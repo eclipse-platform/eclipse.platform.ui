@@ -62,7 +62,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	 */
 	public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
 
-	private static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$;
+	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$;
 
 	private Collection pages = new ArrayList();
 
@@ -143,20 +143,14 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 			return;
 		}
+		String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
+		if (objectClassName == null) {
+			logMissingAttribute(element, ATT_OBJECTCLASS);
+			return;
+		}
 
-		String[] classes = contributor.getObjectClasses();
-		if (classes == null) {
-			// Check for deprecated objectClass attribute
-			String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-			if (objectClassName == null) {
-				logMissingAttribute(element, CHILD_ENABLEMENT);
-				return;
-			}
-			classes = new String[] { objectClassName };
-		}
-		for (int i = 0; i < classes.length; i++) {
-			registerContributor(contributor, classes[i]);
-		}
+		registerContributor(contributor, objectClassName);
+
 	}
 
 	/**
@@ -173,8 +167,8 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		if (element.getName().equals(TAG_FILTER)) {
 			return true;
 		}
-		
-		if (element.getName().equals(CHILD_ENABLEMENT)) {
+
+		if (element.getName().equals(CHILD_ENABLED_WHEN)) {
 			return true;
 		}
 

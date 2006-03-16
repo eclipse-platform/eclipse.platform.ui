@@ -21,7 +21,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
       </documentation>
    </annotation>
 
-   <include schemaLocation="commonExpression.exsd"/>
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -65,7 +65,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
          <sequence>
             <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -182,6 +182,25 @@ define the target object for a property page.
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledWhen">
+      <complexType>
+         <choice>
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+         </choice>
       </complexType>
    </element>
 

@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -26,7 +30,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
@@ -43,9 +46,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class RegistryPageContributor implements IPropertyPageContributor,
 		IAdaptable {
-	private static final String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
-
-	private static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
+	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$
 
 	private String pageId;
 
@@ -61,9 +62,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 
 	private SoftReference filterProperties;
 
-	private ActionExpression enablement;
-
-	private String[] objectClasses;
+	private Expression enablementExpression;
 
 	/**
 	 * PropertyPageContributor constructor.
@@ -148,32 +147,22 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 *         found.
 	 */
 	private Object getAdaptedElement(Object element) {
-		String[] classNames = getObjectClasses();
-		for (int i = 0; i < classNames.length; i++) {
-			Object adapted = LegacyResourceSupport.getAdapter(element,
-					classNames[i]);
-			if (adapted != null)
-				return adapted;
-		}
+		Object adapted = LegacyResourceSupport.getAdapter(element,
+				getObjectClass());
+		if (adapted != null)
+			return adapted;
+
 		return null;
 	}
 
 	/**
-	 * Get the object classes to which this decorator is registered.
+	 * Return the object class name
 	 * 
-	 * @return String [] the object classes to which this decorator is
-	 *         registered
+	 * @return the object class name
 	 */
-	public String[] getObjectClasses() {
-		if (objectClasses == null) {
-			objectClasses = enablement.extractObjectClasses();
-
-			// If the class is null set it to Object
-			if (objectClasses == null) {
-				objectClasses = new String[] { Object.class.getName() };
-			}
-		}
-		return objectClasses;
+	public String getObjectClass() {
+		return pageElement
+				.getAttribute(PropertyPagesRegistryReader.ATT_OBJECTCLASS);
 	}
 
 	/**
@@ -268,20 +257,16 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 * @return boolean <code>true</code> if it fails the enablement test
 	 */
 	private boolean failsEnablement(Object object) {
-		if (enablement == null)
+		if (enablementExpression == null)
 			return false;
-		if (enablement.isEnabledFor(object))
+		try {
+			return enablementExpression.evaluate(
+					new EvaluationContext(null, object)).equals(
+					EvaluationResult.FALSE);
+		} catch (CoreException e) {
+			WorkbenchPlugin.log(e.getStatus());
 			return false;
-		if (adaptable) {
-			String[] classNames = getObjectClasses();
-			for (int i = 0; i < classNames.length; i++) {
-				Object adapted = LegacyResourceSupport.getAdapter(object,
-						classNames[i]);
-				if (enablement.isEnabledFor(adapted))
-					return false;
-			}
 		}
-		return true;
 	}
 
 	/**
@@ -289,13 +274,21 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	 */
 	protected void initializeEnablement(IConfigurationElement definingElement) {
 		IConfigurationElement[] elements = definingElement
-				.getChildren(CHILD_ENABLEMENT);
-		if (elements.length == 0) {
-			String className = definingElement.getAttribute(ATT_OBJECT_CLASS);
-			if (className != null)
-				enablement = new ActionExpression(ATT_OBJECT_CLASS, className);
-		} else
-			enablement = new ActionExpression(elements[0]);
+				.getChildren(CHILD_ENABLED_WHEN);
+
+		if (elements.length == 0)
+			return;
+
+		try {
+			IConfigurationElement[] enablement = elements[0].getChildren();
+			if (enablement.length == 0)
+				return;
+			enablementExpression = ExpressionConverter.getDefault().perform(
+					enablement[0]);
+		} catch (CoreException e) {
+			WorkbenchPlugin.log(e.getStatus());
+		}
+
 	}
 
 	/**
