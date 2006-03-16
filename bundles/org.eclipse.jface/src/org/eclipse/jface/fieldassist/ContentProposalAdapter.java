@@ -188,11 +188,25 @@ public class ContentProposalAdapter {
 				if (!isValid()) {
 					return;
 				}
+				
+				char key = e.character;
 
-				// Traverse events will be blocked when the popup is open, but
-				// we will interpret their characters as navigation within the
-				// popup.
+				// Traverse events are handled depending on whether the 
+				// event has a character.
 				if (e.type == SWT.Traverse) {
+					// If the traverse event contains a legitimate character,
+					// then we must set doit false so that the widget will
+					// receive the key event.  We return immediately so that
+					// the character is handled only in the key event.
+					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132101
+					if (key != 0) {
+						e.doit = false;
+						return;
+					} 
+					// Traversal does not contain a character.  Set doit true
+					// to indicate TRAVERSE_NONE will occur and that no key event
+					// will be triggered. We will check for navigation keys
+					// below.
 					e.detail = SWT.TRAVERSE_NONE;
 					e.doit = true;
 				} else {
@@ -201,7 +215,6 @@ public class ContentProposalAdapter {
 					e.doit = propagateKeys;
 				}
 
-				char key = e.character;
 
 				// No character. Check for navigation keys.
 
@@ -271,7 +284,7 @@ public class ContentProposalAdapter {
 				// Check for special keys involved in cancelling, accepting, or
 				// filtering the proposals.
 				switch (key) {
-				case SWT.ESC: // Esc
+				case SWT.ESC: 
 					e.doit = false;
 					close();
 					break;
@@ -1462,12 +1475,30 @@ public class ContentProposalAdapter {
 				case SWT.Traverse:
 				case SWT.KeyDown:
 					if (DEBUG) {
-						dump("Traverse and KeyDown received by adapter", e); //$NON-NLS-1$
+						StringBuffer sb;
+						if (e.type == SWT.Traverse){
+							sb = new StringBuffer("Traverse"); //$NON-NLS-1$
+						} else {
+							sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
+						} 
+						sb.append(" received by adapter"); //$NON-NLS-1$
+						dump(sb.toString(), e);
 					}
 					// If the popup is open, it gets first shot at the
 					// keystroke and should set the doit flags appropriately.
 					if (popup != null) {
 						popup.getTargetControlListener().handleEvent(e);
+						if (DEBUG) {
+							StringBuffer sb;
+							if (e.type == SWT.Traverse){
+								sb = new StringBuffer("Traverse"); //$NON-NLS-1$
+							} else {
+								sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
+							} 
+							sb.append(" after being handled by popup"); //$NON-NLS-1$
+							dump(sb.toString(), e);
+						}
+
 						return;
 					}
 
