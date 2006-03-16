@@ -25,12 +25,44 @@ import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.*;
 
-public class ModelSelectionDropDownAction extends Action implements IMenuCreator, ISynchronizationScopeChangeListener {
+public class ModelSelectionDropDownAction extends Action implements ISynchronizationScopeChangeListener {
 
 	private final ISynchronizePageConfiguration configuration;
 	private MenuManager menuManager;
 	private Action showAllAction;
 	private org.eclipse.jface.util.IPropertyChangeListener listener;
+	private MenuCreator menuCreator;
+	
+	private class MenuCreator implements IMenuCreator {
+		public void dispose() {
+			if(menuManager != null) {
+				menuManager.dispose();
+				menuManager = null;
+			}
+		}
+		public Menu getMenu(Control parent) {
+			Menu fMenu = null;
+			if (menuManager == null) {
+				menuManager = new MenuManager();
+				fMenu = menuManager.createContextMenu(parent);
+				menuManager.add(showAllAction);
+				showAllAction.setChecked(getActiveProviderId().equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE));
+				ModelProvider[] modelProviders = getEnabledModelProviders();
+				if (modelProviders.length > 0)
+					menuManager.add(new Separator());
+				addModelsToMenu(modelProviders);
+				
+				menuManager.update(true);
+			} else {
+				fMenu = menuManager.getMenu();
+			}
+			return fMenu;
+		}
+
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+	}
 
 	public ModelSelectionDropDownAction(ISynchronizePageConfiguration configuration) {
 		Utils.initAction(this, "action.pickModels."); //$NON-NLS-1$
@@ -62,7 +94,8 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		};
 		//showAllAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
 		//showAllAction.setActionDefinitionId("org.eclipse.team.ui.showAllModels"); //$NON-NLS-1$
-		setMenuCreator(this);		
+		menuCreator = new MenuCreator();
+		setMenuCreator(menuCreator);		
 		update();	
 	}
 
@@ -71,32 +104,11 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 	}
 
 	public void dispose() {
-		if(menuManager != null) {
-			menuManager.dispose();
-			menuManager = null;
-		}
+		if (menuCreator != null)
+			menuCreator.dispose();
 		getSynchronizationContext().getScope().removeScopeChangeListener(this);
 		configuration.removePropertyChangeListener(listener);
 		TeamUI.getTeamContentProviderManager().removePropertyChangeListener(listener);
-	}
-
-	public Menu getMenu(Control parent) {
-		Menu fMenu = null;
-		if (menuManager == null) {
-			menuManager = new MenuManager();
-			fMenu = menuManager.createContextMenu(parent);
-			menuManager.add(showAllAction);
-			showAllAction.setChecked(getActiveProviderId().equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE));
-			ModelProvider[] modelProviders = getEnabledModelProviders();
-			if (modelProviders.length > 0)
-				menuManager.add(new Separator());
-			addModelsToMenu(modelProviders);
-			
-			menuManager.update(true);
-		} else {
-			fMenu = menuManager.getMenu();
-		}
-		return fMenu;
 	}
 
 	private ModelProvider[] getEnabledModelProviders() {
@@ -127,10 +139,6 @@ public class ModelSelectionDropDownAction extends Action implements IMenuCreator
 		if (id == null)
 			id = ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE;
 		return id;
-	}
-
-	public Menu getMenu(Menu parent) {
-		return null;
 	}
 	
 	private ModelProvider getNextProvider() {
