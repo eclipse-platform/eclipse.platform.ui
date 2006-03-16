@@ -138,10 +138,8 @@ public class EngineResultSection {
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(FormColors.TITLE));
 		searchResults.marginHeight = 5;
 		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
-		String nwKey = IHelpUIConstants.IMAGE_NW;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
-		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
 		searchResults.setColor("summary", parent.getDisplay().getSystemColor( //$NON-NLS-1$
 				SWT.COLOR_WIDGET_DARK_SHADOW));
@@ -151,8 +149,6 @@ public class EngineResultSection {
 				.getImage(ISharedImages.IMG_TOOL_BACK));
 		searchResults.setImage(ISharedImages.IMG_OBJS_ERROR_TSK, PlatformUI.getWorkbench().getSharedImages()
 				.getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-		searchResults.setImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK, HelpUIResources
-				.getImage(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		searchResults.setImage(desc.getId(), desc.getIconImage());
 		searchResults.setImage(KEY_PREFIX_GRAYED + desc.getId(), getGrayedImage(desc.getIconImage()));
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
@@ -394,12 +390,10 @@ public class EngineResultSection {
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
 			String href=null;
-			boolean directOpen=false;
 			if (hit instanceof ISearchEngineResult2) {
 				ISearchEngineResult2 hit2 = (ISearchEngineResult2)hit;
 				if (((ISearchEngineResult2)hit).canOpen()) {
 					href = "open:"+desc.getId()+"?id="+hit2.getId(); //$NON-NLS-1$ //$NON-NLS-2$
-					directOpen=true;
 				}
 			}
 			if (href==null) {
@@ -427,23 +421,6 @@ public class EngineResultSection {
 			elabel = part.parent.escapeSpecialChars(elabel);
 			buff.append(elabel);
 			buff.append("</a>"); //$NON-NLS-1$
-			if (!directOpen && !hit.getForceExternalWindow()) {
-				buff.append(" <a href=\""); //$NON-NLS-1$ 
-				buff.append("nw:");//$NON-NLS-1$ 
-				String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), true));
-				buff.append(ahref);
-				buff.append("\"><img href=\""); //$NON-NLS-1$ 
-				buff.append(IHelpUIConstants.IMAGE_NW);
-				buff.append("\""); //$NON-NLS-1$
-				if (Platform.getWS() != Platform.WS_GTK) {
-					buff.append(" alt=\""); //$NON-NLS-1$
-					buff.append(Messages.SearchResultsPart_nwtooltip);// 
-					buff.append("\""); //$NON-NLS-1$
-				}
-				buff.append("/>"); //$NON-NLS-1$ 
-				buff.append("</a>"); //$NON-NLS-1$
-			}
-			addBookmarkLink(buff, hit, href);
 			if (part.getShowDescription()) {
 				String edesc = hit.getDescription();
 				if (edesc != null)
@@ -451,10 +428,7 @@ public class EngineResultSection {
 				String summary = getSummary(elabel, edesc);
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
-					// buff.append("<span color=\"summary\">"); //$NON-NLS-1$
-					// System.out.println(summary);
 					buff.append(summary);
-					// buff.append("</span>"); //$NON-NLS-1$
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$
@@ -501,26 +475,6 @@ public class EngineResultSection {
 			return KEY_PREFIX_GRAYED + iconURL.toString();
 		}
 		return null;
-	}
-
-	private void addBookmarkLink(StringBuffer buff, ISearchEngineResult hit, String href) {
-		buff.append(" <a href=\""); //$NON-NLS-1$ 
-		buff.append("bmk:");//$NON-NLS-1$ 
-		String ahref = part.parent.escapeSpecialChars(hit.toAbsoluteHref(href, true));
-		buff.append(ahref);
-		buff.append("\"><img href=\""); //$NON-NLS-1$ 
-		buff.append(IHelpUIConstants.IMAGE_ADD_BOOKMARK);
-		buff.append("\""); //$NON-NLS-1$
-		if (Platform.getWS() != Platform.WS_GTK) {
-			buff.append(" alt=\""); //$NON-NLS-1$
-			buff.append(Messages.SearchResultsPart_bmktooltip);
-			buff.append("\""); //$NON-NLS-1$
-		}
-		buff.append(" text=\""); //$NON-NLS-1$
-		buff.append(part.parent.escapeSpecialChars(hit.getLabel()));
-		buff.append("\""); //$NON-NLS-1$ 
-		buff.append("/>"); //$NON-NLS-1$ 
-		buff.append("</a>"); //$NON-NLS-1$
 	}
 
 	private void updateErrorStatus(StringBuffer buff) {
