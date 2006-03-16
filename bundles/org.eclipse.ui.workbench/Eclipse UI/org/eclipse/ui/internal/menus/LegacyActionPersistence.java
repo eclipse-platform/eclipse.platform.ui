@@ -81,7 +81,6 @@ import org.eclipse.ui.keys.IBindingService;
  */
 public final class LegacyActionPersistence extends RegistryPersistence {
 
-
 	/**
 	 * The index of the action set elements in the indexed array.
 	 * 
@@ -1066,6 +1065,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param warningsToLog
 	 *            The list of warnings already logged for this extension point;
 	 *            must not be <code>null</code>.
+	 * @param menuId
+	 *            The menu that this group belongs to.
 	 * @param path
 	 *            The path at which the separators will appear; may be
 	 *            <code>null</code>.
@@ -1084,7 +1085,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	protected final SReference[] readGroups(
 			final IConfigurationElement[] elements, final List warningsToLog,
-			final String path, final LegacyLocationInfo locationInfo,
+			final String menuId, final String path,
+			final LegacyLocationInfo locationInfo,
 			final Expression visibleWhenExpression,
 			final boolean separatorsVisible) {
 		final int length = elements.length;
@@ -1093,40 +1095,29 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement element = elements[i];
 
 			// Read the name attribute.
-			final String name = readRequired(element, ATT_NAME, warningsToLog,
+			String name = readRequired(element, ATT_NAME, warningsToLog,
 					"Groups require a name"); //$NON-NLS-1$
 			if (name == null) {
 				continue;
 			}
 
+			name = menuId + '-' + name;
+
 			// Define the group.
 			final SGroup group = menuService.getGroup(name);
 			final SLocation location = createLocation(SBar.TYPE_MENU, path,
 					locationInfo, SLocation.MNEMONIC_NONE, null);
-			SLocation[] locations = null;
 			if (group.isDefined()) {
 				// Add another location.
-				try {
-					final SLocation[] currentLocations = group.getLocations();
-					final int currentLength = currentLocations.length;
-					locations = new SLocation[currentLength + 1];
-					System.arraycopy(currentLocations, 0, locations, 0,
-							currentLength);
-					locations[currentLength] = location;
-				} catch (final NotDefinedException e) {
-					// This should not be possible.
-					addWarning(
-							warningsToLog,
-							"Group became undefined while loading registry (threading problem)", //$NON-NLS-1$
-							element, name);
-				}
+
+				group.addLocation(location);
 
 			} else {
 				// This is the first location.
-				locations = new SLocation[] { location };
+				SLocation[] locations = new SLocation[] { location };
+				group.define(separatorsVisible, locations, null);
 
 			}
-			group.define(separatorsVisible, locations, null);
 			final IMenuContribution contribution = menuService.contributeMenu(
 					group, visibleWhenExpression);
 			menuContributions.add(contribution);
@@ -1192,20 +1183,20 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Read the path attribute.
 			final String path = adjustPath(readOptional(menuElement, ATT_PATH));
+
 			final String subpath;
 			if (path == null) {
 				subpath = menuId;
 			} else {
-				// TODO This path will always be incorrect.
-				subpath = path + '/' + menuId;
+				subpath = path + LeafLocationElement.PATH_SEPARATOR + menuId;
 			}
 
 			// Read the separator elements. There must be at least one.
 			final IConfigurationElement[] separatorElements = menuElement
 					.getChildren(TAG_SEPARATOR);
 			final SReference[] separatorReferences = readGroups(
-					separatorElements, warningsToLog, subpath, locationInfo,
-					visibleWhenExpression, true);
+					separatorElements, warningsToLog, menuId, subpath,
+					locationInfo, visibleWhenExpression, true);
 			if (separatorReferences != null) {
 				references.addAll(Arrays.asList(separatorReferences));
 			}
@@ -1214,7 +1205,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final IConfigurationElement[] groupElements = menuElement
 					.getChildren(TAG_GROUP_MARKER);
 			final SReference[] groupReferences = readGroups(groupElements,
-					warningsToLog, subpath, locationInfo,
+					warningsToLog, menuId, subpath, locationInfo,
 					visibleWhenExpression, false);
 			if (groupReferences != null) {
 				references.addAll(Arrays.asList(groupReferences));
@@ -1222,10 +1213,15 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			// Define the menu.
 			final SMenu menu = menuService.getMenu(menuId);
+
 			final SLocation location = createLocation(SBar.TYPE_MENU, path,
 					locationInfo, mnemonic, null);
-			final SLocation[] locations = new SLocation[] { location };
-			menu.define(label, locations, null);
+			if (menu.isDefined()) {
+				menu.addLocation(location);
+			} else {
+				final SLocation[] locations = new SLocation[] { location };
+				menu.define(label, locations, null);
+			}
 			final IMenuContribution contribution = menuService.contributeMenu(
 					menu, visibleWhenExpression);
 			menuContributions.add(contribution);
@@ -1238,45 +1234,87 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	/**
 	 * @param string
-	 * @return the adjusted path ... i.e. the group has been stripped off.
+	 * @return the adjusted path ... i.e. the group has been sliced and diced
 	 */
 	private String adjustPath(final String path) {
 		if (path == null) {
 			return null;
 		}
+		String result = null;
 
 		SBar loc = new SBar(SBar.TYPE_MENU, path);
 		ILocationElementTokenizer tokenizer = loc.getTokenizer();
 		LocationElementToken token = null;
+		LocationElementToken lastToken = null;
 		while (tokenizer.hasMoreTokens()) {
+			lastToken = token;
 			token = tokenizer.nextToken();
 		}
+
 		if (token == null || token.getId() == null
 				|| token.getId().length() == 0) {
 			return null;
 		}
-
-		String result = null;
-		LocationElement element = token.getLocation().getPath();
-		if (element instanceof LeafLocationElement) {
-			result = ((LeafLocationElement) element).getPath();
-		} else if (Policy.EXPERIMENTAL_MENU) {
-			System.err.println("adjustPath: not a leaf: " + element); //$NON-NLS-1$
+		String groupId = token.getId();
+		if (lastToken != null) {
+			groupId = lastToken.getId() + '-' + groupId;
+		}
+		if (Policy.EXPERIMENTAL_MENU
+				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) {
+			System.err.println("adjustPath: groupId: " + groupId); //$NON-NLS-1$
 		}
 
-		if (menuService.getMenu(token.getId()).isDefined()) {
-			if (result == null) {
-				result = token.getId();
-			} else {
-				result += LeafLocationElement.PATH_SEPARATOR + token.getId();
+		SGroup sgroup = menuService.getGroup(groupId);
+		if (sgroup.isDefined()) {
+			try {
+				SLocation[] locs = sgroup.getLocations();
+				if (locs != null && locs.length > 0) {
+					result = getLocationPath(locs[0])
+							+ LeafLocationElement.PATH_SEPARATOR + groupId;
+				}
+			} catch (NotDefinedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		SMenu smenu = null;
+		if (result == null) {
+			smenu = menuService.getMenu(token.getId());
+		}
+
+		if (smenu != null && smenu.isDefined()) {
+			SLocation[] locs;
+			try {
+				locs = smenu.getLocations();
+				if (locs != null && locs.length > 0) {
+					result = getLocationPath(locs[0])
+							+ LeafLocationElement.PATH_SEPARATOR
+							+ token.getId()
+							+ LeafLocationElement.PATH_SEPARATOR
+							+ token.getId() + '-' + "additions"; //$NON-NLS-1$
+				}
+			} catch (NotDefinedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
 		if (Policy.EXPERIMENTAL_MENU
 				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) {
-			System.err.println("adjustPath: " + path); //$NON-NLS-1$
+			System.err.println("adjustPath: " + path + "\n\tresult: " + result); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
+	}
+
+	private String getLocationPath(SLocation location) {
+		LocationElement element = location.getPath();
+		if (element instanceof LeafLocationElement) {
+			return ((LeafLocationElement) element).getPath();
+		} else if (element instanceof SPart) {
+			return ((SPart) element).getLocation().getPath();
+		}
+		return null;
 	}
 
 	/**
