@@ -781,7 +781,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return;
 			case QUICK_ASSIST:
 				// FIXME: must find a way to post to the status line
-				// String msg= fQuickAssistAssistant.showPossibleQuickAssists();
+				/* String msg= */ fQuickAssistAssistant.showPossibleQuickAssists();
 				// setStatusLineErrorMessage(msg);
 				return;
 			case INFORMATION:
