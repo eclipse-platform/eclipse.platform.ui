@@ -35,6 +35,8 @@ import org.eclipse.ui.PlatformUI;
  * Wizard page for entering information about a CVS repository location.
  */
 public class ConfigurationWizardMainPage extends CVSWizardPage {
+	private static final String ANONYMOUS_USER = "anonymous"; //$NON-NLS-1$
+	
 	private boolean showValidate;
 	private boolean validate;
 	
@@ -380,6 +382,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 					userCombo.add(userNames[i]);
 				}
 			}
+			userCombo.add(ANONYMOUS_USER);
 			if (showValidate) {
 				validate = !settings.getBoolean(STORE_DONT_VALIDATE_ID);
 				validateButton.setSelection(validate);
@@ -437,11 +440,13 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		// Update history
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
-			String[] userNames = settings.getArray(STORE_USERNAME_ID);
-			if (userNames == null) userNames = new String[0];
-			userNames = addToHistory(userNames, userCombo.getText());
-			settings.put(STORE_USERNAME_ID, userNames);
-
+			String userName = userCombo.getText();
+			if (!userName.equals(ANONYMOUS_USER)) {
+				String[] userNames = settings.getArray(STORE_USERNAME_ID);
+				if (userNames == null) userNames = new String[0];
+				userNames = addToHistory(userNames, userName);
+				settings.put(STORE_USERNAME_ID, userNames);
+			}
 			String[] hostNames = settings.getArray(STORE_HOSTNAME_ID);
 			if (hostNames == null) hostNames = new String[0];
 			hostNames = addToHistory(hostNames, hostCombo.getText());
