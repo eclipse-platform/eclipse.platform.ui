@@ -1169,6 +1169,30 @@
       <encoding name="UTF-16LE"/>
       <encoding name="US-ASCII"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.activitySupport">
+      <triggerPoint id="org.eclipse.ui.newWizards">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>
+      <triggerPoint id="org.eclipse.ui.openPerspectiveDialog">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>
+      <triggerPoint id="org.eclipse.ui.importWizards">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>  
+      <triggerPoint id="org.eclipse.ui.exportWizards">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>    
+   </extension>
  
 <!-- Trim Area 'group' definitions -->
    <extension
