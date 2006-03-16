@@ -106,7 +106,7 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 				}
 				if (o instanceof IResource) {
 					IResource resource = (IResource) o;
-					int depth = getTraversalCalculator().getLayoutDepth(resource);
+					int depth = getTraversalCalculator().getLayoutDepth(resource, path);
 					IDiff[] diffs = set.getDiffTree().getDiffs(resource, depth);
 					Set resources = new HashSet();
 					for (int i = 0; i < diffs.length; i++) {
@@ -120,7 +120,7 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 			} 
 			if (getTraversalCalculator().isResourcePath(path)) {
 				IResource resource = (IResource) o;
-				return getTraversalCalculator().getTraversals(resource);
+				return getTraversalCalculator().getTraversals(resource, path);
 			}
 			return getTraversals(o, monitor);
 		}

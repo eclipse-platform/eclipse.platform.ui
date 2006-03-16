@@ -106,7 +106,7 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 		// Check for resources and adjust the depth to match the provider depth
 		if (isResourcePath(pathOrElement)) {
 			IResource resource = (IResource) element;
-			return getTraversalCalculator().getTraversals(resource);
+			return getTraversalCalculator().getTraversals(resource, (TreePath)pathOrElement);
 		}
 		
 		// Finally, just get the traversals from the mapping.

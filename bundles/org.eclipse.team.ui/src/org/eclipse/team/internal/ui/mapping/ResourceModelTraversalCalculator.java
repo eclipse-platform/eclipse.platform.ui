@@ -29,11 +29,13 @@ public class ResourceModelTraversalCalculator {
 
 	public static final String PROP_TRAVERSAL_CALCULATOR = "org.eclipse.team.ui.resourceModelraversalCalculator"; //$NON-NLS-1$
 
-	public int getLayoutDepth(IResource resource) {
+	public int getLayoutDepth(IResource resource, TreePath path) {
 		if (resource.getType() == IResource.PROJECT)
 			return IResource.DEPTH_INFINITE;
 		if (resource.getType() == IResource.FILE) 
 			return IResource.DEPTH_ZERO;
+		if (path != null && hasNonResource(path))
+			return IResource.DEPTH_INFINITE;
 		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT)) {
 			return IResource.DEPTH_ZERO;
 		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT)) {
@@ -41,7 +43,7 @@ public class ResourceModelTraversalCalculator {
 		}
 		return IResource.DEPTH_INFINITE;
 	}
-
+	
 	public String getLayout() {
 		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
@@ -166,7 +168,7 @@ public class ResourceModelTraversalCalculator {
 		Object o = tp.getLastSegment();
 		if (o instanceof IResource) {
 			IResource resource = (IResource) o;
-			int depth = getLayoutDepth(resource);
+			int depth = getLayoutDepth(resource, tp);
 			IDiff[] diffs = dcs.getDiffTree().getDiffs(resource, depth);
 			for (int i = 0; i < diffs.length; i++) {
 				IDiff diff = diffs[i];
@@ -178,8 +180,8 @@ public class ResourceModelTraversalCalculator {
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	public ResourceTraversal[] getTraversals(IResource resource) {
-		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, getLayoutDepth(resource), IResource.NONE) };
+	public ResourceTraversal[] getTraversals(IResource resource, TreePath tp) {
+		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, getLayoutDepth(resource, tp), IResource.NONE) };
 	}
 
 	public boolean isResourcePath(TreePath path) {

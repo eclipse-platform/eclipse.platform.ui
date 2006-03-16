@@ -420,7 +420,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			IResource resource = (IResource) object;
 			if (tree.getDiff(resource) != null)
 				return true;
-			int depth = getTraversalCalculator().getLayoutDepth(resource);
+			int depth = getTraversalCalculator().getLayoutDepth(resource, null);
 			return tree.getDiffs(resource, depth).length > 0;
 		}
 		return false;
