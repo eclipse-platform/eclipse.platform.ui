@@ -19,7 +19,7 @@ import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 
 public class TeamDecoratorManager {
 	
-	public static final String PT_TEAM_DECORATORS = "teamDcorators"; //$NON-NLS-1$
+	public static final String PT_TEAM_DECORATORS = "teamDecorators"; //$NON-NLS-1$
 
 	private static TeamDecoratorManager instance;
 	
