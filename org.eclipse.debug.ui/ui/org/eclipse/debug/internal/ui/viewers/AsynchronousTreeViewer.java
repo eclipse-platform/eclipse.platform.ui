@@ -1120,6 +1120,16 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
                 item.setImage(getImages(image));
             }
         }
+    	TreeColumn[] columns = getTree().getColumns();
+    	for (int i = 0; i < columns.length; i++) {
+    		TreeColumn treeColumn = columns[i];
+			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
+    		if (width == null) {
+    			treeColumn.removeControlListener(fListener);
+    			treeColumn.pack();
+    			treeColumn.addControlListener(fListener);
+    		}
+		}        
     }
 
 	/* (non-Javadoc)
