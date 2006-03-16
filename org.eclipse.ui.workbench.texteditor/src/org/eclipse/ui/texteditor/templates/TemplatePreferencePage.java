@@ -409,7 +409,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @since 3.2
 	 */
 	private int computeMinimumColumnWidth(GC gc, String string) {
-		return gc.stringExtent(string).x + 10; // pad 10 to accomodate table header trimmings
+		return gc.stringExtent(string).x + 10; // pad 10 to accommodate table header trimmings
 	}
 
 	/**
