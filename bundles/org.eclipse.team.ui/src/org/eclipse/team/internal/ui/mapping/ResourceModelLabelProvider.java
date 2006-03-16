@@ -14,9 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
@@ -33,7 +32,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
  * Resource label provider that can decorate using sync state.
  */
 public class ResourceModelLabelProvider extends
-		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener {
+		SynchronizationLabelProvider implements IFontProvider, IResourceChangeListener, ITreePathLabelProvider {
 
 	private ILabelProvider provider = new WorkbenchLabelProvider();
 	private ResourceModelContentProvider contentProvider;
@@ -157,47 +156,20 @@ public class ResourceModelLabelProvider extends
 		}, contentProvider.getStructuredViewer());
 	}
 	
-	private String getLayout() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
-	}
-	
 	protected String getDelegateText(Object elementOrPath) {
-		Object element = internalGetElement(elementOrPath);
-		Object parent = internalGetElementParent(elementOrPath);
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;			
-			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
-					&& resource.getType() == IResource.FOLDER
-					&& (parent == null || parent instanceof IProject)) {
-				return resource.getProjectRelativePath().toString();
-			}
-			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) 
-					&& resource.getType() == IResource.FILE
-					&& (parent == null || parent instanceof IProject)) {
-				IPath parentPath = resource.getProjectRelativePath().removeLastSegments(1);
-				if (!parentPath.isEmpty())
-					return NLS.bind(TeamUIMessages.ResourceModelLabelProvider_0, resource.getName(), parentPath.toString());
-			}
-		}
-		return super.getDelegateText(element);
+		String label = getTraversalCalculator().getLabel(elementOrPath);
+		if (label == null)
+			label = super.getDelegateText(internalGetElement(elementOrPath));
+		return label;
 	}
 	
 	protected Image getDelegateImage(Object elementOrPath) {
-		Object element = internalGetElement(elementOrPath);
-		Object parent = internalGetElementParent(elementOrPath);
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
-			// Only use the compressed folder icon if the parent is not known
-			// or the parent is a project
-			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
-					&& resource.getType() == IResource.FOLDER
-					&& (parent == null || parent instanceof IProject)) {
-				if (compressedFolderImage == null)
-					compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
-				return compressedFolderImage;
-			}
+		if (getTraversalCalculator().isCompressedFolder(elementOrPath)) {
+			if (compressedFolderImage == null)
+				compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
+			return compressedFolderImage;
 		}
-		return super.getDelegateImage(element);
+		return super.getDelegateImage(internalGetElement(elementOrPath));
 	}
 	
 	private Object internalGetElement(Object elementOrPath) {
@@ -208,22 +180,19 @@ public class ResourceModelLabelProvider extends
 		return elementOrPath;
 	}
 	
-	private Object internalGetElementParent(Object elementOrPath) {
-		if (elementOrPath instanceof TreePath) {
-			TreePath tp = (TreePath) elementOrPath;
-			if (tp.getSegmentCount() > 1) {
-				return tp.getSegment(tp.getSegmentCount() - 2);
-			}
-			
-		}
-		return null;
-	}
-	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
 		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
 	}
 
 	private ISynchronizePageConfiguration getConfiguration() {
 		return (ISynchronizePageConfiguration)getExtensionSite().getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+	}
+	
+	public void updateLabel(ViewerLabel label, TreePath elementPath) {
+		label.setImage(getImage(elementPath));
+		label.setText(getText(elementPath));
+		Font f = getFont(elementPath);
+		if (f != null)
+			label.setFont(f);
 	}
 }

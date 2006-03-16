@@ -60,6 +60,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
+		element = internalGetElement(element);
 		if (element instanceof ModelProvider)
 			return null;
 		if (element == getModelRoot())
@@ -78,18 +79,19 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	}
 	
 	private Object[] internalGetChildren(Object parent, boolean isElement) {
-		if (parent instanceof ISynchronizationScope) {
+		Object element = internalGetElement(parent);
+		if (element instanceof ISynchronizationScope) {
 			// If the root is a scope, we want to include all models in the scope
-			ISynchronizationScope rms = (ISynchronizationScope) parent;
+			ISynchronizationScope rms = (ISynchronizationScope) element;
 			if (rms.getMappings(getModelProviderId()).length > 0) {
 				empty = false;
 				return new Object[] { getModelProvider() };
 			}
 			empty = true;
 			return new Object[0];
-		} else if (parent instanceof ISynchronizationContext) {
+		} else if (element instanceof ISynchronizationContext) {
 			// If the root is a context, we want to filter by the context
-			ISynchronizationContext sc = (ISynchronizationContext) parent;
+			ISynchronizationContext sc = (ISynchronizationContext) element;
 			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
 				Object root = getModelRoot();
 				boolean initialized = isInitialized(context);
@@ -103,11 +105,16 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			empty = true;
 			return new Object[0];
 		}
-		if (parent == getModelProvider()) {
+		if (element == getModelProvider()) {
 			if (context != null && !isInitialized(context)) {
 				return new Object[0];
 			}
-			parent = getModelRoot();
+			element = getModelRoot();
+			if (parent instanceof TreePath) {
+				parent = TreePath.EMPTY.createChildPath(element);
+			} else {
+				parent = element;
+			}
 		}
 		Object[] delegateChildren = getDelegateChildren(parent, isElement);
 		ISynchronizationContext sc = getContext();
@@ -159,7 +166,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * delegate content provider
 	 */
 	protected Object[] getDelegateChildren(Object parent) {
-		return getDelegateContentProvider().getChildren(parent);
+		return getDelegateContentProvider().getChildren(internalGetElement(parent));
 	}
 
 	private Object[] getDelegateChildren(Object parent, boolean isElement) {
@@ -168,8 +175,9 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		return getDelegateChildren(parent);
 	}
 
-	private boolean internalHasChildren(Object element) {
+	private boolean internalHasChildren(Object elementOrPath) {
 		//TODO: What about the context and scope
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof ModelProvider) {
 			element = getModelRoot();
 		}
@@ -180,10 +188,10 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 				if (scope == null) {
 					return true;
 				} else {
-					return hasChildrenInScope(scope, element);
+					return hasChildrenInScope(scope, elementOrPath);
 				}
 			} else {
-				return hasChildrenInContext(sc, element);
+				return hasChildrenInContext(sc, elementOrPath);
 			}
 		}
 		return false;
@@ -202,7 +210,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return whether the given element has children in the given scope
 	 */
 	protected boolean hasChildrenInScope(ISynchronizationScope scope, Object element) {
-		ResourceMapping mapping = Utils.getResourceMapping(element);
+		ResourceMapping mapping = Utils.getResourceMapping(internalGetElement(element));
 		if (mapping != null) {
 			ResourceMapping[] mappings = scope.getMappings(mapping.getModelProviderId());
 			for (int i = 0; i < mappings.length; i++) {
@@ -571,7 +579,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * content provider
 	 */
 	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object element) {
-		ResourceMapping mapping = Utils.getResourceMapping(element);
+		ResourceMapping mapping = Utils.getResourceMapping(internalGetElement(element));
 		if (mapping != null) {
 			ResourceMapping[] mappings = ((ISynchronizationScope)scope).getMappings(mapping.getModelProviderId());
 			for (int i = 0; i < mappings.length; i++) {
@@ -595,5 +603,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 */
 	public ICommonContentExtensionSite getExtensionSite() {
 		return site;
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
 	}
 }

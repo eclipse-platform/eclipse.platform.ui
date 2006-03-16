@@ -13,16 +13,17 @@ package org.eclipse.team.internal.ui.mapping;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 
 public class ResourceModelTraversalCalculator {
 
@@ -45,18 +46,31 @@ public class ResourceModelTraversalCalculator {
 		return TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_LAYOUT);
 	}
 	
-	public Object[] filterChildren(IResourceDiffTree diffTree, IResource resource, Object[] children) {
-		Object[] allChildren;
-		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
-			allChildren = getFlatChildren(diffTree, resource);
-		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
-			allChildren = getCompressedChildren(diffTree, (IProject)resource, children);
-		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
-			allChildren = getCompressedChildren(diffTree, (IFolder)resource, children);
-		} else {
-			allChildren = getTreeChildren(diffTree, resource, children);
+	public Object[] filterChildren(IResourceDiffTree diffTree, IResource resource, Object parentOrPath, Object[] children) {
+		if (parentOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) parentOrPath;
+			if (hasNonResource(tp)) {
+				return getTreeChildren(diffTree, resource, children);
+			}
 		}
-		return allChildren;
+		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
+			return getFlatChildren(diffTree, resource);
+		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
+			return getCompressedChildren(diffTree, (IProject)resource, children);
+		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+			return getCompressedChildren(diffTree, (IFolder)resource, children);
+		}
+		return getTreeChildren(diffTree, resource, children);
+	}
+	
+	private boolean hasNonResource(TreePath parentPath) {
+		for (int i = 0; i < parentPath.getSegmentCount(); i++) {
+			Object o = parentPath.getSegment(i);
+			if (!(o instanceof IResource) && !(o instanceof ModelProvider)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private Object[] getCompressedChildren(IResourceDiffTree diffTree, IProject project, Object[] children) {
@@ -176,5 +190,65 @@ public class ResourceModelTraversalCalculator {
 			}
 		}
 		return true;
+	}
+	
+	public String getLabel(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath && hasNonResource((TreePath)elementOrPath)) {
+			return null;
+		}
+		Object element = internalGetElement(elementOrPath);
+		Object parent = internalGetElementParent(elementOrPath);
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;			
+			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
+					&& resource.getType() == IResource.FOLDER
+					&& (parent == null || parent instanceof IProject)) {
+				return resource.getProjectRelativePath().toString();
+			}
+			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) 
+					&& resource.getType() == IResource.FILE
+					&& (parent == null || parent instanceof IProject)) {
+				IPath parentPath = resource.getProjectRelativePath().removeLastSegments(1);
+				if (!parentPath.isEmpty())
+					return NLS.bind(TeamUIMessages.ResourceModelLabelProvider_0, resource.getName(), parentPath.toString());
+			}
+		}
+		return null;
+	}
+	
+	public boolean isCompressedFolder(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath && hasNonResource((TreePath)elementOrPath)) {
+			return false;
+		}
+		Object element = internalGetElement(elementOrPath);
+		Object parent = internalGetElementParent(elementOrPath);
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			// Only use the compressed folder icon if the parent is not known
+			// or the parent is a project
+			return getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
+				&& resource.getType() == IResource.FOLDER
+				&& (parent == null || parent instanceof IProject);
+		}
+		return false;
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
+	}
+	
+	private Object internalGetElementParent(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			if (tp.getSegmentCount() > 1) {
+				return tp.getSegment(tp.getSegmentCount() - 2);
+			}
+			
+		}
+		return null;
 	}
 }

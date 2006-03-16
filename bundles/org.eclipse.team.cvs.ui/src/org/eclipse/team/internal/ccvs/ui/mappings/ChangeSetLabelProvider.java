@@ -16,8 +16,7 @@ import java.util.Set;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -26,7 +25,7 @@ import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 
-public class ChangeSetLabelProvider extends ResourceModelLabelProvider implements ITreePathLabelProvider {
+public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	private Image changeSetImage;
 
@@ -36,7 +35,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 			DiffChangeSet set = (DiffChangeSet) element;
 			return set.getName();
 		}
-		return super.getDelegateText(element);
+		return super.getDelegateText(elementOrPath);
 	}
 	
 	protected Image getDelegateImage(Object elementOrPath) {
@@ -44,7 +43,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 		if (element instanceof DiffChangeSet) {
 			return getChangeSetImage();
 		}
-		return super.getDelegateImage(element);
+		return super.getDelegateImage(elementOrPath);
 	}
 
 	private Image getChangeSetImage() {
@@ -75,7 +74,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 			}
 			return false;
 		}
-		return super.isBusy(element);
+		return super.isBusy(elementOrPath);
 	}
 	
 	protected boolean hasDecendantConflicts(Object elementOrPath) {
@@ -105,7 +104,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 				}));
 			}
 		}
-		return super.hasDecendantConflicts(element);
+		return super.hasDecendantConflicts(elementOrPath);
 	}
 	
 	private DiffChangeSet internalGetChangeSet(Object elementOrPath) {
@@ -140,7 +139,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 			}
 			return severity;
 		}
-		return super.getMarkerSeverity(element);
+		return super.getMarkerSeverity(elementOrPath);
 	}
 	
 	protected void updateLabels(Object[] elements) {
@@ -170,14 +169,6 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider implement
 
 	private ChangeSetContentProvider getContentProvider() {
 		return (ChangeSetContentProvider)getExtensionSite().getExtension().getContentProvider();
-	}
-
-	public void updateLabel(ViewerLabel label, TreePath elementPath) {
-		label.setImage(getImage(elementPath));
-		label.setText(getText(elementPath));
-		Font f = getFont(elementPath);
-		if (f != null)
-			label.setFont(f);
 	}
 	
 	private Object internalGetElement(Object elementOrPath) {

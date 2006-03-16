@@ -37,7 +37,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
  * have a model provider registered (this may be considered an error case).
  *
  */
-public class ResourceModelContentProvider extends SynchronizationContentProvider {
+public class ResourceModelContentProvider extends SynchronizationContentProvider implements ITreePathContentProvider {
 
 	private WorkbenchContentProvider provider;
 
@@ -67,7 +67,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#isInScope(org.eclipse.team.core.mapping.IResourceMappingScope, java.lang.Object, java.lang.Object)
 	 */
-	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object object) {
+	protected boolean isInScope(ISynchronizationScope scope, Object parent, Object elementOrPath) {
+		Object object = internalGetElement(elementOrPath);
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
 			if (resource == null)
@@ -125,19 +126,22 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object, java.lang.Object[])
 	 */
-	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
+	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parentOrPath, Object[] children) {
+		Object parent = internalGetElement(parentOrPath);
 		if (parent instanceof IResource) {
 			IResource resource = (IResource) parent;
 			if (resource.getType() == IResource.PROJECT && !resource.getProject().isAccessible())
 				return new Object[0];
 			IResourceDiffTree diffTree = context.getDiffTree();
-			Object[] allChildren = getTraversalCalculator().filterChildren(diffTree, resource, children);
-			return super.getChildrenInContext(context, parent, allChildren);
+			//TODO: pass path to traversal calculator
+			Object[] allChildren = getTraversalCalculator().filterChildren(diffTree, resource, parentOrPath, children);
+			return super.getChildrenInContext(context, parentOrPath, allChildren);
 		}
-		return super.getChildrenInContext(context, parent, children);
+		return super.getChildrenInContext(context, parentOrPath, children);
 	}
 
-	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object object) {
+	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object elementOrPath) {
+		Object object = internalGetElement(elementOrPath);
 		ISynchronizationScope scope = context.getScope();
 		// First see if the object is a root of the scope
 		ResourceMapping mapping = scope.getMapping(object);
@@ -203,7 +207,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object)
 	 */
-	protected boolean hasChildrenInContext(ISynchronizationContext context, Object element) {
+	protected boolean hasChildrenInContext(ISynchronizationContext context, Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof IContainer) {
 			IContainer container = (IContainer) element;
 			// For containers check to see if the delta contains any children
@@ -296,13 +301,14 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return super.getElements(parent);
 	}
 	
-	public Object getParent(Object element) {
+	public Object getParent(Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
 		if (element instanceof IProject) {
 			ISynchronizationContext context = getContext();
 			if (context != null)
 				return context;
 		}
-		return super.getParent(element);
+		return super.getParent(elementOrPath);
 	}
 	
 	protected void refresh() {
@@ -327,5 +333,39 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	
 	protected boolean isVisible(IDiff diff) {
 		return super.isVisible(diff);
+	}
+
+	public Object[] getChildren(TreePath parentPath) {
+		return getChildren((Object)parentPath);
+	}
+
+	public boolean hasChildren(TreePath path) {
+		return hasChildren((Object)path);
+	}
+
+	public TreePath[] getParents(Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			IResource[] resourcePath = new IResource[resource.getFullPath().segmentCount()];
+			for (int i = resourcePath.length - 1; i >= 0; i--) {
+				resourcePath[i] = resource;
+				resource = resource.getParent();
+			}
+			TreePath treePath = TreePath.EMPTY;
+			for (int i = 0; i < resourcePath.length; i++) {
+				IResource r = resourcePath[i];
+				treePath = treePath.createChildPath(r);
+			}
+			return new TreePath[] { treePath };
+		}
+		return null;
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
 	}
 }
