@@ -167,11 +167,11 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		Iterator keptIterator = keptJobs.iterator();
 		while(keptIterator.hasNext()){
 			JobInfo next = (JobInfo) keptIterator.next();
-			if(next.getGroupInfo() == null) {
+			GroupInfo group = next.getGroupInfo();
+			if(group == null) 
 				all.add(next);
-			} else {
-				all.add(next.getGroupInfo());
-			}
+			else 
+				all.add(group);
 		}
 		return all.toArray();
 	}
