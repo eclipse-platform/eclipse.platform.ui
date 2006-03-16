@@ -239,6 +239,8 @@ public class CVSDecoration {
 	}
 
 	private void computeText() {
+		if (isIgnored())
+			return;
 		Map bindings = new HashMap();
 		if (isDirty()) {
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, preferences.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
