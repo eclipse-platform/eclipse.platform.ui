@@ -62,6 +62,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	
 	// Property fields
 	private int maxRowsVisible;
+	private boolean fittingVertically;
 	private int numRowsInDisplay;
 	private int numRowsInCollection;
 
@@ -585,6 +586,14 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	public void setMaxRowsVisible(int maxRowsVisible) {
 		this.maxRowsVisible = maxRowsVisible;
+		updateVisibleRows();
+	}
+
+	/**
+	 * @param fittingVertically
+	 */
+	public void setFittingVertically(boolean fittingVertically) {
+		this.fittingVertically = fittingVertically;
 		updateVisibleRows();
 	}
 
