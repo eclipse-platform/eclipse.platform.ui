@@ -19,8 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -89,7 +88,7 @@ public class MergeAllActionHandler extends MergeActionHandler implements IDiffCh
 	
 	protected String getJobName() {
 		String name = getConfiguration().getParticipant().getName();
-		return NLS.bind("Merging all changes in {0}", Utils.shortenText(30, name));
+		return NLS.bind(TeamUIMessages.MergeAllActionHandler_0, Utils.shortenText(30, name));
 	}
 	
 	protected boolean promptToUpdate() {
@@ -104,10 +103,10 @@ public class MergeAllActionHandler extends MergeActionHandler implements IDiffCh
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				String sizeString = Long.toString(count);
-				String message = tree.size() > 1 ? NLS.bind("Are you sure you want to merge {0} resources?", new String[] { sizeString }) : 
-					NLS.bind("Are you sure you want to merge {0} resource?", new String[] { sizeString });
+				String message = tree.size() > 1 ? NLS.bind(TeamUIMessages.MergeAllActionHandler_1, new String[] { sizeString }) : 
+					NLS.bind(TeamUIMessages.MergeAllActionHandler_2, new String[] { sizeString });
 				result[0] = MessageDialog.openQuestion(getConfiguration().getSite().getShell(), 
-						NLS.bind("Confirm Merge", new String[] { sizeString }), message); 					 
+						NLS.bind(TeamUIMessages.MergeAllActionHandler_3, new String[] { sizeString }), message); 					 
 			}
 		});
 		return result[0];

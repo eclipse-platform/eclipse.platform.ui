@@ -39,6 +39,32 @@ public class TeamUIMessages extends NLS {
 	public static String IgnorePreferencePage_patternExistsShort;
 	public static String IgnorePreferencePage_remove;
 
+	public static String MergeAllActionHandler_0;
+
+	public static String MergeAllActionHandler_1;
+
+	public static String MergeAllActionHandler_2;
+
+	public static String MergeAllActionHandler_3;
+
+	public static String ModelEnablementPreferencePage_0;
+
+	public static String ModelEnablementPreferencePage_1;
+
+	public static String ResourceMarkAsMergedHandler_0;
+
+	public static String ResourceMarkAsMergedHandler_1;
+
+	public static String ResourceMergeHandler_0;
+
+	public static String ResourceMergeHandler_1;
+
+	public static String ResourceMergeHandler_2;
+
+	public static String ResourceMergeHandler_3;
+
+	public static String ResourceModelLabelProvider_0;
+
 	public static String simpleInternal;
 	public static String exception;
 
@@ -54,6 +80,8 @@ public class TeamUIMessages extends NLS {
 	public static String SyncInfoCompareInput_2;
 	public static String SyncInfoCompareInput_3;
     public static String SyncInfoCompareInput_tooltip;
+
+	public static String SyncViewerPreferencePage_43;
 
 	public static String TeamAction_internal;
 	public static String TextPreferencePage_add;
@@ -167,6 +195,10 @@ public class TeamUIMessages extends NLS {
 	public static String ChangesSection_filterHidesPlural;
 	public static String ChangesSection_filterChange;
 	public static String ChangesSection_noChanges;
+
+	public static String Utils_20;
+
+	public static String Utils_21;
 	public static String Utils_22;
 	public static String Utils_23;
 	public static String Utils_24;

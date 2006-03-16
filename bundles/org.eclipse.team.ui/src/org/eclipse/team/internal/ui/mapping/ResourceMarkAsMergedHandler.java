@@ -19,8 +19,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -100,6 +102,12 @@ public class ResourceMarkAsMergedHandler extends MergeActionHandler {
 							return false;
 						}
 					};
+				}
+				protected String getJobName() {
+					IDiff[] diffs = getTargetDiffs();
+					if (diffs.length == 1)
+						return TeamUIMessages.ResourceMarkAsMergedHandler_0;
+					return NLS.bind(TeamUIMessages.ResourceMarkAsMergedHandler_1, new Integer(diffs.length).toString());
 				}
 			};
 		}

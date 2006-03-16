@@ -73,7 +73,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		
 		addField(new BooleanFieldEditor(
 		        SHOW_AUTHOR_IN_COMPARE_EDITOR, 
-		        "Show the &file author in compare editors", 
+		        TeamUIMessages.SyncViewerPreferencePage_43, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		

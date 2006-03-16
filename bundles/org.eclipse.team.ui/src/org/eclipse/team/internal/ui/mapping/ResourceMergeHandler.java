@@ -14,8 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -68,6 +70,18 @@ public class ResourceMergeHandler extends MergeActionHandler {
 							return overwrite;
 						}
 					};
+				}
+				protected String getJobName() {
+					IDiff[] diffs = getTargetDiffs();
+					if (overwrite) {
+						if (diffs.length == 1)
+							return TeamUIMessages.ResourceMergeHandler_0;
+						return NLS.bind(TeamUIMessages.ResourceMergeHandler_1, new Integer(diffs.length).toString());
+						
+					}
+					if (diffs.length == 1)
+						return TeamUIMessages.ResourceMergeHandler_2;
+					return NLS.bind(TeamUIMessages.ResourceMergeHandler_3, new Integer(diffs.length).toString());
 				}
 			};
 		}

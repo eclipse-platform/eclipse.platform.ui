@@ -356,7 +356,7 @@ public class Utils {
                     remote = getRevisionWithAuthor(remote, monitor);
                     remoteAuthor = remote.getAuthor();
                     if (remoteAuthor != null)
-                    	config.setRightLabel(NLS.bind("{0} ({1})", new String[] { remote.getContentIdentifier(), remoteAuthor })); 
+                    	config.setRightLabel(NLS.bind(TeamUIMessages.Utils_21, new String[] { remote.getContentIdentifier(), remoteAuthor })); 
 	    		}
 	    		if (base != null) {
                     String baseAuthor;
@@ -367,7 +367,7 @@ public class Utils {
                         baseAuthor = base.getAuthor();
                     }
                     if (baseAuthor != null)
-                    	config.setAncestorLabel(NLS.bind("{0} ({1})", new String[] { base.getContentIdentifier(), baseAuthor })); 
+                    	config.setAncestorLabel(NLS.bind(TeamUIMessages.Utils_20, new String[] { base.getContentIdentifier(), baseAuthor })); 
 	    		}
 	        }
         }

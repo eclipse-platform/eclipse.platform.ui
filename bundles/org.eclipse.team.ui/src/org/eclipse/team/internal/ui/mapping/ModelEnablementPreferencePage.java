@@ -22,8 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderDescriptor;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.TeamUI;
@@ -37,7 +36,7 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 	private Set previosulyEnabled = new HashSet();
 	
 	public ModelEnablementPreferencePage() {
-		setTitle("Models"); 
+		setTitle(TeamUIMessages.ModelEnablementPreferencePage_0); 
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
@@ -49,7 +48,7 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label l = SWTUtils.createLabel(composite, "&Select the model types that should be available when synchronizing");
+		Label l = SWTUtils.createLabel(composite, TeamUIMessages.ModelEnablementPreferencePage_1);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		tableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);

@@ -176,7 +176,7 @@ public class ResourceModelLabelProvider extends
 					&& (parent == null || parent instanceof IProject)) {
 				IPath parentPath = resource.getProjectRelativePath().removeLastSegments(1);
 				if (!parentPath.isEmpty())
-					return NLS.bind("{0} - {1}", resource.getName(), parentPath.toString());
+					return NLS.bind(TeamUIMessages.ResourceModelLabelProvider_0, resource.getName(), parentPath.toString());
 			}
 		}
 		return super.getDelegateText(element);
