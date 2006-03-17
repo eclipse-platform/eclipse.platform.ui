@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers;
 
 /**
  * An extension to {@link ILabelProvider} that is given the 
- * path of the element being decoratd, when it is available.
+ * path of the element being decorated, when it is available.
  * @since 3.2
  */
 public interface ITreePathLabelProvider extends IBaseLabelProvider {

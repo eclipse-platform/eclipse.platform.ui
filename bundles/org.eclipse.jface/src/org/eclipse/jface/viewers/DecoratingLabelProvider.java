@@ -322,7 +322,13 @@ public class DecoratingLabelProvider extends LabelProvider implements
         String oldText = settings.getText();
         Object element = elementPath.getLastSegment();
         boolean decorationReady = true;
-        if (currentDecorator instanceof IDelayedLabelDecorator) {
+        if (currentDecorator instanceof LabelDecorator) {
+			LabelDecorator labelDecorator = (LabelDecorator) currentDecorator;
+           if (!labelDecorator.prepareDecoration(element, oldText, getDecorationContext())) {
+                // The decoration is not ready but has been queued for processing
+                decorationReady = false;
+            }
+		} else if (currentDecorator instanceof IDelayedLabelDecorator) {
             IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
             if (!delayedDecorator.prepareDecoration(element, oldText)) {
                 // The decoration is not ready but has been queued for processing
@@ -336,6 +342,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
 			if (decorationReady || oldText == null
 	                || settings.getText().length() == 0) {
 				pprov.updateLabel(settings, elementPath);
+				decorateSettings(settings, elementPath);
 			}
 		} else {
 	        if (decorationReady || oldText == null
@@ -353,5 +360,45 @@ public class DecoratingLabelProvider extends LabelProvider implements
 			}
 		}
 
+	}
+
+	/**
+	 * Decorate the settings
+	 * @param settings the settings obtained from the label provider
+	 * @param elementPath the element path being decorated
+	 */
+	private void decorateSettings(ViewerLabel settings, TreePath elementPath) {
+		Object element = elementPath.getLastSegment();
+        if (decorator != null) {
+        	if (decorator instanceof LabelDecorator) {
+				LabelDecorator labelDecorator = (LabelDecorator) decorator;
+				String text = labelDecorator.decorateText(settings.getText(), element, getDecorationContext());
+	            if (text != null && text.length() > 0)
+	            	settings.setText(text);
+	            Image image = labelDecorator.decorateImage(settings.getImage(), element, getDecorationContext());
+	            if (image != null)
+	            	settings.setImage(image);
+	            
+			} else {
+	            Image image = decorator.decorateImage(settings.getImage(), element);
+	            if (image != null)
+	            	settings.setImage(image);
+			}
+    		if(decorator instanceof IColorDecorator){
+    			IColorDecorator colorDecorator = (IColorDecorator) decorator;
+    			Color background = colorDecorator.decorateBackground(element);
+    			if (background != null)
+    				settings.setBackground(background);
+    			Color foreground = colorDecorator.decorateForeground(element);
+    			if (foreground != null)
+    				settings.setForeground(foreground);
+    		}
+    		
+    		if(decorator instanceof IFontDecorator) {
+    			Font font = ((IFontDecorator) decorator).decorateFont(element);
+    			if (font != null)
+    				settings.setFont(font);
+    		}
+        }
 	}
 }
