@@ -209,7 +209,10 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 
 		public boolean isCompareInputFor(Object object) {
 			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			return resource.equals(object);
+			IResource other = Utils.getResource(object);
+			if (resource != null && other != null)
+				return resource.equals(other);
+			return false;
 		}
 		
 	}
