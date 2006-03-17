@@ -82,6 +82,7 @@ public class CompareWithPatchAction extends BaseCompareAction {
 		
 		if (areAllEditorsSaved()) {
 			PatchWizardDialog dialog= new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
+			wizard.setDialog(dialog);
 			dialog.open();
 		}
 	}

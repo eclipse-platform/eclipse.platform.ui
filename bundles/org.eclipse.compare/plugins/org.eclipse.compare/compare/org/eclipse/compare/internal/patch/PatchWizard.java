@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.patch.CompareWithPatchAction.PatchWizardDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -31,11 +33,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	private final static String DIALOG_SETTINGS_KEY= "PatchWizard"; //$NON-NLS-1$
 
 	private boolean fHasNewDialogSettings;
-	
 	private InputPatchPage fPatchWizardPage;
-
 	private WorkspacePatcher fPatcher;
-
+	private PatchWizardDialog fDialog;
+	
 	/*
 	 * Creates a wizard for applying a patch file to the workspace.
 	 */
@@ -49,9 +50,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-		if (section==null)
+		if (section == null) {
 			fHasNewDialogSettings= true;
-		else {
+		} else {
 			fHasNewDialogSettings= false;
 			setDialogSettings(section);
 		}
@@ -93,15 +94,19 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	public boolean performFinish() {
 		
 		fPatcher.setName(fPatchWizardPage.getPatchName());
-
+		
+		// make sure that the patch has been read
+		if (!fPatchWizardPage.isPatchRead())
+			fPatchWizardPage.readInPatch();
+		
 		try {
-			//Create scheduling rule based on the type of patch - single or workspace
+			// create scheduling rule based on the type of patch - single or workspace
 			ISchedulingRule scheduleRule= null;
 			if (fPatcher.isWorkspacePatch()) {
-				//workspace patch
+				// workspace patch
 				scheduleRule= new MultiRule(fPatcher.getTargetProjects());
 			} else {
-				//single patch
+				// single patch
 				scheduleRule= getTarget();
 			}
 
@@ -138,5 +143,12 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		
 		return true;
 	}
-}
 
+	public void setDialog(PatchWizardDialog dialog) {
+		fDialog= dialog;
+	}
+	
+	public void showPage(IWizardPage page) {
+		fDialog.showPage(page);
+	}
+}

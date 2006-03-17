@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -156,6 +158,12 @@ public class PatchTargetPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fPatchWizard.setTarget(Utilities.getFirstResource(event.getSelection()));
 				updateWidgetEnablements();
+			}
+		});
+		
+		fPatchTargets.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				fPatchWizard.showPage(getNextPage());
 			}
 		});
 	}
