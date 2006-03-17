@@ -14,19 +14,23 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPageSource;
+import org.eclipse.team.internal.ccvs.ui.CVSTeamStateProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
+import org.eclipse.team.ui.mapping.ITeamStateProvider;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class CVSAdapterFactory implements IAdapterFactory {
-	private Object fileAdapter = new RemoteFileElement();
-	private Object folderAdapter = new RemoteFolderElement();
-	private Object rootAdapter = new CVSRepositoryRootElement();
+	private static Object fileAdapter = new RemoteFileElement();
+	private static Object folderAdapter = new RemoteFolderElement();
+	private static Object rootAdapter = new CVSRepositoryRootElement();
 
-	private Object historyParticipant = new CVSHistoryPageSource();
+	private static Object historyParticipant = new CVSHistoryPageSource();
+	
+	private static Object teamStateProvider;
 	
 	// Property cache
 	private Object cachedPropertyObject = null;
@@ -56,6 +60,14 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			return historyParticipant;
 		}
 		
+		if (ITeamStateProvider.class == adapterType) {
+			synchronized (this) {
+				if (teamStateProvider == null)
+					teamStateProvider = new CVSTeamStateProvider(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+			}
+			return teamStateProvider;
+		}
+		
 		return null;
 	}
 	
@@ -76,8 +88,11 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	 * Method declared on IAdapterFactory.
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class, IHistoryPageSource.class, ISynchronizationCompareAdapter.class};
+		return new Class[] { IWorkbenchAdapter.class, IPropertySource.class,
+				IDeferredWorkbenchAdapter.class, IHistoryPageSource.class,
+				ISynchronizationCompareAdapter.class, ITeamStateProvider.class };
 	}
+	
 	/**
 	 * Returns the property source for the given object.  Caches
 	 * the result because the property sheet is extremely inefficient,

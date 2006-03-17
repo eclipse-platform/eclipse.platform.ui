@@ -1550,6 +1550,11 @@
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
+            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
+         <adapter type="org.eclipse.team.ui.mapping.ITeamStateProvider"/>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.team.ui.teamDecorators">

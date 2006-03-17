@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -162,7 +162,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			handleException(element, e);
 		} catch (IllegalStateException e) {
 		    // This is thrown by Core if the workspace is in an illegal state
-		    // If we are not active, ignore it. Otherwise, propogate it.
+		    // If we are not active, ignore it. Otherwise, propagate it.
 		    // (see bug 78303)
 		    if (Platform.getBundle(CVSUIPlugin.ID).getState() == Bundle.ACTIVE) {
 		        throw e;
@@ -170,7 +170,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		}
 	}
 
-	private IResource getResource(Object element) {
+	private static IResource getResource(Object element) {
 		if (element instanceof ResourceMapping) {
 			element = ((ResourceMapping) element).getModelObject();
 		}
@@ -191,27 +191,41 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
         return false;
     }
     
-    private CVSDecoration decorate(Object element, SynchronizationStateTester tester) throws CoreException {
+    public static CVSDecoration decorate(Object element, SynchronizationStateTester tester) throws CoreException {
     	IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
         CVSDecoration result = new CVSDecoration();
         
         // First, decorate the synchronization state
-        if (tester.isStateDecorationEnabled()) {
-			if (tester.isSupervised(element)) {
+        int state = IDiff.NO_CHANGE;
+        if (tester.isDecorationEnabled(element)) {
+			if (isSupervised(element)) {
 				result.setHasRemote(true);
-				int state = tester.getState(element, 
+				state = tester.getState(element, 
 						store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY) 
 							? IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING 
 							: 0, 
 						new NullProgressMonitor());
-	        	if ((state & IThreeWayDiff.OUTGOING) != 0) {
-	        		result.setDirty(true);
-	        	}
+				result.setStateFlags(state);
 	        } else {
 	        	result.setIgnored(true);
 	        }
         }
         
+		// Tag
+        if (!result.isIgnored()) {
+			CVSTag tag = getTagToShow(element);
+			if (tag != null) {
+				String name = tag.getName();
+				if (tag.getType() == CVSTag.DATE) {
+					Date date = tag.asDate();
+					if (date != null) {
+						name = decorateFormatter.format(date);
+					}
+				}
+				result.setTag(name);
+			}
+        }
+		
         // If the element adapts to a single resource, add additional decorations
 		IResource resource = getResource(element);
 		if (resource == null) {
@@ -219,9 +233,37 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		} else {
 			decorate(resource, result);
 		}
+		tester.elementDecorated(element, result.asTeamStateDescription(null));
         return result;
     }
     
+	private static boolean isSupervised(Object element) throws CoreException {
+		IResource[] resources = getTraversalRoots(element);
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (getSubscriber().isSupervised(resource))
+				return true;
+		}
+		return false;
+	}
+	
+	private static IResource[] getTraversalRoots(Object element) throws CoreException {
+		Set result = new HashSet();
+		ResourceMapping mapping = Utils.getResourceMapping(element);
+		if (mapping != null) {
+			ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				IResource[] resources = traversal.getResources();
+				for (int j = 0; j < resources.length; j++) {
+					IResource resource = resources[j];
+					result.add(resource);
+				}
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
 	private static void decorate(IResource resource, CVSDecoration cvsDecoration) throws CVSException {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
@@ -249,18 +291,6 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 				}
 				// Has a remote
 				//cvsDecoration.setHasRemote(CVSWorkspaceRoot.hasRemote(resource));
-			}
-			// Tag
-			CVSTag tag = getTagToShow(resource);
-			if (tag != null) {
-				String name = tag.getName();
-				if (tag.getType() == CVSTag.DATE) {
-					Date date = tag.asDate();
-					if (date != null) {
-						name = decorateFormatter.format(date);
-					}
-				}
-				cvsDecoration.setTag(name);
 			}
 			// Is a new resource
 			if (store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION)) {
@@ -331,6 +361,37 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		CVSTeamProvider provider = getCVSProviderFor(resource);
 		if (provider != null)
 			cvsDecoration.setWatchEditEnabled(provider.isWatchEditEnabled());	
+	}
+
+	protected static CVSTag getTagToShow(Object element) throws CoreException {
+		IResource r = getResource(element);
+		if (r != null)
+			return getTagToShow(r);
+		IResource[] resources = getTraversalRoots(element);
+		boolean first = true;
+		CVSTag tag = null;
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (getSubscriber().isSupervised(resource)) {
+				CVSTag nextTag = getTagToShow(resource);
+				if (first) {
+					tag = nextTag;
+					first = false;
+				} else if (!equals(tag, nextTag)) {
+					return null;
+				}
+				
+			}
+		}
+		return tag;
+	}
+	
+	private static boolean equals(CVSTag tag, CVSTag nextTag) {
+		if (tag == nextTag)
+			return true;
+		if (tag == null || nextTag == null)
+			return false;
+		return tag.getName().equals(nextTag.getName());
 	}
 
 	/**

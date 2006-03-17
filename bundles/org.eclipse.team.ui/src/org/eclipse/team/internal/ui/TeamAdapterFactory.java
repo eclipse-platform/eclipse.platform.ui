@@ -13,13 +13,14 @@ package org.eclipse.team.internal.ui;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.mapping.IResourceMappingMerger;
 import org.eclipse.team.core.mapping.ISynchronizationScopeParticipantFactory;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ITeamStateProvider;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
 
 public class TeamAdapterFactory implements IAdapterFactory {
 
@@ -48,6 +49,10 @@ public class TeamAdapterFactory implements IAdapterFactory {
 		if (adaptableObject instanceof ModelProvider && adapterType == ISynchronizationCompareAdapter.class) {
 			return COMPARE_ADAPTER;
 		}
+		if (adaptableObject instanceof RepositoryProviderType && adapterType == ITeamStateProvider.class) {
+			RepositoryProviderType rpt = (RepositoryProviderType) adaptableObject;
+			return TeamUIPlugin.getPlugin().getDecoratedStateProvider(rpt);
+		}
 		return null;
 	}
 
@@ -55,8 +60,12 @@ public class TeamAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IWorkbenchAdapter.class,
-				IResourceMappingMerger.class, ISynchronizationCompareAdapter.class,
-				ISynchronizationScopeParticipantFactory.class };
+		return new Class[] { 
+				IWorkbenchAdapter.class,
+				IResourceMappingMerger.class, 
+				ISynchronizationCompareAdapter.class,
+				ISynchronizationScopeParticipantFactory.class,
+				ITeamStateProvider.class 
+			};
 	}
 }

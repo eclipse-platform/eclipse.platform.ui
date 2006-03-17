@@ -20,11 +20,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.synchronize.TeamStateDescription;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 
@@ -75,6 +77,7 @@ public class CVSDecoration {
 	private String repository;
 	private ICVSRepositoryLocation location;
 	private String keywordSubstitution;
+	private int stateFlags;
 
 	// Text formatters
 	private String fileFormatter;
@@ -93,7 +96,7 @@ public class CVSDecoration {
 	// List of preferences used to configure the decorations that
 	// are applied.
 	private Preferences preferences;
-
+	
 	/*
 	 * Define a cached image descriptor which only creates the image data once
 	 */
@@ -288,6 +291,8 @@ public class CVSDecoration {
 		if (isWatchEditEnabled() && resourceType == IResource.FILE && !isReadOnly() && isHasRemote()) {
 			return edited;
 		}
+		if (needsMerge)
+			return merged;
 		// show checked in
 		if (preferences.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION) && isHasRemote()) {
 			if ((resourceType == IResource.FOLDER || resourceType == IResource.PROJECT) && isVirtualFolder()) {
@@ -295,8 +300,6 @@ public class CVSDecoration {
 			}
 			return checkedIn;
 		}
-		if (needsMerge)
-			return merged;
 		
 		//nothing matched
 		return null;
@@ -430,5 +433,35 @@ public class CVSDecoration {
 
 	public void setVirtualFolder(boolean virtualFolder) {
 		this.virtualFolder = virtualFolder;
+	}
+
+	public void setStateFlags(int stateFlags) {
+		this.stateFlags = stateFlags;
+    	if ((stateFlags & IThreeWayDiff.OUTGOING) != 0) {
+    		setDirty(true);
+    	}
+	}
+	
+	public TeamStateDescription asTeamStateDescription(String[] properties) {
+		TeamStateDescription desc = new CVSTeamStateDescription(stateFlags);
+		Object o = computeImage();
+		if (o != null && isRequestedProperty(properties, CVSTeamStateDescription.PROP_RESOURCE_STATE)) {
+			desc.setProperty(CVSTeamStateDescription.PROP_RESOURCE_STATE, o);
+		}
+		if (tag != null && isRequestedProperty(properties, CVSTeamStateDescription.PROP_TAG)) {
+			desc.setProperty(CVSTeamStateDescription.PROP_TAG, tag);
+		}
+		return desc;
+	}
+
+	private boolean isRequestedProperty(String[] properties, String property) {
+		if (properties == null)
+			return true;
+		for (int i = 0; i < properties.length; i++) {
+			String string = properties[i];
+			if (string.equals(property))
+				return true;
+		}
+		return false;
 	}
 }

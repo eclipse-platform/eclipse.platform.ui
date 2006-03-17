@@ -27,12 +27,18 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ui.mapping.StreamMergerDelegate;
+import org.eclipse.team.internal.ui.mapping.WorkspaceTeamStateProvider;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamStateProvider;
+import org.eclipse.team.ui.synchronize.TeamStateProvider;
+import org.eclipse.team.ui.synchronize.SubscriberTeamStateProvider;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -57,6 +63,10 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private static List propertyChangeListeners = new ArrayList(5);
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
+	
+	private WorkspaceTeamStateProvider provider;
+
+	private Map decoratedStateProviders = new HashMap();
 	
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -216,6 +226,13 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 			((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
 		} finally {
 			super.stop(context);
+		}
+		if (provider != null) {
+			provider.dispose();
+		}
+		for (Iterator iter = decoratedStateProviders.values().iterator(); iter.hasNext();) {
+			SubscriberTeamStateProvider sdsp = (SubscriberTeamStateProvider) iter.next();
+			sdsp.dispose();
 		}
 	}
 
@@ -384,5 +401,30 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 
 	public org.osgi.service.prefs.Preferences getInstancePreferences() {
 		return new InstanceScope().getNode(getBundle().getSymbolicName());
+	}
+
+	public synchronized TeamStateProvider getDecoratedStateProvider(RepositoryProviderType rpt) {
+		TeamStateProvider provider = (TeamStateProvider)decoratedStateProviders.get(rpt.getID());
+		if (provider != null)
+			return provider;
+		Subscriber subscriber = rpt.getSubscriber();
+		if (subscriber != null) {
+			provider = new SubscriberTeamStateProvider(subscriber);
+			decoratedStateProviders.put(rpt.getID(), provider);
+			return provider;
+		}
+		return null;
+	}
+	
+	/**
+	 * Return a decorated state provider that delegates to the appropriate team 
+	 * provider.
+	 * @return a decorated state provider that delegates to the appropriate team 
+	 * provider
+	 */
+	public synchronized ITeamStateProvider getDecoratedStateProvider() {
+		if (provider == null)
+			provider = new WorkspaceTeamStateProvider();
+		return provider;
 	}
 }
