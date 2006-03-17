@@ -370,6 +370,7 @@ public class PageWidgetFactory {
         layout.leftMargin = 0;
         layout.rightMargin = 0;
         container.setLayout(layout);
+        container.setData(provider);
 
 
         IIntroContentProvider providerClass = ContentProviderManager.getInst()

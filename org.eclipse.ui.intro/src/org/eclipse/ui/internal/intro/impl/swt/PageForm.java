@@ -156,6 +156,10 @@ public class PageForm implements IIntroConstants {
         // a few methods like 'setFocus()' etc.
         // DG
     }
+    
+    public void reflow() {
+    	categoryPageBook.reflow(true);
+    }
 
     public boolean hasPage(String pageId) {
         return categoryPageBook.hasPage(pageId);

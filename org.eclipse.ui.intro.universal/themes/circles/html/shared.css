@@ -548,6 +548,32 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	line-height: 1.3;
 }
 
+.categoryContentnav {
+	font-family: Verdana, Arial, Helvetica; 
+	font-size:10pt; 
+	font-weight: bold; 
+	color: #4A4D4A; 
+	line-height:1.3;
+}
+
+.contentpgNavhover {
+	font-family: Verdana, Arial, Helvetica; 
+	font-size: 8pt; 
+	font-weight: bold; 
+	color: #000; 
+}
+
+.topicList {
+	font-family: Verdana, Arial, Helvetica; 
+	font-size:8pt; 
+	line-height:1.75;
+	color: #00507C;
+}
+
+.topicList:hover {
+	color: #69c;
+}
+
 /*
  * This part is for hosting embedded document inside
  * the content area.

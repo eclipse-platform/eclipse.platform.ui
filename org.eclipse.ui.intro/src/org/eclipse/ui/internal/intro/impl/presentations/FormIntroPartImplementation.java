@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.actions.ActionFactory;
@@ -28,6 +29,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -375,11 +377,20 @@ public class FormIntroPartImplementation extends
     public void reflow(IIntroContentProvider provider, boolean incremental) {
         AbstractIntroPage page = ContentProviderManager.getInst()
             .getContentProviderParentPage(provider);
-        removeCachedPage(page);
-        showPage(model.getCurrentPage());
+        if (incremental) {
+            if (pageForm.hasPage(page.getId()))
+                pageForm.reflow();
+            else if (pageFormWithNav.hasPage(page.getId()))
+                pageFormWithNav.reflow();
+            else if (mainPageBook.hasPage(page.getId()))
+                mainPageBook.reflow(true);        	
+        }
+        else {
+        	removeCachedPage(page);
+        	showPage(model.getCurrentPage());
+        }
     }
-
-
+    
     public void setFocus() {
         if (model.isDynamic()) {
             if (mainPageBook.getCurrentPage() != null)
