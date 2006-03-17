@@ -560,8 +560,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 			recycledRow.setVisible(true);
 			return recycledRow;
 		}
-		TableRow newRow = new TableRow(this, createInternalControl(controlHolder, rowConstructor));
-		fireRowConstructionEvent(newRow.getRowControl());
+		Control newControl = createInternalControl(controlHolder, rowConstructor);
+		fireRowConstructionEvent(newControl);
+		TableRow newRow = new TableRow(this, newControl);
 		if (newRow.getRowControl() instanceof Composite) {
 			Composite rowComp = (Composite) newRow.getRowControl();
 			if (rowComp.getLayout() == null) {
