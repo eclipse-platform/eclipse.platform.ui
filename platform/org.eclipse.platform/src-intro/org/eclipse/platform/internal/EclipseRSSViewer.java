@@ -11,10 +11,17 @@
 package org.eclipse.platform.internal;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -38,9 +45,13 @@ import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.osgi.framework.Bundle;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class EclipseRSSViewer implements IIntroContentProvider {
 	private static final String NEWS_URL = "http://www.eclipse.org/home/eclipsenews.rss"; //$NON-NLS-1$
+	private static final int MAX_NEWS_ITEMS = 5;
 	private static final String HREF_BULLET = "bullet"; //$NON-NLS-1$
 
 	private IIntroContentProviderSite site;
@@ -55,28 +66,26 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	private Image bulletImage;
 
-	private ArrayList items;
+	private List items;
 
 	private FormText formText;
 
-	class NewsItem {
+	static class NewsItem {
 		String label;
 
 		String url;
 
-		public NewsItem(String label, String url) {
+		void setLabel(String label) {
 			this.label = label;
+		}
+
+		void setUrl(String url) {
 			this.url = url;
 		}
 	}
 
 	class NewsFeed implements Runnable {
 		public void run() {
-			// Fake
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-			}
 			// important: don't do the work if the
 			// part gets disposed in the process
 			if (disposed)
@@ -100,6 +109,76 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		}
 	}
 
+	/**
+	 * Handles RSS XML and populates the items list with at most
+	 * MAX_NEWS_ITEMS items.
+	 */
+	private class RSSHandler extends DefaultHandler {
+
+		private static final String ELEMENT_RSS = "rss"; //$NON-NLS-1$
+		private static final String ELEMENT_CHANNEL = "channel"; //$NON-NLS-1$
+		private static final String ELEMENT_ITEM = "item"; //$NON-NLS-1$
+		private static final String ELEMENT_TITLE = "title"; //$NON-NLS-1$
+		private static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
+
+		private Stack stack = new Stack();
+		private StringBuffer buf;
+		private NewsItem item;
+		
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			stack.push(qName);
+			// it's a title/link in an item
+			if ((ELEMENT_TITLE.equals(qName) || ELEMENT_LINK.equals(qName))
+					&& (item != null)) {
+				// prepare the buffer; we're expecting chars
+				buf = new StringBuffer();
+			}
+			// it's an item in a channel in rss
+			else if (ELEMENT_ITEM.equals(qName)
+					&& (ELEMENT_CHANNEL.equals(stack.get(1)))
+					&& (ELEMENT_RSS.equals(stack.get(0)))
+					&& (stack.size() == 3)
+					&& (items.size() < MAX_NEWS_ITEMS)) {
+				// prepare the item
+				item = new NewsItem();
+			}
+		}
+		
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+			stack.pop();
+			if (item != null) {
+				if (buf != null) {
+					if (ELEMENT_TITLE.equals(qName)) {
+						item.setLabel(buf.toString().trim());
+						buf = null;
+					}
+					else if (ELEMENT_LINK.equals(qName)) {
+						item.setUrl(buf.toString().trim());
+						buf = null;
+					}
+				}
+				else {
+					if (ELEMENT_ITEM.equals(qName)) {
+						// ensure we have a valid item
+						if (item.label != null && item.label.length() > 0 &&
+								item.url != null && item.url.length() > 0) {
+							items.add(item);
+						}
+						item = null;
+					}
+				}
+			}
+		}
+		
+		public void characters(char[] ch, int start, int length) throws SAXException {
+			// were we expecting chars?
+			if (buf != null) {
+				buf.append(new String(ch, start, length));
+			}
+		}
+	}
+
+	
 	public void init(IIntroContentProviderSite site) {
 		this.site = site;
 		Thread newsWorker = new Thread(new NewsFeed());
@@ -225,28 +304,27 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	}
 
 	private void createNewsItems() {
-		// Fake content here; replace by opening the
-		// RSS stream, parsing it and creating the items from it
-		items = new ArrayList();
-		// It is important to create the array list. After this,
-		// if you cannot connnect to the RSS feed or fails for
-		// any reason, don't add news items and the 'no news'
-		// message will be presented.
-
-		synchronized (items) {
-			items.add(new NewsItem("Callisto M5 Build available for download", //$NON-NLS-1$
-					"http://www.eclipse.org/projects/callisto.php#Installing")); //$NON-NLS-1$
-			items
-					.add(new NewsItem("Eclipse Board Election Results", //$NON-NLS-1$
-							"http://www.eclipse.org/org/press-release/20060309cb_elections.php")); //$NON-NLS-1$
-			items
-					.add(new NewsItem(
-							"Eclipse Corner Article published: Teach Your Eclipse to Speak the Local Lingo", //$NON-NLS-1$
-							"http://www.eclipse.org/articles/Article-Speak-The-Local-Language/article.html")); //$NON-NLS-1$			
-			items
-					.add(new NewsItem(
-							"Voting closes today 4 p.m. EST in the Eclipse Foundation Elections", //$NON-NLS-1$
-							"http://www.eclipse.org/org/elections/")); //$NON-NLS-1$			
+		items = Collections.synchronizedList(new ArrayList());
+		InputStream in = null;
+		try {
+			URL url = new URL(NEWS_URL);
+			in = url.openStream();
+			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+			parser.parse(in, new RSSHandler());
+		}
+		catch (Exception e) {
+			// if anything goes wrong, fail silently; it will show a
+			// "no news available" message.
+		}
+		finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			}
+			catch (IOException e) {
+				// nothing we can do here
+			}
 		}
 	}
 

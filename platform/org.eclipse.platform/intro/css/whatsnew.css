@@ -12,6 +12,7 @@ div#rss-news {
 }
 
 #rss-news .div-label {
+	font-size: 9pt;
 }
 
 #rss-news .provided-content {
