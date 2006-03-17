@@ -281,7 +281,7 @@ public class ConsoleManager implements IConsoleManager {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			boolean consoleFound = false;
             IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            if (window != null) {
+            if (window != null && console != null) {
                 IWorkbenchPage page= window.getActivePage();
                 if (page != null) {
                     synchronized (fConsoleViews) {
@@ -290,12 +290,10 @@ public class ConsoleManager implements IConsoleManager {
                             boolean consoleVisible = page.isPartVisible(consoleView);
                             if (consoleVisible) {
                                 consoleFound = true;
-                            
                                 boolean bringToTop = shouldBringToTop(console, consoleView);
                                 if (bringToTop) {
                                     page.bringToTop(consoleView);
                                 }
-                                
                                 consoleView.display(console);
                             }
                         }
@@ -315,6 +313,7 @@ public class ConsoleManager implements IConsoleManager {
                     }
                 }
             }
+            console = null;
 			return Status.OK_STATUS;
 		}		
 	}

@@ -67,7 +67,7 @@ public class ConsoleDocument extends Document {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#getLineOfOffset(int)
 	 */
-	public synchronized int getLineOfOffset(int pos) throws BadLocationException {
+	public int getLineOfOffset(int pos) throws BadLocationException {
 		return super.getLineOfOffset(pos);
 	}
 	/* (non-Javadoc)
