@@ -8,6 +8,10 @@
        		<link style-id="content-link" label="Eclipse community" url="http://www.eclipse.org" id="eclipse">
           		<text>Join the community, read articles and news on Eclipse.org</text>
        		</link>
+			<group id="rss-news" label="Latest News">
+				<contentProvider id="rss-viewer" pluginId="org.eclipse.platform" class="org.eclipse.platform.internal.EclipseRSSViewer">
+				</contentProvider>
+			</group>
        </group>
   	</extensionContent>
 </introContent>
