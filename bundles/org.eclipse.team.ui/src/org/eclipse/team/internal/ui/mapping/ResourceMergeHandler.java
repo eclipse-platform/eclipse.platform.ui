@@ -12,12 +12,18 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -96,6 +102,32 @@ public class ResourceMergeHandler extends MergeActionHandler {
 			operation = null;
 		}
 		super.updateEnablement(selection);
+	}
+	
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		if (!overwrite || promptToConfirm())
+			return super.execute(event);
+		return null;
+	}
+
+	private boolean promptToConfirm() {
+		if (Display.getCurrent() != null)
+			return internalPromptToConfirm();
+		final boolean[] confirmed = new boolean[] { false };
+		Shell shell = getConfiguration().getSite().getShell();
+		if (!shell.isDisposed()) {
+			Utils.syncExec(new Runnable() {
+				public void run() {
+					confirmed[0] = promptToConfirm();
+				}
+			
+			}, shell);
+		}
+		return confirmed[0];
+	}
+
+	private boolean internalPromptToConfirm() {
+		return MessageDialog.openQuestion(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_4, TeamUIMessages.ResourceMergeHandler_5);
 	}
 
 }

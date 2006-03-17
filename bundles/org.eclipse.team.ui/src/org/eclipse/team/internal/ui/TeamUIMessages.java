@@ -85,6 +85,10 @@ public class TeamUIMessages extends NLS {
 
 	public static String ResourceMergeHandler_3;
 
+	public static String ResourceMergeHandler_4;
+
+	public static String ResourceMergeHandler_5;
+
 	public static String ResourceModelLabelProvider_0;
 
 	public static String simpleInternal;
