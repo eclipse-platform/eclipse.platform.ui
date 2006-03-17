@@ -35,6 +35,7 @@ import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -454,10 +455,10 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				last.append(s);
 			} else {
 				pendingPartitions.add(new PendingPartition(stream, s));
-                if (fBuffer > 10000) {
+                if (fBuffer > 1000) {
                     queueJob.schedule();
                 } else {
-                    queueJob.schedule(150);
+                    queueJob.schedule(50);
                 }
 			}
             
@@ -494,7 +495,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Updates the document. Will append everything that is available before 
 	 * finishing.
 	 */
-	private class QueueProcessingJob extends WorkbenchJob {
+	private class QueueProcessingJob extends UIJob {
 
         QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$

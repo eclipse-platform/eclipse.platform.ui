@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.console;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -44,8 +42,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     int[] offsets = new int[5000];
     int[] lengths = new int[5000];
     private int regionCount = 0;
-    
-    private Pattern pattern = Pattern.compile("^.*$", Pattern.MULTILINE); //$NON-NLS-1$
     
     
     public ConsoleDocumentAdapter(int width) {
@@ -124,22 +120,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         regionCount++;
     }
     
-    /**
-     * Returns <code>true</code> if the line ends with a legal line delimiter
-     * 
-     * @return <code>true</code> if the line ends with a legal line delimiter,
-     *         <code>false</code> otherwise
-     */
-    private boolean lineEndsWithDelimeter(String line) {
-        String[] lld = document.getLegalLineDelimiters();
-        for (int i = 0; i < lld.length; i++) {
-            if (line.endsWith(lld[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentAdapter#setDocument(org.eclipse.jface.text.IDocument)
      */
@@ -328,29 +308,41 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * display the String
      * @return The number of lines necessary to display the string in the viewer.
      */
-    private int countLines(String string) {
-        int count = 0;
-        if (lineEndsWithDelimeter(string)) {
-            count++;
-        }
-        
-//        work around to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
-//        see bug 84641
-        if (string.endsWith("\r")) { //$NON-NLS-1$
-            int len = string.length();
-            int index = len >= 2 ? len-2 : 0;
-            string = string.substring(0, index);
-        }
-        
-        Matcher matcher = pattern.matcher(string);
-        while (matcher.find()) {
-            count++;
-            if (consoleWidth > 0) {
-                String line = matcher.group();
-                count += (line.length() / consoleWidth);
-            } 
-        }
-        return count;
+    private int countLines(String line) {
+		int count = 0;
+		
+		int lastDelimiter = 0;
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (c == '\n') {
+				count++;
+				if (consoleWidth > 0) {
+					count += (i-lastDelimiter)/consoleWidth;
+				}
+				lastDelimiter = i;
+			} else if (c == '\r') {
+				count++;
+				if (consoleWidth > 0) {
+					count += (i-lastDelimiter)/consoleWidth;
+				}
+				if (i+1 < line.length()) {
+					char next = line.charAt(i+1);
+					if (next == '\n') {
+						i++;
+					}
+				}
+				lastDelimiter = i;
+			}
+		}
+		
+		if (lastDelimiter < line.length()) {
+			count++;
+			if (consoleWidth > 0) {
+				count += (line.length()-lastDelimiter)/consoleWidth;
+			}
+		}
+		
+		return count;
     }
 
 
