@@ -504,6 +504,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	display : block;
 	position : relative;
 	top : -45px;
+	margin-bottom: -25px;
 	left : 53px;
 	margin-right: 53px;
 }
