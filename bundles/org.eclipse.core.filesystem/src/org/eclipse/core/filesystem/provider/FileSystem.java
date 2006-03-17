@@ -134,6 +134,17 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * This default implementation always returns <code>null</code>.
+	 * Subclasses may override to provide a concrete mapping from local
+	 * files to an IFileStore in their file system.
+	 */
+	public IFileStore fromLocalFile(java.io.File file) {
+	   return null;
+	}
+	
+	/**
 	 * Initializes this file system instance with the provided scheme.
 	 * <p>
 	 * This method is called by the platform immediately after the

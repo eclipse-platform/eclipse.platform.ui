@@ -456,6 +456,7 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li>A corresponding file could not be created in the local file system.</li>
 	 * </ul>
+	 * @see IFileSystem#fromLocalFile(java.io.File)
 	 */
 	public java.io.File toLocalFile(int options, IProgressMonitor monitor) throws CoreException;
 

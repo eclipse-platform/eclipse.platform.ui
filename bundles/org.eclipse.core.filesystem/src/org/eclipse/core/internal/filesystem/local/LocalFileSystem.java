@@ -104,6 +104,14 @@ public class LocalFileSystem extends FileSystem {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.IFileSystem#fromLocalFile(java.io.File)
+	 */
+	public IFileStore fromLocalFile(File file) {
+		return new LocalFile(file);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileSystem#getStore(org.eclipse.core.runtime.IPath)
 	 */
 	public IFileStore getStore(IPath path) {

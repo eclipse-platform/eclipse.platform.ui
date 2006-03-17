@@ -78,7 +78,18 @@ public interface IFileSystem extends IAdaptable {
 	 * </ul>
 	 * @see IFileTree
 	 */
-	public abstract IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) throws CoreException;
+	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Returns the file store in this file system corresponding to the 
+	 * given local file.  Returns <code>null</code> if this file system
+	 * cannot provide an {@link IFileStore} corresponding to a local file.
+	 * 
+	 * @param file The file to be converted
+	 * @return The {@link IFileStore} corresponding to the given file, or <code>null</code>
+	 * @see IFileStore#toLocalFile(int, IProgressMonitor)
+	 */
+	public IFileStore fromLocalFile(java.io.File file);
 
 	/**
 	 * Returns the URI scheme of this file system.
