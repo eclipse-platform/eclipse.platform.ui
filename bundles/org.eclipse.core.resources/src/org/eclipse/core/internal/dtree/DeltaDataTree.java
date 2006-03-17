@@ -201,7 +201,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * Collapses this tree so that the given ancestor becomes its
 	 * immediate parent.  Afterwards, this tree will still have exactly the
-	 * same contents, but its internal stucture will be compressed.
+	 * same contents, but its internal structure will be compressed.
 	 *
 	 * <p> This operation should be used to collapse chains of
 	 * delta trees that don't contain interesting intermediate states.
@@ -305,8 +305,8 @@ public class DeltaDataTree extends AbstractDataTree {
 	public AbstractDataTreeNode copyCompleteSubtree(IPath key) {
 		AbstractDataTreeNode node = searchNodeAt(key);
 		if (node == null) {
-			// not found
 			handleNotFound(key);
+			return null;
 		}
 		if (node.isDelta())
 			return naiveCopyCompleteSubtree(key);
@@ -389,7 +389,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	/**
 	 * Initializes the receiver so that it represents an empty delta.
 	 * (i.e. it represents a delta on another (unspecified) tree, 
-	 * ut introduces no changes).  The parent is left unchanged.
+	 * it introduces no changes).  The parent is left unchanged.
 	 */
 	void emptyDelta() {
 		rootNode = new NoDataDeltaNode(null);
@@ -740,7 +740,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Returns a complete node containing the contents of the subtree 
-	 * rooted at @key in the receiver.  Uses the public API.
+	 * rooted at <code>key</code> in the receiver.  Uses the public API.
 	 *
 	 * @param key
 	 *	key of subtree whose contents we want to copy.
@@ -780,7 +780,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * Makes the receiver the root tree in the list of trees on which it is based.
 	 * The receiver's representation becomes a complete tree, while its parents'
 	 * representations become backward deltas based on the receiver.
-	 * It is not possible to reroot a source tree that is not immutable, as this
+	 * It is not possible to re-root a source tree that is not immutable, as this
 	 * would require that its parents be expressed as deltas on a source tree
 	 * which could still change.
 	 *
@@ -797,7 +797,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * Makes the given source tree the root tree in the list of trees on which it is based.
 	 * The source tree's representation becomes a complete tree, while its parents'
 	 * representations become backward deltas based on the source tree.
-	 * It is not possible to reroot a source tree that is not immutable, as this
+	 * It is not possible to re-root a source tree that is not immutable, as this
 	 * would require that its parents be expressed as deltas on a source tree
 	 * which could still change.
 	 *
