@@ -2769,7 +2769,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			if (coolBarManager != null) {
 				coolBarManager.refresh();
 			}
-			getActionPresentation().setActionSets(currentPage.getActionSets());
+			if (!Policy.EXPERIMENTAL_MENU) {
+				getActionPresentation().setActionSets(
+						currentPage.getActionSets());
+			}
 		}
 		fireActionSetsChanged();
 		updateActionBars();
