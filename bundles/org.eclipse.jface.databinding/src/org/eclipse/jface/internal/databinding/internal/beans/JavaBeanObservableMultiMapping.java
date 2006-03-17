@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.ObservableMultiMappingWithDomain;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -78,6 +79,9 @@ public class JavaBeanObservableMultiMapping extends
 	public JavaBeanObservableMultiMapping(IObservableCollection domain,
 			PropertyDescriptor[] propertyDescriptors) {
 		this.propertyDescriptors = propertyDescriptors;
+		for (int i = 0; i < propertyDescriptors.length; i++) {
+			Assert.isTrue(propertyDescriptors[i]!=null);
+		}
 		initDomain(domain);
 	}
 

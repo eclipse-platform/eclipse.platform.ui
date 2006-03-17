@@ -12,9 +12,12 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -83,9 +86,13 @@ public class BindingFactory {
 	public static DataBindingContext createContext() {
 		DataBindingContext context = new DataBindingContext();
 		context.addObservableFactory(new NestedObservableFactory(context));
-		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
+		context.addObservableFactory(new BeanObservableFactory(context, null,
+				new Class[] { Widget.class }));
 		context.addObservableFactory(new SWTObservableFactory());
 		context.addObservableFactory(new ViewersObservableFactory());
+		context.addBindSupportFactory(new DefaultBindSupportFactory());
+		context.addBindingFactory(new DefaultBindingFactory());
+		context.addBindingFactory(new ViewersBindingFactory());
 		return context;
 	}
 }

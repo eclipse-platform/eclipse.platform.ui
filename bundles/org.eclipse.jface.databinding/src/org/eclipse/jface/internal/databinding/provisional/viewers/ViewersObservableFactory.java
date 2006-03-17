@@ -12,7 +12,7 @@ package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 import org.eclipse.jface.internal.databinding.internal.viewers.AbstractListViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.internal.viewers.StructuredViewerObservableValue;
-import org.eclipse.jface.internal.databinding.internal.viewers.TableViewerObservableSetWithLabels;
+import org.eclipse.jface.internal.databinding.internal.viewers.TableViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
@@ -76,14 +76,14 @@ final public class ViewersObservableFactory implements IObservableFactory {
 						(AbstractListViewer) object);
 			else if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
-				return new TableViewerObservableSetWithLabels(
+				return new TableViewerObservableCollectionWithLabels(
 						(TableViewer) object);
 			}
 		} else if (description instanceof AbstractListViewer) {
 			return new AbstractListViewerObservableCollectionWithLabels(
 					(AbstractListViewer) description);
 		} else if (description instanceof TableViewer) {
-			return new TableViewerObservableSetWithLabels(
+			return new TableViewerObservableCollectionWithLabels(
 					(TableViewer) description);
 		}
 		return null;

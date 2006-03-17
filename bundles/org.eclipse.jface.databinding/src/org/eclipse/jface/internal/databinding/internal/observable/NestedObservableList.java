@@ -59,7 +59,7 @@ public class NestedObservableList extends ObservableList {
 	 */
 	public NestedObservableList(DataBindingContext databindingContext,
 			IObservableValue outerObservableValue, Object feature,
-			Object featureType) {
+			Class featureType) {
 		super(new ArrayList(), featureType);
 		this.databindingContext = databindingContext;
 		this.feature = feature;
@@ -89,7 +89,8 @@ public class NestedObservableList extends ObservableList {
 			wrappedList = new ArrayList();
 		} else {
 			this.innerObservableList = (IObservableList) databindingContext
-					.createObservable(new Property(currentOuterValue, feature));
+					.createObservable(new Property(currentOuterValue, feature,
+							(Class) getElementType(), Boolean.TRUE));
 			wrappedList = innerObservableList;
 			Object innerValueType = innerObservableList.getElementType();
 			Assert.isTrue(getElementType().equals(innerValueType),

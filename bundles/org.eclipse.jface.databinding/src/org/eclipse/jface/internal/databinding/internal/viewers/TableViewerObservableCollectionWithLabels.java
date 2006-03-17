@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  * 
  */
-public class TableViewerObservableSetWithLabels extends
+public class TableViewerObservableCollectionWithLabels extends
 		StructuredViewerObservableCollectionWithLabels {
 
 	private TabelLabelProvider labelProvider = new TabelLabelProvider();
@@ -42,7 +42,7 @@ public class TableViewerObservableSetWithLabels extends
 
 		private Object getColumnValue(Object element, int columnIndex) {
 			return labelMapping.getMappingValues(element,
-					new int[] { columnIndex });
+					new int[] { columnIndex })[0];
 		}
 
 		private ViewerLabel getColumnValueAsViewerLabel(Object element,
@@ -119,7 +119,7 @@ public class TableViewerObservableSetWithLabels extends
 	/**
 	 * @param tableViewer
 	 */
-	public TableViewerObservableSetWithLabels(TableViewer tableViewer) {
+	public TableViewerObservableCollectionWithLabels(TableViewer tableViewer) {
 		super(tableViewer);
 	}
 
