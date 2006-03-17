@@ -129,6 +129,20 @@ public abstract class TrayDialog extends Dialog {
 		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		/*
+		 * Close the tray to ensure that those dialogs that remember their
+		 * size do not store the tray size.
+		 */
+		if (getTray() != null) {
+			closeTray();
+		}
+		return super.close();
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
      */
