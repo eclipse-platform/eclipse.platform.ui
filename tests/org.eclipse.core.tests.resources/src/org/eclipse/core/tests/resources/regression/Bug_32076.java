@@ -47,7 +47,7 @@ public class Bug_32076 extends ResourceTest {
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject("MyProject");
 			IFolder sourceParent = project.getFolder("source_parent");
 			IFolder destinationParent = project.getFolder("destination_parent");
 			// this file will be made irremovable
@@ -135,7 +135,7 @@ public class Bug_32076 extends ResourceTest {
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject("MyProject");
 			IFolder sourceParent = project.getFolder("source_parent");
 			IFolder destinationParent = project.getFolder("destination_parent");
 			IFolder folder = sourceParent.getFolder("folder");
@@ -314,7 +314,7 @@ public class Bug_32076 extends ResourceTest {
 		IProject project = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject("MyProject");
 			IFolder sourceParent = project.getFolder("source_parent");
 			IFolder roFolder = sourceParent.getFolder("sub-folder");
 			IFolder destinationParent = project.getFolder("destination_parent");

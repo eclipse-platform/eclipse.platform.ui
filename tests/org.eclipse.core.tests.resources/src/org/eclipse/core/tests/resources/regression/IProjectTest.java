@@ -32,7 +32,7 @@ public class IProjectTest extends AbstractBuilderTest {
 
 	public void test_1G0XIMA() throws CoreException {
 		/* common objects */
-		IProject project = project = getWorkspace().getRoot().getProject("MyProject");
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		project.create(null);
 		project.open(null);
 
@@ -62,7 +62,7 @@ public class IProjectTest extends AbstractBuilderTest {
 
 	public void test_1G5I6PV() throws CoreException {
 		/* common objects */
-		IProject project = project = getWorkspace().getRoot().getProject("MyProject");
+		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		project.create(getMonitor());
 		project.open(getMonitor());
 
