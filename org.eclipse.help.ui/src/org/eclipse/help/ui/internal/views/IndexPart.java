@@ -13,11 +13,13 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -25,6 +27,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
+	private RoleFilter roleFilter;
 
 	class IndexProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -67,13 +70,52 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		}
 	}
 
+	class RoleFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (element instanceof IIndexEntry) {
+				return isNotFiltered((IIndexEntry) element);
+			} else if (element instanceof IHelpResource) {
+				return isNotFiltered((IHelpResource) element);
+			}
+			return false;
+		}
+
+		private boolean isNotFiltered(IIndexEntry entry) {
+			IHelpResource[] topics = entry.getTopics();
+			for (int i = 0; i < topics.length; i++) {
+				if (isNotFiltered(topics[i]))
+					return true;
+			}
+
+			IIndexEntry[] subentries = entry.getSubentries();
+			for (int i = 0; i < subentries.length; i++) {
+				if (isNotFiltered(subentries[i]))
+					return true;
+			}
+
+			return false;
+		}
+
+		private boolean isNotFiltered(IHelpResource topic) {
+			return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+		}
+	}
+
 	public IndexPart(Composite parent, FormToolkit toolkit, IToolBarManager tbm) {
 		super(parent, toolkit, tbm);
+		roleFilter = new RoleFilter();
 	}
 
 	protected void configureTreeViewer() {
 		treeViewer.setContentProvider(new IndexProvider());
 		treeViewer.setLabelProvider(new IndexLabelProvider());
+	}
+
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		super.init(parent, id, memento);
+		if (parent.isFilteredByRoles())
+			treeViewer.addFilter(roleFilter);
 	}
 
 	protected void doOpen(Object obj) {
@@ -99,9 +141,14 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 	}
 
 	public void toggleRoleFilter() {
+		if (parent.isFilteredByRoles())
+			treeViewer.addFilter(roleFilter);
+		else
+			treeViewer.removeFilter(roleFilter);
 	}
 
 	public void refilter() {
+		treeViewer.refresh();
 	}
 
 	private Object[] getChildren(IIndexEntry entry) {

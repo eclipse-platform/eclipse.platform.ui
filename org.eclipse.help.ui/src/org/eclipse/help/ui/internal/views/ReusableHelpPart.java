@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
@@ -1359,6 +1360,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpResource res = (IHelpResource) obj;
 				return res.getHref();
 			}
+			if (obj instanceof IIndexEntry) {
+				/*
+				 * if index entry has single topic
+				 * it represents the topic by itself
+				 */
+				IHelpResource[] topics = ((IIndexEntry) obj).getTopics();
+				if (topics.length == 1)
+					return topics[0].getHref();
+				return null;
+			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
 			Object href = text.getSelectedLinkHref();
@@ -1376,6 +1387,29 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof ITopic) {
 				return (ITopic) obj;
+			} else if (obj instanceof IIndexEntry) {
+				/*
+				 * if index entry has single topic
+				 * it represents the topic by itself
+				 */
+				IIndexEntry entry = (IIndexEntry) obj;
+				IHelpResource[] topics = entry.getTopics();
+				if (topics.length == 1) {
+					final String href = topics[0].getHref();
+					final String label = entry.getKeyword();
+					return new IHelpResource() {
+						public String getHref() {
+							return href;
+						}
+
+						public String getLabel() {
+							return label;
+						}
+					};
+				}
+				return null;
+			} else if (obj instanceof IHelpResource) {
+				return (IHelpResource) obj;
 			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
