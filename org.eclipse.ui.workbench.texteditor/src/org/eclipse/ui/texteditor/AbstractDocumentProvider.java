@@ -223,7 +223,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * Subclasses must implement this method.</p>
 	 *
 	 * @param element the element
-	 * @return the annotation model
+	 * @return the annotation model or <code>null</code> if none
 	 * @exception CoreException if the annotation model could not be created
 	 */
 	protected abstract IAnnotationModel createAnnotationModel(Object element) throws CoreException;
