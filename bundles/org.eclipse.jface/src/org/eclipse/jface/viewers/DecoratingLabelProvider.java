@@ -380,6 +380,9 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	            	settings.setImage(image);
 	            
 			} else {
+				String text = decorator.decorateText(settings.getText(), element);
+	            if (text != null && text.length() > 0)
+	            	settings.setText(text);
 	            Image image = decorator.decorateImage(settings.getImage(), element);
 	            if (image != null)
 	            	settings.setImage(image);
