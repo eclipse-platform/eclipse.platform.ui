@@ -15,9 +15,11 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.ui.*;
@@ -65,7 +67,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 
 			if (file1 == null || file2 == null ||
 			   !file1.exists() || !file2.exists()){
-				MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, CVSUIMessages.CompareRevisionAction_DeleteCompareMessage);
+				MessageDialog.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_DeletedRevTitle, CVSUIMessages.CompareRevisionAction_DeleteCompareMessage);
 				return;
 			}
 			
@@ -114,7 +116,14 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
 		if (selection.size() == 1){
-			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent);
+			Object el = selection.getFirstElement();
+			if (el instanceof CVSFileRevision){
+				CVSFileRevision tempFileRevision = (CVSFileRevision) el;
+				this.setText(NLS.bind(CVSUIMessages.CompareRevisionAction_Revision, new String[]{tempFileRevision.getContentIdentifier()}));
+			} else if (el instanceof LocalFileRevision)
+				this.setText(CVSUIMessages.CompareRevisionAction_Local);
+			else
+				this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent);
 			return shouldShow();
 		}
 		else if (selection.size() == 2){

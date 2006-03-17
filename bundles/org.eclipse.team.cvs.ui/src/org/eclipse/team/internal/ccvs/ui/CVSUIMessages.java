@@ -31,6 +31,10 @@ public class CVSUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
 	}
 	
+	public static String CompareRevisionAction_Local;
+	public static String CompareRevisionAction_Revision;
+	public static String OpenRevisionAction_DeletedRevMessage;
+	public static String OpenRevisionAction_DeletedRevTitle;
 	public static String PasswordManagementPreferencePage_2;
 	public static String PasswordManagementPreferencePage_3;
 	public static String PasswordManagementPreferencePage_4;

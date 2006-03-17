@@ -22,9 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.internal.ccvs.ui.AbstractCVSHistoryCategory;
-import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.ui.*;
@@ -53,7 +51,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 				
 				final IFileRevision revision = (IFileRevision) tempRevision;
 				if (revision == null || !revision.exists()) {
-					MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevisionTitle, TeamUIMessages.OpenRevisionAction_DeletedRevisionMessage);
+					MessageDialog.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_DeletedRevTitle, CVSUIMessages.OpenRevisionAction_DeletedRevMessage);
 				} else {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
