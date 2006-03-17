@@ -638,4 +638,12 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 		}
 		return true;
 	}
+	
+	public ILabelDecorator getLabelDecorator() {
+		ILabelDecorator[] decorators = (ILabelDecorator[])getProperty(ISynchronizePageConfiguration.P_LABEL_DECORATORS);
+		if (decorators == null) {
+			return null;
+		}
+		return new MultiLabelDecorator(decorators);
+	}
 }

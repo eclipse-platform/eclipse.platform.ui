@@ -12,11 +12,14 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ComparePreferencePage;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
 public abstract class CVSModelSynchronizeParticipant extends ModelSynchronizeParticipant {
@@ -64,4 +67,12 @@ public abstract class CVSModelSynchronizeParticipant extends ModelSynchronizePar
 		return enabledProviders;
 	}
 
+	protected  ILabelDecorator getLabelDecorator(ISynchronizePageConfiguration configuration) {
+	    return new CVSParticipantLabelDecorator(configuration);
+	}
+	
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		super.initializeConfiguration(configuration);
+		configuration.addLabelDecorator(getLabelDecorator(configuration));
+	}
 }

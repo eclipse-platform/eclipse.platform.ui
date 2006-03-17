@@ -27,6 +27,7 @@ import org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -193,6 +194,14 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		IBaseLabelProvider provider = viewer.getLabelProvider();
 		if (provider instanceof DecoratingLabelProvider) {
 			DecoratingLabelProvider dlp = (DecoratingLabelProvider) provider;
+			ILabelDecorator decorator = ((SynchronizePageConfiguration)configuration).getLabelDecorator();
+			if (decorator != null) {
+				ILabelProvider lp = dlp.getLabelProvider();
+				dlp = new DecoratingLabelProvider(
+						new DecoratingLabelProvider(lp, decorator),
+						PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
+				viewer.setLabelProvider(dlp);
+			}
 			DecorationContext decorationContext = new DecorationContext();
 			decorationContext.putProperty(SynchronizationStateTester.PROP_TESTER, new SynchronizationStateTester() {
 				public boolean isStateDecorationEnabled() {

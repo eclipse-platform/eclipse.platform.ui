@@ -156,8 +156,10 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		
 		// Calculate and apply the decoration
 		try {
-			CVSDecoration cvsDecoration = decorate(element, tester);
-			cvsDecoration.apply(decoration);
+			if (tester.isDecorationEnabled(element)) {
+				CVSDecoration cvsDecoration = decorate(element, tester);
+				cvsDecoration.apply(decoration);
+			}
 		} catch(CoreException e) {
 			handleException(element, e);
 		} catch (IllegalStateException e) {
@@ -196,23 +198,21 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
         CVSDecoration result = new CVSDecoration();
         
         // First, decorate the synchronization state
-        int state = IDiff.NO_CHANGE;
-        if (tester.isDecorationEnabled(element)) {
-			if (isSupervised(element)) {
-				result.setHasRemote(true);
-				state = tester.getState(element, 
-						store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY) 
-							? IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING 
-							: 0, 
-						new NullProgressMonitor());
-				result.setStateFlags(state);
-	        } else {
-	        	result.setIgnored(true);
-	        }
+    	int state = IDiff.NO_CHANGE;
+		if (isSupervised(element)) {
+			// TODO: Not quite right
+			result.setHasRemote(true);
+			state = tester.getState(element, 
+					store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY) 
+						? IDiff.ADD | IDiff.REMOVE | IDiff.CHANGE | IThreeWayDiff.OUTGOING 
+						: 0, 
+					new NullProgressMonitor());
+			result.setStateFlags(state);
+        } else {
+        	result.setIgnored(true);
         }
-        
 		// Tag
-        if (!result.isIgnored()) {
+		if (!result.isIgnored()) {
 			CVSTag tag = getTagToShow(element);
 			if (tag != null) {
 				String name = tag.getName();
@@ -224,9 +224,9 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 				}
 				result.setTag(name);
 			}
-        }
+		}
 		
-        // If the element adapts to a single resource, add additional decorations
+		// If the element adapts to a single resource, add additional decorations
 		IResource resource = getResource(element);
 		if (resource == null) {
 			result.setResourceType(CVSDecoration.MODEL);
@@ -269,6 +269,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		cvsDecoration.setResourceType(resource.getType());
 		
+		cvsDecoration.setHasRemote(hasRemote(cvsResource));
 		if (cvsResource.isIgnored()) {
 			cvsDecoration.setIgnored(true);
 		}
@@ -310,6 +311,14 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			} else {
 				extractContainerProperties((IContainer) resource, cvsDecoration);
 			}
+		}
+	}
+
+	private static boolean hasRemote(ICVSResource cvsResource) {
+		try {
+			return (cvsResource.isManaged() || cvsResource.isFolder() && ((ICVSFolder)cvsResource).isCVSFolder());
+		} catch (CVSException e) {
+			return false;
 		}
 	}
 
