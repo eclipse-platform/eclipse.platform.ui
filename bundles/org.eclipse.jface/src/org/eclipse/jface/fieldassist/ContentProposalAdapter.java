@@ -94,8 +94,8 @@ public class ContentProposalAdapter {
 									return;
 								}
 								// Workaround a problem on X and Mac, whereby at
-								// this point, the focus control is not known. 
-								// This can happen, for example, when resizing 
+								// this point, the focus control is not known.
+								// This can happen, for example, when resizing
 								// the popup shell on the Mac.
 								// Check the active shell.
 								Shell activeShell = e.display.getActiveShell();
@@ -188,23 +188,24 @@ public class ContentProposalAdapter {
 				if (!isValid()) {
 					return;
 				}
-				
+
 				char key = e.character;
 
-				// Traverse events are handled depending on whether the 
+				// Traverse events are handled depending on whether the
 				// event has a character.
 				if (e.type == SWT.Traverse) {
 					// If the traverse event contains a legitimate character,
 					// then we must set doit false so that the widget will
-					// receive the key event.  We return immediately so that
+					// receive the key event. We return immediately so that
 					// the character is handled only in the key event.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132101
 					if (key != 0) {
 						e.doit = false;
 						return;
-					} 
-					// Traversal does not contain a character.  Set doit true
-					// to indicate TRAVERSE_NONE will occur and that no key event
+					}
+					// Traversal does not contain a character. Set doit true
+					// to indicate TRAVERSE_NONE will occur and that no key
+					// event
 					// will be triggered. We will check for navigation keys
 					// below.
 					e.detail = SWT.TRAVERSE_NONE;
@@ -214,7 +215,6 @@ public class ContentProposalAdapter {
 					// Some keys will always set doit to false anyway.
 					e.doit = propagateKeys;
 				}
-
 
 				// No character. Check for navigation keys.
 
@@ -284,7 +284,7 @@ public class ContentProposalAdapter {
 				// Check for special keys involved in cancelling, accepting, or
 				// filtering the proposals.
 				switch (key) {
-				case SWT.ESC: 
+				case SWT.ESC:
 					e.doit = false;
 					close();
 					break;
@@ -482,6 +482,11 @@ public class ContentProposalAdapter {
 		 * proposal..
 		 */
 		private InfoPopupDialog infoPopup;
+
+		/*
+		 * Flag indicating whether there is a pending secondary popup update.
+		 */
+		private boolean pendingDescriptionUpdate = false;
 
 		/*
 		 * Filter text - tracked while popup is open, only if we are told to
@@ -817,14 +822,16 @@ public class ContentProposalAdapter {
 		 * Show the proposal description in a secondary popup.
 		 */
 		private void showProposalDescription(String description) {
-			// If we have not created an info popup yet, do so now.
-			if (infoPopup == null && description != null) {
+			// If we do not already have a pending update, then
+			// create a thread now that will show the proposal description
+			if (!pendingDescriptionUpdate && description != null) {
 				// Create a thread that will sleep for the specified delay
 				// before creating the popup. We do not use Jobs since this
 				// code must be able to run independently of the Eclipse
 				// runtime.
 				Runnable runnable = new Runnable() {
 					public void run() {
+						pendingDescriptionUpdate = true;
 						try {
 							Thread.sleep(POPUP_DELAY);
 						} catch (InterruptedException e) {
@@ -834,23 +841,26 @@ public class ContentProposalAdapter {
 						}
 						getShell().getDisplay().syncExec(new Runnable() {
 							public void run() {
-								// The selection may have changed by the time we
-								// open, so double check it.
+								// Query the current selection since we have
+								// been delayed
 								IContentProposal p = getSelectedProposal();
 								if (p != null) {
 									if (infoPopup == null) {
 										infoPopup = new InfoPopupDialog(
 												getShell());
 										infoPopup.open();
+										infoPopup.getShell()
+												.addDisposeListener(
+														new DisposeListener() {
+															public void widgetDisposed(
+																	DisposeEvent event) {
+																infoPopup = null;
+															}
+														});
 									}
 									infoPopup.setContents(p.getDescription());
-									infoPopup.getShell().addDisposeListener(
-											new DisposeListener() {
-												public void widgetDisposed(
-														DisposeEvent event) {
-													infoPopup = null;
-												}
-											});
+									pendingDescriptionUpdate = false;
+
 								}
 							}
 						});
@@ -858,9 +868,6 @@ public class ContentProposalAdapter {
 				};
 				Thread t = new Thread(runnable);
 				t.start();
-			} else if (infoPopup != null) {
-				// We already have a popup, so just reset the contents.
-				infoPopup.setContents(description);
 			}
 		}
 
@@ -993,7 +1000,7 @@ public class ContentProposalAdapter {
 	/*
 	 * The delay before showing a secondary popup.
 	 */
-	private static final int POPUP_DELAY = 500;
+	private static final int POPUP_DELAY = 750;
 
 	/*
 	 * The character height hint for the popup. May be overridden by using
@@ -1476,11 +1483,11 @@ public class ContentProposalAdapter {
 				case SWT.KeyDown:
 					if (DEBUG) {
 						StringBuffer sb;
-						if (e.type == SWT.Traverse){
+						if (e.type == SWT.Traverse) {
 							sb = new StringBuffer("Traverse"); //$NON-NLS-1$
 						} else {
 							sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
-						} 
+						}
 						sb.append(" received by adapter"); //$NON-NLS-1$
 						dump(sb.toString(), e);
 					}
@@ -1490,11 +1497,11 @@ public class ContentProposalAdapter {
 						popup.getTargetControlListener().handleEvent(e);
 						if (DEBUG) {
 							StringBuffer sb;
-							if (e.type == SWT.Traverse){
+							if (e.type == SWT.Traverse) {
 								sb = new StringBuffer("Traverse"); //$NON-NLS-1$
 							} else {
 								sb = new StringBuffer("KeyDown"); //$NON-NLS-1$
-							} 
+							}
 							sb.append(" after being handled by popup"); //$NON-NLS-1$
 							dump(sb.toString(), e);
 						}
