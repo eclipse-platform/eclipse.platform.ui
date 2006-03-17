@@ -627,7 +627,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (info != null) {
 
 					ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
-					model.updateMarkers(info.fDocument);
+					if (model != null)
+						model.updateMarkers(info.fDocument);
 
 					info.fModificationStamp= computeModificationStamp(file);
 				}
@@ -1044,7 +1045,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					try {
 						encoding= file.getCharset();
 					} catch (CoreException e) {
-						encoding= null;
+						return null;
 					}
 				}
 				return encoding;
