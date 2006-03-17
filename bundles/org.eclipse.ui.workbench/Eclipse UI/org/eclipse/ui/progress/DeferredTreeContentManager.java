@@ -40,7 +40,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * 
  * AbstractTreeViewers which use this class may wish to 
  * sacrifice accuracy of the expandable state indicator for the 
- * performance benefits of defering content.
+ * performance benefits of deferring content.
  * 
  * @see IDeferredWorkbenchAdapter
  * @since 3.0
