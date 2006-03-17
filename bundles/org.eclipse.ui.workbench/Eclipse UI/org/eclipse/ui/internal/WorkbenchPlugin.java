@@ -95,6 +95,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static final String ORIENTATION_COMMAND_LINE = "-dir";//$NON-NLS-1$
 	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
 	private static final String NL_USER_PROPERTY = "osgi.nl.user"; //$NON-NLS-1$
+	private static final String UI_BUNDLE_ACTIVATOR = "org.eclipse.ui.internal.UIPlugin"; //$NON-NLS-1$
     
     // Default instance of the receiver
     private static WorkbenchPlugin inst;
@@ -590,16 +591,32 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                 StatusUtil.newStatus(IStatus.ERROR, message, null));    
     }
     
+    /**
+     * Log the throwable.
+     * @param t
+     */
     public static void log(Throwable t) {
 		getDefault().getLog().log(getStatus(t));
 	}
 
+	/**
+	 * Return the status from throwable
+	 * @param t throwable
+	 * @return IStatus
+	 */
 	public static IStatus getStatus(Throwable t) {
 		String message = StatusUtil.getLocalizedMessage(t);
 
 		return newError(message, t);
 	}
 
+	/**
+	 * Create a new error from the message and the
+	 * throwable.
+	 * @param message
+	 * @param t
+	 * @return IStatus
+	 */
 	public static IStatus newError(String message, Throwable t) {
 		String pluginId = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 		int errorCode = IStatus.OK;
@@ -679,6 +696,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         getDefault().getLog().log(status);
     }
 
+    /**
+     * Log the status to the default log.
+     * @param status
+     */
     public static void log(IStatus status) {
         getDefault().getLog().log(status);
     }
@@ -707,12 +728,20 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		 Window.setDefaultOrientation(getDefaultOrientation());
 
-        // Start the UI plugin so that it can install the callback in PrefUtil,
+        // The UI plugin needs to be initialized so that it can install the callback in PrefUtil,
         // which needs to be done as early as possible, before the workbench
         // accesses any API preferences.
-        Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID); 
-        if (uiBundle.getState() != Bundle.STARTING)
-        	uiBundle.start();
+        Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+        try {
+            // Attempt to load the activator of the ui bundle.  This will force lazy start
+            // of the ui bundle.  Using the bundle activator class here because it is a
+            // class that needs to be loaded anyway so it should not cause extra classes
+            // to be loaded.
+        	if(uiBundle != null)
+        		uiBundle.loadClass(UI_BUNDLE_ACTIVATOR);
+        } catch (ClassNotFoundException e) {
+            WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
+        }
 		/*
 		 * DO NOT RUN ANY OTHER CODE AFTER THIS LINE.  If you do, then you are
 		 * likely to cause a deadlock in class loader code.  Please see Bug 86450
