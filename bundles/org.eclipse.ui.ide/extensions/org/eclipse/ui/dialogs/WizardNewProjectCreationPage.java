@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.net.URI;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -177,6 +178,20 @@ public class WizardNewProjectCreationPage extends WizardPage {
     public IPath getLocationPath() {
         return new Path(locationArea.getProjectLocation());
     }
+    
+    /**
+     * Returns the current project location path as entered by 
+     * the user, or its anticipated initial value.
+     * Note that if the default has been returned the path
+     * in a project description used to create a project
+     * should not be set.
+     *
+     * @return the project location path or its anticipated initial value.
+     * @since 3.2
+     */
+    public URI getLocationURI() {
+    	return locationArea.getProjectLocationURI();
+    }
 
     /**
      * Creates a project resource handle for the current project name field value.
@@ -279,12 +294,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
             return false;
         }
 
-        String locationValidation = locationArea.checkValidLocation();
-        if(locationValidation != null){
-        	setErrorMessage(locationValidation);
-            return false;
-        }
-
         IProject handle = getProjectHandle();
         if (handle.exists()) {
             setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
@@ -295,8 +304,8 @@ public class WizardNewProjectCreationPage extends WizardPage {
          * If not using the default value validate the location.
          */
         if (!locationArea.isDefault()) {
-            IStatus locationStatus = workspace.validateProjectLocation(handle,
-                    new Path(locationArea.getProjectLocation()));
+            IStatus locationStatus = workspace.validateProjectLocationURI(handle,
+                    locationArea.getProjectLocationURI());
             if (!locationStatus.isOK()) {
                 setErrorMessage(locationStatus.getMessage());
                 return false;

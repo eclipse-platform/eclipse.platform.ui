@@ -12,12 +12,12 @@
 package org.eclipse.ui.wizards.newresource;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +27,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -177,15 +176,15 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
         final IProject newProjectHandle = mainPage.getProjectHandle();
 
         // get a project descriptor
-        IPath newPath = null;
+        URI location = null;
         if (!mainPage.useDefaults()) {
-			newPath = mainPage.getLocationPath();
+			location = mainPage.getLocationURI();
 		}
 
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         final IProjectDescription description = workspace
                 .newProjectDescription(newProjectHandle.getName());
-        description.setLocation(newPath);
+        description.setLocationURI(location);
 
         // update the referenced project if provided
         if (referencePage != null) {

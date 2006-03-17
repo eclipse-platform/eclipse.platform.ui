@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -504,10 +505,11 @@ public class CopyFilesAndFoldersOperation {
 	 * @return IResource[] the resulting {@link IResource}[]
 	 * @see WorkspaceModifyOperation
 	 * @see WorkspaceJob
-     * @since 3.2
+	 * @since 3.2
 	 */
-	public IResource[] copyResourcesInCurrentThread(final IResource[] resources,
-			IContainer destination, IProgressMonitor monitor) {
+	public IResource[] copyResourcesInCurrentThread(
+			final IResource[] resources, IContainer destination,
+			IProgressMonitor monitor) {
 		return copyResources(resources, destination, false, monitor);
 	}
 
@@ -538,7 +540,7 @@ public class CopyFilesAndFoldersOperation {
 			displayError(errorMsg);
 			return copiedResources[0];
 		}
-		
+
 		if (!validateOperation(resources, destinationPath)) {
 			return copiedResources[0];
 		}
@@ -573,36 +575,44 @@ public class CopyFilesAndFoldersOperation {
 
 	/**
 	 * Validates the copy or move operation.
-	 *
-	 * @param resources the resources being copied or moved
-	 * @param destinationPath the destination of the copy or move
+	 * 
+	 * @param resources
+	 *            the resources being copied or moved
+	 * @param destinationPath
+	 *            the destination of the copy or move
 	 * @return whether the operation should proceed
 	 * @since 3.2
 	 */
-	private boolean validateOperation(IResource[] resources, IPath destinationPath) {
-    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
-    	for (int i = 0; i < resources.length; i++) {
+	private boolean validateOperation(IResource[] resources,
+			IPath destinationPath) {
+		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
+				.getValidator().createDeltaFactory();
+		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (isMove()) {
-				factory.move(resource, destinationPath.append(resource.getName()));
+				factory.move(resource, destinationPath.append(resource
+						.getName()));
 			} else {
-				factory.copy(resource, destinationPath.append(resource.getName()));
+				factory.copy(resource, destinationPath.append(resource
+						.getName()));
 			}
 		}
-    	String title;
-    	String message;
-    	if (isMove()) {
-    		title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmMove;
+		String title;
+		String message;
+		if (isMove()) {
+			title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmMove;
 			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningMove;
-    	} else {
+		} else {
 			title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmCopy;
 			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningCopy;
-    	}
-		return IDE.promptToConfirm(messageShell, title, message, factory.getDelta(), modelProviderIds, true /* syncExec */);
+		}
+		return IDE.promptToConfirm(messageShell, title, message, factory
+				.getDelta(), modelProviderIds, true /* syncExec */);
 	}
 
 	/**
 	 * Return whether the operation is a move or a copy
+	 * 
 	 * @return whether the operation is a move or a copy
 	 * @since 3.2
 	 */
@@ -662,7 +672,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the monitor that information will be sent to.
 	 * @see WorkspaceModifyOperation
 	 * @see WorkspaceJob
-     * @since 3.2
+	 * @since 3.2
 	 */
 	public void copyFilesInCurrentThread(URI[] uris, IContainer destination,
 			IProgressMonitor monitor) {
@@ -715,7 +725,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @see WorkspaceModifyOperation
 	 * @see Display#getThread()
 	 * @see Thread#currentThread()
-     * @since 3.2
+	 * @since 3.2
 	 */
 	public void copyFiles(final String[] fileNames, IContainer destination) {
 		IFileStore[] stores = buildFileStores(fileNames);
@@ -740,10 +750,10 @@ public class CopyFilesAndFoldersOperation {
 	 *            the monitor that information will be sent to.
 	 * @see WorkspaceModifyOperation
 	 * @see WorkspaceJob
-     * @since 3.2
+	 * @since 3.2
 	 */
-	public void copyFilesInCurrentThread(final String[] fileNames, IContainer destination,
-			IProgressMonitor monitor) {
+	public void copyFilesInCurrentThread(final String[] fileNames,
+			IContainer destination, IProgressMonitor monitor) {
 		IFileStore[] stores = buildFileStores(fileNames);
 		if (stores == null) {
 			return;
@@ -846,7 +856,8 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Display the supplied status in an error dialog.
 	 * 
-	 * @param status The status to display
+	 * @param status
+	 *            The status to display
 	 */
 	private void displayError(final IStatus status) {
 		messageShell.getDisplay().syncExec(new Runnable() {
@@ -1368,7 +1379,7 @@ public class CopyFilesAndFoldersOperation {
 			return destinationMessage;
 		}
 		IContainer firstParent = null;
-		IPath destinationLocation = destination.getLocation();
+		URI destinationLocation = destination.getLocationURI();
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
 			if (firstParent == null) {
@@ -1378,7 +1389,7 @@ public class CopyFilesAndFoldersOperation {
 				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_parentNotEqual;
 			}
 
-			IPath sourceLocation = sourceResource.getLocation();
+			URI sourceLocation = sourceResource.getLocationURI();
 			if (sourceLocation == null) {
 				if (sourceResource.isLinked()) {
 					// Don't allow copying linked resources with undefined path
@@ -1401,7 +1412,8 @@ public class CopyFilesAndFoldersOperation {
 								sourceResource.getName());
 			}
 			// is the source a parent of the destination?
-			if (sourceLocation.isPrefixOf(destinationLocation)) {
+			if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
+					destinationLocation.toString()))) {
 				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
 			}
 
@@ -1740,26 +1752,27 @@ public class CopyFilesAndFoldersOperation {
 			performFileImport(stores, container, monitor);
 		}
 	}
-	
-    /**
-     * Returns the model provider ids that are known to the client
-     * that instantiated this operation.
-     * 
-     * @return the model provider ids that are known to the client
-     * that instantiated this operation.
-     * @since 3.2
-     */
+
+	/**
+	 * Returns the model provider ids that are known to the client that
+	 * instantiated this operation.
+	 * 
+	 * @return the model provider ids that are known to the client that
+	 *         instantiated this operation.
+	 * @since 3.2
+	 */
 	public String[] getModelProviderIds() {
 		return modelProviderIds;
 	}
 
 	/**
-     * Sets the model provider ids that are known to the client
-     * that instantiated this operation. Any potential side effects
-     * reported by these models during validation will be ignored.
-     * 
-	 * @param modelProviderIds the model providers known to the client
-	 * who is using this operation.
+	 * Sets the model provider ids that are known to the client that
+	 * instantiated this operation. Any potential side effects reported by these
+	 * models during validation will be ignored.
+	 * 
+	 * @param modelProviderIds
+	 *            the model providers known to the client who is using this
+	 *            operation.
 	 * @since 3.2
 	 */
 	public void setModelProviderIds(String[] modelProviderIds) {

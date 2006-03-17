@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -356,7 +356,7 @@ public class ProjectContentsLocationArea {
 			return (IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
 		}
 
-		URI newPath = getLocationFieldURI();
+		URI newPath = getProjectLocationURI();
 		if (newPath == null) {
 			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 		}
@@ -376,7 +376,7 @@ public class ProjectContentsLocationArea {
 			}
 
 			URI projectPath = existingProject.getLocationURI();
-			if (projectPath != null && projectPath.equals(newPath)) {
+			if (projectPath != null && URIUtil.equals(projectPath, newPath)) {
 				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 			}
 		}
@@ -389,7 +389,7 @@ public class ProjectContentsLocationArea {
 	 * 
 	 * @return URI or <code>null</code> if it is not valid.
 	 */
-	private URI getLocationFieldURI() {
+	public URI getProjectLocationURI() {
 
 		FileSystemConfiguration configuration = getSelectedConfiguration();
 		if (configuration == null) {

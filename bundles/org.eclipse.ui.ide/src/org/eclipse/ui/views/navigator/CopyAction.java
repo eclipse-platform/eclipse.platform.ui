@@ -93,12 +93,16 @@ import org.eclipse.ui.part.ResourceTransfer;
         this.pasteAction = pasteAction;
     }
 
-    /**
-     * The <code>CopyAction</code> implementation of this method defined 
-     * on <code>IAction</code> copies the selected resources to the 
-     * clipboard.
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
      */
     public void run() {
+    	 /**
+         * The <code>CopyAction</code> implementation of this method defined 
+         * on <code>IAction</code> copies the selected resources to the 
+         * clipboard.
+         */
         List selectedResources = getSelectedResources();
         IResource[] resources = (IResource[]) selectedResources
                 .toArray(new IResource[selectedResources.size()]);
@@ -171,12 +175,18 @@ import org.eclipse.ui.part.ResourceTransfer;
         }
     }
 
-    /**
-     * The <code>CopyAction</code> implementation of this
-     * <code>SelectionListenerAction</code> method enables this action if 
-     * one or more resources of compatible types are selected.
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
      */
     protected boolean updateSelection(IStructuredSelection selection) {
+    	
+    	 /**
+         * The <code>CopyAction</code> implementation of this
+         * <code>SelectionListenerAction</code> method enables this action if 
+         * one or more resources of compatible types are selected.
+         */
+    	
         if (!super.updateSelection(selection)) {
 			return false;
 		}
@@ -213,10 +223,6 @@ import org.eclipse.ui.part.ResourceTransfer;
         while (resourcesEnum.hasNext()) {
             IResource currentResource = (IResource) resourcesEnum.next();
             if (!currentResource.getParent().equals(firstParent)) {
-				return false;
-			}
-            // resource location must exist
-            if (currentResource.getLocation() == null) {
 				return false;
 			}
         }
