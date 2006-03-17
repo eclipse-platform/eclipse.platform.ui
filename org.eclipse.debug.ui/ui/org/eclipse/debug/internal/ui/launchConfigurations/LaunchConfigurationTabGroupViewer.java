@@ -383,7 +383,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			Color clr2 = getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 			Color[] activeEditorGradient = new Color[] { clr1, clr2};
 			int[] activeEditorPercentages = new int[] {100};
-			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM);
+			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			fTabFolder.setSelectionBackground(activeEditorGradient, activeEditorPercentages, true);

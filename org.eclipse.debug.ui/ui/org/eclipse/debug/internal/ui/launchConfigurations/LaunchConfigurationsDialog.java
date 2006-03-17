@@ -118,7 +118,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.67f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.50f;
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
@@ -1255,14 +1255,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 
 	/**
-	 * resize the dialog to show all relevant content
+	 * resize the dialog to show all relevant content, maintains aspect in all resolutions down to 1024x768
 	 */
 	protected void resize() {
  		if(getTabGroup() != null) {
  			Point shell = getShell().getSize();
- 			Point psize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
  			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
- 				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+ 			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
+ 			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
+ 			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
  			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
 				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
  			}
