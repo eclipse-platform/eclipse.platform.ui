@@ -255,6 +255,9 @@ public class DebugUIMessages extends NLS {
 	public static String GoToAddressComposite_2;
 	public static String GoToAddressComposite_3;
 	public static String GoToAddressComposite_4;
+	public static String GoToAddressComposite_5;
+	public static String GoToAddressComposite_6;
+	public static String GoToAddressComposite_7;
 	
 	static {
 		// load message values from bundle file

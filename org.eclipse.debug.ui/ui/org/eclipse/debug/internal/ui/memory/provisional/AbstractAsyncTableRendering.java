@@ -115,6 +115,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
@@ -475,6 +476,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						
 						fSashForm = new SashForm(parent, SWT.VERTICAL);
 						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, fSashForm, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
+
 						GridData data = new GridData(GridData.FILL_BOTH);
 						fTableViewer.getControl().setLayoutData(data);
 						
@@ -1840,7 +1842,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{	
 			// address is within range, set cursor and reveal
 			fTableViewer.setSelection(address);
-			updateSyncTopAddress(address);
+			updateSyncTopAddress(getTopVisibleAddress());
 			updateSyncSelectedAddress(address);
 		}
 		else
@@ -2766,6 +2768,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	private void showGoToAddressComposite() {
+		
+		String selectedStr = getSelectedAsString();
+		Text text = fGoToAddressComposite.getExpressionWidget();
+		text.setText(selectedStr);
+		text.setSelection(0, text.getCharCount());
 	
 		double height = fGoToAddressComposite.getHeight();
 		double canvasHeight = fSashForm.getParent().getClientArea().height;
@@ -2790,12 +2797,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private void doGoToAddress() {
 		try {
-			String exp = null;
-			if (fGoToAddressComposite.isOffset())
-				exp = getOffsetAddress(getSelectedAddress(), fGoToAddressComposite.getExpressionText());
-			else
-				exp = fGoToAddressAction.parseExpression(fGoToAddressComposite.getExpressionText());
-			fGoToAddressAction.doGoToAddress(exp);
+			BigInteger address = fGoToAddressComposite.getGoToAddress(fContentDescriptor.getContentBaseAddress(), getSelectedAddress());
+			fGoToAddressAction.doGoToAddress(address.toString(16));
 			hideGotoAddressComposite();
 		} catch (DebugException e1) {
 			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
@@ -2803,39 +2806,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		} catch (NumberFormatException e1)
 		{
 			MemoryViewUtil.openError(DebugUIMessages.GoToAddressAction_Go_to_address_failed, 
-				DebugUIMessages.GoToAddressAction_Address_is_invalid, null);
+				DebugUIMessages.GoToAddressAction_Address_is_invalid, e1);
 		}
-	}
-	
-	private String getOffsetAddress(BigInteger address, String expression) throws NumberFormatException
-	{
-		boolean add = true;
-		boolean hex = false;
-		
-		if (expression.startsWith("+")) //$NON-NLS-1$
-		{
-			expression = expression.substring(1);
-		}
-		else if (expression.startsWith("-")) //$NON-NLS-1$
-		{
-			expression = expression.substring(1);
-			add = false;
-		}
-		
-		if (expression.startsWith("0x") || expression.startsWith("0X")) //$NON-NLS-1$ //$NON-NLS-2$
-			hex = true;
-		
-		expression = fGoToAddressAction.parseExpression(expression);
-		
-		BigInteger gotoAddress = hex?new BigInteger(expression, 16):new BigInteger(expression);
-		
-		if (add)
-			gotoAddress = address.add(gotoAddress);
-		else
-			gotoAddress = address.subtract(gotoAddress);
-		
-		return gotoAddress.toString(16);
-			
 	}
 	
 	public void activated() {
