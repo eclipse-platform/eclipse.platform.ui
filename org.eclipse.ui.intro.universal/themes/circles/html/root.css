@@ -17,8 +17,8 @@ a .link-extra-div {
 	position: relative;
 	top: -1.2em;
 	font-size : 13pt;	font-weight : 600;
-	padding-left: 10px;
-	padding-right: 5px;
+	padding-left: 15px;
+	padding-right: 10px;
 	margin-bottom: -1.2pm;
 }
 
@@ -27,7 +27,7 @@ a .link-extra-div {
 }
 
 #page-links a#workbench .link-label {
-	padding-left: 0px;
+	padding-left: 5px;
 	margin-left: 5px;
 }
 
@@ -36,15 +36,12 @@ a .link-extra-div {
 	margin-left: 3px;
 	position: relative;
 	top: -1.6em;
-	padding-top: 10px;
-	padding-left: 5px;
-	padding-right: 5px;
+	padding-top: 5px;
+	padding-left: 9px;
+	padding-right: 10px;
 	margin-bottom: -1.6em;
-	font-size : 13pt;	font-weight : 500;
+	font-size : 11pt;	font-weight : 500;
 	padding-bottom: 5px;
-/*
-	padding-bottom: 10px;
-	*/
 	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
 	background-repeat: repeat-y;
 }
