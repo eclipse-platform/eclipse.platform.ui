@@ -30,22 +30,12 @@
       </product> 
     </extension> 
 
-<!-- 
-    <extension  
-         point="org.eclipse.ui.intro">
-	  <introProductBinding
-            introId="org.eclipse.platform.intro"
-            productId="org.eclipse.sdk.ide">
-      </introProductBinding>
- -->
-<!-- -->
 	<extension
 		point="org.eclipse.ui.intro">
       <introProductBinding
             introId="org.eclipse.ui.intro.universal"
             productId="org.eclipse.sdk.ide">
       </introProductBinding>
-<!-- -->
     </extension>
 
     <extension
