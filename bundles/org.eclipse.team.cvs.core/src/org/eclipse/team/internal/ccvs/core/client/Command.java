@@ -616,12 +616,22 @@ public abstract class Command extends Request {
 			return (KSubstOption[]) ksubstOptionMap.values().toArray(new KSubstOption[ksubstOptionMap.size()]);
 		}
 		/**
-		 * Returns the entry line mode string for this instance.
+		 * Returns the entry line mode string for this instance. Note that it might return blank strings
+		 * for certain options. For UI, use {@link #toEntryLineMode()} which will always return the a string
+		 * containing the keyword substitution.
 		 */
 		public String toMode() {
 			if (KSUBST_TEXT_EXPAND.equals(this)) return ""; //$NON-NLS-1$
 			return getOption();
 		}
+		
+		/**
+		 * Returns the entry line mode string for this instance.
+		 */
+		public String toEntryLineMode(){
+			return getOption();
+		}
+		
 		/**
 		 * Returns true if the substitution mode requires no data translation
 		 * during file transfer.

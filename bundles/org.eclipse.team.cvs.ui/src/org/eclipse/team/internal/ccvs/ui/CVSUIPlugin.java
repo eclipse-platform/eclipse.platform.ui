@@ -520,7 +520,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
-		store.setDefault(ICVSUIConstants.PREF_TEXT_KSUBST, CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION.toMode());
+		store.setDefault(ICVSUIConstants.PREF_TEXT_KSUBST, CVSProviderPlugin.DEFAULT_TEXT_KSUBST_OPTION.toEntryLineMode());
 		store.setDefault(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND, true);
 		store.setDefault(ICVSUIConstants.PREF_REPLACE_UNMANAGED, true);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
