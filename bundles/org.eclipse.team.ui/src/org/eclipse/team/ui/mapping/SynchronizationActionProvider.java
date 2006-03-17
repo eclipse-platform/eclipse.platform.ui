@@ -25,9 +25,9 @@ import org.eclipse.ui.navigator.*;
 
 /**
  * An action group that can be used by models to contribute actions
- * to a team synchronization viewer. Subclases should override the
+ * to a team synchronization viewer. Subclasses should override the
  * {@link #initialize()} method in order to register handlers for the
- * following merge actions if they want cutom merge behavior:
+ * following merge actions if they want custom merge behavior:
  * <ul>
  * <li>{@link #MERGE_ACTION_ID}
  * <li>{@link #OVERWRITE_ACTION_ID}

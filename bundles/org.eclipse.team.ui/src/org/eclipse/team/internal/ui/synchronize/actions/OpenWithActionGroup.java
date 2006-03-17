@@ -52,9 +52,13 @@ public class OpenWithActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager menu, String groupId) {
 		ISelection selection = site.getSelectionProvider().getSelection();
-		if (selection instanceof IStructuredSelection) {
+		if (selection instanceof IStructuredSelection && !hasFileMenu(menu)) {
 			fillOpenWithMenu(menu, groupId, (IStructuredSelection)selection);
 		}
+	}
+
+	private boolean hasFileMenu(IMenuManager menu) {
+		return menu.find(openFileAction.getId()) != null;
 	}
 
 	/**
