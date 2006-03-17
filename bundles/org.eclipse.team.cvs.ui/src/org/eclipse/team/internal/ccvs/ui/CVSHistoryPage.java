@@ -54,7 +54,8 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.LocalFileRevision;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
@@ -1269,8 +1270,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public boolean inputSet() {
 		//blank current input
 		this.treeViewer.setInput(null);
-		//reset default behaviour for clicks
-		compareMode = false;
 		//reset currentFileRevision
 		currentFileRevision = null;
 		ICVSFile cvsFile = getCVSFile(getInput());
