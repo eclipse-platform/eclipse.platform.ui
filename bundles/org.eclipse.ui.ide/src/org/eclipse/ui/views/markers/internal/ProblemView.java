@@ -444,7 +444,7 @@ public class ProblemView extends MarkerView {
 			public void activityManagerChanged(
 					ActivityManagerEvent activityManagerEvent) {
 				clearEnabledFilters();
-				getViewer().refresh();
+				refreshViewer();
 			}
 		};
 
