@@ -29,7 +29,8 @@ public class AllParserTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllParserTests() {
-		addTest(PlatformTest.suite());
+		// re-enable once universal welcome stabilizes
+		//addTest(PlatformTest.suite());
 		addTest(ValidTest.suite());
 	}
 }

@@ -86,7 +86,7 @@ public class IntroModelSerializerTest extends TestCase {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
 		for (int i=0;i<elements.length;++i) {
 			String id = elements[i].getAttribute("id");
-			if ("org.eclipse.platform.introConfig".equals(id)) {
+			if ("org.eclipse.ui.intro.universalConfig".equals(id)) {
 				String pluginRoot = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(), "/").toString().substring("file:".length());
 
 				IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);

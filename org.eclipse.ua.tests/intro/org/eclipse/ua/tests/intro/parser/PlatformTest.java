@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializer;
 import org.eclipse.ua.tests.intro.util.IntroModelSerializerTest;
@@ -50,13 +49,12 @@ public class PlatformTest extends TestCase {
 	 * Test the platform's parsed intro content.
 	 */
 	public void testModel() {
-		final String INTRO_CONFIG_ID = "intro";		
+		final String INTRO_CONFIG_ID = "org.eclipse.ui.intro.universalConfig";		
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
 		IConfigurationElement element = null;
 		for (int i=0;i<elements.length;++i) {
 			if (elements[i] != null) {
-				IExtension ext = elements[i].getDeclaringExtension();
-				if (INTRO_CONFIG_ID.equals(ext.getSimpleIdentifier())) {
+				if (INTRO_CONFIG_ID.equals(elements[i].getAttribute("id"))) {
 					element = elements[i];
 				}
 			}
