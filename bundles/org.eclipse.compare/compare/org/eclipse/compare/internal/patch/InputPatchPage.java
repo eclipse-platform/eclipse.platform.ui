@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - layout tweaks
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -46,6 +48,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -96,6 +99,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 	private Button fPatchFileBrowseButton;
 	private Button fUsePatchFileButton;
 	private Button fUseWorkspaceButton;
+	private Label fWorkspaceSelectLabel;
 	private TreeViewer fTreeViewer;
 	
 	class ActivationListener extends ShellAdapter {
@@ -142,6 +146,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 
+		initializeDialogUnits(parent);
+		
 		buildPatchFileGroup(composite);
 		
 		// see if there are any better options presently selected
@@ -284,6 +290,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 	}
 
 	private void setEnableWorkspacePatch(boolean enable) {
+		fWorkspaceSelectLabel.setEnabled(enable);
 		fTreeViewer.getTree().setEnabled(enable);
 	}
 
@@ -310,14 +317,17 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		fUsePatchFileButton.setText(PatchMessages.InputPatchPage_FileButton_text);
 
 		fPatchFileNameField= new Combo(composite, SWT.BORDER);
-		//gd.horizontalIndent= 8;
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= SIZING_TEXT_FIELD_WIDTH;
 		fPatchFileNameField.setLayoutData(gd);
 
 		fPatchFileBrowseButton= new Button(composite, SWT.PUSH);
 		fPatchFileBrowseButton.setText(PatchMessages.InputPatchPage_ChooseFileButton_text);
-		fPatchFileBrowseButton.setLayoutData(new GridData());
+		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint= convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize= fPatchFileBrowseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint= Math.max(widthHint, minSize.x);
+		fPatchFileBrowseButton.setLayoutData(data);
 
 		//3rd row
 		fUseWorkspaceButton= new Button(composite, SWT.RADIO);
@@ -403,22 +413,17 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 	private void addWorkspaceControls(Composite composite) {
 
-	
 		Composite newComp= new Composite(composite, SWT.NONE);
 		GridLayout layout= new GridLayout(1, false);
-		layout.marginWidth= 15;
-		layout.marginHeight= 0;
-		layout.marginLeft= 5;
+		layout.marginLeft= 16; // align w/ lable of check button
 		newComp.setLayout(layout);
 		newComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 			
-		new Label(newComp, SWT.LEFT).setText(PatchMessages.InputPatchPage_WorkspaceSelectPatch_text);
+		fWorkspaceSelectLabel= new Label(newComp, SWT.LEFT);
+		fWorkspaceSelectLabel.setText(PatchMessages.InputPatchPage_WorkspaceSelectPatch_text);
 		
 		fTreeViewer= new TreeViewer(newComp, SWT.BORDER);
-		final GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.widthHint= 0;
-		gd.heightHint= 0;
-		fTreeViewer.getTree().setLayoutData(gd);
+		fTreeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		fTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		fTreeViewer.setContentProvider(new WorkbenchContentProvider());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - layout tweaks
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -36,6 +37,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -135,13 +137,15 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 			GridLayout layout= new GridLayout();
 			layout.numColumns= 1;
+	        layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	        layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);			
 			composite.setLayout(layout);
 			final GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
 			composite.setLayoutData(data);
 
 			//add controls to composite as necessary
 			Label label= new Label(composite, SWT.LEFT|SWT.WRAP);
-			label.setText(NLS.bind(PatchMessages.Diff_2Args, new String[] {PatchMessages.PreviewPatchPage_SelectProject, rpSelectedProject.getName()}));
+			label.setText(NLS.bind(PatchMessages.PreviewPatchPage_SelectProject, rpSelectedProject.getName()));
 			final GridData data2= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			label.setLayoutData(data2);
 
@@ -159,6 +163,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 			setupListeners();
 
+			Dialog.applyDialogFont(composite);
+			
 			return parent;
 		}
 
@@ -281,6 +287,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 		setControl(composite);
 
+		initializeDialogUnits(parent);
+		
 		buildPatchOptionsGroup(composite);
 
 		Splitter splitter= new Splitter(composite, SWT.VERTICAL);
@@ -296,19 +304,11 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 				return CompareUI.findContentViewer(oldViewer, (ICompareInput) input, this, fCompareConfiguration);
 			}
 		};
-		GridData gd= new GridData();
-		gd.verticalAlignment= GridData.FILL;
-		gd.horizontalAlignment= GridData.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.grabExcessVerticalSpace= true;
-		fHunkViewer.setLayoutData(gd);
+		fHunkViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		//create Match Project button
 		fMatchProject= new Button(composite, SWT.PUSH);
-		gd= new GridData();
-		gd.verticalAlignment= GridData.BEGINNING;
-		gd.horizontalAlignment= GridData.END;
-		fMatchProject.setLayoutData(gd);
+		fMatchProject.setLayoutData(new GridData(SWT.END, GridData.BEGINNING, false, false));
 
 		fMatchProject.setText(PatchMessages.PreviewPatchPage_MatchProjects);
 		fMatchProject.setEnabled(false);
@@ -408,7 +408,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 		Group group= new Group(parent, SWT.NONE);
 		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
-		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0;
+		gl= new GridLayout(); gl.numColumns= 4;
 		group.setLayout(gl);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
 
@@ -470,6 +470,9 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 				}
 			);
 		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		gd.widthHint = Math.max(widthHint, minSize.x);		
 		b.setLayoutData(gd);
 
 		addSpacer(group);
