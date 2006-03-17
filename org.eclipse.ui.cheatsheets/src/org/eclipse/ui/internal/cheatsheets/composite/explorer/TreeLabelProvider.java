@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.views.TaskEditorManager;
@@ -108,7 +109,8 @@ public class TreeLabelProvider extends LabelProvider {
 		    desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
         }
 		if (desc != null) {		
-			images.put(ICompositeCheatSheetTask.NOT_STARTED, desc.createImage());
+			Image baseImage = desc.createImage();
+			images.put(ICompositeCheatSheetTask.NOT_STARTED, baseImage);
 			
 			createImageWithOverlay(ICompositeCheatSheetTask.IN_PROGRESS, 
 		               "$nl$/icons/ovr16/task_in_progress.gif",  //$NON-NLS-1$
@@ -118,10 +120,9 @@ public class TreeLabelProvider extends LabelProvider {
 		               "$nl$/icons/ovr16/task_skipped.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
-			createImageWithOverlay(BLOCKED, 
-		               "$nl$/icons/ovr16/task_blocked.gif",  //$NON-NLS-1$
+			createGrayedImage(BLOCKED, 
 		               images, 
-		               desc);
+		               baseImage);
 			createImageWithOverlay(ICompositeCheatSheetTask.COMPLETED, 
 		               "$nl$/icons/ovr16/task_complete.gif",  //$NON-NLS-1$
 		               images, 
@@ -147,6 +148,14 @@ public class TreeLabelProvider extends LabelProvider {
 		OverlayIcon icon = new OverlayIcon(baseDescriptor, new ImageDescriptor[][] {
 				{}, { descriptor } });
 		images.put(state, icon.createImage());
+	}
+	
+	private void createGrayedImage(int state, ImageSet images, Image baseImage) {
+		images.put(state, createGrayedImage(baseImage));		
+	}
+
+	private Image createGrayedImage(Image image) {
+		return new Image(image.getDevice(), image, SWT.IMAGE_DISABLE);
 	}
 
 	private ImageDescriptor createImageDescriptor(String relativePath) {
