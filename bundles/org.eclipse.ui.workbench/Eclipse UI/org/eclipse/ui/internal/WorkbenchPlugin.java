@@ -711,7 +711,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         // which needs to be done as early as possible, before the workbench
         // accesses any API preferences.
         Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID); 
-        uiBundle.start();
+        if (uiBundle.getState() != Bundle.STARTING)
+        	uiBundle.start();
 		/*
 		 * DO NOT RUN ANY OTHER CODE AFTER THIS LINE.  If you do, then you are
 		 * likely to cause a deadlock in class loader code.  Please see Bug 86450
