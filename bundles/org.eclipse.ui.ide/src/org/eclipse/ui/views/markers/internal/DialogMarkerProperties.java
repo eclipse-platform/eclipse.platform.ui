@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 77332 - [Markers] Add task dialog improvements
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -24,15 +25,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -49,6 +51,8 @@ import org.eclipse.ui.internal.ide.StatusUtil;
  */
 class DialogMarkerProperties extends TrayDialog {
 
+	private static final String DIALOG_SETTINGS_SECTION = "DialogMarkerPropertiesDialogSettings"; //$NON-NLS-1$
+	
     /**
      * The marker being shown, or <code>null</code> for a new marker
      */
@@ -111,6 +115,7 @@ class DialogMarkerProperties extends TrayDialog {
      */
     DialogMarkerProperties(Shell parentShell) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**
@@ -124,14 +129,8 @@ class DialogMarkerProperties extends TrayDialog {
      */
     DialogMarkerProperties(Shell parentShell, String title) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.title = title;
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#create()
-     */
-    public void create() {
-        super.create();
     }
 
     /**
@@ -161,6 +160,8 @@ class DialogMarkerProperties extends TrayDialog {
     /**
      * Sets the resource to use when creating a new marker.
      * If not set, the new marker is created on the workspace root.
+     * 
+     * @param resource the marker's resource
      */
     public void setResource(IResource resource) {
         this.resource = resource;
@@ -222,41 +223,56 @@ class DialogMarkerProperties extends TrayDialog {
             resource = ResourcesPlugin.getWorkspace().getRoot();
         }
 
-        Composite composite = (Composite) super.createDialogArea(parent);
+        Composite comp = (Composite) super.createDialogArea(parent);
+        Composite composite = new Composite(comp, SWT.NULL);
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+		composite.setLayout(layout);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        composite.setLayoutData(gridData);
+    
         initializeDialogUnits(composite);
+
         createDescriptionArea(composite);
         if (marker != null) {
+            createSeperator(composite);
             createCreationTimeArea(composite);
         }
         createAttributesArea(composite);
         if (resource != null) {
-			createResourceArea(composite);
-		}
+            createSeperator(composite);
+            createResourceArea(composite);
+        }
+
         updateDialogFromMarker();
         updateEnablement();
+        
+        Dialog.applyDialogFont(composite);
+        
         return composite;
     }
 
+    /**
+     * Creates a seperator.
+     */
+    protected void createSeperator(Composite parent) {
+		Label seperator = new Label(parent, SWT.NULL);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		seperator.setLayoutData(gridData);
+	}
+    
     /**
      * Method createCreationTimeArea.
      * @param parent
      */
     private void createCreationTimeArea(Composite parent) {
-        String creation = MarkerMessages
-                .propertiesDialog_creationTime_text;
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(MarkerMessages
+                .propertiesDialog_creationTime_text);
 
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(creation);
-        label.setFont(font);
-
-        creationTime = new Label(composite, SWT.NONE);
-        creationTime.setFont(font);
+        creationTime = new Label(parent, SWT.NONE);
     }
 
     /**
@@ -273,25 +289,12 @@ class DialogMarkerProperties extends TrayDialog {
      * Creates the area for the Description field.
      */
     private void createDescriptionArea(Composite parent) {
-        Font font = parent.getFont();
-        
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        
-        Label label = new Label(composite, SWT.NONE);
+        Label label = new Label(parent, SWT.NONE);
         label.setText(MarkerMessages.propertiesDialog_description_text);
-        label.setFont(font);
-        int style = SWT.SINGLE | SWT.BORDER;
-        descriptionText = new Text(composite, style);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        descriptionText = new Text(parent, (SWT.SINGLE | SWT.BORDER));
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.widthHint =  convertHorizontalDLUsToPixels(400);
         descriptionText.setLayoutData(gridData);
-        descriptionText.setFont(font);
 
         descriptionText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -313,40 +316,26 @@ class DialogMarkerProperties extends TrayDialog {
      * Creates the area for the Resource field.
      */
     private void createResourceArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        Label resourceLabel = new Label(composite, SWT.NONE);
+        Label resourceLabel = new Label(parent, SWT.NONE);
         resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
-        resourceLabel.setFont(font);
-        resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP
+        resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         resourceText.setLayoutData(gridData);
-        resourceText.setFont(font);
 
-        Label folderLabel = new Label(composite, SWT.NONE);
+        Label folderLabel = new Label(parent, SWT.NONE);
         folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
-        folderLabel.setFont(font);
-        folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
+        folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
                 | SWT.BORDER);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         folderText.setLayoutData(gridData);
-        folderText.setFont(font);
 
-        Label locationLabel = new Label(composite, SWT.NONE);
+        Label locationLabel = new Label(parent, SWT.NONE);
         locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
-        locationLabel.setFont(font);
-        locationText = new Text(composite, SWT.SINGLE | SWT.WRAP
+        locationText = new Text(parent, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         locationText.setLayoutData(gridData);
-        locationText.setFont(font);
     }
 
     /**
@@ -468,9 +457,7 @@ class DialogMarkerProperties extends TrayDialog {
                         /* (non-Javadoc)
                          * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
                          */
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException,
-                                InterruptedException {
+                        public void run(IProgressMonitor monitor) {
                             try {
 
                                 monitor.beginTask("", 100);//$NON-NLS-1$
@@ -593,4 +580,18 @@ class DialogMarkerProperties extends TrayDialog {
     void setType(String type) {
         this.type = type;
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.2
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+        if (section == null) {
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+        } 
+        return section;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 77332 - [Markers] Add task dialog improvements
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -27,6 +28,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * DialogTaskProperties is the properties dialog
+ * for tasks.
+ *
+ */
 public class DialogTaskProperties extends DialogMarkerProperties {
 
     private static final String PRIORITY_HIGH = 
@@ -63,16 +69,19 @@ public class DialogTaskProperties extends DialogMarkerProperties {
      * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#createAttributesArea(org.eclipse.swt.widgets.Composite)
      */
     protected void createAttributesArea(Composite parent) {
+    	createSeperator(parent);
         super.createAttributesArea(parent);
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setFont(parent.getFont());
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        composite.setLayout(layout);
 
-        Label label = new Label(composite, SWT.NONE);
-        label.setFont(composite.getFont());
+        Label label = new Label(parent, SWT.NONE);
         label.setText(MarkerMessages.propertiesDialog_priority);
+        
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        composite.setLayout(layout);
+        
         priorityCombo = new Combo(composite, SWT.READ_ONLY);
         priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
                 PRIORITY_LOW });
@@ -85,7 +94,6 @@ public class DialogTaskProperties extends DialogMarkerProperties {
                 }
             }
         });
-        priorityCombo.setFont(composite.getFont());
         priorityCombo.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (getMarker() == null) {
@@ -98,7 +106,6 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         });
 
         completedCheckbox = new Button(composite, SWT.CHECK);
-        completedCheckbox.setFont(composite.getFont());
         completedCheckbox.setText(MarkerMessages.propertiesDialog_completed);
         GridData gridData = new GridData();
         gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
@@ -122,9 +129,8 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             Object done = attributes.get(IMarker.DONE);
             return done != null && done instanceof Boolean
                     && ((Boolean) done).booleanValue();
-        } else {
-            return marker.getAttribute(IMarker.DONE, false);
         }
+        return marker.getAttribute(IMarker.DONE, false);
     }
 
     protected int getPriority() {
