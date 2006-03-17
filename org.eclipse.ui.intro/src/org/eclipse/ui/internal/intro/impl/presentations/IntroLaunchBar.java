@@ -364,14 +364,20 @@ public class IntroLaunchBar implements IWindowTrim {
 
 	private void computeColors(Display display) {
 		if (element.getBackground() != null) {
-			RGB r = SharedStyleManager.parseRGB(resolveColor(element.getBackground()));
-			if (r != null)
-				bg = new Color(display, r);
+			String value = resolveColor(element.getBackground());
+			if (value!=null) {
+				RGB r = SharedStyleManager.parseRGB(value);
+				if (r != null)
+					bg = new Color(display, r);
+			}
 		}
 		if (element.getForeground() != null) {
-			RGB r = SharedStyleManager.parseRGB(resolveColor(element.getForeground()));
-			if (r != null)
-				fg = new Color(display, r);
+			String value = resolveColor(element.getForeground());
+			if (value!=null) {
+				RGB r = SharedStyleManager.parseRGB(value);
+				if (r != null)
+					fg = new Color(display, r);
+			}
 		}
 	}
 	

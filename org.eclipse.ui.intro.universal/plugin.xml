@@ -57,8 +57,10 @@
             previewImage="themes/circles/preview.png">
             <property name="workbenchAsRootLink"
             		value="true"/>
+            		<!--
             <property name="launchbarBackground"
             		value="#a1c2cb"/>
+            		-->
             <property name="launchbarOverviewIcon"
             		  value="$theme$graphics/launchbar/overview16.png"/>
             <property name="launchbarFirststepsIcon"
