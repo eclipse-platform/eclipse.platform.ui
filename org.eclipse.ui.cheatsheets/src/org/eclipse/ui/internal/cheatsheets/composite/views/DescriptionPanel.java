@@ -112,14 +112,19 @@ public class DescriptionPanel {
 		} else if (TaskStateUtilities.findBlockedAncestor(task) != null) {
 			isBlocked = true;
 			ICompositeCheatSheetTask blockedAncestor = TaskStateUtilities.findBlockedAncestor(task);
-			String skipParentMsg = NLS.bind(Messages.PARENT_BLOCKED, (new Object[] {blockedAncestor.getName()}));	
-			showBlockingTasks(skipParentMsg , blockedAncestor, buf);
+			String blockingAncestorMsg = NLS.bind(Messages.PARENT_BLOCKED, (new Object[] {blockedAncestor.getName()}));	
+			showBlockingTasks(blockingAncestorMsg , blockedAncestor, buf);
 		} else {
 			startable = task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.NOT_STARTED;
 		}
+		
 		if (startable) {
 			addHyperlink(buf, CompositeCheatSheetPage.START_HREF, START_IMAGE, Messages.COMPOSITE_PAGE_START_TASK);
 		}
+
+		if (task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.COMPLETED ) {
+			addHyperlink(buf, CompositeCheatSheetPage.REVIEW_TAG, REVIEW_IMAGE, Messages.COMPOSITE_PAGE_REVIEW_TASK);
+		}		
 		
 		if (isSkippable) {
 			String skipMessage;
@@ -134,10 +139,6 @@ public class DescriptionPanel {
 		if (!startable && !isBlocked) {
 			showSuccesorTaskLinks(task, buf);
 		}
-		
-		if (task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.COMPLETED ) {
-			addHyperlink(buf, CompositeCheatSheetPage.REVIEW_TAG, REVIEW_IMAGE, Messages.COMPOSITE_PAGE_REVIEW_TASK);
-		}		
 	
 		buf.append("</form>"); //$NON-NLS-1$
 

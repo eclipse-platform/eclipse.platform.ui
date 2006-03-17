@@ -176,10 +176,10 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		    updateSuccessorTasks(state);
 		}
 		this.state = state;	
-		model.notifyStateChanged(this);
 		if (parent != null) {
 		    parent.checkState();
 		}
+		model.notifyStateChanged(this);
 	}
 
 	public URL getInputUrl(String path) throws MalformedURLException {

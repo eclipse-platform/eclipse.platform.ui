@@ -82,19 +82,8 @@ public class TreeLabelProvider extends LabelProvider {
 		}
 		return super.getImage(obj);
 	}
-	
-	private Image getDefaultImage() {
-		if (defaultImage == null) {
-			ImageDescriptor desc = createImageDescriptor("$nl$/icons/obj16/info_task.gif"); //$NON-NLS-1$
-			defaultImage = desc.createImage();	
-		}
-		return defaultImage;
-	}
 
 	public Image lookupImage(String kind, int state, boolean isStartable) {
-		if (kind == null) {
-			return getDefaultImage();
-		}
 		ImageSet images = (ImageSet) imageMap.get(kind);
 		if (images == null) {
 			images = createImages(kind);
@@ -184,4 +173,5 @@ public class TreeLabelProvider extends LabelProvider {
 			defaultImage = null;
 		}
 	}
+	
 }

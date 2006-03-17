@@ -11,7 +11,11 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 /**
@@ -67,6 +71,56 @@ public class TaskStateUtilities {
 			return parent;
 		}
 		return findCompletedAncestor(parent);		
+	}
+	
+	/**
+	 * Determine whether a task can be skipped.
+	 * A task can be skipped if it is skippable, its state is not SKIPPED or completed
+	 * and it has no skipped ot completed ancestors.
+	 */
+	public static boolean isSkipEnabled(ICompositeCheatSheetTask task) {
+		if (!task.isSkippable()) return false;
+		if (task.getState() == ICompositeCheatSheetTask.COMPLETED) return false;
+		if (task.getState() == ICompositeCheatSheetTask.SKIPPED) return false;
+		if (findCompletedAncestor(task) != null) return false;
+		if (findSkippedAncestor(task) != null) return false;
+		return true;
+	}
+
+	/**
+	 * Determine whether a task can be started
+	 * Only editable tasks which are not blocked and whose ancestors
+	 * are not completed can be started
+	 */
+	public static boolean isStartEnabled(ICompositeCheatSheetTask task) {
+		if (!(task instanceof IEditableTask)) return false;
+		if (task.getState() != ICompositeCheatSheetTask.NOT_STARTED) return false;
+	    if (findSkippedAncestor(task) != null) return false;
+	    if (findCompletedAncestor(task) != null) return false;
+	    if (!task.requiredTasksCompleted()) return false;
+	    if (findBlockedAncestor(task) != null) return false;
+        return true;
+	}
+	
+	/**
+	 * Determine which tasks need to be restarted if this tasks is restarted
+	 */
+	public static AbstractTask[] getRestartTasks(ICompositeCheatSheetTask task) {
+		List restartables = new ArrayList();
+		addRestartableTasks(restartables, task);
+		return (AbstractTask[])restartables.toArray(new AbstractTask[restartables.size()]);
+	}
+
+	private static void addRestartableTasks(List restartables, ICompositeCheatSheetTask task) {
+		if (task instanceof IEditableTask && task.getState() != ICompositeCheatSheetTask.NOT_STARTED) {
+			restartables.add(task);
+		} else if (task.getState() == ICompositeCheatSheetTask.SKIPPED){
+			restartables.add(task);
+		}
+		ICompositeCheatSheetTask[] children = task.getSubtasks();
+		for (int i = 0; i < children.length; i++) {
+			addRestartableTasks(restartables, children[i]);
+		}
 	}
 
 }

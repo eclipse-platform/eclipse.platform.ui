@@ -120,6 +120,10 @@ public final class Messages extends NLS {
 	public static String COMPOSITE_PAGE_START_TASK;
 	public static String COMPOSITE_PAGE_SKIP_TASK;
 	public static String COMPOSITE_PAGE_SKIP_TASK_GROUP;
+	public static String COMPOSITE_MENU_SKIP;
+	public static String COMPOSITE_MENU_START;
+	public static String COMPOSITE_MENU_REVIEW;
+	public static String COMPOSITE_MENU_RESET;
 	public static String COMPOSITE_PAGE_BLOCKED;
 	public static String COMPOSITE_PAGE_TASK_NOT_COMPLETE;
 	public static String EXPLORER_PULLDOWN_MENU;
@@ -138,6 +142,8 @@ public final class Messages extends NLS {
 	public static String PARENT_SKIPPED;
 	public static String PARENT_COMPLETED;
 	public static String PARENT_BLOCKED;
+	public static String COMPOSITE_RESET_TASK_DIALOG_TITLE;
+	public static String COMPOSITE_RESET_TASK_DIALOG_MESSAGE;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

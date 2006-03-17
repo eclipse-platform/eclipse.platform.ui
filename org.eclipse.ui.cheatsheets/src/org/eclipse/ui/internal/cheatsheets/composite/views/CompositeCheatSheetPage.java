@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.ManagedForm;
@@ -46,6 +44,8 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
+import org.eclipse.ui.internal.cheatsheets.composite.explorer.RestartAllAction;
+import org.eclipse.ui.internal.cheatsheets.composite.explorer.TreeExplorerMenu;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
@@ -67,7 +67,7 @@ import org.eclipse.ui.part.PageBook;
 public class CompositeCheatSheetPage extends Page implements ISelectionChangedListener, IMenuContributor {
 
 	public static final String REVIEW_TAG = "__review__"; //$NON-NLS-1$
-	public static final String GOTO_TASK_TAG = "Goto:"; //$NON-NLS-1$
+	public static final String GOTO_TASK_TAG = "__goto__"; //$NON-NLS-1$
 	public static final String START_HREF = "__start__"; //$NON-NLS-1$
 	public static final String SKIP_HREF = "__skip__"; //$NON-NLS-1$
 	
@@ -248,6 +248,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		if (explorer != null) {
 			explorer.createControl(explorerContainer, mform.getToolkit());
 			explorer.getControl().setData(ICompositeCheatsheetTags.EXPLORER, explorer);
+			new TreeExplorerMenu(explorer);
 		}
 		return explorer;
 	}
@@ -263,22 +264,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 
 	/*
 	 * Update can be called as a result of a selection  change or a state change
+	 * If this is not the selected task wait till it is selected to display it
 	 */
 	private void updateTask(ICompositeCheatSheetTask task) {
-		if (task==null) return;
+		if (task==null || task != selectedTask) return;
 		if (task.getState() == ICompositeCheatSheetTask.IN_PROGRESS && 
 				task instanceof IEditableTask) {
-		    showTaskEditor((EditableTask) task);
+		    showEditor((EditableTask) task);
 		} else {
 			showDescription(task);
-		}
-	}
-
-	private void showTaskEditor(EditableTask task) {
-		startIfSelected(task, false);
-		TaskEditor editor = getTaskEditor(task, false);
-		if (editor != null) {
-		    setCurrentEditor(editor.getControl().getParent());
 		}
 	}
 
@@ -306,13 +300,24 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	/*
 	 * Ensure that if this task is visible and in a runnable state that it has been started
 	 */
-	private void startIfSelected(ICompositeCheatSheetTask task, boolean initialize) {
+	private void showEditor(EditableTask task) {
 		if (task == selectedTask) {
-			TaskEditor editor = getTaskEditor(task, initialize);
-			if (editor!=null) {
+			TaskEditor editor = getTaskEditor(task);
+			if (editor!= null) {
+				if (!task.isEditorInitialized()) {
+					task.setInput(model.getTaskMemento(task.getId()));
+				}
 				setCurrentEditor(editor.getControl());
 			}
 		}
+	}
+	
+	private void reviewTask(EditableTask task) {
+		showEditor(task);
+		//TaskEditor editor = getTaskEditor(task);
+		//if (editor != null) {
+		    //setCurrentEditor(editor.getControl());
+		//}
 	}
 	
 	private void setCurrentEditor(Control c) {
@@ -331,7 +336,6 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				if (data instanceof EditableTask) {
 				    EditableTask task = (EditableTask)data;
 				    task.setStarted();
-				    startIfSelected(task, true);
 				}
 			}     
             if (ref.equals(SKIP_HREF)) {
@@ -344,7 +348,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			if (ref.equals(REVIEW_TAG)) {
 				Object data = descriptionPanel.getControl().getData(ICompositeCheatsheetTags.TASK);
 				if (data instanceof EditableTask) {
-				    showTaskEditor((EditableTask) data);
+				    reviewTask((EditableTask) data);
 				}
 			}
 			if (ref.startsWith(GOTO_TASK_TAG)) {
@@ -360,24 +364,16 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	/*
 	 * Get the task editor for this task. If no editor exists create one
 	 */
-	private TaskEditor getTaskEditor(ICompositeCheatSheetTask task, boolean initialize) {
-		if (task instanceof EditableTask) {
-			EditableTask editable = (EditableTask)task;
-			if (editable.getEditor() == null) {
-                // Create a new editor using the extension point data
-				TaskEditor editor = TaskEditorManager.getInstance().getEditor(task.getKind());
-				if (editor != null) {
-					editor.createControl(taskEditorContainer, mform.getToolkit());
-					editor.setInput(editable, model.getTaskMemento(task.getId()));
-					editable.setEditor(editor);
-				} else if (initialize) {
-					editor.setInput(editable, model.getTaskMemento(task.getId()));
-				}
-			}
-			return editable.getEditor();
+	private TaskEditor getTaskEditor(EditableTask editable) {
+		if (editable.getEditor() == null) {
+            // Create a new editor using the extension point data
+			TaskEditor editor = TaskEditorManager.getInstance().getEditor(editable.getKind());
+			if (editor != null) {
+				editor.createControl(taskEditorContainer, mform.getToolkit());
+				editable.setEditor(editor);
+			} 
 		}
-		
-		return null;
+		return editable.getEditor();	
 	}
 
 	public Control getControl() {
@@ -408,10 +404,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		item.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (model != null) {
-					if (MessageDialog.openConfirm(
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-							Messages.COMPOSITE_RESTART_DIALOG_TITLE, 
-							Messages.COMPOSITE_RESTART_CONFIRM_MESSAGE)) {
+					if (RestartAllAction.confirmRestart()) {
 					    restart(null);	
 				    }
 				}

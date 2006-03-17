@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,10 +114,11 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	/*
 	 * Reset the state of a task and it's children
 	 */
-	private void resetTask(ICompositeCheatSheetTask task) {
+	public void resetTask(ICompositeCheatSheetTask task) {
 		if (task instanceof EditableTask) {
 		    EditableTask editable = (EditableTask)task;
-			editable.setState(ICompositeCheatSheetTask.NOT_STARTED);
+			editable.reset();
+			saveHelper.clearTaskMemento(task.getId());
 		} else if (task instanceof TaskGroup) { 
 			TaskGroup group = (TaskGroup)task;
 		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();

@@ -193,5 +193,11 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 	public void clearTaskMementos() {
 		taskMementoMap = null;
 	}
+	
+	public void clearTaskMemento(String id) {
+		if (taskMementoMap != null) {
+			taskMementoMap.remove(id);
+		}
+	}
 
 }
