@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids  <sdavids@gmx.de> - Fix for Bug 132156 [Dialogs] Progress Preferences dialog problems
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -27,8 +29,7 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
  */
 public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 
-	BooleanFieldEditor verboseEditor;
-
+	private BooleanFieldEditor verboseEditor;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -52,7 +53,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite top = (Composite) super.createDialogArea(parent);
 		
-		Composite editArea = new Composite(top,SWT.NONE);
+		Composite editArea = new Composite(top, SWT.NONE);
 		editArea.setLayout(new GridLayout());
 		editArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		
@@ -61,9 +62,11 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		verboseEditor.setPreferenceStore(PrefUtil.getAPIPreferenceStore());
 		verboseEditor.load();
 		
+		Dialog.applyDialogFont(top);
 		
 		return top;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -71,7 +74,6 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		verboseEditor.store();
 		super.okPressed();
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.preferences.ViewSettingsDialog#performDefaults()
@@ -79,7 +81,4 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	protected void performDefaults() {
 		verboseEditor.loadDefault();
 	}
-
-	
-
 }
