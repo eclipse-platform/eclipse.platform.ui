@@ -1,10 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.scheduler;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -12,16 +20,12 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.ui.IStartup;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.eclipse.update.configurator.IPlatformConfiguration;
-import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.operations.OperationFactory;
 import org.eclipse.update.operations.IOperation;
 import org.eclipse.update.operations.OperationsManager;

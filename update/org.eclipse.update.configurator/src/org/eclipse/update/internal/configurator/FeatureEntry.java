@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ public class FeatureEntry
 			IConfigurationConstants,
 			IBundleGroup,
 			IBundleGroupConstants,
-			IProduct,
 			IProductConstants {
 	private String id;
 	private String version;
@@ -201,7 +200,7 @@ public class FeatureEntry
 		for (int i=0; i<plugins.size(); i++) {
 			PluginEntry plugin = (PluginEntry)plugins.get(i);
 			// get the highest version for the plugin
-			Bundle bundle = Platform.getBundle(plugin.getPluginIdentifier());
+			Bundle bundle = Utils.getBundle(plugin.getPluginIdentifier());
 			if (bundle != null)
 				bundles.add(bundle);
 		}
@@ -354,11 +353,11 @@ public class FeatureEntry
 	}
 	
 	public Bundle getDefiningBundle() {
-		return Platform.getBundle(getFeaturePluginIdentifier());
+		return Utils.getBundle(getFeaturePluginIdentifier());
 	}
 	
 	public boolean hasBranding() {
         String bundleId = getFeaturePluginIdentifier();
-		return bundleId != null && Platform.getBundle(bundleId) != null;
+		return bundleId != null && Utils.getBundle(bundleId) != null;
 	}
 }

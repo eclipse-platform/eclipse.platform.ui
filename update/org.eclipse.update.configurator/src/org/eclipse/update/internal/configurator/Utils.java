@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,26 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.*;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.environment.EnvironmentInfo;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.State;
+import org.osgi.framework.*;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class Utils {
+	private static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
+	private static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
+	private static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
+	private static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
+	private static final String PI_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	// os
 	public static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$	
 	static FrameworkLog log;
-	// Install location	
-	private static URL installURL;
+	private static ServiceTracker bundleTracker;
 
 	public static void debug(String s) {
 		if (ConfigurationActivator.DEBUG)
@@ -97,7 +108,7 @@ public class Utils {
 	public static URL asPlatformURL(URL url) {
 		try {
 			URL platformURL = new URL("platform:/base/"); //$NON-NLS-1$  // try using platform-relative URL
-			URL resolvedPlatformURL = Platform.asLocalURL(platformURL);
+			URL resolvedPlatformURL = FileLocator.toFileURL(platformURL);
 			// TODO workaround bug in platform url resolution
 			if (resolvedPlatformURL.getProtocol().equals("file")) //$NON-NLS-1$
 				resolvedPlatformURL = new File(resolvedPlatformURL.getFile()).toURL();
@@ -105,25 +116,141 @@ public class Utils {
 			String urlAsString = url.toExternalForm();
 			if (urlAsString.startsWith(platformURLAsString))
 				return new URL(platformURL.toExternalForm() + urlAsString.substring(platformURLAsString.length()) );
-			else
-				return url;
+			return url;
 		} catch (Exception e) {
 			return url;
 		}
 	}
-	
+		
+	/**
+	 * Close the services that we were listening to.
+	 */
+	/*package*/ static void shutdown() {
+		if (bundleTracker != null)
+			bundleTracker.close();
+	}
+
+	/**
+	 * Return a boolean value indicating whether or not we consider the
+	 * platform to be running.
+	 */
+	public static boolean isRunning() {
+		Bundle bundle = getBundle(PI_OSGI);
+		return  bundle == null ? false : bundle.getState() == Bundle.ACTIVE;
+	}
 
 	/**
 	 * 
 	 */
 	public static boolean isValidEnvironment(String os, String ws, String arch, String nl) {
-		if (os!=null && !isMatching(os, Platform.getOS())) return false;
-		if (ws!=null && !isMatching(ws, Platform.getWS())) return false;
-		if (arch!=null && !isMatching(arch, Platform.getOSArch())) return false;
-		if (nl!=null && !isMatchingLocale(nl, Platform.getNL())) return false;
+		if (os!=null && !isMatching(os, getOS())) return false;
+		if (ws!=null && !isMatching(ws, getWS())) return false;
+		if (arch!=null && !isMatching(arch, getArch())) return false;
+		if (nl!=null && !isMatchingLocale(nl, getNL())) return false;
 		return true;
 	}
+	
+	/**
+	 * Return the current operating system value.
+	 * 
+	 * @see EnvironmentInfo#getOS()
+	 */
+	public static String getOS() {
+		return getContext().getProperty(PROP_OS);
+	}
 
+	/**
+	 * Return the current windowing system value.
+	 * 
+	 * @see EnvironmentInfo#getWS()
+	 */
+	public static String getWS() {
+		return getContext().getProperty(PROP_WS);
+	}
+
+	/**
+	 * Return the current system architecture value.
+	 * 
+	 * @see EnvironmentInfo#getOSArch()
+	 */
+	public static String getArch() {
+		return getContext().getProperty(PROP_ARCH);
+	}
+
+	/**
+	 * Return the current NL value.
+	 * 
+	 * @see EnvironmentInfo#getNL()
+	 */
+	public static String getNL() {
+		return getContext().getProperty(PROP_NL);
+	}
+	
+	/**
+	 * Returns a number that changes whenever the set of installed plug-ins
+	 * changes. This can be used for invalidating caches that are based on 
+	 * the set of currently installed plug-ins. (e.g. extensions)
+	 * 
+	 * @see PlatformAdmin#getState()
+	 * @see State#getTimeStamp()
+	 */
+	public static long getStateStamp() {
+		ServiceReference platformAdminReference = getContext().getServiceReference(PlatformAdmin.class.getName());
+		if (platformAdminReference == null)
+			return -1;
+		PlatformAdmin admin = (PlatformAdmin) getContext().getService(platformAdminReference);
+		return admin == null ? -1 : admin.getState(false).getTimeStamp();
+	}
+
+	/**
+	 * Return the resolved bundle with the specified symbolic name.
+	 * 
+	 * @see PackageAdmin#getBundles(String, String)
+	 */
+	public static Bundle getBundle(String symbolicName) {
+		if (bundleTracker == null) {
+			bundleTracker = new ServiceTracker(getContext(), PackageAdmin.class.getName(), null);
+			bundleTracker.open();
+		}
+		PackageAdmin admin = (PackageAdmin) bundleTracker.getService();
+		if (admin == null)
+			return null;
+		Bundle[] bundles = admin.getBundles(symbolicName, null);
+		if (bundles == null)
+			return null;
+		//Return the first bundle that is not installed or uninstalled
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundles[i];
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * Return the bundle context for this bundle.
+	 */
+	private static BundleContext getContext() {
+		return ConfigurationActivator.getBundleContext();
+	}
+
+	/**
+	 * Return the configuration location.
+	 * 
+	 * @see Location
+	 */
+	public static Location getConfigurationLocation() {
+		Filter filter = null;
+		try {
+			filter = getContext().createFilter(Location.CONFIGURATION_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		ServiceTracker configurationLocation = new ServiceTracker(getContext(), filter, null);
+		configurationLocation.open();
+		return (Location) configurationLocation.getService();
+	}
+	
 	/**
 	 * 
 	 */	
@@ -160,7 +287,7 @@ public class Utils {
 	}
 	
 	public static Locale getDefaultLocale() {
-		String nl = Platform.getNL();
+		String nl = getNL();
 		// sanity test
 		if (nl == null)
 			return Locale.getDefault();
@@ -365,10 +492,29 @@ public class Utils {
 		return url;
 	}	
 
+	/**
+	 * Return the install location.
+	 * 
+	 * @see Location
+	 */
 	public static URL getInstallURL() {
-		if (installURL == null)
-			installURL = Platform.getInstallLocation().getURL();
-		return installURL;
+		Filter filter = null;
+		try {
+			filter = getContext().createFilter(Location.INSTALL_FILTER);
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		ServiceTracker instanceLocation = new ServiceTracker(getContext(), filter, null);
+		instanceLocation.open();
+
+		Location location = (Location) instanceLocation.getService();
+
+		// it is pretty much impossible for the install location to be null.  If it is, the
+		// system is in a bad way so throw and exception and get the heck outta here.
+		if (location == null)
+			throw new IllegalStateException("The installation location must not be null"); //$NON-NLS-1$
+
+		return  location.getURL();
 	}
 
 }

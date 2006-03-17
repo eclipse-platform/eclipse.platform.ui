@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
+	private ServiceRegistration bundleGroupProviderSR;
 	private PlatformConfiguration configuration;
 	
 	// Location of the configuration data
@@ -69,26 +70,29 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		//Short cut, if the configuration has not changed
 		if (canRunWithCachedData()) {		
 			Utils.debug("Running with cached data"); //$NON-NLS-1$
-			Platform.registerBundleGroupProvider(this);
+			registerBundleGroupProvider();
 			return;
 		}
 
 		Utils.debug("Starting update configurator..."); //$NON-NLS-1$
 
 		installBundles();
-		Platform.registerBundleGroupProvider(this);
+		registerBundleGroupProvider();
 	}
 
-
+	private void registerBundleGroupProvider() {
+		bundleGroupProviderSR = getBundleContext().registerService(IBundleGroupProvider.class.getName(), this, null);
+	}
+	
 	private void initialize() throws Exception {
 		// TODO this test is not really needed any more than any plugin has 
 		// to test to see if the runtime is running.  It was there from earlier days
 		// where startup was much more disjoint.  Some day that level of decoupling
 		// will return but for now...
-		if (!Platform.isRunning())
+		if (!Utils.isRunning())
 			throw new Exception(Messages.ConfigurationActivator_initialize); 
 		
-		configLocation = Platform.getConfigurationLocation();
+		configLocation = Utils.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
 		if (!configLocation.isReadOnly()) {
 			try {
@@ -133,6 +137,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			e.printStackTrace();
 		}
 		configurationFactorySR.unregister();
+		if (bundleGroupProviderSR != null)
+			bundleGroupProviderSR.unregister();
+		Utils.shutdown();
 	}
 
 	public boolean installBundles() {
@@ -382,7 +389,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			
 			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
-			lastStateTimeStamp = Platform.getStateStamp();
+			lastStateTimeStamp = Utils.getStateStamp();
 			stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
 			stream.writeLong(lastStateTimeStamp);
@@ -417,7 +424,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private boolean canRunWithCachedData() {
 		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
 				lastTimeStamp==configuration.getChangeStamp() &&
-				lastStateTimeStamp==Platform.getStateStamp();
+				lastStateTimeStamp==Utils.getStateStamp();
 	}
 				
 	public static BundleContext getBundleContext() {

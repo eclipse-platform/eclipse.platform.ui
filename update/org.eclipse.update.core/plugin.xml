@@ -72,5 +72,13 @@
          </run>
       </application>
    </extension>
+	<extension
+			id="updateCoreProductProvider"
+			name="%productProviderName"
+			point="org.eclipse.core.runtime.products">
+		<provider> 
+			<run class="org.eclipse.update.internal.core.ProductProvider"/> 
+		</provider> 
+	</extension>
 
 </plugin>

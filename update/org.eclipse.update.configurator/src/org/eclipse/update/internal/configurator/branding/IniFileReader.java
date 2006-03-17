@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.internal.configurator.Messages;
+import org.eclipse.update.internal.configurator.Utils;
 import org.osgi.framework.*;
 
 /**
@@ -79,7 +80,7 @@ public class IniFileReader {
 			return OK_STATUS;
 			
 		// attempt to locate the corresponding plugin
-		bundle = Platform.getBundle(pluginId);
+		bundle = Utils.getBundle(pluginId);
 		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED || bundle.getState() == Bundle.INSTALLED) {
 			bundle = null; // make it null for other test down the road
 			String message = NLS.bind(Messages.IniFileReader_MissingDesc, (new String[] { featureId }));
@@ -90,9 +91,9 @@ public class IniFileReader {
 		URL iniURL = null;
 		IOException ioe = null;
 		try {
-			iniURL = Platform.find(bundle, new Path(NLS_TAG).append(iniFilename));
+			iniURL = FileLocator.find(bundle, new Path(NLS_TAG).append(iniFilename), null);
 			if (iniURL != null)
-				iniURL = Platform.resolve(iniURL);
+				iniURL = FileLocator.resolve(iniURL);
 		} catch (IOException e) {
 			ioe = e;
 		}
@@ -105,9 +106,9 @@ public class IniFileReader {
 		URL propertiesURL = null;
 		if (propertiesFilename != null & propertiesFilename.length() > 0) {
 			try {
-				propertiesURL = Platform.find(bundle, new Path(NLS_TAG).append(propertiesFilename));
+				propertiesURL = FileLocator.find(bundle, new Path(NLS_TAG).append(propertiesFilename), null);
 				if (propertiesURL != null)
-					propertiesURL = Platform.resolve(propertiesURL);
+					propertiesURL = FileLocator.resolve(propertiesURL);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.IniFileReader_OpenPropError, (new String[] { propertiesFilename }));
 				return new Status(IStatus.ERROR, PID, 0, message, e);
@@ -118,9 +119,9 @@ public class IniFileReader {
 		URL mappingsURL = null;
 		if (mappingsFilename != null && mappingsFilename.length() > 0) {
 			try {
-				mappingsURL = Platform.find(bundle, new Path(NLS_TAG).append(mappingsFilename));
+				mappingsURL = FileLocator.find(bundle, new Path(NLS_TAG).append(mappingsFilename), null);
 				if (mappingsURL != null)
-					mappingsURL = Platform.resolve(mappingsURL);
+					mappingsURL = FileLocator.resolve(mappingsURL);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.IniFileReader_OpenMapError, (new String[] { mappingsFilename }));
 				return new Status(IStatus.ERROR, PID, 0, message, e);
@@ -161,7 +162,7 @@ public class IniFileReader {
 		if (fileName != null) {
 			if (bundle == null)
 				return null;
-			url = Platform.find(bundle, new Path(fileName));
+			url = FileLocator.find(bundle, new Path(fileName), null);
 		}
 		return url;
 	}
@@ -187,7 +188,7 @@ public class IniFileReader {
 		ArrayList array = new ArrayList(10);
 		while (tokens.hasMoreTokens()) {
 			String str = tokens.nextToken().trim();
-			array.add(Platform.find(bundle, new Path(str)));
+			array.add(FileLocator.find(bundle, new Path(str), null));
 		}
 
 		URL[] urls = new URL[array.size()];
