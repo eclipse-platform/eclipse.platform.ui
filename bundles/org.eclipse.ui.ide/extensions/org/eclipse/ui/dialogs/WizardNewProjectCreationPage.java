@@ -180,13 +180,12 @@ public class WizardNewProjectCreationPage extends WizardPage {
     }
     
     /**
-     * Returns the current project location path as entered by 
-     * the user, or its anticipated initial value.
-     * Note that if the default has been returned the path
-     * in a project description used to create a project
-     * should not be set.
+    /**
+     * Returns the current project location URI as entered by 
+     * the user, or <code>null</code> if a valid project location
+     * has not been entered.
      *
-     * @return the project location path or its anticipated initial value.
+     * @return the project location URI, or <code>null</code>
      * @since 3.2
      */
     public URI getLocationURI() {
