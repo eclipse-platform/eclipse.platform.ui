@@ -436,19 +436,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fProgressMonitorCancelButton.setFont(font);
 		monitorComposite.setVisible(false);
 
-		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 0;
-		layout.makeColumnsEqualWidth = true;
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setFont(composite.getFont());
-		createButtonsForButtonBar(buttonComposite);
+		/*
+		 * Create the rest of the button bar, but tell it not to
+		 * create a help button (we've already created it).
+		 */
+		boolean helpAvailable = isHelpAvailable();
+		setHelpAvailable(false);
+		super.createButtonBar(composite);
+		setHelpAvailable(helpAvailable);
 		return composite;
 	}
 
