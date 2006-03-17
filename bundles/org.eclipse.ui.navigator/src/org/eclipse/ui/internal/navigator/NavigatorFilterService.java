@@ -33,7 +33,7 @@ import org.eclipse.ui.navigator.INavigatorFilterService;
  * @since 3.2
  * 
  */
-public class NavigatorFilterService implements INavigatorFilterService  {
+public class NavigatorFilterService implements INavigatorFilterService {
 
 	private static final ViewerFilter[] NO_FILTERS = new ViewerFilter[0];
 
@@ -54,21 +54,20 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 
 	/**
 	 * @param aContentService
-	 *            The corresponding content service 
+	 *            The corresponding content service
 	 */
 	public NavigatorFilterService(NavigatorContentService aContentService) {
 		contentService = aContentService;
-		restoreFilterActivation();  
+		restoreFilterActivation();
 	}
- 
+
 	private synchronized void restoreFilterActivation() {
 
 		try {
 			Preferences preferences = NavigatorPlugin.getDefault()
 					.getPluginPreferences();
 
-			
-			if(preferences.contains(getFilterActivationPreferenceKey())) {  
+			if (preferences.contains(getFilterActivationPreferenceKey())) {
 				String activatedFiltersPreferenceValue = preferences
 						.getString(getFilterActivationPreferenceKey());
 				String[] activeFilterIds = activatedFiltersPreferenceValue
@@ -77,10 +76,10 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 					activeFilters.add(activeFilterIds[i]);
 				}
 
-			} else { 
+			} else {
 				ICommonFilterDescriptor[] visibleFilterDescriptors = getVisibleFilterDescriptors();
 				for (int i = 0; i < visibleFilterDescriptors.length; i++) {
-					if(visibleFilterDescriptors[i].isActiveByDefault()) {
+					if (visibleFilterDescriptors[i].isActiveByDefault()) {
 						activeFilters.add(visibleFilterDescriptors[i].getId());
 					}
 				}
@@ -90,7 +89,7 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
 
-	} 
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -146,7 +145,7 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 		for (int i = 0; i < descriptors.length; i++) {
 			if (!toReturnOnlyActiveFilters || isActive(descriptors[i].getId())) {
 				instance = getViewerFilter(descriptors[i]);
-				if(instance != null) {
+				if (instance != null) {
 					filters.add(instance);
 				}
 			}
@@ -168,7 +167,7 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 	 * @return A non-null ViewerFilter from the extension (or
 	 *         {@link SkeletonViewerFilter#INSTANCE}).
 	 */
-	private ViewerFilter getViewerFilter(CommonFilterDescriptor descriptor) {
+	public ViewerFilter getViewerFilter(ICommonFilterDescriptor descriptor) {
 		ViewerFilter filter = (ViewerFilter) declaredViewerFilters
 				.get(descriptor);
 		if (filter != null) {
@@ -177,8 +176,9 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 		synchronized (declaredViewerFilters) {
 			filter = (ViewerFilter) declaredViewerFilters.get(descriptor);
 			if (filter == null) {
-				declaredViewerFilters
-						.put(descriptor, (filter = descriptor.createFilter()));
+				declaredViewerFilters.put(descriptor,
+						(filter = ((CommonFilterDescriptor) descriptor)
+								.createFilter()));
 			}
 		}
 		return filter;
@@ -216,8 +216,19 @@ public class NavigatorFilterService implements INavigatorFilterService  {
 			activeFilters.clear();
 			activeFilters.addAll(Arrays.asList(theFilterIds));
 		}
-
 	}
 
- 
+	/**
+	 * Activate the given array without disabling all other filters.
+	 * 
+	 * @param theFilterIds
+	 *            The filter ids to activate.
+	 */
+	public void addActiveFilterIds(String[] theFilterIds) {
+		Assert.isNotNull(theFilterIds);
+		synchronized (activeFilters) {
+			activeFilters.addAll(Arrays.asList(theFilterIds));
+		}
+	}
+
 }

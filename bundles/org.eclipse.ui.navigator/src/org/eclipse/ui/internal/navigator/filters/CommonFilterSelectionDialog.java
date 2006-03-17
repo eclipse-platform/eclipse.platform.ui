@@ -221,7 +221,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(
 				commonViewer, contentExtensionIdsToActivate);
 		UpdateActiveFiltersOperation updateFilters = new UpdateActiveFiltersOperation(
-				commonViewer, filterIdsToActivate);
+				commonViewer, filterIdsToActivate, true);
 
 		updateExtensions.execute(null, null);
 		updateFilters.execute(null, null);

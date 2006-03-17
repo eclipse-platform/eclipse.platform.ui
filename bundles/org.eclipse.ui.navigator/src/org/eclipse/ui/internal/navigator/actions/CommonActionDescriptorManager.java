@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -154,6 +155,7 @@ public class CommonActionDescriptorManager {
 	 */
 	public CommonActionProviderDescriptor[] findRelevantActionDescriptors(
 			INavigatorContentService aContentService, ActionContext aContext) {
+		Assert.isNotNull(aContext);
 		IStructuredSelection structuredSelection = null;
 		if (aContext.getSelection() instanceof IStructuredSelection) {
 			structuredSelection = (IStructuredSelection) aContext

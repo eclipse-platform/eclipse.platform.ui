@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
@@ -111,6 +112,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				openAction.run();
 			}
 		});
+		
+		actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));
+		actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
+import org.eclipse.ui.internal.navigator.NavigatorFilterService;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -47,6 +48,8 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 
 	private final INavigatorContentService contentService;
 
+	private boolean disableTheComplement;
+
 	/**
 	 * Create an operation to activate extensions and refresh the viewer.
 	 * 
@@ -58,9 +61,10 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 	 *            in the <i>active</i> state after this operation executes. The
 	 *            complement of this set will likewise be in the <i>inactive</i>
 	 *            state after this operation executes.
+	 *            @param toDisableTheComplement True indicates that all filters not in the set should be made inactive.
 	 */
 	public UpdateActiveFiltersOperation(CommonViewer aCommonViewer,
-			String[] theActiveFilterIds) {
+			String[] theActiveFilterIds, boolean toDisableTheComplement) {
 		super(
 				CommonNavigatorMessages.UpdateFiltersOperation_Update_CommonViewer_Filter_);
 		Assert.isNotNull(theActiveFilterIds);
@@ -68,6 +72,7 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 		commonViewer = aCommonViewer;
 		contentService = commonViewer.getNavigatorContentService();
 		filterIdsToActivate = theActiveFilterIds;
+		disableTheComplement = toDisableTheComplement;
 
 	}
 
@@ -90,39 +95,66 @@ public class UpdateActiveFiltersOperation extends AbstractOperation {
 
 			INavigatorFilterService filterService = contentService
 					.getFilterService();
+
+			if(disableTheComplement) {
 			
-			ICommonFilterDescriptor[] visibleFilterDescriptors = filterService.getVisibleFilterDescriptors();
-			  
-			int indexofFilterIdToBeActivated;
+				ICommonFilterDescriptor[] visibleFilterDescriptors = filterService
+						.getVisibleFilterDescriptors();
 
-			/* is there a delta? */
-			for (int i = 0; i < visibleFilterDescriptors.length && !updateFilterActivation; i++) {
-				indexofFilterIdToBeActivated = Arrays.binarySearch(filterIdsToActivate, visibleFilterDescriptors[i].getId());
-				
-				/* Either we have a filter that should be active that isn't XOR 
-				 * a filter that shouldn't be active that is currently
-				 */
-				if(indexofFilterIdToBeActivated >= 0 ^ filterService.isActive(visibleFilterDescriptors[i].getId())) {
-					updateFilterActivation = true;
-				} 
-			} 
-			 
-			/* If so, update */
-			if (updateFilterActivation) {
+				int indexofFilterIdToBeActivated;
 
-				filterService.setActiveFilterIds(filterIdsToActivate);
-				filterService.persistFilterActivationState();
+				/* is there a delta? */
+				for (int i = 0; i < visibleFilterDescriptors.length
+						&& !updateFilterActivation; i++) {
+					indexofFilterIdToBeActivated = Arrays.binarySearch(
+							filterIdsToActivate, visibleFilterDescriptors[i]
+									.getId());
 
-				commonViewer.resetFilters();
-
-				ViewerFilter[] visibleFilters = filterService
-						.getVisibleFilters(true);
-				for (int i = 0; i < visibleFilters.length; i++) {
-					commonViewer.addFilter(visibleFilters[i]);
+					/*
+					 * Either we have a filter that should be active that isn't
+					 * XOR a filter that shouldn't be active that is currently
+					 */
+					if (indexofFilterIdToBeActivated >= 0
+							^ filterService
+									.isActive(visibleFilterDescriptors[i]
+											.getId())) {
+						updateFilterActivation = true;
+					}
 				}
 
-				// the action providers may no longer be enabled, so we reset
-				// the selection.
+				/* If so, update */
+				if (updateFilterActivation) {
+
+					filterService.setActiveFilterIds(filterIdsToActivate);
+					filterService.persistFilterActivationState();
+
+					commonViewer.resetFilters();
+
+					ViewerFilter[] visibleFilters = filterService
+							.getVisibleFilters(true);
+					for (int i = 0; i < visibleFilters.length; i++) {
+						commonViewer.addFilter(visibleFilters[i]);
+					}
+
+					// the action providers may no longer be enabled, so we
+					// reset the selection.
+					commonViewer.setSelection(StructuredSelection.EMPTY);
+				}
+			} else {
+				NavigatorFilterService internalFilterService = (NavigatorFilterService)filterService;
+				
+				internalFilterService.addActiveFilterIds(filterIdsToActivate);
+
+				ICommonFilterDescriptor[] visibleDescriptors = filterService
+						.getVisibleFilterDescriptors();
+				for (int i = 0; i < visibleDescriptors.length; i++) {
+					if(Arrays.binarySearch(filterIdsToActivate, visibleDescriptors[i].getId()) >= 0 ) {
+						commonViewer.addFilter(internalFilterService.getViewerFilter(visibleDescriptors[i]));
+					}
+				}
+
+				// the action providers may no longer be enabled, so we
+				// reset the selection.
 				commonViewer.setSelection(StructuredSelection.EMPTY);
 			}
 

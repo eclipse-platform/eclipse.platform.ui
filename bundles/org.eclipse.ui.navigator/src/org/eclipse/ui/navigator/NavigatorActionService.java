@@ -258,16 +258,20 @@ public final class NavigatorActionService extends ActionGroup implements
 		Assert.isTrue(!disposed);
 
 		theActionBars.clearGlobalActionHandlers();
+		ActionContext context = getContext();
+		if(context == null) {
+			context = new ActionContext(StructuredSelection.EMPTY);
+		}
 
 		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
 				.getInstance().findRelevantActionDescriptors(contentService,
-						getContext());
+						context);
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
 				try {
 					provider = getActionProviderInstance(providerDescriptors[i]);
-					provider.setContext(getContext());
+					provider.setContext(context);
 					provider.fillActionBars(theActionBars);
 
 				} catch (RuntimeException e) {
