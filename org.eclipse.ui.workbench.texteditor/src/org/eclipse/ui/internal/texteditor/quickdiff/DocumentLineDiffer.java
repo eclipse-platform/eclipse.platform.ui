@@ -277,6 +277,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (!isInitialized())
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
 
+		if (fRightDocument == null || fLeftDocument == null)
+			return;
+
 		int rOffset= -1, rLength= -1, lOffset= -1, lLength= -1;
 		RangeDifference diff= null;
 		Iterator it= fDifferences.iterator();
@@ -452,7 +455,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					try {
 						oldJob.join();
 					} catch (InterruptedException e) {
-						// will not happen as noone interrupts our thread
+						// will not happen as no one interrupts our thread
 						Assert.isTrue(false);
 					}
 
@@ -564,10 +567,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				}
 
 				IHashFunction hash= new DJBHashFunction(); 
-				fLeftEquivalent= new DocumentEquivalenceClass(reference, hash);
-				IRangeComparator ref= new DocEquivalenceComparator(fLeftEquivalent, null);
-				fRightEquivalent= new DocumentEquivalenceClass(actual, hash);
-				IRangeComparator act= new DocEquivalenceComparator(fRightEquivalent, null);
+				DocumentEquivalenceClass leftEquivalent= new DocumentEquivalenceClass(reference, hash);
+				fLeftEquivalent= leftEquivalent;
+				IRangeComparator ref= new DocEquivalenceComparator(leftEquivalent, null);
+				
+				DocumentEquivalenceClass rightEquivalent= new DocumentEquivalenceClass(actual, hash);
+				fRightEquivalent= rightEquivalent;
+				IRangeComparator act= new DocEquivalenceComparator(rightEquivalent, null);
 				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
@@ -594,8 +600,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 								fLastDifference= null;
 
 								// replace the private documents with the actual
-								fLeftEquivalent.setDocument(left);
-								fRightEquivalent.setDocument(right);
+								leftEquivalent.setDocument(left);
+								rightEquivalent.setDocument(right);
 
 								// inform blocking calls.
 								DocumentLineDiffer.this.notifyAll();
@@ -641,12 +647,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			}
 
 			private void clearModel() {
-				fLeftDocument= null;
-				fLeftEquivalent= null;
-				fInitializationJob= null;
-				fStoredEvents.clear();
-				fLastDifference= null;
-				fDifferences.clear();
+				synchronized (DocumentLineDiffer.this) {
+					fLeftDocument= null;
+					fLeftEquivalent= null;
+					fInitializationJob= null;
+					fStoredEvents.clear();
+					fLastDifference= null;
+					fDifferences.clear();
+				}
 			}
 
 			/**
@@ -737,13 +745,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	void handleAboutToBeChanged(DocumentEvent event) throws BadLocationException {
 		IDocument doc= event.getDocument();
-		if (doc == null)
+		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
+
+		if (doc == null || rightEquivalent == null)
 			return;
 
 		// store size of replaced region (never synchronized -> not a problem)
 		fFirstLine= doc.getLineOfOffset(event.getOffset()); // store change bounding lines
 		fNLines= doc.getLineOfOffset(event.getOffset() + event.getLength()) - fFirstLine + 1;
-		fRightEquivalent.update(event);
+		rightEquivalent.update(event);
 	}
 
 	/*
@@ -828,12 +838,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails somewhere
 	 */
 	void handleChanged(DocumentEvent event) throws BadLocationException {
-		/*
-		 * Now, here we have a great example of object oriented programming.
-		 */
-
-		// documents: left, right; modified and unchanged are either of both
+		
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=132125
 		IDocument left= fLeftDocument;
+		DocumentEquivalenceClass leftEquivalent= fLeftEquivalent;
+		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
+		if (left == null || leftEquivalent == null || rightEquivalent == null)
+			return;
+		
+		// documents: left, right; modified and unchanged are either of both
 		IDocument right= event.getDocument(); // TODO two-side
 		IDocument modified= event.getDocument();
 		if (modified != left && modified != right)
@@ -910,7 +923,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			leftLine += lineDelta;
 		int leftEndLine= leftLine - shiftAfter;
 		ILineRange leftRange= new LineRange(leftStartLine, leftEndLine - leftStartLine);
-		IRangeComparator reference= new DocEquivalenceComparator(fLeftEquivalent, leftRange);
+		IRangeComparator reference= new DocEquivalenceComparator(leftEquivalent, leftRange);
 
 		// right (actual) document
 		int rightStartLine= consistentBefore.rightStart() + shiftBefore;
@@ -919,7 +932,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			rightLine += lineDelta;
 		int rightEndLine= rightLine - shiftAfter;
 		ILineRange rightRange= new LineRange(rightStartLine, rightEndLine - rightStartLine);
-		IRangeComparator change= new DocEquivalenceComparator(fRightEquivalent, rightRange);
+		IRangeComparator change= new DocEquivalenceComparator(rightEquivalent, rightRange);
 
 		// put an upper bound to the delay we can afford
 		if (leftLine - shiftAfter - leftStartLine > 50 || rightLine - shiftAfter - rightStartLine > 50) {
@@ -1450,14 +1463,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	public void suspend() {
 		Job job= fInitializationJob;
-		if (job != null) {
+		if (job != null)
 			job.cancel();
-			try {
-				job.join();
-			} catch (InterruptedException x) {
-				// ignore
-			}
-		}
 		
 		synchronized (this) {
 			fInitializationJob= null;
