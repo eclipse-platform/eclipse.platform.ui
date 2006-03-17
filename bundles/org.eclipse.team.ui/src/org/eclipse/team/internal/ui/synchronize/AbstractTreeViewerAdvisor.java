@@ -219,9 +219,13 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 			if (treeViewer.getExpandedState(element)) {
 				treeViewer.collapseToLevel(element, AbstractTreeViewer.ALL_LEVELS);
 			} else {
-				AbstractTreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
+				expandToNextDiff(element);
 			}
 		}
 		return true;
+	}
+
+	protected void expandToNextDiff(Object element) {
+		AbstractTreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
 	}
 }

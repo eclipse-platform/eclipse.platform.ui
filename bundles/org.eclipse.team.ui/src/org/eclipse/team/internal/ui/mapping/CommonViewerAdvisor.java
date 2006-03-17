@@ -345,5 +345,24 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			enableContentProviders((CommonViewer)getViewer(), getConfiguration());
 		}
 	}
+	
+	protected boolean handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
+		if (isOpenable(event.getSelection())) {
+			return true;
+		}
+		return super.handleDoubleClick(viewer, event);
+	}
+
+	private boolean isOpenable(ISelection selection) {
+		IStructuredSelection ss = (IStructuredSelection) selection;
+		Object object = ss.getFirstElement();
+		if (object == null)
+			return false;
+		return getParticipant().hasCompareInputFor(object);
+	}
+	
+	protected void expandToNextDiff(Object element) {
+		((TreeViewer)getViewer()).expandToLevel(element, 1);
+	}
 
 }
