@@ -29,7 +29,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
 
@@ -318,7 +317,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	public Object getAdapter(Class adapter) {
 		if (adapter == CommonViewer.class) {
 			return getCommonViewer();
-		} else if (adapter == NavigatorContentService.class) {
+		} else if (adapter == INavigatorContentService.class) {
 			return getCommonViewer().getNavigatorContentService();
 		}
 		return super.getAdapter(adapter);
