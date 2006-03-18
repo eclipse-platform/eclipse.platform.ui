@@ -90,7 +90,7 @@ public class Days extends Composite {
     */
    private void initialize() {
       timeLabel = new Label(this, SWT.RIGHT);
-      timeLabel.setText("23:00");
+      timeLabel.setText("23:00 PM");
       Integer preferredWidth = new Integer(timeLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).x + 5);
       timeLabel.setLayoutData(preferredWidth);
       setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
