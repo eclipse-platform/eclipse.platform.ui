@@ -15,6 +15,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
+/**
+ * @since 3.2
+ *
+ */
 public class Days extends Composite {
 
    /**
@@ -72,7 +76,11 @@ public class Days extends Composite {
    private LinkedList days = new LinkedList();
    private Label timeLabel = null;
 
-   public Days(Composite parent, int style) {
+   /**
+	 * @param parent
+	 * @param style
+	 */
+	public Days(Composite parent, int style) {
       super(parent, style);
       initialize();
    }
@@ -121,11 +129,17 @@ public class Days extends Composite {
    
    private Date currentTime = new Date();
 
-   public Date getCurrentTime() {
+   /**
+	 * @return The current time set in this "days" row.
+	 */
+	public Date getCurrentTime() {
       return currentTime;
    }
 
-   public void setCurrentTime(Date currentTime) {
+   /**
+	 * @param currentTime
+	 */
+	public void setCurrentTime(Date currentTime) {
       this.currentTime = currentTime;
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(currentTime);
