@@ -69,8 +69,10 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 					new Status(IStatus.ERROR, PLUGIN_ID, 0, message, null));
 			System.err.println(message + "\nReason:"); //$NON-NLS-1$
 		}
-		getDefault().getLog().log(status);
-		System.err.println(status.getMessage());
+		if(status != null) {
+			getDefault().getLog().log(status);
+			System.err.println(status.getMessage());
+		}
 	}
 
 	/**
