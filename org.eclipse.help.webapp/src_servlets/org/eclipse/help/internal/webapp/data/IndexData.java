@@ -21,8 +21,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.IHelpResource;
-import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.index.Index;
@@ -50,9 +48,6 @@ public class IndexData extends ActivitiesData {
 	// expand all by default flag
 	private boolean expandAll;
 
-	// flag right-to-left direction of text
-	private boolean isRTL;
-
 	// global writer for private generate...() methods
 	private Writer out;
 
@@ -70,7 +65,6 @@ public class IndexData extends ActivitiesData {
 		expandAll = preferences.isIndexExpandAll();
 		plusMinusImage = expandAll ? "/minus.gif" : "/plus.gif"; //$NON-NLS-1$ //$NON-NLS-2$
 		expandedCollapsed = expandAll ? "expanded" : "collapsed"; //$NON-NLS-1$ //$NON-NLS-2$
-		isRTL = UrlUtil.isRTL(request, response);
 
 		loadIndex();
 	}
@@ -80,6 +74,23 @@ public class IndexData extends ActivitiesData {
 	 */
 	private void loadIndex() {
 		index = extractEnabled(HelpPlugin.getIndexManager().getIndex(getLocale()));
+	}
+
+	/*
+	 * TO DO:
+	 * method to be removed
+	 */
+	public IndexEntry getIndexEntry(String [] path) {
+		Map entries = index.getEntryMap();
+		IndexEntry result = null;
+		for(int i = 0; i < path.length; i++) {
+			result = (IndexEntry)entries.get(path[i]);
+			if(result == null)
+				return null;
+			else
+				entries = result.getEntryMap();
+		}
+		return result;
 	}
 
 	/**
@@ -133,95 +144,23 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * For advanced UI:
-	 *   <li>[ plus_image ]<a ...>...</a>
-	 *   [<ul>list of topics</ul>]
-	 *   [<ul>nested entries</ul>]
-	 *   </li>
-	 *
-	 * For basic UI:
-	 *   <li><a ...>...</a>
-	 *   [<ul>
-	 *     list of topics
-	 *     nested entries
-	 *   </ul>]
-	 *   </li>
+	 * <li>[ plus_image ]<a ...>...</a>
+	 * [<ul>list of topics</ul>]
+	 * [<ul>nested entries</ul>]
+	 * </li>
 	 */
 	private void generateEntry(IndexEntry entry, int level) throws IOException {
-		IHelpResource[] topics = entry.getTopics();
-		IIndexEntry[] subentries = entry.getSubentries();
-		boolean multipleTopics = topics.length > 1;
-		boolean singleTopic = topics.length == 1;
+		List topics = entry.getTopicList();
+		int topicCount = topics.size();
+		boolean multipleTopics = topicCount > 1;
+		boolean singleTopic = topicCount == 1;
 
 		out.write("<li>"); //$NON-NLS-1$
-		if (usePlusMinus && advancedUI) generatePlusImage(multipleTopics);
+		if (usePlusMinus) generatePlusImage(multipleTopics);
 		generateAnchor(singleTopic, entry, level);
-		if (multipleTopics || subentries.length > 0) {
-			if (!advancedUI) {
-				out.write("<ul>\n"); //$NON-NLS-1$
-			}
-			if (multipleTopics) generateTopicList(entry);
-			generateSubentries(entry, level + 1);
-			if (!advancedUI) {
-				out.write("</ul>\n"); //$NON-NLS-1$
-			}
-		}
+		if (multipleTopics) generateTopicList(entry);
+		generateSubentries(entry, level + 1);
 		out.write("</li>\n"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Generates the HTML code (a list) for the index.
-	 * Basic UI version.
-	 *
-	 * @param out
-	 * @throws IOException
-	 */
-	public void generateBasicIndex(Writer out) throws IOException {
-		this.out = out;
-
-		Iterator iter = index.getEntryMap().values().iterator();
-		while(iter.hasNext()) {
-			IndexEntry entry = (IndexEntry)iter.next();
-			generateBasicEntry(entry, 0);
-		}
-	}
-
-	/**
-	 * Generates the HTML code for an index entry.
-	 * Basic UI version.
-	 *
-	 * @param entry
-	 * @param level
-	 * @throws IOException
-	 */
-	/*
-	 * <tr><td align={ "left" | "right" } nowrap>
-	 *   <a ...>...</a>
-	 * </td></tr>
-	 * [<tr><td align={ "left" | "right" } nowrap><ul>
-	 *   list of topics
-	 *   nested entries
-	 * </ul></td></tr>]
-	 */
-	private void generateBasicEntry(IndexEntry entry, int level) throws IOException {
-		IHelpResource[] topics = entry.getTopics();
-		IIndexEntry[] subentries = entry.getSubentries();
-		boolean multipleTopics = topics.length > 1;
-		boolean singleTopic = topics.length == 1;
-
-		out.write("<tr><td align=\""); //$NON-NLS-1$
-		out.write(isRTL ? "right" : "left"); //$NON-NLS-1$ //$NON-NLS-2$
-		out.write("\" nowrap>\n"); //$NON-NLS-1$
-		generateAnchor(singleTopic, entry, level);
-		out.write("</td></tr>\n"); //$NON-NLS-1$
-		if (multipleTopics || subentries.length > 0) {
-			out.write("<tr><td align=\""); //$NON-NLS-1$
-			out.write(isRTL ? "right" : "left"); //$NON-NLS-1$ //$NON-NLS-2$
-			out.write("\" nowrap><ul>\n"); //$NON-NLS-1$
-			if (multipleTopics) generateTopicList(entry);
-			generateSubentries(entry, level + 1);
-			out.write("</ul></td></tr>\n"); //$NON-NLS-1$
-		}
 	}
 
 	/**
@@ -263,15 +202,11 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * For advanced UI:
-	 *   <a [ id="..." ] [ class="nolink" ] href="...">...</a>
-	 *
-	 * For basic UI:
-	 *   <a href="...">...</a>
+	 * <a id="..." [ class="nolink" ] href="...">...</a>
 	 */
 	private void generateAnchor(boolean singleTopic, IndexEntry entry, int level) throws IOException {
 		out.write("<a "); //$NON-NLS-1$
-		if (level == 0 && advancedUI) {
+		if (level == 0) {
 			out.write("id=\""); //$NON-NLS-1$
 			out.write(entry.getKeyword());
 			out.write("\" "); //$NON-NLS-1$
@@ -281,13 +216,10 @@ public class IndexData extends ActivitiesData {
 			out.write(UrlUtil.getHelpURL(((IIndexTopic)entry.getTopicList().get(0)).getHref()));
 			out.write("\">"); //$NON-NLS-1$
 		} else {
-			if (advancedUI) {
-				out.write("class=\"nolink\" "); //$NON-NLS-1$
-			}
-			out.write("href=\"about:blank\">"); //$NON-NLS-1$
+			out.write("class=\"nolink\" href=\"about:blank\">"); //$NON-NLS-1$
 		}
 		out.write(UrlUtil.htmlEncode(entry.getKeyword()));
-		out.write("</a>\n"); //$NON-NLS-1$
+		out.write("</a>"); //$NON-NLS-1$
 	}
 
 	/**
@@ -297,30 +229,23 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * For advanced UI:
-	 *   <ul class={"collapsed" | "expanded"}>
-	 *   <li><img class="h" src="images/plus.gif" alt=""><a href="..."><img src="images/topic.gif" alt="">...</a></li>
-	 *   <li>...
-	 *   </ul>
-	 *
-	 * For basic UI:
-	 *   <li><a href="..."><img src="images/topic.gif" border=0 alt="">...</a></li>
-	 *   <li>...
+	 * <ul class={"collapsed" | "expanded"}>
+	 * <li><img class="h" src="images/plus.gif" alt=""><a href="..."><img src="images/topic.gif">...</a></li>
+	 * <li>...
+	 * </ul>
 	 */
 	private void generateTopicList(IndexEntry entry) throws IOException {
 		List topics = entry.getTopicList();
 		int size = topics.size();
 
-		if (advancedUI) {
-			out.write("\n<ul class=\""); //$NON-NLS-1$
-			out.write(expandedCollapsed);
-			out.write("\">\n"); //$NON-NLS-1$
-		}
+		out.write("\n<ul class=\""); //$NON-NLS-1$
+		out.write(expandedCollapsed);
+		out.write("\">\n"); //$NON-NLS-1$
 		for (int i = 0; i < size; ++i) {
 			IIndexTopic topic = (IIndexTopic)topics.get(i); 
 
 			out.write("<li>"); //$NON-NLS-1$
-			if (usePlusMinus && advancedUI) {
+			if (usePlusMinus) {
 				out.write("<img class=\"h\" src=\""); //$NON-NLS-1$
 				out.write(imagesDirectory);
 				out.write(plusMinusImage);
@@ -330,17 +255,11 @@ public class IndexData extends ActivitiesData {
 			out.write(UrlUtil.getHelpURL(topic.getHref())); 
 			out.write("\"><img src=\""); //$NON-NLS-1$
 			out.write(imagesDirectory);
-			out.write("/topic.gif\" "); //$NON-NLS-1$
-			if (!advancedUI) {
-				out.write("border=0 "); //$NON-NLS-1$
-			}
-			out.write("alt=\"\">"); //$NON-NLS-1$
+			out.write("/topic.gif\" alt=\"\">"); //$NON-NLS-1$
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a></li>\n"); //$NON-NLS-1$
 		}
-		if (advancedUI) {
-			out.write("</ul>\n"); //$NON-NLS-1$
-		}
+		out.write("</ul>\n"); //$NON-NLS-1$
 	}
 
 	/**
@@ -351,41 +270,23 @@ public class IndexData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	/*
-	 * For advanced UI:
-	 *   <ul class="expanded">
-	 *   entries...
-	 *   </ul>
-	 *
-	 * For basic UI:
-	 *   entries...
+	 * <ul class="expanded">
+	 * entries...
+	 * </ul>
 	 */
 	private void generateSubentries(IndexEntry entry, int level) throws IOException {
 		Iterator iter = entry.getEntryMap().values().iterator();
 		if (iter.hasNext()) {
-			if (advancedUI) {
-				out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
-			}
+			out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
 			do {
 				IndexEntry childEntry = (IndexEntry)iter.next();
 				generateEntry(childEntry, level);
 			} while (iter.hasNext());
-			if (advancedUI) {
-				out.write("</ul>\n"); //$NON-NLS-1$
-			}
+			out.write("</ul>\n"); //$NON-NLS-1$
 		}
 	}
 
-	/**
-	 * Get index built from the given containing not filtered entries.
-	 * 
-	 * @param index
-	 * @return
-	 */
 	private Index extractEnabled(Index index) {
-		if (!advancedUI) {
-			// activities never filtered for basic browsers
-			return index;
-		}
 		List enabledEntries = new ArrayList();
 		Iterator iter = index.getEntryMap().values().iterator();
 		while (iter.hasNext()) {
@@ -396,14 +297,6 @@ public class IndexData extends ActivitiesData {
 		return new Index(enabledEntries);
 	}
 
-	/**
-	 * Get index entry built from the given containing not filtered
-	 * topics and subentries. Returns null if all topics and subentries
-	 * are filtered.
-	 * 
-	 * @param entry
-	 * @return
-	 */
 	private IndexEntry extractEnabled(IndexEntry entry) {
 		List enabledTopics = new ArrayList();
 		List enabledSubentries = new ArrayList();
@@ -437,13 +330,11 @@ public class IndexData extends ActivitiesData {
 				enabledTopics, enabledSubentries);
 	}
 
-	/**
-	 * Checks if topic matches an enabled activity.
-	 * 
-	 * @param topic
-	 * @return
-	 */
 	private boolean isEnabled(IIndexTopic topic) {
+		if (!isAdvancedUI()) {
+			// activities never filtered for basic browsers
+			return true;
+		}
 		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
 	}
 }
