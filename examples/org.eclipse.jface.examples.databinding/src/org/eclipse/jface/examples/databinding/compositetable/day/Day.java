@@ -181,12 +181,18 @@ public class Day extends Canvas {
 
    private boolean hourStart = true;
 
-   public void setHourStart(boolean isHourStart) {
+   /**
+	 * @param isHourStart
+	 */
+	public void setHourStart(boolean isHourStart) {
       this.hourStart = isHourStart;
       redraw();
    }
    
-   public boolean isHourStart() {
+   /**
+	 * @return true if the current day represents the start of an hour; false otherwise.
+	 */
+	public boolean isHourStart() {
       return hourStart;
    }
 }
