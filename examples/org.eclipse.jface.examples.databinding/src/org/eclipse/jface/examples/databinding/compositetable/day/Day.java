@@ -183,6 +183,7 @@ public class Day extends Canvas {
 
    public void setHourStart(boolean isHourStart) {
       this.hourStart = isHourStart;
+      redraw();
    }
    
    public boolean isHourStart() {
