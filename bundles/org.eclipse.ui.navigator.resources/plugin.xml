@@ -229,12 +229,43 @@
 	         </enablement>
 		</commonWizard>
    </extension>
-   <!--
-   <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.ui.navigator.CommonNavigator"
-            class="org.eclipse.ui.internal.navigator.resources.workbench.TabbedPropertySheetAdapterFactory"/>
-   </extension>
-	-->
+    <extension
+          point="org.eclipse.core.runtime.adapters">
+       <factory
+             adaptableType="org.eclipse.ui.navigator.CommonNavigator"
+            class="org.eclipse.ui.internal.navigator.resources.workbench.TabbedPropertySheetAdapterFactory">
+         <adapter type="org.eclipse.ui.views.properties.IPropertySheetPage"/>
+      </factory>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+       <propertyContributor
+             contributorId="org.eclipse.ui.navigator.ProjectExplorer"
+             labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.TabbedPropertySheetTitleProvider">
+          <propertyCategory category="general"/>
+          <propertyCategory category="core"/>
+          <propertyCategory category="appearance"/>
+          <propertyCategory category="advanced"/>
+       </propertyContributor>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+       <propertyTabs contributorId="org.eclipse.ui.navigator.ProjectExplorer">
+          <propertyTab
+                label="%Advanced"
+                category="advanced"
+                id="CommonNavigator.tab.Advanced"/>
+       </propertyTabs>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views.properties.tabbed.propertySections">
+       <propertySections contributorId="org.eclipse.ui.navigator.ProjectExplorer">
+          <propertySection
+                class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
+                id="CommonNavigator.section.Advanced"
+                tab="CommonNavigator.tab.Advanced">
+             <input type="java.lang.Object"/>
+          </propertySection>
+       </propertySections>
+    </extension>
 </plugin> 
