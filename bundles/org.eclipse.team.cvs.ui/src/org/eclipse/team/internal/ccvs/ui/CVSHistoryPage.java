@@ -97,6 +97,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Action remoteMode;
 	private Action remoteLocalMode;
 	private Action groupByDateMode;
+	private Action collapseAll;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -229,6 +230,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	protected void contributeActions() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
 
+		//Refresh
 		refreshAction = new Action(CVSUIMessages.HistoryView_refreshLabel, plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) {
 			public void run() {
 				refresh();
@@ -238,6 +240,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
+		//Local Mode
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		localMode =  new Action(CVSUIMessages.CVSHistoryPage_LocalModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE)) {
 			public void run() {
@@ -251,7 +254,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
 		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
 		localMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
-		
+
+		//Remote Mode
 		remoteMode =  new Action(CVSUIMessages.CVSHistoryPage_RemoteModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
 			public void run() {
 				if (isChecked()){
@@ -265,6 +269,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
 		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
 		
+		//Remote + Local Mode
 		remoteLocalMode =  new Action(CVSUIMessages.CVSHistoryPage_CombinedModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
 			public void run() {
 				if (isChecked()){
@@ -281,7 +286,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//set the inital filter to both remote and local
 		updateFilterMode(store.getInt(ICVSUIConstants.PREF_REVISION_MODE));
 		
-
+		//Group by Date
 		groupByDateMode = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY)){
 			public void run() {
 				groupingOn = !groupingOn;
@@ -295,6 +300,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		groupByDateMode.setToolTipText(CVSUIMessages.CVSHistoryPage_GroupByDate);
 		groupByDateMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
 		groupByDateMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY));
+		
+		//Collapse All
+		collapseAll =  new Action(CVSUIMessages.CVSHistoryPage_CollapseAllAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL)) {
+			public void run() {
+				treeViewer.collapseAll();
+			}
+		};
+		collapseAll.setToolTipText(CVSUIMessages.CVSHistoryPage_CollapseAllTooltip); 
+		collapseAll.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
+		collapseAll.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
+		
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
@@ -487,6 +503,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		};
 		toggleCompareAction.setChecked(false);
 	
+		//Create the filter action
+		cvsHistoryFilter = new CVSHistoryFilterAction(this);
+		cvsHistoryFilter.setText(CVSUIMessages.CVSHistoryPage_FilterOn);
+		cvsHistoryFilter.init(treeViewer);
+		cvsHistoryFilter.setToolTipText(CVSUIMessages.CVSHistoryPage_FilterHistoryTooltip);
+		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
@@ -518,6 +540,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					actionBarsMenu.add(toggleTextAction);
 					actionBarsMenu.add(toggleListAction);
 					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(cvsHistoryFilter);
 					actionBarsMenu.add(toggleFilterAction);
 				}
 				// Create actions for the text editor
@@ -533,10 +556,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 		
-		cvsHistoryFilter = new CVSHistoryFilterAction(this);
-		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
-		cvsHistoryFilter.init(treeViewer);
-		cvsHistoryFilter.setToolTipText(CVSUIMessages.CVSHistoryPage_FilterHistoryTooltip);
+		
 		
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
@@ -548,8 +568,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			tbm.appendToGroup("modes", remoteLocalMode); //$NON-NLS-1$
 			tbm.appendToGroup("modes", localMode); //$NON-NLS-1$
 			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
-			tbm.add(new Separator("filter")); //$NON-NLS-1$
-			tbm.appendToGroup("filter", cvsHistoryFilter); //$NON-NLS-1$
+			tbm.add(new Separator("collapse")); //$NON-NLS-1$
+			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
 			tbm.update(false);
 		}
 
@@ -994,7 +1014,18 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 									treeViewer.getTree().setLinesVisible(revisionsFound);
 									treeViewer.getTree().setRedraw(false);
 									treeViewer.setInput(categories);
-									treeViewer.setExpandedElements(elementsToExpand);
+									//if user is switching modes and already has expanded elements
+									//selected try to expand those, else expand all
+									if (elementsToExpand.length > 0)
+										treeViewer.setExpandedElements(elementsToExpand);
+									else {
+										treeViewer.expandAll();
+										Object[] el = treeViewer.getExpandedElements();
+										if (el != null && el.length > 0){
+											treeViewer.setSelection(new StructuredSelection(el[0]));
+											treeViewer.getTree().deselectAll();
+										}
+									}
 									treeViewer.getTree().setRedraw(true);
 								}
 								else {
