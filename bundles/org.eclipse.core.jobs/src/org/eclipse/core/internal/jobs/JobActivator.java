@@ -34,6 +34,7 @@ public class JobActivator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
+		JobOSGiUtils.getDefault().openServices();
 		registerServices();
 	}
 

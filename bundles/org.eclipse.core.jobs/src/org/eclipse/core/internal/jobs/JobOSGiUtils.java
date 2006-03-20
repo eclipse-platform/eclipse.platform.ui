@@ -44,10 +44,10 @@ public class JobOSGiUtils {
 	 * Private constructor to block instance creation.
 	 */
 	private JobOSGiUtils() {
-		initServices();
+		super();
 	}
 
-	private void initServices() {
+	void openServices() {
 		BundleContext context = JobActivator.getContext();
 		if (context == null) {
 			if (JobManager.DEBUG)
