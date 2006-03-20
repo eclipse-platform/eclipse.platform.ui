@@ -12,6 +12,7 @@ package org.eclipse.ltk.ui.refactoring.model;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -82,6 +83,14 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		public RefactoringHandlerDelegate(final IHandler handler) {
 			Assert.isNotNull(handler);
 			fDelegateHandler= handler;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void dispose() {
+			fDelegateHandler.dispose();
+			super.dispose();
 		}
 
 		/**
@@ -254,14 +263,16 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	public void fillContextMenu(final IMenuManager menu) {
 		super.fillContextMenu(menu);
-		final ISynchronizationContext syncContext= getSynchronizationContext();
-		final RefactoringDescriptorProxy[] proxies= getRefactorings(syncContext, getSynchronizePageConfiguration());
-		final AcceptRefactoringsAction accept= new AcceptRefactoringsAction(syncContext, getExtensionSite().getViewSite().getShell());
-		accept.setRefactoringDescriptors(proxies);
-		menu.add(accept);
-		final RejectRefactoringsAction reject= new RejectRefactoringsAction(syncContext);
-		reject.setRefactoringDescriptors(proxies);
-		menu.add(reject);
+		if (isRefactoringElementSelected()) {
+			final ISynchronizationContext context= getSynchronizationContext();
+			final RefactoringDescriptorProxy[] proxies= getRefactorings(context, getSynchronizePageConfiguration());
+			final AcceptRefactoringsAction accept= new AcceptRefactoringsAction(context, getExtensionSite().getViewSite().getShell());
+			accept.setRefactoringDescriptors(proxies);
+			menu.add(accept);
+			final RejectRefactoringsAction reject= new RejectRefactoringsAction(context);
+			reject.setRefactoringDescriptors(proxies);
+			menu.add(reject);
+		}
 	}
 
 	/**
@@ -273,5 +284,19 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		registerHandler(MERGE_ACTION_ID, new RefactoringHandlerDelegate(MergeActionHandler.getDefaultHandler(MERGE_ACTION_ID, configuration)));
 		registerHandler(OVERWRITE_ACTION_ID, new RefactoringHandlerDelegate(MergeActionHandler.getDefaultHandler(OVERWRITE_ACTION_ID, configuration)));
 		registerHandler(MARK_AS_MERGE_ACTION_ID, new RefactoringHandlerDelegate(MergeActionHandler.getDefaultHandler(MARK_AS_MERGE_ACTION_ID, configuration)));
+	}
+
+	private boolean isRefactoringElementSelected() {
+		final ISelection selection= getContext().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection extended= (IStructuredSelection) selection;
+			for (final Iterator iterator= extended.iterator(); iterator.hasNext();) {
+				final Object element= iterator.next();
+				if (element instanceof RefactoringDescriptorProxy || element instanceof RefactoringDescriptor || element instanceof RefactoringHistory) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
