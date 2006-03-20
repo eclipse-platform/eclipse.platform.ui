@@ -24,7 +24,7 @@ import java.util.jar.Manifest;
 //The bundles are discovered by finding all the jars on the classpath. Then they are added with their full path to the osgi.bundles list.
 public class WebStartMain extends Main {
 	private static final String PROP_WEBSTART_AUTOMATIC_INSTALLATION = "eclipse.webstart.automaticInstallation"; //$NON-NLS-1$
-	private static final String DEFAULT_OSGI_BUNDLES = "org.eclipse.core.runtime@2:start"; //$NON-NLS-1$
+	private static final String DEFAULT_OSGI_BUNDLES = "org.eclipse.equinox.common@2:start, org.eclipse.core.runtime@start"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
 	private static final String PROP_WEBSTART_PRECISE_BUNDLEID = "eclipse.webstart.preciseBundleId"; //$NON-NLS-1$
 	
