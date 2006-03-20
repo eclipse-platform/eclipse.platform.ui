@@ -654,12 +654,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				}
 			}
 			TreeViewer viewer = ((TreeViewer)fLaunchConfigurationView.getViewer());
-			IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
-			viewer.getTree().selectAll();
-			int filtered = ((IStructuredSelection)viewer.getSelection()).size();
-			viewer.getTree().deselectAll();
-			viewer.setSelection(sel);
-			fFilteringLabel.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_6, new Object[] {new Integer(filtered), new Integer(total)}));
+			TreeItem[] roots = viewer.getTree().getItems();
+			int count = roots.length;
+			for (int i = 0; i < roots.length; i++) {
+				count += roots[i].getItemCount();
+			}
+			fFilteringLabel.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_6, new Object[] {new Integer(count), new Integer(total)}));
 			
 		}
 		catch(CoreException e) {
