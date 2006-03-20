@@ -87,7 +87,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	public CreateRefactoringScriptWizard() {
 		setNeedsProgressMonitor(false);
 		setWindowTitle(ScriptingMessages.CreateRefactoringScriptWizard_caption);
-		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
+		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_CREATE_SCRIPT);
 		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
 		if (section == null)

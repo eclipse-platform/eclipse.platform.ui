@@ -42,7 +42,9 @@ public class RefactoringPluginImages {
 	private static final String T_ELCL= "elcl16"; 	//$NON-NLS-1$
 	private static final String T_DLCL= "dlcl16"; 	//$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= createUnManaged(T_WIZBAN, "refactor_wiz.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= createUnManaged(T_WIZBAN, "refactor_wiz.png"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_APPLY_SCRIPT= createUnManaged(T_WIZBAN, "apply_rescript_wiz.png"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_CREATE_SCRIPT= createUnManaged(T_WIZBAN, "create_rescript_wiz.png"); 			//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
