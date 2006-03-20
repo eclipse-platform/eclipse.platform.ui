@@ -21,58 +21,61 @@ import org.eclipse.swt.widgets.Shell;
 
 class DialogProblemProperties extends DialogMarkerProperties {
 
-    private Label severityLabel;
-    private Label severityImage;
+	private Label severityLabel;
 
-    DialogProblemProperties(Shell parentShell) {
-        super(parentShell);
-    }
+	private Label severityImage;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
-     */
-    protected void createAttributesArea(Composite parent) {
-    	createSeperator(parent);
-        super.createAttributesArea(parent);
+	DialogProblemProperties(Shell parentShell) {
+		super(parentShell);
+	}
 
-        new Label(parent, SWT.NONE).setText(
-        		MarkerMessages.propertiesDialog_severityLabel);
-        
-        Composite composite = new Composite(parent, SWT.NONE);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createAttributesArea(Composite parent) {
+		createSeperator(parent);
+		super.createAttributesArea(parent);
+
+		new Label(parent, SWT.NONE)
+				.setText(MarkerMessages.propertiesDialog_severityLabel);
+
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		
+
 		severityImage = new Label(composite, SWT.NONE);
 		severityLabel = new Label(composite, SWT.NONE);
-    }
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateDialogFromMarker()
-     */
-    protected void updateDialogFromMarker() {
-        super.updateDialogFromMarker();
-        IMarker marker = getMarker();
-        if (marker == null) {
-            return;
-        }
-        FieldSeverity type = new FieldSeverity();
-        severityImage.setImage(type.getImage(marker));
-        int severity = marker.getAttribute(IMarker.SEVERITY, -1);
-        if (severity == IMarker.SEVERITY_ERROR) {
-            severityLabel.setText(
-            		MarkerMessages.propertiesDialog_errorLabel);
-        } else if (severity == IMarker.SEVERITY_WARNING) {
-            severityLabel.setText(
-            		MarkerMessages.propertiesDialog_warningLabel);
-        } else if (severity == IMarker.SEVERITY_INFO) {
-            severityLabel.setText(
-            		MarkerMessages.propertiesDialog_infoLabel);
-        } else {
-            severityLabel.setText(
-            		MarkerMessages.propertiesDialog_noseverityLabel);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateDialogFromMarker()
+	 */
+	protected void updateDialogFromMarker() {
+		super.updateDialogFromMarker();
+		IMarker marker = getMarker();
+		if (marker == null) {
+			return;
+		}
+
+		severityImage.setImage(Util.getImage(marker.getAttribute(
+				IMarker.SEVERITY, -1)));
+		int severity = marker.getAttribute(IMarker.SEVERITY, -1);
+		if (severity == IMarker.SEVERITY_ERROR) {
+			severityLabel.setText(MarkerMessages.propertiesDialog_errorLabel);
+		} else if (severity == IMarker.SEVERITY_WARNING) {
+			severityLabel.setText(MarkerMessages.propertiesDialog_warningLabel);
+		} else if (severity == IMarker.SEVERITY_INFO) {
+			severityLabel.setText(MarkerMessages.propertiesDialog_infoLabel);
+		} else {
+			severityLabel
+					.setText(MarkerMessages.propertiesDialog_noseverityLabel);
+		}
+	}
 }
