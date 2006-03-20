@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 132479 - [FieldAssist] Field assist example improvements
+ *******************************************************************************/
 package org.eclipse.ui.examples.fieldassist;
 
 import java.text.MessageFormat;
@@ -6,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -220,7 +232,11 @@ public class ExampleDialog extends StatusDialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		Group main = new Group(parent, SWT.NONE);
+		Composite outer = (Composite) super.createDialogArea(parent);
+		
+		initializeDialogUnits(outer);
+		
+		Group main = new Group(outer, SWT.NONE);
 		main.setLayoutData(new GridData(GridData.FILL_BOTH));
 		main.setText(TaskAssistExampleMessages.ExampleDialog_SecurityGroup);
 		GridLayout layout = new GridLayout();
@@ -230,7 +246,6 @@ public class ExampleDialog extends StatusDialog {
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		main.setLayout(layout);
-		applyDialogFont(main);
 
 		Label label = new Label(main, SWT.LEFT);
 		label.setText(TaskAssistExampleMessages.ExampleDialog_UserName);
@@ -367,6 +382,8 @@ public class ExampleDialog extends StatusDialog {
 		text.setText("******"); //$NON-NLS-1$
 		text.setLayoutData(getNonDecoratedFieldGridData());
 
+		Dialog.applyDialogFont(outer);
+		
 		return main;
 	}
 

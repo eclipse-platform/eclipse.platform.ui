@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 132479 - [FieldAssist] Field assist example improvements
+ *******************************************************************************/
 package org.eclipse.ui.examples.fieldassist.preferences;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
@@ -78,6 +90,7 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 				TaskAssistExampleMessages.Preferences_ShowProposalCue,
 				getFieldEditorParent()));
 
+		Dialog.applyDialogFont(getFieldEditorParent());
 	}
 
 	/*

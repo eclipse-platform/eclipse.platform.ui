@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 132479 - [FieldAssist] Field assist example improvements
+ *******************************************************************************/
 package org.eclipse.ui.examples.fieldassist.preferences;
 
 /**
@@ -24,8 +35,8 @@ public class PreferenceConstants {
 	public static final String PREF_CONTENTASSISTKEY = "prefContentAssistKey";
 	public static final String PREF_CONTENTASSISTKEY1 = "Ctrl+Space";
 	public static final String PREF_CONTENTASSISTKEY2 = "*";
-	public static final String PREF_CONTENTASSISTKEYAUTO = "alphanumeric key (on autoactivate delay)";
-	public static final String PREF_CONTENTASSISTKEYAUTOSUBSET = "t, d (on autoactivate delay)";
+	public static final String PREF_CONTENTASSISTKEYAUTO = "Alphanumeric key (on auto-activate delay)";
+	public static final String PREF_CONTENTASSISTKEYAUTOSUBSET = "t, d (on auto-activate delay)";
 	
 	
 	public static final String PREF_CONTENTASSISTRESULT = "prefContentResult";
