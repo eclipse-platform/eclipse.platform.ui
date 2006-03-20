@@ -67,15 +67,11 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	private boolean isSameAsDefault(String workingDir) {
 		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public boolean isValid(ILaunchConfiguration config) {
-		return super.isValid(config);
-	}//end isValid
 	
-	public void setEnabled(boolean enabled) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setEnabled(boolean)
+	 */
+	protected void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 	}
 }
