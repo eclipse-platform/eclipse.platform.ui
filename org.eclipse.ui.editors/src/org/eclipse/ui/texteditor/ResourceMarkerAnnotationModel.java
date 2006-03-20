@@ -97,12 +97,28 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					removeMarkerAnnotation(delta.getMarker());
 					break;
 				case IResourceDelta.CHANGED :
-					modifyMarkerAnnotation(delta.getMarker());
+					if (hasLocationChanged(delta))
+						modifyMarkerAnnotation(delta.getMarker());
 					break;
 			}
 		}
 
 		fireModelChanged();
+	}
+
+	/**
+	 * Tells whether the given delta describes a change in
+	 * the marker's location.
+	 * 
+	 * @param delta the marker delta
+	 * @return <code>true</code> if the marker delta describes a location change 
+	 * @since 3.2 
+	 */
+	private boolean hasLocationChanged(IMarkerDelta delta) {
+		IMarker marker= delta.getMarker();
+		return marker.getAttribute(IMarker.CHAR_START, -1) != delta.getAttribute(IMarker.CHAR_START, -1)
+			|| marker.getAttribute(IMarker.CHAR_END, -1) != delta.getAttribute(IMarker.CHAR_END, -1)
+			|| marker.getAttribute(IMarker.LINE_NUMBER, -1) != delta.getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/*
