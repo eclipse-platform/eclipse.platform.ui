@@ -80,4 +80,8 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	public String getId() {
 		return ICVSUIConstants.CMD_HISTORY;
 	}	
+	
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
 }

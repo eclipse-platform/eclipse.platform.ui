@@ -70,7 +70,13 @@ public class CVSFileHistory extends FileHistory {
 		return revisions;
 	}
 
-	public void refresh(IProgressMonitor monitor) throws TeamException {
+	/**
+	 * Refreshes the revisions for this CVS file. It may or may not contact the server to get new revisions.
+	 * 
+	 * @param monitor	a progress monitor
+	 * @return boolean	true if operation terminated normally,false otherwise
+	 */
+	public boolean refresh(IProgressMonitor monitor) throws TeamException {
 		if (refetchRevisions) {
 			monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()), 300);
 			try {
@@ -140,7 +146,7 @@ public class CVSFileHistory extends FileHistory {
 					arrangeRevisions();
 				}
 			} catch (CoreException e) {
-				//TODO: Handle failure to connect errors
+				return false;
 			} finally {
 				monitor.done();
 			}
@@ -148,6 +154,8 @@ public class CVSFileHistory extends FileHistory {
 			//don't refetch revisions just return revisions with local revisions as requested
 			arrangeRevisions();
 		}
+		
+		return true;
 	}
 
 	private void arrangeRevisions() {
@@ -267,6 +275,30 @@ public class CVSFileHistory extends FileHistory {
 
 	public void includeRemoteRevisions(boolean flag) {
 		this.includeRemoteRevisions = flag;
+	}
+
+	public void fetchLocalOnly(IProgressMonitor monitor) {
+		try{
+		localRevisions = new IFileRevision[0];
+		//always fetch the local revisions, just filter them out from the returned array if not wanted
+		IResource localResource = cvsFile.getIResource();
+		includesExists = false;
+		if (localResource != null && localResource instanceof IFile) {
+			//get the local revisions
+			IFileState[] localHistoryState = ((IFile) localResource).getHistory(new SubProgressMonitor(monitor, 100));
+			localRevisions = convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
+			includesExists = (localRevisions.length > 0);
+		}
+
+		remoteRevisions = new IFileRevision[0];
+		revisions = new IFileRevision[0];
+		arrangeRevisions();
+		} catch (CoreException ex){
+			//nothing to do - calling getFileRevisions() when revisions is null will result in
+			//revisions returning an empty array
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

@@ -23,7 +23,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.HistoryPageSaveablePart;
 import org.eclipse.team.ui.history.IHistoryPage;
@@ -57,7 +56,6 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		
 		// Setup holders
 		final ICVSRemoteFile[] file = new ICVSRemoteFile[] { null };
-		final ILogEntry[][] entries = new ILogEntry[][] { null };
 		
 		// Get the selected file
 		run(new IRunnableWithProgress() {
@@ -71,24 +69,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 			MessageDialog.openWarning(getShell(), CVSUIMessages.CompareWithRevisionAction_noRevisions, CVSUIMessages.CompareWithRevisionAction_noRevisionsLong); // 
 			return;
 		}
-		
-		// Pre-fetch the log entries if we are going to display the results in a dialog
-		if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
-			run(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					try {
-						monitor.beginTask(CVSUIMessages.CompareWithRevisionAction_fetching, 100); 
-						entries[0] = file[0].getLogEntries(Policy.subMonitorFor(monitor, 100));
-						monitor.done();
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			}, true /* cancelable */, PROGRESS_DIALOG);
-			if (entries[0] == null) return;
-		}
-		
-		
+			
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
@@ -144,5 +125,9 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 */
 	protected boolean isEnabledForAddedResources() {
 		return false;
+	}
+	
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
 	}
 }

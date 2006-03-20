@@ -977,7 +977,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		public IStatus run(IProgressMonitor monitor)  {
 			try {
 				if (fileHistory != null && !shutdown) {
-					fileHistory.refresh(monitor);
+					//If fileHistory termintates in a bad way, try to fetch the local
+					//revisions only
+					if (!fileHistory.refresh(monitor)){
+						fileHistory.fetchLocalOnly(monitor);
+					}
 					if (grouping)
 						revisionsFound = sortRevisions();
 					
