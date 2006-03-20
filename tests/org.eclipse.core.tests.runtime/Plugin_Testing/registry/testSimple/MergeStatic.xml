@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="MergeStatic" name="Contribution merge test" schema="schema/ExtensionPointTest.exsd"/>
+   
+   <extension id="MergeStaticExt1" name="Contribution merge test1" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+   
+   <extension id="MergeStaticExt2" name="Contribution merge test2" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+   
+   <extension id="MergeStaticExt3" name="Contribution merge test3" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+
+</plugin>

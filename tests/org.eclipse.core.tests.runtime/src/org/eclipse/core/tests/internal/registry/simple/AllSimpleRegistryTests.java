@@ -31,6 +31,7 @@ public class AllSimpleRegistryTests extends TestCase {
 		suite.addTest(TokenAccess.suite());
 		suite.addTest(XMLExtensionCreateEclipse.suite());
 		suite.addTest(DirectExtensionRemove.suite());
+		suite.addTest(MergeContribution.suite());
 		return suite;
 	}
 }

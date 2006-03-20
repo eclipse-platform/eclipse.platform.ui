@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension id="MergeDynamicExt1" name="Contribution merge Dynamic test1" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+   
+   <extension id="MergeDynamicExt2" name="Contribution merge Dynamic test2" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+   
+   <extension id="MergeDynamicExt3" name="Contribution merge Dynamic test3" point="MergeStatic">
+      <someTag someData="theData">
+      </someTag>
+   </extension>
+
+</plugin>

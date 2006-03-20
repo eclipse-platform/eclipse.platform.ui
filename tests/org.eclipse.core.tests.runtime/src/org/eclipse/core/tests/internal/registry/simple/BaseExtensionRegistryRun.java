@@ -86,9 +86,13 @@ public class BaseExtensionRegistryRun extends TestCase {
 	}
 
 	protected void processXMLContribution(IContributor nonBundleContributor, URL url) {
+		processXMLContribution(nonBundleContributor, url, false);
+	}
+	
+	protected void processXMLContribution(IContributor nonBundleContributor, URL url, boolean persist) {
 		try {
 			InputStream is = url.openStream();
-			simpleRegistry.addContribution(is, nonBundleContributor, false, url.getFile(), null, userToken);
+			simpleRegistry.addContribution(is, nonBundleContributor, persist, url.getFile(), null, persist ? masterToken : userToken);
 		} catch (IOException eFile) {
 			fail(eFile.getMessage());
 			return;
