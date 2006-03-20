@@ -252,7 +252,8 @@ public class AntJRETab extends JavaJRETab {
 			config.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
 			setDefaultVMInstallAttributes(defaultVMInstall, config);
 			applySeparateVMAttributes(config);
-		} 
+		}
+		
 	}
 
 	private IVMInstall getDefaultVMInstall(ILaunchConfiguration config) {
