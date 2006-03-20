@@ -182,7 +182,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
             fTarget= null;
         }
 		fLaunch= null;
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		if (DebugPlugin.getDefault() != null) {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		}
 		try {
 			if (fReaderThread != null)   {
 				// interrupt reader thread so that we don't block on close

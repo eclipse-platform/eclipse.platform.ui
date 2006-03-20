@@ -333,9 +333,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		fThreads= new IThread[0];
 		fTerminated = true;
 		fSuspended = false;
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-        DebugPlugin.getDefault().removeDebugEventListener(this);
-        DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
+		if (DebugPlugin.getDefault() != null) {
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+			DebugPlugin.getDefault().removeDebugEventListener(this);
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
+		}
 		if (!getProcess().isTerminated()) {
 		    try {
                 fProcess.terminate();
@@ -343,7 +345,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		    } catch (DebugException e) {       
 		    }
 		}
-		fireTerminateEvent();
+		if (DebugPlugin.getDefault() != null) {
+			fireTerminateEvent();
+		}
 	}
 	
 	/**

@@ -132,7 +132,9 @@ public class RemoteAntBuildListener implements ILaunchesListener {
     protected synchronized void shutDown() {
         fLaunch= null;
         fFileNameToIFile= null;
-        DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+        if (DebugPlugin.getDefault() != null) {
+        	DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+        }
         try {
             if (fBufferedReader != null) {
                 fBufferedReader.close();
