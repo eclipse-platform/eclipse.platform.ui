@@ -127,8 +127,12 @@ public class JavaBeanObservableMultiMapping extends
 	protected Object[] doGetMappingValues(Object element, int[] indices) {
 		Object[] result = new Object[indices.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = doGetMappingValue(element,
-					propertyDescriptors[indices[i]]);
+			if(indices[i] < propertyDescriptors.length) {
+				result[i] = doGetMappingValue(element,
+						propertyDescriptors[indices[i]]);
+			} else {
+				result[i] = null;
+			}
 		}
 		return result;
 	}
