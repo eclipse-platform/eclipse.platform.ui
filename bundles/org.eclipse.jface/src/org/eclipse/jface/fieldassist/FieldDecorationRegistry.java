@@ -116,8 +116,12 @@ public class FieldDecorationRegistry {
 		getDefault().registerFieldDecoration(DEC_WARNING, null,
 				IMG_DEC_FIELD_WARNING, imageRegistry);
 
-		getDefault().registerFieldDecoration(DEC_REQUIRED, null,
-				IMG_DEC_FIELD_REQUIRED, imageRegistry);
+		getDefault()
+				.registerFieldDecoration(
+						DEC_REQUIRED,
+						JFaceResources
+								.getString("FieldDecorationRegistry.requiredFieldMessage"), //$NON-NLS-1$
+						IMG_DEC_FIELD_REQUIRED, imageRegistry);
 
 	}
 
@@ -220,8 +224,7 @@ public class FieldDecorationRegistry {
 	 * This value can be used by clients to reserve space or otherwise compute
 	 * margins when aligning non-decorated fields with decorated fields.
 	 * 
-	 * @return the maximum width in pixels of any accessed
-	 *         decoration
+	 * @return the maximum width in pixels of any accessed decoration
 	 */
 	public int getMaximumDecorationWidth() {
 		return maxDecorationWidth;
@@ -234,8 +237,7 @@ public class FieldDecorationRegistry {
 	 * margins when aligning non-decorated fields with decorated fields.
 	 * 
 	 * 
-	 * @return the maximum height in pixels of any accessed
-	 *         decoration
+	 * @return the maximum height in pixels of any accessed decoration
 	 */
 	public int getMaximumDecorationHeight() {
 		return maxDecorationHeight;
