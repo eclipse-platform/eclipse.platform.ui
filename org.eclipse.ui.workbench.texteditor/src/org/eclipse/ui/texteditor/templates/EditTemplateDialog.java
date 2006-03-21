@@ -43,6 +43,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -62,6 +63,7 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
 
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -572,6 +574,19 @@ class EditTemplateDialog extends StatusDialog {
 	 */
 	public Template getTemplate() {
 		return fNewTemplate;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 * @since 3.2
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+		IDialogSettings section= settings.getSection(sectionName);
+		if (section == null)
+			section= settings.addNewSection(sectionName);
+		return section;
 	}
 
 }

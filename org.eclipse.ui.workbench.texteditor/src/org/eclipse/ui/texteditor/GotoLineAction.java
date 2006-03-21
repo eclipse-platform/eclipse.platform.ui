@@ -19,13 +19,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
@@ -100,6 +103,20 @@ public class GotoLineAction extends TextEditorAction {
 			applyDialogFont(result);
 			return result;
 		}
+		
+		/*
+		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+		 * @since 3.2
+		 */
+		protected IDialogSettings getDialogBoundsSettings() {
+			String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+			IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+			IDialogSettings section= settings.getSection(sectionName);
+			if (section == null)
+				section= settings.addNewSection(sectionName);
+			return section;
+		}
+		
 	}
 
 	/** The biggest valid line number of the presented document */
