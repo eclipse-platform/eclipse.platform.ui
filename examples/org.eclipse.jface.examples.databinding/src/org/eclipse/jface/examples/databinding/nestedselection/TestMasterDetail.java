@@ -11,6 +11,10 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
+import java.util.Date;
+
+import org.eclipse.jface.internal.databinding.provisional.BindSpec;
+import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
@@ -64,6 +68,12 @@ public class TestMasterDetail {
 
 	private Table ordersTable = null;
 
+	private Label label5;
+
+	private Text orderDate;
+
+	private Label validationError;
+
 	/**
 	 * This method initializes table
 	 * 
@@ -114,6 +124,9 @@ public class TestMasterDetail {
 	 * This method initializes sShell
 	 */
 	private void createShell() {
+		GridData gridData5 = new org.eclipse.swt.layout.GridData();
+		gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+		gridData5.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		GridData gridData4 = new org.eclipse.swt.layout.GridData();
 		gridData4.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 		gridData4.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
@@ -150,6 +163,12 @@ public class TestMasterDetail {
 		state = new Text(shell, SWT.BORDER);
 		state.setLayoutData(gridData3);
 		createTable1();
+		label5 = new Label(shell, SWT.NONE);
+		label5.setText("Order Date");
+		orderDate = new Text(shell, SWT.BORDER);
+		orderDate.setLayoutData(gridData5);
+		validationError = new Label(shell, SWT.NONE);
+		validationError.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,2,1));
 	}
 
 	private void run() {
@@ -192,5 +211,13 @@ public class TestMasterDetail {
 		dbc.bind(ordersViewer, new TableModelDescription(new Property(
 				selectedPerson, "orders", Order.class, Boolean.TRUE),
 				new Object[] { "orderNumber", "date" }), null);
+		
+		IObservable selectedOrder = dbc.createObservable(new Property(ordersViewer, ViewersProperties.SINGLE_SELECTION));
+		
+		Binding b = dbc.bind(orderDate, new Property(selectedOrder, "date", Date.class,
+				Boolean.FALSE), null);
+		dbc.bind(validationError, b.getValidationError(),
+				new BindSpec().setUpdateModel(false));
+
 	}
 }

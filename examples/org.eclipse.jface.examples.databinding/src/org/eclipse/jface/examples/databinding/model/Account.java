@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import java.util.Date;
+
 public class Account extends ModelObject {
 
 	private String country;
@@ -17,6 +19,7 @@ public class Account extends ModelObject {
 	private String lastName;
 	private String state;
 	private String phone;	
+	private Date expiryDate;
 
 	public void setFirstName(String string) {
 		String oldValue = firstName;
@@ -66,6 +69,15 @@ public class Account extends ModelObject {
 
 	public String getPhone() {
 		return phone;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		firePropertyChange("expiryDate", this.expiryDate,
+				this.expiryDate = expiryDate);
 	}
 
 }
