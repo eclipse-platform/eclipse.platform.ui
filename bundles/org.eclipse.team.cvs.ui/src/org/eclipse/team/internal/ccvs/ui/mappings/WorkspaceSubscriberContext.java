@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.provider.DiffTree;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -51,6 +52,26 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		this.type = type;
 	}
 
+	public void markAsMerged(IDiff[] nodes, boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+		if (getType() == TWO_WAY) {
+			// For, TWO_WAY merges (i.e. replace) should not adjust sync info
+			// but should remove the node from the tree so that other models do 
+			// not modify the file
+			DiffTree tree = ((DiffTree)getDiffTree());
+			try {
+				tree.beginInput();
+				for (int i = 0; i < nodes.length; i++) {
+					IDiff diff = nodes[i];
+					tree.remove(diff.getPath());
+				}
+			} finally {
+				tree.endInput(monitor);
+			}
+		} else {
+			super.markAsMerged(nodes, inSyncHint, monitor);
+		}
+	}
+
 	public void markAsMerged(final IDiff node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -60,19 +81,26 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 				IResource resource = getDiffTree().getResource(node);
 				if (resource.getType() != IResource.FILE)
 					return;
-				SyncInfo info = getSyncInfo(resource);
-				ensureRemotesMatch(resource, node, info);
-				if (info instanceof CVSSyncInfo) {
-					CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
-					cvsInfo.makeOutgoing(monitor);
-					if (inSyncHint) {
-						// Compare the contents of the file with the remote
-						// and make the file in-sync if they match
-						ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
-						if (resource.getType() == IResource.FILE && info.getRemote() != null) {
-							if (comparator.compareContents((IFile)resource, info.getRemote(), Policy.subMonitorFor(monitor, 100))) {
-								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-								cvsFile.checkedIn(null, false /* not a commit */);
+				if (getType() == TWO_WAY) {
+					// For, TWO_WAY merges (i.e. replace) should not adjust sync info
+					// but should remove the node from the tree so that other models do 
+					// not modify the file
+					((DiffTree)getDiffTree()).remove(node.getPath());
+				} else {
+					SyncInfo info = getSyncInfo(resource);
+					ensureRemotesMatch(resource, node, info);
+					if (info instanceof CVSSyncInfo) {
+						CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
+						cvsInfo.makeOutgoing(monitor);
+						if (inSyncHint) {
+							// Compare the contents of the file with the remote
+							// and make the file in-sync if they match
+							ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
+							if (resource.getType() == IResource.FILE && info.getRemote() != null) {
+								if (comparator.compareContents((IFile)resource, info.getRemote(), Policy.subMonitorFor(monitor, 100))) {
+									ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+									cvsFile.checkedIn(null, false /* not a commit */);
+								}
 							}
 						}
 					}
