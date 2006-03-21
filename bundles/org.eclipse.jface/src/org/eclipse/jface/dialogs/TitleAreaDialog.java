@@ -110,12 +110,16 @@ public class TitleAreaDialog extends TrayDialog {
     private Image messageImage;
 
     private boolean showingError = false;
+    
+    private boolean showingWarning = false;
 
     private boolean titleImageLargest = true;
     
     private int messageLabelHeight;
     
     private MessageArea messageArea;
+
+	private String warningMessage;
 
     /**
      * Instantiate a new title area dialog.
@@ -375,7 +379,7 @@ public class TitleAreaDialog extends TrayDialog {
          
         //Clear or set error message.
         if (errorMessage == null) {
-        	if(messageArea != null){
+        	if(messageArea != null && !showingWarning){
            		setMessageAreaVisible(false);
          	}
             if (showingError) {
@@ -394,27 +398,17 @@ public class TitleAreaDialog extends TrayDialog {
             messageImageLabel.setImage(messageImage);
             setImageLabelVisible(messageImage != null);
             
-            if(messageImage != null)
-            {
-                // set the bounds of the messageLabel to account for a  message 
-                // image and avoid resetting the layout
-                Rectangle messageBounds = messageLabel.getBounds();
-                Rectangle imageBounds = messageImageLabel.getBounds();
-
-                messageImageLabel.setBounds(imageBounds.x,
-                							imageBounds.y,
-                							messageImage.getBounds().width,
-                							messageImage.getBounds().height);
-                messageLabel.setBounds(imageBounds.x + messageImage.getBounds().width,
-                					   messageBounds.y, 
-                					   messageBounds.width, 
-                					   messageBounds.height);
-            } 
+            if(showingWarning)
+            	setWarningMessage(warningMessage);
+            
          } else {
             if (!showingError) {
                 // we were not previously showing an error
                 showingError = true;
-            }            
+            }
+            if(showingWarning)
+            	setWarningMessage(null);
+
             if(messageArea == null){
             	// create a message area to display the error
                 messageArea = new MessageArea(titleArea, SWT.NULL);
@@ -560,7 +554,13 @@ public class TitleAreaDialog extends TrayDialog {
                 break;
             }
         }
-        showMessage(newMessage, newImage);
+       
+        if(newType == IMessageProvider.WARNING)
+        	setWarningMessage(newMessage);
+        else {
+        	setWarningMessage(null);
+        	showMessage(newMessage, newImage);
+        }
     }
 
     /**
@@ -579,11 +579,11 @@ public class TitleAreaDialog extends TrayDialog {
 		}
         // Message string to be shown - if there is an image then add in
         // a space to the message for layout purposes
-        String shownMessage = (newImage == null) ? message : " " + message; //$NON-NLS-1$  
+        String shownMessage = message; 
         messageImage = newImage;
         if (!showingError) {
-            // we are not showing an error
-            updateMessage(shownMessage);
+        	// we are not showing an error
+        	updateMessage(shownMessage);
             messageImageLabel.setImage(messageImage);
             setImageLabelVisible(messageImage != null);
             layoutForNewMessage();
@@ -666,5 +666,43 @@ public class TitleAreaDialog extends TrayDialog {
         childData.left = new FormAttachment(0, 0);
         childData.bottom = new FormAttachment(100, 0);
         workArea.setLayoutData(childData);
+    }
+    
+    private void setWarningMessage(String newMessage) {
+        // Any change?
+        if (warningMessage == null ? newMessage == null : warningMessage
+                .equals(newMessage)) {
+			return;
+		}
+        warningMessage = newMessage;
+         
+        //Clear or set warning message.
+        if (warningMessage == null) {
+        	if(messageArea != null && !showingError)
+           		setMessageAreaVisible(false);
+        	
+            if (showingWarning)
+                showingWarning = false;
+
+         } else {
+            if (!showingWarning)
+                showingWarning = true;
+
+            warningMessage = newMessage;
+            if(messageArea == null){
+            	// create a message area to display the error
+            	messageArea = new MessageArea(titleArea, SWT.NULL);
+            	messageArea.setBackground(messageLabel.getBackground());
+       		
+            	Policy.getAnimator().setAnimationState(ControlAnimator.CLOSED);
+            }
+            // show the error
+            messageArea.setText(warningMessage);
+            messageArea.setImage(JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING));
+            setMessageAreaVisible(true);
+         }
+        int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
     }
 }
