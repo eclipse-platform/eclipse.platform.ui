@@ -59,7 +59,7 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 		s1.setLayoutData(td);
 		toolkit.createCompositeSeparator(s1);
 		Composite client = toolkit.createComposite(s1);
-		client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
+		//client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		GridLayout glayout = new GridLayout();
 		glayout.marginWidth = glayout.marginHeight = 0;
 		client.setLayout(glayout);
