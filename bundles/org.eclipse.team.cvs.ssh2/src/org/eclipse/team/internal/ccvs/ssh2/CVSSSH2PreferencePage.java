@@ -11,32 +11,71 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.HostKey;
+import com.jcraft.jsch.HostKeyRepository;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
 
 public class CVSSSH2PreferencePage extends PreferencePage
   implements IWorkbenchPreferencePage {
@@ -46,24 +85,11 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private static final String SSH2_PREFERENCE_PAGE_CONTEXT = "org.eclipse.team.cvs.ui.ssh2_preference_page_context"; //$NON-NLS-1$
   
   private Label ssh2HomeLabel;
-  //private Label proxyTypeLabel;
-  //private Label proxyHostLabel;
-  //private Label proxyPortLabel;
-  //private Label proxyUserLabel;
-  //private Label proxyPassLabel;
   private Label privateKeyLabel;
-  //private Combo proxyTypeCombo;
   private Text ssh2HomeText;
-  //private Text proxyHostText;
-  //private Text proxyPortText;
-  //private Text proxyUserText;
-  //private Text proxyPassText;
   private Text privateKeyText;
-  //private Button enableProxy;
-  //private Button enableAuth;
   private Button privateKeyAdd;
-/*  private boolean useProxy;
-  private boolean useAuth;*/
+
 
   private Button ssh2HomeBrowse;
   private Button keyGenerateDSA;
@@ -114,11 +140,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_19); 
     tabItem.setControl(createGeneralPage(tabFolder));
-/*
-    tabItem = new TabItem(tabFolder, SWT.NONE);
-    tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_20); 
-    tabItem.setControl(createProxyPage(tabFolder));
-*/
+
     tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_21); 
     tabItem.setControl(createKeyManagementPage(tabFolder));
@@ -228,119 +250,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     return group;
   }
-/*
-  private Control createProxyPage(Composite parent) {
-    Composite group=new Composite(parent, SWT.NULL);
-    GridLayout layout=new GridLayout();
-    layout.numColumns=3;
-    group.setLayout(layout);
-    GridData data = new GridData();
-    data.horizontalAlignment = GridData.FILL;
-    group.setLayoutData(data);
 
-    enableProxy=new Button(group, SWT.CHECK);
-    enableProxy.setText(CVSSSH2Messages.CVSSSH2PreferencePage_30); 
-    GridData gd=new GridData();
-    gd.horizontalSpan=3;
-    enableProxy.setLayoutData(gd);
-
-    proxyTypeLabel=new Label(group, SWT.NONE);
-    proxyTypeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_31); 
-    proxyTypeCombo=new Combo(group, SWT.READ_ONLY);
-    proxyTypeCombo.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    proxyTypeCombo.setLayoutData(gd);
-    proxyTypeCombo.addModifyListener(new ModifyListener () {
-		public void modifyText(ModifyEvent e){
-		  if(proxyPortText==null) return;
-		  Combo combo=(Combo)(e.getSource());
-		  String foo=combo.getText();
-		  if(foo.equals(ISSHContants.HTTP)){ 
-		    proxyPortText.setText(ISSHContants.HTTP_DEFAULT_PORT); 
-		  }
-		  else if(foo.equals(ISSHContants.SOCKS5)){
-		    proxyPortText.setText(ISSHContants.SOCKS5_DEFAULT_PORT);
-		  }
-		} 
-     });
-    proxyTypeCombo.add(ISSHContants.HTTP);
-    proxyTypeCombo.add(ISSHContants.SOCKS5);
-    proxyTypeCombo.select(0);
-
-    proxyHostLabel=new Label(group, SWT.NONE);
-    proxyHostLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_32); 
-
-    proxyHostText=new Text(group, SWT.SINGLE | SWT.BORDER);
-    proxyHostText.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    proxyHostText.setLayoutData(gd);
-
-    proxyPortLabel=new Label(group, SWT.NONE);
-    proxyPortLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_33); 
-
-    proxyPortText=new Text(group, SWT.SINGLE | SWT.BORDER);
-    proxyPortText.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    proxyPortText.setLayoutData(gd);
-    
-    proxyPortText.addModifyListener(new ModifyListener(){
-    	public void modifyText(ModifyEvent e){
-    			if(isValidPort(proxyPortText.getText())){
-    				setErrorMessage(null);
-    			}
-    	}
-    });
-
-    
-    createSpacer(group, 3);
-
-    enableAuth=new Button(group, SWT.CHECK);
-    enableAuth.setText(CVSSSH2Messages.CVSSSH2PreferencePage_34); 
-    gd=new GridData();
-    gd.horizontalSpan=3;
-    enableAuth.setLayoutData(gd);
-
-    proxyUserLabel=new Label(group, SWT.NONE);
-    proxyUserLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_35); 
-
-    proxyUserText=new Text(group, SWT.SINGLE | SWT.BORDER);
-    proxyUserText.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    proxyUserText.setLayoutData(gd);
-
-    proxyPassLabel=new Label(group, SWT.NONE);
-    proxyPassLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_36); 
-
-    proxyPassText=new Text(group, SWT.SINGLE | SWT.BORDER);
-    proxyPassText.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
-    gd.horizontalSpan=2;
-    proxyPassText.setLayoutData(gd);
-
-    //  performDefaults();
-
-    enableProxy.addSelectionListener(new SelectionListener() {
-	public void widgetSelected(SelectionEvent e) {
-	  updateControls();
-	}
-	public void widgetDefaultSelected(SelectionEvent e) {
-	}
-      });
-
-    enableAuth.addSelectionListener(new SelectionListener() {
-	public void widgetSelected(SelectionEvent e) {
-	  updateControls();
-	}
-	public void widgetDefaultSelected(SelectionEvent e) {
-	}
-      });
-    return group;
-  }
-  */
   private Control createKeyManagementPage(Composite parent) {
     int columnSpan=3;
     Composite group=new Composite(parent, SWT.NULL);
@@ -1017,21 +927,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     } 	
   }
   private void updateControls() {
-   /* boolean enable=enableProxy.getSelection();
-    proxyTypeLabel.setEnabled(enable);
-    proxyTypeCombo.setEnabled(enable);
-    proxyPortLabel.setEnabled(enable);
-    proxyPortText.setEnabled(enable);
-    proxyHostLabel.setEnabled(enable);
-    proxyHostText.setEnabled(enable);
-
-    enableAuth.setEnabled(enable);
-    enable&=enableAuth.getSelection();
-    proxyUserLabel.setEnabled(enable);
-    proxyUserText.setEnabled(enable);
-    proxyPassLabel.setEnabled(enable);
-    proxyPassText.setEnabled(enable);*/
-
     boolean enable=(kpair!=null);
     publicKeylabel.setEnabled(enable);
     publicKeyText.setEnabled(enable);
@@ -1060,23 +955,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     ssh2HomeText.setText(store.getString(ISSHContants.KEY_SSH2HOME));
     privateKeyText.setText(store.getString(ISSHContants.KEY_PRIVATEKEY));
-   /* useProxy=store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
-    enableProxy.setSelection(useProxy);
-    proxyHostText.setText(store.getString(ISSHContants.KEY_PROXY_HOST));
-    proxyTypeCombo.select(store.getString(ISSHContants.KEY_PROXY_TYPE).equals(ISSHContants.HTTP)?0:1);
-    proxyPortText.setText(store.getString(ISSHContants.KEY_PROXY_PORT));
-    useAuth=store.getString(ISSHContants.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
-    enableAuth.setSelection(useAuth);*/
-    
-/*    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
-    if(map!=null){
-      String username=(String) map.get(ISSHContants.KEY_PROXY_USER);
-      if(username!=null) proxyUserText.setText(username);
-      String password=(String) map.get(ISSHContants.KEY_PROXY_PASS);
-      if(password!=null) proxyPassText.setText(password);
-    }
-
-    proxyPassText.setEchoChar('*');*/
     updateControls();
   }
   public boolean performOk() {
@@ -1095,50 +973,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
 					}
 				}
 			}
-			/*if (enableProxy.getSelection() && !isValidPort(proxyPortText.getText())) {
-				return false;
-			}*/
+		
 			IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 			store.setValue(ISSHContants.KEY_SSH2HOME, home);
 			store.setValue(ISSHContants.KEY_PRIVATEKEY, privateKeyText.getText());
-		/*	store.setValue(ISSHContants.KEY_PROXY, enableProxy.getSelection());
-			store.setValue(ISSHContants.KEY_PROXY_TYPE, proxyTypeCombo.getText());
-			store.setValue(ISSHContants.KEY_PROXY_HOST, proxyHostText.getText());
-			store.setValue(ISSHContants.KEY_PROXY_PORT, proxyPortText.getText());
-			store.setValue(ISSHContants.KEY_PROXY_AUTH, enableAuth.getSelection());*/
-			
-			// Store proxy username and password in the keyring file for now. This is
-			// not ultra secure, but at least it will be saved between sessions.
-			Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
-			if (map == null)
-				map = new java.util.HashMap(10);
-			/*map.put(ISSHContants.KEY_PROXY_USER, proxyUserText.getText());
-			map.put(ISSHContants.KEY_PROXY_PASS, proxyPassText.getText());*/
-			try {
-				Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map); //$NON-NLS-1$
-			} catch (CoreException e) {
-				Util.logError("Cannot save ssh2 proxy authentication information to keyring file", e); //$NON-NLS-1$
-			}
 		}
 		CVSSSH2Plugin.getDefault().savePluginPreferences();
 		return result;
 	}
-
-/*  private boolean isValidPort(String port){
-  	int i=-1;
-  	try {	
-  		i=Integer.parseInt(port);
-  	}
-  	catch (NumberFormatException ee) {
-//  		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
-//  		return false;
-  	}
-  	if((i < 0) || (i > 65535)){
-  		setErrorMessage(CVSSSH2Messages.CVSSSH2PreferencePage_104); 
-  		return false;
-  	}
-  	return true;
-  }*/
   
   public void performApply() {
     performOk();
