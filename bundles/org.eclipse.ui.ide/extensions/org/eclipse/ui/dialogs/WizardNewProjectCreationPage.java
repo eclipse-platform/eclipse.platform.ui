@@ -11,6 +11,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.net.URI;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;

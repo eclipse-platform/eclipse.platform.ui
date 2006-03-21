@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
