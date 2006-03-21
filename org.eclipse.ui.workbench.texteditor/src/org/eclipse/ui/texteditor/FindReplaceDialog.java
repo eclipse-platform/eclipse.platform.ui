@@ -135,7 +135,6 @@ class FindReplaceDialog extends Dialog {
 	/** The size of the dialogs search history. */
 	private static final int HISTORY_SIZE= 5;
 
-	private Point fLocation;
 	private Point fIncrementalBaseLocation;
 	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fGlobalInit, fIncrementalInit;
 	/**
@@ -259,8 +258,6 @@ class FindReplaceDialog extends Dialog {
 
 		Shell shell= getShell();
 		shell.addShellListener(fActivationListener);
-		if (fLocation != null)
-			shell.setLocation(fLocation);
 
 		// set help context
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAbstractTextEditorHelpContextIds.FIND_REPLACE_DIALOG);
@@ -1637,6 +1634,19 @@ class FindReplaceDialog extends Dialog {
 			fDialogSettings= settings.addNewSection(getClass().getName());
 		return fDialogSettings;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 * @since 3.2
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+		IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
+		IDialogSettings section= settings.getSection(sectionName);
+		if (section == null)
+			section= settings.addNewSection(sectionName);
+		return section;
+	}
 
 	/**
 	 * Initializes itself from the dialog settings with the same state
@@ -1644,14 +1654,6 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void readConfiguration() {
 		IDialogSettings s= getDialogSettings();
-
-		try {
-			int x= s.getInt("x"); //$NON-NLS-1$
-			int y= s.getInt("y"); //$NON-NLS-1$
-			fLocation= new Point(x, y);
-		} catch (NumberFormatException e) {
-			fLocation= null;
-		}
 
 		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
@@ -1681,10 +1683,6 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void writeConfiguration() {
 		IDialogSettings s= getDialogSettings();
-
-		Point location= getShell().getLocation();
-		s.put("x", location.x); //$NON-NLS-1$
-		s.put("y", location.y); //$NON-NLS-1$
 
 		s.put("wrap", fWrapInit); //$NON-NLS-1$
 		s.put("casesensitive", fCaseInit); //$NON-NLS-1$
