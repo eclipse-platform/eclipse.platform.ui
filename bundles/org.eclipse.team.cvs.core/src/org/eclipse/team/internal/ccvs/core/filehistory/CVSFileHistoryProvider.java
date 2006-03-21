@@ -80,11 +80,12 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 			
 			CVSFileStore fileStore = (CVSFileStore) store;
 			ICVSRemoteFile file = fileStore.getCVSURI().toFile();
-			
-			CVSFileHistory fileHistory = new CVSFileHistory(file);
-			
-			return fileHistory;
-			
+			if (file != null){
+				if ((flags == IFileHistoryProvider.SINGLE_REVISION) || ((flags == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT))) {
+					return new CVSFileHistory(file, flags);
+				} else
+					return new CVSFileHistory(file);
+			}
 		}
 		return null;
 	}
