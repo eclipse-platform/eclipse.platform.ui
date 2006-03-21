@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,29 +13,56 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
-import org.eclipse.jface.contentassist.SubjectControlContextInformationValidator;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 
 /**
- * Content assist processor for regular expressions.
+ * Content assist proposal provider for regular expressions.
+ * <p>
+ * Note: Replaces <code>RegExContentAssistProcessor</code> which was introduced in 3.0.
+ * </p>
  *
- * @since 3.0
+ * @since 3.2
  */
-final class RegExContentAssistProcessor implements IContentAssistProcessor, ISubjectControlContentAssistProcessor {
+final class RegExContentProposalProvider implements IContentProposalProvider {
 
+	
 	/**
 	 * Proposal computer.
-	 *
-	 * @since 3.1
 	 */
 	private static class ProposalComputer {
+
+		private static class Proposal implements IContentProposal {
+			
+			private String fContent;
+			private String fLabel;
+			private String fDescription;
+			private int fCursorPosition;
+			
+			Proposal(String content, String label, String description, int cursorPosition) {
+				fContent= content;
+				fLabel= label;
+				fDescription= description;
+				fCursorPosition= cursorPosition;
+			}
+			
+			public String getContent() {
+				return fContent;
+			}
+			
+			public String getLabel() {
+				return fLabel;
+			}
+			
+			public String getDescription() {
+				return fDescription;
+			}
+			
+			public int getCursorPosition() {
+				return fCursorPosition;
+			}
+		}
+		
 
 		/**
 		 * The whole regular expression.
@@ -60,17 +87,17 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 
 		/**
 		 * Creates a new Proposal Computer.
-		 * @param contentAssistSubjectControl the subject control
-		 * @param documentOffset the offset
+		 * @param contents the contents of the the subject control
+		 * @param position the cursor position
 		 */
-		public ProposalComputer(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
-			fExpression= contentAssistSubjectControl.getDocument().get();
-			fDocumentOffset= documentOffset;
+		public ProposalComputer(String contents, int position) {
+			fExpression= contents;
+			fDocumentOffset= position;
 			fPriorityProposals= new ArrayList();
 			fProposals= new ArrayList();
 			
 			boolean isEscape= false;
-			esc: for (int i= documentOffset - 1; i >= 0; i--) {
+			esc: for (int i= position - 1; i >= 0; i--) {
 				if (fExpression.charAt(i) == '\\')
 					isEscape= !isEscape;
 				else
@@ -83,7 +110,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		 * Computes applicable proposals for the find field.
 		 * @return the proposals
 		 */
-		public ICompletionProposal[] computeFindProposals() {
+		public IContentProposal[] computeFindProposals() {
 			//characters
 			addBsProposal("\\\\", RegExMessages.displayString_bs_bs, RegExMessages.additionalInfo_bs_bs); //$NON-NLS-1$
 			addBracketProposal("\\0", 2, RegExMessages.displayString_bs_0, RegExMessages.additionalInfo_bs_0); //$NON-NLS-1$
@@ -211,14 +238,14 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 			}
 			
 			fPriorityProposals.addAll(fProposals);
-			return (ICompletionProposal[]) fPriorityProposals.toArray(new ICompletionProposal[fProposals.size()]);
+			return (IContentProposal[]) fPriorityProposals.toArray(new IContentProposal[fProposals.size()]);
 		}
 
 		/**
 		 * Computes applicable proposals for the replace field.
 		 * @return the proposals
 		 */
-		public ICompletionProposal[] computeReplaceProposals() {
+		public IContentProposal[] computeReplaceProposals() {
 			if (fDocumentOffset > 0 && '$' == fExpression.charAt(fDocumentOffset - 1)) {
 				addProposal("", RegExMessages.displayString_dollar, RegExMessages.additionalInfo_dollar); //$NON-NLS-1$
 			} else {
@@ -226,7 +253,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 				addBsProposal("\\", RegExMessages.displayString_replace_bs, RegExMessages.additionalInfo_replace_bs); //$NON-NLS-1$
 				addProposal("\t", RegExMessages.displayString_tab, RegExMessages.additionalInfo_tab); //$NON-NLS-1$
 			}
-			return (ICompletionProposal[]) fProposals.toArray(new ICompletionProposal[fProposals.size()]);
+			return (IContentProposal[]) fProposals.toArray(new IContentProposal[fProposals.size()]);
 		}
 		
 		/**
@@ -237,7 +264,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		 * @param additionalInfo the additional information
 		 */
 		private void addProposal(String proposal, String displayString, String additionalInfo) {
-			fProposals.add(new CompletionProposal(proposal, fDocumentOffset, 0, proposal.length(), null, displayString, null, additionalInfo));
+			fProposals.add(new Proposal(proposal, displayString, additionalInfo, proposal.length()));
 		}
 
 		/**
@@ -250,7 +277,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		 * @param additionalInfo the additional information
 		 */
 		private void addProposal(String proposal, int cursorPosition, String displayString, String additionalInfo) {
-			fProposals.add(new CompletionProposal(proposal, fDocumentOffset, 0, cursorPosition, null, displayString, null, additionalInfo));
+			fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
 		}
 
 		/**
@@ -261,7 +288,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		 * @param additionalInfo the additional information
 		 */
 		private void addPriorityProposal(String proposal, String displayString, String additionalInfo) {
-			fPriorityProposals.add(new CompletionProposal(proposal, fDocumentOffset, 0, proposal.length(), null, displayString, null, additionalInfo));
+			fPriorityProposals.add(new Proposal(proposal, displayString, additionalInfo, proposal.length()));
 		}
 		
 		/**
@@ -276,7 +303,7 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 		private void addBracketProposal(String proposal, int cursorPosition, String displayString, String additionalInfo) {
 			String prolog= fExpression.substring(0, fDocumentOffset);
 			if (! fIsEscape && prolog.endsWith("\\") && proposal.startsWith("\\")) { //$NON-NLS-1$//$NON-NLS-2$
-				fProposals.add(new CompletionProposal(proposal, fDocumentOffset, 0, cursorPosition, null, displayString, null, additionalInfo));
+				fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
 				return;
 			}
 			for (int i= 1; i <= cursorPosition; i++) {
@@ -285,110 +312,64 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 					String postfix= proposal.substring(cursorPosition);
 					String epilog= fExpression.substring(fDocumentOffset);
 					if (epilog.startsWith(postfix)) {
-						fPriorityProposals.add(new CompletionProposal(proposal.substring(i, cursorPosition), fDocumentOffset, 0, cursorPosition - i, null, displayString, null, additionalInfo));
+						fPriorityProposals.add(new Proposal(proposal.substring(i, cursorPosition), displayString, additionalInfo, cursorPosition-i));
 					} else {
-						fPriorityProposals.add(new CompletionProposal(proposal.substring(i), fDocumentOffset, 0, cursorPosition - i, null, displayString, null, additionalInfo));
+						fPriorityProposals.add(new Proposal(proposal.substring(i), displayString, additionalInfo, cursorPosition-i));
 					}
 					return;
 				}
 			}
-			fProposals.add(new CompletionProposal(proposal, fDocumentOffset, 0, cursorPosition, null, displayString, null, additionalInfo));
+			fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
 		}
 
 		/**
 		 * Adds a proposal that starts with a backslash.
+		 * Ensures that the backslash is not repeated if already typed.
 		 * 
 		 * @param proposal the string to be inserted
 		 * @param displayString the proposal's label
 		 * @param additionalInfo the additional information
 		 */
 		private void addBsProposal(String proposal, String displayString, String additionalInfo) {
+			String prolog= fExpression.substring(0, fDocumentOffset);
+			int position= proposal.length();
+			// If the string already contains the backslash, do not include in the proposal
+			if (prolog.endsWith("\\")) { //$NON-NLS-1$
+				position--;
+				proposal= proposal.substring(1);
+			}
+
 			if (fIsEscape) {
-				fPriorityProposals.add(new CompletionProposal(proposal.substring(1), fDocumentOffset, 0, proposal.length() - 1, null, displayString, null, additionalInfo));
+				fPriorityProposals.add(new Proposal(proposal, displayString, additionalInfo, position));
 			} else {
-				addProposal(proposal, displayString, additionalInfo);
+				addProposal(proposal, position, displayString, additionalInfo);
 			}
 		}
 	}
-
-	/**
-	 * The context information validator.
-	 */
-	private IContextInformationValidator fValidator= new SubjectControlContextInformationValidator(this);
-
+	
 	/**
 	 * <code>true</code> iff the processor is for the find field.
 	 * <code>false</code> iff the processor is for the replace field.
-	 * @since 3.1
 	 */
 	private final boolean fIsFind;
 	
-	/*
-	 * @since 3.1
+
+	/**
+	 * Creates a new completion proposal provider.
+	 * 
+	 * @param isFind <code>true</code> if the provider is used for the 'find' field
+	 * 					<code>false</code> if the provider is used for the 'reaplce' field
 	 */
-	public RegExContentAssistProcessor(boolean isFind) {
+	public RegExContentProposalProvider(boolean isFind) {
 		fIsFind= isFind;
 	}
 	
 	/*
-	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
+	 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		return null;
-	}
-
-	/*
-	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-	 */
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
-		return null;
-	}
-
-	/*
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	public char[] getCompletionProposalAutoActivationCharacters() {
+	public IContentProposal [] getProposals(String contents, int position) {
 		if (fIsFind)
-			return new char[] {'\\', '[', '('};
-		
-		return new char[] {'$'};
-	}
-
-	/*
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
-	public char[] getContextInformationAutoActivationCharacters() {
-		return new char[] { };
-	}
-
-	/*
-	 * @see IContentAssistProcessor#getContextInformationValidator()
-	 */
-	public IContextInformationValidator getContextInformationValidator() {
-		return fValidator;
-	}
-
-	/*
-	 * @see IContentAssistProcessor#getErrorMessage()
-	 */
-	public String getErrorMessage() {
-		return null;
-	}
-
-	/*
-	 * @see ISubjectControlContentAssistProcessor#computeCompletionProposals(IContentAssistSubjectControl, int)
-	 */
-	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
-		if (fIsFind)
-			return new ProposalComputer(contentAssistSubjectControl, documentOffset).computeFindProposals();
-		
-		return new ProposalComputer(contentAssistSubjectControl, documentOffset).computeReplaceProposals();
-	}
-
-	/*
-	 * @see ISubjectControlContentAssistProcessor#computeContextInformation(IContentAssistSubjectControl, int)
-	 */
-	public IContextInformation[] computeContextInformation(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
-		return null;
+			return new ProposalComputer(contents, position).computeFindProposals();
+		return new ProposalComputer(contents, position).computeReplaceProposals();
 	}
 }

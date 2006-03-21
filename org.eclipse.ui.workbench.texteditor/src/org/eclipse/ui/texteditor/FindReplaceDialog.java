@@ -26,9 +26,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,31 +38,25 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.jface.resource.JFaceColors;
 
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contentassist.ContentAssistHandler;
+import org.eclipse.ui.fieldassist.ContentAssistField;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-
 
 
 /**
@@ -182,6 +174,13 @@ class FindReplaceDialog extends Dialog {
 
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
 	private Combo fFindField, fReplaceField;
+	
+	/**
+	 * Decorated find and replace fields.
+	 * @since 3.2
+	 */
+	private ContentAssistField fContentAssistFindField, fContentAssistReplaceField;
+
 	private Rectangle fDialogPositionInit;
 
 	private IDialogSettings fDialogSettings;
@@ -196,26 +195,6 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean fUseSelectedLines;
-	/**
-	 * The content assist handler for the find combo.
-	 * @since 3.0
-	 */
-	private ContentAssistHandler fFindContentAssistHandler;
-	/**
-	 * The content assist handler for the replace combo.
-	 * @since 3.0
-	 */
-	private ContentAssistHandler fReplaceContentAssistHandler;
-	/**
-	 * Content assist's proposal popup background color.
-	 * @since 3.0
-	 */
-	private Color fProposalPopupBackgroundColor;
-	/**
-	 * Content assist's proposal popup foreground color.
-	 * @since 3.0
-	 */
-	private Color fProposalPopupForegroundColor;
 	/**
 	 * <code>true</code> if the find field should receive focus the next time
 	 * the dialog is activated, <code>false</code> otherwise.
@@ -424,28 +403,12 @@ class FindReplaceDialog extends Dialog {
 
 		applyDialogFont(panel);
 
-		// Setup content assistants for find and replace combo boxes
-		fProposalPopupBackgroundColor= new Color(getShell().getDisplay(), new RGB(254, 241, 233));
-		fProposalPopupForegroundColor= new Color(getShell().getDisplay(), new RGB(0, 0, 0));
-
 		return panel;
 	}
 
 	private void setContentAssistsEnablement(boolean enable) {
-		if (enable) {
-			if (fFindContentAssistHandler == null) {
-				fFindContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fFindField, createContentAssistant(true));
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fReplaceField, createContentAssistant(false));
-			}
-			fFindContentAssistHandler.setEnabled(true);
-			fReplaceContentAssistHandler.setEnabled(true);
-
-		} else {
-			if (fFindContentAssistHandler == null)
-				return;
-			fFindContentAssistHandler.setEnabled(false);
-			fReplaceContentAssistHandler.setEnabled(false);
-		}
+		fContentAssistFindField.setEnabled(enable);
+		fContentAssistReplaceField.setEnabled(enable);
 	}
 
 	/**
@@ -612,17 +575,40 @@ class FindReplaceDialog extends Dialog {
 		Label findLabel= new Label(panel, SWT.LEFT);
 		findLabel.setText(EditorMessages.FindReplace_Find_label);
 		setGridData(findLabel, GridData.BEGINNING, false, GridData.CENTER, false);
-
-		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
-		setGridData(fFindField, GridData.FILL, true, GridData.CENTER, false);
+		
+		// Create the find content assist field 
+		ComboContentAdapter contentAdapter= new ComboContentAdapter();
+		RegExContentProposalProvider findProposer= new RegExContentProposalProvider(true);
+		fContentAssistFindField= new ContentAssistField(panel, SWT.DROP_DOWN | SWT.BORDER, 
+				new IControlCreator() {
+					public Control createControl(Composite controlParent, int style) {
+						return new Combo(controlParent, SWT.DROP_DOWN | SWT.BORDER);
+					}
+				}, 
+				contentAdapter, findProposer, 
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
+				new char[] {'\\', '[', '('});
+		fFindField= (Combo)fContentAssistFindField.getControl();
+		setGridData(fContentAssistFindField.getLayoutControl(), GridData.FILL, true, GridData.CENTER, false);
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel= new Label(panel, SWT.LEFT);
 		fReplaceLabel.setText(EditorMessages.FindReplace_Replace_label);
 		setGridData(fReplaceLabel, GridData.BEGINNING, false, GridData.CENTER, false);
 
-		fReplaceField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
-		setGridData(fReplaceField, GridData.FILL, true, GridData.CENTER, false);
+		// Create the replace content assist field
+		RegExContentProposalProvider replaceProposer= new RegExContentProposalProvider(false);
+		fContentAssistReplaceField= new ContentAssistField(panel, SWT.DROP_DOWN | SWT.BORDER, 
+				new IControlCreator() {
+					public Control createControl(Composite controlParent, int style) {
+						return new Combo(controlParent, SWT.DROP_DOWN | SWT.BORDER);
+					}
+				}, 
+				contentAdapter, replaceProposer, 
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
+				new char[] {'$'});
+		fReplaceField= (Combo)fContentAssistReplaceField.getControl();
+		setGridData(fContentAssistReplaceField.getLayoutControl(), GridData.FILL, true, GridData.CENTER, false);
 		fReplaceField.addModifyListener(listener);
 
 		return panel;
@@ -983,13 +969,6 @@ class FindReplaceDialog extends Dialog {
 
 		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
-
-		setContentAssistsEnablement(false);
-		fFindContentAssistHandler= null;
-		fReplaceContentAssistHandler= null;
-
-		fProposalPopupBackgroundColor.dispose();
-		fProposalPopupForegroundColor.dispose();
 
 		// prevent leaks
 		fActiveShell= null;
@@ -1725,48 +1704,5 @@ class FindReplaceDialog extends Dialog {
 		names= new String[history.size()];
 		history.toArray(names);
 		s.put("replacehistory", names); //$NON-NLS-1$
-	}
-
-	// ------------- content assistant -----------------
-
-	/**
-	 * Create a new regex content assistant.
-	 * @param isFind <code>true</code> iff the processor is for the find field.
-	 *                <code>false</code> iff the processor is for the replace field.
-	 *
-	 * @return a new configured content assistant
-	 * @since 3.0
-	 */
-	private SubjectControlContentAssistant createContentAssistant(boolean isFind) {
-		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
-
-		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size")); //$NON-NLS-1$
-
-		IContentAssistProcessor processor= new RegExContentAssistProcessor(isFind);
-		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-
-		contentAssistant.enableAutoActivation(isRegExSearchAvailableAndChecked());
-		contentAssistant.setProposalSelectorBackground(fProposalPopupBackgroundColor);
-		contentAssistant.setProposalSelectorForeground(fProposalPopupForegroundColor);
-
-		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		contentAssistant.setInformationControlCreator(new IInformationControlCreator() {
-			/*
-			 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-			 */
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent);
-			}});
-
-		return contentAssistant;
-	}
-
-	private IDialogSettings getSettings(String sectionName) {
-		IDialogSettings pluginDialogSettings= TextEditorPlugin.getDefault().getDialogSettings();
-		IDialogSettings settings= pluginDialogSettings.getSection(sectionName);
-		if (settings == null)
-			settings= pluginDialogSettings.addNewSection(sectionName);
-
-		return settings;
 	}
 }
