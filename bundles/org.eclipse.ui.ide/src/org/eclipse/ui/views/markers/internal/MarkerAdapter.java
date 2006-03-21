@@ -66,9 +66,10 @@ public class MarkerAdapter {
 		public MarkerNode[] getChildren() {
 
 			if (children == null) {
-				
-				//Return nothing while a build is going on as this could be stale
-				if(building) {
+
+				// Return nothing while a build is going on as this could be
+				// stale
+				if (building) {
 					return Util.EMPTY_MARKER_ARRAY;
 				}
 
@@ -118,7 +119,14 @@ public class MarkerAdapter {
 		 */
 		public String getDescription() {
 
-			if (view.getMarkerLimit() < 0) {
+			int size = end - start + 1;
+
+			if (size <= view.getMarkerLimit()) {
+
+				if (size == 1)
+					return NLS.bind(MarkerMessages.Category_One_Item_Label,
+							new Object[] { name });
+
 				return NLS.bind(MarkerMessages.Category_Label, new Object[] {
 						name, String.valueOf(getDisplayedSize()) });
 			}
@@ -156,6 +164,7 @@ public class MarkerAdapter {
 
 		/**
 		 * Return the name of the receiver.
+		 * 
 		 * @return String
 		 */
 		public String getName() {
@@ -396,11 +405,12 @@ public class MarkerAdapter {
 
 	/**
 	 * Return the categories for the receiver.
-	 * @return MarkerCategory[] or <code>null</code>
-	 * if there are no categories.
+	 * 
+	 * @return MarkerCategory[] or <code>null</code> if there are no
+	 *         categories.
 	 */
 	public MarkerCategory[] getCategories() {
-		if(building) {
+		if (building) {
 			return null;
 		}
 		return categories;
