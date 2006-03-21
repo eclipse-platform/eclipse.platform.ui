@@ -51,6 +51,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
 import org.eclipse.ui.internal.expressions.LegacyActionSetExpression;
@@ -1273,8 +1274,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 							+ LeafLocationElement.PATH_SEPARATOR + groupId;
 				}
 			} catch (NotDefinedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				WorkbenchPlugin.log(
+						"Unable to find defined group path for " + groupId, e); //$NON-NLS-1$
 			}
 		}
 
@@ -1295,8 +1296,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 							+ token.getId() + '-' + "additions"; //$NON-NLS-1$
 				}
 			} catch (NotDefinedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				WorkbenchPlugin.log(
+						"Unable to find defined menu path for " + token.getId(), e); //$NON-NLS-1$
 			}
 		}
 
