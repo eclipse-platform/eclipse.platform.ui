@@ -1081,5 +1081,13 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_Previous;
 	public static String CVSHistoryPage_NoRevisionsForMode;
 	public static String CVSHistoryPage_NoFilter;
-
+	
+    public static String CVSProxyPreferencePage_enableProxy;
+    public static String CVSProxyPreferencePage_proxyTpe;
+    public static String CVSProxyPreferencePage_proxyHost;
+    public static String CVSProxyPreferencePage_proxyPort;
+    public static String CVSProxyPreferencePage_enableProxyAuth;
+    public static String CVSProxyPreferencePage_proxyUser;
+    public static String CVSProxyPreferencePage_proxyPass;
+    public static String CVSProxyPreferencePage_proxyPortError;
 }

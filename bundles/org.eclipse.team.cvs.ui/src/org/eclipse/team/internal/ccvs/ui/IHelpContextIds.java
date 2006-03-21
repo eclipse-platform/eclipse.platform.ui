@@ -105,6 +105,7 @@ public interface IHelpContextIds {
 	public static final String WATCH_EDIT_PREFERENCE_PAGE = PREFIX + "watch_edit_preference_page_context"; //$NON-NLS-1$
 	public static final String PASSWORD_MANAGEMENT_PAGE = PREFIX + "password_management_preference_page_context"; //$NON-NLS-1$
 	public static final String COMPARE_PREFERENCE_PAGE = PREFIX + "cvs_compare_preference_page_context"; //$NON-NLS-1$
+    public static final String PROXY_PREFERENCE_PAGE = PREFIX + "proxy_preference_page_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
@@ -156,4 +157,5 @@ public interface IHelpContextIds {
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "project_property_page_context"; //$NON-NLS-1$
 	public static final String FOLDER_PROPERTY_PAGE = PREFIX + "folder_property_page_context"; //$NON-NLS-1$
 	public static final String FILE_PROPERTY_PAGE = PREFIX + "file_property_page_context"; //$NON-NLS-1$
+
 }

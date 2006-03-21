@@ -46,24 +46,24 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private static final String SSH2_PREFERENCE_PAGE_CONTEXT = "org.eclipse.team.cvs.ui.ssh2_preference_page_context"; //$NON-NLS-1$
   
   private Label ssh2HomeLabel;
-  private Label proxyTypeLabel;
-  private Label proxyHostLabel;
-  private Label proxyPortLabel;
-  private Label proxyUserLabel;
-  private Label proxyPassLabel;
+  //private Label proxyTypeLabel;
+  //private Label proxyHostLabel;
+  //private Label proxyPortLabel;
+  //private Label proxyUserLabel;
+  //private Label proxyPassLabel;
   private Label privateKeyLabel;
-  private Combo proxyTypeCombo;
+  //private Combo proxyTypeCombo;
   private Text ssh2HomeText;
-  private Text proxyHostText;
-  private Text proxyPortText;
-  private Text proxyUserText;
-  private Text proxyPassText;
+  //private Text proxyHostText;
+  //private Text proxyPortText;
+  //private Text proxyUserText;
+  //private Text proxyPassText;
   private Text privateKeyText;
-  private Button enableProxy;
-  private Button enableAuth;
+  //private Button enableProxy;
+  //private Button enableAuth;
   private Button privateKeyAdd;
-  private boolean useProxy;
-  private boolean useAuth;
+/*  private boolean useProxy;
+  private boolean useAuth;*/
 
   private Button ssh2HomeBrowse;
   private Button keyGenerateDSA;
@@ -114,11 +114,11 @@ public class CVSSSH2PreferencePage extends PreferencePage
     TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_19); 
     tabItem.setControl(createGeneralPage(tabFolder));
-
+/*
     tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_20); 
     tabItem.setControl(createProxyPage(tabFolder));
-
+*/
     tabItem = new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(CVSSSH2Messages.CVSSSH2PreferencePage_21); 
     tabItem.setControl(createKeyManagementPage(tabFolder));
@@ -228,7 +228,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     return group;
   }
-
+/*
   private Control createProxyPage(Composite parent) {
     Composite group=new Composite(parent, SWT.NULL);
     GridLayout layout=new GridLayout();
@@ -340,6 +340,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       });
     return group;
   }
+  */
   private Control createKeyManagementPage(Composite parent) {
     int columnSpan=3;
     Composite group=new Composite(parent, SWT.NULL);
@@ -1016,7 +1017,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     } 	
   }
   private void updateControls() {
-    boolean enable=enableProxy.getSelection();
+   /* boolean enable=enableProxy.getSelection();
     proxyTypeLabel.setEnabled(enable);
     proxyTypeCombo.setEnabled(enable);
     proxyPortLabel.setEnabled(enable);
@@ -1029,9 +1030,9 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyUserLabel.setEnabled(enable);
     proxyUserText.setEnabled(enable);
     proxyPassLabel.setEnabled(enable);
-    proxyPassText.setEnabled(enable);
+    proxyPassText.setEnabled(enable);*/
 
-    enable=(kpair!=null);
+    boolean enable=(kpair!=null);
     publicKeylabel.setEnabled(enable);
     publicKeyText.setEnabled(enable);
     keyFingerPrintLabel.setEnabled(enable);
@@ -1059,15 +1060,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     ssh2HomeText.setText(store.getString(ISSHContants.KEY_SSH2HOME));
     privateKeyText.setText(store.getString(ISSHContants.KEY_PRIVATEKEY));
-    useProxy=store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
+   /* useProxy=store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
     enableProxy.setSelection(useProxy);
     proxyHostText.setText(store.getString(ISSHContants.KEY_PROXY_HOST));
     proxyTypeCombo.select(store.getString(ISSHContants.KEY_PROXY_TYPE).equals(ISSHContants.HTTP)?0:1);
     proxyPortText.setText(store.getString(ISSHContants.KEY_PROXY_PORT));
     useAuth=store.getString(ISSHContants.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
-    enableAuth.setSelection(useAuth);
+    enableAuth.setSelection(useAuth);*/
     
-    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
+/*    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
     if(map!=null){
       String username=(String) map.get(ISSHContants.KEY_PROXY_USER);
       if(username!=null) proxyUserText.setText(username);
@@ -1075,7 +1076,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       if(password!=null) proxyPassText.setText(password);
     }
 
-    proxyPassText.setEchoChar('*');
+    proxyPassText.setEchoChar('*');*/
     updateControls();
   }
   public boolean performOk() {
@@ -1094,25 +1095,25 @@ public class CVSSSH2PreferencePage extends PreferencePage
 					}
 				}
 			}
-			if (enableProxy.getSelection() && !isValidPort(proxyPortText.getText())) {
+			/*if (enableProxy.getSelection() && !isValidPort(proxyPortText.getText())) {
 				return false;
-			}
+			}*/
 			IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 			store.setValue(ISSHContants.KEY_SSH2HOME, home);
 			store.setValue(ISSHContants.KEY_PRIVATEKEY, privateKeyText.getText());
-			store.setValue(ISSHContants.KEY_PROXY, enableProxy.getSelection());
+		/*	store.setValue(ISSHContants.KEY_PROXY, enableProxy.getSelection());
 			store.setValue(ISSHContants.KEY_PROXY_TYPE, proxyTypeCombo.getText());
 			store.setValue(ISSHContants.KEY_PROXY_HOST, proxyHostText.getText());
 			store.setValue(ISSHContants.KEY_PROXY_PORT, proxyPortText.getText());
-			store.setValue(ISSHContants.KEY_PROXY_AUTH, enableAuth.getSelection());
+			store.setValue(ISSHContants.KEY_PROXY_AUTH, enableAuth.getSelection());*/
 			
 			// Store proxy username and password in the keyring file for now. This is
 			// not ultra secure, but at least it will be saved between sessions.
 			Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME); //$NON-NLS-1$
 			if (map == null)
 				map = new java.util.HashMap(10);
-			map.put(ISSHContants.KEY_PROXY_USER, proxyUserText.getText());
-			map.put(ISSHContants.KEY_PROXY_PASS, proxyPassText.getText());
+			/*map.put(ISSHContants.KEY_PROXY_USER, proxyUserText.getText());
+			map.put(ISSHContants.KEY_PROXY_PASS, proxyPassText.getText());*/
 			try {
 				Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map); //$NON-NLS-1$
 			} catch (CoreException e) {
@@ -1123,7 +1124,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 		return result;
 	}
 
-  private boolean isValidPort(String port){
+/*  private boolean isValidPort(String port){
   	int i=-1;
   	try {	
   		i=Integer.parseInt(port);
@@ -1137,7 +1138,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
   		return false;
   	}
   	return true;
-  }
+  }*/
   
   public void performApply() {
     performOk();

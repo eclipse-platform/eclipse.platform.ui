@@ -9,16 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.connection;
-
  
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
+import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.*;
+
+import com.jcraft.jsch.*;
+import com.jcraft.jsch.Proxy;
 
 /**
  * A connection used to talk to an cvs pserver.
@@ -97,13 +101,38 @@ public class PServerConnection implements IServerConnection {
 		monitor.subTask(CVSMessages.PServerConnection_authenticating);
 		monitor.worked(1);
 		
-		fSocket = createSocket(monitor);
+		InputStream is = null;
+		OutputStream os = null;
+        
+        Proxy proxy = getProxy();
+        if (proxy!=null) {
+          String host = cvsroot.getHost();
+          int port = cvsroot.getPort();
+          if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
+            port = DEFAULT_PORT;
+          }
+          try {
+            int timeout = CVSProviderPlugin.getPlugin().getTimeout() * 1000;
+            proxy.connect(new ResponsiveSocketFacory(monitor), host, port, timeout);
+          } catch( Exception ex) {
+            ex.printStackTrace();
+            throw new IOException(ex.getMessage());
+          }
+          is = proxy.getInputStream();
+          os = proxy.getOutputStream();
+          
+        } else {
+          fSocket = createSocket(monitor);
+          is = fSocket.getInputStream();
+          os = fSocket.getOutputStream();
+        }
+        
 		boolean connected = false;
 		try {
-			this.inputStream = new BufferedInputStream(new PollingInputStream(fSocket.getInputStream(),
+			this.inputStream = new BufferedInputStream(new PollingInputStream(is,
 				cvsroot.getTimeout(), monitor));
 			this.outputStream = new PollingOutputStream(new TimeoutOutputStream(
-				fSocket.getOutputStream(), 8192 /*bufferSize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/),
+				os, 8192 /*bufferSize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/),
 				cvsroot.getTimeout(), monitor);
 			authenticate();
 			connected = true;
@@ -112,7 +141,34 @@ public class PServerConnection implements IServerConnection {
 		}
 	}
 
-	/**
+	private Proxy getProxy() {
+        CVSProviderPlugin plugin = CVSProviderPlugin.getPlugin();
+        boolean useProxy = plugin.isUseProxy();
+        Proxy proxy = null;
+        if (useProxy) {
+            String type = plugin.getProxyType();
+            String host = plugin.getProxyHost();
+            String port = plugin.getProxyPort();
+
+            boolean useAuth = plugin.isUseProxyAuth();
+
+            String proxyhost = host + ":" + port; //$NON-NLS-1$
+            if (type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
+                proxy = new ProxyHTTP(proxyhost);
+                if (useAuth) {
+                    ((ProxyHTTP) proxy).setUserPasswd(plugin.getProxyUser(), plugin.getProxyPassword());
+                }
+            } else if (type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
+                proxy = new ProxySOCKS5(proxyhost);
+                if (useAuth) {
+                    ((ProxySOCKS5) proxy).setUserPasswd(plugin.getProxyUser(), plugin.getProxyPassword());
+                }
+            }
+        }
+        return proxy;
+    }
+
+    /**
 	 * @see Connection#getInputStream()
 	 */
 	public InputStream getInputStream() {
@@ -169,13 +225,22 @@ public class PServerConnection implements IServerConnection {
 		// Accumulate a message from the error (E) stream
 		String message = "";//$NON-NLS-1$
 		String separator = ""; //$NON-NLS-1$
-		while (line.length() > 0 && line.charAt(0) == ERROR_CHAR) {
-		    if (line.length() > 2) {
-		        message += separator + line.substring(2);
-			    separator = " "; //$NON-NLS-1$
-		    }
-		    line = Connection.readLine(cvsroot, getInputStream());
-		}
+
+        if(!CVSProviderPlugin.getPlugin().isUseProxy()) {
+          while (line.length() > 0 && line.charAt(0) == ERROR_CHAR) {
+  		    if (line.length() > 2) {
+  		        message += separator + line.substring(2);
+  			    separator = " "; //$NON-NLS-1$
+  		    }
+  		    line = Connection.readLine(cvsroot, getInputStream());
+          }
+        } else {
+            while (line.length() > 0) {
+                message += separator + line;
+                separator = "\n"; //$NON-NLS-1$
+                line = Connection.readLine(cvsroot, getInputStream());
+            }
+        }
 		
 		// If the last line is the login failed (I HATE YOU) message, return authentication failure
 		if (LOGIN_FAILED.equals(line)) {
@@ -255,4 +320,43 @@ public class PServerConnection implements IServerConnection {
 	private void throwInValidCharacter() throws CVSAuthenticationException {
 		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY);
 	}
+    
+    
+    public static class SimpleSocketFactory implements SocketFactory {
+        InputStream in = null;
+        OutputStream out = null;
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            Socket socket = null;
+            socket = new Socket(host, port);
+            return socket;
+        }
+        public InputStream getInputStream(Socket socket) throws IOException {
+            if (in == null)
+                in = socket.getInputStream();
+            return in;
+        }
+        public OutputStream getOutputStream(Socket socket) throws IOException {
+            if (out == null)
+                out = socket.getOutputStream();
+            return out;
+        }
+    }
+    
+    public static class ResponsiveSocketFacory extends SimpleSocketFactory {
+        private IProgressMonitor monitor;
+        public ResponsiveSocketFacory(IProgressMonitor monitor) {
+            this.monitor = monitor;
+        }
+        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+            Socket socket = null;
+            socket = Util.createSocket(host, port, monitor);
+            // Null out the monitor so we don't hold onto anything
+            // (i.e. the SSH2 session will keep a handle to the socket factory around
+            monitor = new NullProgressMonitor();
+            // Set the socket timeout
+            socket.setSoTimeout(CVSProviderPlugin.getPlugin().getTimeout() * 1000);
+            return socket;
+        }
+    }
+    
 }

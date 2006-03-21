@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -396,32 +395,30 @@ class JSchSession {
 			}
 
 			if (jschSession == null) {
-
-				boolean useProxy = store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
+				boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
                 Proxy proxy = null;
 				if (useProxy) {
-					String _type = store.getString(ISSHContants.KEY_PROXY_TYPE);
-					String _host = store.getString(ISSHContants.KEY_PROXY_HOST);
-					String _port = store.getString(ISSHContants.KEY_PROXY_PORT);
+					String _type = CVSProviderPlugin.getPlugin().getProxyType();
+					String _host = CVSProviderPlugin.getPlugin().getProxyHost();
+					String _port = CVSProviderPlugin.getPlugin().getProxyPort();
 
-					boolean useAuth = store.getString(ISSHContants.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
+					boolean useAuth = CVSProviderPlugin.getPlugin().isUseProxyAuth();
 					String _user = ""; //$NON-NLS-1$
 					String _pass = ""; //$NON-NLS-1$
 					
 					// Retrieve username and password from keyring.
-					Map map = Platform.getAuthorizationInfo(CVSSSH2PreferencePage.FAKE_URL, "proxy", CVSSSH2PreferencePage.AUTH_SCHEME); //$NON-NLS-1$
-				    if(map!=null){
-				      _user=(String) map.get(ISSHContants.KEY_PROXY_USER);
-				      _pass=(String) map.get(ISSHContants.KEY_PROXY_PASS);
-				    }
+					if(useAuth){
+						_user=CVSProviderPlugin.getPlugin().getProxyUser();
+						_pass=CVSProviderPlugin.getPlugin().getProxyPassword();
+					}
 
 					String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-					if (_type.equals(ISSHContants.HTTP)) {
+					if (_type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
 						proxy = new ProxyHTTP(proxyhost);
 						if (useAuth) {
 							((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
 						}
-					} else if (_type.equals(ISSHContants.SOCKS5)) {
+					} else if (_type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
 						proxy = new ProxySOCKS5(proxyhost);
 						if (useAuth) {
 							((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);

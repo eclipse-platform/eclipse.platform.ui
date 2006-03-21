@@ -11,8 +11,9 @@
 package org.eclipse.team.internal.ccvs.core;
  
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -105,7 +106,33 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean crash;
 
     private boolean autoShareOnImport;
+    private boolean useProxy;
 
+    public static final String PROXY_TYPE_HTTP = "HTTP"; //$NON-NLS-1$
+    public static final String PROXY_TYPE_SOCKS5 = "SOCKS5"; //$NON-NLS-1$
+    public static final String HTTP_DEFAULT_PORT = "80"; //$NON-NLS-1$
+    public static final String SOCKS5_DEFAULT_PORT = "1080"; //$NON-NLS-1$
+    
+    private String proxyType;
+    private String proxyHost;
+    private String proxyPort;
+    private boolean useProxyAuth;
+
+    private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
+    private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
+
+    private static final URL FAKE_URL;
+    static {
+        URL temp = null;
+        try {
+            temp = new URL("http://org.eclipse.team.cvs.proxy.auth");//$NON-NLS-1$ 
+        } catch (MalformedURLException e) {
+            // Should never fail
+        }
+        FAKE_URL = temp;
+    }
+    
+    
 	public synchronized CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
 		if (cvsWorkspaceSubscriber == null) {
 			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
@@ -598,4 +625,82 @@ public class CVSProviderPlugin extends Plugin {
 	public boolean isWatchOnEdit() {
 		return getPluginPreferences().getBoolean(CVSProviderPlugin.ENABLE_WATCH_ON_EDIT);
 	}
+    
+    // proxy configuration
+    
+    public void setUseProxy(boolean useProxy) {
+      this.useProxy = useProxy;
+    }
+
+    public boolean isUseProxy() {
+        return this.useProxy;
+    }
+
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
+    }
+    
+    public String getProxyType() {
+        return this.proxyType;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+    
+    public String getProxyHost() {
+        return this.proxyHost;
+    }
+
+    public void setProxyPort(String proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+    
+    public String getProxyPort() {
+        return this.proxyPort;
+    }
+
+    public void setUseProxyAuth(boolean useProxyAuth) {
+        this.useProxyAuth = useProxyAuth;
+    }
+
+    public boolean isUseProxyAuth() {
+        return this.useProxyAuth;
+    }
+    
+    public String getProxyUser() {
+        Object user = getAuthInfo().get(INFO_PROXY_USER);
+        return user==null ? "" : (String) user; //$NON-NLS-1$
+    }
+    
+    public String getProxyPassword() {
+        Object pass = getAuthInfo().get(INFO_PROXY_PASS);
+        return pass==null ? "" : (String) pass; //$NON-NLS-1$
+    }
+    
+    private Map getAuthInfo() {
+      // Retrieve username and password from keyring.
+      Map authInfo = Platform.getAuthorizationInfo(FAKE_URL, "proxy", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      return authInfo!=null ? authInfo : Collections.EMPTY_MAP;
+    }
+
+    public void setProxyAuth(String proxyUser, String proxyPass) {
+        Map authInfo = getAuthInfo();
+        if (authInfo.size()==0) {
+            authInfo = new java.util.HashMap(4);
+        }
+        if (proxyUser != null) {
+            authInfo.put(INFO_PROXY_USER, proxyUser);
+        }
+        if (proxyPass != null) {
+            authInfo.put(INFO_PROXY_PASS, proxyPass);
+        }
+        try {
+            Platform.addAuthorizationInfo(FAKE_URL, "proxy", "", authInfo);  //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (CoreException e) {
+            // We should probably wrap the CoreException here!
+            CVSProviderPlugin.log(e);
+        }
+    }
+    
 }
