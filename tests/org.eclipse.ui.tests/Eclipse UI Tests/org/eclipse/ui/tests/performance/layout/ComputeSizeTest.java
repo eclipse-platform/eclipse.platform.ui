@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * Measures the performance of a widget's computeSize method
@@ -26,8 +25,8 @@ import org.eclipse.ui.tests.performance.TestRunnable;
 public class ComputeSizeTest extends BasicPerformanceTest {
 
     private TestWidgetFactory widgetFactory;
-    private int xIterations = 10;
-    private int yIterations = 10;
+    private int xIterations = 15;
+    private int yIterations = 15;
     
     /**
      * @param testName
@@ -52,18 +51,20 @@ public class ComputeSizeTest extends BasicPerformanceTest {
         // generate slightly different test data each time
         final int[] counter = new int[] {0};
         
-        exercise(new TestRunnable() {
-           public void run() {
-        
-               // This counter determines whether we're computing a width, height, or fixed
-               // size and whether or not we flush the cache. 
-               
-               // We do things this way to avoid calling computeSize with the same (or similar) values
-               // twice in a row, which would be too easy to cache.
-               int count = counter[0];
-               
-               startMeasuring();
-               
+        // This counter determines whether we're computing a width,
+		// height, or fixed
+		// size and whether or not we flush the cache.
+
+		// We do things this way to avoid calling computeSize with the same (or
+		// similar) values
+		// twice in a row, which would be too easy to cache.
+		int count = counter[0];
+
+		for (int j = 0; j < 100; j++) {
+
+			startMeasuring();
+			for (int i = 0; i < 200; i++) {
+
                for (int xIteration = 0; xIteration < xIterations; xIteration++) {
                    
                    for (int yIteration = 0; yIteration < yIterations; yIteration++) {
@@ -83,18 +84,16 @@ public class ComputeSizeTest extends BasicPerformanceTest {
                            case 3: widget.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushState); break;
                        }
 
-                       count++;
-                   }
-               }
-               
-               stopMeasuring();
-               
-               processEvents();
-               
-               counter[0]++;               
-            } 
-        });
-        
+						count++;
+					}
+				}
+
+			}
+			stopMeasuring();
+			processEvents();
+			counter[0]++;
+		}
+
         commitMeasurements();
         assertPerformance();
         widgetFactory.done();
