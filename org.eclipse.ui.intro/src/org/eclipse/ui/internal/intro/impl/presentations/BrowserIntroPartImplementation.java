@@ -203,7 +203,7 @@ public class BrowserIntroPartImplementation extends
             if (html != null) {
             	IntroModelRoot root = getModel();
             	if (root!=null) {
-            		Map props = root.getTheme().getProperties();
+            		Map props = root.getTheme()!=null?root.getTheme().getProperties():null;
             		if (props!=null) {
             			String value = (String)props.get("standardSupport"); //$NON-NLS-1$
             			String doctype=null;
