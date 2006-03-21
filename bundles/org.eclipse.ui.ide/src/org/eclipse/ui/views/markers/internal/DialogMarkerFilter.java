@@ -1397,7 +1397,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 				category.add(node);
 			}
 
-			MarkerType[] subTypes = ((MarkerType) obj).getAllSubTypes();
+			MarkerType[] subTypes = ((MarkerType) obj).getSubtypes();
 			for (int j = 0; j < subTypes.length; j++) {
 				buildTypeTree(elements, subTypes[j], categories);
 			}
