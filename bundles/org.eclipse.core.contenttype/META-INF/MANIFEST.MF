@@ -7,9 +7,16 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.equinox.preferences,
  org.eclipse.equinox.registry,
- org.eclipse.equinox.common,
- system.bundle
+ org.eclipse.equinox.common
 Export-Package: org.eclipse.core.internal.content;x-internal:=true,
  org.eclipse.core.runtime.content
 Bundle-Activator: org.eclipse.core.internal.content.Activator
 Eclipse-LazyStart: true
+Import-Package: javax.xml.parsers,
+ org.eclipse.osgi.service.debug,
+ org.eclipse.osgi.util;version="1.0.0",
+ org.osgi.framework,
+ org.osgi.util.tracker,
+ org.xml.sax,
+ org.xml.sax.ext,
+ org.xml.sax.helpers
