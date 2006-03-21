@@ -21,7 +21,7 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
  * Provides the context for an <code>IResourceMappingMerger</code> or a model
  * specific synchronization view that supports merging.
  *  * <p>
- * <a name="async">The diff tree associated with this context may be updated asynchronously in reponse
+ * <a name="async">The diff tree associated with this context may be updated asynchronously in response
  * to calls to any method of this context (e.g. merge and markAsMerged methods) that may result in changes
  * in the synchronization state of resources. It may also get updated as a result
  * of changes triggered from other sources. Hence, the callback from the diff tree
@@ -48,12 +48,12 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * Return the type of merge that will be performed when using this
 	 * context (either {@link ISynchronizationContext#TWO_WAY} or
 	 * {@link ISynchronizationContext#THREE_WAY}). In most cases,
-	 * this type which mathc that returned by {@link ISynchronizationContext#getType()}.
+	 * this type which match that returned by {@link ISynchronizationContext#getType()}.
 	 * However, for some THREE_WAY synchronizations, the merge type may
-	 * be TWO_WAY whioch indicates that clients of the context should
-	 * ignore locla changes when performing merges. This capability is
+	 * be TWO_WAY which indicates that clients of the context should
+	 * ignore local changes when performing merges. This capability is
 	 * provided to support replace operations that support three-way
-	 * preview but ignore local changes when repalcing.
+	 * preview but ignore local changes when replacing.
 	 * @return the type of merge that will be performed when using this
 	 * context.
 	 */
