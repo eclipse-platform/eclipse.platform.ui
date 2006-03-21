@@ -363,6 +363,8 @@ public final class InternalPlatform {
 	 */
 	public IContentTypeManager getContentTypeManager() {
 		if (contentTracker == null) {
+			if (context == null)
+				return null;
 			contentTracker = new ServiceTracker(context, IContentTypeManager.class.getName(), null);
 			contentTracker.open();
 		}
@@ -371,6 +373,8 @@ public final class InternalPlatform {
 
 	public EnvironmentInfo getEnvironmentInfoService() {
 		if (environmentTracker == null) {
+			if (context == null)
+				 return null;
 			environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
 			environmentTracker.open();
 		}
@@ -386,6 +390,8 @@ public final class InternalPlatform {
 
 	public FrameworkLog getFrameworkLog() {
 		if (logTracker == null) {
+			if (context == null)
+				return null;
 			logTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
 			logTracker.open();
 		}
@@ -492,6 +498,8 @@ public final class InternalPlatform {
 	}
 
 	public PlatformAdmin getPlatformAdmin() {
+		if (context == null)
+			return null;
 		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
 		if (platformAdminReference == null)
 			return null;
@@ -550,6 +558,8 @@ public final class InternalPlatform {
 	 */
 	public IPreferencesService getPreferencesService() {
 		if (preferencesTracker == null) {
+			if (context == null)
+				return null;
 			preferencesTracker = new ServiceTracker(context, IPreferencesService.class.getName(), null);
 			preferencesTracker.open();
 		}
@@ -592,6 +602,8 @@ public final class InternalPlatform {
 
 		if (productId == null) {
 			// try bundleContext properties
+			if (context == null)
+				return null;
 			productId = context.getProperty(InternalPlatform.PROP_PRODUCT);
 			if (productId == null)
 				return null;
@@ -771,7 +783,7 @@ public final class InternalPlatform {
 
 	public boolean isRunning() {
 		try {
-			return initialized && context.getBundle().getState() == Bundle.ACTIVE;
+			return initialized && context != null && context.getBundle().getState() == Bundle.ACTIVE;
 		} catch (IllegalStateException e) {
 			return false;
 		}
@@ -1037,6 +1049,8 @@ public final class InternalPlatform {
 
 	private PackageAdmin getBundleAdmin() {
 		if (bundleTracker == null) {
+			if (context == null)
+				return null;
 			bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 			bundleTracker.open();
 		}
