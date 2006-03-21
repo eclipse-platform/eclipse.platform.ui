@@ -12,12 +12,15 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Locale;
 
+import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
+import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.conversion.Converter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
@@ -277,17 +280,16 @@ public class PropertyScenarios extends ScenariosTestCase {
 						}, null));
 		// no validation message
 		assertEquals(null, getDbc().getPartialValidationError().getValue());
-		enterText(text,"Invalid Value");
-		assertEquals(noSpacesMessage, ((ValidationError)getDbc().getPartialValidationError()
-				.getValue()).message);
+		enterText(text, "Invalid Value");
+		assertEquals(noSpacesMessage, ((ValidationError) getDbc()
+				.getPartialValidationError().getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		text.setText("InvalidValueBecauseTooLong");
-		assertEquals(max15CharactersMessage, ((ValidationError)getDbc()
+		assertEquals(max15CharactersMessage, ((ValidationError) getDbc()
 				.getPartialValidationError().getValue()).message);
 		assertEquals("ValidValue", text.getText());
 		enterText(text, "anothervalid");
-		assertEquals(null, getDbc()
-				.getPartialValidationError().getValue());
+		assertEquals(null, getDbc().getPartialValidationError().getValue());
 		assertEquals("anothervalid", text.getText());
 		assertEquals("anothervalid", adventure.getName());
 	}
@@ -339,10 +341,10 @@ public class PropertyScenarios extends ScenariosTestCase {
 		assertEquals("42.24", text.getText());
 		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+		assertEquals(mustBeCurrencyMessage, ((ValidationError) getDbc()
 				.getValidationError().getValue()).message);
 		enterText(text, "-23.9");
-		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+		assertEquals(cannotBeNegativeMessage, ((ValidationError) getDbc()
 				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
@@ -406,10 +408,10 @@ public class PropertyScenarios extends ScenariosTestCase {
 		assertEquals("$42.24", text.getText());
 		assertEquals(null, getDbc().getValidationError().getValue());
 		enterText(text, "jygt");
-		assertEquals(mustBeCurrencyMessage, ((ValidationError)getDbc()
+		assertEquals(mustBeCurrencyMessage, ((ValidationError) getDbc()
 				.getValidationError().getValue()).message);
 		enterText(text, "-$23.9");
-		assertEquals(cannotBeNegativeMessage, ((ValidationError)getDbc()
+		assertEquals(cannotBeNegativeMessage, ((ValidationError) getDbc()
 				.getValidationError().getValue()).message);
 		assertEquals(42.24, adventure.getPrice(), 0.0001);
 		adventure.setPrice(0.0);
@@ -552,5 +554,19 @@ public class PropertyScenarios extends ScenariosTestCase {
 		assertEquals(t1.getText(), adventure.getName());
 		assertEquals(2, counter[0]);
 
+	}
+
+	public void testScenario15() {
+		Text text = new Text(getComposite(), SWT.NONE);
+		Account account = new Account();
+		account.setExpiryDate(new Date());
+		Binding b = getDbc().bind(text, new Property(account, "expiryDate"),
+				null);
+		Text errorText = new Text(getComposite(), SWT.NONE);
+		getDbc().bind(errorText, b.getValidationError(),
+				new BindSpec().setUpdateModel(false));
+		assertEquals(null, b.getValidationError().getValue());
+		enterText(text, "foo");
+		assertNotNull(b.getValidationError().getValue());
 	}
 }

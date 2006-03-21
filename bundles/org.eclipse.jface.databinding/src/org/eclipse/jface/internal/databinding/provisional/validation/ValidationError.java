@@ -67,5 +67,9 @@ public class ValidationError {
 		this.status = status;
 		this.message = message;
 	}
+	
+	public String toString() {
+		return message;
+	}
 }
 

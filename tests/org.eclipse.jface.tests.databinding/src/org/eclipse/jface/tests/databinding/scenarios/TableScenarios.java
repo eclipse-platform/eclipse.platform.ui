@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -86,55 +93,50 @@ public class TableScenarios extends ScenariosTestCase {
 	
 	public void testScenario01() {
 		// Show that a TableViewer with three columns renders the accounts
-//		Account[] accounts = catalog.getAccounts();
-//
-//		TableViewerDescription tableViewerDescription = new TableViewerDescription(
-//				tableViewer);
-//		tableViewerDescription.addColumn(0, "firstName");
-//		tableViewerDescription.addColumn(1, "lastName");
-//		tableViewerDescription.addColumn(2, "state");
-//		getDbc().bind(tableViewerDescription,
-//				new Property(catalog, "accounts"), null);
-//
-//		// Verify the data in the table columns matches the accounts
-//		for (int i = 0; i < accounts.length; i++) {
-//			Account account = catalog.getAccounts()[i];
-//			String col_0 = ((ITableLabelProvider) tableViewer
-//					.getLabelProvider()).getColumnText(account, 0); 
-//			assertEquals(getValue(account.getFirstName()), col_0);
-//			String col_1 = ((ITableLabelProvider) tableViewer
-//					.getLabelProvider()).getColumnText(account, 1);
-//			assertEquals(getValue(account.getLastName()), col_1);
-//			String col_2 = ((ITableLabelProvider) tableViewer
-//					.getLabelProvider()).getColumnText(account, 2);
-//			assertEquals(getValue(account.getState()), col_2);
-//
-//		}
+		Account[] accounts = catalog.getAccounts();
+
+		TableModelDescription tableModelDescription = new TableModelDescription(new Property(catalog, "accounts"),new String[]{"firstName","lastName","state"});
+		getDbc().bind(tableViewer,
+				tableModelDescription, null);
+
+		// Verify the data in the table columns matches the accounts
+		for (int i = 0; i < accounts.length; i++) {
+			Account account = catalog.getAccounts()[i];
+			String col_0 = ((ITableLabelProvider) tableViewer
+					.getLabelProvider()).getColumnText(account, 0); 
+			assertEquals(getValue(account.getFirstName()), col_0);
+			String col_1 = ((ITableLabelProvider) tableViewer
+					.getLabelProvider()).getColumnText(account, 1);
+			assertEquals(getValue(account.getLastName()), col_1);
+			String col_2 = ((ITableLabelProvider) tableViewer
+					.getLabelProvider()).getColumnText(account, 2);
+			assertEquals(getValue(account.getState()), col_2);
+
+		}
 	}
 
 	public void testScenario02() throws SecurityException, IllegalArgumentException {
-//		// Show that a TableViewer with three columns can be used to update
-//		// columns
-//		Account[] accounts = catalog.getAccounts();
-//
-//		TableViewerDescription tableViewerDescription = new TableViewerDescription(
-//				tableViewer);
+		// Show that a TableViewer with three columns can be used to update
+		// columns
+		Account[] accounts = catalog.getAccounts();
+
+		TableModelDescription tableModelDescription = new TableModelDescription(new Property(catalog, "accounts"), new String[]{"firstName","lastName","state"});
 //		tableViewerDescription.addEditableColumn("firstName");
 //		tableViewerDescription.addEditableColumn("lastName", null, null, new PhoneConverter());
 //		tableViewerDescription.addEditableColumn("state", null, null, new StateConverter());
-//		getDbc().bind(tableViewerDescription,
-//				new Property(catalog, "accounts"), null);
-//
-//		Account account = accounts[0];
-//		// Select the first item in the table
-//		tableViewer.editElement(account, 0);
-//		// Set the text property of the cell editor which is now active over the "firstName" column
-//		CellEditor[] cellEditors = tableViewer.getCellEditors();
-//		TextCellEditor firstNameEditor = (TextCellEditor) cellEditors[0];
-//		// Change the firstName and test it goes to the model
-//		enterText((Text) firstNameEditor.getControl(), "Bill");
-//		// Check whether the model has changed
-//		assertEquals("Bill",account.getFirstName());
+		getDbc().bind(tableViewer,
+				tableModelDescription, null);
+
+		Account account = accounts[0];
+		// Select the first item in the table
+		tableViewer.editElement(account, 0);
+		// Set the text property of the cell editor which is now active over the "firstName" column
+		CellEditor[] cellEditors = tableViewer.getCellEditors();
+		TextCellEditor firstNameEditor = (TextCellEditor) cellEditors[0];
+		// Change the firstName and test it goes to the model
+		enterText((Text) firstNameEditor.getControl(), "Bill");
+		// Check whether the model has changed
+		assertEquals("Bill",account.getFirstName());
 	}
 	
 	public void testScenario04() {

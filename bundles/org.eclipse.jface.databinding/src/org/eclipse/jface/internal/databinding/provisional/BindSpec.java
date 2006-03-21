@@ -37,11 +37,15 @@ public class BindSpec {
 
 	private IDomainValidator domainValidator;
 
-	private final Integer modelUpdatePolicy;
+	private Integer modelUpdatePolicy;
 
-	private final Integer validatePolicy;
+	private Integer validatePolicy;
 
-	private final Integer targetUpdatePolicy;
+	private Integer targetUpdatePolicy;
+
+	private boolean updateModel = true;
+
+	private boolean updateTarget = true;
 
 	/**
 	 * Creates a bind spec with the given converters, validators, and update
@@ -84,6 +88,13 @@ public class BindSpec {
 			IDomainValidator domainValidator) {
 		this(modelToTargetConverter, targetToModelConverter, targetValidator,
 				domainValidator, null, null, null);
+	}
+
+	/**
+	 * 
+	 */
+	public BindSpec() {
+		this(null, null, null, null, null, null, null);
 	}
 
 	/**
@@ -167,30 +178,102 @@ public class BindSpec {
 
 	/**
 	 * @param converter
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public void setModelToTargetConverter(IConverter converter) {
+	public BindSpec setModelToTargetConverter(IConverter converter) {
 		this.modelToTargetConverter = converter;
+		return this;
 	}
 
 	/**
 	 * @param converter
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public void setTargetToModelConverter(IConverter converter) {
+	public BindSpec setTargetToModelConverter(IConverter converter) {
 		this.targetToModelConverter = converter;
+		return this;
 	}
 
 	/**
 	 * @param validator
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public void setValidator(IValidator validator) {
+	public BindSpec setValidator(IValidator validator) {
 		this.targetValidator = validator;
+		return this;
 	}
 
 	/**
 	 * @param validator
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public void setDomainValidator(IDomainValidator validator) {
+	public BindSpec setDomainValidator(IDomainValidator validator) {
 		this.domainValidator = validator;
+		return this;
+	}
+
+	/**
+	 * @return true if the model should be updated by the binding
+	 */
+	public boolean updateModel() {
+		return updateModel;
+	}
+
+	/**
+	 * @return true if the target should be updated by the binding
+	 */
+	public boolean updateTarget() {
+		return updateTarget;
+	}
+
+	/**
+	 * @param updateModel
+	 *            The updateModel to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setUpdateModel(boolean updateModel) {
+		this.updateModel = updateModel;
+		return this;
+	}
+
+	/**
+	 * @param updateTarget
+	 *            The updateTarget to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setUpdateTarget(boolean updateTarget) {
+		this.updateTarget = updateTarget;
+		return this;
+	}
+
+	/**
+	 * @param modelUpdatePolicy
+	 *            The modelUpdatePolicy to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setModelUpdatePolicy(Integer modelUpdatePolicy) {
+		this.modelUpdatePolicy = modelUpdatePolicy;
+		return this;
+	}
+
+	/**
+	 * @param targetUpdatePolicy
+	 *            The targetUpdatePolicy to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setTargetUpdatePolicy(Integer targetUpdatePolicy) {
+		this.targetUpdatePolicy = targetUpdatePolicy;
+		return this;
+	}
+
+	/**
+	 * @param validatePolicy
+	 *            The validatePolicy to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setValidatePolicy(Integer validatePolicy) {
+		this.validatePolicy = validatePolicy;
+		return this;
 	}
 
 }
