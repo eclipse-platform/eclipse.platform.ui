@@ -522,6 +522,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
+		setDefaultWorkingDirectory(copy);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
 		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler, antHome);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
@@ -723,5 +724,21 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 					return true;
 		}
 		return super.saveBeforeLaunch(configuration, mode, monitor);
+	}
+	
+	/**
+	 * Sets the default working directory to be the parent folder of the buildfile if
+	 * the user has not explicitly set the working directory.
+	 */
+	private void setDefaultWorkingDirectory(ILaunchConfigurationWorkingCopy copy) {
+		try {
+			String wd = copy.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			if (wd == null) {
+				wd= ExternalToolsUtil.getLocation(copy).removeLastSegments(1).toOSString();
+				copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
+			}
+		} catch (CoreException e) {
+			AntUIPlugin.log(e.getStatus());
+		}
 	}
 }
