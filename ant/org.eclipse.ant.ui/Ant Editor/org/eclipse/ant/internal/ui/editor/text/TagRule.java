@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -9,7 +9,7 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 24108
+ * 	   IBM Corporation - bug 24108, bug 111740
  *     John-Mason P. Shackelford - bug 51215
  *******************************************************************************/
 
@@ -59,45 +59,29 @@ public class TagRule extends MultiLineRule {
      */
     protected boolean endSequenceDetected(ICharacterScanner scanner) {
         int c;
-        char[][] delimiters = scanner.getLegalLineDelimiters();
-        boolean previousWasEscapeCharacter = false;
         while ((c = scanner.read()) != ICharacterScanner.EOF) {
             if (c == fEscapeCharacter) {
                 // Skip the escaped character.
                 scanner.read();
-            } else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
-                // Check if the specified end sequence has been found.
-                if (sequenceDetected(scanner, fEndSequence, true)) {
-                    if (fEndSequence[0] == '>') {
-                        return endOfTagDetected(scanner);
-                    } 
-                    return true;
-                }
-            } else if (fBreaksOnEOL) {
-                // Check for end of line since it can be used to terminate the
-                // pattern.
-                for (int i = 0; i < delimiters.length; i++) {
-                    if (c == delimiters[i][0]
-                            && sequenceDetected(scanner, delimiters[i], true)) {
-                        if (!fEscapeContinuesLine
-                                || !previousWasEscapeCharacter) return true;
-                    }
-                }
-            }
-            previousWasEscapeCharacter = (c == fEscapeCharacter);
+            } else if (c == '>') {
+                endOfTagDetected(scanner);
+                return true;
+            } 
         }
-        if (fBreaksOnEOF) return true;
+        
         scanner.unread();
         return false;
     }
 
-    private boolean endOfTagDetected(ICharacterScanner scanner) {
+    private void endOfTagDetected(ICharacterScanner scanner) {
         int c;
         int scanAhead = 0;
         int endOfTagOffset = 0;
         while ((c = scanner.read()) != ICharacterScanner.EOF && c != '<') {
             scanAhead++;
-            if (c == '>') endOfTagOffset = scanAhead;
+            if (c == '>') {
+            	endOfTagOffset = scanAhead;
+            }
         }
 
         if (c == '<') {
@@ -106,6 +90,5 @@ public class TagRule extends MultiLineRule {
                 scanner.unread();
             }
         }
-        return true;
     }    
 }

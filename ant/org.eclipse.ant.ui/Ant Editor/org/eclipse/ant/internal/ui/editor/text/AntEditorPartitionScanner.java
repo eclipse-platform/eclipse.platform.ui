@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -9,7 +9,7 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 32890, bug 24108
+ * 	   IBM Corporation - bug 32890, bug 24108, bug 111740
  *     John-Mason P. Shackelford - bug 57379
  *******************************************************************************/
 
@@ -62,7 +62,7 @@ public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
 		rules[2]= new TagRule(tag);
 	
 		IToken xmlDTD = new Token(XML_DTD);
-		rules[3]= new MultiLineRule("<!DOCTYPE", "]>", xmlDTD); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[3]= new DocTypeRule(xmlDTD);
 		
 		setPredicateRules(rules);
 	}
