@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IFileEditorMapping;
 
@@ -103,9 +104,10 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
      */
     public String getText(Object element) {
         if (element instanceof IFileEditorMapping) {
-			return ((IFileEditorMapping) element).getLabel();
+			return TextProcessor.process(((IFileEditorMapping) element)
+					.getLabel(), "*."); //$NON-NLS-1$
 		}
 
-        return null;
+		return null;
     }
 }
