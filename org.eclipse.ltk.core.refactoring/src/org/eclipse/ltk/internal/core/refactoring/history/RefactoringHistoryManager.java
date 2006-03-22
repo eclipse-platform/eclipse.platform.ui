@@ -206,6 +206,39 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
+	 * Checks whether the argument is well-formed.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @throws CoreException
+	 */
+	private static void checkArgument(final Object argument) throws CoreException {
+		if (argument instanceof String) {
+			final String string= (String) argument;
+			if ("".equals(string)) //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_empty_argument, null));
+		} else
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_non_string_argument, null));
+	}
+
+	/**
+	 * Checks whether the argument map is well-formed.
+	 * 
+	 * @param arguments
+	 *            the argument map
+	 * @throws CoreException
+	 *             if the check turns out to be unsuccessful
+	 */
+	private static void checkArgumentMap(final Map arguments) throws CoreException {
+		Assert.isNotNull(arguments);
+		for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
+			final Map.Entry entry= (Map.Entry) iterator.next();
+			checkArgument(entry.getKey());
+			checkArgument(entry.getValue());
+		}
+	}
+
+	/**
 	 * Escapes the specified string for the history index.
 	 * 
 	 * @param string
@@ -536,6 +569,7 @@ public final class RefactoringHistoryManager {
 				else if (descriptor instanceof DefaultRefactoringDescriptor)
 					arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
 				if (arguments != null) {
+					checkArgumentMap(arguments);
 					for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 						final Map.Entry entry= (Entry) iterator.next();
 						transformer.createArgument((String) entry.getKey(), (String) entry.getValue());
@@ -627,6 +661,7 @@ public final class RefactoringHistoryManager {
 						else if (current instanceof DefaultRefactoringDescriptor)
 							arguments= ((DefaultRefactoringDescriptor) current).getArguments();
 						if (arguments != null) {
+							checkArgumentMap(arguments);
 							for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 								final Map.Entry entry= (Entry) iterator.next();
 								transformer.createArgument((String) entry.getKey(), (String) entry.getValue());

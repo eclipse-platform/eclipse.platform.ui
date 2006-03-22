@@ -72,6 +72,10 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String RefactoringCorePlugin_participant_removed;
 
+	public static String RefactoringHistoryManager_empty_argument;
+
+	public static String RefactoringHistoryManager_non_string_argument;
+
 	public static String RefactoringHistoryService_resolving_information;
 
 	public static String RefactoringHistoryService_retrieving_history;
