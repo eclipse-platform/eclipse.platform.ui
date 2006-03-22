@@ -24,16 +24,11 @@ public class PreferenceBoldLabelProvider extends PreferenceLabelProvider
 		implements IFontProvider {
 
 	private FilteredTree filterTree;
-
+	private PatternFilter filterForBoldElements = new PreferencePatternFilter();
+	
 	PreferenceBoldLabelProvider(FilteredTree filterTree) {
 		this.filterTree = filterTree;
 	}
-
-	/**
-	 * Using "false" to construct the filter so that this filter can filter
-	 * supernodes of a matching node
-	 */
-	PatternFilter filterForBoldElements = new PreferencePatternFilter();
 
 	public Font getFont(Object element) {
 		return FilteredTree.getBoldFont(element, filterTree,
