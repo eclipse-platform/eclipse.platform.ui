@@ -195,11 +195,16 @@ public abstract class MarkerView extends TableView {
 					MarkerCategory[] categories = getMarkerAdapter()
 							.getCategories();
 					if (categories != null) {
-						for (int i = 0; i < categories.length; i++) {
-							MarkerCategory category = categories[i];
-							if (categoriesToExpand.contains(category.getName())) {
-								getViewer().expandToLevel(category,
-										AbstractTreeViewer.ALL_LEVELS);
+						if (categories.length == 1)//Expand if there is only one
+							getViewer().expandAll();
+						else {
+							for (int i = 0; i < categories.length; i++) {
+								MarkerCategory category = categories[i];
+								if (categoriesToExpand.contains(category
+										.getName())) {
+									getViewer().expandToLevel(category,
+											AbstractTreeViewer.ALL_LEVELS);
+								}
 							}
 						}
 					}

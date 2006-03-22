@@ -18,7 +18,6 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 
 	private final String TAG_FIELD = "categoryField"; //$NON-NLS-1$
 
-
 	/**
 	 * Create a new instance of the receiver wrapping a sorter.
 	 * 
@@ -144,16 +143,27 @@ public class CategorySorter extends ViewerSorter implements Comparator {
 	 */
 	public void restoreState(IDialogSettings dialogSettings, ProblemView view) {
 		if (dialogSettings == null) {
+			selectDefaultGrouping(view);
 			return;
 		}
 
 		IDialogSettings settings = dialogSettings
 				.getSection(TableSorter.TAG_DIALOG_SECTION);
 		if (settings == null) {
+			selectDefaultGrouping(view);
 			return;
 		}
 
 		String description = settings.get(TAG_FIELD);
-		view.selectCategory(description,this);
+		view.selectCategory(description, this);
+	}
+
+	/**
+	 * Select the default grouping in the problem view
+	 * @param view
+	 */
+	private void selectDefaultGrouping(ProblemView view) {
+		view.selectCategoryField(MarkerSupportRegistry.getInstance()
+				.getDefaultGroup(), this);
 	}
 }

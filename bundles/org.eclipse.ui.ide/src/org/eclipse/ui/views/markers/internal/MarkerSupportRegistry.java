@@ -93,6 +93,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_GROUPING_ENTRY = "markerGroupingEntry"; //$NON-NLS-1$
 
+	private static final Object SEVERITY_ID = "org.eclipse.ui.ide.severity";//$NON-NLS-1$
+
 	private static MarkerSupportRegistry singleton;
 
 	// Create a lock so that initiization happens in one thread
@@ -664,6 +666,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public Collection getMarkerGroups() {
 		return markerGroups.values();
+	}
+
+	/**
+	 * Return the default group.
+	 * @return IField
+	 */
+	public IField getDefaultGroup() {
+		
+		return (IField) markerGroups.get(SEVERITY_ID);
 	}
 
 }
