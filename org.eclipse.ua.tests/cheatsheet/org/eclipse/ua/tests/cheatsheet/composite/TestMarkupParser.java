@@ -12,8 +12,7 @@
 package org.eclipse.ua.tests.cheatsheet.composite;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -28,12 +27,10 @@ import org.xml.sax.SAXException;
 public class TestMarkupParser extends TestCase {
 	
 	private Document readString(String input) {
-		InputStream is = new StringBufferInputStream(input); 
-		InputSource source = null;
-		source = new InputSource(is);
+		StringReader reader = new StringReader(input); 
+		InputSource source = new InputSource(reader);
 
-
-	   DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
+	    DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()
 					.getDocumentBuilder();
 		try {
 			return documentBuilder.parse(source);
