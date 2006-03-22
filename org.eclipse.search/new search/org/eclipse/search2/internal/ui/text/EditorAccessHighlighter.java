@@ -19,29 +19,29 @@ import java.util.Set;
 
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
+
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 
 
 public class EditorAccessHighlighter extends Highlighter {
 	private ISearchEditorAccess fEditorAcess;
 	private Map fMatchesToAnnotations;
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 	
 	public EditorAccessHighlighter(ISearchEditorAccess editorAccess) {
 		fEditorAcess= editorAccess;
@@ -60,8 +60,8 @@ public class EditorAccessHighlighter extends Highlighter {
 						Map map= getMap(mapsByAnnotationModel, matches[i]);
 						if (map != null) {
 							Annotation annotation= matches[i].isFiltered() 
-								? new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchPlugin.FILTERED_SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null)
-								: new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+							? new Annotation(SearchPlugin.FILTERED_SEARCH_ANNOTATION_TYPE, true, null)
+							: new Annotation(SearchPlugin.SEARCH_ANNOTATION_TYPE, true, null);
 							fMatchesToAnnotations.put(matches[i], annotation);
 							map.put(annotation, position);
 						}

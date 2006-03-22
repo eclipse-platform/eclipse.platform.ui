@@ -66,6 +66,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */ 
 	public static final String FILTERED_SEARCH_MARKER=  NewSearchUI.PLUGIN_ID + ".filteredsearchmarker"; //$NON-NLS-1$
 
+	/** 
+	 * Search annotation type (value <code>"org.eclipse.search.results"</code>).
+	 *
+	 * @since 3.2
+	 */ 
+	public static final String SEARCH_ANNOTATION_TYPE= NewSearchUI.PLUGIN_ID + ".results"; //$NON-NLS-1$
+	
+	/** 
+	 * Filtered search annotation type (value <code>"org.eclipse.search.filteredResults"</code>).
+	 *
+	 * @since 3.2
+	 */ 
+	public static final String FILTERED_SEARCH_ANNOTATION_TYPE= NewSearchUI.PLUGIN_ID + ".filteredResults"; //$NON-NLS-1$
+	
 	/** Status code describing an internal error */
 	public static final int INTERNAL_ERROR= 1;
 	

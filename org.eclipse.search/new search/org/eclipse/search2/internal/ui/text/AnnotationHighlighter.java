@@ -18,15 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.Match;
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.SearchMessages;
-
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -37,15 +31,18 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
+
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.SearchMessages;
 
 
 public class AnnotationHighlighter extends Highlighter {
 	private IAnnotationModel fModel;
 	private IDocument fDocument;
 	private Map fMatchesToAnnotations;
-	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 	
 	public AnnotationHighlighter(IAnnotationModel model, IDocument document) {
 		fModel= model;
@@ -62,8 +59,8 @@ public class AnnotationHighlighter extends Highlighter {
 				Position position= createPosition(matches[i]);
 				if (position != null) {
 					Annotation annotation= matches[i].isFiltered() 
-						? new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchPlugin.FILTERED_SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null)
-						: new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+						? new Annotation(SearchPlugin.FILTERED_SEARCH_ANNOTATION_TYPE, true, null)
+						: new Annotation(SearchPlugin.SEARCH_ANNOTATION_TYPE, true, null);
 					fMatchesToAnnotations.put(matches[i], annotation);
 					map.put(annotation, position);
 				}
