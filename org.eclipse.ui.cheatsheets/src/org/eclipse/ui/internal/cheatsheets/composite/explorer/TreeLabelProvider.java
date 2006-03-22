@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.composite.views.TaskEditorManager;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
@@ -104,7 +105,7 @@ public class TreeLabelProvider extends LabelProvider {
 	private ImageSet createImages(String kind) {
 		ImageSet images = new ImageSet();
 		ImageDescriptor desc;
-		desc = getPredefinedImageDescriptor(kind);
+		desc = getPredefinedImageDescriptor(kind, true);
         if (desc == null) {
 		    desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
         }
@@ -120,7 +121,7 @@ public class TreeLabelProvider extends LabelProvider {
 		               "$nl$/icons/ovr16/task_skipped.gif",  //$NON-NLS-1$
 		               images, 
 		               desc);
-			createGrayedImage(BLOCKED, 
+			createDisabledImage(kind, BLOCKED, 
 		               images, 
 		               baseImage);
 			createImageWithOverlay(ICompositeCheatSheetTask.COMPLETED, 
@@ -132,15 +133,27 @@ public class TreeLabelProvider extends LabelProvider {
 		return images;
 	}
 
-	private ImageDescriptor getPredefinedImageDescriptor(String kind) {
-		if (ITaskGroup.SET.equals(kind)) {
-			return createImageDescriptor("$nl$/icons/obj16/task_set.gif"); //$NON-NLS-1$
+	private ImageDescriptor getPredefinedImageDescriptor(String kind, boolean isEnabled) {
+		String filename;
+		if (ICompositeCheatsheetTags.CHEATSHEET_TASK_KIND.equals(kind)) {
+			filename = "cheatsheet_task.gif"; //$NON-NLS-1$
+		} else if (ITaskGroup.SET.equals(kind)) {
+			filename = "task_set.gif"; //$NON-NLS-1$
 		} else if (ITaskGroup.CHOICE.equals(kind)) {
-			return createImageDescriptor("$nl$/icons/obj16/task_choice.gif"); //$NON-NLS-1$
+			filename = "task_choice.gif"; //$NON-NLS-1$
 		} else if (ITaskGroup.SEQUENCE.equals(kind)) {
-			return createImageDescriptor("$nl$/icons/obj16/task_sequence.gif"); //$NON-NLS-1$
+			filename = "task_sequence.gif"; //$NON-NLS-1$
+		} else {
+			return null;
 		}
-		return null;
+		String iconPath =  "$nl$/icons/"; //$NON-NLS-1$
+		if (isEnabled) { 
+			iconPath += CheatSheetPlugin.T_OBJ;
+		} else {
+			iconPath += CheatSheetPlugin.T_DLCL;
+		}
+		iconPath += filename;
+		return createImageDescriptor(iconPath);
 	}
 
 	private void createImageWithOverlay(int state, String imagePath, ImageSet images, ImageDescriptor baseDescriptor) {
@@ -150,8 +163,20 @@ public class TreeLabelProvider extends LabelProvider {
 		images.put(state, icon.createImage());
 	}
 	
-	private void createGrayedImage(int state, ImageSet images, Image baseImage) {
-		images.put(state, createGrayedImage(baseImage));		
+	private void createDisabledImage(String kind, int state, ImageSet images, Image baseImage) {
+		// The four images for task_set, task_sequence, task_choice and cheatsheet_task can be found
+		// in icons/dlcl16. 
+		// TODO extend the extension point to allow disabled images to be specified.
+		//if 
+
+		ImageDescriptor desc = getPredefinedImageDescriptor(kind, false);
+		Image disabledImage;
+		if (desc != null) {
+			disabledImage = desc.createImage();
+		} else {
+		    disabledImage = createGrayedImage(baseImage);
+		}
+		images.put(state, disabledImage);		
 	}
 
 	private Image createGrayedImage(Image image) {
@@ -161,6 +186,7 @@ public class TreeLabelProvider extends LabelProvider {
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = CheatSheetPlugin.getPlugin().getBundle();
 		URL url = FileLocator.find(bundle, new Path(relativePath),null);
+		if (url == null) return null;
 		try {
 			url = FileLocator.resolve(url);
 			return ImageDescriptor.createFromURL(url);

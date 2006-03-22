@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,15 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -46,13 +43,7 @@ public class CheatSheetView extends ViewPart {
 		IMenuManager menuManager = bars.getMenuManager();
 		IToolBarManager tbmanager = bars.getToolBarManager();
 	
-		// fields
-		IPath path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("collapse_expand_all.gif");//$NON-NLS-1$
-		ImageDescriptor collapseExpandImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
-	
 		expandRestoreAction = new CheatSheetExpandRestoreAction(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP, false, viewer);
-		expandRestoreAction.setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
-		expandRestoreAction.setImageDescriptor(collapseExpandImage);
 		
 		copyAction = new Action("copy") { //$NON-NLS-1$
 			public void run() {
@@ -68,9 +59,8 @@ public class CheatSheetView extends ViewPart {
 	
 		CheatSheetMenu cheatsheetMenuMenuItem = new CheatSheetMenu();
 		menuManager.add(cheatsheetMenuMenuItem);
-		if (viewer != null) {
-			cheatsheetMenuMenuItem.setMenuContributor(viewer);
-		}
+
+		cheatsheetMenuMenuItem.setMenuContributor(viewer);
 	}
 
 

@@ -40,7 +40,7 @@ public class IntroItem extends ViewItem {
 	}
 
 	/*package*/ void setRestartImage() {
-		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RESTART));
+		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RETURN));
 		startButton.setText(Messages.RESTART_CHEATSHEET_TOOLTIP);
 		startButton.setToolTipText(Messages.RESTART_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());

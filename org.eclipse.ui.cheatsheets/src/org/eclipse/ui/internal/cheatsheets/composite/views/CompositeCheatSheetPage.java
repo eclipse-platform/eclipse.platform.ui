@@ -81,6 +81,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private CompositeCheatSheetSaveHelper saveHelper;
 	
 	private ICompositeCheatSheetTask selectedTask;
+	private boolean initialized = false;;
 	
 	public CompositeCheatSheetPage(CompositeCheatSheetModel model) {
 		this.model = model;
@@ -390,9 +391,13 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		Map layout = new HashMap();
 		model.loadState(layout);
 		setInputModel(model, layout);
+		initialized  = true;
 	}
 
 	public int contributeToViewMenu(Menu menu, int index) {	
+		if (!initialized) {
+			return index;
+		}
 		index = contributeExplorerMenuItem(menu, index);
 		return contributeRestartMenuItem(menu, index);
 	}

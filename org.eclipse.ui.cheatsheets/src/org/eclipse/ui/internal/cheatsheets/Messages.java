@@ -60,9 +60,7 @@ public final class Messages extends NLS {
 	public static String LAUNCH_SHEET_ERROR;
 	public static String CHEAT_SHEET_ERROR_OPENING;
 	public static String ERROR_OPENING_PERSPECTIVE;
-	public static String ERROR_CREATING_STATEFILE_URL;
 	public static String ERROR_SAVING_STATEFILE_URL;
-	public static String ERROR_READING_MANAGERDATA_FROM_STATEFILE;
 	public static String CHEAT_SHEET_INTRO_TITLE;
 	public static String ERROR_TITLE;
 	public static String ERROR_CREATING_DOCUMENT_BUILDER;
@@ -113,8 +111,6 @@ public final class Messages extends NLS {
 	public static String SELECTION_DIALOG_FILEPICKER_BROWSE;
 	public static String SELECTION_DIALOG_OPEN_REGISTERED;
 	public static String SELECTION_DIALOG_OPEN_FROM_FILE;
-	public static String ERROR_READING_ID_FROM_STATEFILE;
-	public static String ERROR_SAVING_STATE_REFERENCE;
 	public static String COMPOSITE_PAGE_REVIEW_TASK;
 	public static String COMPOSITE_PAGE_GOTO_TASK;
 	public static String COMPOSITE_PAGE_START_TASK;

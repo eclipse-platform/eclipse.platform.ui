@@ -49,6 +49,8 @@ public class DescriptionPanel {
 	private static final String GOTO_IMAGE = "goto"; //$NON-NLS-1$
 	private static final String SKIP_IMAGE = "skip"; //$NON-NLS-1$
 	private static final String START_IMAGE = "start"; //$NON-NLS-1$
+	private static final String WARNING_IMAGE = "warning"; //$NON-NLS-1$
+	private static final String INFORMATION_IMAGE = "info"; //$NON-NLS-1$
 	private ScrolledFormText panel;
 	
 	public DescriptionPanel(ManagedForm mform, Composite container) {
@@ -64,6 +66,8 @@ public class DescriptionPanel {
 		text.setImage(SKIP_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_SKIP));
 		text.setImage(GOTO_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_GOTO_TASK)); 
 		text.setImage(REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
+		text.setImage(WARNING_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING));
+		text.setImage(INFORMATION_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION));
 		panel.setFormText(text);
 	}
 	
@@ -84,27 +88,27 @@ public class DescriptionPanel {
 		buf.append(task.getName());
 		buf.append("</span></p>"); //$NON-NLS-1$		
 
-		buf.append(createParagraph(task.getDescription()));
+		buf.append(createParagraph(task.getDescription(), null));
 
         boolean startable = false;
         boolean isBlocked = false;
         boolean isSkippable = ((AbstractTask)task).isSkippable();
 		
 		if (task.getState() == ICompositeCheatSheetTask.COMPLETED) {
-			buf.append(createParagraph(task.getCompletionMessage()));
+			buf.append(createParagraph(task.getCompletionMessage(), null));
 			isSkippable = false;
 		} else if (task.getState() == ICompositeCheatSheetTask.SKIPPED) {
-			buf.append(createParagraph(Messages.THIS_TASK_SKIPPED));
+			buf.append(createParagraph(Messages.THIS_TASK_SKIPPED, INFORMATION_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findSkippedAncestor(task) != null) {
 			ICompositeCheatSheetTask skipped = TaskStateUtilities.findSkippedAncestor(task);
 			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED, (new Object[] {skipped.getName()}));	
-			buf.append(createParagraph(skipParentMsg));
+			buf.append(createParagraph(skipParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findCompletedAncestor(task) != null) {
 			ICompositeCheatSheetTask completed = TaskStateUtilities.findCompletedAncestor(task);
 			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED, (new Object[] {completed.getName()}));	
-			buf.append(createParagraph(completedParentMsg));
+			buf.append(createParagraph(completedParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (!task.requiredTasksCompleted()) {
 			isBlocked = true;
@@ -143,24 +147,41 @@ public class DescriptionPanel {
 		buf.append("</form>"); //$NON-NLS-1$
 
 		text.setText(buf.toString(), true, false);
-		panel.setData(ICompositeCheatsheetTags.TASK, task);
+		getControl().setData(ICompositeCheatsheetTags.TASK, task);
 		panel.reflow(true);
 	}
 
 	/*
 	 * Add paragraph tags if not already present
 	 */
-	private String createParagraph(String text) {
+	private String createParagraph(String text, String imageTag) {
+		String result = ""; //$NON-NLS-1$
 		String trimmed = text.trim();
-		if (trimmed.charAt(0)!='<') {
-			return "<p>" + trimmed + "</p>"; //$NON-NLS-1$ //$NON-NLS-2$
+		boolean addParagraphTags = trimmed.length() == 0 || trimmed.charAt(0)!='<';
+		if (addParagraphTags) {
+			result +=  "<p>"; //$NON-NLS-1$
+		} 
+
+		if (imageTag != null) {
+			result += "<img href=\""; //$NON-NLS-1$
+			result += imageTag;
+			result += "\"/> "; //$NON-NLS-1$
 		}
-		return trimmed;
+
+		result += trimmed;
+
+		if (addParagraphTags) {
+			result += "</p>"; //$NON-NLS-1$ 
+		}
+		return result;
 	}
 
 	private void showBlockingTasks(String message, final ICompositeCheatSheetTask task, StringBuffer buf) {
 		buf.append("<p/>"); //$NON-NLS-1$
 		buf.append("<p>"); //$NON-NLS-1$
+		buf.append("<img href=\""); //$NON-NLS-1$
+		buf.append(WARNING_IMAGE);
+		buf.append("\"/> "); //$NON-NLS-1$
 		buf.append(message);
 		buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
 		

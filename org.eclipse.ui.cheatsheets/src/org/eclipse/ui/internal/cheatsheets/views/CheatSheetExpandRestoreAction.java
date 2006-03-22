@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.cheatsheets.*;
 
 /**
@@ -21,10 +23,21 @@ public class CheatSheetExpandRestoreAction extends Action {
 	private CheatSheetViewer viewer;
 	private boolean collapsed = false;
 
+	private ImageDescriptor collapseImage;
+	private ImageDescriptor expandImage;
+	private ImageDescriptor disabledImage;
+
 	public CheatSheetExpandRestoreAction(String title, boolean initValue, CheatSheetViewer viewer) {
 		super(title);
 		this.viewer = viewer;
-		
+
+		IPath path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("collapse_expand_all.gif");//$NON-NLS-1$
+		collapseImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
+		path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_DLCL).append("collapse_expand_all.gif");//$NON-NLS-1$
+		disabledImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
+		path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("expandall.gif");//$NON-NLS-1$
+		expandImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
+		setDisabledImageDescriptor(disabledImage);
 		setChecked(initValue);
 	}
 	
@@ -44,8 +57,10 @@ public class CheatSheetExpandRestoreAction extends Action {
 		collapsed = value;
 		if(value) {
 			setToolTipText(Messages.RESTORE_ALL_TOOLTIP);
+			setImageDescriptor(expandImage);
 		} else {
 			setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
+			setImageDescriptor(collapseImage);
 		}
 	}
 }

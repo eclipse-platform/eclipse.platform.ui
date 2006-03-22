@@ -60,7 +60,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		this.name = name;
 		this.kind = kind;
 		this.parameters = new Hashtable();
-		this.description = name;
+		this.description = ""; //$NON-NLS-1$
 		requiredTasks = new ArrayList();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -568,6 +568,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	private void createErrorPage(String message) {
+		setCollapseExpandButtonEnabled(false);
 		if(message != null) {
 			currentPage = new ErrorPage(message);
 		} else {
@@ -823,11 +824,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		control.setRedraw(false);
 		if (model instanceof CheatSheet) {	
 		    currentPage = new CheatSheetPage((CheatSheet)model, viewItemList, this);
+		    setCollapseExpandButtonEnabled(true);
 		} else if (model instanceof CompositeCheatSheetModel) {
 			CompositeCheatSheetModel compositeCheatSheetModel = ((CompositeCheatSheetModel)model);
 			compositeCheatSheetModel.setId(currentID);
 			currentPage = new CompositeCheatSheetPage(compositeCheatSheetModel);
 			compositeCheatSheetModel.setCheatSheetManager(initManager());
+			setCollapseExpandButtonEnabled(false);
 	    }
 	    CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after CheatSheetPage() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	    currentPage.createPart(control);
@@ -1187,6 +1190,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		} else if (currentPage instanceof CompositeCheatSheetPage) {
 			((CompositeCheatSheetPage)currentPage).restart(cheatSheetData);
 		}		
+	}
+	
+	/*
+	 * Show the collapse/expand button if we have access to the toolbar
+	 */
+	private void setCollapseExpandButtonEnabled(boolean enable) {
+		if (expandRestoreAction != null) {
+			expandRestoreAction.setEnabled(enable);
+		}
 	}
 
 }
