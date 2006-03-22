@@ -1647,6 +1647,14 @@ class FindReplaceDialog extends Dialog {
 			section= settings.addNewSection(sectionName);
 		return section;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
+	 * @since 3.2
+	 */
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTLOCATION;
+	}
 
 	/**
 	 * Initializes itself from the dialog settings with the same state

@@ -117,6 +117,13 @@ public class GotoLineAction extends TextEditorAction {
 			return section;
 		}
 		
+		/*
+		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
+		 * @since 3.2
+		 */
+		protected int getDialogBoundsStrategy() {
+			return DIALOG_PERSISTLOCATION;
+		}
 	}
 
 	/** The biggest valid line number of the presented document */
