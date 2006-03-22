@@ -14,16 +14,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ITrimManager;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -83,9 +81,11 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testGetIDs() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-		int[] ids = trimManager.getAreaIds();
-		assertEquals("number of trim areas", 4, ids.length);
+		if (window instanceof WorkbenchWindow) {
+			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+			int[] ids = trimManager.getAreaIds();
+			assertEquals("number of trim areas", 4, ids.length);
+		}
 	}
 
 	/**
@@ -96,10 +96,11 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testTrimInformation() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-
-		List descs = trimManager.getAreaTrim(SWT.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, descs);
+		if (window instanceof WorkbenchWindow) {
+			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+			List descs = trimManager.getAreaTrim(SWT.BOTTOM);
+			validatePositions(DEFAULT_BOTTOM, descs);
+		}
 	}
 
 	/**
@@ -110,18 +111,19 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveStatusLine() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
+		if (window instanceof WorkbenchWindow) {
+			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+			List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(DEFAULT_BOTTOM, trim);
 
-		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
-
-		swapPostition(trim, 1, 3);
-		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
-
-		window.getShell().layout(true, true);
-
-		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(SWAPPED_STATUS_LINE, trim);
+			swapPostition(trim, 1, 3);
+			trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
+	
+			window.getShell().layout(true, true);
+	
+			trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(SWAPPED_STATUS_LINE, trim);
+		}
 	}
 
 	/**
@@ -132,18 +134,19 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveFastViewBar() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-
-		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
-
-		swapPostition(trim, 0, 3);
-		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
-
-		window.getShell().layout(true, true);
-
-		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(SWAPPED_FASTVIEW, trim);
+		if (window instanceof WorkbenchWindow) {
+			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+			List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(DEFAULT_BOTTOM, trim);
+	
+			swapPostition(trim, 0, 3);
+			trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
+	
+			window.getShell().layout(true, true);
+	
+			trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(SWAPPED_FASTVIEW, trim);
+		}
 	}
 
 	/**
@@ -156,18 +159,19 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testRemoveHeapStatus() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-
-		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
-
-		trim.remove(2);
-		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, true);
-
-		window.getShell().layout(true, true);
-
-		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(REMOVED_HEAP_STATUS, trim);
+		if (window instanceof WorkbenchWindow) {
+			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+			List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(DEFAULT_BOTTOM, trim);
+	
+			trim.remove(2);
+			trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, true);
+	
+			window.getShell().layout(true, true);
+	
+			trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+			validatePositions(REMOVED_HEAP_STATUS, trim);
+		}
 	}
 
 	/**
@@ -176,20 +180,21 @@ public class TrimLayoutTest extends UITestCase {
 	 * @throws Throwable
 	 */
 	public void testAddExtraTrim() throws Throwable {
-		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-
-		assertTrue(
-				"The window should have it's top banner in place",
-				trimManager
-						.getTrim("org.eclipse.ui.internal.WorkbenchWindow.topBar") != null);
-		
-		TrimList trimList = new TrimList(window.getShell());
-		trimManager.addTrim(ITrimManager.TOP, trimList);
-		window.getShell().layout();
-
-		List trim = trimManager.getAreaTrim(ITrimManager.TOP);
-		validatePositions(TOP_TRIM_LIST, trim);
+//		IWorkbenchWindow window = openTestWindow();
+//		if (window instanceof WorkbenchWindow) {
+//			ITrimManager trimManager = ((WorkbenchWindow)window).getTrimManager();
+//			assertTrue(
+//					"The window should have it's top banner in place",
+//					trimManager
+//							.getTrim("org.eclipse.ui.internal.WorkbenchWindow.topBar") != null);
+//			
+//			TrimList trimList = new TrimList(window.getShell());
+//			trimManager.addTrim(ITrimManager.TOP, trimList);
+//			window.getShell().layout();
+//	
+//			List trim = trimManager.getAreaTrim(ITrimManager.TOP);
+//			validatePositions(TOP_TRIM_LIST, trim);
+//		}
 	}
 
 	/**
@@ -199,27 +204,27 @@ public class TrimLayoutTest extends UITestCase {
 	 * @throws Throwable
 	 */
 	public void testPlaceExtraTrim() throws Throwable {
-		IWorkbenchWindow window = openTestWindow();
-		ITrimManager trimManager = window.getTrimManager();
-		
-		TrimList trimList = new TrimList(window.getShell());
-		trimManager.addTrim(ITrimManager.TOP, trimList);
-
-		// WindowTrimProxy is an internal "quick and dirty" way
-		// to just provide a control to the trim ... not public API
-		Button b = new Button(window.getShell(), SWT.PUSH);
-		b.setText("B");
-		IWindowTrim buttonTrim = new WindowTrimProxy(b, BUTTON_B_ID,
-				"Button B", SWT.TOP | SWT.BOTTOM, false);
-		
-		// find an existing piece of trim to use as a reference
-		IWindowTrim trim = trimManager.getTrim(TrimList.TRIM_LIST_ID);
-		assertTrue(trimList == trim);
-		trimManager.addTrim(ITrimManager.TOP, buttonTrim, trim);
-		window.getShell().layout();
-
-		List topTrim = trimManager.getAreaTrim(ITrimManager.TOP);
-		validatePositions(TOP_BUTTON_TRIM, topTrim);
+//		IWorkbenchWindow window = openTestWindow();
+//		ITrimManager trimManager = window.getTrimManager();
+//		
+//		TrimList trimList = new TrimList(window.getShell());
+//		trimManager.addTrim(ITrimManager.TOP, trimList);
+//
+//		// WindowTrimProxy is an internal "quick and dirty" way
+//		// to just provide a control to the trim ... not public API
+//		Button b = new Button(window.getShell(), SWT.PUSH);
+//		b.setText("B");
+//		IWindowTrim buttonTrim = new WindowTrimProxy(b, BUTTON_B_ID,
+//				"Button B", SWT.TOP | SWT.BOTTOM, false);
+//		
+//		// find an existing piece of trim to use as a reference
+//		IWindowTrim trim = trimManager.getTrim(TrimList.TRIM_LIST_ID);
+//		assertTrue(trimList == trim);
+//		trimManager.addTrim(ITrimManager.TOP, buttonTrim, trim);
+//		window.getShell().layout();
+//
+//		List topTrim = trimManager.getAreaTrim(ITrimManager.TOP);
+//		validatePositions(TOP_BUTTON_TRIM, topTrim);
 	}
 
 	/**
