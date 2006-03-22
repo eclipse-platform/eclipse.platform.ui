@@ -972,17 +972,29 @@ public class LinkedModeUI {
 	 * Reveals the selection on the current target's widget, if it is valid.
 	 */
 	private void showSelection() {
-		try {
-			fCurrentTarget.fWidget.showSelection();
-		} catch (IllegalArgumentException e) {
-			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=66914
-			// if the StyledText is in setRedraw(false) mode, its
-			// selection may not be up2date and calling showSelection
-			// will throw an IAE.
-			// we don't have means to find out whether the selection is valid
-			// or whether the widget is redrawing or not therefore we try
-			// and ignore an IAE.
-		}
+		final StyledText widget= fCurrentTarget.fWidget;
+		if (widget == null || widget.isDisposed())
+			return;
+		
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132263
+		widget.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (!widget.isDisposed())
+					try {
+					widget.showSelection();
+					} catch (IllegalArgumentException e) {
+						/*
+						 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=66914
+						 * if the StyledText is in setRedraw(false) mode, its
+						 * selection may not be up2date and calling showSelection
+						 * will throw an IAE.
+						 * We don't have means to find out whether the selection is valid
+						 * or whether the widget is redrawing or not therefore we try
+						 * and ignore an IAE.
+						 */
+					}
+			}
+		});
 	}
 
 	/**
