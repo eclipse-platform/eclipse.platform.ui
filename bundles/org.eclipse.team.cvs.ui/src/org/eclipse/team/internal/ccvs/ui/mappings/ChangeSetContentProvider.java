@@ -293,7 +293,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return false;
 	}
 
-	private boolean isEnabled() {
+	protected boolean isEnabled() {
 		final Object input = getViewer().getInput();
 		return (input instanceof ChangeSetModelProvider);
 	}

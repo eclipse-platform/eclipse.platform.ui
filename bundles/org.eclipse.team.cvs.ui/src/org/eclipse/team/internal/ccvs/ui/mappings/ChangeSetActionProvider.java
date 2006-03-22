@@ -283,27 +283,29 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-        if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
-            appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
-        }
-        if (getChangeSetCapability().enableActiveChangeSetsFor(getSynchronizePageConfiguration())) {
-			appendToGroup(
-					menu, 
-					CHANGE_SET_GROUP, 
-					addToChangeSet);
-			appendToGroup(
-					menu, 
-					CHANGE_SET_GROUP, 
-					editChangeSet);
-			appendToGroup(
-					menu, 
-					CHANGE_SET_GROUP, 
-					removeChangeSet);
-			appendToGroup(
-					menu, 
-					CHANGE_SET_GROUP, 
-					makeDefault);
-        }
+		if (isContentProviderEnabled()) {
+			if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
+				appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
+			}
+			if (getChangeSetCapability().enableActiveChangeSetsFor(getSynchronizePageConfiguration())) {
+				appendToGroup(
+						menu, 
+						CHANGE_SET_GROUP, 
+						addToChangeSet);
+				appendToGroup(
+						menu, 
+						CHANGE_SET_GROUP, 
+						editChangeSet);
+				appendToGroup(
+						menu, 
+						CHANGE_SET_GROUP, 
+						removeChangeSet);
+				appendToGroup(
+						menu, 
+						CHANGE_SET_GROUP, 
+						makeDefault);
+			}
+		}
 	}
 	
 	public void dispose() {
@@ -528,6 +530,10 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	}
 
 	protected boolean isContentProviderEnabled() {
-		return getContentProvider() != null;
+		ChangeSetContentProvider provider = getContentProvider();
+		if (provider != null) {
+			return provider.isEnabled();
+		}
+		return false;
 	}
 }
