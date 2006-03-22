@@ -35,7 +35,15 @@ public class ResourceMessages extends NLS {
 	public static String NewProject_internalError;
 	public static String NewProject_caseVariantExistsError;
 	public static String NewProject_perspSwitchTitle;
+	/**
+	 * Combines a perspective name and text for introducing a perspective switch
+	 */
 	public static String NewProject_perspSwitchMessage;
+	/**
+	 * Combines a perspective name and description with text for introducing 
+	 * a perspective switch
+	 */
+	public static String NewProject_perspSwitchMessageWithDesc;
 
 	static {
 		// load message values from bundle file

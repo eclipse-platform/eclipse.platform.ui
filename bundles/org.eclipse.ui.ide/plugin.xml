@@ -28,6 +28,9 @@
             icon="$nl$/icons/full/eview16/resource_persp.gif"
             class="org.eclipse.ui.internal.ide.ResourcePerspective"
             id="org.eclipse.ui.resourcePerspective">
+         <description>
+            %Perspective.resourceDescription
+         </description>
       </perspective>
    </extension>
    <extension

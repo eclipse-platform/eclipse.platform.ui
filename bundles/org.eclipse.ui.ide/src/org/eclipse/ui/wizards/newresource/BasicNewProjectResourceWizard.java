@@ -556,10 +556,16 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
             // Return whether or not we should always switch
             return IDEInternalPreferences.PSPM_ALWAYS.equals(pspm);
         }
-
+        String desc = finalPersp.getDescription();
+        String message;
+        if (desc == null || desc.length() == 0)
+        	message = NLS.bind(ResourceMessages.NewProject_perspSwitchMessage, finalPersp.getLabel());
+        else
+        	message = NLS.bind(ResourceMessages.NewProject_perspSwitchMessageWithDesc, new String[] {finalPersp.getLabel(), desc});
+        
         MessageDialogWithToggle dialog = MessageDialogWithToggle
                 .openYesNoQuestion(window.getShell(), ResourceMessages.NewProject_perspSwitchTitle,
-                        NLS.bind(ResourceMessages.NewProject_perspSwitchMessage, finalPersp.getLabel()),
+                		message,
                         null /* use the default message for the toggle */,
                         false /* toggle is initially unchecked */, store,
                         IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
