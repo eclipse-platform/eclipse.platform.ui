@@ -32,7 +32,10 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
         suite.addTest(HippieCompletionTest.suite());
         suite.addTest(RangeTest.suite());
         suite.addTest(ChangeRegionTest.suite());
+        
+        // XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=128171
 //        suite.addTest(DiffApplierTest.suite());
+        
 		//$JUnit-END$
 		return suite;
 	}
