@@ -57,7 +57,7 @@ public class WorkspaceModelParticipant extends
 			configuration.setProperty(MERGE_ALL_ACTION_ID, new MergeAllActionHandler(configuration) {
 				protected String getJobName() {
 					String name = getConfiguration().getParticipant().getName();
-					return NLS.bind("Updating all changes in {0}", Utils.shortenText(30, name));
+					return NLS.bind(CVSUIMessages.WorkspaceModelParticipant_0, Utils.shortenText(30, name));
 				}
 				
 				protected boolean promptToUpdate() {

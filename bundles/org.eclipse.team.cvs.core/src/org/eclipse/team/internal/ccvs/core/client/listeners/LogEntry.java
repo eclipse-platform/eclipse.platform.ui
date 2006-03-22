@@ -37,7 +37,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 			char c = string.charAt(i);
 			if (c == '\r' || c == '\n') {
 				if (!skipAdjacentLineSeparator)
-					buffer.append("/"); 
+					buffer.append(CVSMessages.LogEntry_0); 
 				skipAdjacentLineSeparator = true;
 			} else {
 				buffer.append(c);

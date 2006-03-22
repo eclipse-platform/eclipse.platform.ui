@@ -13,6 +13,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class CVSMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.team.internal.ccvs.core.messages";//$NON-NLS-1$
+	public static String LogEntry_0;
 	public static String ok;
 	public static String AbstractStructureVisitor_sendingFolder;
 	public static String AbstractStructureVisitor_sendingFile;
