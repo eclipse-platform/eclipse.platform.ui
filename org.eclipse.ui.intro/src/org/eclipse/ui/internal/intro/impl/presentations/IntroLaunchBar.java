@@ -33,13 +33,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.ITrimManager;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -49,6 +48,8 @@ import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
@@ -192,11 +193,25 @@ public class IntroLaunchBar implements IWindowTrim {
 
 		dock(location);
 
-		ITrimManager trimManager = window.getTrimManager();
+		ITrimManager trimManager = getTrimManager();
 		trimManager.addTrim(location, this);
 		window.getShell().layout();
 	}
 
+	/**
+	 * Get the trim manager from the default workbench window. If the current
+	 * workbench window is -not- the <code>WorkbenchWindow</code> then return null.
+	 *  
+	 * @return The trim manager for the current workbench window
+	 */
+	private ITrimManager getTrimManager() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window instanceof WorkbenchWindow)
+			return ((WorkbenchWindow)window).getTrimManager();
+		
+		return null; // not using the default workbench window
+	}
+	
 	protected boolean isPlain() {
 		return !"org.eclipse.ui.presentations.default".equals(presentationId); //$NON-NLS-1$
 	}
@@ -474,7 +489,7 @@ public class IntroLaunchBar implements IWindowTrim {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
 		// if we've already been removed, this won't hurt us
-		window.getTrimManager().removeTrim(this);
+		getTrimManager().removeTrim(this);
 
 		IIntroPart intro = null;
 		if (restore) {
