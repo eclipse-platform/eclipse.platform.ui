@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
@@ -25,7 +26,11 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class FileEditorMapping extends Object implements IFileEditorMapping,
         Cloneable {
-    private String name = "*"; //$NON-NLS-1$
+	
+	private static final String STAR = "*"; //$NON-NLS-1$ 
+	private static final String DOT = ".";	//$NON-NLS-1$ 
+	
+    private String name = STAR;
 
     private String extension;
 
@@ -43,7 +48,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *  @param extension java.lang.String
      */
     public FileEditorMapping(String extension) {
-        this("*", extension); //$NON-NLS-1$
+        this(STAR, extension); 
     }
 
     /**
@@ -55,8 +60,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     public FileEditorMapping(String name, String extension) {
         super();
         if (name == null || name.length() < 1) {
-			setName("*");//$NON-NLS-1$
-		} else {
+            setName(STAR);
+        } else {
 			setName(name);
 		}
         if (extension == null) {
@@ -186,7 +191,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * Method declared on IFileEditorMapping.
      */
     public String getLabel() {
-        return name + (extension.length() == 0 ? "" : "." + extension); //$NON-NLS-1$ //$NON-NLS-2$
+        return TextProcessor.process(name + (extension.length() == 0 ? "" : DOT + extension), STAR + DOT); 	//$NON-NLS-1$  
     }
 
     /* (non-Javadoc)
