@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -318,7 +319,7 @@ public final class WorkbenchWindowConfigurer implements
         windowTitle = title;
         Shell shell = window.getShell();
         if (shell != null && !shell.isDisposed()) {
-            shell.setText(title);
+            shell.setText(TextProcessor.process(title, "-"));	 //$NON-NLS-1$
         }
     }
 
