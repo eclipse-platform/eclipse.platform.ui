@@ -744,7 +744,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Gets the collpase all action
+	 * Gets the collapse all action
 	 * @return the collapse all action
 	 * @since 3.2
 	 */
