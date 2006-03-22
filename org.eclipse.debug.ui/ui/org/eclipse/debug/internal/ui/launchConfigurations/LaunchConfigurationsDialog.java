@@ -149,7 +149,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
-	 * deinfes the delimiter used in the persistence of the expanded state
+	 * defines the delimiter used in the persistence of the expanded state
 	 * @since 3.2
 	 */
 	private static final String DELIMITER = ", "; //$NON-NLS-1$
@@ -1408,9 +1408,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
 												 1);
 		if (dialog.open() == 0) {
-			fLaunchConfigurationView.setAutoSelect(false);
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(false);
+			}
 			getTabViewer().handleRevertPressed();
-			fLaunchConfigurationView.setAutoSelect(true);
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(true);
+			}
 			return true;
 		}
 		return false;
@@ -1435,16 +1439,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},  
 												 0);
 		int ret = dialog.open();
-		if (ret == 0) {
-			fLaunchConfigurationView.setAutoSelect(false);
-			getTabViewer().handleApplyPressed();
-			fLaunchConfigurationView.setAutoSelect(true);
-			return true;
-		}
-		if(ret == 1) {
-			fLaunchConfigurationView.setAutoSelect(false);
-			getTabViewer().handleRevertPressed();
-			fLaunchConfigurationView.setAutoSelect(true);
+		if (ret == 0 || ret == 1) {
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(false);
+			}
+			if (ret == 0) {
+				getTabViewer().handleApplyPressed();
+			} else {
+				getTabViewer().handleRevertPressed();	
+			}
+			if (fLaunchConfigurationView != null) {
+				fLaunchConfigurationView.setAutoSelect(true);
+			}
 			return true;
 		}
 		return false;
