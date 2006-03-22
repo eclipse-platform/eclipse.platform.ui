@@ -69,8 +69,6 @@ import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
-import org.eclipse.osgi.util.NLS;
-
 /**
  * Control which is capable of displaying refactoring histories.
  * 
@@ -498,7 +496,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		if (history != null) {
 			final int total= history.getDescriptors().length;
 			if (total > 0 && fControlConfiguration.isCheckableViewer())
-				fHistoryPane.setText(NLS.bind(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(fCheckedDescriptors.size()), String.valueOf(total)}));
+				fHistoryPane.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(fCheckedDescriptors.size()), String.valueOf(total)}));
 			else
 				fHistoryPane.setText(getHistoryPaneText());
 		}

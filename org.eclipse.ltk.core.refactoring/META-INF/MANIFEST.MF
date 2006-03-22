@@ -20,3 +20,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.text;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
+Import-Package: com.ibm.icu.text

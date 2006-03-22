@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 
 /**
  * Diff of a refactoring.
@@ -101,6 +101,6 @@ public final class RefactoringDescriptorDiff implements IThreeWayDiff {
 	 * {@inheritDoc}
 	 */
 	public String toDiffString() {
-		return NLS.bind(ModelMessages.RefactoringDescriptorDiff_diff_string, fDescriptor.getDescription());
+		return Messages.format(ModelMessages.RefactoringDescriptorDiff_diff_string, fDescriptor.getDescription());
 	}
 }

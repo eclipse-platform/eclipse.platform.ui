@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.text.Format;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorImageDescriptor;
@@ -34,8 +35,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.viewers.LabelProvider;
-
-import org.eclipse.osgi.util.NLS;
 
 /**
  * Label provider to display a refactoring history. This label provider can be
@@ -170,7 +169,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		if (fControlConfiguration.isTimeDisplayed()) {
 			final long stamp= descriptor.getTimeStamp();
 			if (stamp >= 0)
-				return NLS.bind(fControlConfiguration.getRefactoringPattern(), new String[] { getDateFormat().format(new Date(stamp)), descriptor.getDescription()});
+				return Messages.format(fControlConfiguration.getRefactoringPattern(), new String[] { getDateFormat().format(new Date(stamp)), descriptor.getDescription()});
 		}
 		return descriptor.getDescription();
 	}
@@ -248,7 +247,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
 									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, locale);
-									buffer.append(NLS.bind(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
+									buffer.append(Messages.format(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
 								} else
 									format= DateFormat.getDateInstance();
 								break;
@@ -262,7 +261,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 						}
 						if (format != null)
-							buffer.append(NLS.bind(pattern, new String[] { format.format(stamp)}));
+							buffer.append(Messages.format(pattern, new String[] { format.format(stamp)}));
 					}
 				}
 			}

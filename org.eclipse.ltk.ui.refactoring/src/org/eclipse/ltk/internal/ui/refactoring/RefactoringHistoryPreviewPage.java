@@ -24,8 +24,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard;
 
-import org.eclipse.osgi.util.NLS;
-
 /**
  * Preview page for refactoring history wizards.
  * 
@@ -200,7 +198,7 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 		else
 			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
 		if (total > 1)
-			setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
+			setTitle(Messages.format(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
 		else
 			setTitle(message);
 	}

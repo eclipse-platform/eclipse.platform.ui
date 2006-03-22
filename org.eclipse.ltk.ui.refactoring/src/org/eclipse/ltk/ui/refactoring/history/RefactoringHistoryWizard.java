@@ -12,7 +12,7 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ChoiceFormat;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -82,8 +82,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.osgi.util.NLS;
 
 /**
  * A default implementation of a refactoring history wizard. Refactoring history
@@ -191,7 +189,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			else
 				message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
 			if (total > 1)
-				setTitle(NLS.bind(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
+				setTitle(Messages.format(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
 			else
 				setTitle(message);
 		}
@@ -589,7 +587,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (!status.hasFatalError())
 				return refactoring;
 		} else
-			status.addFatalError(NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
+			status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
 		return null;
 	}
 
@@ -668,7 +666,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				String message= null;
 				String key= null;
 				if (!RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title.equals(fErrorPage.getTitle())) {
-					message= NLS.bind(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle());
+					message= Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_fatal_error_message, fErrorPage.getTitle());
 					key= PREFERENCE_DO_NOT_SHOW_SKIP;
 				} else {
 					message= RefactoringUIMessages.RefactoringHistoryWizard_error_applying_changes;
