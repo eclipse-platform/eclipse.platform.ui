@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -132,7 +133,8 @@ public class ResourceInfoPage extends PropertyPage {
 		// path value label
 		Text pathValueText = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
-		pathValueText.setText(resource.getFullPath().toString());
+		String pathString = TextProcessor.process(resource.getFullPath().toString());
+		pathValueText.setText(pathString);
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 		gd.grabExcessHorizontalSpace = true;
@@ -163,7 +165,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
-		locationValue.setText(IDEResourceInfoUtils.getLocationText(resource));
+		String locationStr = TextProcessor.process(IDEResourceInfoUtils.getLocationText(resource));
+		locationValue.setText(locationStr);
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 		gd.grabExcessHorizontalSpace = true;

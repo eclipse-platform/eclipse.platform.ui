@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -155,9 +156,9 @@ public class ProjectContentsLocationArea {
 
 				if (useDefaults) {
 					userPath = locationPathField.getText();
-					locationPathField.setText(getDefaultPathDisplayString());
+					locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 				} else {
-					locationPathField.setText(userPath);
+					locationPathField.setText(TextProcessor.process(userPath));
 				}
 				setUserAreaEnabled(!useDefaults);
 			}
@@ -207,13 +208,13 @@ public class ProjectContentsLocationArea {
 		createFileSystemSelection(composite);
 
 		if (defaultEnabled) {
-			locationPathField.setText(getDefaultPathDisplayString());
+			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 		} else {
 			if (existingProject == null) {
 				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
 			} else {
-				locationPathField.setText(existingProject.getLocation()
-						.toString());
+				locationPathField.setText(TextProcessor.process(existingProject.getLocation()
+						.toString()));
 			}
 		}
 
@@ -322,7 +323,7 @@ public class ProjectContentsLocationArea {
 	 * @param selectedPath
 	 */
 	private void updateLocationField(String selectedPath) {
-		locationPathField.setText(selectedPath);
+		locationPathField.setText(TextProcessor.process(selectedPath));
 	}
 
 	/**
@@ -428,7 +429,7 @@ public class ProjectContentsLocationArea {
 	public void updateProjectName(String newName) {
 		projectName = newName;
 		if (isDefault()) {
-			locationPathField.setText(getDefaultPathDisplayString());
+			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 		}
 
 	}
