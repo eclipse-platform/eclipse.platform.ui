@@ -77,25 +77,14 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		
 		addButton = new Button(buttons, SWT.PUSH);
 		addButton.setText(TeamUIMessages.IgnorePreferencePage_add); 
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		addButton.setLayoutData(data);
 		addButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addIgnore();
 			}
 		});
 		
-		
 		removeButton = new Button(buttons, SWT.PUSH);
 		removeButton.setText(TeamUIMessages.IgnorePreferencePage_remove); 
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		removeButton.setLayoutData(data);
 		removeButton.setEnabled(false);
 		removeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -104,6 +93,8 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		});
 		fillTable(Team.getAllIgnores());
 		Dialog.applyDialogFont(ancestor);
+		setButtonLayoutData(addButton);
+		setButtonLayoutData(removeButton);
         
         // set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.IGNORE_PREFERENCE_PAGE);
