@@ -646,6 +646,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 		filtersList.setSelection(new StructuredSelection(filters[0]));
 
+		createResetArea(dialogArea);
 		createSeparatorLine(dialogArea);
 		
 		applyDialogFont(dialogArea);
@@ -897,7 +898,6 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
 
-		createResetArea(selectedComposite);
 
 		return selectedComposite;
 	}
@@ -994,7 +994,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		typesViewer = new CheckboxTreeViewer(tree);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.widthHint = convertVerticalDLUsToPixels(100);
-		gridData.heightHint = convertVerticalDLUsToPixels(200);
+		gridData.heightHint = convertVerticalDLUsToPixels(125);
 
 		typesContentProvider = getTypesContentProvider();
 		typesViewer.getControl().setLayoutData(gridData);
