@@ -646,6 +646,8 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 		filtersList.setSelection(new StructuredSelection(filters[0]));
 
+		createSeparatorLine(dialogArea);
+		
 		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
@@ -895,7 +897,6 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
 
-		createSeparatorLine(selectedComposite);
 		createResetArea(selectedComposite);
 
 		return selectedComposite;

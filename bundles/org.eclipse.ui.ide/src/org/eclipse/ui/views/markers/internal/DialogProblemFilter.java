@@ -44,6 +44,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * DialogProblemFilter is the dialog class for problem filters.
+ * 
+ * @since 3.2
+ * 
+ */
 public class DialogProblemFilter extends DialogMarkerFilter {
 
 	private DescriptionGroup descriptionGroup;
@@ -123,10 +129,20 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			});
 		}
 
+		/**
+		 * Get the contains value.
+		 * 
+		 * @return boolean
+		 */
 		public boolean getContains() {
 			return combo.getSelectionIndex() == combo.indexOf(contains);
 		}
 
+		/**
+		 * Return whether or not the contains value is of use.
+		 * 
+		 * @param value
+		 */
 		public void setContains(boolean value) {
 			if (value) {
 				combo.select(combo.indexOf(contains));
@@ -135,6 +151,11 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			}
 		}
 
+		/**
+		 * Set the description field.
+		 * 
+		 * @param text
+		 */
 		public void setDescription(String text) {
 			if (text == null) {
 				description.setText(""); //$NON-NLS-1$ 
@@ -143,6 +164,11 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			}
 		}
 
+		/**
+		 * Return the text for the description.
+		 * 
+		 * @return String
+		 */
 		public String getDescription() {
 			return description.getText();
 		}
@@ -247,34 +273,74 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			});
 		}
 
+		/**
+		 * Return whether or not sort by severity is selected.
+		 * 
+		 * @return boolean
+		 */
 		public boolean isSeveritySelected() {
 			return enablementButton.getSelection();
 		}
 
+		/**
+		 * Set whether or not the enabled button is selected.
+		 * 
+		 * @param enabled
+		 */
 		public void setEnabled(boolean enabled) {
 			enablementButton.setSelection(enabled);
 		}
 
+		/**
+		 * Return whether or not the error button is selected.
+		 * 
+		 * @return boolean
+		 */
 		public boolean isErrorSelected() {
 			return errorButton.getSelection();
 		}
 
+		/**
+		 * Set whether or not the error button is selected.
+		 * 
+		 * @param selected
+		 */
 		public void setErrorSelected(boolean selected) {
 			errorButton.setSelection(selected);
 		}
 
+		/**
+		 * Return whether or not the warning button is selected.
+		 * 
+		 * @return boolean
+		 */
 		public boolean isWarningSelected() {
 			return warningButton.getSelection();
 		}
 
+		/**
+		 * Set whether or not the warning button is selected.
+		 * 
+		 * @param selected
+		 */
 		public void setWarningSelected(boolean selected) {
 			warningButton.setSelection(selected);
 		}
 
+		/**
+		 * Return whether or not the info button is selected.
+		 * 
+		 * @return boolean
+		 */
 		public boolean isInfoSelected() {
 			return infoButton.getSelection();
 		}
 
+		/**
+		 * Set whether or not the erinforor button is selected.
+		 * 
+		 * @param selected
+		 */
 		public void setInfoSelected(boolean selected) {
 			infoButton.setSelection(selected);
 		}
@@ -415,6 +481,11 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 */
 	void createFiltersArea(Composite dialogArea) {
 
+		if (MarkerSupportRegistry.getInstance().getRegisteredFilters().size() == 0) {
+			super.createFiltersArea(dialogArea);
+			return;
+		}
+
 		Composite mainComposite = new Composite(dialogArea, SWT.NONE);
 		mainComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				true));
@@ -448,6 +519,11 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 
 	}
 
+	/**
+	 * Create a composite for the registered filters.
+	 * 
+	 * @param bottomComposite
+	 */
 	private void createRegisteredFilters(Composite bottomComposite) {
 
 		Composite listArea = new Composite(bottomComposite, SWT.NONE);
@@ -538,8 +614,6 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 
 		definedList.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		
 
 	}
 
@@ -637,12 +711,12 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 			return NLS.bind(
 					MarkerMessages.ProblemFilterDialog_Contains_Description,
 					filter.getDescription());
-		} else {
-			return NLS
-					.bind(
-							MarkerMessages.ProblemFilterDialog_Does_Not_Contain_Description,
-							filter.getDescription());
 		}
+		return NLS
+				.bind(
+						MarkerMessages.ProblemFilterDialog_Does_Not_Contain_Description,
+						filter.getDescription());
+
 	}
 
 	/**
@@ -751,12 +825,14 @@ public class DialogProblemFilter extends DialogMarkerFilter {
 	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerFilter#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == SELECT_ALL_FILTERS_ID) {
-			definedList.setAllChecked(true);
-		} else if (buttonId == DESELECT_ALL_FILTERS_ID) {
-			definedList.setAllChecked(false);
-		} 
-		
+		if (definedList != null) {
+			if (buttonId == SELECT_ALL_FILTERS_ID) {
+				definedList.setAllChecked(true);
+			} else if (buttonId == DESELECT_ALL_FILTERS_ID) {
+				definedList.setAllChecked(false);
+			}
+		}
+
 		super.buttonPressed(buttonId);
 	}
 
