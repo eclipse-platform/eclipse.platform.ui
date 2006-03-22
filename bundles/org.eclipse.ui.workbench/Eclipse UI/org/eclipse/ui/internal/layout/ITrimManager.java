@@ -1,4 +1,4 @@
-package org.eclipse.ui;
+package org.eclipse.ui.internal.layout;
 
 import java.util.List;
 
@@ -14,9 +14,6 @@ import org.eclipse.swt.SWT;
  * </p>
  * 
  * @since 3.2
- * 
- * @deprecated This Interface -will- be removed in M6 and replaced with the use of the
- * <code>org.eclipse.ui.menus</code> extension point.
  */
 public interface ITrimManager {
 

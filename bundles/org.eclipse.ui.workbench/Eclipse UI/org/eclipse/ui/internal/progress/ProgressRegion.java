@@ -18,9 +18,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 
 /**
  * The ProgressRegion is class for the region of the workbench where the

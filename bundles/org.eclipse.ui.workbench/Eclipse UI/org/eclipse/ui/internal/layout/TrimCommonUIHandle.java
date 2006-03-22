@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.RadioMenu;

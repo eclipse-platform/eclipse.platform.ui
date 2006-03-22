@@ -19,7 +19,6 @@ import java.util.ListIterator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.internal.WindowTrimProxy;
 
 /**

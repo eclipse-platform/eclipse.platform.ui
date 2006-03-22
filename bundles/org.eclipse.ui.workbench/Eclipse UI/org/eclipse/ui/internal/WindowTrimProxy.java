@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWindowTrim;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 
 /**
  * A transition class for any control that wants to participate in the workbench
@@ -96,7 +96,7 @@ public class WindowTrimProxy implements IWindowTrim {
 	 * The default for a proxied window trim is to do nothing, as it can't be
 	 * moved around.
 	 * 
-	 * @see org.eclipse.ui.IWindowTrim#dock(int)
+	 * @see org.eclipse.ui.internal.layout.IWindowTrim#dock(int)
 	 */
 	public void dock(int dropSide) {
 	}

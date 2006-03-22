@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWindowTrim;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,6 +59,8 @@ import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.CellLayout;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -329,13 +330,26 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			topBar.setBottom(null);
 			topBar.setRight(null);
 			LayoutUtil.resize(topBar);
-			window.getTrimManager().addTrim(SWT.LEFT, this);
+			getTrimManager().addTrim(SWT.LEFT, this);
 			break;
 		default:
 			return;
 		}
 
 		LayoutUtil.resize(perspectiveBar.getControl());
+	}
+
+	/**
+	 * Get the trim manager from the default workbench window. If the current
+	 * workbench window is -not- the <code>WorkbenchWindow</code> then return null.
+	 *  
+	 * @return The trim manager for the current workbench window
+	 */
+	private ITrimManager getTrimManager() {
+		if (window instanceof WorkbenchWindow)
+			return ((WorkbenchWindow)window).getTrimManager();
+		
+		return null; // not using the default workbench window
 	}
 
 	/**
@@ -466,7 +480,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		// otherwise dispose the current controls and make new ones
 		
 		// First, make sure that the existing verion is removed from the trim layout
-		window.getTrimManager().removeTrim(this);
+		getTrimManager().removeTrim(this);
 
 		disposeChildControls();
 		if (newLocation == LEFT) {

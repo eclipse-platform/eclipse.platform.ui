@@ -220,14 +220,4 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 	 * @since 3.1
 	 */
     public IExtensionTracker getExtensionTracker();
-    
-	/**
-	 * Return the trim layout manager.
-	 * @return the trim Manager.
-	 * @since 3.2
-	 * 
-	 * @deprecated This method -will- be removed in M6 and replaced with the use of the
-	 * <code>org.eclipse.ui.menus</code> extension point.
-	 */
-	public ITrimManager getTrimManager();
 }
