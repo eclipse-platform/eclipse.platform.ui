@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,9 +245,9 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				if (nodeName == IParserTags.PARAM) {
 					addParameter(parentTask, childNode.getAttributes());			
 				} else if (nodeName == IParserTags.INTRO) {
-					parentTask.setDescription(parseTextMarkup(childNode, parentTask, this));
+					parentTask.setDescription(MarkupParser.parseAndTrimTextMarkup(childNode));
 				} else if (nodeName == ICompositeCheatsheetTags.ON_COMPLETION) {
-					parentTask.setCompletionMessage(parseTextMarkup(childNode, parentTask, this));						
+					parentTask.setCompletionMessage(MarkupParser.parseAndTrimTextMarkup(childNode));						
 				} else if (nodeName == ICompositeCheatsheetTags.DEPENDS_ON) {
 					parseDependency(childNode, parentTask, model);
 				} else if (CompositeCheatSheetParser.isAbstractTask(nodeName)) {
@@ -377,38 +377,6 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 	
 	private String autoGenerateId() {
 		return "TaskId_" + nextTaskId++; //$NON-NLS-1$
-	}
-
-	public static String parseTextMarkup(Node descriptionNode, 
-			                             AbstractTask parentTask,
-			                             IStatusContainer status) {
-	    NodeList nodes = descriptionNode.getChildNodes();
-		StringBuffer text = new StringBuffer();
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node = nodes.item(i);
-			if (node.getNodeType() == Node.TEXT_NODE) {
-				text.append(node.getNodeValue());
-			} else if (node.getNodeType() == Node.ELEMENT_NODE) {
-				// handle <b></b> and <br/>
-				if (node.getNodeName().equals(IParserTags.BOLD)) {
-					text.append(IParserTags.BOLD_START_TAG);
-					text.append(node.getFirstChild().getNodeValue());
-					text.append(IParserTags.BOLD_END_TAG);
-				} else if (node.getNodeName().equals(IParserTags.BREAK)) {
-					text.append(IParserTags.BREAK_TAG);
-				} else {
-					String message = NLS
-							.bind(
-									Messages.WARNING_PARSING_DESCRIPTION_UNKNOWN_ELEMENT,
-									(new Object[] { parentTask.getName(),
-											node.getNodeName() }));
-					status.addStatus(IStatus.WARNING, message, null);
-				}
-			}
-		}
-
-		// Remove the new line, form feed and tab chars
-		return text.toString().trim();
 	}
 
 }

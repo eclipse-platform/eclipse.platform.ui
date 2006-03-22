@@ -25,6 +25,7 @@ public class AllCompositeTests {
 		suite.addTestSuite(TestTaskGroups.class);
 		suite.addTestSuite(TestEventing.class);
 		suite.addTestSuite(TestPersistence.class);
+		suite.addTestSuite(TestMarkupParser.class);
 		suite.addTestSuite(TestDependency.class);
 		//$JUnit-END$
 		return suite;
