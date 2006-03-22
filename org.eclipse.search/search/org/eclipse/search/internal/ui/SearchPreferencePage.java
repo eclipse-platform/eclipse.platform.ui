@@ -42,7 +42,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
 import org.eclipse.search.internal.ui.util.ComboFieldEditor;
 
-import org.eclipse.search2.internal.ui.text2.TextSearchQueryProviderRegistry;
 
 /*
  * The page for setting the Search preferences.
