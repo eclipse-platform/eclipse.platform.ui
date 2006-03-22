@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
@@ -88,6 +89,6 @@ public abstract class RefactoringContribution {
 			final DefaultRefactoringDescriptor extended= (DefaultRefactoringDescriptor) descriptor;
 			return extended.getArguments();
 		}
-		return null;
+		return Collections.EMPTY_MAP;
 	}
 }
