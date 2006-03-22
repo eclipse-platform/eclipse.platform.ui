@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -120,6 +121,16 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			return ((Spec)element).sortValue;
 		}
 	}
+    
+    private class FileSpecLabelProvider extends LabelProvider{
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+    	 */
+    	public String getText(Object element) {
+    		String label = super.getText(element);
+    		return TextProcessor.process(label, "*.");	//$NON-NLS-1$
+    	}
+    }
     
     private class FileSpecContentProvider implements IStructuredContentProvider {
 
@@ -396,6 +407,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
             fileAssociationViewer.getControl().setFont(composite.getFont());
             fileAssociationViewer
                     .setContentProvider(new FileSpecContentProvider());
+            fileAssociationViewer.setLabelProvider(new FileSpecLabelProvider());
             GridData data = new GridData(GridData.FILL_BOTH);
             data.horizontalSpan = 1;
             fileAssociationViewer.getControl().setLayoutData(data);
