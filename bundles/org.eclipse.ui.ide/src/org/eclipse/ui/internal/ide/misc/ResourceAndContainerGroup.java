@@ -18,6 +18,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -28,6 +32,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.fieldassist.RequiredFieldColorer;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -189,13 +194,19 @@ public class ResourceAndContainerGroup implements Listener {
         label.setFont(font);
 
         // resource name entry field
-        resourceNameField = new Text(nameGroup, SWT.BORDER);
+        DecoratedField field = new DecoratedField(nameGroup, SWT.BORDER, new TextControlCreator());
+		field.addFieldDecoration(FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_REQUIRED), SWT.BOTTOM
+				| SWT.LEFT, false);
+        resourceNameField = (Text)field.getControl();
         resourceNameField.addListener(SWT.Modify, this);
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.GRAB_HORIZONTAL);
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-        resourceNameField.setLayoutData(data);
+        field.getLayoutControl().setLayoutData(data);
         resourceNameField.setFont(font);
+ 		resourceNameField.addFocusListener(new RequiredFieldColorer(resourceNameField, new TextContentAdapter()));
+ 		 
 
         validateControls();
     }
