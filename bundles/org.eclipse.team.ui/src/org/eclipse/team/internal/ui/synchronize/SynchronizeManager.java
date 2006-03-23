@@ -344,7 +344,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 				try {
 					ParticipantInstance ref = createParticipantReference(participant.getId(), participant.getSecondaryId(), participant.getName());
 					ref.setParticipant(participant);
-					removeMatchingPinnedParticipant(participant.getId());
+					removeMatchingParticipant(participant.getId());
 					participantReferences.put(key, ref);
 					added.add(participant);
 				} catch (PartInitException e) {
@@ -359,7 +359,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		}
 	}
 	
-	private void removeMatchingPinnedParticipant(String id) {
+	private void removeMatchingParticipant(String id) {
 		ISynchronizeParticipantReference[] refs = get(id);
 		if (refs.length > 0) {
 			// Find an un-pinned participant and replace it
@@ -368,7 +368,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 				ISynchronizeParticipant p;
 				try {
 					p = reference.getParticipant();
-					if (!p.isPinned()) {
+					if (!p.isPinned() && !isDirty(p)) {
 						removeSynchronizeParticipants(new ISynchronizeParticipant[]{p});
 						break;
 					}
@@ -377,6 +377,19 @@ public class SynchronizeManager implements ISynchronizeManager {
 				}
 			}
 		}
+	}
+
+	private boolean isDirty(ISynchronizeParticipant p) {
+		if (p instanceof ISaveableModelSource) {
+			ISaveableModelSource sms = (ISaveableModelSource) p;
+			ISaveableModel[] models = sms.getModels();
+			for (int i = 0; i < models.length; i++) {
+				ISaveableModel model = models[i];
+				if (model.isDirty())
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/*
