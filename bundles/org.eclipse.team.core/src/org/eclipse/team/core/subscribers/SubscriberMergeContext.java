@@ -38,7 +38,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	private final ISynchronizationScopeManager manager;
 	
 	/**
-	 * Create a merge context for the given sibscriber
+	 * Create a merge context for the given subscriber
 	 * @param subscriber the subscriber
 	 * @param manager the scope manager
 	 */

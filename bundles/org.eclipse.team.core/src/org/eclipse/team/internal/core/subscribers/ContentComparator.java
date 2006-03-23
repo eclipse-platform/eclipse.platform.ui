@@ -15,13 +15,14 @@ import java.io.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
- * This is an internal class that is usd by the <code>ContentComparisonSyncInfoFilter</code>
- * to compare the comtents of the local and remote resources
+ * This is an internal class that is used by the <code>ContentComparisonSyncInfoFilter</code>
+ * to compare the contents of the local and remote resources
  */
 public class ContentComparator {
 
@@ -133,6 +134,9 @@ public class ContentComparator {
 				if (!remote.isContainer()) {
 					return new BufferedInputStream(remote.getStorage(monitor).getContents());
 				}
+			} else if(resource instanceof IFileRevision) {
+				IFileRevision remote = (IFileRevision)resource;
+				return new BufferedInputStream(remote.getStorage(monitor).getContents());
 			}
 			return null;
 		} catch (CoreException e) {

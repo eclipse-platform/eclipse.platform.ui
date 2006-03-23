@@ -16,18 +16,21 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.DiffFilter;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.variants.IResourceVariantTree;
 import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.ContentComparisonDiffFilter;
+import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler.IDiffFilterProvider;
 
 /**
  * This subscriber is used when comparing the local workspace with its
  * corresponding remote.
  */
-public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubscriberChangeListener {
+public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubscriberChangeListener, IDiffFilterProvider {
 
 	public static final String ID = "org.eclipse.team.cvs.ui.compare-participant"; //$NON-NLS-1$
 	public static final String ID_MODAL = "org.eclipse.team.cvs.ui.compare-participant-modal"; //$NON-NLS-1$
@@ -275,4 +278,11 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
     public boolean isMultipleTagComparison() {
         return getTag() == null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler.IDiffFilterProvider#getFilter()
+	 */
+	public DiffFilter getFilter() {
+		return new ContentComparisonDiffFilter(false);
+	}
 }

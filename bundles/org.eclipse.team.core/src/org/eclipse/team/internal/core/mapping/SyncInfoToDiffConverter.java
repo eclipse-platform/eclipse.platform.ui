@@ -223,12 +223,9 @@ public class SyncInfoToDiffConverter {
 	}
 
 	public static IResourceVariant getRemoteVariant(IThreeWayDiff twd) {
-		IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-		if (diff != null)
-			return asResourceVariant(diff.getAfterState());
-		diff = (IResourceDiff)twd.getLocalChange();
-		if (diff != null)
-			return asResourceVariant(diff.getBeforeState());
+		IFileRevision revision = getRemote(twd);
+		if (revision != null)
+			return asResourceVariant(revision);
 		return null;
 	}
 
@@ -306,6 +303,28 @@ public class SyncInfoToDiffConverter {
 				return (IResourceVariant) o;
 			}
 		}
+		return null;
+	}
+
+	public static IFileRevision getRemote(IDiff diff) {
+		if (diff instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) diff;
+			rd.getAfterState();
+		}
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			return getRemote(twd);
+		}
+		return null;
+	}
+	
+	public static IFileRevision getRemote(IThreeWayDiff twd) {
+		IResourceDiff rd = (IResourceDiff)twd.getRemoteChange();
+		if (rd != null)
+			return rd.getAfterState();
+		rd = (IResourceDiff)twd.getLocalChange();
+		if (rd != null)
+			return rd.getBeforeState();
 		return null;
 	}
 }

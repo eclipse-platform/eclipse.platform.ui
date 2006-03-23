@@ -15,10 +15,10 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IDiffVisitor;
-import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.*;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.Messages;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -32,6 +32,11 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	private SubscriberDiffCollector collector;
 	private ISynchronizationScopeManager manager;
 	private Object family;
+	private DiffFilter filter;
+	
+	public interface IDiffFilterProvider {
+		public DiffFilter getFilter();
+	}
 
 	/*
 	 * An event used to represent a change in a diff
@@ -90,6 +95,10 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		this.manager = manager;
 		this.tree = tree;
 		this.collector = new SubscriberDiffCollector(subscriber);
+		if (subscriber instanceof IDiffFilterProvider) {
+			IDiffFilterProvider dfp = (IDiffFilterProvider) subscriber;
+			filter = dfp.getFilter();
+		}
 	}
 
 	protected void reset(ResourceTraversal[] traversals, int type) {
@@ -170,7 +179,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 							if (changedNode.getKind() == IDiff.NO_CHANGE) {
 								tree.remove(changedNode.getPath());
 							} else {
-								tree.add(changedNode);
+								addDiff(changedNode, monitor);
 							}
 						}
 						break;
@@ -186,6 +195,11 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		} finally {
 			tree.endInput(monitor);
 		}
+	}
+
+	private void addDiff(IDiff diff, IProgressMonitor monitor) {
+		if (filter == null || filter.select(diff, monitor))
+			tree.add(diff);
 	}
 
 	/**
@@ -241,6 +255,14 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	protected void handleCancel(OperationCanceledException e) {
 		super.handleCancel(e);
 		tree.reportError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot()));
+	}
+
+	public DiffFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(DiffFilter filter) {
+		this.filter = filter;
 	}
 
 }
