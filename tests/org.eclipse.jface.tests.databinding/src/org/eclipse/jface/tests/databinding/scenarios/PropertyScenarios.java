@@ -84,7 +84,6 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		// uncomment the following line to see what's happening
-		// happening
 		// spinEventLoop(1);
 		assertEquals(adventure.getName(), text.getText());
 		enterText(text, "foobar");
