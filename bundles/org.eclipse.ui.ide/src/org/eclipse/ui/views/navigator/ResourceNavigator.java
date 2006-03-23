@@ -877,6 +877,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     protected void linkToEditor(IStructuredSelection selection) {
 
+    	if (this != this.getSite().getPage().getActivePart())
+    		return;
+    	
         Object obj = selection.getFirstElement();
         if (obj instanceof IFile && selection.size() == 1) {
             IFile file = (IFile) obj;
