@@ -644,6 +644,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		Iterator i = trim.iterator();
 		while (i.hasNext()) {
 			IWindowTrim t = (IWindowTrim) i.next();
+			t.dock(id);  // Ensure that the trim is properly oriented
 			addTrim(id, t, null);
 			current.remove(t);
 		}

@@ -173,7 +173,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private TrimLayout defaultLayout;
 
 	ProgressRegion progressRegion = null;
-
+	
+	private TrimBarManager trimMgr;
+	
 	/**
 	 * The map of services maintained by the workbench window. These services
 	 * are initialized during workbench window during the
@@ -994,8 +996,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Insert any contributed trim into the layout
 		// TODO: Hook this up with the Menu and/or CoolBar manager
 		// to allow for 'update' calls...
-		TrimBarManager trimMgr = new TrimBarManager(this);
-		trimMgr.update(true, false);
+		trimMgr = new TrimBarManager(this);
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
@@ -2500,9 +2501,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// first pass sets up ordering for all trim areas
-
 		IMemento[] areas = memento
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
+		
+		// We need to remember all the trim that was repositioned
+		// here so we can re-site -newly contributed- trim after
+		// we're done
+		List knownIds = new ArrayList();
+		
 		List[] trimOrder = new List[areas.length];
 		for (int i = 0; i < areas.length; i++) {
 			trimOrder[i] = new ArrayList();
@@ -2511,6 +2517,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
 			for (int j = 0; j < items.length; j++) {
 				IMemento item = items[j];
+				knownIds.add(item.getID());
+				
 				IWindowTrim t = defaultLayout.getTrim(item.getID());
 				if (t != null) {
 					trimOrder[i].add(t);
@@ -2525,6 +2533,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			defaultLayout.updateAreaTrim(id, trimOrder[i], false);
 		}
 
+		// get the trim manager to re-locate any -newly contributed-
+		// trim widgets
+		trimMgr.updateLocations(knownIds);
+		
 		return Status.OK_STATUS;
 	}
 
@@ -3266,7 +3278,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					defaultLayout.addTrim(SWT.BOTTOM, heapStatusTrim);
 				}
 				heapStatus.setVisible(true);
-
 			} else {
 
 				defaultLayout.removeTrim(heapStatusTrim);
@@ -3294,6 +3305,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		
 		defaultLayout.setCenterControl(getPageComposite());
+
+		// Re-populate the trim elements
+		trimMgr.update(true, false, !topBar.getVisible());
 	}
 
 	public boolean getShowFastViewBars() {
