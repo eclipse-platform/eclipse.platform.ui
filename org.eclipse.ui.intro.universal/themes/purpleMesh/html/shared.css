@@ -256,6 +256,12 @@ body, .page{
 #navigation-links a#webresources:focus img,
 #navigation-links a#webresources:active img { background-image : url(../graphics/icons/ctool/webrsrc48.gif); }
 
+#navigation-links a#migrate img { background-image : url(../graphics/icons/etool/migrate48.gif); }
+#navigation-links a#migrate:hover img,
+#navigation-links a#migrate:focus img,
+#navigation-links a#migrate:active img { background-image : url(../graphics/icons/ctool/migrate48.gif); }
+
+
 #navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
 #navigation-links a#workbench .text { display : none; }
 #navigation-links a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); width : 53px; height : 53px;}

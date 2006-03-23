@@ -1,0 +1,8 @@
+body {
+	background-image : url(../graphics/contentpage/migrate_wtr.jpg);
+}
+
+/* show the "selected" image for this page */
+#navigation-links a#migrate img, #navigation-links a#migrate:hover img { 
+	background-image : url(../graphics/icons/ctool/migrate48sel.gif); 
+}
