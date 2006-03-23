@@ -13,13 +13,19 @@ package org.eclipse.ui.internal.cheatsheets.composite.views;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.ScrolledFormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -45,51 +51,83 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 public class DescriptionPanel {
 	
-	private static final String REVIEW_IMAGE = "review"; //$NON-NLS-1$
+	public static final String REVIEW_IMAGE = "review"; //$NON-NLS-1$
 	private static final String GOTO_IMAGE = "goto"; //$NON-NLS-1$
 	private static final String SKIP_IMAGE = "skip"; //$NON-NLS-1$
 	private static final String START_IMAGE = "start"; //$NON-NLS-1$
 	private static final String WARNING_IMAGE = "warning"; //$NON-NLS-1$
-	private static final String INFORMATION_IMAGE = "info"; //$NON-NLS-1$
-	private ScrolledFormText panel;
+	private static final String INFORMATION_IMAGE = "info"; //$NON-NLS-1$	
+	private Composite panel;
+	private Composite control;
+	private FormText upperText;
+	private FormText lowerText;
+	protected DescriptionPanel() {}
 	
-	public DescriptionPanel(ManagedForm mform, Composite container) {
-		FormText text;
-		panel = new ScrolledFormText(container, false);
-		mform.getToolkit().adapt(panel, false, false);			
-		text = mform.getToolkit().createFormText(panel, true);
-		text.marginWidth = 5;
-		text.marginHeight = 5;
-		text.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
-		text.setColor("title", mform.getToolkit().getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
-		text.setImage(START_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START));
-		text.setImage(SKIP_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_SKIP));
-		text.setImage(GOTO_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_GOTO_TASK)); 
-		text.setImage(REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
-		text.setImage(WARNING_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING));
-		text.setImage(INFORMATION_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION));
-		panel.setFormText(text);
+	public DescriptionPanel(ManagedForm mform, Composite parent) {
+		
+		FormToolkit toolkit = mform.getToolkit();
+		control = new Composite(parent, SWT.NULL);	
+		final GridLayout controlLayout = new GridLayout();
+		controlLayout.marginHeight = 0;
+		controlLayout.marginWidth = 0;
+		control.setLayout(controlLayout);
+		ScrolledForm form = toolkit.createScrolledForm(control);
+		panel = form.getBody();
+		form.setLayoutData(new GridData(GridData.FILL_BOTH));
+		toolkit.adapt(panel);
+		
+		TableWrapLayout layout = new TableWrapLayout();
+		panel.setLayout(layout);
+
+		upperText = mform.getToolkit().createFormText(panel, false);
+		mform.getToolkit().adapt(upperText, false, false);	
+		
+		Composite separator = toolkit.createCompositeSeparator(panel);
+		
+	    TableWrapData data = new TableWrapData();
+	    data.align = TableWrapData.FILL;
+	    data.grabHorizontal = true;
+	    data.maxHeight = 1;
+	    separator.setLayoutData(data);
+	     
+		lowerText = mform.getToolkit().createFormText(panel, false);
+		mform.getToolkit().adapt(lowerText, false, false);	
+
+		upperText.marginWidth = 5;
+		upperText.marginHeight = 5;
+		upperText.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
+		upperText.setColor("title", toolkit.getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
+		lowerText.marginWidth = 5;
+		lowerText.marginHeight = 5;
+		lowerText.setImage(START_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START));
+		lowerText.setImage(SKIP_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_SKIP));
+		lowerText.setImage(GOTO_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_GOTO_TASK)); 
+		lowerText.setImage(REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
+		lowerText.setImage(WARNING_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING));
+		lowerText.setImage(INFORMATION_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION));	
 	}
 	
 	public Control getControl() {
-		return panel;
+		return control;
 	}
 	
 	public void addHyperlinkListener(IHyperlinkListener listener) {
-		panel.getFormText().addHyperlinkListener(listener);
-		
+		lowerText.addHyperlinkListener(listener);		
 	}
 	
 	public void showDescription(final ICompositeCheatSheetTask task) {
-		FormText text = panel.getFormText();	
+		StringBuffer upperMessage = new StringBuffer();
+		upperMessage.append("<form>"); //$NON-NLS-1$
+		upperMessage.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
+		upperMessage.append(task.getName());
+		upperMessage.append("</span></p>"); //$NON-NLS-1$		
+		upperMessage.append(createParagraph(task.getDescription(), null));
+		upperMessage.append("</form>"); //$NON-NLS-1$
+        upperText.setText(upperMessage.toString(), true, false);
+	
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>"); //$NON-NLS-1$
-		buf.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
-		buf.append(task.getName());
-		buf.append("</span></p>"); //$NON-NLS-1$		
-
-		buf.append(createParagraph(task.getDescription(), null));
-
+		
         boolean startable = false;
         boolean isBlocked = false;
         boolean isSkippable = ((AbstractTask)task).isSkippable();
@@ -146,9 +184,9 @@ public class DescriptionPanel {
 	
 		buf.append("</form>"); //$NON-NLS-1$
 
-		text.setText(buf.toString(), true, false);
+		lowerText.setText(buf.toString(), true, false);
 		getControl().setData(ICompositeCheatsheetTags.TASK, task);
-		panel.reflow(true);
+		panel.layout();
 	}
 
 	/*

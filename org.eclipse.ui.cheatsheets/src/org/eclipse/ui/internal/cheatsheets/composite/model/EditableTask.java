@@ -29,6 +29,8 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 	private ITaskParseStrategy parserStrategy;
 	
 	private boolean editorInitialized = false;
+	
+	private boolean underReview = false;
 
 	public EditableTask(CompositeCheatSheetModel model, String id, String name, String kind) {
 		super(model, id, name, kind);
@@ -71,6 +73,14 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 
 	public boolean isEditorInitialized() {
 		return editorInitialized;
+	}
+
+	public void setUnderReview(boolean underReview) {
+		this.underReview = underReview;
+	}
+
+	public boolean isUnderReview() {
+		return underReview;
 	}	
 	
 }

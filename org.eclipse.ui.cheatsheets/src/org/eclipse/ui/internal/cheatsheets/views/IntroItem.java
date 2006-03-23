@@ -33,7 +33,7 @@ public class IntroItem extends ViewItem {
 
 
 	/*package*/ void setStartImage() {
-		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START));
+		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START));
 		startButton.setText(Messages.START_CHEATSHEET_TOOLTIP);
 		startButton.setToolTipText(Messages.START_CHEATSHEET_TOOLTIP);
 //		startButton.setFAccessibleName(startButton.getToolTipText());
@@ -67,7 +67,7 @@ public class IntroItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
+		startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
 		startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		page.getToolkit().adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {

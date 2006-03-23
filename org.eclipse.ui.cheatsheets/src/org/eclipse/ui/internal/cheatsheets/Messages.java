@@ -140,6 +140,7 @@ public final class Messages extends NLS {
 	public static String PARENT_BLOCKED;
 	public static String COMPOSITE_RESET_TASK_DIALOG_TITLE;
 	public static String COMPOSITE_RESET_TASK_DIALOG_MESSAGE;
+	public static String COMPOSITE_PAGE_END_REVIEW;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

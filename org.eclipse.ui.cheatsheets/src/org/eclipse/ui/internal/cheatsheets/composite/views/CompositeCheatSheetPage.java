@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -55,7 +56,6 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader.TaskExplorerNode;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
-import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskExplorer;
 import org.eclipse.ui.part.PageBook;
@@ -67,6 +67,7 @@ import org.eclipse.ui.part.PageBook;
 public class CompositeCheatSheetPage extends Page implements ISelectionChangedListener, IMenuContributor {
 
 	public static final String REVIEW_TAG = "__review__"; //$NON-NLS-1$
+	public static final String END_REVIEW_TAG = "__endReview__"; //$NON-NLS-1$
 	public static final String GOTO_TASK_TAG = "__goto__"; //$NON-NLS-1$
 	public static final String START_HREF = "__start__"; //$NON-NLS-1$
 	public static final String SKIP_HREF = "__skip__"; //$NON-NLS-1$
@@ -269,12 +270,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	 */
 	private void updateTask(ICompositeCheatSheetTask task) {
 		if (task==null || task != selectedTask) return;
-		if (task.getState() == ICompositeCheatSheetTask.IN_PROGRESS && 
-				task instanceof IEditableTask) {
-		    showEditor((EditableTask) task);
-		} else {
-			showDescription(task);
-		}
+		if ( task instanceof EditableTask) {
+			EditableTask editable = (EditableTask)task;
+			if (editable.getState() == ICompositeCheatSheetTask.IN_PROGRESS ||
+				editable.isUnderReview()) {
+				showEditor(editable);
+				return;
+			}
+		} 
+		showDescription(task);
 	}
 
 	public void saveState() {
@@ -308,17 +312,55 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				if (!task.isEditorInitialized()) {
 					task.setInput(model.getTaskMemento(task.getId()));
 				}
-				setCurrentEditor(editor.getControl());
+				setCurrentEditor(editor.getControl().getParent());
 			}
 		}
 	}
-	
+
+	private void addHyperlink(StringBuffer buf, String href, String imageRef, String message) {
+		buf.append("<p><a href=\""); //$NON-NLS-1$
+		buf.append(href);
+		buf.append("\">"); //$NON-NLS-1$
+		buf.append("<img href=\""); //$NON-NLS-1$
+		buf.append(imageRef);
+		buf.append("\"/> "); //$NON-NLS-1$
+		buf.append(message);
+		buf.append("</a></p>"); //$NON-NLS-1$
+	}
+
 	private void reviewTask(EditableTask task) {
+		TaskEditor taskEditor = getTaskEditor(task);
+		Composite container = taskEditor.getControl().getParent();
+		Composite separator = toolkit.createCompositeSeparator(container);
+		GridData data = new GridData();
+		data.heightHint = 1;
+		data.horizontalAlignment = SWT.FILL;
+	    separator.setLayoutData(data);
+	    FormText text = toolkit.createFormText(container, false);
+		text.setImage(DescriptionPanel.REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
+	    text.addHyperlinkListener(getEndReviewListener());
+	    text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    StringBuffer buf = new StringBuffer();
+	    buf.append("<form>"); //$NON-NLS-1$
+	    addHyperlink(buf, END_REVIEW_TAG + task.getId(), DescriptionPanel.REVIEW_IMAGE, Messages.COMPOSITE_PAGE_END_REVIEW );
+	    buf.append("</form>"); //$NON-NLS-1$
+	    text.setText(buf.toString(), true, false);
+		task.setUnderReview(true);
+		container.layout(true);
 		showEditor(task);
-		//TaskEditor editor = getTaskEditor(task);
-		//if (editor != null) {
-		    //setCurrentEditor(editor.getControl());
-		//}
+	}
+	
+	private void endReview(EditableTask task) {
+		TaskEditor taskEditor = getTaskEditor(task);
+		Control editorControl = taskEditor.getControl();
+		Composite container = editorControl.getParent();
+		Control[] children = container.getChildren();
+		for (int i = children.length -2; i < children.length; i++) {
+			children[i].dispose();
+		}
+		task.setUnderReview(false);
+		showDescription(task);
+		container.layout();
 	}
 	
 	private void setCurrentEditor(Control c) {
@@ -361,6 +403,32 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			}
 		}
 	}
+	
+	/**
+	 * Class which responds to hyperlink events originating from the
+	 * end review panel
+	 */
+	private final class EndReviewListener extends HyperlinkAdapter {
+		public void linkActivated(HyperlinkEvent e) {
+			String ref = (String)e.getHref();
+			if (ref.startsWith(END_REVIEW_TAG)) {
+				String next = ref.substring(END_REVIEW_TAG.length());
+				AbstractTask task =
+				    model.getDependencies().getTask(next);
+				endReview((EditableTask)task);			
+			}
+		}
+	}
+	
+	private EndReviewListener endReviewListener;
+	
+	private EndReviewListener getEndReviewListener() {
+		if (endReviewListener == null) {
+			endReviewListener = new EndReviewListener();
+		}
+		return endReviewListener;
+	}
+
 
 	/*
 	 * Get the task editor for this task. If no editor exists create one
@@ -370,8 +438,16 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
             // Create a new editor using the extension point data
 			TaskEditor editor = TaskEditorManager.getInstance().getEditor(editable.getKind());
 			if (editor != null) {
-				editor.createControl(taskEditorContainer, mform.getToolkit());
+				Composite editorPanel = new Composite(taskEditorContainer, SWT.NULL);
+				GridLayout layout = new GridLayout();
+				layout.marginWidth = 0;
+				layout.marginHeight = 0;
+				editorPanel.setLayout(layout);
+				mform.getToolkit().adapt(editorPanel);
+				editor.createControl(editorPanel, mform.getToolkit());
 				editable.setEditor(editor);
+				GridData gridData = new GridData(GridData.FILL_BOTH);
+				editor.getControl().setLayoutData(gridData);
 			} 
 		}
 		return editable.getEditor();	
