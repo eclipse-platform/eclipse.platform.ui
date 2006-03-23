@@ -161,6 +161,9 @@
             icon="$nl$/icons/full/eview16/synch_synch.gif"
             class="org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective"
             id="org.eclipse.team.ui.TeamSynchronizingPerspective">
+         <description>
+            %Synchronizing.perspective.description 
+         </description>
       </perspective>
    </extension>
    <extension

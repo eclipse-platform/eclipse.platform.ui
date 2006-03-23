@@ -88,7 +88,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 				if (editor != null){
 					editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
 					try {
-						GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.viewId);
+						GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.VIEW_ID);
 						historyView.showHistoryFor(fCVSResource.getIResource());
 					} catch (PartInitException e) {
 						CVSException.wrapException(e);

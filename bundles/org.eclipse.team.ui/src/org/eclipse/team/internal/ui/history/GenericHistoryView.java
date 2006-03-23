@@ -173,7 +173,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	private boolean viewPinned;
 
-	public final static String viewId = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
+	public final static String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
 
 	/**
 	 * Refreshes the global actions for the active page.
@@ -503,7 +503,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			try {
 				IViewPart view = null;
 				//check to see if a view already contains this object
-				String id = viewId + System.currentTimeMillis();
+				String id = VIEW_ID + System.currentTimeMillis();
 				IHistoryPage page = searchHistoryViewsForObject(object, refresh);
 				if (page != null)
 					return page;
@@ -515,7 +515,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 					return historyView.itemDropped(object, refresh);
 				}
 				
-				view = getSite().getPage().showView(viewId, id, IWorkbenchPage.VIEW_CREATE);
+				view = getSite().getPage().showView(VIEW_ID, id, IWorkbenchPage.VIEW_CREATE);
 				getSite().getPage().activate(view);
 				if (view instanceof GenericHistoryView)
 					return ((GenericHistoryView) view).itemDropped(object, refresh);
@@ -547,7 +547,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		IWorkbenchPage page = getSite().getPage();
 		IViewReference[] historyViews = page.getViewReferences();
 		for (int i = 0; i < historyViews.length; i++) {
-			if (historyViews[i].getId().equals(viewId)){
+			if (historyViews[i].getId().equals(VIEW_ID)){
 				IViewPart historyView = historyViews[i].getView(true);
 				if (historyView != null){
 					IHistoryPage historyPage = ((IHistoryView)historyView).getHistoryPage();
@@ -570,7 +570,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		IWorkbenchPage page = getSite().getPage();
 		IViewReference[] historyViews = page.getViewReferences();
 		for (int i = 0; i < historyViews.length; i++) {
-			if (historyViews[i].getId().equals(viewId)){
+			if (historyViews[i].getId().equals(VIEW_ID)){
 				IViewPart historyView = historyViews[i].getView(false);
 				if (!((GenericHistoryView)historyView).isViewPinned())
 					return (GenericHistoryView) historyView;

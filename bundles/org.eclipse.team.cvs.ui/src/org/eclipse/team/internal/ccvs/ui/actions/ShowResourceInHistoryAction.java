@@ -31,7 +31,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.viewId);
+				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.VIEW_ID);
 				if (view != null) {
 					view.itemDropped(resources[0],true);
 				}

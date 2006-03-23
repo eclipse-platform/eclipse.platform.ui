@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
 
@@ -27,6 +28,7 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 
 	/**
 	 * Defines the initial actions for a page.  
+	 * @param layout the page layout
 	 */
 	public void defineActions(IPageLayout layout) {
 
@@ -51,12 +53,14 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 
 	/**
 	 * Defines the initial layout for a page.  
+	 * @param layout the page layout
 	 */
 	public void defineLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		IFolderLayout top = layout.createFolder("top", IPageLayout.LEFT, 0.45f, editorArea);	//$NON-NLS-1$
 		top.addView(ISynchronizeView.VIEW_ID);
 		IFolderLayout top2 = layout.createFolder("top2", IPageLayout.BOTTOM, 0.80f, editorArea);	//$NON-NLS-1$
+		top2.addView(GenericHistoryView.VIEW_ID);
 		top2.addView(IPageLayout.ID_TASK_LIST);
 		top2.addView(IPageLayout.ID_PROBLEM_VIEW);
 		layout.setEditorAreaVisible(true);

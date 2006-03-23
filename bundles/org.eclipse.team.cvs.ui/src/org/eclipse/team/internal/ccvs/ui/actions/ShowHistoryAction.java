@@ -64,7 +64,7 @@ public class ShowHistoryAction extends CVSAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.viewId);
+				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.VIEW_ID);
 				if (view != null) {
 					view.itemDropped(files[0], true);
 				}

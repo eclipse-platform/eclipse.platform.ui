@@ -155,7 +155,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 		// Get hook to the HistoryView
 				
-		historyView = (GenericHistoryView) page.showView(GenericHistoryView.viewId);
+		historyView = (GenericHistoryView) page.showView(GenericHistoryView.VIEW_ID);
 		historyView.showHistoryFor((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
 	}
 	

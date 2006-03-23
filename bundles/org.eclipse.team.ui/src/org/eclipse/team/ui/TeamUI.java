@@ -81,8 +81,8 @@ public class TeamUI {
 	 */
 	public static IHistoryView getHistoryView() {
 		try {
-			TeamUIPlugin.getActivePage().showView(GenericHistoryView.viewId);
-			return (IHistoryView) TeamUIPlugin.getActivePage().findView(GenericHistoryView.viewId);
+			TeamUIPlugin.getActivePage().showView(GenericHistoryView.VIEW_ID);
+			return (IHistoryView) TeamUIPlugin.getActivePage().findView(GenericHistoryView.VIEW_ID);
 		} catch (PartInitException e) {
 		}
 
