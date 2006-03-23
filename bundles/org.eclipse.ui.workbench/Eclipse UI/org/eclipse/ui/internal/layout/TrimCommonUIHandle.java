@@ -1,8 +1,5 @@
 package org.eclipse.ui.internal.layout;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -65,7 +62,6 @@ public class TrimCommonUIHandle extends Composite {
 	private TrimLayout  layout;
     private IWindowTrim trim;
 	private Control     toDrag;
-	private int         curSide;
 	private int orientation;
 
 	// CoolBar handling
@@ -83,8 +79,8 @@ public class TrimCommonUIHandle extends Composite {
 	private MenuItem dockCascade;
     private RadioMenu radioButtons;
     private IntModel radioVal = new IntModel(0);
-	private Menu showMenu;
-	private MenuItem showCascade;
+//	private Menu showMenu;
+//	private MenuItem showCascade;
 	
 	/*
 	 * Listeners...
@@ -161,7 +157,6 @@ public class TrimCommonUIHandle extends Composite {
     	this.layout = layout;
     	this.trim = trim;
     	this.toDrag = trim.getControl();
-    	this.curSide = curSide;
     	this.radioVal.set(curSide);
     	
     	// remember the orientation to use
@@ -310,42 +305,11 @@ public class TrimCommonUIHandle extends Composite {
 	}
 	
 	/**
-	 * Determine and set the appropriate drag cursor. If a trim item can
-	 * only live on a single side the a two-way arrow is chosen based on
-	 * the orientation. If the item has more than one valid side then a 
-	 * four-way arrow is supplied.
+	 * Set the cursor to the four-way arrow to indicate that the
+	 * trim can be dragged
 	 */
 	private void setDragCursor() {
-   		int validSides = trim.getValidSides();
-   		
-    	// Can this trim change sides ??
-    	int sideCount = 0;
-    	if ((validSides & SWT.TOP) != 0) {
-			sideCount++;
-		}
-    	if ((validSides & SWT.BOTTOM) != 0) {
-			sideCount++;
-		}
-    	if ((validSides & SWT.LEFT) != 0) {
-			sideCount++;
-		}
-    	if ((validSides & SWT.RIGHT) != 0) {
-			sideCount++;
-		}
-    	
-    	Cursor dragCursor;
-    	if (sideCount == 1) {
-    		// If there's only one valid side then 'curSide' must be it...
-        	if (curSide == SWT.TOP || curSide == SWT.BOTTOM) {
-				dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE);
-			} else {
-				dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS);
-			}
-    	}
-    	else {
-    		dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
-    	}
-    	
+    	Cursor dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
     	setCursor(dragCursor);
 	}
 
@@ -399,19 +363,19 @@ public class TrimCommonUIHandle extends Composite {
     				
     				// Test Hook: add a menu entry that brings up a dialog to allow
     				// testing with various GUI prefs.
-    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
-    				closeItem.setText("Change Preferences"); //$NON-NLS-1$
-    				
-    				closeItem.addSelectionListener(new SelectionListener() {
-						public void widgetSelected(SelectionEvent e) {
-							handleChangePreferences();
-						}
-
-						public void widgetDefaultSelected(SelectionEvent e) {
-						}
-    				});
-
-    				new MenuItem(menu, SWT.SEPARATOR, index++);
+//    				MenuItem closeItem = new MenuItem(menu, SWT.PUSH, index++);
+//    				closeItem.setText("Change Preferences"); //$NON-NLS-1$
+//    				
+//    				closeItem.addSelectionListener(new SelectionListener() {
+//						public void widgetSelected(SelectionEvent e) {
+//							handleChangePreferences();
+//						}
+//
+//						public void widgetDefaultSelected(SelectionEvent e) {
+//						}
+//    				});
+//
+//    				new MenuItem(menu, SWT.SEPARATOR, index++);
     				
     				// Create a cascading menu to allow the user to dock the trim
     				dockCascade = new MenuItem(menu, SWT.CASCADE, index++);
@@ -421,19 +385,10 @@ public class TrimCommonUIHandle extends Composite {
     					sidesMenu = new Menu(dockCascade);
     					radioButtons = new RadioMenu(sidesMenu, radioVal);
     					
-    					int validSides = trim.getValidSides();
-    					if ((validSides & SWT.TOP) != 0) {
-							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Top, new Integer(SWT.TOP));
-						} 
-    					if ((validSides & SWT.BOTTOM) != 0) {
-							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Bottom, new Integer(SWT.BOTTOM));
-						} 
-    					if ((validSides & SWT.LEFT) != 0) {
-							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Left, new Integer(SWT.LEFT));
-						} 
-    					if ((validSides & SWT.RIGHT) != 0) {
-							radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Right, new Integer(SWT.RIGHT));
-						} 
+						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Top, new Integer(SWT.TOP));
+						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Bottom, new Integer(SWT.BOTTOM));
+						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Left, new Integer(SWT.LEFT));
+						radioButtons.addMenuItem(WorkbenchMessages.TrimCommon_Right, new Integer(SWT.RIGHT));
     					
     					dockCascade.setMenu(sidesMenu);
     				}
@@ -448,40 +403,40 @@ public class TrimCommonUIHandle extends Composite {
     		    	});
     				
     				// Provide Show / Hide trim capabilities
-    				showCascade = new MenuItem(menu, SWT.CASCADE, index++);
-    				{
-    					showCascade.setText(WorkbenchMessages.TrimCommon_ShowTrim); 
-    					
-    					showMenu = new Menu(dockCascade);
-    					
-    					// Construct a 'hide/show' cascade from -all- the existing trim...
-    					List trimItems = layout.getAllTrim();
-    					Iterator d = trimItems.iterator();
-    					while (d.hasNext()) {
-    						IWindowTrim trimItem = (IWindowTrim) d.next();
-							MenuItem item = new MenuItem(showMenu, SWT.CHECK);
-							item.setText(trimItem.getDisplayName());
-							item.setSelection(trimItem.getControl().getVisible());
-							item.setData(trimItem);
-							
-							// TODO: Make this work...wire it off for now
-							item.setEnabled(false);
-							
-							item.addSelectionListener(new SelectionListener() {
-
-								public void widgetSelected(SelectionEvent e) {
-									IWindowTrim trim = (IWindowTrim) e.widget.getData();
-									layout.setTrimVisible(trim, !trim.getControl().getVisible());
-								}
-
-								public void widgetDefaultSelected(SelectionEvent e) {
-								}
-								
-							});
-						}
-    					
-    					showCascade.setMenu(showMenu);
-    				}
+//    				showCascade = new MenuItem(menu, SWT.CASCADE, index++);
+//    				{
+//    					showCascade.setText(WorkbenchMessages.TrimCommon_ShowTrim); 
+//    					
+//    					showMenu = new Menu(dockCascade);
+//    					
+//    					// Construct a 'hide/show' cascade from -all- the existing trim...
+//    					List trimItems = layout.getAllTrim();
+//    					Iterator d = trimItems.iterator();
+//    					while (d.hasNext()) {
+//    						IWindowTrim trimItem = (IWindowTrim) d.next();
+//							MenuItem item = new MenuItem(showMenu, SWT.CHECK);
+//							item.setText(trimItem.getDisplayName());
+//							item.setSelection(trimItem.getControl().getVisible());
+//							item.setData(trimItem);
+//							
+//							// TODO: Make this work...wire it off for now
+//							item.setEnabled(false);
+//							
+//							item.addSelectionListener(new SelectionListener() {
+//
+//								public void widgetSelected(SelectionEvent e) {
+//									IWindowTrim trim = (IWindowTrim) e.widget.getData();
+//									layout.setTrimVisible(trim, !trim.getControl().getVisible());
+//								}
+//
+//								public void widgetDefaultSelected(SelectionEvent e) {
+//								}
+//								
+//							});
+//						}
+//    					
+//    					showCascade.setMenu(showMenu);
+//    				}
     			}
     		};
     	}
@@ -492,10 +447,10 @@ public class TrimCommonUIHandle extends Composite {
 	 * Test Hook: Bring up a dialog that allows the user to
 	 * modify the trimdragging GUI preferences.
 	 */
-	private void handleChangePreferences() {
-		TrimDragPreferenceDialog dlg = new TrimDragPreferenceDialog(getShell());
-		dlg.open();
-	}
+//	private void handleChangePreferences() {
+//		TrimDragPreferenceDialog dlg = new TrimDragPreferenceDialog(getShell());
+//		dlg.open();
+//	}
    
 	/**
 	 * Handle the event generated when the "Close" item is
