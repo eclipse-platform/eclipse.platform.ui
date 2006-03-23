@@ -965,6 +965,9 @@
             icon="$nl$/icons/full/eview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.CVSPerspective"
             id="org.eclipse.team.cvs.ui.cvsPerspective">
+         <description>
+            %CVSRepositoryExploring.description
+         </description>
       </perspective>
    </extension>
 <!-- ************** Perspective Extensions **************** -->
