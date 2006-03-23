@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -21,6 +23,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.provider.DiffTree;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
@@ -232,14 +235,14 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}
 		runInBackground(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				cacheContents(traversals, monitor);
+				cacheContents(traversals, getDiffTree(), monitor);
 			}
 		});
 		
 		monitor.done();
 	}
 	
-	protected void cacheContents(final ResourceTraversal[] traversals, IProgressMonitor monitor) throws CVSException {
+	protected void cacheContents(final ResourceTraversal[] traversals, IResourceDiffTree tree, IProgressMonitor monitor) throws CVSException {
 		// cache the base and remote contents
 		// TODO: Refreshing and caching now takes 3 round trips.
 		// OPTIMIZE: remote state and contents could be obtained in 1
@@ -263,8 +266,8 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}};
 		try {
 			monitor.beginTask(null, 50);
-			new CacheBaseContentsOperation(null, mappings, getDiffTree(), true).run(Policy.subMonitorFor(monitor, 25));
-			new CacheRemoteContentsOperation(null, mappings, getDiffTree()).run(Policy.subMonitorFor(monitor, 25));
+			new CacheBaseContentsOperation(null, mappings, tree, true).run(Policy.subMonitorFor(monitor, 25));
+			new CacheRemoteContentsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
@@ -272,5 +275,38 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	public IStatus merge(IDiff[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor.beginTask(null, 100);
+			cacheContents(getTraversals(deltas), getDiffTree(deltas), monitor);
+			return super.merge(deltas, force, Policy.subMonitorFor(monitor, 80));
+		} finally {
+			monitor.done();
+		}
+	}
+
+	private ResourceTraversal[] getTraversals(IDiff[] deltas) {
+		List result = new ArrayList();
+		for (int i = 0; i < deltas.length; i++) {
+			IDiff diff = deltas[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null) {
+				result.add(resource);
+			}
+		}
+		return new ResourceTraversal[] {
+				new ResourceTraversal((IResource[]) result.toArray(new IResource[result.size()]), IResource.DEPTH_ZERO, IResource.NONE)
+		};
+	}
+
+	private IResourceDiffTree getDiffTree(IDiff[] deltas) {
+		ResourceDiffTree tree = new ResourceDiffTree();
+		for (int i = 0; i < deltas.length; i++) {
+			IDiff diff = deltas[i];
+			tree.add(diff);
+		}
+		return tree;
 	}
 }
