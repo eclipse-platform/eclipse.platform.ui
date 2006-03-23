@@ -37,13 +37,6 @@
             label="%preferenceKeywords.appserverPreferencePage"
             id="org.eclipse.help.ui.appserverPreferencePage"/>
    </extension>
-<!-- Context Help contribution -->
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
-   </extension>
 <!-- Web Browsers -->
    <extension
          point="org.eclipse.help.base.browser">
