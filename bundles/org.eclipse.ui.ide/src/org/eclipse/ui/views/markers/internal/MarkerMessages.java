@@ -96,6 +96,8 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_noWorkingSet;
 	public static String filtersDialog_selectAll;
 	public static String filtersDialog_deselectAll;
+	public static String filtersDialog_selectAllTypes;
+	public static String filtersDialog_deselectAllTypes;
 	public static String filtersDialog_type_columnHeader;
 	public static String filtersDialog_superTypecolumnHeader;
 	public static String filtersDialog_titleMarkerLimitInvalid;

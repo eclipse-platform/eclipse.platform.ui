@@ -1017,9 +1017,9 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		buttonLayout.marginWidth = 0;
 		buttonComposite.setLayout(buttonLayout);
 		selectAllButton = createButton(buttonComposite, SELECT_ALL_ID,
-				MarkerMessages.filtersDialog_selectAll, false);
+				MarkerMessages.filtersDialog_selectAllTypes, false);
 		deselectAllButton = createButton(buttonComposite, DESELECT_ALL_ID,
-				MarkerMessages.filtersDialog_deselectAll, false);
+				MarkerMessages.filtersDialog_deselectAllTypes, false);
 	}
 
 	/**
