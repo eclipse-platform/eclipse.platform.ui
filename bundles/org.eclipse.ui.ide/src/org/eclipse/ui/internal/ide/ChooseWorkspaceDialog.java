@@ -18,6 +18,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -38,6 +42,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.fieldassist.RequiredFieldColorer;
 
 /**
  * A dialog that prompts for a directory to use as a workspace.
@@ -209,12 +214,21 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
         Label label = new Label(panel, SWT.NONE);
         label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
-
-        text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+		DecoratedField field = new DecoratedField(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN,
+				new IControlCreator() {
+			public Control createControl(Composite parent, int style) {
+				return new Combo(parent, style);
+			}
+		});
+		field.addFieldDecoration(FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_REQUIRED), SWT.BOTTOM
+				| SWT.LEFT, false);
+        text = (Combo)field.getControl();
         text.setFocus();
-        text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+        field.getLayoutControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.FILL_HORIZONTAL));
-        text.addModifyListener(new ModifyListener(){
+        
+       text.addModifyListener(new ModifyListener(){
         	public void modifyText(ModifyEvent e) {
         		Button okButton = getButton(Window.OK);
         		if(okButton != null && !okButton.isDisposed()) {
@@ -222,6 +236,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         		}
         	}
         });
+ 		text.addFocusListener(new RequiredFieldColorer(text, new ComboContentAdapter()));
+      
         setInitialTextValues(text);
 
         Button browseButton = new Button(panel, SWT.PUSH);
