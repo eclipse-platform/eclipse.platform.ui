@@ -24,6 +24,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -50,6 +54,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
+import org.eclipse.ui.internal.fieldassist.RequiredFieldColorer;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -144,8 +149,14 @@ public class ResourceWorkingSetPage extends WizardPage implements
         label.setLayoutData(data);
         label.setFont(font);
 
-        text = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+        DecoratedField field = new DecoratedField(composite, 
+        		SWT.SINGLE | SWT.BORDER, new TextControlCreator());
+		field.addFieldDecoration(FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_REQUIRED), SWT.BOTTOM
+				| SWT.LEFT, false);
+
+        text = (Text)field.getControl();
+        field.getLayoutControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         text.setFont(font);
         text.addModifyListener(new ModifyListener() {
@@ -153,6 +164,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
                 validateInput();
             }
         });
+        text.addFocusListener(new RequiredFieldColorer(text, new TextContentAdapter()));
         text.setFocus();
 
         label = new Label(composite, SWT.WRAP);
@@ -177,6 +189,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
         data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+        data.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
         tree.getControl().setLayoutData(data);
         tree.getControl().setFont(font);
 
