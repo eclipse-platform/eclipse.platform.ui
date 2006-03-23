@@ -149,7 +149,6 @@ public class Main {
     private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
     private static final String PROP_REQUIRED_JAVA_VERSION = "osgi.requiredJavaVersion"; //$NON-NLS-1$
     private static final String PROP_PARENT_CLASSLOADER = "osgi.parentClassloader"; //$NON-NLS-1$
-    private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 	private static final String PROP_NL = "osgi.nl";  //$NON-NLS-1$
     private static final String PROP_NOSHUTDOWN = "osgi.noShutdown"; //$NON-NLS-1$
     private static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$	
@@ -2028,27 +2027,25 @@ public class Main {
     }
 
     private void mergeProperties(Properties destination, Properties source) {
-        if (destination == null || source == null)
-            return;
-        for (Enumeration e = source.keys(); e.hasMoreElements();) {
-            String key = (String) e.nextElement();
-            if (key.equals(PROP_CLASSPATH)) {
-                String destinationClasspath = destination.getProperty(PROP_CLASSPATH);
-                String sourceClasspath = source.getProperty(PROP_CLASSPATH);
-                if (destinationClasspath == null)
-                    destinationClasspath = sourceClasspath;
-                else
-                    destinationClasspath = destinationClasspath + sourceClasspath;
-                destination.put(PROP_CLASSPATH, destinationClasspath);
-                continue;
-            }
-            if (!key.equals(PROP_EOF)) {
-                String value = source.getProperty(key);
-                if (destination.getProperty(key) == null)
-                    destination.put(key, value);
-            }
-        }
-    }
+		if (destination == null || source == null)
+			return;
+		for (Enumeration e = source.keys(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
+			if (key.equals(PROP_CLASSPATH)) {
+				String destinationClasspath = destination.getProperty(PROP_CLASSPATH);
+				String sourceClasspath = source.getProperty(PROP_CLASSPATH);
+				if (destinationClasspath == null)
+					destinationClasspath = sourceClasspath;
+				else
+					destinationClasspath = destinationClasspath + sourceClasspath;
+				destination.put(PROP_CLASSPATH, destinationClasspath);
+				continue;
+			}
+			String value = source.getProperty(key);
+			if (destination.getProperty(key) == null)
+				destination.put(key, value);
+		}
+	}
 
     private void setupVMProperties() {
         if (vm != null)
