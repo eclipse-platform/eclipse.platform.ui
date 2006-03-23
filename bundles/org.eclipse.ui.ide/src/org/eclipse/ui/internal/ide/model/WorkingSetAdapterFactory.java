@@ -14,12 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.CompositeResourceMapping;
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IWorkingSet;
@@ -53,11 +49,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 					}
 				}
 				if (!result.isEmpty()) {
-					return new CompositeResourceMapping(
-							ModelProvider.RESOURCE_MODEL_PROVIDER_ID,
-							adaptable,
-							(ResourceMapping[]) result
-									.toArray(new ResourceMapping[result.size()]));
+					return new WorkingSetResourceMapping(workingSet);
 				}
 			}
 			return null;
@@ -132,11 +124,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 					}
 				}
 				if (!result.isEmpty()) {
-					return new CompositeResourceMapping(
-							ModelProvider.RESOURCE_MODEL_PROVIDER_ID,
-							adaptableObject,
-							(ResourceMapping[]) result
-									.toArray(new ResourceMapping[result.size()]));
+					return new WorkingSetResourceMapping(workingSet);
 				}
 			}
 		}
@@ -153,7 +141,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 				IWorkbenchAdapter.class, ResourceMapping.class };
 	}
 
-	ResourceMapping getResourceMapping(Object o) {
+	static ResourceMapping getResourceMapping(Object o) {
 		// First, ask the object directly for a resource mapping
 		Object mapping = internalGetAdapter(o, ResourceMapping.class);
 		if (mapping instanceof ResourceMapping) {
@@ -170,7 +158,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	ResourceMapping getContributedResourceMapping(
+	static ResourceMapping getContributedResourceMapping(
 			IAdaptable element) {
 		Object resourceAdapter = internalGetAdapter(element,
 				IContributorResourceAdapter.class);
@@ -201,7 +189,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	Object internalGetAdapter(Object o, Class adapter) {
+	static Object internalGetAdapter(Object o, Class adapter) {
 		if (o instanceof IAdaptable) {
 			IAdaptable element = (IAdaptable) o;
 			Object adapted = element.getAdapter(adapter);
