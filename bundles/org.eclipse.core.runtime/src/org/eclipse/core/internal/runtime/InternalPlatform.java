@@ -118,7 +118,7 @@ public final class InternalPlatform {
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;
 
-	private Map groupProviders = new IdentityHashMap(3);
+	private Map groupProviders = new HashMap(3);
 	private ServiceTracker installLocation = null;
 	private ServiceTracker instanceLocation = null;
 	private boolean missingProductReported = false;
