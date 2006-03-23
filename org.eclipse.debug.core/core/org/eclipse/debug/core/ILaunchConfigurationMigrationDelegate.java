@@ -32,7 +32,7 @@ public interface ILaunchConfigurationMigrationDelegate {
 	 * 
 	 * @param candidate potential migration candidate 
 	 * @return whether the given launch configuration requires migration
-	 * @throws CoreException if an exception occurrs determing the status of the
+	 * @throws CoreException if an exception occurs determining the status of the
 	 *  given configuration
 	 */
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException;
@@ -42,7 +42,7 @@ public interface ILaunchConfigurationMigrationDelegate {
 	 * 
 	 * @param candidate the candidate to be migrated, which can be a launch configuration
 	 *  or working copy
-	 * @throws CoreException if an exception occurrs during migration
+	 * @throws CoreException if an exception occurs during migration
 	 */
 	public void migrate(ILaunchConfiguration candidate) throws CoreException;
 	

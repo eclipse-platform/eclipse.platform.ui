@@ -60,7 +60,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
- * Provides the Launch Configuraiton preference page to the Run/Debug preferences
+ * Provides the Launch Configuration preference page to the Run/Debug preferences
  * 
  * This page allows users to set filtering options as well as perform migration tasks.
  * This class is not intended to be subclasssed 
@@ -69,7 +69,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * Content provider for the launch configuraiton type table
+	 * Content provider for the launch configuration type table
 	 */
 	class TableContentProvider implements IStructuredContentProvider {
 
@@ -93,7 +93,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private static final String EXT_BUILDER_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
 	
 	/**
-	 * to monitor the proress of the migration process
+	 * to monitor the progress of the migration process
 	 */
 	private ProgressMonitorPart fMonitor;
 	
@@ -124,7 +124,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	/**
 	 * creates a composite to place tab controls on
 	 * @param parent the parent to create to composite for
-	 * @return a composite for settgin as a tabitem control
+	 * @return a composite for setting as a tabitem control
 	 */
 	private Composite createComposite(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -195,8 +195,8 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	}
 	
 	/**
-	 * @param parent the parent ot add this composite to
-	 * @return the new composite with the type selction table in it
+	 * @param parent the parent to add this composite to
+	 * @return the new composite with the type selection table in it
 	 */
 	private Composite createTypeFiltering(Composite parent) {
 		Composite comp = createComposite(parent);
