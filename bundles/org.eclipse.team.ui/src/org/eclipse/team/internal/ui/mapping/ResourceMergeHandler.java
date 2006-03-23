@@ -24,11 +24,10 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.mapping.SynchronizationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-public class ResourceMergeHandler extends MergeActionHandler {
+public class ResourceMergeHandler extends ResourceMergeActionHandler {
 	
 	private final boolean overwrite;
 	private ResourceModelProviderOperation operation;
@@ -105,7 +104,7 @@ public class ResourceMergeHandler extends MergeActionHandler {
 	}
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (!overwrite || promptToConfirm())
+		if (saveDirtyEditors() && (!overwrite || promptToConfirm()))
 			return super.execute(event);
 		return null;
 	}

@@ -79,7 +79,7 @@ public class CreatePatchAction extends CVSModelProviderAction {
     	return "GenerateDiffFileAction."; //$NON-NLS-1$
     }
     
-    public void run() {
+    public void execute() {
     	final ResourceTraversal [][] traversals = new ResourceTraversal[][] { null };
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {

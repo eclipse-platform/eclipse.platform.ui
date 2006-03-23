@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,19 +25,18 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 
 /**
- * A commit action that will commit all outgoing canges in the context.
+ * A commit action that will commit all outgoing changes in the context.
  */
-public class WorkspaceCommitAction extends ModelParticipantAction implements IDiffChangeListener {
+public class WorkspaceCommitAction extends CVSModelProviderAction implements IDiffChangeListener {
 
 	/**
-	 * Crate the action
+	 * Create the action
 	 * @param configuration the synchronize page configuration
 	 */
 	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration) {
-		super(null, configuration);
+		super(configuration);
 		final IDiffTree tree = getDiffTree();
 		tree.addDiffChangeListener(this);
 		getSynchronizationContext().getCache().addCacheListener(new ICacheListener() {
@@ -46,6 +46,10 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 		});
 		updateEnablement();
 		
+	}
+	
+	protected String getBundleKeyPrefix() {
+		return "WorkspaceToolbarCommitAction."; //$NON-NLS-1$
 	}
 
 	private IDiffTree getDiffTree() {
@@ -82,7 +86,7 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
 		setEnabled(enabled);
 	}
 	
-	public void run() {
+	public void execute() {
 		ISynchronizationContext context = (ISynchronizationContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ResourceTraversal[] traversals = context.getScope().getTraversals();
         Shell shell= getConfiguration().getSite().getShell();
@@ -93,6 +97,10 @@ public class WorkspaceCommitAction extends ModelParticipantAction implements IDi
         } catch (CVSException e) {
             CVSUIPlugin.log(e);
         }
+	}
+	
+	protected IResource[] getTargetResources() {
+		return getSynchronizationContext().getScope().getRoots();
 	}
 
 }

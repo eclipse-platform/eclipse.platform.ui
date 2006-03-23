@@ -73,7 +73,7 @@ public class CommitAction extends CVSModelProviderAction implements IPropertyCha
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
-	public void run() {
+	public void execute() {
     	final ResourceTraversal [][] traversals = new ResourceTraversal[][] { null };
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {

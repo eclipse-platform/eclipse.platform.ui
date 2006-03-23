@@ -22,11 +22,13 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelTraversalCalculator;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelParticipantAction;
+import org.eclipse.ui.ide.IDE;
 
 public abstract class CVSModelProviderAction extends ModelParticipantAction {
 
@@ -145,4 +147,85 @@ public abstract class CVSModelProviderAction extends ModelParticipantAction {
 		}
 		return (ResourceMapping[]) mappings.toArray(new ResourceMapping[mappings.size()]);
 	}
+	
+	/**
+	 * Prompt to save all dirty editors and return whether to proceed
+	 * or not.
+	 * @return whether to proceed
+	 * or not
+	 */
+	public final boolean saveDirtyEditors() {
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors(getTargetResources(), confirmSaveOfDirtyEditor())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected IResource[] getTargetResources() {
+		IStructuredSelection selection = getStructuredSelection();
+		Object[] objects = selection.toArray();
+		Set roots = new HashSet();
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			ResourceMapping mapping = Utils.getResourceMapping(object);
+			if (mapping != null) {
+				try {
+					ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+					for (int j = 0; j < traversals.length; j++) {
+						ResourceTraversal traversal = traversals[j];
+						IResource[] resources = traversal.getResources();
+						for (int k = 0; k < resources.length; k++) {
+							IResource resource = resources[k];
+							roots.add(resource);
+						}
+					}
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+			}
+		}
+		return (IResource[]) roots.toArray(new IResource[roots.size()]);
+	}
+
+	/**
+	 * Save all dirty editors in the workbench that are open on files that may
+	 * be affected by this operation. Opens a dialog to prompt the user if
+	 * <code>confirm</code> is true. Return true if successful. Return false
+	 * if the user has canceled the command. Must be called from the UI thread.
+	 * @param resources the root resources being operated on
+	 * @param confirm prompt the user if true
+	 * @return boolean false if the operation was canceled.
+	 */
+	public final boolean saveAllEditors(IResource[] resources, boolean confirm) {
+		return IDE.saveAllEditors(resources, confirm);
+	}
+
+	/**
+	 * Return whether dirty editor should be saved before this action is run.
+	 * Default is <code>true</code>.
+	 * 
+	 * @return whether dirty editor should be saved before this action is run
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
+	/**
+	 * Returns whether the user should be prompted to save dirty editors. The
+	 * default is <code>true</code>.
+	 * 
+	 * @return whether the user should be prompted to save dirty editors
+	 */
+	protected boolean confirmSaveOfDirtyEditor() {
+		return true;
+	}
+	
+	public void run() {
+		if (saveDirtyEditors())
+			execute();
+	}
+
+	protected abstract void execute();
 }

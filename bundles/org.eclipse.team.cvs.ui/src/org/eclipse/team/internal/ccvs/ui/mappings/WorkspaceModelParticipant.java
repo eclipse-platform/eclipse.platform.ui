@@ -82,6 +82,14 @@ public class WorkspaceModelParticipant extends
 				private IMergeContext getMergeContext() {
 					return ((IMergeContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT));
 				}
+				protected boolean needsToSaveDirtyEditors() {
+					int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
+					return option != ICVSUIConstants.OPTION_NEVER;
+				}
+				protected boolean confirmSaveOfDirtyEditor() {
+					int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
+					return option == ICVSUIConstants.OPTION_PROMPT;
+				}
 			});
 			super.initialize(configuration);
 			
@@ -93,7 +101,6 @@ public class WorkspaceModelParticipant extends
 						new CommitAction(configuration));
 				
 				commitToolbar = new WorkspaceCommitAction(configuration);
-				Utils.initAction(commitToolbar, "WorkspaceToolbarCommitAction.", Policy.getActionBundle()); //$NON-NLS-1$
 				appendToGroup(
 						ISynchronizePageConfiguration.P_TOOLBAR_MENU,
 						MERGE_ACTION_GROUP,

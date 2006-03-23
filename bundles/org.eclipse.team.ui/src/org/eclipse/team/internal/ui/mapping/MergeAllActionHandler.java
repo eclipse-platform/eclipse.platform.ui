@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +23,7 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.ide.IDE;
 
 public class MergeAllActionHandler extends MergeActionHandler implements IDiffChangeListener {
 
@@ -81,9 +83,61 @@ public class MergeAllActionHandler extends MergeActionHandler implements IDiffCh
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (promptToUpdate())
+		if (saveDirtyEditors() && promptToUpdate())
 			return super.execute(event);
 		return null;
+	}
+	
+	/**
+	 * Prompt to save all dirty editors and return whether to proceed
+	 * or not.
+	 * @return whether to proceed
+	 * or not
+	 */
+	public final boolean saveDirtyEditors() {
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors(getTargetResources(), confirmSaveOfDirtyEditor())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private IResource[] getTargetResources() {
+		return getContext().getDiffTree().getAffectedResources();
+	}
+
+	/**
+	 * Save all dirty editors in the workbench that are open on files that may
+	 * be affected by this operation. Opens a dialog to prompt the user if
+	 * <code>confirm</code> is true. Return true if successful. Return false
+	 * if the user has canceled the command. Must be called from the UI thread.
+	 * @param resources the root resources being operated on
+	 * @param confirm prompt the user if true
+	 * @return boolean false if the operation was canceled.
+	 */
+	public final boolean saveAllEditors(IResource[] resources, boolean confirm) {
+		return IDE.saveAllEditors(resources, confirm);
+	}
+
+	/**
+	 * Return whether dirty editor should be saved before this action is run.
+	 * Default is <code>true</code>.
+	 * 
+	 * @return whether dirty editor should be saved before this action is run
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
+	/**
+	 * Returns whether the user should be prompted to save dirty editors. The
+	 * default is <code>true</code>.
+	 * 
+	 * @return whether the user should be prompted to save dirty editors
+	 */
+	protected boolean confirmSaveOfDirtyEditor() {
+		return true;
 	}
 	
 	protected String getJobName() {
