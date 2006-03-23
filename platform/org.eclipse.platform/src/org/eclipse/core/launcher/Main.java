@@ -249,7 +249,6 @@ public class Main {
     /**
      * Executes the launch.
      * 
-     * @return the result of performing the launch
      * @param args command-line arguments
      * @exception Exception thrown if a problem occurs during the launch
      */
