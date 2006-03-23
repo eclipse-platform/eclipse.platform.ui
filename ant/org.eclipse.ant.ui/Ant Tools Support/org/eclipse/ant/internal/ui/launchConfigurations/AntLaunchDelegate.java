@@ -592,9 +592,10 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private void setDefaultVM(ILaunchConfiguration configuration, ILaunchConfigurationWorkingCopy copy) {
 		try {
 			JavaRuntime.getJavaProject(configuration);
-			//remove the vm name and install type for the Java launching concept of default VM
+			//remove the vm name, install type and jre container path for the Java launching concept of default VM
 			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 		} catch (CoreException ce) {
 			//not in a Java project
 			IVMInstall defaultVMInstall= JavaRuntime.getDefaultVMInstall();

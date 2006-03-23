@@ -92,6 +92,7 @@ public class AntJRETab extends JavaJRETab {
 		if (fJREBlock.isDefaultJRE()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 			configuration.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
@@ -174,8 +175,9 @@ public class AntJRETab extends JavaJRETab {
 			 		needsSaving= true;
 			 	}
 			 	
-			 	//null out the vm type to get the default vm install from JavaRuntime
+			 	//null out the vm type and jre container path to get the default vm install from JavaRuntime
 			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			 	copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 			 	IVMInstall defaultVMInstall= getDefaultVMInstall(copy);
 			 	if (defaultVMInstall != null) {
 			 		//update if required
