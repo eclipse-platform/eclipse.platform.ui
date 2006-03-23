@@ -271,8 +271,9 @@ public class TeamUIMessages extends NLS {
 	public static String ParticipantCompareDialog_2;
 	public static String ParticipantCompareDialog_3;
 	public static String SynchronizeManager_27;
-	public static String SynchronizeManager_31;
 	public static String SynchronizeManager_30;
+	public static String SynchronizeManager_31;
+	public static String SynchronizeManager_32;
 	public static String ParticipantPagePane_0;
 	public static String Participant_synchronizing;
 	public static String ParticipantPageSaveablePart_0;

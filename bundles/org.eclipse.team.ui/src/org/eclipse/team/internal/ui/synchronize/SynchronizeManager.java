@@ -515,9 +515,16 @@ public class SynchronizeManager implements ISynchronizeManager {
 		
 		if(perspectiveDescriptor != null) {
 			
+			String message;;
+			String desc = perspectiveDescriptor.getDescription();
+			if (desc == null) {
+				message = NLS.bind(TeamUIMessages.SynchronizeManager_30, new String[] { perspectiveDescriptor.getLabel() });
+			} else {
+				message = NLS.bind(TeamUIMessages.SynchronizeManager_32, new String[] { perspectiveDescriptor.getLabel(), desc });
+			}
 			MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null),
 						TeamUIMessages.SynchronizeManager_27,  
-						NLS.bind(TeamUIMessages.SynchronizeManager_30, new String[] { perspectiveDescriptor.getLabel() }), 
+						message, 
 						TeamUIMessages.SynchronizeManager_31,  
 						false /* toggle state */,
 						store,

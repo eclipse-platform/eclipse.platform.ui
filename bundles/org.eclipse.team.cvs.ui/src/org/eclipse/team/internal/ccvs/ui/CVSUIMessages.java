@@ -105,6 +105,7 @@ public class CVSUIMessages extends NLS {
 	public static String ShowAnnotationOperation_0;
 	public static String ShowAnnotationOperation_1;
 	public static String ShowAnnotationOperation_2;
+	public static String ShowAnnotationOperation_3;
 	public static String ShowAnnotationOperation_4;
 
 	public static String CVSCompareEditorInput_branchLabel;

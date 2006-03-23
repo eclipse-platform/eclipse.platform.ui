@@ -316,11 +316,18 @@ public class ShowAnnotationOperation extends CVSOperation {
 		
 		if (desired != null) {
 		    
+			String message;;
+			String desc = desired.getDescription();
+			if (desc == null) {
+				message = NLS.bind(CVSUIMessages.ShowAnnotationOperation_2, new String[] { desired.getLabel() });
+			} else {
+				message = NLS.bind(CVSUIMessages.ShowAnnotationOperation_3, new String[] { desired.getLabel(), desc });
+			}
 		    // Ask the user whether to switch
 			final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
 			        Utils.getShell(null),
 			        CVSUIMessages.ShowAnnotationOperation_1, 
-			        NLS.bind(CVSUIMessages.ShowAnnotationOperation_2, new String[] { desired.getLabel() }), 
+			        message, 
 			        CVSUIMessages.ShowAnnotationOperation_4,   
 			        false /* toggle state */,
 			        store,
