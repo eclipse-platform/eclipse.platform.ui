@@ -355,10 +355,13 @@ public abstract class TextEditBasedChange extends Change {
 	TextEdit[] mapEdits(TextEdit[] edits, TextEditCopier copier) {
 		if (edits == null)
 			return null;
+		final List result= new ArrayList(edits.length);
 		for (int i= 0; i < edits.length; i++) {
-			edits[i]= copier.getCopy(edits[i]);
+			TextEdit edit= copier.getCopy(edits[i]);
+			if (edit != null)
+				result.add(edit);
 		}
-		return edits;
+		return (TextEdit[]) result.toArray(new TextEdit[result.size()]);
 	}
 
 	/**
