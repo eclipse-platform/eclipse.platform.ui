@@ -15,11 +15,14 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -367,5 +370,98 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			return tp.getLastSegment();
 		}
 		return elementOrPath;
+	}
+	
+	public void diffsChanged(final IDiffChangeEvent event, IProgressMonitor monitor) {
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				handleChange(event);
+			}
+		}, (StructuredViewer)getViewer());
+	}
+
+	private void handleChange(IDiffChangeEvent event) {
+		Set existingProjects = getVisibleProjects();
+		IProject[] changedProjects = getChangedProjects(event);
+		List refreshes = new ArrayList(changedProjects.length);
+		List additions = new ArrayList(changedProjects.length);
+		List removals = new ArrayList(changedProjects.length);
+		for (int i = 0; i < changedProjects.length; i++) {
+			IProject project = changedProjects[i];
+			if (hasDiffs(event.getTree(), project)) {
+				if (existingProjects.contains(project)) {
+					refreshes.add(project);
+				} else {
+					additions.add(project);
+				}
+			} else if (existingProjects.contains(project)) {
+				removals.add(project);
+				
+			}
+		}
+		if (!removals.isEmpty() || !additions.isEmpty() || !refreshes.isEmpty()) {
+			TreeViewer viewer = (TreeViewer)getViewer();
+			Tree tree = viewer.getTree();
+			try {
+				tree.setRedraw(false);
+				if (!additions.isEmpty())
+					viewer.add(viewer.getInput(), additions.toArray());
+				if (!removals.isEmpty())
+					viewer.remove(viewer.getInput(), removals.toArray());
+				if (!refreshes.isEmpty())
+					viewer.remove(refreshes.toArray());
+			} finally {
+				tree.setRedraw(true);
+			}
+		}
+	}
+
+	private boolean hasDiffs(IDiffTree tree, IProject project) {
+		return tree.getChildren(project.getFullPath()).length > 0;
+	}
+
+	private IProject[] getChangedProjects(IDiffChangeEvent event) {
+		Set result = new HashSet();
+		IDiff[] changes = event.getChanges();
+		for (int i = 0; i < changes.length; i++) {
+			IDiff diff = changes[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null) {
+				result.add(resource.getProject());
+			}
+		}
+		IDiff[] additions = event.getAdditions();
+		for (int i = 0; i < additions.length; i++) {
+			IDiff diff = additions[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null) {
+				result.add(resource.getProject());
+			}
+		}
+		IPath[] removals = event.getRemovals();
+		for (int i = 0; i < removals.length; i++) {
+			IPath path = removals[i];
+			if (path.segmentCount() > 0) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.segment(0));
+				result.add(project);
+			}
+		}
+		return (IProject[]) result.toArray(new IProject[result.size()]);
+	}
+
+	private Set getVisibleProjects() {
+		TreeViewer viewer = (TreeViewer)getViewer();
+		Tree tree = viewer.getTree();
+		Control[] children = tree.getChildren();
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			Control control = children[i];
+			Object data = control.getData();
+			IResource resource = Utils.getResource(data);
+			if (resource.getType() == IResource.PROJECT) {
+				result.add(resource);
+			}
+		}
+		return result;
 	}
 }

@@ -406,7 +406,8 @@ public class DiffTree implements IDiffTree {
 			IPath[] paths = pathTree.getPaths();
 			for (int i = 0; i < paths.length; i++) {
 				IPath path = paths[i];
-				pathTree.setPropogatedProperty(path, P_BUSY_HINT, false);
+				IPath[] changed = pathTree.setPropogatedProperty(path, P_BUSY_HINT, false);
+				accumulatePropertyChanges(P_BUSY_HINT, changed);
 			}
 		} finally {
 			endInput(monitor);
@@ -437,7 +438,7 @@ public class DiffTree implements IDiffTree {
 	}
 	
 	/**
-	 * Report to any listeners that an error has occurrd while populating the
+	 * Report to any listeners that an error has occurred while populating the
 	 * set. Listeners will be notified that an error occurred and can react
 	 * accordingly.
 	 * </p>
