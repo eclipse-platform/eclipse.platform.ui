@@ -3599,11 +3599,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		serviceLocator.registerService(IActionCommandMappingService.class,
 				mappingService);
 
-		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(
-				this);
-		serviceLocator.registerService(LegacyActionPersistence.class,
-				actionPersistence);
-		actionPersistence.read();
+		if (Policy.EXPERIMENTAL_MENU) {
+			final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(
+					this);
+			serviceLocator.registerService(LegacyActionPersistence.class,
+					actionPersistence);
+			actionPersistence.read();
+		}
 
 	}
 
