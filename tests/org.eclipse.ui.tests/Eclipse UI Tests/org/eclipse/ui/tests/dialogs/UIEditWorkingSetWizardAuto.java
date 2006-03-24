@@ -91,7 +91,12 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
         setTextWidgetText("", page);
         assertTrue(page.canFlipToNextPage() == false);
         assertTrue(fWizard.canFinish() == false);
-        assertNotNull(page.getErrorMessage());
+        /*
+         * Commented out because error message is not shown when
+         * the required field indicators are used.
+         * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=133044
+         */
+        // assertNotNull(page.getErrorMessage());
 
         /*
          * Test page state with complete page input
