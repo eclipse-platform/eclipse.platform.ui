@@ -391,7 +391,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			if (hasDiffs(event.getTree(), project)) {
 				if (existingProjects.contains(project)) {
 					refreshes.add(project);
-				} else {
+				} else if (hasVisibleChanges(event.getTree(), project)){
 					additions.add(project);
 				}
 			} else if (existingProjects.contains(project)) {
@@ -414,6 +414,14 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 				tree.setRedraw(true);
 			}
 		}
+	}
+
+	private boolean hasVisibleChanges(IDiffTree tree, IProject project) {
+		return tree.hasMatchingDiffs(project.getFullPath(), new FastDiffFilter() {
+			public boolean select(IDiff diff) {
+				return isVisible(diff);
+			}
+		});
 	}
 
 	private boolean hasDiffs(IDiffTree tree, IProject project) {
