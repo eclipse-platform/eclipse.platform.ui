@@ -413,7 +413,7 @@ public abstract class RefreshParticipantJob extends Job {
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 		group.beginTask(taskName, 100);
 		setProgressGroup(group, 80);
-		handleProgressGroupSet(group);
+		handleProgressGroupSet(group, 20);
 		setProperty(IProgressConstants.ICON_PROPERTY, participant.getImageDescriptor());
 		setProperty(IProgressConstants.ACTION_PROPERTY, actionWrapper);
 		setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
@@ -458,7 +458,14 @@ public abstract class RefreshParticipantJob extends Job {
 		}	
 	}
 
-	protected abstract void handleProgressGroupSet(IProgressMonitor group);
+	/**
+	 * The progress group of this job has been set. Any subclasses should
+	 * assign this group to any additional jobs they use to collect 
+	 * changes from the refresh.
+	 * @param group a progress group
+	 * @param ticks the ticks for the change collection job
+	 */
+	protected abstract void handleProgressGroupSet(IProgressMonitor group, int ticks);
 	
 	protected abstract IChangeDescription createChangeDescription();
 	

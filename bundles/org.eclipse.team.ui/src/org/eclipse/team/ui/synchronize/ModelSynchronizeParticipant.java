@@ -255,7 +255,7 @@ public class ModelSynchronizeParticipant extends
 	 * Return the synchronization context for this participant.
 	 * @return the synchronization context for this participant
 	 */
-	public SynchronizationContext getContext() {
+	public ISynchronizationContext getContext() {
 		return context;
 	}
 	

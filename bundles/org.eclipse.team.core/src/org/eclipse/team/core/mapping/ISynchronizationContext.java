@@ -36,7 +36,7 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
  * clients should listen to both sources in order to guarantee that they update
  * any dependent state appropriately.
  * <p>
- * <a name="async">The diff tree associated with this context may be updated asynchronously in reponse
+ * <a name="async">The diff tree associated with this context may be updated asynchronously in response
  * to calls to any method of this context (e.g. refresh methods) that may result in changes
  * in the synchronization state of resources. It may also get updated as a result
  * of changes triggered from other sources. Hence, the callback from the diff tree

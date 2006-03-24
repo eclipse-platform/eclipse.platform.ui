@@ -17,12 +17,15 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.core.mapping.GroupProgressMonitor;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
 public class RefreshModelParticipantJob extends RefreshParticipantJob {
 
 	private final ResourceMapping[] mappings;
+	private IProgressMonitor group;
+	private int groupTicks;
 
 	public class ChangeDescription implements IChangeDescription, IDiffChangeListener {
 		Map changes = new HashMap();
@@ -76,8 +79,9 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		return ((ModelSynchronizeParticipant)getParticipant()).getContext().getDiffTree().size();
 	}
 
-	protected void handleProgressGroupSet(IProgressMonitor group) {
-		// TODO Auto-generated method stub
+	protected void handleProgressGroupSet(IProgressMonitor group, int ticks) {
+		this.group = group;
+		this.groupTicks = ticks;
 	}
 
 	protected IChangeDescription createChangeDescription() {
@@ -88,6 +92,16 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		if (family == ((ModelSynchronizeParticipant)getParticipant()))
 			return true;
 		return super.belongsTo(family);
+	}
+	
+	public IStatus run(IProgressMonitor monitor) {
+		if (group != null)
+			monitor = wrapMonitorWithGroup(monitor);
+		return super.run(monitor);
+	}
+
+	private IProgressMonitor wrapMonitorWithGroup(IProgressMonitor monitor) {
+		return new GroupProgressMonitor(monitor, group, groupTicks);
 	}
 
 }

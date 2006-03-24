@@ -13,12 +13,12 @@ package org.eclipse.team.core.subscribers;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.mapping.GroupProgressMonitor;
 import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 
 /**
@@ -69,9 +69,23 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 */
 	public void refresh(ResourceTraversal[] traversals, int flags,
 			IProgressMonitor monitor) throws CoreException {
+		GroupProgressMonitor group = getGroup(monitor);
+		if (group != null)
+			handler.setProgressGroupHint(group.getGroup(), group.getTicks());
 		subscriber.refresh(traversals, monitor);
 	}
 	
+	private GroupProgressMonitor getGroup(IProgressMonitor monitor) {
+		if (monitor instanceof GroupProgressMonitor) {
+			return (GroupProgressMonitor) monitor;
+		}
+		if (monitor instanceof ProgressMonitorWrapper) {
+			ProgressMonitorWrapper wrapper = (ProgressMonitorWrapper) monitor;
+			return getGroup(wrapper.getWrappedProgressMonitor());
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.provider.SynchronizationContext#dispose()
 	 */

@@ -22,9 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
-import org.eclipse.team.core.mapping.ISynchronizationScopeChangeListener;
-import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
@@ -253,7 +251,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	 */
 	public void onLoad(INavigatorContentExtension anExtension) {
 		extensions.add(anExtension);
-		SynchronizationContext context = getParticipant().getContext();
+		ISynchronizationContext context = getParticipant().getContext();
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, context.getScope());
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION, getConfiguration());
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, context);

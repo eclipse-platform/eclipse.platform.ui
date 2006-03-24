@@ -59,8 +59,8 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 		return new RefreshChangeListener(resources, getCollector());
 	}
 	
-	protected void handleProgressGroupSet(IProgressMonitor group) {
-		getCollector().setProgressGroup(group, 20);
+	protected void handleProgressGroupSet(IProgressMonitor group, int ticks) {
+		getCollector().setProgressGroup(group, ticks);
 	}
 	
 	/**
