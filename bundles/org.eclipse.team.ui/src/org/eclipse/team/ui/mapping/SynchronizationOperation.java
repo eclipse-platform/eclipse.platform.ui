@@ -19,7 +19,8 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -58,7 +59,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	 * @param elements the elements to be operated on
 	 */
 	protected SynchronizationOperation(ISynchronizePageConfiguration configuration, Object[] elements) {
-		super(getPart(configuration));
+		super(getPart(configuration), configuration.getRunnableContext());
 		this.configuration = configuration;
 		this.elements = elements;
 	}

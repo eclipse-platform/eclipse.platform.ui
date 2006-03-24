@@ -24,17 +24,21 @@ import org.eclipse.team.ui.synchronize.*;
 
 public class ModelSynchronizeWizard extends ModelParticipantWizard {
 
-	public ModelSynchronizeWizard() {
-		super();
-	}
-
-	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
+	public static ISynchronizeParticipant createWorkspaceParticipant(ResourceMapping[] selectedMappings) {
 		ISynchronizationScopeManager manager = new SubscriberScopeManager(
 				CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), selectedMappings, 
 				CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
 		WorkspaceModelParticipant p =  new WorkspaceModelParticipant( 
 				WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY));
 		return p;
+	}
+	
+	public ModelSynchronizeWizard() {
+		super();
+	}
+
+	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
+		return createWorkspaceParticipant(selectedMappings);
 	}
 
 	protected String getPageTitle() {

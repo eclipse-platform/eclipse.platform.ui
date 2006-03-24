@@ -15,8 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -28,27 +27,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionWizardPage;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.tags.*;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbench;
 
 /**
@@ -536,7 +525,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 				} else {
 					shareProject(Policy.subMonitorFor(monitor, 50));
 				}
-				getParticipant().refreshNow(new IResource[] {project}, CVSUIMessages.ShareProjectOperation_1, Policy.subMonitorFor(monitor, 50)); 
+				try {
+					getParticipant().getContext().refresh(Utils.getResourceMappings(new IProject[] { project }), Policy.subMonitorFor(monitor, 50));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 				if (monitor.isCanceled()) {
 					throw new InterruptedException();
 				}
@@ -561,7 +554,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		tagPage.setDescription(NLS.bind(CVSUIMessages.SharingWizard_25, new String[] { remote.getRepositoryRelativePath() })); 
 	}
 
-	private WorkspaceSynchronizeParticipant getParticipant() {
+	private ModelSynchronizeParticipant getParticipant() {
 		return syncPage.getParticipant();
 	}
 }
