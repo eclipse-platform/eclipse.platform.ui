@@ -36,6 +36,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_CollapseAllAction;
 	public static String CVSHistoryPage_CollapseAllTooltip;
 	public static String CVSHistoryPage_FilterOn;
+	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String OpenRevisionAction_DeletedRevMessage;
 	public static String OpenRevisionAction_DeletedRevTitle;
 	public static String PasswordManagementPreferencePage_2;
@@ -43,6 +44,8 @@ public class CVSUIMessages extends NLS {
 	public static String PasswordManagementPreferencePage_4;
 	public static String PasswordManagementPreferencePage_5;
 	public static String PasswordManagementPreferencePage_6;
+	public static String ShowAnnotationOperation_QDAnnotateMessage;
+	public static String ShowAnnotationOperation_QDAnnotateTitle;
 	public static String UserValidationDialog_5;
 	public static String UserValidationDialog_6;
 	public static String UserValidationDialog_7;

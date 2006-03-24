@@ -16,10 +16,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -61,14 +63,24 @@ public class ShowAnnotationAction extends WorkspaceAction {
 
     private boolean isBinary(ICVSResource cvsResource) {
         if (cvsResource.isFolder()) return false;
-        try {
-            byte[] syncBytes = ((ICVSFile)cvsResource).getSyncBytes();
-                if (syncBytes == null) 
-                    return false;
-            return ResourceSyncInfo.isBinary(syncBytes);
-        } catch (CVSException e) {
-            return false;
+        
+        if (cvsResource instanceof RemoteFile){
+        	RemoteFile rFile = (RemoteFile) cvsResource;
+			int result = Team.getFileContentManager().getTypeForName(rFile.getName());
+	        if (result == Team.BINARY || result == Team.UNKNOWN)
+	            return true;
         }
+        else {
+	        try {
+	            byte[] syncBytes = ((ICVSFile)cvsResource).getSyncBytes();
+	                if (syncBytes == null) 
+	                    return false;
+	            return ResourceSyncInfo.isBinary(syncBytes);
+	        } catch (CVSException e) {
+	            return false;
+	        }
+        }
+        return false;
     }
 
     /**

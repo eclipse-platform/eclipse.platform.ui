@@ -80,7 +80,7 @@ public class LocalFileRevision extends FileRevision {
 	public String getComment() {
 		if (file != null)
 			return Messages.LocalFileRevision_currentVersionTag;
-		return Messages.LocalFileRevision_localRevisionTag;
+		return null;
 	}
 
 	/* (non-Javadoc)

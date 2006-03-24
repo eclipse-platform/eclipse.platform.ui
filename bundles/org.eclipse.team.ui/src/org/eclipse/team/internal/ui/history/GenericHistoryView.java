@@ -327,6 +327,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				}
 			}
 		}
+		
+		if (currentPageContainer.page instanceof IHistoryPage){
+			IHistoryPageSite pageSite = ((IHistoryPage) currentPageContainer.page).getHistoryPageSite();
+			if (pageSite != null)
+				pageSite.setFocus(); 
+			
+		}
 	}
 
 	/**

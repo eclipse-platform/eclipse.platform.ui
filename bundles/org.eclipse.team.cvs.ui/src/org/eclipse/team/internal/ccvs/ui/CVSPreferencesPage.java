@@ -508,6 +508,15 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    		YES_NO_PROMPT,
 	    		new Integer [] { new Integer(ICVSUIConstants.OPTION_AUTOMATIC),	new Integer(ICVSUIConstants.OPTION_NEVER), 	new Integer(ICVSUIConstants.OPTION_PROMPT)});
 				
+		new StringRadioButtons(
+	    		composite, 
+	    		ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE, 
+	    		CVSUIMessages.CVSPreferencesPage_QuickDiffAnnotate, 
+	    		IHelpContextIds.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS,
+	    		YES_NO_PROMPT,
+	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
+	    		);
+		
 	    new StringRadioButtons(
 	    		composite, 
 	    		ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, 

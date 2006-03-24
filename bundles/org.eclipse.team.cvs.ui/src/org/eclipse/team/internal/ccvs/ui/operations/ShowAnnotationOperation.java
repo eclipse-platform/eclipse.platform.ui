@@ -41,7 +41,11 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 /**
@@ -83,19 +87,31 @@ public class ShowAnnotationOperation extends CVSOperation {
 		final Display display= getPart().getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				// is there an open editor for the given input? If yes, use live annotate
-				AbstractDecoratedTextEditor editor= getEditor();
-				if (editor != null){
-					editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
-					try {
-						GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.VIEW_ID);
-						historyView.showHistoryFor(fCVSResource.getIResource());
-					} catch (PartInitException e) {
-						CVSException.wrapException(e);
+				boolean useQuickDiffAnnotate = false;
+				//If the file being annotated is not binary, check to see if we can use the quick
+				//annotate. Until we are able to show quick diff annotate on read only text editors
+				//we can't make use of it for binary files/remote files.
+				if (!binary)
+					useQuickDiffAnnotate = promptForQuickDiffAnnotate();
+				if (useQuickDiffAnnotate){
+					//is there an open editor for the given input? If yes, use live annotate
+					AbstractDecoratedTextEditor editor= getEditor();
+					if (editor != null){
+						editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
+						try {
+							GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.VIEW_ID);
+							historyView.showHistoryFor(fCVSResource.getIResource());
+							IHistoryPage historyPage = historyView.getHistoryPage();
+							if (historyPage instanceof CVSHistoryPage){
+								CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
+								cvsHistoryPage.setMode(CVSHistoryPage.REMOTE_MODE);
+							}
+						} catch (PartInitException e) {
+							CVSException.wrapException(e);
+						}
 					}
-				}
-				else
-					showView(listener); 
+				} else
+					showView(listener);	
 			}
 		});
 		monitor.done();
@@ -162,14 +178,43 @@ public class ShowAnnotationOperation extends CVSOperation {
 					IEditorPart editor= reference.getEditor(false);
 					if (editor instanceof AbstractDecoratedTextEditor)
 						return (AbstractDecoratedTextEditor) editor;
+					else {
+						//editor opened is not a text editor - reopen file using the defualt text editor
+						IEditorPart part = getPart().getSite().getPage().openEditor(new FileEditorInput((IFile) resource), IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_NONE);
+						if (part != null && part instanceof AbstractDecoratedTextEditor)
+							return (AbstractDecoratedTextEditor)part;
+					}
 				}
 			} catch (PartInitException e) {
 				// ignore
 			}
 		}
+		
+		//no existing editor references found, try to open a new editor for the file	
+		if (resource instanceof IFile){
+			try {
+				IEditorDescriptor descrptr = IDE.getEditorDescriptor((IFile) resource);
+				//try to open the associated editor only if its an internal editor
+				if (descrptr.isInternal()){
+					IEditorPart part = IDE.openEditor(getPart().getSite().getPage(), (IFile) resource);
+					if (part instanceof AbstractDecoratedTextEditor)
+						return (AbstractDecoratedTextEditor)part;
+					
+					//editor opened is not a text editor - close it
+					getPart().getSite().getPage().closeEditor(part, false);
+				}
+				//open file in default text editor	
+				IEditorPart part = IDE.openEditor(getPart().getSite().getPage(), (IFile) resource, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+				if (part != null && part instanceof AbstractDecoratedTextEditor)
+					return (AbstractDecoratedTextEditor)part;
+				
+			} catch (PartInitException e) {
+			}
+		}
+	
         return null;
 	}
-
+	
     private void fetchAnnotation(AnnotateListener listener, ICVSResource cvsResource, String revision, IProgressMonitor monitor) throws CVSException {
     
         monitor = Policy.monitorFor(monitor);
@@ -345,5 +390,30 @@ public class ShowAnnotationOperation extends CVSOperation {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns true if the user wishes to always use the live annotate view, false otherwise.
+	 * @return
+	 */
+	private boolean promptForQuickDiffAnnotate(){
+		//check whether we should ask the user.
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String option = store.getString(ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE);
+		
+		if (option.equals(MessageDialogWithToggle.ALWAYS))
+			return true; //use live annotate
+		
+		final MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null), CVSUIMessages.ShowAnnotationOperation_QDAnnotateTitle,
+				CVSUIMessages.ShowAnnotationOperation_QDAnnotateMessage,CVSUIMessages.ShowAnnotationOperation_4, false, store, ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE);
+		
+		final int result = dialog.getReturnCode();
+		switch (result) {
+			//yes
+			case IDialogConstants.YES_ID:
+			case IDialogConstants.OK_ID :
+			    return true;
+		}
+		return false;
 	}
 }

@@ -315,6 +315,12 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY);
 		createImageDescriptor(ICVSUIConstants.IMG_LOCALMODE);
 		createImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE);
+		createImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE);
+		createImageDescriptor(ICVSUIConstants.IMG_LOCALMODE_DISABLED);
+		createImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE_DISABLED);
+		createImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE_DISABLED);
+		createImageDescriptor(ICVSUIConstants.IMG_LOCALREVISION_TABLE);
+		createImageDescriptor(ICVSUIConstants.IMG_REMOTEREVISION_TABLE);
 		
 		// special
 		createImageDescriptor("glyphs/glyph1.gif");  //$NON-NLS-1$
@@ -569,6 +575,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		store.setDefault(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS, CVSPerspective.ID);
 		store.setDefault(ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, MessageDialogWithToggle.PROMPT);
+		store.setDefault(ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
 		store.setDefault(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS, MessageDialogWithToggle.PROMPT);
 		
 		store.setDefault(ICVSUIConstants.PREF_UPDATE_HANDLING, ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);

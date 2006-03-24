@@ -252,11 +252,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
-		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
+		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE_DISABLED));
 		localMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
 
 		//Remote Mode
-		remoteMode =  new Action(CVSUIMessages.CVSHistoryPage_RemoteModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY)) {
+		remoteMode =  new Action(CVSUIMessages.CVSHistoryPage_RemoteModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE)) {
 			public void run() {
 				if (isChecked()){
 					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, REMOTE_MODE);
@@ -266,8 +266,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
-		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
-		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REPOSITORY));
+		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE_DISABLED));
+		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE));
 		
 		//Remote + Local Mode
 		remoteLocalMode =  new Action(CVSUIMessages.CVSHistoryPage_CombinedModeAction, plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE)) {
@@ -280,7 +280,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
-		remoteLocalMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
+		remoteLocalMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE_DISABLED));
 		remoteLocalMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
 		
 		//set the inital filter to both remote and local
@@ -1002,6 +1002,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					if (!fileHistory.refresh(monitor)){
 						fileHistory.fetchLocalOnly(monitor);
 					}
+					
 					if (grouping)
 						revisionsFound = sortRevisions();
 					
@@ -1368,5 +1369,30 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		historyFilter = filter;
 		treeViewer.addFilter(filter);
 		toggleFilterAction.setEnabled(true);
+	}
+	
+	/*
+	 * Sets the filter mode for the page.
+	 * param flag	LOCAL_MODE, REMOTE_MODE, REMOTE_LOCAL_MODE
+	 */
+	public void setMode(int flag){
+		switch(flag){
+			case LOCAL_MODE:
+				localMode.setChecked(true);
+				localMode.run();
+				break;
+			
+			case REMOTE_MODE:
+				remoteMode.setChecked(true);
+				remoteMode.run();
+				break;
+				
+			case REMOTE_LOCAL_MODE:
+				remoteLocalMode.setChecked(true);
+				remoteLocalMode.run();
+				break;
+		}
+		
+		refreshHistory(true);
 	}
 }

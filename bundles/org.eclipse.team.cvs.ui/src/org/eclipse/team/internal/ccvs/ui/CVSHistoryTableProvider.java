@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.history.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.core.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.ui.PlatformUI;
@@ -56,22 +57,61 @@ public class CVSHistoryTableProvider {
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
 		
 		Image dateImage = null;
-		ImageDescriptor desc = null;
-	
+		ImageDescriptor dateDesc = null;
+		
+		Image localRevImage = null;
+		ImageDescriptor localRevDesc = null;
+		
+		Image remoteRevImage = null;
+		ImageDescriptor remoteRevDesc = null;
+		
 		public void dispose() {
 			if (dateImage != null){
-				JFaceResources.getResources().destroyImage(desc);
+				JFaceResources.getResources().destroyImage(dateDesc);
 				dateImage = null;
+			}
+			
+			if (localRevImage != null) {
+				JFaceResources.getResources().destroyImage(localRevDesc);
+				localRevImage = null;
+			}
+			
+			if (remoteRevImage != null) {
+				JFaceResources.getResources().destroyImage(remoteRevDesc);
+				remoteRevImage = null;
 			}
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (element instanceof DateCVSHistoryCategory &&
 				columnIndex == COL_REVISIONID){
-				desc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
-				return desc.createImage();
+				if (dateImage == null){
+					dateDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
+					dateImage = dateDesc.createImage();
+					return dateImage;
+				} 
+				return dateImage;
 			}
 			
+			if (element instanceof LocalFileRevision &&
+					columnIndex == COL_REVISIONID){
+				if (localRevImage == null){
+					localRevDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_LOCALREVISION_TABLE);
+					localRevImage = localRevDesc.createImage();
+					return localRevDesc.createImage();
+				}
+				return localRevImage;
+			}
+			
+			if (element instanceof CVSFileRevision &&
+					columnIndex == COL_REVISIONID){
+				if (remoteRevImage == null){
+					remoteRevDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REMOTEREVISION_TABLE);
+					remoteRevImage = remoteRevDesc.createImage();
+					return remoteRevDesc.createImage();
+				}
+				return remoteRevImage;
+			}
 			return null;
 		}
 
@@ -115,14 +155,16 @@ public class CVSHistoryTableProvider {
 					return entry.getAuthor();
 				case COL_COMMENT :
 					String comment = entry.getComment();
-					int index = comment.indexOf("\n"); //$NON-NLS-1$
-					switch (index) {
-						case -1:
-							return comment;
-						case 0:
-							return CVSUIMessages.HistoryView_______4; 
-						default:
-							return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) });
+					if (comment != null){
+						int index = comment.indexOf("\n"); //$NON-NLS-1$
+						switch (index) {
+							case -1:
+								return comment;
+							case 0:
+								return CVSUIMessages.HistoryView_______4; 
+							default:
+								return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) });
+						}
 					}
 			}
 			return ""; //$NON-NLS-1$
@@ -168,7 +210,7 @@ public class CVSHistoryTableProvider {
 			String comment = entry.getComment();
 			String tempCurrentRevision = getCurrentRevision();
 			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision) ||
-				comment.equals(CVSUIMessages.CVSHistoryTableProvider_currentVersion)) {
+				(comment != null && comment.equals(CVSUIMessages.CVSHistoryTableProvider_currentVersion))) {
 				return getCurrentRevisionFont();
 			}
 			return null;

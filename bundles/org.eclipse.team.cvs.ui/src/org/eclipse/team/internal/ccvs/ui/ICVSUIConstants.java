@@ -41,21 +41,26 @@ public interface ICVSUIConstants {
 	public final String IMG_DATE = "obj16/date.gif"; //$NON-NLS-1$
 	public final String IMG_CHANGELOG = "obj16/changelog_obj.gif"; //$NON-NLS-1$
 	
+	public final String IMG_LOCALREVISION_TABLE = "obj16/local_entry_tbl.gif"; //$NON-NLS-1$
+    public final String IMG_REMOTEREVISION_TABLE = "obj16/remote_entry_tbl.gif"; //$NON-NLS-1$
+    
 	// toolbar
 	public final String IMG_REFRESH = "elcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR = "elcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public final String IMG_LINK_WITH_EDITOR = "elcl16/synced.gif"; //$NON-NLS-1$
 	public final String IMG_REMOVE_CONSOLE = "elcl16/console_rem.gif"; //$NON-NLS-1$
-	//TODO:replace these with real icons
-	//temporary history view icons
-	public final String IMG_LOCALMODE = "etool16/local_history.gif";  //$NON-NLS-1$
-	public final String IMG_LOCALREMOTE_MODE = "etool16/local_remote.gif";  //$NON-NLS-1$
+	public final String IMG_REMOTEMODE = "elcl16/remote_history_mode.gif"; //$NON-NLS-1$
+	public final String IMG_LOCALMODE = "elcl16/local_history_mode.gif";  //$NON-NLS-1$
+	public final String IMG_LOCALREMOTE_MODE = "elcl16/all_history_mode.gif";  //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR_DISABLED = "dlcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_REMOVE_CONSOLE_DISABLED = "dlcl16/console_rem.gif"; //$NON-NLS-1$
+	public final String IMG_REMOTEMODE_DISABLED = "dlcl16/remote_history_mode.gif"; //$NON-NLS-1$
+	public final String IMG_LOCALMODE_DISABLED = "dlcl16/local_history_mode.gif";  //$NON-NLS-1$
+	public final String IMG_LOCALREMOTE_MODE_DISABLED = "dlcl16/all_history_mode.gif";  //$NON-NLS-1$
 		
 	// toolbar (enabled)
 	public final String IMG_REFRESH_ENABLED = "elcl16/refresh.gif"; //$NON-NLS-1$
@@ -107,6 +112,8 @@ public interface ICVSUIConstants {
     public final String PREF_AUTO_SHARE_ON_IMPORT = "pref_auto_share_on_import"; //$NON-NLS-1$
 	public final String PREF_ENABLE_WATCH_ON_EDIT = "pref_enable_watch_on_edit"; //$NON-NLS-1$ 
     public final String PREF_USE_PROJECT_NAME_ON_CHECKOUT = "pref_use_project_name_on_checkout"; //$NON-NLS-1$
+    public final String PREF_USE_QUICKDIFFANNOTATE = "pref_use_quickdiffannotate"; //$NON-NLS-1$
+    
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
