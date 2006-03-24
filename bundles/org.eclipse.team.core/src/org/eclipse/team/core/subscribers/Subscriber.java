@@ -365,7 +365,7 @@ abstract public class Subscriber {
 		SyncInfo info = getSyncInfo(resource);
 		if (info == null || info.getKind() == SyncInfo.IN_SYNC)
 			return null;
-		return SyncInfoToDiffConverter.getDeltaFor(info);
+		return SyncInfoToDiffConverter.getDefault().getDeltaFor(info);
 	}
 	
 	/**

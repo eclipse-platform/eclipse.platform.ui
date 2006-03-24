@@ -10,27 +10,27 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.core.variants.IResourceVariantComparator;
-import org.eclipse.team.core.variants.ResourceVariantTreeSubscriber;
+import org.eclipse.team.core.variants.*;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSResourceVariantFileRevision;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 
 /**
- * This class provides common funtionality for three way sychronizing
+ * This class provides common functionality for three way synchronizing
  * for CVS.
  */
-public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscriber {
+public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscriber implements IAdaptable {
 	
 	public static final String SYNC_KEY_QUALIFIER = "org.eclipse.team.cvs"; //$NON-NLS-1$
 	
@@ -38,6 +38,13 @@ public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscribe
 	
 	private QualifiedName id;
 	private String name;
+	private SyncInfoToDiffConverter converter = new CVSSyncInfoToDiffConverter();
+	
+	public class CVSSyncInfoToDiffConverter extends SyncInfoToDiffConverter {
+		protected ResourceVariantFileRevision asFileRevision(IResourceVariant variant) {
+			return new CVSResourceVariantFileRevision(variant);
+		}
+	}
 	
 	CVSSyncTreeSubscriber(QualifiedName id, String name) {
 		this.id = id;
@@ -134,4 +141,19 @@ public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscribe
 		if(roots1.size() != roots2.size()) return false;
 		return roots2.containsAll(roots1);
 	}
+	
+	
+	public IDiff getDiff(IResource resource) throws CoreException {
+		SyncInfo info = getSyncInfo(resource);
+		if (info == null || info.getKind() == SyncInfo.IN_SYNC)
+			return null;
+		return converter.getDeltaFor(info);
+	}
+	public Object getAdapter(Class adapter) {
+		if (adapter == SyncInfoToDiffConverter.class) {
+			return converter;
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
 }

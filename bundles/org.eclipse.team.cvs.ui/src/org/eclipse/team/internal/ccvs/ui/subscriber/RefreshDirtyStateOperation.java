@@ -80,10 +80,17 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 		List diffs = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
-			IDiff node = SyncInfoToDiffConverter.getDeltaFor(info);
+			IDiff node = getConverter().getDeltaFor(info);
 			diffs.add(node);
 		}
 		ensureBaseContentsCached(project, (IDiff[]) diffs.toArray(new IDiff[diffs.size()]), monitor);
+	}
+
+	private SyncInfoToDiffConverter getConverter() {
+		SyncInfoToDiffConverter converter = (SyncInfoToDiffConverter)CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getAdapter(SyncInfoToDiffConverter.class);
+		if (converter == null)
+			return SyncInfoToDiffConverter.getDefault();
+		return converter;
 	}
 
 	private void ensureBaseContentsCached(final IProject project, IDiff[] nodes, IProgressMonitor monitor) throws CVSException {

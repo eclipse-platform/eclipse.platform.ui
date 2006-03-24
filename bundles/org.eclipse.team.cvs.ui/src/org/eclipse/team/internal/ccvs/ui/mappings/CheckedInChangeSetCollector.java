@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.LogEntryCacheUpdateHandler;
 import org.eclipse.team.internal.ccvs.ui.subscriber.LogEntryCacheUpdateHandler.ILogsFetchedListener;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.internal.core.subscribers.*;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
@@ -215,7 +216,7 @@ public class CheckedInChangeSetCollector extends BatchedChangeSetCollector imple
 		SyncInfoSet set = new SyncInfoSet();
 		for (int i = 0; i < diffs.length; i++) {
 			IDiff diff = diffs[i];
-			set.add(SyncInfoToDiffConverter.asSyncInfo(diff, getSubscriber().getResourceComparator()));
+			set.add(getConverter().asSyncInfo(diff, getSubscriber().getResourceComparator()));
 		}
 		return set.getSyncInfos();
 	}
@@ -377,7 +378,7 @@ public class CheckedInChangeSetCollector extends BatchedChangeSetCollector imple
 	        		// this shouldn't happen, we've provided our own calculate kind
 	        	}
 	        }
-	        IDiff diff = SyncInfoToDiffConverter.getDeltaFor(info);
+	        IDiff diff = getConverter().getDeltaFor(info);
 	        // Only add the info if the base and remote differ
 	        IResourceVariant base = info.getBase();
 	        IResourceVariant remote = info.getRemote();
@@ -398,7 +399,14 @@ public class CheckedInChangeSetCollector extends BatchedChangeSetCollector imple
         }
     }
 
-    private CVSCheckedInChangeSet createChangeSetFor(ILogEntry logEntry) {
+    private SyncInfoToDiffConverter getConverter() {
+		SyncInfoToDiffConverter converter = (SyncInfoToDiffConverter)Utils.getAdapter(subscriber, SyncInfoToDiffConverter.class);
+		if (converter == null)
+			converter = SyncInfoToDiffConverter.getDefault();
+		return converter;
+	}
+
+	private CVSCheckedInChangeSet createChangeSetFor(ILogEntry logEntry) {
 		return new CVSCheckedInChangeSet(logEntry);
     }
 

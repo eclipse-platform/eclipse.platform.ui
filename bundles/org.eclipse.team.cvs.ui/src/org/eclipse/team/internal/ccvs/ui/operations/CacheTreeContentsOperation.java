@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -75,15 +75,13 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 			IThreeWayDiff twd = (IThreeWayDiff) node;	
 			IResource local = getTree().getResource(node);
 			IFileRevision remote = getRemoteFileState(twd);
+			IResourceVariant variant = (IResourceVariant)Utils.getAdapter(remote, IResourceVariant.class);
 			if (local.getType() == IResource.FILE 
 					&& isEnabledForDirection(twd.getDirection()) 
-					&& remote instanceof SyncInfoToDiffConverter.ResourceVariantFileRevision) {
-				IResourceVariant variant = ((SyncInfoToDiffConverter.ResourceVariantFileRevision) remote).getVariant();
-				if (variant instanceof RemoteFile) {
-					RemoteFile rf = (RemoteFile) variant;
-					if (!rf.isContentsCached()) {
-						return true;
-					}
+					&& variant instanceof RemoteFile) {
+				RemoteFile rf = (RemoteFile) variant;
+				if (!rf.isContentsCached()) {
+					return true;
 				}
 			}
 		}

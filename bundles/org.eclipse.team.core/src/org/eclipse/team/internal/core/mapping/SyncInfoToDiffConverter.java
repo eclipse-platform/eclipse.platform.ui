@@ -28,41 +28,6 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
  */
 public class SyncInfoToDiffConverter {
 
-	public static final class ResourceVariantFileRevision extends FileRevision {
-		private final IResourceVariant variant;
-
-		private ResourceVariantFileRevision(IResourceVariant variant) {
-			this.variant = variant;
-		}
-
-		public IStorage getStorage(IProgressMonitor monitor) throws CoreException {
-			return variant.getStorage(monitor);
-		}
-
-		public String getName() {
-			return variant.getName();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.internal.core.FileRevision#getContentIndentifier()
-		 */
-		public String getContentIdentifier() {
-			return variant.getContentIdentifier();
-		}
-
-		public IResourceVariant getVariant() {
-			return variant;
-		}
-
-		public boolean isPropertyMissing() {
-			return false;
-		}
-
-		public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
-			return this;
-		}
-	}
-
 	private static class PrecalculatedSyncInfo extends SyncInfo {
 		public int kind;
 		public PrecalculatedSyncInfo(int kind, IResource local, IResourceVariant base, IResourceVariant remote, IResourceVariantComparator comparator) {
@@ -74,6 +39,8 @@ public class SyncInfoToDiffConverter {
 			return kind;
 		}
 	}
+
+	private static SyncInfoToDiffConverter instance;
 	
 	public static int asDiffFlags(int syncInfoFlags) {
 		if (syncInfoFlags == SyncInfo.IN_SYNC)
@@ -137,7 +104,7 @@ public class SyncInfoToDiffConverter {
 		return syncKind;
 	}
 	
-	public static IDiff getDeltaFor(SyncInfo info) {
+	public IDiff getDeltaFor(SyncInfo info) {
 		if (info.getComparator().isThreeWay()) {
 			ITwoWayDiff local = getLocalDelta(info);
 			ITwoWayDiff remote = getRemoteDelta(info);
@@ -166,7 +133,7 @@ public class SyncInfoToDiffConverter {
 		}
 	}
 
-	private static ITwoWayDiff getRemoteDelta(SyncInfo info) {
+	private ITwoWayDiff getRemoteDelta(SyncInfo info) {
 		int direction = SyncInfo.getDirection(info.getKind());
 		if (direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING) {
 			IResourceVariant ancestor = info.getBase();
@@ -191,13 +158,17 @@ public class SyncInfoToDiffConverter {
 		return null;
 	}
 
-	private static IFileRevision asFileState(final IResourceVariant variant) {
+	private IFileRevision asFileState(final IResourceVariant variant) {
 		if (variant == null)
 			return null;
+		return asFileRevision(variant);
+	}
+
+	protected ResourceVariantFileRevision asFileRevision(final IResourceVariant variant) {
 		return new ResourceVariantFileRevision(variant);
 	}
 
-	private static ITwoWayDiff getLocalDelta(SyncInfo info) {
+	private ITwoWayDiff getLocalDelta(SyncInfo info) {
 		int direction = SyncInfo.getDirection(info.getKind());
 		if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING) {
 			IResourceVariant ancestor = info.getBase();
@@ -239,7 +210,7 @@ public class SyncInfoToDiffConverter {
 		return null;
 	}
 	
-	public static SyncInfo asSyncInfo(IDiff diff, IResourceVariantComparator comparator) {
+	public SyncInfo asSyncInfo(IDiff diff, IResourceVariantComparator comparator) {
 		if (diff instanceof ResourceDiff) {
 			ResourceDiff rd = (ResourceDiff) diff;
 			IResource local = rd.getResource();
@@ -326,5 +297,11 @@ public class SyncInfoToDiffConverter {
 		if (rd != null)
 			return rd.getBeforeState();
 		return null;
+	}
+
+	public static SyncInfoToDiffConverter getDefault() {
+		if (instance == null)
+			instance = new SyncInfoToDiffConverter();
+		return instance;
 	}
 }

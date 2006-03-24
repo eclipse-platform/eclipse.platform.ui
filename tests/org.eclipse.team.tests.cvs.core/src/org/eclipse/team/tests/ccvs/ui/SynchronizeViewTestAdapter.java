@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.*;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
@@ -93,9 +94,16 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		if (info == null || info.getKind() == SyncInfo.IN_SYNC) {
 			return null;
 		}
-		return SyncInfoToDiffConverter.getDeltaFor(info);
+		return getConverter(subscriber).getDeltaFor(info);
 	}
 	
+	private SyncInfoToDiffConverter getConverter(Subscriber subscriber) {
+		SyncInfoToDiffConverter converter = (SyncInfoToDiffConverter)Utils.getAdapter(subscriber, SyncInfoToDiffConverter.class);
+		if (converter == null)
+			converter = SyncInfoToDiffConverter.getDefault();
+		return converter;
+	}
+
 	public static SubscriberParticipant getParticipant(Subscriber subscriber) {
 		// show the sync view
 		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();

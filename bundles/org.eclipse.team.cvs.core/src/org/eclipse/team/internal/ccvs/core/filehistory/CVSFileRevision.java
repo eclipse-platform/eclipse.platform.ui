@@ -95,7 +95,7 @@ public class CVSFileRevision extends FileRevision {
 	}
 	
 	public boolean isPropertyMissing() {
-		//If we have an aothor and a comment then we consider this revision complete
+		//If we have an author and a comment then we consider this revision complete
 		if (entry.getAuthor() == null)
 			return true;
 		
