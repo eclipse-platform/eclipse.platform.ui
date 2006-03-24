@@ -530,7 +530,7 @@
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file"
             name="%PropertyPages.info.file"
-            objectClass="org.eclipse.core.resources.IProject">
+            objectClass="org.eclipse.core.resources.IResource">
       </page>
    </extension>
    <extension
