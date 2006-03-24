@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -62,12 +61,6 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      */
     private static final Integer EXIT_RELAUNCH = new Integer(24);
 
-    private static final int MIN_JVM_VERSION_MAJOR = 1;
-
-    private static final int MIN_JVM_VERSION_MINOR = 4;
-
-    private static final int MIN_JVM_VERSION_SERVICE = 1;
-
     /**
      * Creates a new IDE application.
      */
@@ -83,11 +76,6 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 
         try {
             Shell shell = new Shell(display, SWT.ON_TOP);
-
-            if (!checkJavaRuntimeVersion(shell)) {
-                Platform.endSplash();
-                return EXIT_OK;
-            }
 
             try {
                 if (!checkInstanceLocation(shell)) {
@@ -140,37 +128,6 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
         // There is nothing to do for IDEApplication
-    }
-
-    /**
-     * Return a boolean value indicating whether or not the version of the Java runtime
-     * ("java.version" system property) is deemed to be compatible with Eclipse.  
-     * The current implementation compares only the version (and not things like vendor name), 
-     * which matches the implementation that used to be in the runtime.
-     */
-    private boolean checkJavaRuntimeVersion(Shell shell) {
-        try {
-            if (isCompatibleVersion(System.getProperty("java.version"))) { //$NON-NLS-1$
-				return true;
-			}
-
-            // build the requirement into a version string
-            String reqVersion = Integer.toString(MIN_JVM_VERSION_MAJOR) + '.'
-                    + MIN_JVM_VERSION_MINOR + '.' + MIN_JVM_VERSION_SERVICE;
-
-            MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_incompatibleJVMTitle,
-                    NLS.bind(IDEWorkbenchMessages.IDEApplication_incompatibleJVMMessage, reqVersion));
-            return false;
-        } catch (SecurityException e) {
-            // If the security manager won't allow us to get the system
-            // property, continue for now and let things fail later on
-            // their own if necessary.
-            return true;
-        } catch (NumberFormatException e) {
-            // If the version string was in a format that we don't understand,
-            // continue and let things fail later on their own if necessary.
-            return true;
-        }
     }
 
     /**
@@ -260,54 +217,6 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             // already in use -- force the user to choose again
             MessageDialog.openError(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle, 
                     IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage);
-        }
-    }
-
-    /**
-     * Return true if the argument version is >= the product's requirement and
-     * false otherwise. This algorithm (including behaviour in error cases) was
-     * copied from the old code in the runtime.
-     */
-    private static boolean isCompatibleVersion(String vmVersion) {
-        if (vmVersion == null) {
-			return false;
-		}
-
-        StringTokenizer tokenizer = new StringTokenizer(vmVersion, " ._"); //$NON-NLS-1$
-        try {
-            // make sure the running vm's major is >= the requirement
-            if (!tokenizer.hasMoreTokens()) {
-				return true;
-			}
-            int major = Integer.parseInt(tokenizer.nextToken());
-            if (major != MIN_JVM_VERSION_MAJOR) {
-				return major > MIN_JVM_VERSION_MAJOR;
-			}
-
-            // make sure the running vm's minor is >= the requirement
-            if (!tokenizer.hasMoreTokens()) {
-				return true;
-			}
-            int minor = Integer.parseInt(tokenizer.nextToken());
-            if (minor != MIN_JVM_VERSION_MINOR) {
-				return minor > MIN_JVM_VERSION_MINOR;
-			}
-
-            // make sure the running vm's service is >= the requirement
-            if (!tokenizer.hasMoreTokens()) {
-				return true;
-			}
-            int service = Integer.parseInt(tokenizer.nextToken());
-            return service >= MIN_JVM_VERSION_SERVICE;
-        } catch (SecurityException e) {
-            // If the security manager won't allow us to get the system
-            // property, continue for now and let things fail later on
-            // their own if necessary.
-            return true;
-        } catch (NumberFormatException e) {
-            // If the version string was in a format that we don't understand,
-            // continue and let things fail later on their own if necessary.
-            return true;
         }
     }
 

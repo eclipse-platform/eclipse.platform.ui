@@ -827,8 +827,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEApplication_workspaceCannotLockMessage;
 	public static String IDEApplication_versionTitle;
 	public static String IDEApplication_versionMessage;
-	public static String IDEApplication_incompatibleJVMTitle;
-	public static String IDEApplication_incompatibleJVMMessage;
 	public static String GlobalBuildAction_BuildRunningTitle;
 	public static String GlobalBuildAction_BuildRunningMessage;
 	public static String CleanDialog_buildCleanAuto;
