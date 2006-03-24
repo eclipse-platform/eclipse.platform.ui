@@ -357,6 +357,10 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	layout.removeTrim(draggedTrim);
            	LayoutUtil.resize(draggedTrim.getControl());
            	
+           	// Re-orient the widget to its -original- side and size
+        	draggedTrim.dock(initialAreaId);
+        	draggedTrim.getControl().setSize(initialLocation.width, initialLocation.height);
+           	
            	// Create a new dragging border onto the dragged trim
            	border = new DragBorder(windowComposite, draggedTrim.getControl());
 
