@@ -57,7 +57,6 @@ public class PropertyTests extends AbstractAntDebugTest {
 			AntProperty property= frame.findProperty("ant.library.dir");
 			assertNotNull(property);
 			
-			assertProperty(thread, "ant.java.version", "1.4");
 			assertProperty(thread, "ant.project.name", "debugEcho");
 		} finally {
 			terminateAndRemove(thread);
