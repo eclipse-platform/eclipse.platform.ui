@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -460,10 +460,10 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	private Set getVisibleProjects() {
 		TreeViewer viewer = (TreeViewer)getViewer();
 		Tree tree = viewer.getTree();
-		Control[] children = tree.getChildren();
+		TreeItem[] children = tree.getItems();
 		Set result = new HashSet();
 		for (int i = 0; i < children.length; i++) {
-			Control control = children[i];
+			TreeItem control = children[i];
 			Object data = control.getData();
 			IResource resource = Utils.getResource(data);
 			if (resource.getType() == IResource.PROJECT) {
