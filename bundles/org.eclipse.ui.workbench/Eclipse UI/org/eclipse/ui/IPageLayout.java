@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross <schtoo@schtoo.com> 
+ *     - Fix for 99155 - allow standalone view placeholders
  *******************************************************************************/
 package org.eclipse.ui;
 

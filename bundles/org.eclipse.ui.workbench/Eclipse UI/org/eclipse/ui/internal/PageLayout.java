@@ -11,6 +11,8 @@
  *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml
  *     Ted Stockwell <emorning@yahoo.com>
  *     - Fix for bug 63595 - IPageLayout.addFastView regression (3.0M8 to 3.0M9)
+ *     Chris Gross <schtoo@schtoo.com> 
+ *     - Fix for 99155 - allow standalone view placeholders
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
