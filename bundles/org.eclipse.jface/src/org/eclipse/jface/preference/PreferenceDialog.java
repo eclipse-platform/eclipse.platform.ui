@@ -199,6 +199,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	
     private ListenerList pageChangedListeners = new ListenerList();
 
+    /**
+     *  Composite with a FormLayout to contain the title area
+     */
+    Composite formTitleComposite;
+
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
@@ -374,21 +379,35 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
 		pageAreaComposite.setLayout(layout);
 		
-	
+		formTitleComposite = new Composite(pageAreaComposite, SWT.NONE);
+		FormLayout titleLayout = new FormLayout();
+		titleLayout.marginWidth = 0;
+		titleLayout.marginHeight = 0;
+		formTitleComposite.setLayout(titleLayout);
+		
+		GridData titleGridData = new GridData(GridData.FILL_HORIZONTAL);
+		titleGridData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		formTitleComposite.setLayoutData(titleGridData);
 		
 		// Build the title area and separator line
-		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
+		Composite titleComposite = new Composite(formTitleComposite, SWT.NONE);
 		layout = new GridLayout();
+		layout.marginBottom = 5;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		titleComposite.setLayout(layout);
-		GridData titleLayoutData = new GridData(GridData.FILL_HORIZONTAL);
-		titleLayoutData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		titleComposite.setLayoutData(titleLayoutData);
+		
+		FormData titleFormData = new FormData();
+	   	titleFormData.top = new FormAttachment(0,0);
+    	titleFormData.left = new FormAttachment(0,0);
+    	titleFormData.right = new FormAttachment(100,0);
+    	titleFormData.bottom = new FormAttachment(100,0);
+		
+		titleComposite.setLayoutData(titleFormData);
 		createTitleArea(titleComposite);
 		
 		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -527,7 +546,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		titleArea.setLayoutData(layoutData);
 
 		// Message label
-		messageArea = new DialogMessageArea();
+		messageArea = new PreferenceMessageArea(this);
 		messageArea.createContents(titleArea);
 
 		titleArea.addControlListener(new ControlAdapter() {
