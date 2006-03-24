@@ -516,6 +516,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         String errorMessage = null;
         String infoMessage= null;
         String newText = text.getText();
+        boolean showErrorMessage = true;
 
         if (newText.equals(newText.trim()) == false) {
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace; 
@@ -525,7 +526,16 @@ public class ResourceWorkingSetPage extends WizardPage implements
         }
         if (newText.equals("")) { //$NON-NLS-1$
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
+            /*
+             * Required field emphasis is already showing, so no need to
+             * actually show an error.  This is a temporary hack.  We need
+             * cleaner code for these cases where the button should still
+             * be disabled but we don't want to show an error.
+             * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=120238
+             */
+            showErrorMessage = false;
         }
+
         if (errorMessage == null
                 && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
             IWorkingSet[] workingSets = PlatformUI.getWorkbench()
@@ -540,7 +550,9 @@ public class ResourceWorkingSetPage extends WizardPage implements
         	infoMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_resourceMustBeChecked;
         }
         setMessage(infoMessage, INFORMATION);
-        setErrorMessage(errorMessage);
+        if (showErrorMessage) {
+        	setErrorMessage(errorMessage);
+        }
         setPageComplete(errorMessage == null);
     }
 }
