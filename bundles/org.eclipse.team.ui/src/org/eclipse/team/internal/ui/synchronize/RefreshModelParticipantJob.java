@@ -89,7 +89,11 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 	}
 	
 	public boolean belongsTo(Object family) {
-		if (family == ((ModelSynchronizeParticipant)getParticipant()))
+		if (family instanceof RefreshModelParticipantJob) {
+			RefreshModelParticipantJob rmpj = (RefreshModelParticipantJob) family;
+			return rmpj.getParticipant() == getParticipant();
+		}
+		if (family == getParticipant())
 			return true;
 		return super.belongsTo(family);
 	}
