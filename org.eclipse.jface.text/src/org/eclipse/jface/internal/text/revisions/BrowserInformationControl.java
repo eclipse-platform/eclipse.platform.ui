@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -46,17 +44,20 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.internal.text.link.contentassist.HTML2TextReader;
+
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.TextPresentation;
 
-import org.eclipse.jface.internal.text.link.contentassist.HTML2TextReader;
-
 /**
- * XXX copy of org.eclipse.jdt.internal.ui.text.java.hover.BrowserInformationControl.
- * <p>
  * Displays textual information in a {@link org.eclipse.swt.browser.Browser} widget.
+ * </p>
+ * <p>
+ * XXX copy of org.eclipse.jdt.internal.ui.text.java.hover.BrowserInformationControl.
  * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -66,7 +67,7 @@ import org.eclipse.jface.internal.text.link.contentassist.HTML2TextReader;
  * https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532)
  * </p>
  * 
- * @since 3.1
+ * @since 3.2
  */
 class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, DisposeListener {
 
@@ -75,7 +76,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	 * Tells whether the SWT Browser widget and hence this information
 	 * control is available.
 	 *
-	 * @param parent the parent component used for checking
+	 * @param parent the parent component used for checking or <code>null</code> if none
 	 * @return <code>true</code> if this control is available
 	 */
 	public static boolean isAvailable(Composite parent) {
@@ -182,6 +183,8 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 			layout= new GridLayout(1, false);
 			layout.marginHeight= 0;
 			layout.marginWidth= 0;
+			layout.verticalSpacing= 1;
+			layout.horizontalSpacing= 1;
 			composite.setLayout(layout);
 			
 			GridData  gd= new GridData(GridData.FILL_BOTH);
@@ -271,7 +274,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	 * @param style the additional styles for the browser widget
 	 */
 	public BrowserInformationControl(Shell parent,int style) {
-		this(parent, SWT.NO_TRIM, style);
+		this(parent, SWT.TOOL | SWT.NO_TRIM, style);
 	}
 
 	/**
@@ -319,7 +322,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		fBrowser.setText(content);
 	
 	}
-	
+
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.IInformationControlExtension4#setStatusText(java.lang.String)
 	 * @since 3.2
@@ -373,21 +376,20 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		}
 		Rectangle bounds= fTextLayout.getBounds();
 		
-		bounds.width= bounds.width + 80; 
+		bounds.width= bounds.width + 15; 
 		bounds.height= bounds.height + 25; 
 		
-		if (fStatusFieldText != null) {
+		if (fStatusFieldText != null && fSeparator != null) {
 			fTextLayout.setText(fStatusFieldText);
 			Rectangle statusBounds= fTextLayout.getBounds();
-			bounds.width= Math.max(statusBounds.width, bounds.width);
-			bounds.height= Math.max(statusBounds.height, bounds.height);
+			Rectangle separatorBounds= fSeparator.getBounds();
+			bounds.width= Math.max(bounds.width, statusBounds.width);
+			bounds.height= bounds.height + statusBounds.height + separatorBounds.height;
 		}
 		
 		// Apply size constraints
-		if (fMaxWidth != -1)
-			bounds.width= Math.min(fMaxWidth, bounds.width);
-		if (fMaxHeight != -1)
-			bounds.height= Math.min(fMaxHeight, bounds.height);
+		bounds.width= Math.min(fMaxWidth, bounds.width);
+		bounds.height= Math.min(fMaxHeight, bounds.height);
 		
 		// Ensure minimal size
 		bounds.width= Math.max(MIN_WIDTH, bounds.width);
