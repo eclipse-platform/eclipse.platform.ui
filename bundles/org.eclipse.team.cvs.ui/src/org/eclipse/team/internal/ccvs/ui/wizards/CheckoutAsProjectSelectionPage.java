@@ -44,12 +44,10 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	private TreeViewer tree;
 	private Text nameField;
 	private Combo filterList;
-	private Button recurseCheck;
 	
 	private IResource selection;
 	private ICVSRemoteFolder[] remoteFolders;
 	private String folderName;
-	private boolean recurse;
 	private int filter;
 
 	/**
@@ -125,15 +123,6 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		});
 		
 		createWrappingLabel(composite, "", 0, 2); //$NON-NLS-1$
-				
-		// Should subfolders of the folder be checked out?
-		recurseCheck = createCheckBox(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_recurse); 
-		recurseCheck.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				recurse = recurseCheck.getSelection();
-				updateWidgetEnablements();
-			}
-		});
 		
 		initializeValues();
 		updateWidgetEnablements();
@@ -149,8 +138,6 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 			nameField.setText(getInputFolderName());
 		}
 		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		recurse = true;
-		recurseCheck.setSelection(recurse);
 		filter = 0;
 		updateTreeContents(filter);
 		filterList.add(CVSUIMessages.CheckoutAsProjectSelectionPage_showAll); 
@@ -247,14 +234,6 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	
 	public IContainer getParentFolder() {
 		return ((IContainer)getSelection());
-	}
-	
-	/**
-	 * Returns the recurse.
-	 * @return boolean
-	 */
-	public boolean isRecurse() {
-		return recurse;
 	}
 	
 	private void handleFilterSelection() {

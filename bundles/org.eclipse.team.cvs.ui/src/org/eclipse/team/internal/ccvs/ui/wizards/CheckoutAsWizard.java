@@ -249,7 +249,12 @@ public class CheckoutAsWizard extends Wizard {
 		String targetLocation = locationSelectionPage.getTargetLocation();
 		// Run the checkout in the background
 		ICVSRemoteFolder folder = getRemoteFolder();
-		new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false).run();
+		final boolean recurse = mainPage.isRecurse();
+		new CheckoutSingleProjectOperation(part, folder, newProject, targetLocation, false) {
+			protected boolean isRecursive() {
+				return recurse;
+			}
+		}.run();
 		return true;
 	}
 
@@ -266,7 +271,7 @@ public class CheckoutAsWizard extends Wizard {
 
 	private boolean performCheckoutInto() throws InvocationTargetException, InterruptedException {
 		CheckoutIntoOperation operation;
-		boolean recursive = projectSelectionPage.isRecurse();
+		boolean recursive = mainPage.isRecurse();
 		if (isSingleFolder()) {
 			ICVSRemoteFolder folder = getRemoteFolder();
 			operation = new CheckoutIntoOperation(part, folder, projectSelectionPage.getLocalFolder(), recursive);

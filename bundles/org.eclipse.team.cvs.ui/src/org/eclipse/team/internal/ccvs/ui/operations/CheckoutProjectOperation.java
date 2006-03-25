@@ -255,6 +255,8 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					tag = CVSTag.DEFAULT;
 				}
 				localOptions.add(Update.makeTagOption(tag));
+				if (!isRecursive())
+					localOptions.add(Command.DO_NOT_RECURSE);
 				
 				// Perform the checkout
 				IStatus status = Command.CHECKOUT.execute(session,
@@ -271,6 +273,10 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		} finally {
 			pm.done();
 		}
+	}
+
+	protected boolean isRecursive() {
+		return true;
 	}
 
 	/*

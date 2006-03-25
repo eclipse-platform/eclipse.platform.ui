@@ -42,6 +42,9 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	private Button configuredProjectButton;
 	private Text projectNameField;
 	private ICVSRemoteFolder[] folders;
+	
+	private Button recurseCheck;
+	private boolean recurse = true;
 
 	public static final String NAME = "CheckoutAsMainPage"; //$NON-NLS-1$
 	
@@ -113,6 +116,17 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		} else {
 			simpleProjectButton.setSelection(true);
 		}
+		
+		new Label(composite, SWT.NONE);
+		
+		// Should sub-folders of the folder be checked out?
+		recurseCheck = createCheckBox(composite, CVSUIMessages.CheckoutAsProjectSelectionPage_recurse); 
+		recurseCheck.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				recurse = recurseCheck.getSelection();
+			}
+		});
+		recurseCheck.setSelection(recurse);
 	}
 
 	/*
@@ -233,4 +247,12 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		return radio;
 	}
 
+	/**
+	 * Returns the recurse.
+	 * @return boolean
+	 */
+	public boolean isRecurse() {
+		return recurse;
+	}
+	
 }
