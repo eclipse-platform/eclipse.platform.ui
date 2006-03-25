@@ -402,16 +402,14 @@ public final class RevisionPainter {
 	/**
 	 * The information control creator.
 	 */
-	private static final class InformationControlCreator extends AbstractReusableInformationControlCreator {
+	private static final class HoverInformationControlCreator extends AbstractReusableInformationControlCreator {
 		/*
 		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
 		protected IInformationControl doCreateInformationControl(Shell parent) {
-			int shellStyle= SWT.RESIZE | SWT.TOOL;
-			int style= SWT.NONE /*| SWT.V_SCROLL | SWT.H_SCROLL*/;
 			if (BrowserInformationControl.isAvailable(parent))
-				return new BrowserInformationControl(parent, shellStyle, style, null, true);
-			return new DefaultInformationControl(parent, shellStyle, style, null);
+				return new BrowserInformationControl(parent, SWT.TOOL | SWT.NO_TRIM, SWT.NONE, null, true);
+			return new DefaultInformationControl(parent, SWT.NONE, null);
 		}
 	}
 	
@@ -433,7 +431,7 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 		 */
 		public IInformationControlCreator getHoverControlCreator() {
-			return new InformationControlCreator();
+			return new HoverInformationControlCreator();
 		}
 
 		/*
