@@ -75,13 +75,15 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 			IThreeWayDiff twd = (IThreeWayDiff) node;	
 			IResource local = getTree().getResource(node);
 			IFileRevision remote = getRemoteFileState(twd);
-			IResourceVariant variant = (IResourceVariant)Utils.getAdapter(remote, IResourceVariant.class);
-			if (local.getType() == IResource.FILE 
-					&& isEnabledForDirection(twd.getDirection()) 
-					&& variant instanceof RemoteFile) {
-				RemoteFile rf = (RemoteFile) variant;
-				if (!rf.isContentsCached()) {
-					return true;
+			if (remote != null) {
+				IResourceVariant variant = (IResourceVariant)Utils.getAdapter(remote, IResourceVariant.class);
+				if (local.getType() == IResource.FILE 
+						&& isEnabledForDirection(twd.getDirection()) 
+						&& variant instanceof RemoteFile) {
+					RemoteFile rf = (RemoteFile) variant;
+					if (!rf.isContentsCached()) {
+						return true;
+					}
 				}
 			}
 		}
