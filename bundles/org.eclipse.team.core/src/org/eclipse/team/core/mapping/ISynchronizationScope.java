@@ -13,7 +13,6 @@ package org.eclipse.team.core.mapping;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 
 /**
  * Interface which defines the protocol for translating a set of
@@ -21,11 +20,11 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
  * complete set of resources to be operated on.
  * <p>
  * This interface is not intended to be implemented by clients. Instead, clients should
- * use a {@link SynchronizationScopeManager} to generate a resource mapping scope from
+ * use a {@link ISynchronizationScopeManager} to generate a resource mapping scope from
  * a set of input resource mappings.
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
- * @see SynchronizationScopeManager
+ * @see ISynchronizationScopeManager
  * 
  * @since 3.2
  */
@@ -49,7 +48,7 @@ public interface ISynchronizationScope {
 	 * 
 	 * @see ResourceMapping#getTraversals(ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 * 
-	 * @return the resource mapping contxt that the scope
+	 * @return the resource mapping context that the scope
 	 * uses to obtain traversals from resource mappings
 	 */
 	ResourceMappingContext getContext();
@@ -199,7 +198,7 @@ public interface ISynchronizationScope {
 	 * is called by {@link ISynchronizationScopeParticipant}
 	 * instances when they detect changes that require the scope
 	 * to be adjusted.
-	 * @param mappings the mappings to be refeshed.
+	 * @param mappings the mappings to be refreshed.
 	 */
 	void refresh(ResourceMapping[] mappings);
 

@@ -438,8 +438,10 @@ public class SynchronizationScopeManager implements ISynchronizationScopeManager
 			handler.shutdown();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.mapping.IResourceMappingScopeManager#refresh(org.eclipse.core.resources.mapping.ResourceMapping[])
+	/**
+	 * Refresh the given mappings by recalculating the traversals for the 
+	 * mappings and adjusting the scope accordingly.
+	 * @param mappings the mappings to be refreshed
 	 */
 	public void refresh(ResourceMapping[] mappings) {
 		getHandler().refresh(mappings);
