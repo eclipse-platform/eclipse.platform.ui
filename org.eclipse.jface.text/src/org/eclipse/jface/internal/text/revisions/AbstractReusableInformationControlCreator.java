@@ -14,6 +14,9 @@ import org.eclipse.jface.text.IInformationControlCreatorExtension;
 
 /**
  * Abstract class for a reusable information control creators.
+ * <p>
+ * XXX copy of org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator.
+ * </p>
  * 
  * @since 3.2
  */
