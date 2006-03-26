@@ -1597,9 +1597,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.1
 	 */
 	protected final void checkStateOfPartitioner(IDocumentPartitioner partitioner, String partitioning) {
-		DocumentRewriteSession session= getActiveRewriteSession();
-		if (session != null && partitioner instanceof IDocumentPartitionerExtension3) {
-			IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+		if (!(partitioner instanceof IDocumentPartitionerExtension3))
+			return;
+
+		IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+		DocumentRewriteSession session= extension.getActiveRewriteSession();
+		if (session != null) {
 			extension.stopRewriteSession(session);
 
 			if (DEBUG)
