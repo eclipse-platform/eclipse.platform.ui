@@ -1304,7 +1304,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         PartPane pane = (PartPane)part;
         
-        IPresentablePart presentablePart = new PresentablePart(pane, getControl().getParent());
+        PresentablePart presentablePart = new PresentablePart(pane, getControl().getParent());
         presentableParts.add(presentablePart);
         
         if (isActive) {
@@ -1318,12 +1318,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         if (requestedCurrent == null) {
             setSelection(part);
         }
+        
+        if (childObscuredByZoom(part)) {
+			presentablePart.enableInputs(false);
+		}
     }
 
     /**
-     * Update the container to show the correct visible tab based on the
-     * activation list.
-     */
+	 * Update the container to show the correct visible tab based on the
+	 * activation list.
+	 */
     private void updateContainerVisibleTab() {
         LayoutPart[] parts = getChildren();
 

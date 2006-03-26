@@ -181,10 +181,16 @@ abstract public class LayoutPart implements ISizeProvider {
     }
 
     /**
-     * Returns the workbench window window for a part.
-     */
+	 * Returns the workbench window window for a part.
+	 * 
+	 * @return the workbench window, or <code>null</code> if there's no window
+	 *         associated with this part.
+	 */
     public IWorkbenchWindow getWorkbenchWindow() {
         Shell s = getShell();
+        if (s==null) {
+        	return null;
+        }
         Object data = s.getData();
         if (data instanceof IWorkbenchWindow) {
             return (IWorkbenchWindow)data;
