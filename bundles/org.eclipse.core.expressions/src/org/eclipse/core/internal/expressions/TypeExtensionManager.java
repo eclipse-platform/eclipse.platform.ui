@@ -74,7 +74,11 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		initializeCaches();
 	}
 
-	public synchronized Property getProperty(Object receiver, String namespace, String method) throws CoreException  {
+	public Property getProperty(Object receiver, String namespace, String method) throws CoreException  {
+		return getProperty(receiver, namespace, method, false);
+	}
+	
+	public synchronized Property getProperty(Object receiver, String namespace, String method, boolean forcePluginActivation) throws CoreException  {
 		long start= 0;
 		if (Expressions.TRACING)
 			start= System.currentTimeMillis();
@@ -84,7 +88,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		Property result= new Property(clazz, namespace, method);
 		Property cached= fPropertyCache.get(result);
 		if (cached != null) {
-			if (cached.isValidCacheEntry()) {
+			if (cached.isValidCacheEntry(forcePluginActivation)) {
 				if (Expressions.TRACING) {
 					System.out.println("[Type Extension] - method " + //$NON-NLS-1$
 						clazz.getName() + "#" + method + //$NON-NLS-1$
@@ -99,7 +103,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			fPropertyCache.remove(cached);
 		}
 		TypeExtension extension= get(clazz);
-		IPropertyTester extender= extension.findTypeExtender(this, namespace, method, receiver instanceof Class);
+		IPropertyTester extender= extension.findTypeExtender(this, namespace, method, receiver instanceof Class, forcePluginActivation);
 		if (extender == TypeExtension.CONTINUE || extender == null) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,

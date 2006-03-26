@@ -43,6 +43,27 @@ public interface IEvaluationContext {
 	public IEvaluationContext getRoot();
 	
 	/**
+	 * Specifies whether this evaluation context allows activation
+	 * of plug-ins for testers used in the expression tree. To actual
+	 * trigger the plug-in loading this flag has to be set to <code>
+	 * true</code> and the actual test expression must have the
+	 * attribute <code>forcePluginActivation</code> set to <code>
+	 * true</code> as well.
+	 * 
+	 * @param value whether this evaluation context allows plug-in
+	 *  activation
+	 */
+	public void setAllowPluginActivation(boolean value);
+	
+	/**
+	 * Returns whether this evaluation context supports plug-in 
+	 * activation.
+	 * 
+	 * @return whether plug-in activation is supported or not
+	 */
+	public boolean getAllowPluginActivation();
+	
+	/**
 	 * Returns the default variable.
 	 * 
 	 * @return the default variable or <code>null</code> if

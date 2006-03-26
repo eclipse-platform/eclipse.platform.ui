@@ -43,9 +43,13 @@ public class Property {
 		return fTester.isDeclaringPluginActive();
 	}
 	
-	public boolean isValidCacheEntry() {
-		return 	(isInstantiated() && isDeclaringPluginActive()) ||
-				(!isInstantiated() && !isDeclaringPluginActive());
+	public boolean isValidCacheEntry(boolean forcePluginActivation) {
+		if (forcePluginActivation) {
+			return isInstantiated() && isDeclaringPluginActive();
+		} else {
+			return 	(isInstantiated() && isDeclaringPluginActive()) ||
+					(!isInstantiated() && !isDeclaringPluginActive());
+		}
 	}
  	
 	public boolean test(Object receiver, Object[] args, Object expectedValue) {

@@ -64,6 +64,20 @@ public final class DefaultVariable implements IEvaluationContext {
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setAllowPluginActivation(boolean value) {
+		fParent.setAllowPluginActivation(value);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getAllowPluginActivation() {
+		return fParent.getAllowPluginActivation();
+	}
 
 	/**
 	 * {@inheritDoc}

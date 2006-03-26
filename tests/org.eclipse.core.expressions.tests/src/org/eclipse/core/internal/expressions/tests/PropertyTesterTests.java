@@ -17,7 +17,11 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+
 import org.eclipse.core.internal.expressions.Property;
+import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.TypeExtensionManager;
 
 import org.osgi.framework.Bundle;
@@ -29,6 +33,9 @@ public class PropertyTesterTests extends TestCase {
 	private I i;
 
 	private static final TypeExtensionManager fgManager= new TypeExtensionManager("propertyTesters"); //$NON-NLS-1$
+	
+	// Needs additional local test plug-ins
+	private static final boolean TEST_DYNAMIC_AND_ACTIVATION= false;
 	
 	public static Test suite() {
 		return new TestSuite(PropertyTesterTests.class);
@@ -109,8 +116,9 @@ public class PropertyTesterTests extends TestCase {
 	}
 	
 	public void testDynamicPlugin() throws Exception {
-		if (true)
+		if (!TEST_DYNAMIC_AND_ACTIVATION)
 			return;
+		
 		A receiver= new A();
 		Property p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue(!p.isInstantiated());
@@ -121,6 +129,29 @@ public class PropertyTesterTests extends TestCase {
 		bundle.stop();
 		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue(!p.isInstantiated());
+	}
+	
+	public void testPluginActivation() throws Exception {
+		if (!TEST_DYNAMIC_AND_ACTIVATION)
+			return;
+		
+		Bundle bundle= Platform.getBundle("org.eclipse.core.expressions.tests.forceActivation"); //$NON-NLS-1$
+		assertTrue(bundle.getState() == Bundle.RESOLVED);
+		
+		A receiver= new A();
+		TestExpression exp= new TestExpression("org.eclipse.core.expressions.tests.forceActivation", "testing", null, null, true);
+		EvaluationContext context= new EvaluationContext(null, receiver);
+		EvaluationResult result= exp.evaluate(context);
+		assertTrue(result == EvaluationResult.NOT_LOADED);
+		assertTrue(bundle.getState() == Bundle.RESOLVED);
+		Property p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(!p.isInstantiated());
+		
+		context.setAllowPluginActivation(true);
+		exp.evaluate(context);
+		assertTrue(bundle.getState() == Bundle.ACTIVE);
+		p= TestExpression.testGetTypeExtensionManager().getProperty(receiver, "org.eclipse.core.expressions.tests.forceActivation", "testing", false); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue(p.isInstantiated());
 	}
 	
 	public void testDifferentNameSpace() throws Exception {

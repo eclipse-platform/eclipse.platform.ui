@@ -140,8 +140,11 @@
          <documentation>
             This element is used to evaluate the property state of the object in focus. The set of
             testable properties can be extended using the propery tester extension point. The test
-            expression returns EvaluationResult.NOT_LOADED if teh property tester doing the actual
-            testing isn&apos;t loaded yet.
+            expression returns EvaluationResult.NOT_LOADED if the property tester doing the actual
+            testing isn&apos;t loaded yet and the attribute forcePluginActivation is set to false. 
+            If forcePluginActivation is set to true and the evaluation context used to evaluate
+            this expression support plug-in activation then evaluating the property will result in 
+            activating the plug-in defining the tester.
          </documentation>
       </annotation>
       <complexType>
@@ -183,6 +186,18 @@ rules:
  example, the attribute value=&amp;quot;&apos;true&apos;&amp;quot; is converted into the
  string &amp;quot;true&amp;quot;&lt;/li&gt;
 &lt;/ul&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="forcePluginActivation" type="boolean">
+            <annotation>
+               <documentation>
+                  a flag indicating whether the plug-in contributing the property tester
+                  should be loaded if necessary. As such, this flag should be used judiciously, 
+                  in order to avoid unnecessary plug-in activations. Most clients should avoid
+                  setting this flag to true. This flag is only honored if the evaluation context
+                  used to evaluate this expression allows plug-in activation. Otherwise the flag
+                  is ignored and no plug-in loading takes place.
                </documentation>
             </annotation>
          </attribute>

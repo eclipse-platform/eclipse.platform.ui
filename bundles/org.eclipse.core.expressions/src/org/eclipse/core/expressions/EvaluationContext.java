@@ -32,6 +32,7 @@ public class EvaluationContext implements IEvaluationContext {
 	private Object fDefaultVariable;
 	private Map/*<String, Object>*/ fVariables;
 	private IVariableResolver[] fVariableResolvers;
+	private boolean fAllowPluginActivation;
 	
 	/**
 	 * Create a new evaluation context with the given parent and default
@@ -86,6 +87,20 @@ public class EvaluationContext implements IEvaluationContext {
 	 */
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setAllowPluginActivation(boolean value) {
+		fAllowPluginActivation= value;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getAllowPluginActivation() {
+		return fAllowPluginActivation;
 	}
 	
 	/**

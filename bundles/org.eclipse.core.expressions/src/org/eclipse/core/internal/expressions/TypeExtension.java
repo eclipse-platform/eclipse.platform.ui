@@ -19,7 +19,7 @@ public class TypeExtension {
 	
 	private static final TypeExtension[] EMPTY_TYPE_EXTENSION_ARRAY= new TypeExtension[0];
 
-	/* a special property tester instance that used to signal that method searching has to continue */
+	/* a special property tester instance that is used to signal that method searching has to continue */
 	/* package */ static final IPropertyTester CONTINUE= new IPropertyTester() {
 		public boolean handles(String namespace, String method) {
 			return false;
@@ -40,7 +40,7 @@ public class TypeExtension {
 		
 	/* a special type extension instance that marks the end of an evaluation chain */
 	private static final TypeExtension END_POINT= new TypeExtension() {
-		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod) throws CoreException {
+		/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String name, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
 			return CONTINUE;
 		}
 	};
@@ -64,7 +64,7 @@ public class TypeExtension {
 		fType= type;
 	}
 	
-	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, boolean staticMethod) throws CoreException {
+	/* package */ IPropertyTester findTypeExtender(TypeExtensionManager manager, String namespace, String method, boolean staticMethod, boolean forcePluginActivation) throws CoreException {
 		if (fExtenders == null) {
 			fExtenders= manager.loadTesters(fType);
 		}
@@ -78,13 +78,15 @@ public class TypeExtension {
 			if (extender.isInstantiated()) {
 				if (extender.isDeclaringPluginActive()) {
 					return extender;
+				} else if (forcePluginActivation) {
+					
 				} else {
 					PropertyTester tester= (PropertyTester)extender;
 					fExtenders[i]= extender= tester.internalCreateDescriptor();
 					return extender;
 				}
 			} else {
-				if (extender.isDeclaringPluginActive()) {
+				if (extender.isDeclaringPluginActive() || forcePluginActivation) {
 					try {
 						PropertyTesterDescriptor descriptor= (PropertyTesterDescriptor)extender;
 						IPropertyTester inst= descriptor.instantiate();
@@ -120,7 +122,7 @@ public class TypeExtension {
 				fExtends= END_POINT;
 			}
 		}
-		result= fExtends.findTypeExtender(manager, namespace, method, staticMethod);
+		result= fExtends.findTypeExtender(manager, namespace, method, staticMethod, forcePluginActivation);
 		if (result != CONTINUE)
 			return result;
 		
@@ -137,7 +139,7 @@ public class TypeExtension {
 			}
 		}
 		for (int i= 0; i < fImplements.length; i++) {
-			result= fImplements[i].findTypeExtender(manager, namespace, method, staticMethod);
+			result= fImplements[i].findTypeExtender(manager, namespace, method, staticMethod, forcePluginActivation);
 			if (result != CONTINUE)
 				return result;
 		}

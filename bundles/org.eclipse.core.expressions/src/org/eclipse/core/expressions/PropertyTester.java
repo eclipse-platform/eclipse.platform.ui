@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.core.expressions;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.internal.expressions.PropertyTesterDescriptor;
-
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.internal.expressions.ExpressionMessages;
+import org.eclipse.core.internal.expressions.ExpressionPlugin;
+import org.eclipse.core.internal.expressions.Messages;
+import org.eclipse.core.internal.expressions.PropertyTesterDescriptor;
 
 /**
  * Abstract superclass of all property testers. Implementation classes of
@@ -85,6 +92,24 @@ public abstract class PropertyTester implements IPropertyTester {
 	public final PropertyTesterDescriptor internalCreateDescriptor() {
 		return new PropertyTesterDescriptor(fConfigElement, fNamespace, fProperties);
 	}
+	
+	/**
+	 * Note: this method is for internal use only. Clients must not call 
+	 * this method.
+	 * 
+	 * @throws CoreException if the plugin can't be activated
+	 */
+	public final void internalActivateDeclaringPlugin() throws CoreException {
+		String pluginName= fConfigElement.getContributor().getName();
+		Bundle bundle= Platform.getBundle(pluginName);
+		try {
+			bundle.start();
+		} catch (BundleException e) {
+			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(), IStatus.ERROR,
+				Messages.format(ExpressionMessages.PropertyTester_error_activating_plugin, pluginName), 
+				e));
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -104,8 +129,8 @@ public abstract class PropertyTester implements IPropertyTester {
 	 * {@inheritDoc}
 	 */
 	public boolean isDeclaringPluginActive() {
-		Bundle fBundle= Platform.getBundle(fConfigElement.getContributor().getName());
-		return fBundle.getState() == Bundle.ACTIVE;		
+		Bundle bundle= Platform.getBundle(fConfigElement.getContributor().getName());
+		return bundle.getState() == Bundle.ACTIVE;		
 	}
 	
 	/**

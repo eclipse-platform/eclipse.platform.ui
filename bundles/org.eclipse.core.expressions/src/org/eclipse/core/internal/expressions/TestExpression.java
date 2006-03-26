@@ -24,9 +24,11 @@ public class TestExpression extends Expression {
 	private String fProperty;
 	private Object[] fArgs;
 	private Object fExpectedValue;
+	private boolean fForcePluginActivation;
 	
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
 	private static final String ATT_ARGS= "args"; //$NON-NLS-1$
+	private static final String ATT_FORCE_PLUGIN_ACTIVATION= "forcePluginActivation"; //$NON-NLS-1$
 	/**
 	 * The seed for the hash code for all test expressions.
 	 */
@@ -46,17 +48,23 @@ public class TestExpression extends Expression {
 		fProperty= property.substring(pos + 1);
 		fArgs= Expressions.getArguments(element, ATT_ARGS);
 		fExpectedValue= Expressions.convertArgument(element.getAttribute(ATT_VALUE));
+		fForcePluginActivation= Expressions.getOptionalBooleanAttribute(element, ATT_FORCE_PLUGIN_ACTIVATION);
 	}
 	
 	public TestExpression(String namespace, String property, Object[] args, Object expectedValue) {
+		this(namespace, property, args, expectedValue, false);
+	}
+	
+	public TestExpression(String namespace, String property, Object[] args, Object expectedValue, boolean forcePluginActivation) {
 		Assert.isNotNull(namespace);
 		Assert.isNotNull(property);
 		fNamespace= namespace;
 		fProperty= property;
 		fArgs= args != null ? args : Expressions.EMPTY_ARGS;
 		fExpectedValue= expectedValue;
+		fForcePluginActivation= forcePluginActivation;
 	}
-	
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		if (System.class.equals(element)) {
@@ -65,7 +73,7 @@ public class TestExpression extends Expression {
 				return EvaluationResult.FALSE;
 			return EvaluationResult.valueOf(str.equals(fArgs[0]));
 		}
-		Property property= fgTypeExtensionManager.getProperty(element, fNamespace, fProperty);
+		Property property= fgTypeExtensionManager.getProperty(element, fNamespace, fProperty, context.getAllowPluginActivation() && fForcePluginActivation);
 		if (!property.isInstantiated())
 			return EvaluationResult.NOT_LOADED;
 		return EvaluationResult.valueOf(property.test(element, fArgs, fExpectedValue));
@@ -80,7 +88,8 @@ public class TestExpression extends Expression {
 			return false;
 		
 		final TestExpression that= (TestExpression)object;
-		return this.fNamespace.equals(that.fNamespace) && this.fProperty.equals(that.fProperty)
+		return this.fNamespace.equals(that.fNamespace) && this.fProperty.equals(that.fProperty) 
+			&& this.fForcePluginActivation == that.fForcePluginActivation
 			&& equals(this.fArgs, that.fArgs) && equals(this.fExpectedValue, that.fExpectedValue);
 	}
 
@@ -88,7 +97,8 @@ public class TestExpression extends Expression {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fArgs)
 			* HASH_FACTOR + hashCode(fExpectedValue)
 			* HASH_FACTOR + fNamespace.hashCode()
-			* HASH_FACTOR + fProperty.hashCode();
+			* HASH_FACTOR + fProperty.hashCode()
+			* HASH_FACTOR + (fForcePluginActivation ? 1 : 0);
 	}
 	
 	//---- Debugging ---------------------------------------------------
@@ -113,6 +123,17 @@ public class TestExpression extends Expression {
 		return "<test property=\"" + fProperty +  //$NON-NLS-1$
 		  (fArgs.length != 0 ? "\" args=\"" + args + "\"" : "\"") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		  (fExpectedValue != null ? "\" value=\"" + fExpectedValue + "\"" : "\"") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		  " plug-in activation: " + (fForcePluginActivation ? "eager" : "lazy") +   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		  "/>"; //$NON-NLS-1$
+	}
+	
+	//---- testing ---------------------------------------------------
+	
+	public boolean testGetForcePluginActivation() {
+		return fForcePluginActivation;
+	}
+	
+	public static TypeExtensionManager testGetTypeExtensionManager() {
+		return fgTypeExtensionManager;
 	}
 }

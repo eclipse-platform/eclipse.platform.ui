@@ -652,6 +652,22 @@ public class ExpressionTests extends TestCase {
 		Expression exp= ExpressionConverter.getDefault().perform(enable);
 		ref(exp);
 	}
+	
+	public void testForcePluginActivation() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		IConfigurationElement enable= findExtension(ces, "test2").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
+		EnablementExpression exp= (EnablementExpression) ExpressionConverter.getDefault().perform(enable);
+		Expression[] children= exp.getChildren();
+		assertTrue(children.length == 3);
+		TestExpression test= (TestExpression) children[0];
+		assertTrue(test.testGetForcePluginActivation());
+		test= (TestExpression) children[1];
+		assertTrue(!test.testGetForcePluginActivation());
+		test= (TestExpression) children[2];
+		assertTrue(!test.testGetForcePluginActivation());
+	}
 
 	private IConfigurationElement findExtension(IConfigurationElement[] ces, String id) {
 		for (int i= 0; i < ces.length; i++) {
@@ -662,6 +678,5 @@ public class ExpressionTests extends TestCase {
 	}
 	
 	protected void ref(Expression exp) {
-		
 	}
 }

@@ -104,6 +104,7 @@
             <test property="namespace.isDefault"/>
             <test property="namespace.isDefault" value="default"/>
             <test property="namespace.isDefault" args="'arg1', 'arg2'" value="default"/>
+            <test property="namespace.isDefault" forcePluginActivation="true"/>
 	        <systemTest property="isDefault" value="xx"/>
 	        <equals value= "string"/>
             <count value="1"/>
@@ -166,5 +167,16 @@
             </iterate>
       </enablement>
      </testParticipant>
-   </extension>
+    </extension>
+    
+	<extension point="org.eclipse.core.expressions.tests.testParticipants">
+	  <testParticipant id="test2">
+		<enablement>
+            <test property="namespace.isDefault" forcePluginActivation="true"/>
+            <test property="namespace.isDefault" forcePluginActivation="false"/>
+            <test property="namespace.isDefault"/>
+      	</enablement>
+      </testParticipant>
+   	</extension>
+   	 
 </plugin>

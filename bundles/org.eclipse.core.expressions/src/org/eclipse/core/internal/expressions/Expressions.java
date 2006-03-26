@@ -89,6 +89,13 @@ public class Expressions {
 			Messages.format(ExpressionMessages.Expression_variable_not_a_list, expression.toString()))); 
 	}
 	
+	public static boolean getOptionalBooleanAttribute(IConfigurationElement element, String attributeName) {
+		String value= element.getAttribute(attributeName);
+		if (value == null)
+			return false;
+		return Boolean.valueOf(value).booleanValue();
+	}
+	
 	//---- Argument parsing --------------------------------------------
 	
 	public static final Object[] EMPTY_ARGS= new Object[0];

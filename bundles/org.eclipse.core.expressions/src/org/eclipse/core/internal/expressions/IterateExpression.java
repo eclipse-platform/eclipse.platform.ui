@@ -44,6 +44,12 @@ public class IterateExpression extends CompositeExpression {
 		public Object getDefaultVariable() {
 			return fDefaultVariable;
 		}
+		public boolean getAllowPluginActivation() {
+			return fParent.getAllowPluginActivation();
+		}
+		public void setAllowPluginActivation(boolean value) {
+			fParent.setAllowPluginActivation(value);
+		}
 		public void addVariable(String name, Object value) {
 			fParent.addVariable(name, value);
 		}
