@@ -164,7 +164,7 @@ public class MirrorSite extends Site {
 				+ sourceFeature.getVersionedIdentifier()
 				+ " ..."); //$NON-NLS-1$
 		final IPluginEntry[] sourceFeaturePluginEntries =
-			sourceFeature.getPluginEntries();
+			sourceFeature.getRawPluginEntries();
 
 		// determine list of plugins to install
 		// find the intersection between the plugin entries already contained
