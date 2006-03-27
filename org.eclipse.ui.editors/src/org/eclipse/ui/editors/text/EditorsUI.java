@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.nio.charset.UnmappableCharacterException;
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -151,7 +153,17 @@ public final class EditorsUI {
 	public static SpellingService getSpellingService() {
 		return EditorsPlugin.getDefault().getSpellingService();
 	}
-	
+
+	/**
+	 * Returns the shared text colors of this plug-in.
+	 *
+	 * @return the shared text colors
+	 * @since 3.2
+	 */
+	public ISharedTextColors getSharedTextColors() {
+		return EditorsPlugin.getDefault().getSharedTextColors();
+	}
+
 	// --------------- Status codes for this plug-in ---------------
 	
 	// NOTE: See also IEditorsStatusConstants 
