@@ -25,6 +25,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -156,10 +157,10 @@ public class CommitCommentArea extends DialogArea {
 			fCombo.add(fMessage);
             for (int i = 0; i < fCommentTemplates.length; i++) {
                 fCombo.add(CVSUIMessages.CommitCommentArea_6 + ": " + //$NON-NLS-1$
-                		HistoryView.flattenText(fCommentTemplates[i]));
+                		Util.flattenText(fCommentTemplates[i]));
             }
             for (int i = 0; i < fComments.length; i++) {
-                fCombo.add(HistoryView.flattenText(fComments[i]));
+                fCombo.add(Util.flattenText(fComments[i]));
             }
             fCombo.setText(fMessage);
 		}

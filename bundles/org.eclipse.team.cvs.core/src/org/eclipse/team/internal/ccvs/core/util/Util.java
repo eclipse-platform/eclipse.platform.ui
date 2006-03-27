@@ -18,20 +18,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -580,5 +570,25 @@ public class Util {
 			return path.substring(0, secondLastSeparator) + path.substring(lastSeparator);
 		}
 		return path;
+	}
+	
+	/**
+	 * Flatten the text in the multiline comment
+	 */
+	public static String flattenText(String string) {
+		StringBuffer buffer = new StringBuffer(string.length() + 20);
+		boolean skipAdjacentLineSeparator = true;
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if (c == '\r' || c == '\n') {
+				if (!skipAdjacentLineSeparator)
+					buffer.append(Session.SERVER_SEPARATOR); 
+				skipAdjacentLineSeparator = true;
+			} else {
+				buffer.append(c);
+				skipAdjacentLineSeparator = false;
+			}
+		}
+		return buffer.toString();
 	}
 }

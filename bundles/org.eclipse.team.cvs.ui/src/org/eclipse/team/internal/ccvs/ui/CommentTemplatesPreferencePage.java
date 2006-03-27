@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -84,14 +85,14 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 		viewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
 				String template = (String) element;
-				return HistoryView.flattenText(template);
+				return Util.flattenText(template);
 			}
 		});
 		viewer.addSelectionChangedListener(this);
 		viewer.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				String template1 = HistoryView.flattenText((String) e1);
-				String template2 = HistoryView.flattenText((String) e2);
+				String template1 = Util.flattenText((String) e1);
+				String template2 = Util.flattenText((String) e2);
 				return template1.compareToIgnoreCase(template2);
 			}
 		});

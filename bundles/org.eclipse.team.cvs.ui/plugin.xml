@@ -771,13 +771,6 @@
             id="org.eclipse.team.ccvs.ui.RepositoriesView">
       </view>
       <view
-            name="%HistoryView.name"
-            icon="$nl$/icons/full/eview16/history_view.gif"
-            category="org.eclipse.team.ccvs.ui"
-            class="org.eclipse.team.internal.ccvs.ui.HistoryView"
-            id="org.eclipse.team.ccvs.ui.HistoryView">
-      </view>
-      <view
             name="%EditorsView.name"
             icon="$nl$/icons/full/eview16/rep_editors_view.gif"
             category="org.eclipse.team.ccvs.ui"

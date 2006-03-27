@@ -27,6 +27,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
@@ -110,7 +111,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
         public CVSCheckedInChangeSet(ILogEntry entry) {
             this.entry = entry;
     		Date date = entry.getDate();
-    		String comment = HistoryView.flattenText(entry.getComment());
+    		String comment = Util.flattenText(entry.getComment());
     		if (date == null) {
     			setName("["+entry.getAuthor()+ "] " + comment); //$NON-NLS-1$ //$NON-NLS-2$
     		} else {
