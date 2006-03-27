@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2005, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -44,7 +44,6 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarShortcut;
-import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
