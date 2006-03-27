@@ -152,8 +152,7 @@
             name="%resourceModelName"
             point="org.eclipse.core.resources.modelProviders">
          <modelProvider
-               class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"
-               name="%resourceModelName"/>
+               class="org.eclipse.core.internal.resources.mapping.ResourceModelProvider"/>
           <enablement>
             <instanceof value="org.eclipse.core.resources.IResource" />
           </enablement>
