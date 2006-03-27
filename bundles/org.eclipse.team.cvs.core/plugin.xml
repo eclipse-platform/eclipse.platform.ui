@@ -218,8 +218,7 @@
          name="Change Sets"
          point="org.eclipse.core.resources.modelProviders">
       <modelProvider
-            class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"
-            name="Change Sets"/>
+            class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"/>
       <extends-model id="org.eclipse.core.resources.modelProvider"/>
    </extension>
    <extension
