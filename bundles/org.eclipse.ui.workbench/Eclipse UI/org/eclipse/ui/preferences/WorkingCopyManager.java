@@ -29,6 +29,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class WorkingCopyManager implements IWorkingCopyManager{
 
+	private static final String EMPTY_STRING = "";//$NON-NLS-1$
 	// all working copies - maps absolute path to PreferencesWorkingCopy instance
 	private Map workingCopies = new HashMap();
 
@@ -55,7 +56,9 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	 */
 	public void applyChanges() throws BackingStoreException {
 		for (Iterator i = workingCopies.values().iterator(); i.hasNext();) {
-			((WorkingCopyPreferences) i.next()).flush();
+			WorkingCopyPreferences prefs = (WorkingCopyPreferences) i.next();
+			if (prefs.nodeExists(EMPTY_STRING)) 
+				prefs.flush();
 		}
 	}
 
