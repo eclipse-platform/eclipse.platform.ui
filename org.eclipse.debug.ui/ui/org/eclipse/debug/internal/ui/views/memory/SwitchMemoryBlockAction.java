@@ -14,7 +14,10 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -22,7 +25,6 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
@@ -43,7 +45,7 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class SwitchMemoryBlockAction extends Action implements IViewActionDelegate, IActionDelegate2 {
 
@@ -89,45 +91,62 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			fView.getSite().getSelectionProvider().setSelection(new StructuredSelection(fMemoryblock));
 		}
 
-		public SwitchToAction(IMemoryBlock memBlk)
+		public SwitchToAction(final IMemoryBlock memBlk, boolean buildLabel)
 		{
 			super();
-			try {
-				String text;
-				if (memBlk instanceof IMemoryBlockExtension)
-				{
-					text = ((IMemoryBlockExtension)memBlk).getExpression();
-					
-					if (text == null)
-					{
-						text = DebugUIMessages.SwitchMemoryBlockAction_0;
-					}
-					
-					if (((IMemoryBlockExtension)memBlk).getBigBaseAddress() != null)
-					{	
-						text += " : 0x"; //$NON-NLS-1$
-						text += ((IMemoryBlockExtension)memBlk).getBigBaseAddress().toString(16);
-					}
-				}
-				else
-				{
-					long address = memBlk.getStartAddress();
-					text = Long.toHexString(address);
-				}
-				
-				ILabelDecorator decorator = (ILabelDecorator)memBlk.getAdapter(ILabelDecorator.class);
-				if (decorator != null)
-					text = decorator.decorateText(text, memBlk);
-				
-				super.setText(text);
-				
-				PlatformUI.getWorkbench().getHelpSystem().setHelp(this, DebugUIPlugin.getUniqueIdentifier() + ".switchToAction_context"); //$NON-NLS-1$
-				
-			} catch (DebugException e) {
-				
-				super.setText(DebugUIMessages.SwitchMemoryBlockAction_3);
+			
+			if (buildLabel)
+			{
+				setText(DebugUIMessages.SwitchMemoryBlockAction_4);
+				Job job = new Job("SwtichToAction"){ //$NON-NLS-1$
+	
+					protected IStatus run(IProgressMonitor monitor) {
+						getLabels(memBlk);
+						return Status.OK_STATUS;
+					}}; 
+				job.setSystem(true);
+				job.schedule();
 			}
+			
 			fMemoryblock = memBlk;
+		}
+		
+		public SwitchToAction(final IMemoryBlock memBlk, String label)
+		{
+			super(label);
+			fMemoryblock = memBlk;
+		}
+		
+		
+		private void getLabels(final IMemoryBlock memBlk)
+		{
+			StringBuffer text = new StringBuffer(""); //$NON-NLS-1$
+			String label = new String(""); //$NON-NLS-1$
+			if (memBlk instanceof IMemoryBlockExtension)
+			{
+				String expression = ((IMemoryBlockExtension)memBlk).getExpression();
+				if (expression == null)
+					expression = DebugUIMessages.SwitchMemoryBlockAction_0;
+				
+				text.append(expression);
+			}
+			else
+			{
+				long address = memBlk.getStartAddress();
+				text.append(Long.toHexString(address));
+			}
+			
+			label = text.toString();
+			label = decorateLabel(memBlk, label);
+
+			final String finalLabel = label;
+			WorkbenchJob job = new WorkbenchJob("SwtichToAction Update Label") { //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					SwitchToAction.super.setText(finalLabel);
+					return Status.OK_STATUS;
+				}};
+			job.setSystem(true);
+			job.schedule();
 		}
 	}
 	
@@ -158,21 +177,49 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			{	
 				dropdown =  new Menu(parent);
 
-				// get all memory blocks associated with selected debug target
+				// get all memory blocks from tree viewer
 				IMemoryBlock[] allMemoryBlocks = getMemoryBlocksFromViewer();
 				
 				// get selection from memory view
 				IMemoryBlock memoryBlock = getCurrentMemoryBlock();
+				MemoryBlockNavigationModel model = getTreeNavigationModel();
 			
+				if (model == null)
+				{
+					Object context = DebugUITools.getDebugContext();
+					IMemoryBlockRetrieval retrieval =  MemoryViewUtil.getMemoryBlockRetrieval(context);
+					if (retrieval != null)
+					{
+						allMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
+					}
+				}
+				
 				for (int i=0; i<allMemoryBlocks.length; i++)
 				{	
-					SwitchToAction action = new SwitchToAction(allMemoryBlocks[i]);
+					SwitchToAction action;
+					if (model != null)
+					{
+						String label = model.getLabel(allMemoryBlocks[i]);
+						if (label == null)
+							action = new SwitchToAction(allMemoryBlocks[i], true);
+						else
+						{
+							label = decorateLabel(allMemoryBlocks[i], label);
+							action = new SwitchToAction(allMemoryBlocks[i], label);
+						}
+					}
+					else
+					{
+						action = new SwitchToAction(allMemoryBlocks[i], true);
+					}
 					
 					if (allMemoryBlocks[i] == memoryBlock)
 						action.setChecked(true);
 					
 					ActionContributionItem item = new ActionContributionItem(action);
 					item.fill(dropdown, -1);
+					
+					item.getAction().setChecked(true);
 				}
 			}
 			
@@ -204,7 +251,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		{
 			MemoryView memView = (MemoryView)fView;
 			IMemoryViewPane pane = memView.getViewPane(MemoryBlocksTreeViewPane.PANE_ID);
-			if (pane instanceof MemoryBlocksTreeViewPane)
+			if (pane instanceof MemoryBlocksTreeViewPane && pane.isVisible())
 			{
 				AsynchronousTreeViewer viewer = ((MemoryBlocksTreeViewPane)pane).getViewer();
 				return new MemoryBlockNavigationModel(viewer);
@@ -308,29 +355,45 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			
 			if (retrieval != null)
 			{
-				IMemoryBlock[] memoryBlocks = getMemoryBlocksFromViewer();
-				// only run if there is more than one memory block
-				if (memoryBlocks.length > 1)
+				MemoryBlockNavigationModel model = getTreeNavigationModel();
+				if (model != null)
 				{
-					IMemoryBlock current = getCurrentMemoryBlock();
-					
-					int next = 0;
-					if (current != null)
-					{
-						for (int i=0; i<memoryBlocks.length; i++)
-						{
-							if (memoryBlocks[i] == current)
-								next = i+1;
-						}
-					}
-					
-					if (next > memoryBlocks.length-1)
-						next = 0;
-					
-					SwitchToAction switchAction = new SwitchToAction(memoryBlocks[next]);
-					switchAction.run();
+					IMemoryBlock[] memoryBlocks = getMemoryBlocksFromViewer();
+					doSwitchToNext(memoryBlocks);
+				}
+				else
+				{
+					IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
+					doSwitchToNext(memoryBlocks);
 				}
 			}
+		}
+	}
+
+	/**
+	 * @param memoryBlocks
+	 */
+	private void doSwitchToNext(IMemoryBlock[] memoryBlocks) {
+		// only run if there is more than one memory block
+		if (memoryBlocks.length > 1)
+		{
+			IMemoryBlock current = getCurrentMemoryBlock();
+			
+			int next = 0;
+			if (current != null)
+			{
+				for (int i=0; i<memoryBlocks.length; i++)
+				{
+					if (memoryBlocks[i] == current)
+						next = i+1;
+				}
+			}
+			
+			if (next > memoryBlocks.length-1)
+				next = 0;
+			
+			SwitchToAction switchAction = new SwitchToAction(memoryBlocks[next], false);
+			switchAction.run();
 		}
 	}
 
@@ -380,6 +443,17 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			}
 		}
 		return memoryBlock;
+	}
+
+	/**
+	 * @param memBlk
+	 * @param label
+	 */
+	private String decorateLabel(final IMemoryBlock memBlk, String label) {
+		ILabelDecorator decorator = (ILabelDecorator)memBlk.getAdapter(ILabelDecorator.class);
+		if (decorator != null)
+			label = decorator.decorateText(label, memBlk);
+		return label;
 	}
 
 }

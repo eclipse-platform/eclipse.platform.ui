@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -33,6 +33,8 @@ public class DebugUIMessages extends NLS {
 	public static String MultipleInputDialog_6;
 	public static String MultipleInputDialog_7;
 	public static String MultipleInputDialog_8;
+
+	public static String SwitchMemoryBlockAction_4;
 
 	public static String WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
 	public static String WorkingDirectoryStatusHandler_Eclipse_is_not_able_to_set_the_working_directory_specified_by_the_program_being_launched_as_the_current_runtime_does_not_support_working_directories__nContinue_launch_without_setting_the_working_directory__2;

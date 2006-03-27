@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
@@ -20,6 +21,7 @@ public class MemoryBlockNavigationModel  {
 
 	private ArrayList fElements;
 	private AsynchronousTreeViewer fViewer = null;
+	private Hashtable fLabels;
 	
 	public MemoryBlockNavigationModel(AsynchronousTreeViewer viewer) {
 		init(viewer);
@@ -32,6 +34,7 @@ public class MemoryBlockNavigationModel  {
 	private void init(AsynchronousTreeViewer viewer) {
 		fViewer = viewer;
 		fElements = new ArrayList();
+		fLabels = new Hashtable();
 		TreeItem[] items = viewer.getTree().getItems();
 		traverse(items);
 	}
@@ -42,6 +45,7 @@ public class MemoryBlockNavigationModel  {
 			Object data = item.getData();
 			if (data != null) {
 				fElements.add(data);
+				fLabels.put(data, item.getText());
 				traverse(item.getItems());
 			}
 		}
@@ -63,5 +67,10 @@ public class MemoryBlockNavigationModel  {
 	 */
 	AsynchronousTreeViewer getViewer() {
 		return fViewer;
+	}
+	
+	public String getLabel(Object item)
+	{
+		return (String)fLabels.get(item);
 	}
 }

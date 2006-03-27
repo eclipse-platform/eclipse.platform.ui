@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -94,6 +95,15 @@ public class MemoryViewUtil {
 	
 		Object elem = ((IStructuredSelection)selection).getFirstElement();
 	
+		return isValidContext(elem);
+	}
+
+
+	/**
+	 * @param elem
+	 * @return
+	 */
+	public static boolean isValidContext(Object elem) {
 		// if not debug element
 		if (!(elem instanceof IDebugElement))
 			return false;
@@ -194,5 +204,24 @@ public class MemoryViewUtil {
 	public static String[] getHistory() 
 	{
 		return (String[])MEMORY_BLOCKS_HISTORY.toArray(new String[MEMORY_BLOCKS_HISTORY.size()]);
+	}
+	
+	public static IMemoryBlockRetrieval getMemoryBlockRetrieval(Object object)
+	{
+		IMemoryBlockRetrieval retrieval = null;
+
+		if (object instanceof IAdaptable)
+		{
+			IAdaptable adaptable = (IAdaptable)object;
+			retrieval = (IMemoryBlockRetrieval)adaptable.getAdapter(IMemoryBlockRetrieval.class);
+		}
+		
+		if (retrieval == null && object instanceof IDebugElement)
+		{
+			IDebugElement de = (IDebugElement)object;
+			retrieval = de.getDebugTarget();
+		}
+		
+		return retrieval;
 	}
 }
