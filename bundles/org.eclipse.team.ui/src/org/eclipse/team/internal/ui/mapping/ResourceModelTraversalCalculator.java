@@ -134,6 +134,17 @@ public class ResourceModelTraversalCalculator {
 			Object object = children[i];
 			result.add(object);
 		}
+		IResource[] setChildren = getChildren(diffTree, resource);
+		for (int i = 0; i < setChildren.length; i++) {
+			IResource child = setChildren[i];
+			result.add(child);
+		}
+		Object[] allChildren = result.toArray(new Object[result.size()]);
+		return allChildren;
+	}
+
+	public static IResource[] getChildren(IResourceDiffTree diffTree, IResource resource) {
+		Set result = new HashSet();
 		IPath[] childPaths = diffTree.getChildren(resource.getFullPath());
 		for (int i = 0; i < childPaths.length; i++) {
 			IPath path = childPaths[i];
@@ -151,8 +162,7 @@ public class ResourceModelTraversalCalculator {
 			}
 			result.add(child);
 		}
-		Object[] allChildren = result.toArray(new Object[result.size()]);
-		return allChildren;
+		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
 	public ResourceTraversal[] getTraversals(DiffChangeSet dcs, TreePath tp) {

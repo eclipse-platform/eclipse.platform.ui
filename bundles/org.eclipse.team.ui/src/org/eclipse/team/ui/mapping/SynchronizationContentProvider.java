@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -474,19 +474,38 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	protected Object[] getChildrenInContext(ISynchronizationContext context, Object parent, Object[] children) {
 		if (children.length != 0)
 			children = getChildrenInScope(context.getScope(), parent, children);
+		if (parent instanceof IResource) {
+			IResource resource = (IResource) parent;
+			children = getChildrenWithPhantoms(context, resource, children);
+		}
 		if (children.length == 0)
 			return children;
 		return internalGetChildren(context, parent, children);
 	}
 
+	private Object[] getChildrenWithPhantoms(ISynchronizationContext context, IResource resource, Object[] children) {
+		IResource[] setChildren = context.getDiffTree().members(resource);
+		if (setChildren.length == 0)
+			return children;
+		if (children.length == 0)
+			return setChildren;
+		Set result = new HashSet(children.length);
+		for (int i = 0; i < children.length; i++) {
+			result.add(children[i]);
+		}
+		for (int i = 0; i < setChildren.length; i++) {
+			result.add(setChildren[i]);
+		}
+		return result.toArray();
+	}
+
 	private Object[] internalGetChildren(ISynchronizationContext context, Object parent, Object[] children) {
-		List result = new ArrayList();
+		List result = new ArrayList(children.length);
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
 			if (isVisible(context, object))
 				result.add(object);
 		}
-		// TODO: may need to get phantoms as well
 		return result.toArray(new Object[result.size()]);
 	}
 

@@ -136,7 +136,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			if (resource.getType() == IResource.PROJECT && !resource.getProject().isAccessible())
 				return new Object[0];
 			IResourceDiffTree diffTree = context.getDiffTree();
-			//TODO: pass path to traversal calculator
 			Object[] allChildren = getTraversalCalculator().filterChildren(diffTree, resource, parentOrPath, children);
 			return super.getChildrenInContext(context, parentOrPath, allChildren);
 		}
@@ -178,14 +177,16 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 								}
 							}
 						}
-						if (include)
-							result.add(new ResourceTraversal(new IResource[] { resource}, depth, IResource.NONE));
+						if (include) {
+							int layoutDepth = getTraversalCalculator().getLayoutDepth(resource, internalGetPath(elementOrPath));
+							result.add(new ResourceTraversal(new IResource[] { resource}, Math.min(depth, layoutDepth), IResource.NONE));
+						}
 					}
 				}
 				return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 			} else {
 				// The resource is a parent of an in-scope resource
-				// TODO: fails due to se of roots
+				// TODO: fails due to use of roots
 				ResourceMapping[] mappings = scope.getMappings(ModelProvider.RESOURCE_MODEL_PROVIDER_ID);
 				List result = new ArrayList();
 				for (int i = 0; i < mappings.length; i++) {
@@ -370,6 +371,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			return tp.getLastSegment();
 		}
 		return elementOrPath;
+	}
+	
+	private TreePath internalGetPath(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			return (TreePath) elementOrPath;
+		}
+		return null;
 	}
 	
 	public void diffsChanged(final IDiffChangeEvent event, IProgressMonitor monitor) {
