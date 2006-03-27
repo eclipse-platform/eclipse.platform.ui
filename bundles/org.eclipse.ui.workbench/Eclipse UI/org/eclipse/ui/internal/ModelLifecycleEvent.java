@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui;
+package org.eclipse.ui.internal;
 
 import java.util.EventObject;
+
+import org.eclipse.ui.ISaveableModel;
 
 /**
  * @since 3.2

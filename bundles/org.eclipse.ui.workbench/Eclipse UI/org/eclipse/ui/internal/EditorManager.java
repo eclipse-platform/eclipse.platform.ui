@@ -129,9 +129,9 @@ public class EditorManager implements IExtensionChangeHandler {
 	// Handler for the pin editor keyboard shortcut
 	private IHandlerActivation pinEditorHandlerActivation = null;
 
-	private static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.EditorManager_saveResourcesMessage;
+	static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.EditorManager_saveResourcesMessage;
 
-	private static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.EditorManager_saveResourcesTitle;
+	static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.EditorManager_saveResourcesTitle;
 
 	/**
 	 * EditorManager constructor comment.

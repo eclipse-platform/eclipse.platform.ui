@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,17 +20,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IModelLifecycleListener;
 import org.eclipse.ui.ISaveableModel;
 import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.ModelLifecycleEvent;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
  * @since 3.2
@@ -199,23 +210,24 @@ public class SaveableModelManager implements ISaveableModelManager {
 	/**
 	 * @param editorsToClose
 	 * @param save
-	 * @param workbenchWindow
+	 * @param window
 	 * @return the post close info to be passed to postClose
 	 */
 	public Object preEditorClose(List editorsToClose, boolean save,
-			IWorkbenchWindow workbenchWindow) {
+			final IWorkbenchWindow window) {
 		// reference count (how many occurrences of a model will go away?)
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
 		for (Iterator it = editorsToClose.iterator(); it.hasNext();) {
 			IEditorPart part = (IEditorPart) it.next();
 			postCloseInfo.partsClosing.add(part);
-			if (!part.isSaveOnCloseNeeded()) {
+			if (save && !part.isSaveOnCloseNeeded()) {
 				// pretend for now that this part is not closing
 				continue;
 			}
-			if (part instanceof ISaveablePart2) {
+			if (save && part instanceof ISaveablePart2) {
 				ISaveablePart2 saveablePart2 = (ISaveablePart2) part;
-				int response = SaveableHelper.savePart(saveablePart2, workbenchWindow, true);
+				// TODO show saveablePart2 before prompting, see EditorManager.saveAll
+				int response = SaveableHelper.savePart(saveablePart2, window, true);
 				// only include this part in the following logic if it returned DEFAULT
 				if (response != ISaveablePart2.DEFAULT) {
 					continue;
@@ -235,9 +247,101 @@ public class SaveableModelManager implements ISaveableModelManager {
 				postCloseInfo.modelsClosing.add(model);
 			}
 		}
-		// TODO prompt for saving of modelsClosing (changes will be lost)
-		// TODO prompt for saving of modelsDecrementing but not closing (changes
-		// won't be lost)
+        if (save) { 
+        	// TODO prompt for saving of dirty modelsClosing (changes will be lost)
+        	// TODO prompt for saving of dirty modelsDecrementing but not closing (changes
+        	// won't be lost)
+        	
+        	List modelsToSave = new ArrayList();
+        	for (Iterator it = postCloseInfo.modelsClosing.iterator(); it.hasNext();) {
+        		ISaveableModel modelClosing = (ISaveableModel) it.next();
+        		if (modelClosing.isDirty()) {
+        			modelsToSave.add(modelClosing);
+        		}
+        	}
+            // Save parts, exit the method if cancel is pressed.
+            if (modelsToSave.size() > 0) {
+                if (modelsToSave.size() == 1) {
+                	ISaveableModel model = (ISaveableModel) modelsToSave.get(0);
+    				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, model.getName()); 
+    				// Show a dialog.
+    				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
+    				MessageDialog d = new MessageDialog(
+    					window.getShell(), WorkbenchMessages.Save_Resource,
+    					null, message, MessageDialog.QUESTION, buttons, 0);
+    				
+    				int choice = SaveableHelper.testGetAutomatedResponse();
+    				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
+    					choice = d.open();
+    				}
+
+    				// Branch on the user choice.
+    				// The choice id is based on the order of button labels
+    				// above.
+    				switch (choice) {
+    				case ISaveablePart2.YES: // yes
+    					break;
+    				case ISaveablePart2.NO: // no
+    					modelsToSave.clear();
+    					break;
+    				default:
+    				case ISaveablePart2.CANCEL: // cancel
+    					return null;
+    				}
+                }
+                else {
+    	            ListSelectionDialog dlg = new ListSelectionDialog(
+    	                    window.getShell(), modelsToSave,
+    	                    new ArrayContentProvider(),
+    	                    new WorkbenchPartLabelProvider(), EditorManager.RESOURCES_TO_SAVE_MESSAGE);
+    	            dlg.setInitialSelections(modelsToSave.toArray());
+    	            dlg.setTitle(EditorManager.SAVE_RESOURCES_TITLE);
+    	
+    	            // this "if" statement aids in testing.
+    	            if (SaveableHelper.testGetAutomatedResponse()==SaveableHelper.USER_RESPONSE) {
+    	            	int result = dlg.open();
+    	                //Just return null to prevent the operation continuing
+    	                if (result == IDialogConstants.CANCEL_ID)
+    	                    return null;
+    	
+    	                modelsToSave = Arrays.asList(dlg.getResult());
+    	            }
+                }
+            }
+    		// Create save block.
+            final List finalModels = modelsToSave;
+    		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
+    			public void run(IProgressMonitor monitor) {
+    				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
+    						monitor);
+    				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
+    				for (Iterator i = finalModels.iterator(); i.hasNext();) {
+    					ISaveableModel model = (ISaveableModel) i.next();
+    					// handle case where this model got saved as a result of saving another
+    					if (!model.isDirty()) {
+    						monitor.worked(1);
+    						continue;
+    					}
+    					try {
+    						model.doSave(new SubProgressMonitor(monitorWrap, 1));
+    					} catch (CoreException e) {
+    						ErrorDialog.openError(window.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
+    					}
+    					if (monitorWrap.isCanceled())
+    						break;
+    				}
+    				monitorWrap.done();
+    			}
+    		};
+
+    		// Do the save.
+    		if(!SaveableHelper.runProgressMonitorOperation(
+    				WorkbenchMessages.Save_All, progressOp, window)) {
+    			// cancelled
+    			return null;
+    		}
+
+        }
 		return postCloseInfo;
 	}
 

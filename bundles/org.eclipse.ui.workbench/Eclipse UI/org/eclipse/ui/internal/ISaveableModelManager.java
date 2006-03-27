@@ -11,10 +11,8 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IModelLifecycleListener;
 import org.eclipse.ui.ISaveableModel;
 import org.eclipse.ui.ISaveableModelSource;
-import org.eclipse.ui.ModelLifecycleEvent;
 
 /**
  * The model manager maintains a list of open saveable models.

@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui;
+package org.eclipse.ui.internal;
+
 
 /**
  * @since 3.2
