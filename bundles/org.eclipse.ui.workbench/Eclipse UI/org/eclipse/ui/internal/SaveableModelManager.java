@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IModelLifecycleListener;
 import org.eclipse.ui.ISaveableModel;
-import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveableModelSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
@@ -209,6 +208,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
 		for (Iterator it = editorsToClose.iterator(); it.hasNext();) {
 			IEditorPart part = (IEditorPart) it.next();
+			postCloseInfo.partsClosing.add(part);
 			if (!part.isSaveOnCloseNeeded()) {
 				// pretend for now that this part is not closing
 				continue;
@@ -221,7 +221,6 @@ public class SaveableModelManager implements ISaveableModelManager {
 					continue;
 				}
 			}
-			postCloseInfo.partsClosing.add(part);
 			ISaveableModel[] modelsFromSource = getSaveableModels(part);
 			for (int i = 0; i < modelsFromSource.length; i++) {
 				incrementRefCount(postCloseInfo.modelsDecrementing,

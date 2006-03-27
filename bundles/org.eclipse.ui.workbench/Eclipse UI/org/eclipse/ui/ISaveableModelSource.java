@@ -22,11 +22,12 @@ public interface ISaveableModelSource {
 
 	/**
 	 * Returns the saveable models presented by the workbench part. If the
-	 * return value of this method changes over time, the model manager must be
-	 * notified about these changes.
+	 * return value of this method changes during the lifetime of this part, the
+	 * model manager must be notified about these changes by calling
+	 * {@link ISaveableModelManager#handleModelLifecycleEvent(ModelLifecycleEvent)}.
 	 * <p>
-	 * The model manager is available as a service from the part site, by calling
-	 * <code>partSite.getService(ISaveableModelManager.class)</code>.
+	 * The model manager is available as a service from the part site, by
+	 * calling <code>partSite.getService(ISaveableModelManager.class)</code>.
 	 * </p>
 	 * 
 	 * @return the saveable models presented by the workbench part
@@ -39,7 +40,8 @@ public interface ISaveableModelSource {
 	 * Returns the saveable models currently active in the workbench part.
 	 * <p>
 	 * Certain workbench actions, such as Save, target only the active models in
-	 * the active part.
+	 * the active part. For example, the active saveable models could be
+	 * determined based on the current selection in the part.
 	 * </p>
 	 * 
 	 * @return the saveable models currently active in the workbench part
