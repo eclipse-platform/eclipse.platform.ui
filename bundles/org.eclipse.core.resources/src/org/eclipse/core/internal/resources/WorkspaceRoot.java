@@ -28,13 +28,13 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	/**
 	 * Cache of the canonicalized platform location.
 	 */
-	private final IPath location;
+	private final IPath workspaceLocation;
 
 	protected WorkspaceRoot(IPath path, Workspace container) {
 		super(path, container);
 		Assert.isTrue(path.equals(Path.ROOT));
-		location = FileUtil.canonicalPath(Platform.getLocation());
-		Assert.isNotNull(location);
+		workspaceLocation = FileUtil.canonicalPath(Platform.getLocation());
+		Assert.isNotNull(workspaceLocation);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IResource#getLocation()
 	 */
 	public IPath getLocation() {
-		return location;
+		return workspaceLocation;
 	}
 
 	/**
@@ -214,6 +214,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	
 	/**
 	 * @see IResource#isLocal(int)
+	 * @deprecated
 	 */
 	public boolean isLocal(int depth) {
 		// the flags parameter is ignored for the workspace root so pass anything
@@ -222,6 +223,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	/**
 	 * @see IResource#isLocal(int)
+	 * @deprecated
 	 */
 	public boolean isLocal(int flags, int depth) {
 		// don't check the flags....workspace root is always local
