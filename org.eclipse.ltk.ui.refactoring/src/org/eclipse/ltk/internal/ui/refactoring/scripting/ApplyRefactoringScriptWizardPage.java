@@ -166,7 +166,6 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			setPageComplete(false);
 			return;
 		} catch (CoreException exception) {
-			RefactoringUIPlugin.log(exception);
 			setErrorMessage(ScriptingMessages.ApplyRefactoringScriptWizardPage_invalid_format);
 			setPageComplete(false);
 			return;
