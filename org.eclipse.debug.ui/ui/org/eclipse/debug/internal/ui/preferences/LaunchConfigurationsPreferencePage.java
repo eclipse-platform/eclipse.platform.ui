@@ -25,8 +25,10 @@ import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -71,13 +73,25 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * Need to make the dialog resizable
+	 * Need to make the dialog resizable, and persist sizing
 	 * @since 3.2
 	 */
 	class LaunchConfigurationMigrationSelectionDialog extends ListSelectionDialog {
+		
+		private String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".MIGRATION_SELECTION_DIALOG"; //$NON-NLS-1$
+		
 		public LaunchConfigurationMigrationSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
 			super(parentShell, input, contentProvider, labelProvider, message);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}
+
+		protected IDialogSettings getDialogBoundsSettings() {
+			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section = settings.getSection(SETTINGS_ID);
+			if (section == null) {
+				section = settings.addNewSection(SETTINGS_ID);
+			} 
+			return section;
 		}
 	}
 	
