@@ -280,7 +280,7 @@ public class SyncInfoToDiffConverter {
 	public static IFileRevision getRemote(IDiff diff) {
 		if (diff instanceof IResourceDiff) {
 			IResourceDiff rd = (IResourceDiff) diff;
-			rd.getAfterState();
+			return rd.getAfterState();
 		}
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;

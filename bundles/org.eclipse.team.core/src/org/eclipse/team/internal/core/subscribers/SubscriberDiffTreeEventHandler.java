@@ -198,7 +198,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	}
 
 	private void addDiff(IDiff diff, IProgressMonitor monitor) {
-		if (filter == null || filter.select(diff, monitor))
+		if (filter == null || !filter.select(diff, monitor))
 			tree.add(diff);
 	}
 
