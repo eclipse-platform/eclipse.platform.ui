@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -38,6 +39,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 public class DiffTreeChangesSection extends ForwardingChangesSection implements IDiffChangeListener, IPropertyChangeListener, IEmptyTreeListener {
 
 	private ISynchronizationContext context;
+	private IStatus[] errors;
+	private boolean showingError;
 	
 	public interface ITraversalFactory {
 		ResourceTraversal[] getTraversals(ISynchronizationScope scope);
@@ -156,6 +159,10 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 
 	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+		IStatus[] errors = event.getErrors();
+		if (errors.length > 0) {
+			this.errors = errors;
+		}
 		calculateDescription();
 	}
 
@@ -244,6 +251,18 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 	
 	protected void calculateDescription() {
+		if (errors != null && errors.length > 0) {
+			if (!showingError) {
+				TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updatePage(getErrorComposite(getContainer()));
+						showingError = true;
+					}
+				});
+			}
+			return;
+		}
+		showingError = false;
 		if (isViewerEmpty()) {
 			handleEmptyViewer();
 		} else {
@@ -263,5 +282,54 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	public void notEmpty(TreeViewer viewer) {
 		calculateDescription();
 	}
+	
+	private Composite getErrorComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(getBackgroundColor());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		composite.setLayoutData(data);	
 
+		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
+		link.setText(TeamUIMessages.ChangesSection_8); 
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				showErrors();
+			}
+		});
+		link.setBackground(getBackgroundColor());
+		link.setUnderlined(true);
+		
+		link = new Hyperlink(composite, SWT.WRAP);
+		link.setText(TeamUIMessages.ChangesSection_9); 
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				errors = null;
+				calculateDescription();
+				// TODO: Should refresh
+			}
+		});
+		link.setBackground(getBackgroundColor());
+		link.setUnderlined(true);
+		
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { getConfiguration().getParticipant().getName() })); 
+
+		return composite;
+	}
+
+	/* private */ void showErrors() {
+		if (errors != null) {
+			IStatus[] status = errors;
+			String title = TeamUIMessages.ChangesSection_11; 
+			if (status.length == 1) {
+				ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
+			} else {
+				MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ChangesSection_12, null); 
+				ErrorDialog.openError(getShell(), title, null, multi);
+			}
+		}
+	}
 }
