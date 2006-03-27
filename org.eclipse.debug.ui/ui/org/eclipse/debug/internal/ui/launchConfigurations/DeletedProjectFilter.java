@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * 
- * Provides implementaiton to filter unavailable projects form the launch configuration dialog.
+ * Provides implementation to filter unavailable projects form the launch configuration dialog.
  * It is (de) activated via the <code>IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED</code> preference.
  * 
  * @since 3.2
