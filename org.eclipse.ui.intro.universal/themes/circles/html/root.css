@@ -35,11 +35,11 @@ a .link-extra-div {
 #page-links a p .text {
 	margin-left: 3px;
 	position: relative;
-	top: -1.6em;
-	padding-top: 5px;
+	top: -50px;
+	padding-top: 25px;
 	padding-left: 9px;
 	padding-right: 10px;
-	margin-bottom: -1.6em;
+	margin-bottom: -50px;
 	font-size : 11pt;	font-weight : 500;
 	padding-bottom: 5px;
 	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
