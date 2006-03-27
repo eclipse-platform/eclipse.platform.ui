@@ -62,7 +62,9 @@ public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog
 		if (elements.length == 1) {
 			TreeItem item = fLabelProvider.getItem(elements[0]);
 			TreePath treePath = fViewer.getTreePath(item);
-			fViewer.setSelection(new TreeSelection(treePath), true, true);
+			if (treePath != null) {
+				fViewer.setSelection(new TreeSelection(treePath), true, true);
+			}
 		}
 		super.okPressed();
 	}

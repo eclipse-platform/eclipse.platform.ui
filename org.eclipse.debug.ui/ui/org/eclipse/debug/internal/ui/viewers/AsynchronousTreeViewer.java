@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +23,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CellEditor;
@@ -681,12 +680,13 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     }    
 
     /**
-     * Constructs and returns a tree path for the given item. Must be called
+     * Constructs and returns a tree path for the given item
+     * or <code>null</code>. Must be called
      * from the UI thread.
      * 
      * @param item
      *            item to constuct a path for
-     * @return tree path for the item
+     * @return tree path for the item or <code>null</code> if none
      */
     protected synchronized TreePath getTreePath(TreeItem item) {
         TreeItem parent = item;
@@ -694,12 +694,16 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
         while (parent != null && !parent.isDisposed()) {
             Object parentElement = parent.getData();
             if (parentElement == null) {
-            	return new TreePath(new Object[0]);
+            	return null;
             }
 			path.add(0, parentElement);
             parent = parent.getParentItem();
         }
-        path.add(0, fTree.getData());
+        Object data = fTree.getData();
+        if (data == null) {
+        	return null;
+        }
+		path.add(0, data);
         return new TreePath(path.toArray());
     }
     
@@ -859,7 +863,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
             return StructuredSelection.EMPTY;
         }
         List list = getSelectionFromWidget();
-        return new TreeSelection((TreePath[]) list.toArray());
+        return new TreeSelection((TreePath[]) list.toArray(new TreePath[list.size()]));
     }
 
     /*
@@ -869,11 +873,14 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
      */
     protected synchronized List getSelectionFromWidget() {
         TreeItem[] selection = fTree.getSelection();
-        TreePath[] paths = new TreePath[selection.length];
+        List paths = new ArrayList(selection.length);
         for (int i = 0; i < selection.length; i++) {
-            paths[i] = getTreePath(selection[i]);
+            TreePath treePath = getTreePath(selection[i]);
+            if (treePath != null) {
+            	paths.add(treePath);
+            }
         }
-        return Arrays.asList(paths);
+        return paths;
     }
 
     /* (non-Javadoc)
