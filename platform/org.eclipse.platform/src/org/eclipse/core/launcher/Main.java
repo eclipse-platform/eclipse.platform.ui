@@ -362,7 +362,7 @@ public class Main {
             if (!compatible) {
                 // any non-zero value should do it - 14 used to be used for version incompatibility in Eclipse 2.1 
                 System.getProperties().put(PROP_EXITCODE, "14"); //$NON-NLS-1$
-                System.getProperties().put(PROP_EXITDATA, "Required Java version: "+ requiredVersion + ". Available: " + availableVersion + '.'); //$NON-NLS-1$ //$NON-NLS-2$
+                System.getProperties().put(PROP_EXITDATA, "<title>Incompatible JVM</title>Version " + availableVersion + " of the JVM is not suitable for this product. Version: "+ requiredVersion + " or greater is required."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
             return compatible;
         } catch (SecurityException e) {
