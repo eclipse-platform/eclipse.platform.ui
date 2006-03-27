@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.ImageAndMessageArea;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
@@ -34,9 +35,6 @@ import org.eclipse.swt.widgets.Control;
  * for displaying errors and warnings.
  * 
  * @since 3.2
- * 
- * This class is not intended to be extended by clients.
- * 
  */
 class PreferenceMessageArea extends DialogMessageArea {
 	
@@ -46,7 +44,7 @@ class PreferenceMessageArea extends DialogMessageArea {
 
     private CLabel titleLabel;
 
-	private MessageArea messageArea;
+	private ImageAndMessageArea messageArea;
 	
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 	
@@ -76,7 +74,7 @@ class PreferenceMessageArea extends DialogMessageArea {
         titleLabel = new CLabel(parent, SWT.NONE);
         titleLabel.setFont(JFaceResources.getBannerFont());
         
-        messageArea = new MessageArea(preferenceDialog.formTitleComposite, SWT.NONE);
+        messageArea = new ImageAndMessageArea(preferenceDialog.formTitleComposite, SWT.NONE);
         messageArea.setFont(JFaceResources.getDialogFont());
    		messageArea.setVisible(false);
 	}

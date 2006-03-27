@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.preference;
+package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.TextControlCreator;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Text;
  * This class is not intended to be extended by clients.
  * 
  */
-class MessageArea extends Composite {
+public class ImageAndMessageArea extends Composite {
 	
 	private int BORDER_MARGIN = IDialogConstants.HORIZONTAL_SPACING/2;
 
@@ -48,14 +48,16 @@ class MessageArea extends Composite {
 	
 
 	/**
-	 * Constructs a new MessageArea with an empty decorated field.
+	 * Constructs a new ImageAndMessageArea with an empty decorated field.
 	 * Calls to <code>setText(String text)</code> and <code>setImage(Image image)</code> 
 	 * are required in order to fill the message area. 
+	 * <p>
+	 * The style bit <code>SWT.WRAP</code> should be used if a larger message area is desired.
 	 * 
 	 * @param parent the parent composite
-	 * @param style the SWT style bits
+	 * @param style the SWT style bits. Using SWT.WRAP will create a larger message area.
 	 */
-	public MessageArea(Composite parent, int style) {
+	public ImageAndMessageArea(Composite parent, int style) {
 		super(parent, style);
 		container = new Composite(this, style);
 		GridLayout glayout = new GridLayout();
@@ -64,10 +66,22 @@ class MessageArea extends Composite {
 		glayout.marginHeight = 0;
 		container.setLayout(glayout);
 
-		messageField = new DecoratedField(container,SWT.READ_ONLY,new TextControlCreator());
-		messageField.getLayoutControl().setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-       
+		messageField = new DecoratedField(container,SWT.READ_ONLY | style,new TextControlCreator());
+    	setFont(JFaceResources.getDialogFont());
+		
+		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
+		int lineHeight = ((Text) messageField.getControl()).getLineHeight() + 2 * BORDER_MARGIN;
+		if((style & SWT.WRAP) > 0)
+			gd.heightHint = 2 * lineHeight;
+		else
+			gd.heightHint = lineHeight;
+		
+		messageField.getLayoutControl().setLayoutData(gd);
+		
 		addPaintListener(new PaintListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+			 */
 			public void paintControl(PaintEvent e) {
 				onPaint(e);
 			}
@@ -76,6 +90,9 @@ class MessageArea extends Composite {
 		// sets the layout and size to account for the BORDER_MARGIN between
 		// the border drawn around the container and the decorated field.
 		setLayout(new Layout() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+			 */
 			public void layout(Composite parent, boolean changed) {
 				Rectangle carea = getClientArea();
 				container.setBounds(carea.x + BORDER_MARGIN, carea.y + BORDER_MARGIN,
@@ -83,6 +100,9 @@ class MessageArea extends Composite {
 							carea.height - (2 * BORDER_MARGIN));
 			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+			 */
 			public Point computeSize(Composite parent, int wHint,
 					int hHint, boolean changed) {
 				Point size;
@@ -123,7 +143,7 @@ class MessageArea extends Composite {
 	/**
 	 * Adds an image to decorated field to be shown in the message area.
 	 * 
-	 * @param image desired image to be shown in the MessageArea
+	 * @param image desired image to be shown in the ImageAndMessageArea
 	 */
 	public void setImage(Image image) {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();

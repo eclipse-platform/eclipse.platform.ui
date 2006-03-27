@@ -117,7 +117,7 @@ public class TitleAreaDialog extends TrayDialog {
     
     private int messageLabelHeight;
     
-    private MessageArea messageArea;
+    private ImageAndMessageArea messageArea;
 
 	private String warningMessage;
 
@@ -411,12 +411,13 @@ public class TitleAreaDialog extends TrayDialog {
 
             if(messageArea == null){
             	// create a message area to display the error
-                messageArea = new MessageArea(titleArea, SWT.NULL);
+                messageArea = new ImageAndMessageArea(titleArea, SWT.WRAP);
         		messageArea.setBackground(messageLabel.getBackground());
-       		
+
         		Policy.getAnimator().setAnimationState(ControlAnimator.CLOSED);
               }
             // show the error
+            messageArea.setToolTipText(errorMessage);
             messageArea.setText(errorMessage);
         	messageArea.setImage(JFaceResources.getImage(DLG_IMG_TITLE_ERROR));
             setMessageAreaVisible(true);
@@ -691,12 +692,13 @@ public class TitleAreaDialog extends TrayDialog {
             warningMessage = newMessage;
             if(messageArea == null){
             	// create a message area to display the error
-            	messageArea = new MessageArea(titleArea, SWT.NULL);
+            	messageArea = new ImageAndMessageArea(titleArea, SWT.WRAP);
             	messageArea.setBackground(messageLabel.getBackground());
        		
             	Policy.getAnimator().setAnimationState(ControlAnimator.CLOSED);
             }
             // show the error
+            messageArea.setToolTipText(warningMessage);
             messageArea.setText(warningMessage);
             messageArea.setImage(JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING));
             setMessageAreaVisible(true);
@@ -704,5 +706,5 @@ public class TitleAreaDialog extends TrayDialog {
         int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
         setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
-    }
+    } 
 }
