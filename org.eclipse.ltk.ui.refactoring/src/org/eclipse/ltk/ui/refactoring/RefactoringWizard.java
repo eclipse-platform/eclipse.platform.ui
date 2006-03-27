@@ -170,7 +170,7 @@ public abstract class RefactoringWizard extends Wizard {
 		Assert.isTrue(flags < LAST);
 		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0) 
 			flags |= WIZARD_BASED_USER_INTERFACE;
-		org.eclipse.core.runtime.Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
+		Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
 		fRefactoring= refactoring;
 		fFlags= flags;
 		setNeedsProgressMonitor(true);
