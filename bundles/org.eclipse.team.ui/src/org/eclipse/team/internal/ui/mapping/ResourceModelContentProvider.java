@@ -425,7 +425,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 				if (!removals.isEmpty())
 					viewer.remove(viewer.getInput(), removals.toArray());
 				if (!refreshes.isEmpty())
-					viewer.remove(refreshes.toArray());
+					viewer.refresh(refreshes.toArray());
 			} finally {
 				tree.setRedraw(true);
 			}
@@ -482,7 +482,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			TreeItem control = children[i];
 			Object data = control.getData();
 			IResource resource = Utils.getResource(data);
-			if (resource.getType() == IResource.PROJECT) {
+			if (resource != null && resource.getType() == IResource.PROJECT) {
 				result.add(resource);
 			}
 		}
