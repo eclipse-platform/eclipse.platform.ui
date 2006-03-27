@@ -924,20 +924,6 @@
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
-            targetID="org.eclipse.team.ccvs.ui.HistoryView"
-            id="org.eclipse.team.cvs.ui.history">
-         <action
-               label="%HistoryFilter.label"
-               hoverIcon="$nl$/icons/full/elcl16/filter_history.gif"
-               icon="$nl$/icons/full/elcl16/filter_history.gif"
-               tooltip="%HistoryFilter.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction"
-               disabledIcon="$nl$/icons/full/dlcl16/filter_history.gif"
-               toolbarPath="actions"
-               id="org.eclipse.team.cvs.ui.historyaction">
-         </action>
-      </viewContribution>
-      <viewContribution
             targetID="org.eclipse.team.ccvs.ui.RepositoriesView"
             id="org.eclipse.team.cvs.ui.repoview_actions">
          <action
