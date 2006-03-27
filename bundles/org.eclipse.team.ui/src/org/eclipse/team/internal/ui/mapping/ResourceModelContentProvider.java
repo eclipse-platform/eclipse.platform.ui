@@ -191,10 +191,11 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 				List result = new ArrayList();
 				for (int i = 0; i < mappings.length; i++) {
 					ResourceMapping resourceMapping = mappings[i];
-					if (resourceMapping.getModelObject() instanceof IResource) {
-						IResource root = (IResource) resourceMapping.getModelObject();
+					Object element = resourceMapping.getModelObject();
+					IResource root = getResource(element);
+					if (root != null) {
 						if (resource.getFullPath().isPrefixOf(root.getFullPath())) {
-							mapping = scope.getMapping(root);
+							mapping = scope.getMapping(element);
 							if (mapping != null) {
 								ResourceTraversal[] traversals = scope.getTraversals(mapping);
 								result.addAll(Arrays.asList(traversals));
@@ -208,6 +209,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		return new ResourceTraversal[0];
 	}
 	
+	private IResource getResource(Object element) {
+		if (element instanceof IResource) {
+			return (IResource) element;
+		}
+		return Utils.getResource(element);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object)
 	 */
