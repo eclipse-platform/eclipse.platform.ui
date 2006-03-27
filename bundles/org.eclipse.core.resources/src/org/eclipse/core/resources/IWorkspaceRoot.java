@@ -206,11 +206,12 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	/**
 	 * Returns a handle to the project resource with the given name
 	 * which is a child of this root.  The given name must be a valid
-	 * project name  as defined by {@link IWorkspace#validateName(String, int)}.
+	 * path segment as defined by {@link IPath#isValidSegment(String)}.
 	 * <p>
 	 * Note: This method deals exclusively with resource handles, 
 	 * independent of whether the resources exist in the workspace.
-	 * The validation check on the project name is not done
+	 * With the exception of validating that the name is a valid path segment,
+	 * validation checking of the project name is not done
 	 * when the project handle is constructed; rather, it is done
 	 * automatically as the project is created.
 	 * </p>
