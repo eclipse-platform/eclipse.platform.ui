@@ -48,10 +48,6 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);
 			newWorkingCopy.doSave();
-			LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-			if(dialog != null) {
-				dialog.refreshFilteringLabel();
-			}
 		} catch (CoreException e) {
 			errorDialog(e);
 		}

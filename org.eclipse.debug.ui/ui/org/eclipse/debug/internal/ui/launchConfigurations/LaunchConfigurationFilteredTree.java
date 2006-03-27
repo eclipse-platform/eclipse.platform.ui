@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -26,7 +25,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class LaunchConfigurationFilteredTree extends FilteredTree {
 
-	private final ILaunchConfigurationDialog fDialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 	private Job fRefreshJob;
 	
 	/**
@@ -61,10 +59,6 @@ public class LaunchConfigurationFilteredTree extends FilteredTree {
 			        boolean update = text.length() > 0 && !initial;
 			        updateToolbar(update);
 			        treeViewer.refresh(true);
-		            if(fDialog != null && fDialog instanceof LaunchConfigurationsDialog) {
-			        	treeViewer.expandAll();
-			        	((LaunchConfigurationsDialog)fDialog).refreshFilteringLabel();
-			        }
 			        return Status.OK_STATUS;
 				}
 		        return Status.CANCEL_STATUS;

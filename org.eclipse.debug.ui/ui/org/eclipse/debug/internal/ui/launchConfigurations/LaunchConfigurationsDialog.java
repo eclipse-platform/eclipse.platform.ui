@@ -79,7 +79,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
@@ -158,12 +157,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
 	private int fOpenMode = LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED;
+	
 	/**
 	 * dialog settings
 	 */
 	private static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	private static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
 	private static final String DIALOG_EXPANDED_NODES = IDebugUIConstants.PLUGIN_ID + ".EXPANDED_NODES"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the currently visible dialog
 	 * @return the currently visible launch dialog
@@ -180,30 +181,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * the last control to have focus before the progress part to focus
-	 * @since 3.2
+	 * widgets
 	 */
 	private Control fLastControl;
-	
-	/**
-	 * The Composite used to insert an adjustable 'sash' between the tree and the tabs.
-	 */
 	private SashForm fSashForm;
-	
-	/**
-	 * Tree view of launch configurations
-	 */
 	private LaunchConfigurationView fLaunchConfigurationView;
-	
-	/**
-	 * Tab edit area
-	 */
 	private LaunchConfigurationTabGroupViewer fTabViewer;
-
-	/**
-	 * The 'cancel' button that appears when the in-dialog progress monitor is shown.
-	 */
 	private Button fProgressMonitorCancelButton;	
+	private ProgressMonitorPart fProgressMonitorPart;
+	private LaunchGroupExtension fGroup;
+	private Image fBannerImage;
 	
 	/**
 	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
@@ -217,11 +204,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private IStatus fInitialStatus;
 
 	/**
-	 * progress monitor part
-	 */
-	private ProgressMonitorPart fProgressMonitorPart;
-	
-	/**
 	 * Listener for a list
 	 */
 	private ListenerList changeListeners = new ListenerList();
@@ -230,34 +212,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * The number of 'long-running' operations currently taking place in this dialog
 	 */	
 	private long fActiveRunningOperations = 0;
-	
-	/**
-	 * The launch group being displayed
-	 */
-	private LaunchGroupExtension fGroup;
-	
-	/**
-	 * Banner image
-	 */
-	private Image fBannerImage;
-	
+
 	/**
 	 * Double-click action
 	 */
 	private IAction fDoubleClickAction;
-
-	/**
-	 * the label for the viewer about items filtered
-	 * @since 3.2
-	 */
-	private Label fFilteringLabel;
 	
-	/**
-	 * the current launch manager
-	 * 
-	 * @since 3.2
-	 */
-	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
+//	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 	
 	/**
 	 * Filters for the LCD
@@ -560,7 +521,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					}
 				} else {
 					getNewAction().run();
-					refreshFilteringLabel();
 				}
 			}
 		};
@@ -571,10 +531,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
         viewForm.setContent(viewFormContents);
-		fFilteringLabel = new Label(viewFormContents, SWT.NONE);
-		fFilteringLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | SWT.BEGINNING));
-		fFilteringLabel.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
-		refreshFilteringLabel();
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
 			public boolean getConfirmation() {
 				return canDiscardCurrentConfig();
@@ -618,54 +574,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			filters.add(fWorkingSetsFilter);
 		}
 		return (ViewerFilter[]) filters.toArray(new ViewerFilter[filters.size()]);
-	}
-	
-    /**
-	 * Returns whether the given categories are equal.
-	 * 
-	 * @param c1 category identifier or <code>null</code>
-	 * @param c2 category identifier or <code>null</code>
-	 * @return boolean
-	 */
-	private boolean equalCategories(String c1, String c2) {
-		if (c1 == null || c2 == null) {
-			return c1 == c2;
-		}
-		return c1.equals(c2);
 	} 
-	
-	/**
-	 * Displays how many of the items showing matched the filtering currently in operation
-	 * @since 3.2
-	 */
-	public void refreshFilteringLabel() {
-		try {
-			int total = 0;
-			ILaunchConfiguration[] configs = fLaunchManager.getLaunchConfigurations();
-			for(int i = 0; i < configs.length; i++) {
-				if(configs[i].supportsMode(getMode()) & !configs[i].getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) & equalCategories(configs[i].getCategory(), getLaunchGroup().getCategory())) {
-					total++;
-				}
-			}
-			ILaunchConfigurationType[] types = fLaunchManager.getLaunchConfigurationTypes();
-			for(int i = 0; i < types.length; i++) {
-				if(types[i].supportsMode(getMode()) & types[i].isPublic() & equalCategories(types[i].getCategory(), getLaunchGroup().getCategory())) {
-					total++;
-				}
-			}
-			TreeViewer viewer = ((TreeViewer)fLaunchConfigurationView.getViewer());
-			TreeItem[] roots = viewer.getTree().getItems();
-			int count = roots.length;
-			for (int i = 0; i < roots.length; i++) {
-				count += roots[i].getItemCount();
-			}
-			fFilteringLabel.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_6, new Object[] {new Integer(count), new Integer(total)}));
-			
-		}
-		catch(CoreException e) {
-            DebugUIPlugin.log(e);
-		}
-	}
 	
 	/**
 	 * Set the initial selection in the tree.
@@ -702,7 +611,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (name == null) {
 			name = EMPTY_STRING;
 		}
-		return fLaunchManager.generateUniqueLaunchConfigurationNameFrom(name);
+		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 	}
 	
 	/* (non-Javadoc)
@@ -950,20 +859,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		ISelection selection = event.getSelection();
  		if (!selection.isEmpty()) {
  			if (selection instanceof IStructuredSelection) {
- 				//fix for bug 111079
  				Button button = getButton(ID_LAUNCH_BUTTON);
  				IStructuredSelection structuredSelection = (IStructuredSelection)selection;
  				if (structuredSelection.size() == 1) {
  					newInput = structuredSelection.getFirstElement();
  					button.setEnabled(true);
- 				}//end if
+ 				}
  				else {
  					button.setEnabled(false);
- 				}//end else
+ 				}
  			}
  		}
  		ILaunchConfiguration original = getTabViewer().getOriginal();
- 		if (original != null && newInput == null && fLaunchManager.getMovedTo(original) != null) {
+ 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
 			// the current config is about to be deleted ignore this change
 			return;
 		}
@@ -975,7 +883,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				boolean renamed = false;
  				if (newInput instanceof ILaunchConfiguration) {
  					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
- 					renamed = fLaunchManager.getMovedFrom(lc) != null;
+ 					renamed = getLaunchManager().getMovedFrom(lc) != null;
  				}
 	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
 	 				IStructuredSelection sel;
@@ -990,11 +898,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 			}
  			}
 			getTabViewer().setInput(newInput);
- 			// bug 14758 - if the newly selected config is dirty, save its changes
  			if (getTabViewer().isDirty()) {
  				getTabViewer().handleApplyPressed();
- 			} 
- 			// bug 14758			
+ 			} 	
  			ILaunchConfigurationTabGroup newGroup = getTabGroup();
  			if (!isEqual(group, newGroup)) {
  				if (getShell() != null && getShell().isVisible()) {
@@ -1018,7 +924,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		close();
 		if(config != null) {
 			DebugUITools.launch(config, mode);
-		}//end if
+		}
 	}
 
 	/**
@@ -1363,6 +1269,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
+	 * Returns the current launch manager
+	 * @return the current launch manager
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+	
+	/**
 	 * Set the flag indicating how this dialog behaves when the <code>open()</code> method is called.
 	 * Valid values are defined by the LAUNCH_CONFIGURATION_DIALOG... constants in this class.
 	 */
@@ -1527,7 +1441,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						viewer.addFilter(fLCTFilter);
 					}
 				}
-				refreshFilteringLabel();
 				updateSelection(path, pidx, cidx);
 				return null;
 			}
