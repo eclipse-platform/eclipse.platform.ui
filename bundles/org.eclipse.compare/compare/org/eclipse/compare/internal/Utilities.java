@@ -344,7 +344,7 @@ public class Utilities {
 			} catch (NumberFormatException x) {
 				CompareUIPlugin.log(x);
 			} catch (MissingResourceException x) {
-				CompareUIPlugin.log(x);
+				// silently ignore Exception
 			}
 		}
 		return dfltValue;
