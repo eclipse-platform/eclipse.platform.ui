@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
@@ -25,28 +24,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public final class ResourceModelProvider extends ModelProvider {
 
-	private IResource[] getChildren(IContainer container, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		if (context instanceof RemoteResourceMappingContext) {
-			Set result = new HashSet();
-			RemoteResourceMappingContext rrmc = (RemoteResourceMappingContext) context;
-			IResource[] remoteMembers = rrmc.fetchMembers(container, monitor);
-			for (int i = 0; i < remoteMembers.length; i++) {
-				IResource resource = remoteMembers[i];
-				result.add(resource);
-			}
-			IResource[] localMembers = container.members();
-			for (int i = 0; i < localMembers.length; i++) {
-				IResource resource = localMembers[i];
-				result.add(resource);
-			}
-		}
-		return container.members();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.IResource, org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
 	}
 
@@ -69,12 +50,7 @@ public final class ResourceModelProvider extends ModelProvider {
 						if (resource.getType() == IResource.FILE) {
 							result.add(resource);
 						} else {
-							IResource[] children = getChildren((IContainer) resource, context, monitor);
-							for (int k = 0; k < children.length; k++) {
-								IResource child = children[k];
-								if (child.getType() == IResource.FILE)
-									result.add(child);
-							}
+							result.add(new ShallowContainer((IContainer)resource));
 						}
 						break;
 					case IResource.DEPTH_ZERO :
@@ -84,6 +60,16 @@ public final class ResourceModelProvider extends ModelProvider {
 				}
 			}
 		}
-		return getMappings((IResource[]) result.toArray(new IResource[result.size()]), context, monitor);
+		ResourceMapping[] mappings = new ResourceMapping[result.size()];
+		int i = 0;
+		for (Iterator iter = result.iterator(); iter.hasNext();) {
+			Object element = iter.next();
+			if (element instanceof IResource) {
+				mappings[i++] = new SimpleResourceMapping((IResource) element);
+			} else {
+				mappings[i++] = new ShallowResourceMapping((ShallowContainer)element);
+			}
+		}
+		return mappings;
 	}
 }

@@ -21,9 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.1
  */
 public class SimpleResourceMapping extends ResourceMapping {
-	public static final String MODEL_PROVIDER = ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	private final IResource resource;
-	private ResourceTraversal[] traversals;
 
 	public SimpleResourceMapping(IResource resource) {
 		this.resource = resource;
@@ -39,6 +37,11 @@ public class SimpleResourceMapping extends ResourceMapping {
 				IResource other = (IResource) object;
 				return resource.getFullPath().isPrefixOf(other.getFullPath());
 			}
+			if (object instanceof ShallowContainer) {
+				ShallowContainer sc = (ShallowContainer) object;
+				IResource other = sc.getResource();
+				return resource.getFullPath().isPrefixOf(other.getFullPath());
+			}
 		}
 		return false;
 	}
@@ -51,7 +54,7 @@ public class SimpleResourceMapping extends ResourceMapping {
 	}
 
 	public String getModelProviderId() {
-		return MODEL_PROVIDER;
+		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
 
 	/* (non-Javadoc)
@@ -67,9 +70,9 @@ public class SimpleResourceMapping extends ResourceMapping {
 	 * Method declared on ResourceMapping.
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
-		if (traversals == null) {
-			traversals = new ResourceTraversal[] {new ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
+		if (resource.getType() == IResource.ROOT) {
+			return new ResourceTraversal[] {new ResourceTraversal(((IWorkspaceRoot)resource).getProjects(), IResource.DEPTH_INFINITE, IResource.NONE)};
 		}
-		return traversals;
+		return new ResourceTraversal[] {new ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
 	}
 }
