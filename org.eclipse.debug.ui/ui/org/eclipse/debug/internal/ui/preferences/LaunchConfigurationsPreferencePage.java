@@ -36,6 +36,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
@@ -68,6 +70,17 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	/**
+	 * Need to make the dialog resizable
+	 * @since 3.2
+	 */
+	class LaunchConfigurationMigrationSelectionDialog extends ListSelectionDialog {
+		public LaunchConfigurationMigrationSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
+			super(parentShell, input, contentProvider, labelProvider, message);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}
+	}
+	
 	/**
 	 * Content provider for the launch configuration type table
 	 */
@@ -276,9 +289,11 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				MessageDialog.openInformation(getShell(), DebugPreferencesMessages.LaunchingPreferencePage_29, DebugPreferencesMessages.LaunchingPreferencePage_30);
 				return;
 			}
-			ListSelectionDialog listd = new ListSelectionDialog(getShell(), new AdaptableList(configurations), 
-											new WorkbenchContentProvider(),	DebugUITools.newDebugModelPresentation(), 
-											DebugPreferencesMessages.LaunchingPreferencePage_0);
+			LaunchConfigurationMigrationSelectionDialog listd = new LaunchConfigurationMigrationSelectionDialog(getShell(), 
+																new AdaptableList(configurations), 
+																new WorkbenchContentProvider(),	
+																DebugUITools.newDebugModelPresentation(), 
+																DebugPreferencesMessages.LaunchingPreferencePage_0);
 			listd.setTitle(DebugPreferencesMessages.LaunchingPreferencePage_28);
 			listd.setInitialSelections(configurations);
 			if(listd.open() == IDialogConstants.OK_ID) {
