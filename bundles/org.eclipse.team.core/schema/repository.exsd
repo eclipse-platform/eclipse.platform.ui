@@ -110,7 +110,7 @@ A repository provider type can also specify one or more meta-file paths (delimit
 &lt;extension point=&quot;org.eclipse.team.core.repository&quot;&gt;
   &lt;repository
     class=&quot;org.eclipse.myprovider.MyRepositoryProvider&quot;
-    typeClass=&quot;org.eclipse.myprovider.MyRepositoryProvider&quot;
+    typeClass=&quot;org.eclipse.myprovider.MyRepositoryProviderType&quot;
     id=&quot;org.eclipse.myprovider.myProviderID&quot;
     canImportId=&quot;org.eclipse.myprovider.myOldProviderID&quot;
     metaFilePaths=&quot;.meta/files,.meta/version&quot;&gt;
