@@ -45,9 +45,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 */
 	protected ArrayList allPathsForLocation(URI inputLocation) {
 		URI location = FileUtil.canonicalURI(inputLocation);
+		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
 		final IWorkspaceRoot root = getWorkspace().getRoot();
 		final ArrayList results = new ArrayList();
-		if (location.equals(root.getLocationURI())) {
+		if (URIUtil.equals(location, root.getLocationURI())) {
 			//there can only be one resource at the workspace root's location
 			results.add(Path.ROOT);
 			return results;
@@ -58,6 +59,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			IProject project = projects[i];
 			//check the project location
 			URI testLocation = project.getLocationURI();
+			// if we are looking for file: locations try to get a file: location for this project
+			if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
+				testLocation = getFileURI(testLocation);
+			if (testLocation == null)
+				continue;
 			URI relative = testLocation.relativize(location);
 			if (!relative.isAbsolute() && !relative.equals(testLocation)) {
 				IPath suffix = new Path(relative.getPath());
@@ -72,6 +78,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			for (Iterator it = links.values().iterator(); it.hasNext();) {
 				LinkDescription link = (LinkDescription) it.next();
 				testLocation = varMan.resolveURI(link.getLocationURI());
+				// if we are looking for file: locations try to get a file: location for this link
+				if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
+					testLocation = getFileURI(testLocation);
+				if (testLocation == null)
+					continue;
 				relative = testLocation.relativize(location);
 				if (!relative.isAbsolute() && !relative.equals(testLocation)) {
 					IPath suffix = new Path(relative.getPath());
@@ -80,6 +91,24 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			}
 		}
 		return results;
+	}
+	
+	/** 
+	 * Tries to obtain a file URI for the given URI. Returns <code>null</code> if the file system associated
+	 * to the URI scheme does not map to the local file system. 
+	 * @param locationURI the URI to convert
+	 * @return a file URI or <code>null</code>
+	 */
+	private URI getFileURI(URI locationURI) {
+		try {
+			IFileStore testLocationStore = EFS.getStore(locationURI);
+			java.io.File storeAsFile =  testLocationStore.toLocalFile(EFS.NONE, null);
+			if (storeAsFile != null)
+				return URIUtil.toURI(storeAsFile.getAbsolutePath());
+		} catch (CoreException e) {
+			// we don't know such file system or some other failure, just return null
+		}
+		return null;
 	}
 
 	/**

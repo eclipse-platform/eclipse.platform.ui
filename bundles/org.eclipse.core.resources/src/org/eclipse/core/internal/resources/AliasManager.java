@@ -449,8 +449,9 @@ public class AliasManager implements IManager, ILifecycleListener {
 					if (compare != 0)
 						return compare;
 				}
-				IPath path1 = new Path(store1.toString());
-				IPath path2 = new Path(store2.toString());
+				// XXX ignore query part - if IFileStore URIs need not have paths, this is wrong 
+				IPath path1 = new Path(store1.toURI().getPath());
+				IPath path2 = new Path(store2.toURI().getPath());
 				int segmentCount1 = path1.segmentCount();
 				int segmentCount2 = path2.segmentCount();
 				for (int i = 0; (i < segmentCount1) && (i < segmentCount2); i++) {
