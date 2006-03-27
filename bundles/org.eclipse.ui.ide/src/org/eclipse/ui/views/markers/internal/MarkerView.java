@@ -127,7 +127,7 @@ public abstract class MarkerView extends TableView {
 	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
-	private class MarkerProcessJob extends Job {
+	class MarkerProcessJob extends Job {
 
 		/**
 		 * Create a new instance of the receiver.

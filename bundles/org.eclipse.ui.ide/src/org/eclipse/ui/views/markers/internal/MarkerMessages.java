@@ -266,6 +266,7 @@ public class MarkerMessages extends NLS{
 	public static String ProblemView_GroupByMenu;
 	public static String ProblemView_Type;
 	public static String ProblemView_None;
+	public static String ProblemView_UpdateCategoryJob;
 	
 	public static String Util_WorkspaceName;
 	public static String Util_ProjectRoot;

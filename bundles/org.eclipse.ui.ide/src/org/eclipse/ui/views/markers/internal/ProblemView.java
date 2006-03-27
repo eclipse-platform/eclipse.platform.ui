@@ -17,6 +17,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -104,10 +108,29 @@ public class ProblemView extends MarkerView {
 		 */
 		public void run() {
 
-			problemView.selectCategoryField(groupingField, problemView
-					.getMarkerAdapter().getCategorySorter());
-			getMarkerAdapter().getCategorySorter().saveState(
-					getDialogSettings());
+			if (isChecked()) {				
+				Job categoryJob = new Job(MarkerMessages.ProblemView_UpdateCategoryJob) {
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							markerProcessJob.join();
+						} catch (InterruptedException e) {
+							return Status.CANCEL_STATUS;
+						}
+						problemView.selectCategoryField(groupingField, problemView
+								.getMarkerAdapter().getCategorySorter());
+						
+						getMarkerAdapter().getCategorySorter().saveState(
+								getDialogSettings());
+						return Status.OK_STATUS;
+					}
+				};
+				categoryJob.setSystem(true);
+				getProgressService().schedule(categoryJob);			
+				
+			}
 
 		}
 	}
@@ -524,10 +547,11 @@ public class ProblemView extends MarkerView {
 
 	}
 
+	
 	/**
 	 * Select the field groupingField.
-	 * 
-	 * @param description
+	 * @param groupingField
+	 * @param sorter
 	 */
 	void selectCategoryField(IField groupingField, CategorySorter sorter) {
 		getMarkerAdapter().getCurrentMarkers().clearGroups();
@@ -562,35 +586,37 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#restoreFilters(org.eclipse.ui.IMemento)
 	 */
-void restoreFilters(IMemento memento) {
+	void restoreFilters(IMemento memento) {
 
 		super.restoreFilters(memento);
-		
-		if (memento == null) 
+
+		if (memento == null)
 			return;
-		
+
 		IMemento[] sections = memento.getChildren(TAG_SYSTEM_FILTER_ENTRY);
-		
-		
-		Collection registered = MarkerSupportRegistry.getInstance().getRegisteredFilters();
+
+		Collection registered = MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters();
 		MarkerFilter[] filters = new MarkerFilter[registered.size()];
-		registered.toArray(filters);		
+		registered.toArray(filters);
 
 		if (sections != null) {
-			
+
 			for (int i = 0; i < sections.length; i++) {
 				String filterName = sections[i].getID();
-				boolean enabled = Boolean.valueOf(sections[i].getString(MarkerFilter.TAG_ENABLED)).booleanValue();
-				setEnablement(filterName,enabled,filters);
-				
+				boolean enabled = Boolean.valueOf(
+						sections[i].getString(MarkerFilter.TAG_ENABLED))
+						.booleanValue();
+				setEnablement(filterName, enabled, filters);
+
 			}
 		}
 
-	
 	}
+
 	/**
-	 * Set the enablement state of the filter called filterName to
-	 * enabled.
+	 * Set the enablement state of the filter called filterName to enabled.
+	 * 
 	 * @param filterName
 	 * @param enabled
 	 * @param filters
