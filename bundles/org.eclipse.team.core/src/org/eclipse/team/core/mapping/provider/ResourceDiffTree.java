@@ -114,8 +114,11 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	}
 
 	private IResource internalGetResource(IPath fullPath, boolean container) {
-		if (container)
+		if (container) {
+			if (fullPath.segmentCount() == 1)
+				return ResourcesPlugin.getWorkspace().getRoot().getProject(fullPath.segment(0));
 			return ResourcesPlugin.getWorkspace().getRoot().getFolder(fullPath);
+		}
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
 	}
 
