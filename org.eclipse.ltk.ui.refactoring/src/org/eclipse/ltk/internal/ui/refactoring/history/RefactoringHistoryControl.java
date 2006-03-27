@@ -466,7 +466,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
 		if (project != null)
-			text= Messages.format(fControlConfiguration.getProjectPattern(), new String[] { project.getName()});
+			text= Messages.format(fControlConfiguration.getProjectPattern(), project.getName());
 		else
 			text= fControlConfiguration.getWorkspaceCaption();
 		return text;

@@ -94,7 +94,7 @@ public class ChangeExceptionHandler {
 				RefactoringUIPlugin.log(status);
 				final ErrorDialog dialog= new RefactorErrorDialog(fParent,
 					RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
-					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, new String[] {fName}), 
+					Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName), 
 					status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
 				int result= dialog.open();
 				if (result == IDialogConstants.OK_ID) {
@@ -105,7 +105,7 @@ public class ChangeExceptionHandler {
 		}
 		ErrorDialog dialog= new ErrorDialog(fParent,
 			RefactoringUIMessages.ChangeExceptionHandler_refactoring, 
-			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, new String[] {fName}), 
+			Messages.format(RefactoringUIMessages.ChangeExceptionHandler_unexpected_exception, fName), 
 			status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); 
 		dialog.open();
 	}
