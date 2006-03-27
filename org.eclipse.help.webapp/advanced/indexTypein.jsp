@@ -38,17 +38,10 @@
 	</tr>
 <%}%>
 	<tr>
-<%if (isRTL) {%>
-	<%if (prefs.isIndexButton()) {%>
-		<td><input type="button" id="button" value="<%=ServletResources.getString("IndexTypeinButton", request)%>" onclick="this.blur();parent.doDisplay()"></td>
-	<%}%>
-		<td width="100%"><input type="text" id="typein"></td>
-<%} else {%>
 		<td width="100%"><input type="text" id="typein"></td>
 	<%if (prefs.isIndexButton()) {%>
 		<td><input type="button" id="button" value="<%=ServletResources.getString("IndexTypeinButton", request)%>" onclick="this.blur();parent.doDisplay()"></td>
 	<%}%>
-<%}%>
 	</tr>
 </table>
 

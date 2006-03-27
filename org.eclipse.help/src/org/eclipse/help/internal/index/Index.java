@@ -27,21 +27,18 @@ import org.eclipse.help.IIndexEntry;
  */
 public class Index implements IIndex {
     
-    protected Map entries;
+    protected TreeMap entries;
     
-    public static final class IgnoreCaseComparator implements Comparator {
-
-        public int compare(Object left, Object right) {
-            return ((String)left).compareToIgnoreCase((String) right);
-        }
-    }	
-
     public Index() {
-        entries = new TreeMap(new IgnoreCaseComparator());
+    	entries = new TreeMap();
     }
 
-    public Index(List entries) {
-    	this();
+    public Index(Comparator comparator) {
+        entries = new TreeMap(comparator);
+    }
+
+    public Index(Comparator comparator, List entries) {
+    	this(comparator);
     	for (Iterator i = entries.iterator(); i.hasNext();) {
     		IndexEntry entry = (IndexEntry)i.next();
     		this.entries.put(entry.getKeyword(), entry);
@@ -54,7 +51,7 @@ public class Index implements IIndex {
     protected IndexEntry addEntry(String keyword) {
         IndexEntry oldEntry = (IndexEntry) entries.get(keyword);
         if (oldEntry == null) {
-			oldEntry = new IndexEntry(keyword);
+			oldEntry = new IndexEntry(entries.comparator(), keyword);
 	        entries.put(keyword, oldEntry);
         }
 		return oldEntry;
@@ -72,5 +69,9 @@ public class Index implements IIndex {
 		IIndexEntry[] entryArray = new IIndexEntry[entryCollection.size()];
 		entryCollection.toArray(entryArray);
 		return entryArray;
+	}
+
+	public Comparator getComparator() {
+		return entries.comparator();
 	}
 }

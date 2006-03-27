@@ -12,6 +12,7 @@ package org.eclipse.help.internal.index;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.Platform;
@@ -39,9 +40,9 @@ public class IndexBuilder {
     /**
      * Constructs the index builder
      */
-    public IndexBuilder() {
+    public IndexBuilder(Comparator comparator) {
         unprocessedIndexFiles = new ArrayList();
-        index = new Index();
+        index = new Index(comparator);
 		entries = new Stack();
         tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
     }

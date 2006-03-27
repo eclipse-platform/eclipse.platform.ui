@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.index;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.help.IHelpResource;
@@ -25,17 +26,18 @@ public class IndexEntry extends Index implements IIndexEntry {
     String keyword;
     List topics;
     
-    public IndexEntry(String keyword) {
-		this(keyword, new ArrayList());
+    public IndexEntry(Comparator comparator, String keyword) {
+		this(comparator, keyword, new ArrayList());
 	}
 
-	public IndexEntry(String keyword, List topics) {
+	public IndexEntry(Comparator comparator, String keyword, List topics) {
+		super(comparator);
         this.keyword = keyword;
         this.topics = topics;
     }
 
-	public IndexEntry(String keyword, List topics, List subentries) {
-		super(subentries);
+	public IndexEntry(Comparator comparator, String keyword, List topics, List subentries) {
+		super(comparator, subentries);
         this.keyword = keyword;
         this.topics = topics;
     }

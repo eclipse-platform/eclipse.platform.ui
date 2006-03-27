@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -51,7 +53,7 @@ public class IndexManager {
      */
     private void build(String locale) {
         Collection contributedIndexFiles = getContributedIndexFiles(locale);
-        IndexBuilder builder = new IndexBuilder();
+        IndexBuilder builder = new IndexBuilder(Collator.getInstance(getLocale(locale)));
         builder.build(contributedIndexFiles);
         IIndex index = builder.getBuiltIndex();
         indexesByLang.put(locale, index);
@@ -139,4 +141,21 @@ public class IndexManager {
             return false;
         return !getContributedIndexFiles(locale).isEmpty();
     }
+
+    /**
+	 * Returns the locale object from the provided string.
+	 * @param localeStr the encoded locale string
+	 * @return the Locale object
+	 */
+	private static Locale getLocale(String localeStr) {
+		if (localeStr.length() >= 5) {
+			return new Locale(localeStr.substring(0, 2), localeStr.substring(3,
+					5));
+		} else if (localeStr.length() >= 2) {
+			return new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
+		} else {
+			return Locale.getDefault();
+		}
+	}
+
 }
