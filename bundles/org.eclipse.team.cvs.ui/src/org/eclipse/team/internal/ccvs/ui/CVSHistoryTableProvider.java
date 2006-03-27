@@ -315,9 +315,25 @@ public class CVSHistoryTableProvider {
 					return date1 > date2 ? -1 : 1;
 
 				case 3 : /* author */
-					return getCollator().compare(e1.getAuthor(), e2.getAuthor());
+					String author1 = e1.getAuthor();
+					String author2 = e2.getAuthor();
+					if (author2 == null)
+						return -1;
+					
+					if (author1 == null)
+						return 1;
+					
+					return getCollator().compare(author1, author2);
 				case 4 : /* comment */
-					return getCollator().compare(e1.getComment(), e2.getComment());
+					String comment1 = e1.getComment();
+					String comment2 = e2.getComment();
+					if (comment2 == null)
+						return -1;
+					
+					if (comment1 == null)
+						return 1;
+					
+					return getCollator().compare(comment1, comment2);
 				default :
 					return 0;
 			}
@@ -377,8 +393,8 @@ public class CVSHistoryTableProvider {
 		TableLayout layout = new TableLayout();
 		tree.setLayout(layout);
 
-		TreeViewer viewer = new TreeViewer(tree);
-
+		this.viewer = new TreeViewer(tree);
+		
 		createColumns(tree, layout);
 
 		viewer.setLabelProvider(new HistoryLabelProvider());
@@ -397,8 +413,7 @@ public class CVSHistoryTableProvider {
 				}
 			}
 		});
-
-		this.viewer = viewer;
+		
 		return viewer;
 	}
 
