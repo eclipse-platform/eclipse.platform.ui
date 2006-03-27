@@ -218,8 +218,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private IAction fDoubleClickAction;
 	
-//	private ILaunchManager fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
-	
 	/**
 	 * Filters for the LCD
 	 * @since 3.2

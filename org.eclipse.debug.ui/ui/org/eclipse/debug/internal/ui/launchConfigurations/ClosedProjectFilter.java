@@ -61,6 +61,13 @@ public class ClosedProjectFilter extends ViewerFilter {
 								return true;
 							}
 						}
+						else {
+							//we must consider that the mapped resource is not always a project
+							IProject project = resources[i].getProject();
+							if(project != null && (project.isOpen() || !project.exists())) {
+								return true;
+							}
+						}
 					}
 				}
 			} 
