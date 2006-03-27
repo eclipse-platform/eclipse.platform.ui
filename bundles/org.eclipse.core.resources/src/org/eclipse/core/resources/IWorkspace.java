@@ -1403,7 +1403,7 @@ public interface IWorkspace extends IAdaptable {
 	 * given types.
 	 * <p>
 	 * In addition to the basic restrictions on paths in general (see
-	 * <code>IPath.isValidSegment</code>), a resource name must also not 
+	 * {@link IPath#isValidSegment(String)}), a resource name must also not 
 	 * contain any characters or substrings that are not valid on the file system 
 	 * on which workspace root is located. In addition, the names "." and ".."
 	 * are reserved due to their special meaning in file system paths.
