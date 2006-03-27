@@ -155,11 +155,12 @@ public class EmbeddedBreakpointsViewer {
 		fViewer.setCheckedElements(new Object[] {});
 		ArrayList list = new ArrayList();
 		for(int i = 0; i < items.length; i++) {
-			if(items[i] instanceof IBreakpoint) {
-				list.add(items[i]);
+			Object item = items[i];
+			if(item instanceof IBreakpoint) {
+				list.add(item);
 			}//end if
-			else {
-				getBreakpointsFromContainers((BreakpointContainer)items[i], list);
+			else if (item instanceof BreakpointContainer) {
+				getBreakpointsFromContainers((BreakpointContainer)item, list);
 			}//end if
 		}//end for
 		for(int i = 0; i < list.size(); i++) {
