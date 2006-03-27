@@ -19,6 +19,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
 
 public class IWorkspaceRootTest extends ResourceTest {
 	public IWorkspaceRootTest() {
@@ -30,6 +31,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 	}
 
 	public static Test suite() {
+//		return new IWorkspaceRootTest("testFindFilesForLocationOnWrappedFileSystem");
 		return new TestSuite(IWorkspaceRootTest.class);
 	}
 
@@ -37,11 +39,45 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IProject[] projects = getWorkspace().getRoot().getProjects();
 		getWorkspace().delete(projects, true, null);
 	}
-
+	
 	/**
 	 * Tests the API method findContainersForLocation.
 	 */
 	public void testFindContainersForLocation() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject p1 = root.getProject("p1");
+		IProject p2 = root.getProject("p2");
+		testFindContainersForLocation(p1, p2);
+	}
+
+	private void replaceProject(IProject project, URI newLocation)
+			throws CoreException {
+		IProjectDescription projectDesc = project.getDescription();
+		projectDesc.setLocationURI(newLocation);
+		project.move(projectDesc, IResource.REPLACE, null);
+	}
+	
+	public void testFindContainersForLocationOnWrappedFileSystem() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject p1 = root.getProject("p1");
+		IProject p2 = root.getProject("p2");
+		ensureExistsInWorkspace(new IResource[] {p1, p2}, true);
+		try {
+			replaceProject(p1, WrapperFileSystem.getWrappedURI(p1.getLocationURI()));
+		} catch (CoreException e) {
+			fail("0.1", e);
+		}
+		try {
+			replaceProject(p2, WrapperFileSystem.getWrappedURI(p2.getLocationURI()));
+		} catch (CoreException e) {
+			fail("0.2", e);
+		}
+		testFindContainersForLocation(p1, p2);
+	}
+	/**
+	 * Tests the API method findContainersForLocation.
+	 */
+	public void testFindContainersForLocation(IProject p1, IProject p2) {
 		//should find the workspace root
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IContainer[] result = root.findContainersForLocation(root.getLocation());
@@ -49,8 +85,6 @@ public class IWorkspaceRootTest extends ResourceTest {
 		assertEquals("1.1", root, result[0]);
 		
 		//deep linked resource
-		IProject p1 = root.getProject("p1");
-		IProject p2 = root.getProject("p2");
 		IFolder parent = p2.getFolder("parent");
 		IFolder link = parent.getFolder("link");
 		ensureExistsInWorkspace(new IResource[] {p1, p2, parent}, true);
@@ -110,17 +144,43 @@ public class IWorkspaceRootTest extends ResourceTest {
 		assertResources("5.1", child, result);
 
 	}
+	
+	
+	/**
+	 * Tests the API method findFilesForLocation.
+	 */
+	public void testFindFilesForLocationOnWrappedFileSystem() {
+		//should not find the workspace root
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("p1");
+		ensureExistsInWorkspace(project, true);
+		try {
+			replaceProject(project, WrapperFileSystem.getWrappedURI(project.getLocationURI()));
+		} catch (CoreException e) {
+			fail("0.1", e);
+		}
+		testFindFilesForLocation(project);
+	}
+	
+	
+	/**
+	 * Tests the API method findFilesForLocation on non-default file system.
+	 */
+	public void testFindFilesForLocation() {
+		//should not find the workspace root
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		testFindFilesForLocation(root.getProject("p1"));
+	}
 
 	/**
 	 * Tests the API method findFilesForLocation.
 	 */
-	public void testFindFilesForLocation() {
+	public void testFindFilesForLocation(IProject project) {
 		//should not find the workspace root
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IFile[] result = root.findFilesForLocation(root.getLocation());
 		assertEquals("1.0", 0, result.length);
 		
-		IProject project = root.getProject("p1");
 		IFile existing = project.getFile("file1");
 		ensureExistsInWorkspace(existing, true);
 		
