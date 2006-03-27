@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public interface IEvaluationContext {
 	 * attribute <code>forcePluginActivation</code> set to <code>
 	 * true</code> as well.
 	 * 
-	 * @param value whether this evaluation context allows plug-in
-	 *  activation
+	 * @param value whether this evaluation context allows plug-in activation
+	 * @since 3.2
 	 */
 	public void setAllowPluginActivation(boolean value);
 	
@@ -60,6 +60,7 @@ public interface IEvaluationContext {
 	 * activation.
 	 * 
 	 * @return whether plug-in activation is supported or not
+	 * @since 3.2
 	 */
 	public boolean getAllowPluginActivation();
 	

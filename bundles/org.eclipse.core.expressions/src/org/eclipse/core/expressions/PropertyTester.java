@@ -98,6 +98,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	 * this method.
 	 * 
 	 * @throws CoreException if the plugin can't be activated
+	 * @since 3.2
 	 */
 	public final void internalActivateDeclaringPlugin() throws CoreException {
 		String pluginName= fConfigElement.getContributor().getName();
