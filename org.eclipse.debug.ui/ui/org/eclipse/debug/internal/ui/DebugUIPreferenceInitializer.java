@@ -67,7 +67,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, new RGB(255, 0, 0));
 		
-		PreferenceConverter.setDefault(prefs, IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND, new RGB(0xFF, 0xB6, 0xC1));
+		PreferenceConverter.setDefault(prefs, IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND, new RGB(255, 255, 0));
 		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR, new RGB(114, 119, 129));
 		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR, new RGB(0, 0, 0));
 
