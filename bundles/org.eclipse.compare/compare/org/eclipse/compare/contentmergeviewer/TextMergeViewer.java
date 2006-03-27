@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     channingwalton@mac.com - curved line code
+ *     gilles.querret@free.fr - fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=72995
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
@@ -1665,17 +1666,27 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			mcp.setLeftError(null);
 			mcp.setRightError(null);
 		}
+
+		// Get encodings from streams. If an encoding is null, abide by the other one
+		// Defaults to workbench encoding only if both encodings are null
+		fLeftEncoding= getEncoding(left);
+		fRightEncoding= getEncoding(right);
+		if (fLeftEncoding == null && fRightEncoding == null) {
+			fLeftEncoding= fRightEncoding= ResourcesPlugin.getEncoding();
+		} else if (fLeftEncoding == null) {
+			fLeftEncoding= fRightEncoding;
+		} else if (fRightEncoding == null) {
+			fRightEncoding= fLeftEncoding;
+		}
 		
 		// set new documents
-		setDocument(fLeft, 'L', left);
+		setDocument(fLeft, 'L', left, fLeftEncoding);
 		fLeftLineCount= fLeft.getLineCount();
-		fLeftEncoding= getEncoding(left);
-
-		setDocument(fRight, 'R', right);
-		fRightLineCount= fRight.getLineCount();
-		fRightEncoding= getEncoding(right);
 		
-		setDocument(fAncestor, 'A', ancestor);
+		setDocument(fRight, 'R', right, fRightEncoding);
+		fRightLineCount= fRight.getLineCount();
+		
+		setDocument(fAncestor, 'A', ancestor, fLeftEncoding);
 		
 		updateHeader();
 		updateControls();
@@ -1732,17 +1743,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 
 	private static String getEncoding(Object o) {
-		String encoding= null;
 		if (o instanceof IEncodedStreamContentAccessor) {
 			try {
-				encoding= ((IEncodedStreamContentAccessor)o).getCharset();
+				return ((IEncodedStreamContentAccessor)o).getCharset();
 			} catch (CoreException e) {
-				// ignored
+				// silently ignored
 			}
 		}
-		if (encoding == null)
-			encoding= ResourcesPlugin.getEncoding();
-		return encoding;
+		return null;
 	}
 	
 	private void updateDiffBackground(Diff diff) {
@@ -1899,7 +1907,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/*
 	 * Returns true if a new Document could be installed.
 	 */
-	private boolean setDocument(MergeSourceViewer tp, char type, Object o) {
+	private boolean setDocument(MergeSourceViewer tp, char type, Object o, String encoding) {
 		
 		if (tp == null)
 			return false;
@@ -1920,9 +1928,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (newDoc == null) {
 				IStreamContentAccessor sca= (IStreamContentAccessor) o;
 				String s= null;
-		
+				if (encoding == null)
+					encoding= ResourcesPlugin.getEncoding();
+
 				try {
-					s= Utilities.readString(sca);
+					s= Utilities.readString(sca.getContents(), encoding);
 				} catch (CoreException ex) {
 					setError(type, ex.getMessage());
 				}
