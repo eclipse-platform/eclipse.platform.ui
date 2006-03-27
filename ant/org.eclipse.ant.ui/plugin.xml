@@ -127,6 +127,18 @@ M4 = Platform-specific fourth key -->
       	id="org.eclipse.ant.ui.toggleMarkOccurrences" /> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
+         <key
+            sequence="M1+M2+F"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.jdt.ui.edit.text.java.format"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <!-- alternative for some gtk input modes -->
+      <key
+            platform="gtk"
+            sequence="ESC CTRL+F"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.jdt.ui.edit.text.java.format"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             sequence="F2"
             contextId="org.eclipse.ant.ui.AntEditorScope"

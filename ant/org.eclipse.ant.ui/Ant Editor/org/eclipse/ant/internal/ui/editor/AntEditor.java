@@ -56,6 +56,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -641,6 +642,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
         
 		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+        action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
         setAction("ContentFormat", action); //$NON-NLS-1$
         
         action = new OpenDeclarationAction(this);
