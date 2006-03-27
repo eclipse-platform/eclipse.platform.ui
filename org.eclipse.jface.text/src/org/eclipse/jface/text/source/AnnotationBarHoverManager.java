@@ -305,6 +305,12 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @since 3.2
 	 */
 	private boolean fHideOnMouseWheel= true;
+	
+	/**
+	 * The current annotation hover.
+	 * @since 3.2
+	 */
+	private IAnnotationHover fCurrentHover;
 
 	/**
 	 * Creates an annotation hover manager with the given parameters. In addition,
@@ -370,6 +376,24 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			setInformation(hover.getHoverInfo(fSourceViewer, line), computeArea(line));
 		}
 
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
+	 * @since 3.2
+	 */
+	protected void showInformationControl(Rectangle subjectArea) {
+	    super.showInformationControl(subjectArea);
+	    fCurrentHover= getHover(getHoverEvent());
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
+	 * @since 3.2
+	 */
+	protected void hideInformationControl() {
+		fCurrentHover= null;
+	    super.hideInformationControl();
 	}
 
 	/**
@@ -696,5 +720,16 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		fAllowMouseExit= false;
 		return super.computeLocation(subjectArea, controlSize, anchor);
 	}
+
+	/**
+	 * Returns the currently shown annotation hover or <code>null</code> if none
+	 * hover is shown.
+	 *
+	 * @return the currently shown annotation hover or <code>null</code>
+	 * @since 3.2
+	 */
+    public IAnnotationHover getCurrentAnnotationHover() {
+	    return fCurrentHover;
+    }
 }
 

@@ -45,7 +45,7 @@ import org.eclipse.jface.text.ITextViewer;
  * allows access to the viewer's visual annotation model.</li>
  * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension3} since version 3.2
  * introducing the concept of a quick assist assistant and providing access
- * to the quick assist invocation context.</li>
+ * to the quick assist invocation context as well as the current annotation hover.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the

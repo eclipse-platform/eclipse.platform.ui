@@ -221,7 +221,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/** The viewer's range indicator to be shown in the vertical ruler */
 	private Annotation fRangeIndicator;
 	/** The viewer's vertical ruler hovering controller */
-	private AbstractHoverInformationControlManager fVerticalRulerHoveringController;
+	private AnnotationBarHoverManager fVerticalRulerHoveringController;
 	/**
 	 * The viewer's overview ruler hovering controller
 	 * @since 2.1
@@ -1025,5 +1025,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			}
 		}
 	}
-
+	
+    /*
+     * @see org.eclipse.jface.text.source.ISourceViewer#getCurrentAnnotationHover()
+     * @since 3.2
+     */
+    public IAnnotationHover getCurrentAnnotationHover() {
+    	if (fVerticalRulerHoveringController == null)
+    		return null;
+    	return fVerticalRulerHoveringController.getCurrentAnnotationHover();
+    }
 }
