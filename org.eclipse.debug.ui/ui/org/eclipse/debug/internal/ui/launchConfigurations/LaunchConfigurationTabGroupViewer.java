@@ -57,6 +57,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -379,14 +380,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void createTabFolder(Composite parent) {
 		if (fTabFolder == null) {
-			Color clr1 = getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-			Color clr2 = getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-			Color[] activeEditorGradient = new Color[] { clr1, clr2};
-			int[] activeEditorPercentages = new int[] {100};
+			Display display = getShell().getDisplay();
+			Color c1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND),
+				  c2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
-			fTabFolder.setSelectionBackground(activeEditorGradient, activeEditorPercentages, true);
+			fTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
 			fTabFolder.setSelectionForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 			fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 			fTabFolder.setLayoutData(gd);
@@ -398,7 +398,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						handleTabSelected();
 					}
 				}
-			});		
+			});	
 		}
 	}
 	

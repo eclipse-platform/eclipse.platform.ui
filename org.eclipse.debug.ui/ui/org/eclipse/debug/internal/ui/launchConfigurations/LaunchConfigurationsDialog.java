@@ -1391,6 +1391,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		getNewAction().setEnabled(getNewAction().isEnabled());
 		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
+		getTabViewer().refresh();
 		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch());
 	}
 
