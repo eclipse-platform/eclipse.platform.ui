@@ -311,7 +311,7 @@ body {
 	font-size : 13pt;
 	font-weight : 600;
 	position: absolute;
-	right: 0px;
+	left: 13px;
 	width: 201px;
 	height: 1em;
 	top: 84px;
@@ -321,11 +321,11 @@ body {
 
 #page-links a:hover#overview .link-extra-div {
 	top: 99px;
+	left: 15px;
 }
 
 #page-links a:hover#workbench .link-extra-div {
 	left: 0px;
-	right: auto;
 }
 
 /* Link images */
