@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.navigator;
 
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -257,7 +257,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
         Object[] theListeners = getListeners();
         for (int i = 0; i < theListeners.length; ++i) {
             final ILabelProviderListener l = (ILabelProviderListener) theListeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.labelProviderChanged(event);
                 }
