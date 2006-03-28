@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
@@ -139,9 +140,12 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				workspace.beginOperation(true);
 				final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
 				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
+				IStatus result = Status.OK_STATUS;
 				if (shouldBuild())
-					workspace.getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+					result = workspace.getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
+				if (!result.isOK())
+					throw new ResourceException(result);
 				buildNeeded = false;
 			} finally {
 				//building may close the tree, but we are still inside an

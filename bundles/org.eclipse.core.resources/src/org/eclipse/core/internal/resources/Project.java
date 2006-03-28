@@ -84,8 +84,10 @@ public class Project extends Container implements IProject {
 
 				workspace.beginOperation(true);
 				workspace.aboutToBuild(this, trigger);
-				workspace.getBuildManager().build(this, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				IStatus result = workspace.getBuildManager().build(this, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				if (!result.isOK())
+					throw new ResourceException(result);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (workspace.getElementTree().isImmutable())
@@ -111,11 +113,12 @@ public class Project extends Container implements IProject {
 				int flags = getFlags(info);
 				if (!exists(flags, true) || !isOpen(flags))
 					return;
-
 				workspace.beginOperation(true);
 				workspace.aboutToBuild(this, trigger);
-				workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
+				IStatus result = workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
 				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				if (!result.isOK())
+					throw new ResourceException(result);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (workspace.getElementTree().isImmutable())

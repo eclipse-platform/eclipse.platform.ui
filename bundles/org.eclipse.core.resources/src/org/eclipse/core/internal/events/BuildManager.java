@@ -264,12 +264,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 	}
 
-	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Runs all builders on all projects. 
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	public IStatus build(int trigger, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
 			if (!canRun(trigger))
-				return;
+				return Status.OK_STATUS;
 			try {
 				hookStartBuild(trigger);
 				IProject[] ordered = workspace.getBuildOrder();
@@ -279,10 +283,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
 
 				basicBuildLoop(ordered, unordered, trigger, status, monitor);
-
-				// if the status is not ok, throw an exception 
-				if (!status.isOK())
-					throw new ResourceException(status);
+				return status;
 			} finally {
 				hookEndBuild(trigger);
 			}
@@ -293,36 +294,46 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 	}
 
-	public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Runs all builders on the given project. 
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	public IStatus build(IProject project, int trigger, IProgressMonitor monitor) {
 		if (!canRun(trigger))
-			return;
+			return Status.OK_STATUS;
 		try {
 			hookStartBuild(trigger);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 			basicBuild(project, trigger, status, monitor);
-			if (!status.isOK())
-				throw new ResourceException(status);
+			return status;
 		} finally {
 			hookEndBuild(trigger);
 		}
 	}
 
-	public void build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Runs the builder with the given name on the given project. 
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	public IStatus build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, 1);
 			if (!canRun(trigger))
-				return;
+				return Status.OK_STATUS;
 			try {
 				hookStartBuild(trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 				ICommand command = getCommand(project, builderName, args);
-				IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
-				if (builder != null)
-					basicBuild(trigger, builder, args, status, Policy.subMonitorFor(monitor, 1));
-				if (!status.isOK())
-					throw new ResourceException(status);
+				try {
+					IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
+					if (builder != null)
+						basicBuild(trigger, builder, args, status, Policy.subMonitorFor(monitor, 1));
+				} catch (CoreException e) {
+					status.add(e.getStatus());
+				}
+				return status;
 			} finally {
 				hookEndBuild(trigger);
 			}
