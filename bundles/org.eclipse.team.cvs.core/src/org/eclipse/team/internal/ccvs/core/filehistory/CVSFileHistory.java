@@ -17,11 +17,16 @@ import java.util.Iterator;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistory;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.core.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {
@@ -81,6 +86,20 @@ public class CVSFileHistory extends FileHistory {
 			monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()), 300);
 			try {
 				ILogEntry[] entries = cvsFile.getLogEntries(new SubProgressMonitor(monitor, 200));
+				
+				if (entries.length == 0){
+					//Get the parent folder
+					ICVSFolder folder = cvsFile.getParent();
+					String remoteFolderLocation = folder.getRemoteLocation(folder);
+					String remoteFileName = remoteFolderLocation.concat(Session.SERVER_SEPARATOR + cvsFile.getName());
+					//Create remote file
+					CVSTeamProvider pro = (CVSTeamProvider) RepositoryProvider.getProvider(cvsFile.getIResource().getProject());
+					CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
+					CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
+					RemoteFile remFile = RemoteFile.create(remoteFileName, location);
+					entries=remFile.getLogEntries(monitor);
+				}
+				
 				if (flag == IFileHistoryProvider.SINGLE_REVISION) {
 					String revisionNumber = cvsFile.getSyncInfo().getRevision();
 					for (int i = 0; i < entries.length; i++) {
@@ -300,5 +319,5 @@ public class CVSFileHistory extends FileHistory {
 			monitor.done();
 		}
 	}
-
+		
 }
