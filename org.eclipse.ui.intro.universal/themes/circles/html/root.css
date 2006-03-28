@@ -35,11 +35,11 @@ a .link-extra-div {
 #page-links a p .text {
 	margin-left: 3px;
 	position: relative;
-	top: -50px;
-	padding-top: 25px;
+	top: -1.6em;
+	padding-top: 5px;
 	padding-left: 9px;
 	padding-right: 10px;
-	margin-bottom: -50px;
+	margin-bottom: -1.6em;
 	font-size : 11pt;	font-weight : 500;
 	padding-bottom: 5px;
 	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
@@ -153,7 +153,6 @@ body {
 	height : 84px;
 }
 
-
 /* Absolute positions of root links */
 
 #page-links a#whatsnew {
@@ -195,11 +194,6 @@ body {
 #page-links a:focus#workbench,
 #page-links a:active#workbench {
 	left: 713px;
-}
-
-/* Turn the background image off */
-#page-links a .background-image {
-	display : none;
 }
 
 /* Paint bottom edge of the text box as a background image */
@@ -303,30 +297,61 @@ body {
 	width: 193px;
 }
 
+#page-links a .background-image {
+	display: none;
+}
+
+#page-links a .link-extra-div {
+	display :none;
+}
+
+#page-links a:hover .link-extra-div {
+	z-index: -100;
+	display: block;
+	font-size : 13pt;
+	font-weight : 600;
+	position: absolute;
+	right: 0px;
+	width: 201px;
+	height: 1em;
+	top: 84px;
+	background-image: url("../graphics/icons/ctool/root_midhov2.gif");
+	background-repeat: repeat-y;
+}
+
+#page-links a:hover#overview .link-extra-div {
+	top: 99px;
+}
+
+#page-links a:hover#workbench .link-extra-div {
+	left: 0px;
+	right: auto;
+}
+
 /* Link images */
-#page-links a#overview img { background-image : url("../graphics/icons/ctool/overview.gif"); }
-#page-links a:hover#overview img { background-image : url("../graphics/icons/ctool/overview_tophov.gif"); }
+#page-links a#overview .content-img { background-image : url("../graphics/icons/ctool/overview.gif"); }
+#page-links a:hover#overview .content-img { background-image : url("../graphics/icons/ctool/overview_tophov.gif"); }
 
-#page-links a#tutorials img { background-image : url("../graphics/icons/ctool/tutorials.gif"); }
-#page-links a:hover#tutorials img { background-image : url("../graphics/icons/ctool/tutorials_tophov.gif"); }
+#page-links a#tutorials .content-img { background-image : url("../graphics/icons/ctool/tutorials.gif"); }
+#page-links a:hover#tutorials .content-img { background-image : url("../graphics/icons/ctool/tutorials_tophov.gif"); }
 
-#page-links a#samples img { background-image : url("../graphics/icons/ctool/samples.gif"); }
-#page-links a:hover#samples img { background-image : url("../graphics/icons/ctool/samples_tophov.gif"); }
+#page-links a#samples .content-img { background-image : url("../graphics/icons/ctool/samples.gif"); }
+#page-links a:hover#samples .content-img { background-image : url("../graphics/icons/ctool/samples_tophov.gif"); }
 
-#page-links a#whatsnew img { background-image : url("../graphics/icons/ctool/whatsnew.gif"); }
-#page-links a:hover#whatsnew img { background-image : url("../graphics/icons/ctool/whatsnew_tophov.gif"); }
+#page-links a#whatsnew .content-img { background-image : url("../graphics/icons/ctool/whatsnew.gif"); }
+#page-links a:hover#whatsnew .content-img { background-image : url("../graphics/icons/ctool/whatsnew_tophov.gif"); }
 
-#page-links a#firststeps img { background-image : url("../graphics/icons/ctool/firststeps.gif"); }
-#page-links a:hover#firststeps img { background-image : url("../graphics/icons/ctool/firststeps_tophov.gif"); }
+#page-links a#firststeps .content-img { background-image : url("../graphics/icons/ctool/firststeps.gif"); }
+#page-links a:hover#firststeps .content-img { background-image : url("../graphics/icons/ctool/firststeps_tophov.gif"); }
 
-#page-links a#migrate img { background-image : url("../graphics/icons/ctool/migrate.gif"); }
-#page-links a:hover#migrate img { background-image : url("../graphics/icons/ctool/migrate_tophov.gif"); }
+#page-links a#migrate .content-img { background-image : url("../graphics/icons/ctool/migrate.gif"); }
+#page-links a:hover#migrate .content-img { background-image : url("../graphics/icons/ctool/migrate_tophov.gif"); }
 
-#page-links a#webresources img { background-image : url("../graphics/icons/ctool/webresources.gif"); }
-#page-links a:hover#webresources img { background-image : url("../graphics/icons/ctool/webresources_tophov.gif"); }
+#page-links a#webresources .content-img { background-image : url("../graphics/icons/ctool/webresources.gif"); }
+#page-links a:hover#webresources .content-img { background-image : url("../graphics/icons/ctool/webresources_tophov.gif"); }
 
-#page-links a#workbench img { background-image : url("../graphics/icons/ctool/workbench.gif"); }
-#page-links a:hover#workbench img { background-image : url("../graphics/icons/ctool/workbench_tophov.gif"); }
+#page-links a#workbench .content-img { background-image : url("../graphics/icons/ctool/workbench.gif"); }
+#page-links a:hover#workbench .content-img { background-image : url("../graphics/icons/ctool/workbench_tophov.gif"); }
 
 /*
  * Not using action links.
