@@ -99,14 +99,15 @@ setTimeout('refresh()', 2000);
 		if (isPotentialHit) {
 %>
 
-	<span class='grayed'><%=data.getTopicScore(topic)%></span>
+
+	<img src="<%=prefs.getImagesDirectory()%>/d_topic.gif" alt=""/>
 
 <%
 		}
 		else {
 %>
 
-	<%=data.getTopicScore(topic)%>
+	<img src="<%=prefs.getImagesDirectory()%>/topic.gif" alt=""/>
 
 <%
 		}

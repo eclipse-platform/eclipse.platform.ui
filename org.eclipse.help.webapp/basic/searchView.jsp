@@ -79,7 +79,7 @@ if (data.isProgressRequest()) {
 			//	}
 %>
 <tr>
-	<td align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td align='<%=isRTL?"left":"right"%>'><img src="<%=prefs.getImagesDirectory()%>/topic.gif" alt=""/></td>
 	<td align='<%=isRTL?"right":"left"%>' nowrap>
 		&nbsp;
 		<a <%=("a"+topic).equals(data.getSelectedTopicId())?" name=\"selectedItem\" ":""%>

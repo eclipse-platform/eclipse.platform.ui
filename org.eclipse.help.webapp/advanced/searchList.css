@@ -60,10 +60,6 @@ TABLE {
 	height:100%;
 }
 
-.grayed {
-	color:gray;
-}
-
 .label {
 	margin-<%=isRTL?"right":"left"%>:4px;
 }

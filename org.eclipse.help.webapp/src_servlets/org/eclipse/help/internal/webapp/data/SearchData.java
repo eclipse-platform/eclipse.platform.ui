@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import java.text.*;
-import java.util.*;
+import java.util.ArrayList;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.webapp.*;
-import org.eclipse.help.internal.webapp.servlet.*;
-import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.search.ISearchQuery;
+import org.eclipse.help.internal.search.QueryTooComplexException;
+import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.internal.search.SearchProgressMonitor;
+import org.eclipse.help.internal.search.SearchQuery;
+import org.eclipse.help.internal.search.SearchResults;
+import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
+import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
  * Helper class for searchView.jsp initialization
@@ -128,18 +136,6 @@ public class SearchData extends ActivitiesData {
 
 	public String getTopicLabel(int i) {
 		return UrlUtil.htmlEncode(hits[i].getLabel());
-	}
-
-	public String getTopicScore(int i) {
-		try {
-			float score = hits[i].getScore();
-			NumberFormat percentFormat = NumberFormat
-					.getPercentInstance(UrlUtil.getLocaleObj(request, response));
-			return percentFormat.format(score);
-		} catch (NumberFormatException nfe) {
-			// will display original score string
-			return String.valueOf(hits[i].getScore());
-		}
 	}
 
 	public String getTopicTocLabel(int i) {
