@@ -38,7 +38,7 @@ public class CheatSheetExpandRestoreAction extends Action {
 		path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("expandall.gif");//$NON-NLS-1$
 		expandImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 		setDisabledImageDescriptor(disabledImage);
-		setChecked(initValue);
+		setCollapsed(initValue);
 	}
 	
 	/*
