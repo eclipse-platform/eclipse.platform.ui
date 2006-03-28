@@ -127,6 +127,18 @@ public class ReferenceCounter {
     }
 
     /**
+     * @param id is a unique ID for the object.
+     * @return the current ref count
+     */
+    public int getRef(Object id) {
+        RefRec rec = (RefRec) mapIdToRec.get(id);
+        if (rec == null) {
+			return 0;
+		}
+        return rec.refCount;
+    }
+
+    /**
      * Removes one reference from an object in the counter.
      * If the ref count drops to 0 the object is removed from
      * the counter completely.
@@ -135,17 +147,17 @@ public class ReferenceCounter {
      * @return the new ref count
      */
     public int removeRef(Object id) {
-        RefRec rec = (RefRec) mapIdToRec.get(id);
-        if (rec == null) {
-			return 0;
-		}
-        int newCount = rec.removeRef();
-        if (newCount <= 0) {
-			mapIdToRec.remove(id);
-		}
-        return newCount;
+    	RefRec rec = (RefRec) mapIdToRec.get(id);
+    	if (rec == null) {
+    		return 0;
+    	}
+    	int newCount = rec.removeRef();
+    	if (newCount <= 0) {
+    		mapIdToRec.remove(id);
+    	}
+    	return newCount;
     }
-
+    
     /**
      * Returns a complete list of the values in the counter.
      *

@@ -97,4 +97,30 @@ public class DefaultSaveableModel implements ISaveableModel {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return part.hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final DefaultSaveableModel other = (DefaultSaveableModel) obj;
+		if (part == null) {
+			if (other.part != null)
+				return false;
+		} else if (!part.equals(other.part))
+			return false;
+		return true;
+	}
+
 }

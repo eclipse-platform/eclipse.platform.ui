@@ -85,6 +85,7 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
@@ -1210,10 +1211,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 	/**
-	 * Initializes all of the default command-based services for the workbench.
-	 * This also parses the registry and hooks up all the required listeners.
+	 * Initializes all of the default services for the workbench. For
+	 * initializing the command-based services, this also parses the registry
+	 * and hooks up all the required listeners.
 	 */
 	private final void initializeDefaultServices() {
+		
+		serviceLocator.registerService(ISaveableModelManager.class, new SaveableModelManager());
+		
 		/*
 		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the

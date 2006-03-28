@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -200,6 +201,10 @@ public abstract class PartList {
         // open event for an editor that is already active. (This either indicates that a redundant
         // open event was fired or that a closed editor was somehow activated)
         Assert.isTrue(activeEditorReference != ref);
+        
+        SaveableModelManager modelManager = (SaveableModelManager) actualPart
+				.getSite().getService(ISaveableModelManager.class);
+        modelManager.postOpen(actualPart);
         
         // Fire the "part opened" event
         firePartOpened(ref);

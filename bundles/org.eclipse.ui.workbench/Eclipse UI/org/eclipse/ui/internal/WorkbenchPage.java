@@ -69,6 +69,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IShowEditorInput;
@@ -1217,29 +1218,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         IEditorReference[] editorRefs = (IEditorReference[]) toClose.toArray(new IEditorReference[toClose.size()]);
         
-        if (save) { 
-            // Intersect the dirty editors with the editors that are closing
-            IEditorPart[] dirty = getDirtyEditors();
-            List intersect = new ArrayList();
-            for (int i = 0; i < editorRefs.length; i++) {
-                IEditorReference reference = editorRefs[i];
-                IEditorPart refPart = reference.getEditor(false);
-                if (refPart != null) {
-                    for (int j = 0; j < dirty.length; j++) {
-                        if (refPart.equals(dirty[j]) && refPart.isSaveOnCloseNeeded()) {
-                            intersect.add(refPart);
-                            break;
-                        }
-                    }
-                }
+        // notify the model manager before the close
+        List partsToClose = new ArrayList();
+        for (int i = 0; i < editorRefs.length; i++) {
+            IEditorPart refPart = editorRefs[i].getEditor(false);
+            if (refPart != null) {
+            	partsToClose.add(refPart);
             }
-            // Save parts, exit the method if cancel is pressed.
-            if (intersect.size() > 0) {
-                if (!EditorManager.saveAll(intersect, true, true,
-                        getWorkbenchWindow())) {
-					return false;
-				}
-            }
+        }
+        SaveableModelManager modelManager = null;
+        Object postCloseInfo = null;
+        if(partsToClose.size()>0) {
+        	modelManager = (SaveableModelManager) getWorkbenchWindow().getService(ISaveableModelManager.class);
+        	// this may prompt for saving and return null if the user canceled:
+        	postCloseInfo = modelManager.preCloseParts(partsToClose, save, getWorkbenchWindow());
+        	if (postCloseInfo==null) {
+        		return false;
+        	}
         }
 
         // Fire pre-removal changes 
@@ -1270,6 +1265,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Notify interested listeners after the close
         window.firePerspectiveChanged(this, getPerspective(),
                 CHANGE_EDITOR_CLOSE);
+        
+        if(modelManager!=null) {
+        	modelManager.postClose(postCloseInfo);
+        }
 
         // Return true on success.
         return true;
@@ -2113,6 +2112,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
         }
         
+        int refCount = getViewFactory().getReferenceCount(ref);
+        SaveableModelManager saveableModelManager = null;
+        Object postCloseInfo = null;
+        if (refCount == 1) {
+        	IWorkbenchPart actualPart = ref.getPart(false);
+        	if (actualPart != null) {
+				saveableModelManager = (SaveableModelManager) actualPart
+						.getSite().getService(ISaveableModelManager.class);
+				postCloseInfo = saveableModelManager.preCloseParts(Collections
+						.singletonList(actualPart), true, this
+						.getWorkbenchWindow());
+				if (postCloseInfo==null) {
+					// cancel
+					return;
+				}
+			}
+        }
+        
         // Notify interested listeners before the hide
         window.firePerspectiveChanged(this, persp.getDesc(), ref,
                 CHANGE_VIEW_HIDE);
@@ -2127,6 +2144,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         // Notify interested listeners after the hide
         window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
+        
+        if (saveableModelManager != null) {
+        	saveableModelManager.postClose(postCloseInfo);
+        }
     }
 
     /* package */void refreshActiveView() {

@@ -225,6 +225,17 @@ import org.eclipse.ui.views.IViewRegistry;
     }
 
     /**
+     * 
+     * @param viewRef
+     * @return the current reference count for the given view
+     */
+    public int getReferenceCount(IViewReference viewRef) {
+        String key = getKey(viewRef);
+        IViewReference ref = (IViewReference) counter.get(key);
+        return ref==null ? 0 : counter.getRef(key);
+    }
+    
+    /**
      * Releases an instance of a view.
      *
      * This factory does reference counting.  For more info see
