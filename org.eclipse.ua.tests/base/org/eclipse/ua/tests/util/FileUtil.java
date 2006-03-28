@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 /*
@@ -49,90 +48,9 @@ public class FileUtil {
 	 * for the intro xml referred to by the string.
 	 */
 	public static String getResultFile(String in) {
-		return getResultFile(in, false);
+		return in.substring(0, in.lastIndexOf('.')) + "_expected.txt";
 	}
 
-	/**
-	 * Same as above, but gives the option of appending os, ws, and arch. For example,
-	 * myfile_serialized_macosx_carbon_ppc.txt.
-	 */
-	public static String getResultFile(String in, boolean env) {
-		StringBuffer buf = new StringBuffer();
-		buf.append(in.substring(0, in.lastIndexOf('.')) + "_serialized");
-		if (env) {
-			buf.append('_');
-			buf.append(Platform.getOS());
-			buf.append('_');
-			buf.append(Platform.getWS());
-			buf.append('_');
-			buf.append(Platform.getOSArch());
-		}
-		buf.append(".txt");
-		return buf.toString();
-	}
-	
-	/**
-	 * Gets the contents of the result file with the given original relative path in
-	 * the given bundle, as a String (file must be encoded as UTF-8).
-	 */
-	public static String getResultFileContents(Bundle bundle, String relative) throws IOException {
-		/*
-		 * Try [filename]_serialized_os_ws_arch.txt. If it's not there, try
-		 * [filename]_serialized.txt.
-		 * 
-		 * We use different files for os/ws/arch combinations in order to test dynamic content,
-		 * specifically filtering. Some of the files have filters by os, ws, and arch so the
-		 * result is different on each combination.
-		 */
-		String contents = null;
-		try {
-			contents = getContents(bundle, getResultFile(relative, true));
-		}
-		catch(Exception e) {
-			// didn't find the _serialized_os_ws_arch.txt file, try just _serialized.txt
-		}
-		if (contents == null) {
-			try {
-				contents = getContents(bundle, getResultFile(relative, false));
-			}
-			catch(IOException e) {
-				throw e;
-			}
-		}
-		return contents;
-	}
-
-	/**
-	 * Gets the contents of the result file with the given original absolute path as
-	 * a String (file must be encoded as UTF-8).
-	 */
-	public static String getResultFileContents(String absolutePath) throws IOException {
-		/*
-		 * Try [filename]_serialized_os_ws_arch.txt. If it's not there, try
-		 * [filename]_serialized.txt.
-		 * 
-		 * We use different files for os/ws/arch combinations in order to test dynamic content,
-		 * specifically filtering. Some of the files have filters by os, ws, and arch so the
-		 * result is different on each combination.
-		 */
-		String contents = null;
-		try {
-			contents = getContents(getResultFile(absolutePath, true));
-		}
-		catch(Exception e) {
-			// didn't find the _serialized_os_ws_arch.txt file, try just _serialized.txt
-		}
-		if (contents == null) {
-			try {
-				contents = getContents(getResultFile(absolutePath, false));
-			}
-			catch(IOException e) {
-				throw e;
-			}
-		}
-		return contents;
-	}
-	
 	/**
 	 * Reads the contents of the input stream as UTF-8 and constructs and returns
 	 * as a String.
@@ -146,8 +64,10 @@ public class FileUtil {
 		}
 		String result = new String(out.toByteArray(), "UTF-8");
 		if (result != null) {
+			// filter windows-specific newline
 			result = result.replaceAll("\r", "");
 		}
-		return result;
+		// ignore whitespace at start or end
+		return result.trim();
 	}
 }

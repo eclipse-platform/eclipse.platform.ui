@@ -191,26 +191,15 @@ public class SearchManager implements ITocsChangedListener {
 	 * property values. For example, if the filters contain "os=win32", the filter
 	 * matches only if the OS is windows. 
 	 * 
-	 * @param filters the filters to check, e.g. "os=linux,ws=gtk,arch=x86"
+	 * @param filters the filters to check, e.g. "os=linux,ws!=gtk,arch=x86"
 	 * @return whether or not the filters are satisfied
 	 */
 	private boolean filtersMatch(String filters) {
 		StringTokenizer tok = new StringTokenizer(filters, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String filter = tok.nextToken();
-			int index = filter.indexOf('=');
-			if (index > 0) {
-				boolean enabled = true;
-				if (filter.charAt(0) == '!') {
-					enabled = false;
-					filter = filter.substring(1);
-					index--;
-				}
-				String name = filter.substring(0, index);
-				String value = filter.substring(index + 1);
-				if (XHTMLSupport.getFilterProcessor().isFilteredIn(name, value) != enabled) {
-					return false;
-				}
+			if (!XHTMLSupport.getFilterProcessor().isFilteredIn(filter)) {
+				return false;
 			}
 		}
 		return true;
@@ -913,6 +902,21 @@ public class SearchManager implements ITocsChangedListener {
 		indexCache.endAddBatch(true, true);
 	}
 	
+	/**
+	 * Takes in a list of general filters that a document is sensitive to, and inserts
+	 * current specific values, e.g. "os,plugin=my.plugin.id" -> "os=win32,plugin!=my.plugin.id".
+	 * 
+	 * For single-value filters (e.g. os, ws, arch), the general form has the filter key,
+	 * and the specific form is "[key]=[current_value]".
+	 * 
+	 * For multi-value filters (e.g. plugin), the general form has "[name]=[value]", e.g.
+	 * "plugin=my.plugin.id" which means the document is sensitive to whether or not
+	 * my.plugin.id is present. The specific form is the same except if the plugin is
+	 * not currently there it uses a "!=" instead of "=".
+	 * 
+	 * @param filters the general filters, e.g. "os,ws,plugin=my.plugin"
+	 * @return the current specific filters, e.g. "os=win32,ws=win32,plugin!=my.plugin"
+	 */
 	private String setCurrentValues(String filters) {
 		StringBuffer buf = new StringBuffer();
 		StringTokenizer tok = new StringTokenizer(filters, ","); //$NON-NLS-1$
@@ -924,14 +928,15 @@ public class SearchManager implements ITocsChangedListener {
 			first = false;
 			String filter = tok.nextToken();
 			int index = filter.indexOf('=');
+			
+			// multi-value filter, e.g. "plugin=my.plugin.id" (there can be many plugins)
 			if (index > 0) {
-				String name = filter.substring(0, index);
+				String key = filter.substring(0, index);
 				String value = filter.substring(index + 1);
-				if (!XHTMLSupport.getFilterProcessor().isFilteredIn(name, value)) {
-					buf.append('!');
-				}
-				buf.append(filter);
+				boolean isPositive = (XHTMLSupport.getFilterProcessor().isFilteredIn(key, value, true));
+				buf.append(key + (isPositive ? "=" : "!=") + value);  //$NON-NLS-1$//$NON-NLS-2$
 			}
+			// single-value filter, e.g. "os=win32" (there can only be one OS)
 			else {
 				buf.append(filter + '=' + XHTMLSupport.getFilterProcessor().getCurrentValue(filter));
 			}

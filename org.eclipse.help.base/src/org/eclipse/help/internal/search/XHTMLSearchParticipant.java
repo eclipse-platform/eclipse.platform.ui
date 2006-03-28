@@ -40,6 +40,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * The search participant responsible for indexing XHTML documents.
+ */
 public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 	
     private static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
@@ -288,7 +291,7 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 	 * keep each name and value pair.
 	 * 
 	 * e.g.,
-	 * before: "os=linux,ws=gtk,plugin=org.eclipse.help,product=org.eclipse.sdk"
+	 * before: "os=linux,ws!=gtk,plugin!=org.eclipse.help,product=org.eclipse.sdk"
 	 * after:  "os,ws,plugin=org.eclipse.help,product"
 	 * 
 	 * @param filters the filters contained in the document
@@ -301,9 +304,15 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 			String filter = (String)iter.next();
 			int index = filter.indexOf('=');
 			if (index > 0) {
-				String name = filter.substring(0, index);
+				String[] tokens = filter.split("!?="); //$NON-NLS-1$
+				String name = tokens[0]; 
+				String value = tokens[1];
+				// strip any leading NOT symbols ('!')
+				if (value != null && value.length() > 0 && value.charAt(0) == '!') {
+					value = value.substring(1);
+				}
 				if (XHTMLSupport.getFilterProcessor().isMultiValue(name)) {
-					processed.add(filter);
+					processed.add(name + '=' + value);
 				}
 				else {
 					processed.add(name);

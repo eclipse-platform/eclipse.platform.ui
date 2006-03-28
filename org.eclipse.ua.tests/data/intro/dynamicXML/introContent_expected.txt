@@ -1,4 +1,3 @@
-
 Intro Model Content:
 ======================
 
@@ -93,7 +92,7 @@ PAGE id = filter
 	style-id = null
 	page styles are = 
 	page alt-styles are = 
-	page children = 9
+	page children = 6
 
 		TITLE: id = null
 				title = Filter Example
@@ -103,34 +102,7 @@ PAGE id = filter
 				children = 1
 				style-id = null
 						LINK: id = null
-								label = Your OS is win32.
-								text = null
-								url = http://org.eclipse.ui.intro/showPage?id=filter
-								style-id = null
-		GROUP: id = null
-				label = null
-				children = 1
-				style-id = null
-						LINK: id = null
-								label = Your WS is win32.
-								text = null
-								url = http://org.eclipse.ui.intro/showPage?id=filter
-								style-id = null
-		GROUP: id = null
-				label = null
-				children = 1
-				style-id = null
-						LINK: id = null
-								label = Your ARCH is x86.
-								text = null
-								url = http://org.eclipse.ui.intro/showPage?id=filter
-								style-id = null
-		GROUP: id = null
-				label = null
-				children = 1
-				style-id = null
-						LINK: id = null
-								label = Your OS is win32 AND your WS is win32.
+								label = Sanity test
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null

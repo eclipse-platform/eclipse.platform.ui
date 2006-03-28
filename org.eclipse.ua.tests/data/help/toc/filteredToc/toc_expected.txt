@@ -14,38 +14,6 @@
          </topic>
       </topic>
       <topic
-            label="Your OS is linux"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-         <topic
-               label="test"
-               href="/org.eclipse.ua.tests/data/help/filteredTOC/simple_page.html">
-         </topic>
-      </topic>
-      <topic
-            label="Your WS is gtk"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-         <topic
-               label="test"
-               href="/org.eclipse.ua.tests/data/help/filteredTOC/simple_page.html">
-         </topic>
-      </topic>
-      <topic
-            label="Your ARCH is x86"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-         <topic
-               label="test"
-               href="/org.eclipse.ua.tests/data/help/filteredTOC/simple_page.html">
-         </topic>
-      </topic>
-      <topic
-            label="Your OS is linux AND your WS is gtk"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-         <topic
-               label="test"
-               href="/org.eclipse.ua.tests/data/help/filteredTOC/simple_page.html">
-         </topic>
-      </topic>
-      <topic
             label="The plugin org.eclipse.help is installed"
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
@@ -79,22 +47,6 @@
       </topic>
       <topic
             label="This topic should always appear"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-      </topic>
-      <topic
-            label="Your OS is linux"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-      </topic>
-      <topic
-            label="Your WS is gtk"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-      </topic>
-      <topic
-            label="Your ARCH is x86"
-            href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
-      </topic>
-      <topic
-            label="Your OS is linux AND your WS is gtk"
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
       </topic>
       <topic

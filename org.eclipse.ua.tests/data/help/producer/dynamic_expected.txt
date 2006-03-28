@@ -5,7 +5,7 @@
 --><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
 <title>dynamic.xhtml</title>
 </head>
 <body>
@@ -13,6 +13,20 @@
 <h2>dynamic.xhtml</h2>
 <p>
 This page contains filtered content.
+</p>
+
+<p filter="os!=invalid">
+This paragraph, which has filter attribute "os!=invalid" should never be filtered out.
+</p>
+
+<p filter="plugin!=my.invalid.plugin.id.012345">
+This paragraph, which has filter attribute "plugin!=my.invalid.plugin.id.012345" should never be filtered out.
+</p>
+
+<p>
+   <filter name="plugin" value="!my.invalid.plugin.id.012345" />
+   This paragraph, which has filter element name="plugin", value="!my.invalid.plugin.id.012345",
+   should never be filtered out.
 </p>
 
 

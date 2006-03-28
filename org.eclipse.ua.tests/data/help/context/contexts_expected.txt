@@ -7,23 +7,11 @@
             href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
       </topic>
       <topic
-            label="Your OS is linux"
-            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
-      </topic>
-      <topic
-            label="Your WS is gtk"
-            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
-      </topic>
-      <topic
-            label="Your ARCH is x86"
-            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
-      </topic>
-      <topic
-            label="Your OS is linux AND your WS is gtk"
-            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
-      </topic>
-      <topic
             label="The plugin org.eclipse.help is installed"
+            href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
+      </topic>
+      <topic
+            label="The plugin my.invalid.plugin.id.12345 is NOT installed"
             href="/org.eclipse.ua.tests/data/help/context/simple_page.html">
       </topic>
       <topic

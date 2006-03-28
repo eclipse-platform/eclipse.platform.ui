@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.cheatsheet.parser;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.StringTokenizer;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.cheatsheet.util.CheatSheetModelSerializer;
-import org.eclipse.ua.tests.intro.util.IntroModelSerializerTest;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.ResourceFinder;
@@ -41,7 +40,7 @@ public class ValidTest extends TestCase {
 	/*
 	 * Test valid cheat sheets.
 	 */
-	public void testParserValid() {
+	public void testParserValid() throws IOException {
 		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid", ".xml", false);
 		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
 		for (int i=0;i<urls.length;++i) {
@@ -49,30 +48,10 @@ public class ValidTest extends TestCase {
 			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], CheatSheetParser.ANY);
 			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + urls[i], sheet);
 			
-			String resultFile = IntroModelSerializerTest.getResultFile(urls[i].toString().substring("file:".length()));
-
-			try {
-				String expected = FileUtil.getContents(resultFile);
-				String actual = CheatSheetModelSerializer.serialize(sheet);
-				
-				StringTokenizer tok1 = new StringTokenizer(expected, "\n");
-				StringTokenizer tok2 = new StringTokenizer(actual, "\n");
-				
-				/*
-				 * Report the line number and line text where it didn't match,
-				 * as well as the extension id and expected results file.
-				 */
-				int lineNumber = 0;
-				while (tok1.hasMoreTokens() && tok2.hasMoreTokens()) {
-					String a = tok1.nextToken();
-					String b = tok2.nextToken();
-					Assert.assertEquals("Serialized cheat sheet model text for \"" + resultFile + "\" did not match expected result. First difference occured on line " + lineNumber + ".", a, b);
-					++lineNumber;
-				}
-			}
-			catch(Exception e) {
-				Assert.fail("An error occured while loading expected result file for intro at: " + resultFile + ": " + e);
-			}
+			String path = urls[i].toString().substring("file:".length());
+			String expected = FileUtil.getContents(FileUtil.getResultFile(path));
+			String actual = CheatSheetModelSerializer.serialize(sheet);
+			Assert.assertEquals("The model serialization generated for the cheatsheet did not match the expected result for: " + path, expected, actual);
 		}
 	}
 }

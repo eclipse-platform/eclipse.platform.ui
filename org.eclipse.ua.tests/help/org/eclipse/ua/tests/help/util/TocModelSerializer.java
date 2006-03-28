@@ -37,7 +37,7 @@ public class TocModelSerializer {
 				buf.append(serializeAux(topics[i], indent + "   "));
 			}
 			
-			buf.append(indent + "</toc>\n");
+			buf.append(indent + "</toc>");
 			return buf.toString();
 		}
 		return EMPTY_STRING;

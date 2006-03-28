@@ -106,19 +106,16 @@ public class UAContentFilterProcessor {
 	/**
 	 * Returns true is filter passes and Element is to be included.
 	 * 
-	 * @param element
-	 * @return
+	 * @param element the element whose filter attribute to check
+	 * @return whether or not the element should be filtered in
 	 */
 	private boolean processFilterAttribute(Element element) {
 		String filterString = element.getAttribute(DOMUtil.ATT_FILTER);
-		String[] parsedFilterString = filterString.split("="); //$NON-NLS-1$
-		String filter = parsedFilterString[0];
-		String value = parsedFilterString[1];
+		boolean filtered_in = isFilteredIn(filterString);
 
-		boolean filtered_in = isFilteredIn(filter, value);
-
-		if (!filtered_in)
+		if (!filtered_in) {
 			element.getParentNode().removeChild(element);
+		}
 		return filtered_in;
 	}
 
@@ -128,7 +125,12 @@ public class UAContentFilterProcessor {
 		for (int i = 0; i < filters.length; i++) {
 			String filter = filters[i].getAttribute("name"); //$NON-NLS-1$
 			String value = filters[i].getAttribute("value"); //$NON-NLS-1$
-			filtered_in = isFilteredIn(filter, value);
+			boolean isPositive = (value.length() == 0 || value.charAt(0) != '!');
+			if (!isPositive) {
+				// strip the NOT symbol (!)
+				value = value.substring(1);
+			}
+			filtered_in = isFilteredIn(filter, value, isPositive);
 			if (!filtered_in) {
 				parent.getParentNode().removeChild(parent);
 				break;
@@ -137,16 +139,33 @@ public class UAContentFilterProcessor {
 		return filtered_in;
 	}
 
+	/**
+	 * Returns whether or not the object with the given filter attribute should be
+	 * filtered in.
+	 * 
+	 * @param filterAttribute the attribute to check, e.g. "os=win32"
+	 * @return whether or not the element should be filtered in
+	 */
+	public boolean isFilteredIn(String filterAttribute) {
+		String[] parsedFilterString = null;
+		boolean isPositive = (filterAttribute.indexOf("!=") == -1); //$NON-NLS-1$
+		// split at "=" or "!="
+		parsedFilterString = filterAttribute.split("!?="); //$NON-NLS-1$
+		String filter = parsedFilterString[0];
+		String value = parsedFilterString[1];
+		return isFilteredIn(filter, value, isPositive);
+	}
 
 	/**
-	 * Returns whether or not the object with the given filter should be filtered out.
+	 * Returns whether or not the object with the given filter should be filtered in.
 	 * Can be overriden to provide additional filtering.
 	 * 
 	 * @param filter the filter name (e.g. "os")
 	 * @param value the filter value (e.g. "win32")
+	 * @param isPositive whether the filter is a positive filter (as opposed to a NOT)
 	 * @return whether or not to filter the element
 	 */
-	public boolean isFilteredIn(String filter, String value) {
+	public boolean isFilteredIn(String filter, String value, boolean isPositive) {
 		boolean filtered_in = false;
 		if (filter.equals("ws")) { //$NON-NLS-1$
 			filtered_in = filterByWS(value);
@@ -161,7 +180,7 @@ public class UAContentFilterProcessor {
 		} else
 			filtered_in = filterBySystemProperty(filter, value);
 
-		return filtered_in;
+		return isPositive ? filtered_in : !filtered_in;
 	}
 
 	/**
@@ -178,7 +197,13 @@ public class UAContentFilterProcessor {
 				Iterator iter = filters.entrySet().iterator();
 				while (iter.hasNext()) {
 					Map.Entry entry = (Map.Entry)iter.next();
-					if (!isFilteredIn((String)entry.getKey(), (String)entry.getValue())) {
+					String key = (String)entry.getKey();
+					String value = (String)entry.getValue();
+					boolean isPositive = (value.length() == 0 || value.charAt(0) != '!');
+					if (!isPositive) {
+						value = value.substring(1);
+					}
+					if (!isFilteredIn(key, value, isPositive)) {
 						return false;
 					}
 				}

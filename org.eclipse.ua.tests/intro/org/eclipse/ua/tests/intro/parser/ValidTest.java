@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.intro.parser;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -50,11 +51,12 @@ public class ValidTest extends TestCase {
 	}
 
 	/*
-	 * Test valid intro content. This goes through all the test intro content (xml files and
-	 * xhtml files) and serializes them using the IntroModelSerializer, then compares the result
-	 * of the serialization with the expected content (the _serialized.txt files).
+	 * Test valid intro content. This goes through all the test intro content
+	 * (xml files and xhtml files) and serializes them using the
+	 * IntroModelSerializer, then compares the result of the serialization
+	 * with the expected result (the _expected.txt files).
 	 */
-	public void testParserValid() {
+	public void testParserValid() throws IOException {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
 		for (int i=0;i<elements.length;++i) {
 			/*
@@ -68,36 +70,9 @@ public class ValidTest extends TestCase {
 				IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);
 				IntroModelSerializer serializer = new IntroModelSerializer(model);
 
-				/*
-				 * Try [filename]_serialized_os_ws_arch.txt. If it's not there, try
-				 * [filename]_serialized.txt.
-				 * 
-				 * We use different files for os/ws/arch combinations in order to test dynamic content,
-				 * specifically filtering. Some of the files have filters by os, ws, and arch so the
-				 * result is different on each combination.
-				 */
-				String contents = null;
-				try {
-					contents = FileUtil.getContents(bundle, IntroModelSerializerTest.getResultFile(content, true));
-				}
-				catch(Exception e) {
-					// didn't find the _serialized_os_ws_arch.txt file, try just _serialized.txt
-				}
-				if (contents == null) {
-					try {
-						contents = FileUtil.getContents(bundle, IntroModelSerializerTest.getResultFile(content));
-					}
-					catch(Exception e) {
-						Assert.fail("An error occured while loading expected result file for intro XML for: " + content);
-					}
-				}
-				/*
-				 * Do a fuzzy match. Ignore all whitespace then compare. This is to avoid platform
-				 * specific newlines, etc.
-				 */
-				String expected = contents.replaceAll("[ \t\n\r]", "");
-				String actual = serializer.toString().replaceAll("[ \t\n\r]", "");;
-				Assert.assertEquals("The serialization generated for intro did not match the expected result for: " + id, expected, actual);
+				String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(content));
+				String actual = serializer.toString();
+				Assert.assertEquals("The model parsed for intro did not match the expected result for: " + id, expected, actual);
 				
 				Map map = IntroModelSerializerTest.getXHTMLFiles(model);
 				Iterator iter = map.entrySet().iterator();
@@ -105,36 +80,8 @@ public class ValidTest extends TestCase {
 					Map.Entry entry = (Map.Entry)iter.next();
 					String relativePath = (String)entry.getKey();
 					
-					/*
-					 * Try [filename]_serialized_os_ws_arch.txt. If it's not there, try
-					 * [filename]_serialized.txt.
-					 * 
-					 * We use different files for os/ws/arch combinations in order to test dynamic content,
-					 * specifically filtering. Some of the files have filters by os, ws, and arch so the
-					 * result is different on each combination.
-					 */
-					contents = null;
-					try {
-						contents = FileUtil.getContents(bundle, IntroModelSerializerTest.getResultFile(relativePath, true));
-					}
-					catch(Exception e) {
-						// didn't find the _serialized_os_ws_arch.txt file, try just _serialized.txt
-					}
-					if (contents == null) {
-						try {
-							contents = FileUtil.getContents(bundle, IntroModelSerializerTest.getResultFile(relativePath));
-						}
-						catch(Exception e) {
-							Assert.fail("An error occured while loading expected result file for intro XHTML for: " + relativePath);
-						}
-					}
-					
-					/*
-					 * Do a fuzzy match. Ignore all whitespace then compare.. the XML transformers
-					 * seem to add whitespace to the resulting XML string differently.
-					 */
-					expected = contents.replaceAll("[ \t\n\r]", "");
-					actual = ((String)entry.getValue()).replaceAll("[ \t\n\r]", "");;
+					expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
+					actual = (String)entry.getValue();
 					Assert.assertEquals("The XHTML generated for intro did not match the expected result for: " + relativePath, expected, actual);
 				}
 			}

@@ -57,7 +57,7 @@ public class ParserTest extends TestCase {
 			String relativePath = file.getHref();
 			
 			try {
-				String expected = FileUtil.getResultFileContents(bundle, relativePath);
+				String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
 				String actual = ContextModelSerializer.serialize(contexts);
 				Assert.assertEquals("Serialized context help model for " + relativePath + " did not match the expected result", expected, actual);
 			}

@@ -11,6 +11,7 @@
 package org.eclipse.ua.tests.help.util;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,11 +32,11 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 
 /*
- * A utility for regenerating the _serialized.txt files that contain the expected
- * output for the context content when serialized. This reads all the context content
+ * A utility for regenerating the _expected.txt files that contain the expected
+ * result for the context model when serialized. This reads all the context content
  * from the plugin manifest (for this test plugin only), constructs the model, then
  * serializes the model to a text file, which is stored in the same directory as the
- * intro xml file, as <original_name>_serialized.txt.
+ * intro xml file, as <original_name>_expected.txt.
  * 
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
@@ -46,13 +47,6 @@ import org.eclipse.ua.tests.util.FileUtil;
  * 2. Right-click in "Package Explorer -> Refresh".
  * 
  * The new files should appear.
- * 
- * Note: Some of the files have os, ws, and arch appended, for example
- * <original_name>_serialized_linux_gtk_x86.txt. These are filtering tests that have
- * filters by os/ws/arch so the result is different on each combination. This test will
- * only generate the _serialized file and will be the one for the current platform. You
- * need to make one copy for each combination and edit the files manually to have the
- * correct content (or generate on each platform).
  */
 public class ContextModelSerializerTest extends TestCase {
 	
@@ -71,7 +65,7 @@ public class ContextModelSerializerTest extends TestCase {
 		HelpUIPlugin.getDefault();
 	}
 	
-	public void testRunSerializer() {
+	public void testRunSerializer() throws IOException {
 		Iterator iter = getContextFiles().iterator();
 		while (iter.hasNext()) {
 			ContextsFile file = (ContextsFile)iter.next();
@@ -84,14 +78,9 @@ public class ContextModelSerializerTest extends TestCase {
 			String absolutePath = pluginRoot + relativePath;
 			String resultFile = FileUtil.getResultFile(absolutePath); 
 			
-			try {
-				PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
-				out.print(ContextModelSerializer.serialize(contexts));
-				out.close();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
+			out.print(ContextModelSerializer.serialize(contexts));
+			out.close();
 		}
 	}
 	

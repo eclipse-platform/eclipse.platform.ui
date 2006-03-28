@@ -43,7 +43,7 @@ public class CheatSheetModelSerializer {
 			buf.append("      title=\"" + sheet.getTitle() + "\">\n");
 			buf.append(serialize(sheet.getIntroItem(), "   "));
 			buf.append(serialize(sheet.getItems(), "   "));
-			buf.append("</cheatsheet>\n");
+			buf.append("</cheatsheet>");
 		}
 		return buf.toString();
 	}

@@ -8,67 +8,17 @@
 	<topic label="This topic should always appear" href="data/help/toc/filteredToc/simple_page.html">
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
-	<topic filter="os=win32" label="Your OS is win32" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-	<topic filter="os=linux" label="Your OS is linux" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-	<topic filter="os=macosx" label="Your OS is macosx" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
 
 	<!-- should never appear -->
 	<topic filter="os=invalid" label="Your OS is invalid" href="data/help/toc/filteredToc/simple_page.html">
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
-
-	<topic filter="ws=win32" label="Your WS is win32" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-	<topic filter="ws=gtk" label="Your WS is gtk" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-	<topic filter="ws=carbon" label="Your WS is carbon" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-
-	<!-- should never appear -->
 	<topic filter="ws=invalid" label="Your WS is invalid" href="data/help/toc/filteredToc/simple_page.html">
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
-
-	<topic filter="arch=x86" label="Your ARCH is x86" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-	<topic filter="arch=ppc" label="Your ARCH is ppc" href="data/help/toc/filteredToc/simple_page.html">
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-
-	<!-- should never appear -->
 	<topic filter="arch=invalid" label="Your ARCH is invalid" href="data/help/toc/filteredToc/simple_page.html">
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
-	
-	<topic label="Your OS is win32 AND your WS is win32" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="win32"/>
-        <filter name="ws" value="win32"/>
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-
-	<topic label="Your OS is linux AND your WS is gtk" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="linux"/>
-        <filter name="ws" value="gtk"/>
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-
-	<topic label="Your OS is macosx AND your WS is carbon" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="macosx"/>
-        <filter name="ws" value="carbon"/>
-		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
-	</topic>
-
-	<!-- should never appear -->
 	<topic label="Your OS is win32 AND your WS is invalid" href="data/help/toc/filteredToc/simple_page.html">
 	    <filter name="os" value="win32"/>
         <filter name="ws" value="invalid"/>
@@ -115,42 +65,11 @@
 	<!-- Topics -->
 
 	<topic label="This topic should always appear" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="os=win32" label="Your OS is win32" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="os=linux" label="Your OS is linux" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="os=macosx" label="Your OS is macosx" href="data/help/toc/filteredToc/simple_page.html"/>
 
 	<!-- should never appear -->
 	<topic filter="os=invalid" label="Your OS is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
-
-	<topic filter="ws=win32" label="Your WS is win32" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="ws=gtk" label="Your WS is gtk" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="ws=carbon" label="Your WS is carbon" href="data/help/toc/filteredToc/simple_page.html"/>
-
-	<!-- should never appear -->
 	<topic filter="ws=invalid" label="Your WS is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
-
-	<topic filter="arch=x86" label="Your ARCH is x86" href="data/help/toc/filteredToc/simple_page.html"/>
-	<topic filter="arch=ppc" label="Your ARCH is ppc" href="data/help/toc/filteredToc/simple_page.html"/>
-
-	<!-- should never appear -->
 	<topic filter="arch=invalid" label="Your ARCH is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
-	
-	<topic label="Your OS is win32 AND your WS is win32" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="win32"/>
-        <filter name="ws" value="win32"/>
-	</topic>
-
-	<topic label="Your OS is linux AND your WS is gtk" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="linux"/>
-        <filter name="ws" value="gtk"/>
-	</topic>
-
-	<topic label="Your OS is macosx AND your WS is carbon" href="data/help/toc/filteredToc/simple_page.html">
-	    <filter name="os" value="macosx"/>
-        <filter name="ws" value="carbon"/>
-	</topic>
-
-	<!-- should never appear -->
 	<topic label="Your OS is win32 AND your WS is invalid" href="data/help/toc/filteredToc/simple_page.html">
 	    <filter name="os" value="win32"/>
         <filter name="ws" value="invalid"/>

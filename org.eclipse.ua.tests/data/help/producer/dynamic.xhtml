@@ -18,8 +18,28 @@
 This page contains filtered content.
 </p>
 <p filter="os=invalid">
-This paragraph should always be filtered out.
+This paragraph, which has filter attribute "os=invalid" should always be filtered out.
 </p>
+<p filter="os!=invalid">
+This paragraph, which has filter attribute "os!=invalid" should never be filtered out.
+</p>
+<p filter="plugin=my.invalid.plugin.id.012345">
+This paragraph, which has filter attribute "plugin=my.invalid.plugin.id.012345" should always be filtered out.
+</p>
+<p filter="plugin!=my.invalid.plugin.id.012345">
+This paragraph, which has filter attribute "plugin!=my.invalid.plugin.id.012345" should never be filtered out.
+</p>
+<p>
+   <filter name="plugin" value="my.invalid.plugin.id.012345"/>
+   This paragraph, which has filter element name="plugin", value="my.invalid.plugin.id.012345",
+   should always be filtered out.
+</p>
+<p>
+   <filter name="plugin" value="!my.invalid.plugin.id.012345"/>
+   This paragraph, which has filter element name="plugin", value="!my.invalid.plugin.id.012345",
+   should never be filtered out.
+</p>
+
 
 </body>
 </html>

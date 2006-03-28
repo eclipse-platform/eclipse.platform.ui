@@ -65,7 +65,7 @@ public class ParserTest extends TestCase {
 			 */
 			if (relativePath.startsWith("data/help/toc/")) {
 				try {
-					String expected = FileUtil.getResultFileContents(bundle, relativePath);
+					String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
 					String actual = TocModelSerializer.serialize(toc);
 					Assert.assertEquals("Serialized toc model for " + relativePath + " did not match the expected result", expected, actual);
 				}

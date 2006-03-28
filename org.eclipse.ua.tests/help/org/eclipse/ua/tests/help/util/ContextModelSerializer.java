@@ -39,7 +39,7 @@ public class ContextModelSerializer {
 			buf.append(serializeAux(entry, indent + "   "));
 		}
 
-		buf.append(indent + "</contexts>\n");
+		buf.append(indent + "</contexts>");
 		return buf.toString();
 	}
 	

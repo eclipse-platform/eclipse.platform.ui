@@ -15,34 +15,10 @@
 This page contains filtered content.
 </p>
 <ul>
-<li filter="os=win32">Your OS is <strong>win32</strong>.</li>
-
-
-
 <!-- should never appear -->
 
 
-<li filter="ws=win32">Your WS is <strong>win32</strong>.</li>
 
-
-
-<!-- should never appear -->
-
-
-<li filter="arch=x86">Your ARCH is <strong>x86</strong>.</li>
-
-
-<!-- should never appear -->
-
-<li>
-<filter name="os" value="win32" />
-<filter name="ws" value="win32" />
-Your OS is <strong>win32</strong> AND your WS is <strong>win32</strong>.
-</li>
-
-
-
-<!-- should never appear -->
 
 
 <li filter="plugin=org.eclipse.help">The plugin <code>org.eclipse.help</code> is installed.</li>

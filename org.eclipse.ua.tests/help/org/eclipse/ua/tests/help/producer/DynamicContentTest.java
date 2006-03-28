@@ -22,6 +22,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
+import org.eclipse.ua.tests.util.XHTMLUtil;
 import org.osgi.framework.Bundle;
 
 /*
@@ -49,8 +50,9 @@ public class DynamicContentTest extends TestCase {
 					Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
 					
 					try {
-						String expected = FileUtil.getResultFileContents(bundle, relativePath);
+						String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
 						String actual = FileUtil.readString(HelpSystem.getHelpContent(href));
+						actual = XHTMLUtil.removeEnvironmentSpecificContent(actual);
 						Assert.assertEquals("Processed file " + relativePath + " did not match the expected result", expected, actual);
 					}
 					catch(IOException e) {

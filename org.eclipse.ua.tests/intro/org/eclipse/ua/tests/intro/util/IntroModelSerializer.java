@@ -65,7 +65,7 @@ public class IntroModelSerializer {
     }
     
     private void printModelRootInfo(IntroModelRoot model, StringBuffer text) {
-        text.append("\nIntro Model Content:"); //$NON-NLS-1$
+        text.append("Intro Model Content:"); //$NON-NLS-1$
         text.append("\n======================"); //$NON-NLS-1$
         text.append("\n\nModel has valid config = " + model.hasValidConfig()); //$NON-NLS-1$
         text.append("\nPresentation type = " //$NON-NLS-1$
@@ -344,7 +344,6 @@ public class IntroModelSerializer {
             .getChildrenOfType(AbstractIntroElement.GROUP
                     | AbstractIntroElement.LINK);
         text.append("\n\t\t\tGroups and Links: " + linksAndGroups.length); //$NON-NLS-1$
-        text.append("\n"); //$NON-NLS-1$
     }
 
     /**

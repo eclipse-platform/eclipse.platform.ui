@@ -22,13 +22,15 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
+import org.eclipse.ua.tests.util.XHTMLUtil;
 
 /*
- * A utility for regenerating the _serialized.txt files that contain the expected
- * output for the producer content when serialized. This reads all the TOC content
- * from data/help/producer, passes it through the dynamic content producer, then
- * stores the result in a text file, which is stored in the same directory as the
- * original xhtml file, as <original_name>_serialized.txt.
+ * A utility for regenerating the _expected.txt files that contain the
+ * expected result for the producer content model when serialized.
+ * This reads all the TOC content from data/help/producer, passes it
+ * through the dynamic content producer, then stores the result in a
+ * text file, which is stored in the same directory as the original
+ * xhtml file, as <original_name>_expected.txt.
  * 
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
@@ -63,15 +65,11 @@ public class ProducerSerializerTest extends TestCase {
 					String absolutePath = pluginRoot + relativePath;
 					String resultFile = FileUtil.getResultFile(absolutePath);
 					
-					try {
-						PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
-						out.print(FileUtil.readString(HelpSystem.getHelpContent(href)));
-						out.close();
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-						throw e;
-					}
+					PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
+					String output = FileUtil.readString(HelpSystem.getHelpContent(href));
+					output = XHTMLUtil.removeEnvironmentSpecificContent(output);
+					out.print(output);
+					out.close();
 				}
 			}
 		}

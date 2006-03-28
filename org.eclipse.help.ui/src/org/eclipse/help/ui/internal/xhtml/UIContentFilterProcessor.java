@@ -29,16 +29,16 @@ public class UIContentFilterProcessor extends UAContentFilterProcessor {
 	 *  
 	 * @see org.eclipse.help.internal.xhtml.UAContentFilterProcessor#isFilteredIn(java.lang.String, java.lang.String)
 	 */
-	public boolean isFilteredIn(String filter, String value) {
+	public boolean isFilteredIn(String filter, String value, boolean isPositive) {
 		boolean filtered_in = false;
 		if (filter.equals("category")) { //$NON-NLS-1$
 			filtered_in = filterByCategory(value);
 		} else if (filter.equals("activity")) { //$NON-NLS-1$
 			filtered_in = filterByActivity(value);
 		} else
-			filtered_in = super.isFilteredIn(filter, value);
+			return super.isFilteredIn(filter, value, isPositive);
 
-		return filtered_in;
+		return isPositive ? filtered_in : !filtered_in;
 	}
 
 	/**

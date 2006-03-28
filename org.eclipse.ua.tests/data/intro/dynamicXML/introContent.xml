@@ -41,43 +41,12 @@
     <page id="filter">
         <title>Filter Example</title>
         <group>
-            <link filter="os=win32" label="Your OS is win32." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-            <link filter="os=linux" label="Your OS is linux." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-            <link filter="os=macosx" label="Your OS is macosx." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
+            <link label="Sanity test" url="http://org.eclipse.ui.intro/showPage?id=filter"/>
 
             <!-- should never appear -->
             <link filter="os=invalid" label="Your OS is invalid." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-        </group>
-        <group>
-            <link filter="ws=win32" label="Your WS is win32." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-            <link filter="ws=gtk" label="Your WS is gtk." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-            <link filter="ws=carbon" label="Your WS is carbon." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-
-            <!-- should never appear -->
             <link filter="ws=invalid" label="Your WS is invalid." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-        </group>
-        <group>
-            <link filter="arch=x86" label="Your ARCH is x86." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-            <link filter="arch=ppc" label="Your ARCH is ppc." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-
-            <!-- should never appear -->
             <link filter="arch=invalid" label="Your ARCH is invalid." url="http://org.eclipse.ui.intro/showPage?id=filter"/>
-        </group>
-        <group>
-            <link label="Your OS is win32 AND your WS is win32." url="http://org.eclipse.ui.intro/showPage?id=filter">
-                <filter name="os" value="win32"/>
-                <filter name="ws" value="win32"/>
-            </link>
-            <link label="Your OS is linux AND your WS is gtk." url="http://org.eclipse.ui.intro/showPage?id=filter">
-                <filter name="os" value="linux"/>
-                <filter name="ws" value="gtk"/>
-            </link>
-            <link label="Your OS is macosx AND your WS is carbon." url="http://org.eclipse.ui.intro/showPage?id=filter">
-                <filter name="os" value="macosx"/>
-                <filter name="ws" value="carbon"/>
-            </link>
-
-            <!-- should never appear -->
             <link label="Your OS is win32 AND your WS is invalid." url="http://org.eclipse.ui.intro/showPage?id=filter">
                 <filter name="os" value="win32"/>
                 <filter name="ws" value="invalid"/>

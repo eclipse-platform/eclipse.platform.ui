@@ -24,12 +24,13 @@ import org.xml.sax.Attributes;
  * where the filter has a name and value, for example:
  * 
  * <myUAElement filter="os=win32" myattribute="..." />
+ * <myUAElement filter="os!=linux" myattribute="..." />
  * 
  * or
  * 
  * <myUAElement myattribute="...">
  *    <filter name="os" value="linux" />
- *    <filter name="ws" value="gtk" />
+ *    <filter name="ws" value="!gtk" />
  * </myUAElement>
  * 
  * Filters must be stored in the model because they should only be processed when
@@ -88,9 +89,14 @@ public abstract class FilterableUAElement {
 	 * @param nameAndValue the filter name and value
 	 */
 	public void addFilter(String nameAndValue) {
-    	int equalsIndex = nameAndValue.indexOf('=');
-    	String name = nameAndValue.substring(0, equalsIndex);
-    	String value = nameAndValue.substring(equalsIndex + 1);
+		boolean isPositive = (nameAndValue.indexOf("!=") == -1); //$NON-NLS-1$
+		// split at "=" or "!="
+		String[] tokens = nameAndValue.split("!?="); //$NON-NLS-1$
+    	String name = tokens[0];
+    	String value = tokens[1];
+    	if (!isPositive) {
+    		value = '!' + value;
+    	}
     	addFilter(name, value);
 	}
 
