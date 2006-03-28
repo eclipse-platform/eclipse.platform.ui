@@ -23,14 +23,15 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
-import org.eclipse.ui.internal.navigator.extensions.LinkHelperManager;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ILinkHelper;
@@ -40,70 +41,99 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * This action links the activate editor with the Navigator selection.
- *  
+ * 
  * @since 3.2
  */
-public class LinkEditorAction extends Action implements ISelectionChangedListener, IAction, IPropertyListener {
+public class LinkEditorAction extends Action implements
+		ISelectionChangedListener, IAction, IPropertyListener {
+
+	private static final long BRIEF_DELAY = 100;
 
 	private IPartListener partListener;
-	private final CommonViewer commonViewer;
+
 	private final CommonNavigator commonNavigator;
-	private LinkHelperManager linkHelperRegistry;
+
+	private final CommonViewer commonViewer;
+
+	private final NavigatorContentService contentService;
+
+	private final LinkHelperService linkService;
+
+	private UIJob activateEditorJob = new UIJob(
+			CommonNavigatorMessages.Link_With_Editor_Job_) {
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+
+			ISelection selection = commonViewer.getSelection();
+			if (selection != null && !selection.isEmpty()
+					&& selection instanceof IStructuredSelection) {
+
+				IStructuredSelection sSelection = (IStructuredSelection) selection;
+				if (sSelection.size() == 1) {
+					ILinkHelper[] helpers = linkService
+							.getLinkHelpersFor(sSelection.getFirstElement());
+					if (helpers.length > 0) {
+						helpers[0].activateEditor(commonNavigator.getSite()
+								.getPage(), sSelection);
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	};
+	
+
+	private UIJob updateSelectionJob = new UIJob(
+			CommonNavigatorMessages.Link_With_Editor_Job_) {
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+
+			try { 
+				IEditorPart editor = commonNavigator.getSite().getPage()
+						.getActiveEditor();
+				IEditorInput input = editor.getEditorInput();
+				ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
+
+				IStructuredSelection selection = StructuredSelection.EMPTY;
+				IStructuredSelection newSelection = StructuredSelection.EMPTY;
+
+				for (int i = 0; i < helpers.length; i++) {
+					selection = helpers[i].findSelection(input);
+					if (selection != null && !selection.isEmpty()) {
+						newSelection = mergeSelection(newSelection, selection);
+					}
+				}
+				if(!newSelection.isEmpty()) {
+					commonNavigator.selectReveal(newSelection);
+				}
+			} catch (Throwable e) { 
+				String msg = e.getMessage() != null ? e.getMessage() : e.toString();
+				NavigatorPlugin.logError(0, msg, e);
+			}
+			return Status.OK_STATUS;
+		}
+	};
+
 
 	/**
-	 * Create a LinkEditorAction for the given navigator and viewer. 
-	 * @param aNavigator The navigator which defines whether linking is enabled and implements {@link ISetSelectionTarget}.
-	 * @param aViewer The common viewer instance with a {@link INavigatorContentService}.
+	 * Create a LinkEditorAction for the given navigator and viewer.
+	 * 
+	 * @param aNavigator
+	 *            The navigator which defines whether linking is enabled and
+	 *            implements {@link ISetSelectionTarget}.
+	 * @param aViewer
+	 *            The common viewer instance with a
+	 *            {@link INavigatorContentService}.
 	 */
 	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer) {
 		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
-		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1); 
+		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
+		contentService = (NavigatorContentService) aViewer
+				.getNavigatorContentService();
+
+		linkService = new LinkHelperService(contentService);
+
 		init();
-	}
-
-	protected void activateEditor() {
-		ISelection selection = commonViewer.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			activateEditor((IStructuredSelection) selection);
-		}
-	}
-
-	/**
-	 * Update the active editor based on the current selection in the Navigator.
-	 */
-	protected void activateEditor(final IStructuredSelection aSelection) {
-		if (aSelection == null || aSelection.size() != 1) {
-			return;
-		}
-
-		final Runnable activateEditor = new Runnable() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				ILinkHelper[] helpers = linkHelperRegistry.getLinkHelpersFor(aSelection);
-				if (helpers.length > 0) {
-					helpers[0].activateEditor(commonNavigator.getSite().getPage(), aSelection);
-				}
-			}
-		};
-
-		if (Display.getCurrent() != null) {
-			activateEditor.run();
-		} else {
-			/* Create and schedule a UI Job to activate the editor in a valid Display thread */
-			new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					activateEditor.run();
-					return Status.OK_STATUS;
-				}
-			}.schedule();
-		}
 	}
 
 	/**
@@ -114,18 +144,18 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 
 			public void partActivated(IWorkbenchPart part) {
 				if (part instanceof IEditorPart) {
-					linkToEditor((IEditorPart) part);
+					updateSelectionJob.schedule(BRIEF_DELAY);
 				}
 			}
 
 			public void partBroughtToTop(IWorkbenchPart part) {
 				if (part instanceof IEditorPart) {
-					linkToEditor((IEditorPart) part);
+					updateSelectionJob.schedule(BRIEF_DELAY);
 				}
 			}
 
 			public void partClosed(IWorkbenchPart part) {
-				 
+
 			}
 
 			public void partDeactivated(IWorkbenchPart part) {
@@ -138,56 +168,22 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		updateLinkingEnabled(commonNavigator.isLinkingEnabled());
 
 		commonNavigator.addPropertyListener(this);
-		 
-		
-		//linkHelperRegistry = new LinkHelperManager(commonViewer.getNavigatorContentService());
+
+		// linkHelperRegistry = new
+		// LinkHelperManager(commonViewer.getNavigatorContentService());
 	}
-	
+
 	/**
 	 * 
 	 */
 	public void dispose() {
 		commonNavigator.removePropertyListener(this);
-		if(isChecked()) {
+		if (isChecked()) {
 			commonViewer.removeSelectionChangedListener(this);
-			commonNavigator.getSite().getPage().removePartListener(partListener);
+			commonNavigator.getSite().getPage()
+					.removePartListener(partListener);
 		}
 
-	}
-
-	/**
-	 * Link the Navigator to the current open editor. Do this by updating the Navigator's selection.
-	 */
-	private void linkToEditor(IEditorPart anEditor) {
-		if (anEditor != null) {
-
-			IEditorInput input = anEditor.getEditorInput();
-			ILinkHelper[] helpers = linkHelperRegistry.getLinkHelpersFor(input);
-
-			IStructuredSelection selection = StructuredSelection.EMPTY;
-			IStructuredSelection newSelection = StructuredSelection.EMPTY;
-
-			for (int i = 0; i < helpers.length; i++) {
-				selection = helpers[i].findSelection(input);
-				if (selection != null && !selection.isEmpty()) {
-					newSelection = mergeSelection(newSelection, selection);
-				}
-			}
-
-			commonNavigator.selectReveal(newSelection);
-		}
-	}
-
-	private IStructuredSelection mergeSelection(IStructuredSelection aBase, IStructuredSelection aSelectionToAppend) {
-		if (aBase == null || aBase.isEmpty()) {
-			return (aSelectionToAppend != null) ? aSelectionToAppend : StructuredSelection.EMPTY;
-		} else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty()) {
-			return aBase;
-		} else {
-			List newItems = new ArrayList(aBase.toList());
-			newItems.addAll(aSelectionToAppend.toList());
-			return new StructuredSelection(newItems);
-		}
 	}
 
 	/**
@@ -204,20 +200,36 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (commonNavigator.isLinkingEnabled()) {
-			activateEditor((IStructuredSelection) event.getSelection());
+			activateEditor();
 		}
 
+	}
+
+	/**
+	 * Update the active editor based on the current selection in the Navigator.
+	 */
+	protected void activateEditor() {
+		ISelection selection = commonViewer.getSelection();
+		if (selection != null && !selection.isEmpty()
+				&& selection instanceof IStructuredSelection) { 
+			/*
+			 * Create and schedule a UI Job to activate the editor in a valid
+			 * Display thread
+			 */
+			activateEditorJob.schedule(BRIEF_DELAY);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
+	 *      int)
 	 */
 	public void propertyChanged(Object aSource, int aPropertyId) {
 		switch (aPropertyId) {
-			case CommonNavigator.IS_LINKING_ENABLED_PROPERTY :
-				updateLinkingEnabled(((CommonNavigator) aSource).isLinkingEnabled());
+		case CommonNavigator.IS_LINKING_ENABLED_PROPERTY:
+			updateLinkingEnabled(((CommonNavigator) aSource).isLinkingEnabled());
 		}
 	}
 
@@ -228,17 +240,31 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		setChecked(toEnableLinking);
 
 		if (toEnableLinking) {
-			IEditorPart editor = commonNavigator.getSite().getPage().getActiveEditor();
-			linkToEditor(editor);
+			
+			updateSelectionJob.schedule(BRIEF_DELAY);
 
 			commonViewer.addSelectionChangedListener(this);
 			commonNavigator.getSite().getPage().addPartListener(partListener);
 		} else {
 			commonViewer.removeSelectionChangedListener(this);
-			commonNavigator.getSite().getPage().removePartListener(partListener);
+			commonNavigator.getSite().getPage()
+					.removePartListener(partListener);
 		}
 	}
-	
-	
+
+	private IStructuredSelection mergeSelection(IStructuredSelection aBase,
+			IStructuredSelection aSelectionToAppend) {
+		if (aBase == null || aBase.isEmpty()) {
+			return (aSelectionToAppend != null) ? aSelectionToAppend
+					: StructuredSelection.EMPTY;
+		} else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty()) {
+			return aBase;
+		} else {
+			List newItems = new ArrayList(aBase.toList());
+			newItems.addAll(aSelectionToAppend.toList());
+			return new StructuredSelection(newItems);
+		}
+	}
+ 
 
 }

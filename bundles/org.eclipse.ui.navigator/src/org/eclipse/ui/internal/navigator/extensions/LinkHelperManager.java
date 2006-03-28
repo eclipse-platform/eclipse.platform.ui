@@ -12,13 +12,13 @@
 package org.eclipse.ui.internal.navigator.extensions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.navigator.ILinkHelper;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * <p>
@@ -33,16 +33,14 @@ import org.eclipse.ui.navigator.ILinkHelper;
  */
 public class LinkHelperManager {
 
-	private static final ILinkHelper[] NO_LINK_HELPERS = new ILinkHelper[0];
-
 	private static final LinkHelperManager instance = new LinkHelperManager();
+
+	private static final LinkHelperDescriptor[] NO_DESCRIPTORS = new LinkHelperDescriptor[0];
 
 	private List descriptors;
 
-//	private INavigatorContentService contentService;
-	
 	/**
-	 * Return the singleton instance.
+	 * @return the singleton instance.
 	 */
 	public static LinkHelperManager getInstance() {
 		return instance;
@@ -52,69 +50,71 @@ public class LinkHelperManager {
 		new LinkHelperRegistry().readRegistry();
 	}
 
-	// TODO Define more explicitly the expected order that LinkHelpers will be
-	// returned
-	public ILinkHelper[] getLinkHelpersFor(IStructuredSelection aSelection) {
+	/**
+	 * Return the link helper descriptors for a given selection and content
+	 * service.
+	 * 
+	 * @param anObject
+	 *            An object from the viewer.
+	 * @param aContentService
+	 *            The content service to use for visibility filtering. Link
+	 *            Helpers are filtered by contentExtension elements in
+	 *            viewerContentBindings.
+	 * @return An array of <i>visible</i> and <i>enabled</i> Link Helpers or
+	 *         an empty array.
+	 */
+	public LinkHelperDescriptor[] getLinkHelpersFor(
+			Object anObject,
+			INavigatorContentService aContentService) {
 
-//		if (aSelection.isEmpty()) {
-			return NO_LINK_HELPERS;
-//		}
-//
-//		Set contentDescriptors = contentService
-//				.findContentExtensionsWithPossibleChild(aSelection
-//						.getFirstElement());
-//		if (contentDescriptors.isEmpty()) {
-//			return NO_LINK_HELPERS;
-//		}
-//
-//		/* Use the first Navigator Content LinkHelperDescriptor for now */
-//		INavigatorContentExtension contentExtension = (INavigatorContentExtension) contentDescriptors
-//				.iterator().next();
-//
-//		List helpersList = new ArrayList();
-//		ILinkHelper[] helpers = NO_LINK_HELPERS;
-//		LinkHelperDescriptor descriptor = null;
-//		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
-//			descriptor = (LinkHelperDescriptor) itr.next();
-//			if (descriptor.isEnabledFor(contentExtension.getId())) {
-//				helpersList.add(getLinkHelper(descriptor));
-//			} else if (descriptor.isEnabledFor(aSelection)) {
-//				helpersList.add(getLinkHelper(descriptor));
-//			}
-//		}
-//		if (helpersList.size() > 0) {
-//			helpersList
-//					.toArray((helpers = new ILinkHelper[helpersList.size()]));
-//		}
-//
-//		return helpers;
+		List helpersList = new ArrayList();
+		LinkHelperDescriptor descriptor = null;
+		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
+			descriptor = (LinkHelperDescriptor) itr.next();
+			if (aContentService.isVisible(descriptor.getId())
+					&& descriptor.isEnabledFor(anObject)) {
+				helpersList.add(descriptor);
+			}
+		}
+		if (helpersList.size() == 0) {
+			return NO_DESCRIPTORS;
+		}
+		return (LinkHelperDescriptor[]) helpersList
+				.toArray(new LinkHelperDescriptor[helpersList.size()]);
+
 	}
 
-//	/**
-//	 * @param descriptor
-//	 * @return
-//	 */
-//	private Object getLinkHelper(LinkHelperDescriptor descriptor) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	/**
+	 * Return the link helper descriptors for a given selection and content
+	 * service.
+	 * 
+	 * @param anInput
+	 *            The input of the active viewer.
+	 * @param aContentService
+	 *            The content service to use for visibility filtering. Link
+	 *            Helpers are filtered by contentExtension elements in
+	 *            viewerContentBindings.
+	 * @return An array of <i>visible</i> and <i>enabled</i> Link Helpers or
+	 *         an empty array.
+	 */
+	public LinkHelperDescriptor[] getLinkHelpersFor(IEditorInput anInput,
+			INavigatorContentService aContentService) {
 
-	public ILinkHelper[] getLinkHelpersFor(IEditorInput input) {
 		List helpersList = new ArrayList();
-		ILinkHelper[] helpers = new ILinkHelper[0];
-//		LinkHelperDescriptor descriptor = null;
-//		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
-//			descriptor = (LinkHelperDescriptor) itr.next();
-//			if (descriptor.isEnabledFor(input)) {
-//				helpersList.add(descriptor.getLinkHelper());
-//			}
-//		}
-		if (helpersList.size() > 0) {
-			helpersList
-					.toArray((helpers = new ILinkHelper[helpersList.size()]));
+		LinkHelperDescriptor descriptor = null;
+		for (Iterator itr = getDescriptors().iterator(); itr.hasNext();) {
+			descriptor = (LinkHelperDescriptor) itr.next();
+			if (aContentService.isVisible(descriptor.getId())
+					&& descriptor.isEnabledFor(anInput)) {
+				helpersList.add(descriptor);
+			}
 		}
+		if (helpersList.size() == 0) {
+			return NO_DESCRIPTORS;
+		}
+		return (LinkHelperDescriptor[]) helpersList
+				.toArray(new LinkHelperDescriptor[helpersList.size()]);
 
-		return helpers;
 	}
 
 	protected List getDescriptors() {
@@ -133,7 +133,12 @@ public class LinkHelperManager {
 
 		public boolean readElement(IConfigurationElement element) {
 			if (LINK_HELPER.equals(element.getName())) {
-				getDescriptors().add(new LinkHelperDescriptor(element));
+				try {
+					getDescriptors().add(new LinkHelperDescriptor(element));
+				} catch (Throwable e) {
+					String msg = e.getMessage() != null ? e.getMessage() : e.toString();
+					NavigatorPlugin.logError(0, msg, e);
+				}
 				return true;
 			}
 			return false;

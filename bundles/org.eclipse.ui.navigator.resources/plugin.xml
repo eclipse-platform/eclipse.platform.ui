@@ -49,7 +49,7 @@
           <includes>
        	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
 	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
-       	      <contentExtension pattern="org.eclipse.ui.navigator.resources.sorters.defaultSorter" />		       	      
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper"/>
           </includes>
        </viewerContentBinding>
        <viewerActionBinding
@@ -267,5 +267,18 @@
              <input type="java.lang.Object"/>
           </propertySection>
        </propertySections>
+    </extension>
+    <extension
+          point="org.eclipse.ui.navigator.linkHelper">
+       <linkHelper
+             class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceLinkHelper"
+             id="org.eclipse.ui.navigator.resources.linkHelper">
+          <selectionEnablement>
+             <instanceof value="org.eclipse.core.resources.IFile"/>
+          </selectionEnablement>
+          <editorInputEnablement>
+             <instanceof value="org.eclipse.ui.IFileEditorInput"/>
+          </editorInputEnablement>
+       </linkHelper>
     </extension>
 </plugin> 
