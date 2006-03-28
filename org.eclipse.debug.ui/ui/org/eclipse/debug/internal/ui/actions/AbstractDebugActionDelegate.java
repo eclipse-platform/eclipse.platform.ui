@@ -468,6 +468,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
+		fAction = action;
 	}
 	
 	/**
