@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -66,7 +67,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * 
 	 * @since 3.2
 	 */
-	private LaunchConfigurationFilteredTree fTree;
+	private FilteredTree fTree;
 	
 	/**
 	 * a handle to the launch manager
@@ -132,7 +133,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		fTree = new LaunchConfigurationFilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
+		fTree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
 		fTree.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
 		TreeViewer treeViewer = fTree.getViewer();
 		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -145,7 +146,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		}
 		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
-/*		treeViewer.expandAll();*/
 		treeViewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent evt) {
 				handleHelpRequest(evt);
