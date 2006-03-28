@@ -101,7 +101,7 @@ public class NavigatorViewerDescriptorManager {
 								.logError(
 										0,
 										"Only one \"popupMenu\" child of \"viewer\" may be specified. (see " + element.getNamespace() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
-					} else { // valid case
+					} else if(tagPopupMenu.length == 1) { // valid case
 
 						String popupMenuId = tagPopupMenu[0]
 								.getAttribute(ATT_ID);
