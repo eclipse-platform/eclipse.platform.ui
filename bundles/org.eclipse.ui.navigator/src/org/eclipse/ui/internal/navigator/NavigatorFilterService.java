@@ -230,5 +230,25 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			activeFilters.addAll(Arrays.asList(theFilterIds));
 		}
 	}
+	
+	/**
+	 * 
+	 * @param aFilterId The id of the filter to activate or deactivate
+	 * @param toMakeActive True to make the filter active, false to make the filter inactive
+	 */
+	public void setActive(String aFilterId, boolean toMakeActive) {
+
+		synchronized (activeFilters) {
+			boolean isActive = activeFilters.contains(aFilterId);
+			if(isActive ^ toMakeActive) {
+				if(toMakeActive)
+					activeFilters.remove(aFilterId);
+				else
+					activeFilters.add(aFilterId);
+					
+			}
+				
+		}
+	}
 
 }

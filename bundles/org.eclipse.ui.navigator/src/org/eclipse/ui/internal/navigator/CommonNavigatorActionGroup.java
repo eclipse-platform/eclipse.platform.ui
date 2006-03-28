@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.actions.CollapseAllAction;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
-import org.eclipse.ui.internal.navigator.filters.SelectFiltersAction;
+import org.eclipse.ui.internal.navigator.filters.FilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
@@ -33,7 +33,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 
 	private CollapseAllAction collapseAllAction;
 
-	private SelectFiltersAction selectFiltersAction;
+	private FilterActionGroup filterGroup;
 
 	private final CommonViewer commonViewer;
 
@@ -90,14 +90,8 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 			collapseAllAction.setHoverImageDescriptor(collapseAllIcon);
 		}
 
-		boolean hideAvailableCustomizationsDialog = viewerDescriptor
-				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);
-		if (!hideAvailableCustomizationsDialog) {
-			selectFiltersAction = new SelectFiltersAction(commonViewer);
-			ImageDescriptor selectFiltersIcon = getImageDescriptor("elcl16/filter_ps.gif"); //$NON-NLS-1$
-			selectFiltersAction.setImageDescriptor(selectFiltersIcon);
-			selectFiltersAction.setHoverImageDescriptor(selectFiltersIcon);
-		}
+		filterGroup = new FilterActionGroup(commonViewer);
+
 	}
 
 	/*
@@ -108,10 +102,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars theActionBars) {
 		IMenuManager menu = theActionBars.getMenuManager();
 
-		if (selectFiltersAction != null) {
-			menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS,
-					selectFiltersAction);
-		}
+		filterGroup.fillActionBars(theActionBars);
 
 		if (collapseAllAction != null) {
 			theActionBars.getToolBarManager().add(collapseAllAction);
@@ -127,13 +118,15 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 
 		theActionBars.updateActionBars();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
 	 */
-	public void dispose() { 
+	public void dispose() {
 		super.dispose();
-		if(toggleLinkingAction != null) {
+		if (toggleLinkingAction != null) {
 			toggleLinkingAction.dispose();
 		}
 	}

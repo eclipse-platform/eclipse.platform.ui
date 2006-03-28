@@ -31,22 +31,26 @@ import org.eclipse.ui.navigator.CommonViewer;
  */
 public class SelectFiltersAction extends Action implements IAction {
 
-	private final CommonViewer commonViewer; 
+	private final CommonViewer commonViewer;
+	private FilterActionGroup filterGroup; 
 
 	/**
 	 * Create an action to drive the Filter selection dialog
 	 * for a particular instance of the CommonViewer.
 	 * @param aCommonViewer
+	 * @param aFilterGroup 
 	 */
-	public SelectFiltersAction(CommonViewer aCommonViewer) {
+	public SelectFiltersAction(CommonViewer aCommonViewer, FilterActionGroup aFilterGroup) {
 		super(CommonNavigatorMessages.SelectFiltersActionDelegate_0); 
 		setToolTipText(CommonNavigatorMessages.SelectFiltersActionDelegate_1); 
 		commonViewer = aCommonViewer; 
+		filterGroup = aFilterGroup;
 	}
 
 	public void run() {
 		CommonFilterSelectionDialog filterSelectionDialog = new CommonFilterSelectionDialog(commonViewer);
 		filterSelectionDialog.open();
+		filterGroup.updateFilterShortcuts();
 	}
 
 }
