@@ -33,6 +33,7 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(Bug_126104.suite());
 		suite.addTest(Bug_127562.suite());
+		suite.addTest(Bug_132510.suite());
 		suite.addTest(Bug_25457.suite());
 		suite.addTest(Bug_26294.suite());
 		suite.addTest(Bug_27271.suite());
