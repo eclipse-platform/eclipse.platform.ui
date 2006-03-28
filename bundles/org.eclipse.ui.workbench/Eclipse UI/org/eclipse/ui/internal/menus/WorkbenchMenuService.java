@@ -81,6 +81,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 	public final void dispose() {
 		menuPersistence.dispose();
+		menuAuthority.dispose();
 	}
 
 	public final SActionSet getActionSet(final String actionSetId) {

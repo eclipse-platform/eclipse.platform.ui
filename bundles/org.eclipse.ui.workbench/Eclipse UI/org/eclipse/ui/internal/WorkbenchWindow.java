@@ -1492,6 +1492,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
+			
+			if (trimMgr!=null) {
+				trimMgr.dispose();
+			}
+			trimMgr = null;
 		} finally {
 			result = super.close();
 		}
