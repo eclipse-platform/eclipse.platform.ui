@@ -522,6 +522,9 @@ public class FormTextModel {
 	}
 
 	public HyperlinkSettings getHyperlinkSettings() {
+		// #132723 cannot have null settings
+		if (hyperlinkSettings==null)
+			hyperlinkSettings = new HyperlinkSettings(SWTUtil.getStandardDisplay());
 		return hyperlinkSettings;
 	}
 
