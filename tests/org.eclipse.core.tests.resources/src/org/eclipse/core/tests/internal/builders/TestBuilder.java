@@ -62,7 +62,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
-	 * Implemements the inherited abstract method in
+	 * Implements the inherited abstract method in
 	 * <code>InternalBuilder</code>.
 	 * 
 	 * @see InternalBuilder#build(IResourceDelta,int,IProgressMonitor)
