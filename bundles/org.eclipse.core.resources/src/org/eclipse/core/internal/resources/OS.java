@@ -26,26 +26,20 @@ public abstract class OS {
 	static {
 		//find out the OS being used
 		//setup the invalid names
-		char[] chars = null;
-		String[] names = null;
 		INSTALLED_PLATFORM = Platform.getOS();
 		if (INSTALLED_PLATFORM.equals(Platform.OS_WIN32)) {
 			//valid names and characters taken from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/fileio/fs/naming_a_file.asp
-			chars = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
-
-			names = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			INVALID_RESOURCE_CHARACTERS = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
+			INVALID_RESOURCE_NAMES = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 					"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 					"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+			Arrays.sort(INVALID_RESOURCE_NAMES);
 		} else {
 			//only front slash and null char are invalid on UNIXes
 			//taken from http://www.faqs.org/faqs/unix-faq/faq/part2/section-2.html
-			chars = new char[] {'/', '\0',};
-			//'.' and '..' have special meaning, and so can't be used as resource names
-			names = new String[] {}; 
+			INVALID_RESOURCE_CHARACTERS = new char[] {'/', '\0',};
+			INVALID_RESOURCE_NAMES = new String[] {}; 
 		}
-		INVALID_RESOURCE_CHARACTERS = chars == null ? new char[0] : chars;
-		Arrays.sort(names);
-		INVALID_RESOURCE_NAMES = names;
 	}
 
 	/**
