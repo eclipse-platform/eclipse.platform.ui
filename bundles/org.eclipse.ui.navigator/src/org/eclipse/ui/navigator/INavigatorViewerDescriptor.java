@@ -17,7 +17,7 @@ import org.eclipse.jface.action.Separator;
 public interface INavigatorViewerDescriptor {
 
 	/**
-	 * {@value #PROP_HIDE_AVAILABLE_EXT_TAB } (boolean): True indicates the
+	 * {@value} (boolean): True indicates the
 	 * "Available Extensions" tab in the "Available Customizations" dialog
 	 * should not be available for the user (defaults to <b>false</b>).
 	 * 
@@ -25,21 +25,21 @@ public interface INavigatorViewerDescriptor {
 	String PROP_HIDE_AVAILABLE_EXT_TAB = "org.eclipse.ui.navigator.hideAvailableExtensionsTab"; //$NON-NLS-1$
 
 	/**
-	 * {@value #PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG } (boolean): True
+	 * {@value} (boolean): True
 	 * indicates the entire "Available Customizations" dialog should not be
 	 * available for the user (defaults to <b>false</b>).
 	 */
 	String PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG = "org.eclipse.ui.navigator.hideAvailableCustomizationsDialog"; //$NON-NLS-1$
 
 	/**
-	 * {@value #PROP_HIDE_COLLAPSE_ALL_ACTION } (boolean): True indicates the
+	 * {@value} (boolean): True indicates the
 	 * "Collapse All" button should not be available for the user (defaults to
 	 * <b>false</b>).
 	 */
 	String PROP_HIDE_COLLAPSE_ALL_ACTION = "org.eclipse.ui.navigator.hideCollapseAllAction"; //$NON-NLS-1$
 
 	/**
-	 * {@value #PROP_HIDE_LINK_WITH_EDITOR_ACTION } (boolean): True indicates
+	 * {@value} (boolean): True indicates
 	 * the "Link With Editor" action should not be available for the user
 	 * (defaults to <b>false</b>).
 	 */
