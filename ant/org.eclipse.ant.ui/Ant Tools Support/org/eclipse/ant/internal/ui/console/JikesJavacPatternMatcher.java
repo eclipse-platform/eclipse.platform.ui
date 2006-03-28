@@ -31,6 +31,7 @@ public class JikesJavacPatternMatcher extends AbstractJavacPatternMatcher {
         int fileLength = filePath.length();
         
         int lineNumber = getLineNumber(eventOffset);
-        addLink(filePath, lineNumber, fileStart, fileLength);
+        //TODO determine if error or warning
+        addLink(filePath, lineNumber, fileStart, fileLength, fgErrorType);
     }
 }

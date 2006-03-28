@@ -61,7 +61,9 @@ public class AntPreferencesMessages extends NLS {
 	public static String AntPreferencePage_0;
 	public static String AntPreferencePage_1;
 	public static String AntPreferencePage_2;
-
+	public static String AntPreferencePage_15;
+	public static String AntPreferencePage_16;
+	
 	public static String AntTasksPage_1;
 	public static String AntTasksPage_2;
 	public static String AntTasksPage_3;

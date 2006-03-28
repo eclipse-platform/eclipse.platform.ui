@@ -55,5 +55,6 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 	 */
 	public void consoleClosed() {
 		TaskLinkManager.dispose(fConsole.getProcess());
+		AbstractJavacPatternMatcher.consoleClosed(fConsole.getProcess());
 	}
 }

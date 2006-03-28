@@ -102,7 +102,14 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		}
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent()));
-		
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CREATE_MARKERS, AntPreferencesMessages.AntPreferencePage_15, getFieldEditorParent()));
+		 label= new Label(getFieldEditorParent(), SWT.WRAP);
+			label.setText(AntPreferencesMessages.AntPreferencePage_16);
+			gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			gd.horizontalSpan= 3;
+			gd.widthHint= convertWidthInCharsToPixels(60);
+			label.setLayoutData(gd);
+			label.setFont(font);
 		createSpace();
 		
 		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());

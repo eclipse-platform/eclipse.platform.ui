@@ -27,9 +27,11 @@ public class EclipseJavacPatternMatcher extends AbstractJavacPatternMatcher {
         }
         int index = matchedText.indexOf(fgError);
         String filePath;
+        Integer type= fgErrorType;
         if (index == -1) {
             index = matchedText.indexOf(fgWarning);
             filePath= matchedText.substring(index + 10).trim();
+            type= fgWarningType;
         } else {
             filePath= matchedText.substring(index + 8).trim();   
         }
@@ -39,6 +41,6 @@ public class EclipseJavacPatternMatcher extends AbstractJavacPatternMatcher {
         int eventLength = filePath.length();
         
         int lineNumber = getLineNumber(eventOffset);
-        addLink(filePath, lineNumber, eventOffset, eventLength);
+        addLink(filePath, lineNumber, eventOffset, eventLength, type);
     }
 }

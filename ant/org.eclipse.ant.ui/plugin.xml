@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
      <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -690,7 +689,7 @@ M4 = Platform-specific fourth key -->
          class="org.eclipse.ant.internal.ui.console.JavacPatternMatcher"
          id="org.eclipse.ant.ui.JavacPatternMatcher"
          qualifier="javac"
-         regex="\[.*javac.*\] .*\.java:.*:.*">
+         regex="\[.*javac.*\] .*(\.java:.*:.*|.*\.java)">
          <enablement>
             <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
          </enablement>

@@ -31,21 +31,37 @@ public class JavacPatternMatcher extends AbstractJavacPatternMatcher {
         int numStart= matchedText.lastIndexOf(':', numEnd - 1);
         
         int index = matchedText.indexOf("]"); //$NON-NLS-1$
-        String filePath = matchedText.substring(index + 1, numStart);
-        filePath = filePath.trim();
-
-        int fileStart = matchedText.indexOf(filePath);
-        int eventOffset= event.getOffset() + fileStart;
-        int eventLength = filePath.length();
         
-        String lineNumberString = matchedText.substring(numStart + 1, numEnd);
-        int lineNumber= -1; 
-        try {
-            lineNumber= Integer.parseInt(lineNumberString);
-        } catch (NumberFormatException e) {
-            AntUIPlugin.log(e);
+        String filePath;
+        if (numStart == -1) {
+        	//file path from listfiles
+        	filePath= matchedText.substring(index + 1);
+        	filePath = filePath.trim();
+        	int fileStart = matchedText.indexOf(filePath);
+        	int eventOffset= event.getOffset() + fileStart;
+            int eventLength = filePath.length();
+        	addLink(filePath, -1, eventOffset, eventLength, null);
+        } else {
+        	filePath= matchedText.substring(index + 1, numStart);
+        	filePath = filePath.trim();
+
+        	int fileStart = matchedText.indexOf(filePath);
+        	int eventOffset= event.getOffset() + fileStart;
+        	int eventLength = filePath.length();
+
+        	String lineNumberString = matchedText.substring(numStart + 1, numEnd);
+        	int lineNumber= -1; 
+        	try {
+        		lineNumber= Integer.parseInt(lineNumberString);
+        	} catch (NumberFormatException e) {
+        		AntUIPlugin.log(e);
+        	}
+
+        	Integer type= fgErrorType;
+        	if (-1 != matchedText.indexOf("warning", numEnd)) { //$NON-NLS-1$
+        		type= fgWarningType;
+        	}
+        	addLink(filePath, lineNumber, eventOffset, eventLength, type);
         }
-            
-        addLink(filePath, lineNumber, eventOffset, eventLength);
     }
 }
