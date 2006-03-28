@@ -15,7 +15,7 @@ package org.eclipse.ui;
 /**
  * The model manager maintains a list of open saveable models.
  * 
- * @see SaveableModel
+ * @see ISaveableModel
  * @see ISaveableModelSource
  * 
  * @since 3.2
