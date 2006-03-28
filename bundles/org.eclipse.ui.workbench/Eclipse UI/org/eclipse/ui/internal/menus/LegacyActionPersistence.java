@@ -58,6 +58,7 @@ import org.eclipse.ui.internal.expressions.LegacyActionSetExpression;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
 import org.eclipse.ui.internal.expressions.LegacySelectionEnablerWrapper;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
+import org.eclipse.ui.internal.expressions.LegacyViewerContributionExpression;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.keys.BindingService;
@@ -1045,7 +1046,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				continue;
 			}
 			final Expression visibleWhenExpression = new LegacyEditorContributionExpression(
-					targetId, null);
+					targetId, window);
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, null,
@@ -1417,7 +1418,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				continue;
 			}
 			final Expression visibleWhenExpression = new LegacyViewContributionExpression(
-					targetId, null);
+					targetId, window);
 			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
 					targetId);
 
@@ -1472,10 +1473,12 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Read the visibility element, if any.
 			final Expression visibleWhenExpression = readVisibility(element,
 					id, warningsToLog);
+			final Expression menuVisibleWhenExpression = new LegacyViewerContributionExpression(
+					targetId, window, visibleWhenExpression);
 
 			// Read all of the child elements from the registry.
 			readActionsAndMenus(element, id, warningsToLog, locationInfo,
-					visibleWhenExpression, null);
+					menuVisibleWhenExpression, targetId);
 		}
 
 		logWarnings(
