@@ -23,6 +23,7 @@ public class ImportExportMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, ImportExportMessages.class);
 	}
 
+	public static String ImportBreakpointsOperation_1;
 	public static String WizardImportBreakpoints_0;
 	public static String WizardExportBreakpoints_0;
 	public static String WizardBreakpointsPage_0;
