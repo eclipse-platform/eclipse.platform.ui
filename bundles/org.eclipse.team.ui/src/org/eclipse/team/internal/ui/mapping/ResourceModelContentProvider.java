@@ -424,8 +424,12 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 					viewer.add(viewer.getInput(), additions.toArray());
 				if (!removals.isEmpty())
 					viewer.remove(viewer.getInput(), removals.toArray());
-				if (!refreshes.isEmpty())
-					viewer.refresh(refreshes.toArray());
+				if (!refreshes.isEmpty()) {
+					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
+						Object element = iter.next();
+						viewer.refresh(element);
+					}
+				}
 			} finally {
 				tree.setRedraw(true);
 			}
