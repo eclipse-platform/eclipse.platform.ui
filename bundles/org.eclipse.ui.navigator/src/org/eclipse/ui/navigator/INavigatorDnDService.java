@@ -14,7 +14,6 @@ package org.eclipse.ui.navigator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.TransferData;
 
-
 /**
  * 
  * Provides instances of {@link CommonDragAdapterAssistant} and
@@ -31,7 +30,7 @@ import org.eclipse.swt.dnd.TransferData;
  * 
  * <p>
  * This interface is not intended to be implemented by clients.
- * </p> 
+ * </p>
  * 
  * @see CommonDragAdapter
  * @see CommonDragAdapterAssistant
@@ -59,11 +58,21 @@ public interface INavigatorDnDService {
 	 * viewer using the <b>dragAssistant</b> element. This element defines a
 	 * class which extends {@link CommonDragAdapterAssistant} and can direct the
 	 * viewer on how to provide different kinds of DND Transfer Types. The array
-	 * is returned in no particular order. 
+	 * is returned in no particular order.
 	 * 
 	 * @return An array of {@link CommonDragAdapterAssistant} or an empty array.
 	 */
 	CommonDragAdapterAssistant[] getCommonDragAssistants();
+
+	/**
+	 * Clients may choose to programmatically bind drag assistants to an
+	 * instance of the DND Service. A programmatic binding is not persisted
+	 * between sessions and is not propagated to other instances of
+	 * {@link INavigatorContentService} with the same id. 
+	 * 
+	 * @param anAssistant The assistant to bind.
+	 */
+	void bindDragAssistant(CommonDragAdapterAssistant anAssistant);
 
 	/**
 	 * 
@@ -71,7 +80,7 @@ public interface INavigatorDnDService {
 	 * content extensions that are <i>visible</i> and <i>active</i> for the
 	 * associated {@link INavigatorContentService}. The array is sorted by
 	 * priority, with overrides taken into account.
-	 *  
+	 * 
 	 * <p>
 	 * The array should be processed from the first element to the last, asking
 	 * each extension to
@@ -83,8 +92,8 @@ public interface INavigatorDnDService {
 	 * 
 	 * @param aDropTarget
 	 *            The target element in the viewer of the drop operation.
-	 * @param theTransferType 
-	 * 			  The transfer type of the current drop operation.
+	 * @param theTransferType
+	 *            The transfer type of the current drop operation.
 	 * @return An array of {@link CommonDropAdapterAssistant}s that are defined
 	 *         by the set of
 	 *         <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b>
@@ -93,13 +102,13 @@ public interface INavigatorDnDService {
 	 */
 	CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
 			Object aDropTarget, TransferData theTransferType);
-	
+
 	/**
 	 * 
 	 * This method returns an array of {@link CommonDropAdapterAssistant} from
 	 * content extensions that are <i>visible</i> and <i>active</i> for the
-	 * associated {@link INavigatorContentService}.  
-	 *  
+	 * associated {@link INavigatorContentService}.
+	 * 
 	 * <p>
 	 * The array should be processed from the first element to the last, asking
 	 * each extension to
@@ -111,8 +120,8 @@ public interface INavigatorDnDService {
 	 * 
 	 * @param aDropTarget
 	 *            The target element in the viewer of the drop operation.
-	 * @param theDragSelection 
-	 * 			  The drag selection of the current drop operation.
+	 * @param theDragSelection
+	 *            The drag selection of the current drop operation.
 	 * @return An array of {@link CommonDropAdapterAssistant}s that are defined
 	 *         by the set of
 	 *         <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b>

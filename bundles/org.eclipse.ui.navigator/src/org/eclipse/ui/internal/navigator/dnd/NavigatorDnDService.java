@@ -62,19 +62,32 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 	public synchronized CommonDragAdapterAssistant[] getCommonDragAssistants() {
 
-		if (dragAssistants == null) {
-			int i = 0;
-			Set dragDescriptors = ((NavigatorViewerDescriptor) contentService
-					.getViewerDescriptor()).getDragAssistants();
-			dragAssistants = new CommonDragAdapterAssistant[dragDescriptors
-					.size()];
-			for (Iterator iter = dragDescriptors.iterator(); iter.hasNext();) {
-				CommonDragAssistantDescriptor descriptor = (CommonDragAssistantDescriptor) iter
-						.next();
-				dragAssistants[i++] = descriptor.createDragAssistant();
-			}
-		}
+		if (dragAssistants == null) 
+			initializeDragAssistants(); 
 		return dragAssistants;
+	}
+ 
+	private void initializeDragAssistants() {
+		int i = 0;
+		Set dragDescriptors = ((NavigatorViewerDescriptor) contentService
+				.getViewerDescriptor()).getDragAssistants();
+		dragAssistants = new CommonDragAdapterAssistant[dragDescriptors
+				.size()];
+		for (Iterator iter = dragDescriptors.iterator(); iter.hasNext();) {
+			CommonDragAssistantDescriptor descriptor = (CommonDragAssistantDescriptor) iter
+					.next();
+			dragAssistants[i++] = descriptor.createDragAssistant();
+		}
+	}
+	
+
+	public synchronized void bindDragAssistant(CommonDragAdapterAssistant anAssistant) {
+		if(dragAssistants == null) 
+			initializeDragAssistants(); 
+		CommonDragAdapterAssistant[] newDragAssistants = new CommonDragAdapterAssistant[dragAssistants.length + 1];
+		System.arraycopy(dragAssistants, 0, newDragAssistants, 0, dragAssistants.length);
+		newDragAssistants[dragAssistants.length] = anAssistant;
+		dragAssistants = newDragAssistants;		
 	}
 
 	public CommonDropAdapterAssistant[] findCommonDropAdapterAssistants(
