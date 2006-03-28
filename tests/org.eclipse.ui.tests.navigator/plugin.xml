@@ -8,6 +8,12 @@
             class="org.eclipse.ui.navigator.CommonNavigator"
             id="org.eclipse.ui.tests.navigator.TestView"
             name="%test.navigator.viewName"/>
+            
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="org.eclipse.ui.tests.navigator.ProgrammaticTestView"
+            name="%test.navigator.programmaticViewName"/>            
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -168,4 +174,25 @@
          <adapter type="org.eclipse.core.resources.IFile"/>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>
+      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>
+   </extension>
+   <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" -->
+   <!-- Disabled for demo
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="org.eclipse.ui.tests.navigator.extension.TestLabelDecorator"
+            id="org.eclipse.ui.tests.navigator.threeDecorator"
+            label="Items that end in 3 decorator"
+            lightweight="false"
+            state="true">
+         <enablement>
+            <objectClass name="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+         </enablement>
+      </decorator>
+   </extension>
+   -->
 </plugin>
