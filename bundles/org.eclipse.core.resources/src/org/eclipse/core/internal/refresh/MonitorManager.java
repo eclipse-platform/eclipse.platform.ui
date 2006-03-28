@@ -247,10 +247,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		} catch (LinkageError e) {
 			t = e;
 		}
-		if (t != null) {
-			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, t);
-			Policy.log(error);
-		}
+		IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.refresh_installError, t);
+		Policy.log(error);
 		return null;
 	}
 

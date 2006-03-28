@@ -40,19 +40,12 @@ public class TestElementComparator implements IElementComparator {
 	 */
 	public int compare(Object oldInfo, Object newInfo) {
 		if (oldInfo == null) {
-			if (newInfo == null) {
+			if (newInfo == null)
 				return CHANGED;
-			} else {
-				return ADDED;
-			}
+			return ADDED;
 		}
-		if (newInfo == null) {
-			if (oldInfo == null) {
-				return CHANGED;
-			} else {
-				return REMOVED;
-			}
-		}
+		if (newInfo == null)
+			return REMOVED;
 		return testEquality(oldInfo, newInfo) ? K_NO_CHANGE : CHANGED;
 	}
 

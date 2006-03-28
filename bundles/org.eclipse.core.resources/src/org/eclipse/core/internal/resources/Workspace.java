@@ -1393,11 +1393,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public IProjectDescription loadProjectDescription(InputStream stream) throws CoreException {
 		IProjectDescription result = null;
-		IOException e = null;
 		result = new ProjectDescriptionReader().read(new InputSource(stream));
-		if (result == null || e != null) {
+		if (result == null) {
 			String message = NLS.bind(Messages.resources_errorReadProject, stream.toString());
-			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, null);
 			throw new ResourceException(status);
 		}
 		return result;
