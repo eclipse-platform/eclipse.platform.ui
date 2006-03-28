@@ -22,6 +22,7 @@
             modes="run, debug"
             sourceLocatorId="org.eclipse.ant.ui.debug.sourceLookupDirector"
             sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer"
+			migrationDelegate="org.eclipse.ant.internal.ui.launchConfigurations.AntMigrationDelegate"
             id="org.eclipse.ant.AntLaunchConfigurationType">
       </launchConfigurationType>
       <launchConfigurationType

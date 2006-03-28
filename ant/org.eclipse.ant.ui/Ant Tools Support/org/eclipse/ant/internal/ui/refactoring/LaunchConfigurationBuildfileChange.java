@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +31,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -231,13 +235,14 @@ public class LaunchConfigurationBuildfileChange extends Change {
 		if (fNewBuildfileLocation != null) {
             String newBuildFileLocation= oldBuildfileLocation.replaceFirst(fOldBuildfileLocation, fNewBuildfileLocation);
             fNewLaunchConfiguration.setAttribute(IExternalToolConstants.ATTR_LOCATION, newBuildFileLocation);
+            fNewLaunchConfiguration.setMappedResources(new IResource[] {getAssociatedFile(newBuildFileLocation)});
 		} 
 		if (fNewProjectName != null) {
 			oldProjectName= fOldProjectName;
 			fNewLaunchConfiguration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
             String newBuildFileLocation= oldBuildfileLocation.replaceFirst(oldProjectName, fNewProjectName);
             fNewLaunchConfiguration.setAttribute(IExternalToolConstants.ATTR_LOCATION, newBuildFileLocation);
-            
+            fNewLaunchConfiguration.setMappedResources(new IResource[] {getAssociatedFile(newBuildFileLocation)});
             String launchConfigurationName= fLaunchConfiguration.getName();
             fNewLaunchConfigurationName= launchConfigurationName.replaceFirst(oldProjectName, fNewProjectName);
             if (launchConfigurationName.equals(fNewLaunchConfigurationName) || DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(fNewLaunchConfigurationName)) {
@@ -261,5 +266,18 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 */
 	public Object getModifiedElement() {
 		return fLaunchConfiguration;
+	}
+	
+	private IFile getAssociatedFile(String location) {
+		IFile file= null;
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		try {
+			String expandedLocation= manager.performStringSubstitution(location);
+			if (expandedLocation != null) {
+				file= AntUtil.getFileForLocation(expandedLocation, null);
+			}
+		} catch (CoreException e) {
+		}
+		return file;
 	}
 }

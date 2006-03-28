@@ -15,6 +15,7 @@ import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -77,22 +78,35 @@ public class AntMainTab extends ExternalToolsMainTab {
 		} catch (CoreException e) {
 		}
        
+		setMappedResources(configuration);
 		setAttribute(IAntUIConstants.SET_INPUTHANDLER, configuration, fSetInputHandlerButton.getSelection(), true);
 	}
 
+	private void setMappedResources(ILaunchConfigurationWorkingCopy configuration) {
+		IFile file= getIFile(configuration);
+		configuration.setMappedResources(new IResource[] {file});
+	}
+
 	private void updateProjectName(ILaunchConfigurationWorkingCopy configuration) {
-        IFile file= null;
+        IFile file = getIFile(configuration);
+        String projectName= ""; //$NON-NLS-1$
+        if (file != null) {
+            projectName= file.getProject().getName();
+        }
+        configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+    }
+
+	private IFile getIFile(ILaunchConfigurationWorkingCopy configuration) {
+		IFile file= null;
         if (fNewFile != null) {
             file= fNewFile;
             fNewFile= null;
         } else {
-            String expandedLocation= null;
-            String location= null;
             IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
             try {
-                location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+            	String location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
                 if (location != null) {
-                    expandedLocation= manager.performStringSubstitution(location);
+                    String expandedLocation= manager.performStringSubstitution(location);
                     if (expandedLocation != null) {
                         file= AntUtil.getFileForLocation(expandedLocation, null);
                     }
@@ -100,12 +114,8 @@ public class AntMainTab extends ExternalToolsMainTab {
             } catch (CoreException e) {
             }
         }
-        String projectName= ""; //$NON-NLS-1$
-        if (file != null) {
-            projectName= file.getProject().getName();
-        }
-        configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
-    }
+		return file;
+	}
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)

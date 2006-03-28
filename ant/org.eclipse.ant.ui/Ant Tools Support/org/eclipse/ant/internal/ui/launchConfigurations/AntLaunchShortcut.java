@@ -424,6 +424,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			jreTab.setDefaults(workingCopy);
 			jreTab.dispose();
 			
+			IFile file= AntUtil.getFileForLocation(filePath.toString(), null);
+			workingCopy.setMappedResources(new IResource[] {file});
+			
 			return workingCopy.doSave();
 		} catch (CoreException e) {
 			reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_2, new String[]{filePath.toString()}), e);
