@@ -129,6 +129,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 	 */
 	public void setQuickAssistProcessor(IQuickAssistProcessor processor) {
 		fQuickAssistProcessor= processor;
+		fQuickAssistAssistantImpl.setDocumentPartitioning("__" + getClass().getName() + "_partitioning"); //$NON-NLS-1$ //$NON-NLS-2$
 		fQuickAssistAssistantImpl.setContentAssistProcessor(new ContentAssistProcessor(processor), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
