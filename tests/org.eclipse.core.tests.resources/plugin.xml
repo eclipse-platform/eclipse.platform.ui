@@ -24,6 +24,11 @@
       <run class="org.eclipse.core.tests.internal.builders.BrokenBuilder"/> 
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="exceptionbuilder" name="Exception Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.ExceptionBuilder"/> 
+    </builder>
+  </extension>
   <extension point="org.eclipse.core.resources.builders" id="refreshbuilder" name="Refresh local builder">
     <builder>
       <run class="org.eclipse.core.tests.internal.builders.RefreshLocalJavaFileBuilder"/>

@@ -152,12 +152,55 @@ public class BuilderTest extends AbstractBuilderTest {
 		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 		verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
 		verifier.assertLifecycleEvents("3.1");
-		//build again -- it should suceed this time
+		//build again -- it should succeed this time
 		try {
 			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
+	}
+
+	/**
+	 * Tests installing and running a builder that always fails in its build method
+	 */
+	public void testExceptionBuilder() {
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		try {
+			setAutoBuilding(false);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		// Create and set a build spec for the project
+		try {
+			IProjectDescription desc = project.getDescription();
+			ICommand command1 = desc.newCommand();
+			command1.setBuilderName(ExceptionBuilder.BUILDER_NAME);
+			desc.setBuildSpec(new ICommand[] {command1});
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		final boolean[] listenerCalled = new boolean[] {false};
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				listenerCalled[0] = true;
+			}
+		};
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+		//do an incremental build -- build should fail, but POST_BUILD should still occur
+		try {
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+			//expected
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener);
+		}
+		assertTrue("1.0", listenerCalled[0]);
 	}
 
 	public void testBuildClean() {
