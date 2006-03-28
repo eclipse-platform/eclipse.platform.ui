@@ -52,6 +52,7 @@ import org.osgi.framework.Bundle;
  */
 public class SearchManager implements ITocsChangedListener {
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.luceneSearchParticipants"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
 	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
@@ -619,6 +620,9 @@ public class SearchManager implements ITocsChangedListener {
 		}
 		
 		// send out the final results
+		if (highlightTerms[0] == null) {
+			highlightTerms[0] = EMPTY_STRING;
+		}
 		collector.addHits(hits, highlightTerms[0]);
 	}
 	
