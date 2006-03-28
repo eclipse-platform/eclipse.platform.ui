@@ -1496,6 +1496,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// Remove drop targets
 			DragUtil.removeDragTarget(null, trimDropTarget);
 			DragUtil.removeDragTarget(getShell(), trimDropTarget);
+			trimDropTarget = null;
 			
 			if (trimMgr!=null) {
 				trimMgr.dispose();
