@@ -144,6 +144,21 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	public TreeSelection() {
 		super();
 	}
+	
+	/**
+	 * Returns the element comparer passed in when the tree selection
+	 * has been created or <code>null</code> if no comparer has been
+	 * provided.
+	 * 
+	 * @return the element comparer or <code>null</code>
+	 * 
+	 * @since 3.2
+	 */
+	public IElementComparer getElementComparer() {
+		if (element2TreePaths == null)
+			return null;
+		return element2TreePaths.getComparer();
+	}
 
 	/*
 	 * (non-Javadoc)

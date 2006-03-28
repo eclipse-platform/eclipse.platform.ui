@@ -182,6 +182,19 @@ import java.util.NoSuchElementException;
             }
         }
     }
+    
+    /**
+     * Returns the element comparer used  to compare keys and to obtain
+     * hash codes for keys, or <code>null</code> if no comparer has been
+     * provided.
+     * 
+     * @return the element comparer or <code>null</code>
+     * 
+     * @since 3.2
+     */
+    public IElementComparer getComparer() {
+    	return comparer;
+    }
 
     private void computeMaxSize() {
         threshold = (int) (elementData.length * loadFactor);
