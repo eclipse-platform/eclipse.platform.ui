@@ -1493,6 +1493,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
 			
+			// Remove drop targets
+			DragUtil.removeDragTarget(null, trimDropTarget);
+			DragUtil.removeDragTarget(getShell(), trimDropTarget);
+			
 			if (trimMgr!=null) {
 				trimMgr.dispose();
 			}

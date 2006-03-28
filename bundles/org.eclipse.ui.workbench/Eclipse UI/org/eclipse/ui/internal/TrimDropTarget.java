@@ -444,10 +444,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 
         // Create an instance of a drop target to use
         dropTarget = new ActualTrimDropTarget();
-        
-        // Add the trim layout as a 'default' drop target so that it
-        // continues to get events even when the mouse is -outside- the shell
-        DragUtil.addDragTarget(null, this);
     }
 
     /* (non-Javadoc)
