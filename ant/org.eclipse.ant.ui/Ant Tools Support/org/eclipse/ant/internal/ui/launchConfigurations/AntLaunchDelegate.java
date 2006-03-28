@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -21,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -478,7 +478,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		while (itr.hasNext()) {
 			Task task = (Task) itr.next();
 			commandLine.append(" -eclipseTask "); //$NON-NLS-1$
-			commandLine.append(task.getTaskName());
+			String name= ProjectHelper.genComponentName(task.getURI(), task.getTaskName());
+			commandLine.append(name);
 			commandLine.append(',');
 			commandLine.append(task.getClassName());
 		}
@@ -488,7 +489,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		while (itr.hasNext()) {
 			Type type = (Type) itr.next();
 			commandLine.append(" -eclipseType "); //$NON-NLS-1$
-			commandLine.append(type.getTypeName());
+			String name= ProjectHelper.genComponentName(type.getURI(), type.getTypeName());
+			commandLine.append(name);
 			commandLine.append(',');
 			commandLine.append(type.getClassName());
 		}

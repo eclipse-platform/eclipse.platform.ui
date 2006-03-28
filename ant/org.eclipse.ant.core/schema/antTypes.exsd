@@ -63,6 +63,13 @@ plug-in load the specified class.
                </documentation>
             </annotation>
          </attribute>
+          <attribute name="uri" type="string">
+            <annotation>
+               <documentation>
+                   The uri that this definition should live in. Only used if using Ant newer than 1.6.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>

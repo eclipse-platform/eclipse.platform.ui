@@ -519,6 +519,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			antObject.setEclipseRuntimeRequired(Boolean.valueOf(runtime).booleanValue());
 		}
 		
+		String uri = element.getAttribute(AntCorePlugin.URI);
+		if (uri != null) {
+			antObject.setURI(uri);
+		}
+		
 		String library = element.getAttribute(AntCorePlugin.LIBRARY);
 		if (library == null) {
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.AntCorePreferences_Library_not_specified_for___0__4, new String[]{objectName}), null);

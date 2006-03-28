@@ -273,7 +273,8 @@ public class InternalAntRunner {
 			
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 				AntTypeDefinition def= new AntTypeDefinition();
-				def.setName(task.getTaskName());
+				String name = ProjectHelper.genComponentName(task.getURI(),task.getTaskName());
+				def.setName(name);
 	            def.setClassName(task.getClassName());
 	            def.setClassLoader(this.getClass().getClassLoader());
 	            def.setAdaptToClass(Task.class);
@@ -306,7 +307,8 @@ public class InternalAntRunner {
 			Type type = (Type) iterator.next();
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 				AntTypeDefinition def = new AntTypeDefinition();
-                def.setName(type.getTypeName());
+				String name= ProjectHelper.genComponentName(type.getURI(), type.getTypeName());
+                def.setName(name);
                 def.setClassName(type.getClassName());
                 def.setClassLoader(this.getClass().getClassLoader());
                 ComponentHelper.getComponentHelper(project).addDataTypeDefinition(def);

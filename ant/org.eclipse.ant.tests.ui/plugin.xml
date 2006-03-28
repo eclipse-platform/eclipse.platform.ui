@@ -58,6 +58,13 @@
 	    	library="lib/antUITestsSupport.jar"
 	    	eclipseRuntime="false">
 	    </antTask>
+	    <antTask 
+	    	name="coolUITask"
+	    	uri="testing"
+	    	class="org.eclipse.ant.tests.ui.support.tasks.AntTestTask2"
+	    	library="lib/antUITestsSupport.jar"
+	    	eclipseRuntime="false">
+	    </antTask>
    </extension>
 
 	<extension point="org.eclipse.ant.core.antTypes">

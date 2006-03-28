@@ -120,6 +120,13 @@ public class AntCorePlugin extends Plugin {
 	public static final String ECLIPSE_RUNTIME = "eclipseRuntime"; //$NON-NLS-1$
 	
 	/**
+	 * Simple identifier constant (value <code>"uri"</code>) of a tag
+	 * that appears in Ant extensions.
+	 * @since 3.2
+	 */
+	public static final String URI = "uri"; //$NON-NLS-1$
+	
+	/**
 	 * Simple identifier constant (value <code>"value"</code>) of a tag
 	 * that appears in Ant extensions.
 	 * @since 3.0

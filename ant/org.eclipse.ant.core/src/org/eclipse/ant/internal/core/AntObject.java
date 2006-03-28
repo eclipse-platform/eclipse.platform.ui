@@ -23,6 +23,7 @@ public abstract class AntObject {
 	protected String fName;
 	private String fPluginLabel;
 	private boolean eclipseRuntime= true;
+	private String fURI= null;
 	
 	/**
 	 * Gets the className.
@@ -81,7 +82,10 @@ public abstract class AntObject {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return fName;
+		if (fURI == null || fURI.equals("") || fURI.equals("antlib:org.apache.tools.ant")) {  //$NON-NLS-1$//$NON-NLS-2$
+            return fName;
+        }
+		return fURI + ':' + fName;
 	}
 	/**
 	 * Returns whether this Ant object has been created because of an extension
@@ -96,7 +100,7 @@ public abstract class AntObject {
 	 * Sets that this Ant object has been created by the appropriate extension
 	 * point.
 	 * @param isDefault Whether this Ant object has been created because of an
-	 * extension point defintion.
+	 * extension point definition.
 	 * @deprecated Since 3.0 Set the plugin label to indicate a default object
 	 */
 	public void setIsDefault(boolean isDefault) {
@@ -140,5 +144,20 @@ public abstract class AntObject {
 	
 	public void setEclipseRuntimeRequired(boolean eclipseRuntime) {
 		this.eclipseRuntime= eclipseRuntime;
+	}
+	
+	/**
+	 * Returns the URI namespace that this Ant object should live in.
+	 * Defaults value is <code>null</code>
+	 * 
+	 * @return The URI that this Ant object should live in
+     * @since 3.2
+	 */
+	public String getURI() {
+		return fURI;
+	}
+	
+	public void setURI(String uri) {
+		fURI= uri;
 	}
 }

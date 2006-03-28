@@ -140,4 +140,11 @@ public class TaskTests extends AbstractAntTest {
 		}
 		assertTrue("Build should have failed as task was not defined to run in headless", false);
 	}
+	
+	public void testTaskDefinedInExtensionPointWithURI() throws CoreException {
+		run("ExtensionPointTask.xml");
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(2);
+		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertSuccessful();
+	}
 }
