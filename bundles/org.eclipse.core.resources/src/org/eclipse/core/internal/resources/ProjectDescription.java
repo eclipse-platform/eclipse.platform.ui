@@ -321,17 +321,23 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * remove the link from the project description.
 	 */
 	public void setLinkLocation(IPath path, LinkDescription description) {
+		HashMap tempMap = linkDescriptions;
 		if (description != null) {
 			//addition or modification
-			if (linkDescriptions == null)
-				linkDescriptions = new HashMap(10);
-			linkDescriptions.put(path, description);
+			if (tempMap == null)
+				tempMap = new HashMap(10);
+			else 
+				//copy on write to protect against concurrent read
+				tempMap = (HashMap) tempMap.clone();
+			tempMap.put(path, description);
+			linkDescriptions = tempMap;
 		} else {
 			//removal
-			if (linkDescriptions != null) {
-				linkDescriptions.remove(path);
-				if (linkDescriptions.size() == 0)
-					linkDescriptions = null;
+			if (tempMap != null) {
+				//copy on write to protect against concurrent access
+				HashMap newMap = (HashMap) tempMap.clone();
+				newMap.remove(path);
+				linkDescriptions = newMap.size() == 0 ? null : newMap;
 			}
 		}
 	}
