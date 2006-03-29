@@ -33,6 +33,7 @@ import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant;
 import org.eclipse.ui.part.IPageSite;
 
 /**
@@ -97,6 +98,11 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		}
 		public boolean isEmpty() {
 			return empty;
+		}
+		
+		protected void initDragAndDrop() {
+			getNavigatorContentService().getDnDService().bindDragAssistant(new ResourceDragAdapterAssistant());
+			super.initDragAndDrop();
 		}
 	}
 

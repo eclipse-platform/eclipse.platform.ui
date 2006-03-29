@@ -123,9 +123,6 @@
                    separator="true"/>
           </popupMenu>
        </viewer>
-       <dragAssistant
-             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
-             viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization"/>
        <viewer viewerId="org.eclipse.team.cvs.ui.mergeSynchronization">
           <popupMenu
                 allowsPlatformContributions="false"
@@ -159,9 +156,6 @@
                    separator="true"/>   
           </popupMenu>
        </viewer>
-       <dragAssistant
-             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
-             viewerId="org.eclipse.team.cvs.ui.mergeSynchronization"/>
       <viewer viewerId="org.eclipse.team.cvs.ui.compareSynchronization">
           <popupMenu
                 allowsPlatformContributions="false"
@@ -192,9 +186,6 @@
                    separator="true"/>  
           </popupMenu>
        </viewer>
-       <dragAssistant
-             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
-             viewerId="org.eclipse.team.cvs.ui.compareSynchronization"/>
    </extension>
    
 <!-- *************** Authenticator **************** -->
