@@ -98,12 +98,12 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		 * @see CharacterIterator#next()
 		 */
 		public char next() {
-			if (fIndex == fEndOffset -1)
+			++fIndex;
+			int end= getEndIndex();
+			if (fIndex >= end) {
+				fIndex= end;
 				return DONE;
-
-			if (fIndex < fEndOffset)
-				++ fIndex;
-
+			}
 			return current();
 		}
 
