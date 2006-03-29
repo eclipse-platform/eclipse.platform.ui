@@ -1402,7 +1402,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setErrorMessage(getTabViewer().getErrorMesssage());
 		setMessage(getTabViewer().getMessage());	
 	}
-
+	
+	/**
+	 * Returns if there is a selection in the tree viewer or not
+	 * @return true if something in the tree is selected, false otherwise
+	 * @since 3.2
+	 */
+	public boolean isTreeSelectionEmpty() {
+		return fLaunchConfigurationView.getTreeViewer().getSelection().isEmpty();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */

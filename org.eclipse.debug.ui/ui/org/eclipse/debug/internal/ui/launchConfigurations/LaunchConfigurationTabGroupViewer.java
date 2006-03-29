@@ -71,6 +71,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class LaunchConfigurationTabGroupViewer extends Viewer {
 	
+	private final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * Containing launch dialog
 	 */
@@ -231,7 +232,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         fViewform.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
 		fViewform.setLayoutData(gd);
-		setVisibleArea(fViewform);
+		fVisibleArea = fViewform;
         fViewform.setTopLeft(null);
         
         Composite mainComp = new Composite(fViewform, SWT.FLAT);
@@ -429,7 +430,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public void setName(String name) {
 		if (getWorkingCopy() != null) {
 			if (name == null) {
-				name = ""; //$NON-NLS-1$
+				name = EMPTY_STRING;
 			}
 			fNameWidget.setText(name.trim());
 			refreshStatus();
@@ -491,6 +492,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 	}
 
+	/**
+	 * updates the button states
+	 */
 	private void updateButtons() {
 		boolean dirty = isDirty();
 		fApplyButton.setEnabled(dirty && canSave());
@@ -511,7 +515,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		tabItem.setImage(image);
 	}	
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
 	public void setInput(Object input) {
@@ -542,8 +546,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						 * fix for bug 66576 and 79709
 						 */
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
-						setOriginal(configuration);
-						setWorkingCopy(configuration.getWorkingCopy());
+						fOriginal = configuration;
+						fWorkingCopy = configuration.getWorkingCopy();
 						displayInstanceTabs();
 					} else if (fInput instanceof ILaunchConfigurationType) {
 						/*
@@ -566,12 +570,24 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 	
+	/**
+	 * Sets the tab group viewer to have no input, this is the case when null is passed as an input type
+	 * Setting no input is equivalent to resetting all items, clearing any messages and showing the 'getting started' pane
+	 * @since 3.2 
+	 */
 	private void setNoInput() {
-		setOriginal(null);
-		setWorkingCopy(null);
+		fOriginal = null;
+		fWorkingCopy = null;
 		disposeExistingTabs();	
 		updateButtons();
 		updateVisibleControls(false);
+		ILaunchConfigurationDialog lcd = getLaunchConfigurationDialog();
+		if(lcd instanceof LaunchConfigurationsDialog) {
+			if(((LaunchConfigurationsDialog)lcd).isTreeSelectionEmpty()) {
+				fDescription = EMPTY_STRING;
+			}
+		}
+		lcd.updateMessage();
 	}
 	
 	/**
@@ -599,10 +615,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         
     }
     
+	/**
+	 * Sets if the 
+	 * @param b
+	 */
 	private void setRedraw(boolean b) {
 		if (fRedraw != b) {
 			fRedraw = b;
-			getVisibleArea().setRedraw(fRedraw);
+			fVisibleArea.setRedraw(fRedraw);
 		}	
 	}	
 	/**
@@ -648,8 +668,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Turn off initializing flag to update message
 		fInitializingTabs = false;
 		
-		if (!getVisibleArea().isVisible()) {
-			getVisibleArea().setVisible(true);
+		if (!fVisibleArea.isVisible()) {
+			fVisibleArea.setVisible(true);
 		}
 		refreshStatus();		
 	}
@@ -661,7 +681,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void showInstanceTabsFor(ILaunchConfigurationType configType) {
 
 		// Don't do any work if the current tabs are for the current config type
-		if (getTabType() != null && getTabType().equals(configType)) { 
+		if (fTabType != null && fTabType.equals(configType)) { 
 			return;
 		}
 		
@@ -712,7 +732,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			description = LaunchConfigurationPresentationManager.getDefault().getDescription(configType, mode);
 		}	
 		if (description == null)
-			description = ""; //$NON-NLS-1$
+			description = EMPTY_STRING;
 		return description;
 	}
 	
@@ -730,7 +750,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Create the Control for each tab
 		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
 		CTabItem tab = null;
-		String name = ""; //$NON-NLS-1$
+		String name = EMPTY_STRING;
 		for (int i = 0; i < tabs.length; i++) {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
 			name = tabs[i].getName();
@@ -881,15 +901,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected ILaunchConfigurationDialog getLaunchConfigurationDialog() {
 		return fDialog;
 	}
-	
-	/**
-	 * Sets the launch configuration being displayed/edited, possilby
-	 * <code>null</code>.
-	 */
-	private void setOriginal(ILaunchConfiguration configuration) {
-		fOriginal = configuration;
-	}
-	
+
 	/**
 	 * Returns the original launch configuration being edited, possibly
 	 * <code>null</code>.
@@ -898,13 +910,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected ILaunchConfiguration getOriginal() {
 		return fOriginal;
-	}
-	
-	/**
-	 * Sets the working copy used to edit the original.
-	 */
-	private void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
 	}
 	
 	/**
@@ -1115,16 +1120,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		disposeTabGroup();
 		fDisposingTabs = false;
 	}	
-	
-	/**
-	 * Returns the type that tabs are currently displayed
-	 * for, or <code>null</code> if none.
-	 *
-	 * @return launch configuration type or <code>null</code>
-	 */
-	private ILaunchConfigurationType getTabType() {
-		return fTabType;
-	}
 
 	/**
 	 * Returns the current tab group
@@ -1215,15 +1210,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected void errorDialog(CoreException exception) {
 		ErrorDialog.openError(getShell(), null, null, exception.getStatus());
 	}	
-	
-	protected void setVisibleArea(Composite control) {
-		fVisibleArea = control;
-	}
-	
-	protected Composite getVisibleArea() {
-		return fVisibleArea;
-	}
-	
+
 	/**
 	 * Sets the displayed tab to the given tab. Has no effect if the specified
 	 * tab is not one of the tabs being displayed in the dialog currently.
