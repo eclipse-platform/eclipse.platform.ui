@@ -159,12 +159,12 @@ public abstract class StackPresentation implements ISizeProvider {
      * is the only way that a presentation is allowed to change its state.
      * <p>
      * If a presentation wishes to minimize itself, it must call setState
-     * on its associated IPresentationSite. If the site chooses to respond
+     * on its associated IStackPresentationSite. If the site chooses to respond
      * to the state change, it will call this method at the correct time.
      * The presentation should not call this method directly. 
      * </p>
      * 
-     * @param state one of the IPresentationSite.STATE_* constants.
+     * @param state one of the IStackPresentationSite.STATE_* constants.
      */
     public abstract void setState(int state);
 
