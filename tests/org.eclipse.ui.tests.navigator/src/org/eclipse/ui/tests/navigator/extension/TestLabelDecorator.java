@@ -3,6 +3,8 @@ package org.eclipse.ui.tests.navigator.extension;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class TestLabelDecorator implements ILabelDecorator {
 	
@@ -14,6 +16,13 @@ public class TestLabelDecorator implements ILabelDecorator {
 	}
 
 	public Image decorateImage(Image image, Object element) { 
+		if(element != null && element instanceof TestExtensionTreeData) {
+			TestExtensionTreeData data = (TestExtensionTreeData) element;
+			if(data.getName().endsWith("3")) {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						ISharedImages.IMG_OBJS_INFO_TSK);
+			}
+		}
 		return null;
 	}
 
@@ -21,7 +30,7 @@ public class TestLabelDecorator implements ILabelDecorator {
 		if(element instanceof TestExtensionTreeData) {
 			
 			if(text != null && text.endsWith("3")) {
-				return ">>" + text;
+				return "x " + text + " x";
 			}
 		}
 		return null;

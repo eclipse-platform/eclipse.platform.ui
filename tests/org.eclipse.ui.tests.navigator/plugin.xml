@@ -188,8 +188,7 @@
    </extension>
    
    
-   <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" -->
-   <!-- Disabled for demo
+   <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" --> 
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
@@ -202,6 +201,5 @@
             <objectClass name="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
          </enablement>
       </decorator>
-   </extension>
-   -->
+   </extension> 
 </plugin>
