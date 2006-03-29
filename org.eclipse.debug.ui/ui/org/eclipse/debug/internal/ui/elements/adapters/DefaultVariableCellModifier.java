@@ -66,25 +66,28 @@ public class DefaultVariableCellModifier implements ICellModifier {
 	 */
 	public void modify(Object element, String property, Object value) {
 		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
-			if (element instanceof IVariable) {
-				IVariable variable = (IVariable) element;
-				IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
-				Shell shell = null;
-				IWorkbenchPart part = fContext.getPart();
-				if (part != null) {
-					shell = part.getSite().getShell();
-				}
-				if (editor != null) {
-					if  (editor.saveVariable(variable, (String) value, shell)) {
-						return;
+			Object oldValue = getValue(element, property);
+	        if (!value.equals(oldValue)) {
+				if (element instanceof IVariable) {
+					IVariable variable = (IVariable) element;
+					IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
+					Shell shell = null;
+					IWorkbenchPart part = fContext.getPart();
+					if (part != null) {
+						shell = part.getSite().getShell();
+					}
+					if (editor != null) {
+						if  (editor.saveVariable(variable, (String) value, shell)) {
+							return;
+						}
+					}
+					try {
+						variable.setValue((String) value);
+					} catch (DebugException e) {
+						DebugUIPlugin.errorDialog(shell, Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
 					}
 				}
-				try {
-					variable.setValue((String) value);
-				} catch (DebugException e) {
-					DebugUIPlugin.errorDialog(shell, Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
-				}
-			}
+	        }
 		}
 	}
 	
