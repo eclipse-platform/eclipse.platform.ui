@@ -118,7 +118,7 @@ public class AntModel implements IAntModel {
     private Map fProperties= null;
     private List fPropertyFiles= null;
     
-	private Map fDefinersToText;
+    private Map fDefinersToText;
     private Map fPreviousDefinersToText;
     private Map fDefinerNodeIdentifierToDefinedTasks;
     private Map fTaskNameToDefiningNode;
@@ -126,7 +126,7 @@ public class AntModel implements IAntModel {
     
     private boolean fReportingProblemsCurrent= false;
     private boolean fDoNotReportProblems= false;
-	private boolean fShouldReconcile= true;
+    private boolean fShouldReconcile= true;
     private HashMap fNamespacePrefixMappings;
     
     public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
@@ -185,7 +185,7 @@ public class AntModel implements IAntModel {
         if (fgInstanceCount == 0) {
             //no other models are open to ensure that the classpath is up to date wrt the
             //Ant preferences and start listening for breakpoint changes
-        	AntDefiningTaskNode.setJavaClassPath();
+            AntDefiningTaskNode.setJavaClassPath();
             AntModelCore.getDefault().startBreakpointListening();
         }
         fgInstanceCount++;
@@ -244,7 +244,7 @@ public class AntModel implements IAntModel {
      */
     public void reconcile() {
         synchronized (fDirtyLock) {
-			if (!fShouldReconcile || !fIsDirty) {
+            if (!fShouldReconcile || !fIsDirty) {
                 return;
             }
             fIsDirty= false;
@@ -277,7 +277,7 @@ public class AntModel implements IAntModel {
         fLastNode= null;
         fCurrentNodeIdentifiers= null;
         fNamespacePrefixMappings= null;
-		
+        
         fNonStructuralNodes= new ArrayList(1);
         if (fDefinersToText != null) {
             fPreviousDefinersToText= new HashMap(fDefinersToText);
@@ -317,8 +317,6 @@ public class AntModel implements IAntModel {
         } catch(BuildException e) {
             handleBuildException(e, null);
         } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-            getClassLoader(null);
             if (parsed) {       
                 SecurityManager origSM= System.getSecurityManager();
                 processAntHome(true);
@@ -330,6 +328,8 @@ public class AntModel implements IAntModel {
                 } catch (AntSecurityException e) {
                 
                 } finally {
+                    Thread.currentThread().setContextClassLoader(originalClassLoader);
+                    getClassLoader(null);
                     System.setSecurityManager(origSM);
                     project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
                 }
@@ -787,7 +787,7 @@ public class AntModel implements IAntModel {
             taskNode.setImportNode(fNodeBeingResolved);
             //place the node in the collection right after the import node
             if (fNodeBeingResolvedIndex == -1) {
-            	fNodeBeingResolvedIndex= fTaskNodes.indexOf(fNodeBeingResolved);
+                fNodeBeingResolvedIndex= fTaskNodes.indexOf(fNodeBeingResolved);
             }
             fNodeBeingResolvedIndex++;
             fTaskNodes.add(fNodeBeingResolvedIndex, taskNode);
@@ -1752,17 +1752,17 @@ public class AntModel implements IAntModel {
         return null;
     }
 
-	/**
-	 * Sets whether the AntModel should reconcile if it become dirty.
+    /**
+     * Sets whether the AntModel should reconcile if it become dirty.
      * If set to reconcile, a reconcile is triggered if the model is dirty.
-	 * @param shouldReconcile
-	 */
-	public void setShouldReconcile(boolean shouldReconcile) {
-		fShouldReconcile= shouldReconcile;
-		if (fShouldReconcile) {
-			reconcile();
-		}		
-	}
+     * @param shouldReconcile
+     */
+    public void setShouldReconcile(boolean shouldReconcile) {
+        fShouldReconcile= shouldReconcile;
+        if (fShouldReconcile) {
+            reconcile();
+        }       
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.IAntModel#addPrefixMapping(java.lang.String, java.lang.String)
