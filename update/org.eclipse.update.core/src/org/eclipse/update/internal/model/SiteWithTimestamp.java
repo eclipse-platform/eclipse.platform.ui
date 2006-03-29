@@ -46,11 +46,11 @@ public class SiteWithTimestamp extends Site implements ITimestamp {
 
 	private Date timestamp;
 	
-	private Site site;
+	/*private Site site;
 	
 	public SiteWithTimestamp( Site site) {
 		this.site = site;
-	}
+	}*/
 	
 	public Date getTimestamp() {
 		return timestamp;
@@ -60,7 +60,7 @@ public class SiteWithTimestamp extends Site implements ITimestamp {
 		this.timestamp = timestamp;
 		
 	}
-
+/*
 	public boolean isReadOnly() {
 		return site.isReadOnly();
 	}
@@ -282,5 +282,5 @@ public class SiteWithTimestamp extends Site implements ITimestamp {
 	public void setType(String type) {		
 		site.setType(type);
 	}
-
+*/
 }

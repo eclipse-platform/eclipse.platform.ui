@@ -32,7 +32,7 @@
          id="http"
          point="org.eclipse.update.core.siteTypes">
       <site-factory
-            class="org.eclipse.update.internal.core.SiteURLFactory">
+            class="org.eclipse.update.internal.core.ExtendedSiteURLFactory">
       </site-factory>
    </extension>
    <extension

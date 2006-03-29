@@ -43,7 +43,7 @@ public class InstallWizard
         if (searchRequest == null) {
             searchRequest =
                 new UpdateSearchRequest(
-                    new SiteSearchCategory(),
+                    new SiteSearchCategory(true),
                     new UpdateSearchScope());
             searchRequest.addFilter(new BackLevelFilter());
         }

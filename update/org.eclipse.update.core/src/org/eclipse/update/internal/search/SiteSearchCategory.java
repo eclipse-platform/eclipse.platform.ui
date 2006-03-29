@@ -15,6 +15,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.ExtendedSite;
+import org.eclipse.update.internal.core.LiteFeature;
 import org.eclipse.update.search.*;
 
 /**
@@ -22,26 +24,56 @@ import org.eclipse.update.search.*;
  */
 public class SiteSearchCategory extends BaseSearchCategory {
 	private IUpdateSearchQuery[] queries;
+	private boolean liteFeaturesAreOK;
 	private static final String CATEGORY_ID =
 		"org.eclipse.update.core.unified-search"; //$NON-NLS-1$
 
 	private static class Query implements IUpdateSearchQuery {
+		
+		private boolean liteFeaturesAreOK;
+		
+		
+		public Query() {
+			liteFeaturesAreOK = false;
+		}
+		
+		public Query(boolean liteFeaturesAreOK) {
+			this.liteFeaturesAreOK = liteFeaturesAreOK;
+		}
 		public void run(
 			ISite site,
 			String[] categoriesToSkip,
 			IUpdateSearchFilter filter,
 			IUpdateSearchResultCollector collector,
 			IProgressMonitor monitor) {
+			
 			ISiteFeatureReference[] refs = site.getFeatureReferences();
-			HashSet ignores = new HashSet();
+			HashSet ignores = new HashSet();			
+			Map liteFeatures = new HashMap();
+			
 			if (categoriesToSkip != null) {
 				for (int i = 0; i < categoriesToSkip.length; i++) {
 					ignores.add(categoriesToSkip[i]);
 				}
 			}
+			List siteFeatureReferences = new ArrayList(Arrays.asList(refs));
+			//System.out.println(site.getClass().getCanonicalName());
+			if (liteFeaturesAreOK && (site instanceof ExtendedSite) ) {
+				//System.out.println("YYYYYYYYYYYYYYYYY");
+				ExtendedSite extendedSite = (ExtendedSite)site;
+				LiteFeature[] liteFeaturesArray =  extendedSite.getLiteFeatures();
+				if ( (liteFeaturesArray != null) && ( liteFeaturesArray.length != 0)) {
+					for(int i = 0; i < liteFeaturesArray.length; i++) {
+						liteFeatures.put(liteFeaturesArray[i].getVersionedIdentifier(), liteFeaturesArray[i]);					
+					}
+					new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor, true, liteFeatures);
+				} else {
+					liteFeaturesAreOK = false;
+				}
+			}
 			
 
-			List siteFeatureReferences = new ArrayList(Arrays.asList(refs));
+			
 			monitor.beginTask("", refs.length); //$NON-NLS-1$
 			ThreadGroup featureDownloaders = new ThreadGroup("FeatureDownloader"); //$NON-NLS-1$
 			int numberOfThreads = (refs.length > 5)? 5: refs.length;
@@ -70,6 +102,9 @@ public class SiteSearchCategory extends BaseSearchCategory {
 					}
 				}
 			}
+			//double nano = 1000000000;
+			//System.out.println("Time:" + FeatureContentProvider.timer/nano);
+			//System.out.println("Time:" + FeatureContentProvider.first/nano);
 			
 		}
 
@@ -84,6 +119,11 @@ public class SiteSearchCategory extends BaseSearchCategory {
 	public SiteSearchCategory() {
 		super(CATEGORY_ID);
 		queries = new IUpdateSearchQuery[] { new Query()};
+	}
+
+	public SiteSearchCategory(boolean liteFeaturesAreOK) {
+		this();
+		this.liteFeaturesAreOK = liteFeaturesAreOK;
 	}
 
 	public IUpdateSearchQuery[] getQueries() {
@@ -103,6 +143,10 @@ public class SiteSearchCategory extends BaseSearchCategory {
 		
 		private HashSet ignores;
 
+		private boolean liteFeaturesAreOK;
+
+		private Map liteFeatures;
+
 		private FeatureDownloader() {			
 		}
 		
@@ -114,6 +158,12 @@ public class SiteSearchCategory extends BaseSearchCategory {
 			this.ignores = ignores;
 			this.monitor = monitor;
 			this.siteFeatureReferences = siteFeatureReferences;
+		}
+		
+		public FeatureDownloader(List siteFeatureReferences, IUpdateSearchResultCollector collector, IUpdateSearchFilter filter, HashSet ignores, IProgressMonitor monitor, boolean liteFeaturesAreOK, Map liteFeatures) {
+			this(siteFeatureReferences, collector, filter, ignores, monitor);
+			this.liteFeaturesAreOK = liteFeaturesAreOK && (liteFeatures != null);
+			this.liteFeatures = liteFeatures;
 		}
 
 		public void run() {
@@ -147,9 +197,14 @@ public class SiteSearchCategory extends BaseSearchCategory {
 					try {
 						if (!skipFeature) {
 							if (filter.accept(siteFeatureReference)) {
-								IFeature feature = siteFeatureReference.getFeature(null);
+								IFeature feature = null;
+								if(liteFeaturesAreOK) {
+									feature = (IFeature)liteFeatures.get(siteFeatureReference.getVersionedIdentifier());
+								} else {
+									feature = siteFeatureReference.getFeature(null);
+								}
 								synchronized(siteFeatureReferences) {
-									if (filter.accept(feature))								
+									if ( (feature != null) && (filter.accept(feature)) ) 								
 										collector.accept(feature);							    
 									monitor.subTask(feature.getLabel());
 								}

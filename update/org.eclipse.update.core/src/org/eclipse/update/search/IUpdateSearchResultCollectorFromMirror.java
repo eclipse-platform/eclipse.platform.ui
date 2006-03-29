@@ -11,7 +11,8 @@
 
 package org.eclipse.update.search;
 
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.ISiteWithMirrors;
+import org.eclipse.update.core.IURLEntry;
 
 /**
  * Search results are collected by implementing this interface

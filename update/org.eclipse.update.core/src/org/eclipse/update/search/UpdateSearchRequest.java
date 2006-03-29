@@ -209,6 +209,7 @@ public class UpdateSearchRequest {
 		IUpdateSearchResultCollector collector,
 		IProgressMonitor monitor)
 		throws CoreException {
+		//System.out.println("performSearch");
 		ArrayList statusList = new ArrayList();
 
 		searchInProgress = true;
@@ -218,16 +219,23 @@ public class UpdateSearchRequest {
 		boolean searchFeatureProvidedSites = scope.isFeatureProvidedSitesEnabled();
 
 		if (!monitor.isCanceled()) {
+			//System.out.println("performSearch 1.1");
 			int nsearchsites = 0;
+			try {
 			for (int i = 0; i < queries.length; i++) {
 				if (queries[i].getQuerySearchSite() != null)
 					nsearchsites++;
 			}
+			} catch (Throwable t) {
+				t.printStackTrace();
+				
+			}
+			//System.out.println("performSearch 1.15");
 			int ntasks = nsearchsites + queries.length * candidates.length;
 			if (updateMapURL!=null) ntasks++;
 
 			monitor.beginTask(Messages.UpdateSearchRequest_searching, ntasks); 
-
+			//System.out.println("performSearch 1.2");
 			try {
 				UpdatePolicy updatePolicy=null;
 				if (updateMapURL!=null) {
@@ -236,6 +244,7 @@ public class UpdateSearchRequest {
 					if (status != null)
 						statusList.add(status);
 				}
+				//System.out.println("performSearch2");
 				for (int i = 0; i < queries.length; i++) {
 					IUpdateSearchQuery query = queries[i];
 					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
@@ -333,7 +342,7 @@ public class UpdateSearchRequest {
 		SubProgressMonitor monitor,
 		boolean checkMirrors)
 		throws CoreException {
-		
+		//System.out.println("searchOneSite");
 		String text = NLS.bind(Messages.UpdateSearchRequest_contacting, siteAdapter.getLabel());
 		monitor.subTask(text);
 		monitor.beginTask("", 10); //$NON-NLS-1$
@@ -356,7 +365,9 @@ public class UpdateSearchRequest {
 			if ((collector instanceof IUpdateSearchResultCollectorFromMirror) &&
 				(site instanceof ISiteWithMirrors) &&
                 !(siteAdapter instanceof MirroredUpdateSiteAdapter)) {
+				//System.out.println("XXXXXXXXXXXX");
 				IURLEntry mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
+				//System.out.println("XXXXXXXXXXXX");
 				if (mirror != null) 
 					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, new SubProgressMonitor(monitor,1), false);
 			}

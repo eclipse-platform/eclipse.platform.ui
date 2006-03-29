@@ -39,7 +39,10 @@ public abstract class FeatureContentProvider
 	implements IFeatureContentProvider {
 
 	private static final boolean SWITCH_COPY_LOCAL = true;
-
+	//public static long timer = 0; 
+	
+	//public static long first = 0; 
+	
 	/**
 	 *  
 	 */
@@ -213,6 +216,7 @@ public abstract class FeatureContentProvider
 			}
 
 			try {
+				//long startTime = System.nanoTime();
 				if (localFileFragment != null
 					&& "http".equals(ref.asURL().getProtocol())) { //$NON-NLS-1$
 					localFile = localFileFragment.getFile();
@@ -302,9 +306,18 @@ public abstract class FeatureContentProvider
 					ref.asURL());
 
 				success = true;
-
+				//long endTime = System.nanoTime();
 				// file is downloaded succesfully, map it
 				Utilities.mapLocalFile(key, localFile);
+				
+				/*if (ref.asURL().toExternalForm().endsWith("jar")) {
+					synchronized(this.getClass()) {
+						timer += (endTime - startTime);
+						if (first == 0) {
+							first = endTime - startTime;
+						}
+					}
+				}*/
 			} catch (ClassCastException e) {
 				throw Utilities.newCoreException(
 					NLS.bind(Messages.FeatureContentProvider_UnableToCreate, (new Object[] { localFile })),

@@ -13,11 +13,15 @@ package org.eclipse.update.core.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,12 +29,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.internal.core.Digest;
+import org.eclipse.update.internal.core.ExtendedSite;
+import org.eclipse.update.internal.core.LiteFeature;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.w3c.dom.Document;
@@ -256,6 +264,10 @@ public class DefaultSiteParser extends DefaultHandler {
 					text = (String) objectStack.pop();
 					SiteModel site = (SiteModel) objectStack.peek();
 					site.getDescriptionModel().setAnnotation(text);
+					if ( (site instanceof ExtendedSite) && ((ExtendedSite)site).isDigestExist()) {
+						ExtendedSite extendedSite = (ExtendedSite)site;
+						extendedSite.setLiteFeatures(getLightFeatures(extendedSite));
+					}
 				}
 				//do not pop the object
 				break;
@@ -501,6 +513,31 @@ public class DefaultSiteParser extends DefaultHandler {
 				site.setMirrorSiteEntryModels(mirrors);
 			else 
 				site.setMirrorsURLString(mirrorsURL);
+		}
+		
+		if ( (site instanceof ExtendedSite) && (Boolean.getBoolean(attributes.getValue("digestURL")))) {
+			ExtendedSite extendedSite = (ExtendedSite) site;
+			extendedSite.setDigestExist(true);
+			extendedSite.setDigestURL(attributes.getValue("digestURL"));
+			
+			if ( (attributes.getValue("availableLocals") != null) && (!attributes.getValue("availableLocals").trim().equals(""))) {
+				StringTokenizer locals = new StringTokenizer(attributes.getValue("availableLocals"), ",");
+				String[] availableLocals = new String[locals.countTokens()];
+				int i = 0;
+				while(locals.hasMoreTokens()) {
+					availableLocals[i++] = locals.nextToken();
+				}
+				extendedSite.setAvailableLocals(availableLocals);
+			}
+			if ( (attributes.getValue("availableLanguages") != null) && (!attributes.getValue("availableLanguages").trim().equals(""))) {
+				StringTokenizer languages = new StringTokenizer(attributes.getValue("availableLanguages"), ",");
+				String[] availableLanguages = new String[languages.countTokens()];
+				int i = 0;
+				while(languages.hasMoreTokens()) {
+					availableLanguages[i++] = languages.nextToken();
+				}
+				extendedSite.setAvailableLanguages(availableLanguages);
+			}
 		}
 		
 		objectStack.push(site);
@@ -811,5 +848,65 @@ public class DefaultSiteParser extends DefaultHandler {
 		    	UpdateCore.log(Messages.DefaultSiteParser_mirrors, e);
 			return null;
 		}
+	}
+	
+	private LiteFeature[] getLightFeatures(ExtendedSite site) {
+		
+		URL fullDigestURL;
+		try {
+			fullDigestURL = getFullDigestURL( site, Locale.getDefault().getCountry(), Locale.getDefault().getLanguage());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		Digest digest = new Digest( fullDigestURL);
+		try {
+			return (LiteFeature[])digest.parseDigest();
+		} catch(Exception e){ 
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private URL getFullDigestURL(ExtendedSite site, String country, String language) throws MalformedURLException {
+		
+		String digestURL = site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/digest";
+		// TODO Auto-generated method stub
+		if ( isLocalSupported(site, country, language)) {
+			return new URL(digestURL + "_" + language + "_" + country + ".zip");
+		}
+		if ( isLangaugeSupported(site, language)) {
+			return new URL(digestURL + "_" + language + ".zip");
+		}
+		return new URL(digestURL + ".zip");
+	}
+
+	private boolean isLangaugeSupported(ExtendedSite site, String language) {
+		String[] availableLanguages =  site.getAvailableLanguages();
+		if ((availableLanguages == null) || (availableLanguages.length == 0)) {
+			return false;
+		}
+		for(int i = 0; i < availableLanguages.length; i++) {
+			if (availableLanguages[i].equals(language)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isLocalSupported(ExtendedSite site, String country, String language) {
+		String localeCode = language + "_" + country;
+		String[] availableLocals =  site.getAvailableLanguages();
+		if ((availableLocals == null) || (availableLocals.length == 0)) {
+			return false;
+		}
+		for(int i = 0; i < availableLocals.length; i++) {
+			if (availableLocals[i].equals(localeCode)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -78,14 +78,15 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 
 			SiteModelFactory factory = this;
 			site = (Site) factory.parseSite(siteStream);
-			
+			//System.out.println(site.getClass().getCanonicalName());
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, url);
 			site.markReadOnly();
-			SiteWithTimestamp siteWithTimestamp = new SiteWithTimestamp(site);
+			/*SiteWithTimestamp siteWithTimestamp = new SiteWithTimestamp(site);
 			siteWithTimestamp.setTimestamp( new Date(response.getLastModified()));
-			site = siteWithTimestamp;
+			site = siteWithTimestamp;*/
+			((SiteWithTimestamp)site).setTimestamp( new Date(response.getLastModified()));
 		} catch (MalformedURLException e) {
 			throw Utilities.newCoreException(NLS.bind(Messages.SiteURLFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e); //$NON-NLS-1$
 		} catch (IOException e) {
