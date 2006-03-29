@@ -542,23 +542,18 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			public void run() {
 				try {
 					if (fInput instanceof ILaunchConfiguration) {
-						/*
-						 * fix for bug 66576 and 79709
-						 */
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
 						fOriginal = configuration;
 						fWorkingCopy = configuration.getWorkingCopy();
 						displayInstanceTabs();
 					} else if (fInput instanceof ILaunchConfigurationType) {
-						/*
-						 * fix for bug 66576 and 79709
-						 */
 						fDescription = getDescription((ILaunchConfigurationType)fInput);
 						setNoInput();
 						refreshStatus();
 					} else {
 						setNoInput();
-					}//end else
+						refreshStatus();
+					}
 					setRedraw(true);
 				} catch (CoreException ce) {
 					errorDialog(ce);
@@ -587,7 +582,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				fDescription = EMPTY_STRING;
 			}
 		}
-		lcd.updateMessage();
 	}
 	
 	/**
@@ -874,12 +868,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (workingCopy == null) {
 			return false;
 		}
-
 		// Working copy hasn't been saved
 		if (workingCopy.getOriginal() == null) {
 			return true;
 		}
-
 		ILaunchConfiguration original = getOriginal();
 		return !original.contentsEqual(workingCopy);
 	}
