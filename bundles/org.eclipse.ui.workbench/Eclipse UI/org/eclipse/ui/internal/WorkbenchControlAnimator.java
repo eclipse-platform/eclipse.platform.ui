@@ -50,6 +50,12 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 		
 		Rectangle parentBounds = control.getParent().getBounds();
 		int bottom = parentBounds.height;
+		
+		if (bottom <= 0) {
+			setAnimationState(OPEN);
+			return;
+		}
+		
 		endY = visible ? bottom - control.getBounds().height
 				: bottom;
 		
