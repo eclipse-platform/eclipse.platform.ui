@@ -27,6 +27,9 @@
             icon="$nl$/icons/full/eview16/debug_persp.gif"
             class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
             id="org.eclipse.debug.ui.DebugPerspective">
+         <description>
+            %DebugPerspective.description
+         </description>
       </perspective>
    </extension>
    <extension

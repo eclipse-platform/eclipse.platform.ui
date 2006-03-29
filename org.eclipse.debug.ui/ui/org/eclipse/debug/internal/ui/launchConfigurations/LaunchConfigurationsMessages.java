@@ -137,6 +137,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String PerspectiveManager_12;
 	public static String PerspectiveManager_13;
 	public static String PerspectiveManager_15;
+	public static String PerspectiveManager_suspend_description;
+	public static String PerspectiveManager_launch_description;
 
 	public static String DebugModePromptStatusHandler_0;
 	public static String DebugModePromptStatusHandler_1;

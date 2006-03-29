@@ -450,9 +450,15 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *  automatically when the given launch suspends
 	 */
 	protected boolean shouldSwitchPerspectiveForSuspend(IWorkbenchWindow window, String perspectiveId) {
-		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_13, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); 
+		String launchMessage;
+		if (getPerspectiveDescription(perspectiveId) != null)
+			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_suspend_description;
+		else
+			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_13;
+			
+		return shouldSwitchPerspective(window, perspectiveId, launchMessage, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); 
 	}
-	
+
 	/**
 	 * Returns whether or not the user wishes to switch to the specified
 	 * perspective when a launch occurs.
@@ -464,7 +470,14 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *  automatically when a launch occurs
 	 */
 	protected boolean shouldSwitchPerspectiveForLaunch(IWorkbenchWindow window, String perspectiveId) {
-		return shouldSwitchPerspective(window, perspectiveId, LaunchConfigurationsMessages.PerspectiveManager_15, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); 
+		String launchMessage;
+		if (getPerspectiveDescription(perspectiveId) != null)
+			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_launch_description;
+		else
+			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_15;
+			
+
+		return shouldSwitchPerspective(window, perspectiveId, launchMessage, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); 
 	}
 	
 	/**
@@ -488,6 +501,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (perspectiveName == null) {
 			return false;
 		}
+		String perspectiveDesc = getPerspectiveDescription(perspectiveId);
+		String[] args;
+		if (perspectiveDesc != null)
+			args = new String[] { perspectiveName , perspectiveDesc };
+		else 
+			args = new String[] { perspectiveName };
 		String switchPerspective= DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
 		if (MessageDialogWithToggle.ALWAYS.equals(switchPerspective)) {
 			return true;
@@ -507,7 +526,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 			shell.forceActive();
 		}
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, new String[] { perspectiveName }), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); 
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, args), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); 
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
 			fPrompting= false;
@@ -560,6 +579,23 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		return newPerspective.getLabel();
 	}
 
+	
+	/**
+	 * Returns the label of the perspective with the given identifier or
+	 * <code>null</code> if no such perspective exists.
+	 * 
+	 * @param perspectiveId the identifier
+	 * @return the label of the perspective with the given identifier or
+	 *  <code>null</code> if no such perspective exists 
+	 */
+	protected String getPerspectiveDescription(String perspectiveId) {
+		IPerspectiveDescriptor newPerspective = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		if (newPerspective == null) {
+			return null;
+		}
+		return newPerspective.getDescription();
+	}
+	
 	/** 
 	 * Returns the perspective associated with the
 	 * given launch, or <code>null</code> if none.
