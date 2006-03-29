@@ -16,9 +16,12 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
@@ -30,11 +33,13 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
-public class ProgrammaticOpenTest extends TestCase {
+public class PipelineTest extends TestCase {
 
-	public static final String COMMON_NAVIGATOR_INSTANCE_ID = "org.eclipse.ui.tests.navigator.ProgrammaticTestView"; //$NON-NLS-1$
+	public static final String COMMON_NAVIGATOR_INSTANCE_ID = "org.eclipse.ui.tests.navigator.PipelineTestView"; //$NON-NLS-1$
 
 	public static final String COMMON_NAVIGATOR_RESOURCE_EXT = "org.eclipse.ui.navigator.resourceContent"; //$NON-NLS-1$
+	
+	public static final String COMMON_NAVIGATOR_JAVA_EXT = "org.eclipse.jdt.java.ui.javaContent"; //$NON-NLS-1$
 
 	private Set expectedChildren = new HashSet();
 
@@ -79,63 +84,68 @@ public class ProgrammaticOpenTest extends TestCase {
 	public void testNavigatorRootContents() throws Exception {
 
 		assertEquals(
-				"There should be no visible extensions for the programmatic viewer.", 0, 
+				"There should be no visible extensions for the pipeline viewer.", 0,
 				contentService.getVisibleExtensionIds().length);
 
 		contentService.bindExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, false);
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT }, false);
 
 		assertEquals(
-				"There should be one visible extension for the programmatic viewer.", 1,
+				"There should be two visible extension for the pipeline viewer.", 2,
 				contentService.getVisibleExtensionIds().length);
 
 		contentService.getActivationService().activateExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT }, true);
 
 		viewer.refresh();
-		viewer.expandAll();
-
-		TreeItem[] items = viewer.getTree().getItems();
-
-		assertTrue("There should be some items.", items.length > 0); //$NON-NLS-1$		
-
-		assertEquals(project, items[0].getData());
+		
 
 		// we do this to force the rendering of the children of items[0]
 		viewer
 				.setSelection(new StructuredSelection(project
 						.getFile(".project"))); //$NON-NLS-1$
 
-		TreeItem[] children = items[0].getItems();
+		TreeItem[] rootItems = viewer.getTree().getItems();
+		
+		assertEquals("There should be one item.", 1, rootItems.length); //$NON-NLS-1$		
+		
+		assertTrue("The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
 
-		assertEquals(expectedChildren.size(), children.length);
-		for (int i = 0; i < children.length; i++) {
-			assertTrue(expectedChildren.contains(children[i].getData()));
+		IProject adaptedProject = (IProject) ((IAdaptable)rootItems[0].getData()).getAdapter(IProject.class); 
+		assertEquals(project, adaptedProject);
+		
+		IFolder sourceFolder = project.getFolder(new Path("src"));
+		viewer.add(project, sourceFolder);
+		  
+		TreeItem[] projectChildren = rootItems[0].getItems(); 
+
+		assertTrue("There should be some items.", projectChildren.length > 0); //$NON-NLS-1$
+		 
+		for (int i = 0; i < projectChildren.length; i++) {
+			if(projectChildren[i].getData() == sourceFolder)
+				fail("The src folder should not be added as an IFolder.");			
 		}
+		
+		// a new project without a Java nature should add without an issue.
+		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject("New Project");
+		viewer.add(viewer.getInput(), newProject);
+		
+		rootItems = viewer.getTree().getItems();
+		
+		assertEquals("There should be two items.", 2, rootItems.length); //$NON-NLS-1$
+		
+		boolean found = false;
+		for (int i = 0; i < rootItems.length; i++) {
+			if(rootItems[i].getData() instanceof IProject) {
+				IProject newProjectFromTree = (IProject) rootItems[i].getData();
+				assertEquals(newProject, newProjectFromTree);
+				found = true;
+			}	
+		}
+		assertTrue(found);
 
+		
 	}
-
-	public void testNavigatorExtensionEnablement() throws Exception {
-
-		contentService.getActivationService().activateExtensions(
-				new String[] {}, true);
-
-		viewer.refresh();
-		viewer.expandAll();
-
-		TreeItem[] items = viewer.getTree().getItems();
-
-		assertTrue("There should be NO items.", items.length == 0); //$NON-NLS-1$
-
-		contentService.getActivationService().deactivateExtensions(
-				new String[] {}, true);
-
-		viewer.expandToLevel(2);
-
-		items = viewer.getTree().getItems();
-
-		assertTrue("There should be some items.", items.length > 0); //$NON-NLS-1$
-
-	}
+ 
 
 }

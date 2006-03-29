@@ -188,7 +188,11 @@ public class SafeDelegateTreeContentProvider implements
 	 */
 	public PipelinedShapeModification interceptAdd(
 			PipelinedShapeModification anAddModification) { 
-		return null;
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
+			return ((IPipelinedTreeContentProvider) contentProvider)
+					.interceptAdd(anAddModification);
+		}
+		return anAddModification;
 	}
 
 	/*
@@ -198,7 +202,11 @@ public class SafeDelegateTreeContentProvider implements
 	 */
 	public PipelinedShapeModification interceptRemove(
 			PipelinedShapeModification aRemoveModification) { 
-		return null;
+		if (contentProvider instanceof IPipelinedTreeContentProvider) {
+			return ((IPipelinedTreeContentProvider) contentProvider)
+					.interceptRemove(aRemoveModification);
+		}
+		return aRemoveModification;
 	}
 
 	/*
@@ -224,7 +232,7 @@ public class SafeDelegateTreeContentProvider implements
 			PipelinedViewerUpdate anUpdateSynchronization) {
 		if (contentProvider instanceof IPipelinedTreeContentProvider) {
 			return ((IPipelinedTreeContentProvider) contentProvider)
-					.interceptRefresh(anUpdateSynchronization);
+					.interceptUpdate(anUpdateSynchronization);
 		}
 		return false;
 	}

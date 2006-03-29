@@ -108,7 +108,16 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * mapped to the correct set of model elements in the overridding extension.
 	 * Clients may add, remove, or modify elements in the given set of added
 	 * children. Clients should return a set for downstream extensions to
-	 * massage further.
+	 * massage further. 
+	 * </p>
+	 * <p>
+	 * Clients may change what parent the reshaped elements are added to, so
+	 * long as that parent is not the root of the viewer.
+	 * </p>
+	 * <p>
+	 * Clients should never create their own pipeline shape
+	 * modifications, but instead return the shape modification that was passed
+	 * in with appropriate changes.
 	 * </p>
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update
@@ -137,6 +146,13 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * Clients may add, remove, or modify elements in the given set of removed
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.
+	 * </p>
+	 * <p>
+	 * The parent will be <b>null</b> for remove modifications.
+	 * <p>
+	 * Clients should never create their own pipeline shape
+	 * modifications, but instead return the shape modification that was passed
+	 * in with appropriate changes.
 	 * </p>
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update

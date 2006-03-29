@@ -13,7 +13,13 @@
             allowMultiple="false"
             class="org.eclipse.ui.navigator.CommonNavigator"
             id="org.eclipse.ui.tests.navigator.ProgrammaticTestView"
-            name="%test.navigator.programmaticViewName"/>            
+            name="%test.navigator.programmaticViewName"/>     
+            
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="org.eclipse.ui.tests.navigator.PipelineTestView"
+            name="%test.navigator.pipelineViewName"/>            
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -176,9 +182,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
-      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>
-      <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>
+      <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
+      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
+      
    </extension>
+   
+   
    <!-- Verify decorator extension: Adds ">>" to Test Items that end in "3" -->
    <!-- Disabled for demo
    <extension
