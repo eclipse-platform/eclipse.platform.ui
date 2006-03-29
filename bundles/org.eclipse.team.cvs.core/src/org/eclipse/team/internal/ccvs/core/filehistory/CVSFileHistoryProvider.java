@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.filehistory;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.*;
 import org.eclipse.team.core.history.provider.FileHistoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -47,10 +48,12 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 				CVSFileHistory remoteFile = null;
 				if (remoteResource instanceof ICVSFile) {
 					remoteFile = new CVSFileHistory((ICVSFile) remoteResource);
+					remoteFile.refresh(monitor);
 				}
 				return remoteFile;
 			}
 		} catch (CVSException e) {
+		} catch (TeamException e) {
 		} finally {
 			monitor.done();
 		}
@@ -81,10 +84,16 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 			CVSFileStore fileStore = (CVSFileStore) store;
 			ICVSRemoteFile file = fileStore.getCVSURI().toFile();
 			if (file != null){
+				try{
 				if ((flags == IFileHistoryProvider.SINGLE_REVISION) || ((flags == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT))) {
-					return new CVSFileHistory(file, flags);
-				} else
-					return new CVSFileHistory(file);
+					CVSFileHistory history = new CVSFileHistory(file, flags);
+					history.refresh(monitor);
+					return history;
+				} else{
+					CVSFileHistory history = new CVSFileHistory(file);
+					history.refresh(monitor);
+					return history;
+				} } catch (TeamException ex){}
 			}
 		}
 		return null;
