@@ -24,7 +24,7 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -778,7 +778,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 					}
 				};
-				Platform.run(runnable);
+				SafeRunner.run(runnable);
 
 			}
 		}

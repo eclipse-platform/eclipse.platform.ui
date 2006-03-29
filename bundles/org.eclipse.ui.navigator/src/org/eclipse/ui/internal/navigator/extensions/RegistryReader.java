@@ -78,7 +78,7 @@ public abstract class RegistryReader {
 	protected static void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
 		StringBuffer buf = new StringBuffer();
-		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+		buf.append("Plugin " + extension.getNamespaceIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text);//$NON-NLS-1$
 		NavigatorPlugin.logError(0, buf.toString(), null);
 	}
@@ -117,8 +117,8 @@ public abstract class RegistryReader {
 		System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
 		Comparator comparer = new Comparator() {
 			public int compare(Object arg0, Object arg1) {
-				String s1 = ((IExtension) arg0).getNamespace();
-				String s2 = ((IExtension) arg1).getNamespace();
+				String s1 = ((IExtension) arg0).getNamespaceIdentifier();
+				String s2 = ((IExtension) arg1).getNamespaceIdentifier();
 				return s1.compareToIgnoreCase(s2);
 			}
 		};

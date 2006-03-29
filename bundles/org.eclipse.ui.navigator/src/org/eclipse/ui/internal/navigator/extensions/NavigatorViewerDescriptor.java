@@ -267,7 +267,7 @@ public final class NavigatorViewerDescriptor implements
 							TAG_INCLUDES,
 							element.getDeclaringExtension()
 									.getUniqueIdentifier(),
-							element.getDeclaringExtension().getNamespace() }),
+							element.getDeclaringExtension().getNamespaceIdentifier() }),
 					null);
 		}
 
@@ -288,7 +288,7 @@ public final class NavigatorViewerDescriptor implements
 							TAG_EXCLUDES,
 							element.getDeclaringExtension()
 									.getUniqueIdentifier(),
-							element.getDeclaringExtension().getNamespace() }),
+							element.getDeclaringExtension().getNamespaceIdentifier() }),
 					null);
 		}
 	}

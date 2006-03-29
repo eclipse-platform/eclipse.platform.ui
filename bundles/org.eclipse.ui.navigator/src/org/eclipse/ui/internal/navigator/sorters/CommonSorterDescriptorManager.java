@@ -163,7 +163,7 @@ public class CommonSorterDescriptorManager {
 																id,
 																element
 																		.getDeclaringExtension()
-																		.getNamespace() }),
+																		.getNamespaceIdentifier() }),
 										null);
 					}
 				} else {
@@ -173,7 +173,7 @@ public class CommonSorterDescriptorManager {
 									NLS
 											.bind(
 													CommonNavigatorMessages.CommonSorterDescriptorManager_A_navigatorContent_extesnion_in_0_,
-													element.getNamespace()),
+													element.getNamespaceIdentifier()),
 									null);
 				}
 			}

@@ -108,8 +108,7 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 									IStatus.WARNING,
 									0,
 									"A \"commonFilter\" was specified in " + //$NON-NLS-1$
-											element.getDeclaringExtension()
-													.getNamespace()
+											element.getDeclaringExtension().getNamespaceIdentifier()
 											+ " which specifies a \"class\" attribute and an Core Expression.\n" + //$NON-NLS-1$
 											"Only the Core Expression will be respected.", //$NON-NLS-1$
 									null);

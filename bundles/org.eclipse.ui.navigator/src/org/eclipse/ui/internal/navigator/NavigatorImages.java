@@ -12,20 +12,16 @@ package org.eclipse.ui.internal.navigator;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ *  
  * 
  * @since 3.2
  */
@@ -37,8 +33,8 @@ public class NavigatorImages {
 
 	private static URL ICONS_LOCATION;
 	static {
-		ICONS_LOCATION = NavigatorPlugin.getDefault().find(
-				new Path("icons/full/")); //$NON-NLS-1$  
+		ICONS_LOCATION = FileLocator.find(NavigatorPlugin.getDefault()
+				.getBundle(), new Path("icons/full/"), Collections.EMPTY_MAP); //$NON-NLS-1$  
 	}
 
 	/**

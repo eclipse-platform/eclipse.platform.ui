@@ -167,7 +167,7 @@ public final class NavigatorContentDescriptor implements
 							ATT_ID,
 							id,
 							configElement.getDeclaringExtension()
-									.getNamespace() }));
+									.getNamespaceIdentifier() }));
 		}
 
 		IConfigurationElement[] children = configElement
@@ -184,7 +184,7 @@ public final class NavigatorContentDescriptor implements
 								TAG_TRIGGER_POINTS,
 								id,
 								configElement.getDeclaringExtension()
-										.getNamespace() }));
+										.getNamespaceIdentifier() }));
 			}
 
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
@@ -197,7 +197,7 @@ public final class NavigatorContentDescriptor implements
 								TAG_POSSIBLE_CHILDREN,
 								id,
 								configElement.getDeclaringExtension()
-										.getNamespace() }));
+										.getNamespaceIdentifier() }));
 			}
 		} else if (children.length == 1) {
 			try {
@@ -213,7 +213,7 @@ public final class NavigatorContentDescriptor implements
 							TAG_ENABLEMENT,
 							id,
 							configElement.getDeclaringExtension()
-									.getNamespace() }));
+									.getNamespaceIdentifier() }));
 		}
 
 		contribution = new IPluginContribution() {
@@ -223,7 +223,7 @@ public final class NavigatorContentDescriptor implements
 			}
 
 			public String getPluginId() {
-				return configElement.getDeclaringExtension().getNamespace();
+				return configElement.getDeclaringExtension().getNamespaceIdentifier();
 			}
 
 		};

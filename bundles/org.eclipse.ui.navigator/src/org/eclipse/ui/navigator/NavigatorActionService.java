@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -331,7 +331,7 @@ public final class NavigatorActionService extends ActionGroup implements
 
 					}
 				};
-				Platform.run(runnable);
+				SafeRunner.run(runnable);
 
 			}
 		}

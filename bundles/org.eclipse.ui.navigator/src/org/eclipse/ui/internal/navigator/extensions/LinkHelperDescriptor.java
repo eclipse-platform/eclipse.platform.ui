@@ -88,10 +88,12 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 
 	/**
 	 * Create a link helper instance from this descriptors class attribute.
-	 * @return
+	 * 
+	 * @return An instance of the helper that is defined by the extension, or a
+	 *         Skeleton Link Helper.
 	 */
 	public ILinkHelper createLinkHelper() {
-		if(hasLinkHelperFailedCreation)
+		if (hasLinkHelperFailedCreation)
 			return SkeletonLinkHelper.INSTANCE;
 		try {
 			return (ILinkHelper) configElement
@@ -100,7 +102,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 			hasLinkHelperFailedCreation = true;
 			NavigatorPlugin.logError(0, t.getMessage(), t);
 		}
-		return  SkeletonLinkHelper.INSTANCE;
+		return SkeletonLinkHelper.INSTANCE;
 	}
 
 	/**
@@ -123,7 +125,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
 		return false;
-	} 
+	}
 
 	/**
 	 * @param anObject
