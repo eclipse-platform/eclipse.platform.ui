@@ -64,7 +64,7 @@ a .link-extra-div {
 /*
  * Set up the content for the root page.
  */
-body {
+html, body {
 /*
 	min-width : 770px;	width:expression(document.body.clientWidth < 770? "770px": "auto" );
 */
