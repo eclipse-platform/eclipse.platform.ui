@@ -310,7 +310,7 @@ public class AntElementNode implements IAdaptable {
 		fIsExternal = isExternal;
 	}
 	
-	private String getElementPath() {
+	protected String getElementPath() {
 		if (fElementPath == null) {
 			StringBuffer buffer= new StringBuffer();
 			String buildFileName= getProjectNode().getBuildFileName();
