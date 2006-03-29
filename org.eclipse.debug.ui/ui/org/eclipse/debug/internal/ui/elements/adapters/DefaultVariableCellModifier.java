@@ -65,9 +65,9 @@ public class DefaultVariableCellModifier implements ICellModifier {
 	 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
 	 */
 	public void modify(Object element, String property, Object value) {
-		if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
-			Object oldValue = getValue(element, property);
-	        if (!value.equals(oldValue)) {
+		Object oldValue = getValue(element, property);
+        if (!value.equals(oldValue)) {
+        	if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
 				if (element instanceof IVariable) {
 					IVariable variable = (IVariable) element;
 					IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
