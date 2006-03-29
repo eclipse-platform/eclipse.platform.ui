@@ -176,7 +176,7 @@ public class PortingActionProvider extends CommonActionProvider {
 	private void addExportMenu(IMenuManager aMenu) {
 
 		exportWizardActionGroup.setContext(getContext());
-		if (importWizardActionGroup.getWizardActionIds().length == 0) {
+		if (exportWizardActionGroup.getWizardActionIds().length == 0) {
 			aMenu.appendToGroup(ICommonMenuConstants.GROUP_PORT, exportAction);
 			return;
 		}
