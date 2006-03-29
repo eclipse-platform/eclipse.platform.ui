@@ -15,6 +15,8 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,8 +31,6 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  */
 public class DeleteWorkingsetsMessageDialog extends MessageDialog {
-
-
 
 	/**
 	 * to determine if we should delete the working set as well 
@@ -69,11 +69,24 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		fDeleteWS = new Button(comp, SWT.CHECK);
 		fDeleteWS.setText(ActionMessages.DeleteWorkingsetsMessageDialog_0);
 		fDeleteWS.setFont(font);
-		fDeleteWS.setSelection(fDeleteWorkingsets);
+		fDeleteWS.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
+			}
+		});
 		
 		fDeleteBPS = new Button(comp, SWT.CHECK);
 		fDeleteBPS.setText(ActionMessages.DeleteWorkingsetsMessageDialog_1);
 		fDeleteBPS.setFont(font);
+		fDeleteBPS.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				getButton(0).setEnabled(fDeleteWS.getSelection() || fDeleteBPS.getSelection());
+			}
+		});
+		
+		fDeleteWS.setSelection(fDeleteWorkingsets);
 		fDeleteBPS.setSelection(fDeleteBreakpoints);
 		return comp;
 	}
