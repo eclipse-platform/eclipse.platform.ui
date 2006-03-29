@@ -371,7 +371,7 @@ public class Utils {
 		if (bundleURL.indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
 			return true;
 		
-		String osgiBundles = System.getProperty("osgi.bundles"); //$NON-NLS-1$
+		String osgiBundles = ConfigurationActivator.getBundleContext().getProperty("osgi.bundles"); //$NON-NLS-1$
 		StringTokenizer st = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken().trim();

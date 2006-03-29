@@ -354,7 +354,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	public String getApplicationIdentifier() {
 		// Return the app if defined in system properties
-		String application = System.getProperty(ECLIPSE_APPLICATION);
+		String application = ConfigurationActivator.getBundleContext().getProperty(ECLIPSE_APPLICATION);
 		if (application != null)
 			return application;
 
@@ -379,7 +379,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 */
 	public String getPrimaryFeatureIdentifier() {
 		// Return the product if defined in system properties
-		String primaryFeatureId = System.getProperty(ECLIPSE_PRODUCT);
+		String primaryFeatureId = ConfigurationActivator.getBundleContext().getProperty(ECLIPSE_PRODUCT);
 		if (primaryFeatureId != null) {
 			// check if feature exists
 			IFeatureEntry feature = findConfiguredFeatureEntry(primaryFeatureId);

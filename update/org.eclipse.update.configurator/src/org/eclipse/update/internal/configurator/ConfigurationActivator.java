@@ -146,7 +146,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		Utils.debug("Installing bundles..."); //$NON-NLS-1$
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		int startLevel = 4;
-		String defaultStartLevel = System.getProperty("osgi.bundles.defaultStartLevel"); //$NON-NLS-1$
+		String defaultStartLevel = context.getProperty("osgi.bundles.defaultStartLevel"); //$NON-NLS-1$
 		if (defaultStartLevel != null) {
 			try {
 				startLevel = Integer.parseInt(defaultStartLevel);
@@ -422,7 +422,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 	
 	private boolean canRunWithCachedData() {
-		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
+		return  !"true".equals(context.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
 				lastTimeStamp==configuration.getChangeStamp() &&
 				lastStateTimeStamp==Utils.getStateStamp();
 	}
