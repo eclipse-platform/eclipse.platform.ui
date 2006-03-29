@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
+import java.beans.PropertyDescriptor;
+
+import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableMultiMapping;
 import org.eclipse.jface.internal.databinding.internal.viewers.MultiMappingAndListBinding;
 import org.eclipse.jface.internal.databinding.internal.viewers.MultiMappingAndSetBinding;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
@@ -37,8 +40,35 @@ public class ViewersBindingFactory implements IBindingFactory {
 		// List-based
 		if (targetObservable instanceof IObservableList
 				&& targetObservable instanceof IObservableCollectionWithLabels) {
-			if (modelObservable instanceof IObservableMultiMappingWithDomain) {
-				IObservableMultiMappingWithDomain model = (IObservableMultiMappingWithDomain) modelObservable;
+			IObservableMultiMappingWithDomain model = null;
+			if (modelObservable instanceof IObservableList) {
+				//FIXME Needs Test Case
+				
+				IObservableList observableList = (IObservableList) modelObservable;
+				Class objectDef;
+				Object elementType = observableList.getElementType();
+				if (elementType instanceof Class) {
+					objectDef = (Class) elementType;
+				} else {
+					throw new UnsupportedOperationException("Automatic creation of toString() IObservableMultiMappingWithDomain is not supported with non Class element types."); //$NON-NLS-1$
+				}
+				
+				PropertyDescriptor propertyDescriptor = null;
+				try {
+					propertyDescriptor = new PropertyDescriptor("string", objectDef.getMethod("toString", null), null); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (Throwable t) {
+					throw new IllegalStateException("Automatic creation of toString() IObservableMultiMappingWithDomain failed."); //$NON-NLS-1$
+				} 
+
+				PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[1];
+				propertyDescriptors[0] = propertyDescriptor;
+				model = new JavaBeanObservableMultiMapping(observableList,
+						propertyDescriptors);
+			} else if (modelObservable instanceof IObservableMultiMappingWithDomain) {
+				model = (IObservableMultiMappingWithDomain) modelObservable;
+			}
+			
+			if (model != null) {
 				if (model.getDomain() instanceof IObservableList) {
 					IObservableList modelList = (IObservableList) model
 							.getDomain();

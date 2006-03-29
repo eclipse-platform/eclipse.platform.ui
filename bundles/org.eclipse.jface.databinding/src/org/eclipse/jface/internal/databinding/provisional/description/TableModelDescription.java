@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.provisional.description;
 
+import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
+
 
 /**
  * TODO Javadoc
@@ -21,6 +23,7 @@ package org.eclipse.jface.internal.databinding.provisional.description;
 public class TableModelDescription {
 	
 	private final Property collectionProperty;
+	private final IObservableList observableList;
 	private final Object[] columnIDs;
 
 	/**
@@ -30,6 +33,17 @@ public class TableModelDescription {
 	public TableModelDescription(Property collectionProperty, Object[] columnIDs) {
 		this.collectionProperty = collectionProperty;
 		this.columnIDs = columnIDs;
+		this.observableList = null;
+	}
+
+	/**
+	 * @param observableList
+	 * @param columnIDs
+	 */
+	public TableModelDescription(IObservableList observableList, Object[] columnIDs) {
+		this.observableList = observableList;
+		this.columnIDs = columnIDs;
+		this.collectionProperty = null;
 	}
 
 	/**
@@ -46,4 +60,7 @@ public class TableModelDescription {
 		return columnIDs;
 	}
 
+	public IObservableList getObservableList() {
+		return observableList;
+	}
 }

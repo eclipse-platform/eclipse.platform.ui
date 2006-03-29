@@ -154,9 +154,12 @@ final public class BeanObservableFactory implements IObservableFactory {
 			// (TreeModelDescription) description));
 		} else if (description instanceof TableModelDescription) {
 			TableModelDescription tableModelDescription = (TableModelDescription) description;
-			IObservable collectionObservable = dataBindingContext
+			IObservable collectionObservable = tableModelDescription.getObservableList();
+			if (collectionObservable == null) {
+				collectionObservable = dataBindingContext
 					.createObservable(tableModelDescription
 							.getCollectionProperty());
+			}
 			if (collectionObservable == null) {
 				return null;
 			}
