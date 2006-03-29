@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,20 +17,19 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,10 +42,10 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 
 /**
@@ -124,36 +121,70 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		if (marker == null)
 			return;
 
-		boolean isProblemMarker= MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM);
-		boolean isTaskMarker= MarkerUtilities.isMarkerType(marker, IMarker.TASK);
-		if (isProblemMarker || isTaskMarker) {
-			IWorkbenchPage page= fTextEditor.getSite().getPage();
-			IViewPart view= page.findView(isProblemMarker ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST);
-			if (view != null) {
-				boolean selectionSet= false;
-				try {
-					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
-					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
-					selectionSet= true;
-				} catch (NoSuchMethodException x) {
-					selectionSet= false;
-				} catch (IllegalAccessException x) {
-					selectionSet= false;
-				} catch (InvocationTargetException x) {
-					selectionSet= false;
-				}
+		IWorkbenchPage page= fTextEditor.getSite().getPage();
+		MarkerViewUtil.showMarker(page, marker, false);
+		
+		gotoMarker(marker);
+	}
+	
+	public void gotoMarker(IMarker marker) {
+		
+		// Use the provided adapter if any
+		IGotoMarker gotoMarkerAdapter= (IGotoMarker)fTextEditor.getAdapter(IGotoMarker.class);
+		if (gotoMarkerAdapter != null) {
+			gotoMarkerAdapter.gotoMarker(marker);
+			return;
+		}
+		
+		int start= MarkerUtilities.getCharStart(marker);
+		int end= MarkerUtilities.getCharEnd(marker);
+		
+		boolean selectLine= start < 0 || end < 0; 
 
-				if (selectionSet)
-					return;
+		IDocumentProvider documentProvider= fTextEditor.getDocumentProvider();
+		IEditorInput editorInput= fTextEditor.getEditorInput();
+		
+		// look up the current range of the marker when the document has been edited
+		IAnnotationModel model= documentProvider.getAnnotationModel(editorInput);
+		if (model instanceof AbstractMarkerAnnotationModel) {
+
+			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+			Position pos= markerModel.getMarkerPosition(marker);
+			if (pos != null && !pos.isDeleted()) {
+				// use position instead of marker values
+				start= pos.getOffset();
+				end= pos.getOffset() + pos.getLength();
+			}
+
+			if (pos != null && pos.isDeleted()) {
+				// do nothing if position has been deleted
+				return;
 			}
 		}
-		// Select and reveal in editor
-		int offset= MarkerUtilities.getCharStart(marker);
-		int endOffset= MarkerUtilities.getCharEnd(marker);
-		if (offset > -1 && endOffset > -1)
-			fTextEditor.selectAndReveal(offset, endOffset - offset);
 
+		IDocument document= documentProvider.getDocument(editorInput);
+
+		if (selectLine) {
+			int line;
+			try {
+				if (start >= 0)
+					line= document.getLineOfOffset(start);
+				else {
+					line= MarkerUtilities.getLineNumber(marker);
+					// Marker line numbers are 1-based
+					-- line;
+				}
+				end= start + document.getLineLength(line) - 1;
+			} catch (BadLocationException e) {
+				return;
+			}
+		}
+
+		int length= document.getLength();
+		if (end - 1 < length && start < length)
+			fTextEditor.selectAndReveal(start, end - start);
 	}
+	
 
 	/**
 	 * Chooses the marker with the highest layer. If there are multiple
