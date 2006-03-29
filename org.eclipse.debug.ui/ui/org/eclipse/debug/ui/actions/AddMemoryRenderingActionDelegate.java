@@ -154,6 +154,9 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				debugContext = (IAdaptable)((IStructuredSelection)context).getFirstElement();
 		}
 		
+		if (debugContext == null)
+			fActionDelegate = null;
+		
 		if (debugContext == fDebugContext)
 			return;
 		
