@@ -94,9 +94,9 @@ public class DigestParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if(localName.equals("digest"))
+		if(localName.equals("digest")) //$NON-NLS-1$
 			return;
-		if(localName.equals("feature"))
+		if(localName.equals("feature")) //$NON-NLS-1$
 			featureParser.internalInit(factory, location);
 		
 		featureParser.startElement(uri, localName, qName, attributes);
@@ -108,10 +108,10 @@ public class DigestParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public void endElement(String uri, String localName, String qName) {
-		if(localName.equals("digest"))
+		if(localName.equals("digest")) //$NON-NLS-1$
 			return;
 		featureParser.endElement(uri, localName, qName);
-		if(localName.equals("feature")) {
+		if(localName.equals("feature")) { //$NON-NLS-1$
 			try {
 				featureModels.add(featureParser.getFeatureModel());
 			} catch (SAXException e) {

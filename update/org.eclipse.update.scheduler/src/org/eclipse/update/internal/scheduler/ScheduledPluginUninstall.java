@@ -37,7 +37,7 @@ public class ScheduledPluginUninstall implements IStartup {
 		
 		File f = new File(platformXML.getFile());
 
-		f = new File(f.getParentFile(), "toBeUninstalled");
+		f = new File(f.getParentFile(), "toBeUninstalled"); //$NON-NLS-1$
 		try {
 			if (!f.exists()) {
 				return;
@@ -56,7 +56,7 @@ public class ScheduledPluginUninstall implements IStartup {
 			int i = 0;
 			while(featuresToBeDeleted.hasMoreElements()) {
 				String temp = (String)featuresToBeDeleted.nextElement();
-				StringTokenizer stk = new StringTokenizer( temp, ";");
+				StringTokenizer stk = new StringTokenizer( temp, ";"); //$NON-NLS-1$
 				String targetSite = stk.nextToken();
 				String featureName = stk.nextToken();
 				for(int j = 0; j < sites.length; j++) {

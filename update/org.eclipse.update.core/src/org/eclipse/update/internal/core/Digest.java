@@ -29,7 +29,7 @@ public class Digest {
 		localSource = digestContentProvider.asLocalReference(new JarContentReference( null, source), null).asFile();
 		digestJar = new JarFile(localSource);
 		
-		ZipEntry digestEntry = digestJar.getEntry("digest.xml");
+		ZipEntry digestEntry = digestJar.getEntry("digest.xml"); //$NON-NLS-1$
 		
 		if (digestEntry != null) {
 			inputStream = digestJar.getInputStream(digestEntry);

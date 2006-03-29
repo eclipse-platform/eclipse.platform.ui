@@ -515,13 +515,13 @@ public class DefaultSiteParser extends DefaultHandler {
 				site.setMirrorsURLString(mirrorsURL);
 		}
 		
-		if ( (site instanceof ExtendedSite) && (Boolean.getBoolean(attributes.getValue("digestURL")))) {
+		if ( (site instanceof ExtendedSite) && (Boolean.getBoolean(attributes.getValue("digestURL")))) { //$NON-NLS-1$
 			ExtendedSite extendedSite = (ExtendedSite) site;
 			extendedSite.setDigestExist(true);
-			extendedSite.setDigestURL(attributes.getValue("digestURL"));
+			extendedSite.setDigestURL(attributes.getValue("digestURL")); //$NON-NLS-1$
 			
-			if ( (attributes.getValue("availableLocals") != null) && (!attributes.getValue("availableLocals").trim().equals(""))) {
-				StringTokenizer locals = new StringTokenizer(attributes.getValue("availableLocals"), ",");
+			if ( (attributes.getValue("availableLocals") != null) && (!attributes.getValue("availableLocals").trim().equals(""))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				StringTokenizer locals = new StringTokenizer(attributes.getValue("availableLocals"), ",");  //$NON-NLS-1$//$NON-NLS-2$
 				String[] availableLocals = new String[locals.countTokens()];
 				int i = 0;
 				while(locals.hasMoreTokens()) {
@@ -529,8 +529,8 @@ public class DefaultSiteParser extends DefaultHandler {
 				}
 				extendedSite.setAvailableLocals(availableLocals);
 			}
-			if ( (attributes.getValue("availableLanguages") != null) && (!attributes.getValue("availableLanguages").trim().equals(""))) {
-				StringTokenizer languages = new StringTokenizer(attributes.getValue("availableLanguages"), ",");
+			if ( (attributes.getValue("availableLanguages") != null) && (!attributes.getValue("availableLanguages").trim().equals(""))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				StringTokenizer languages = new StringTokenizer(attributes.getValue("availableLanguages"), ","); //$NON-NLS-1$ //$NON-NLS-2$
 				String[] availableLanguages = new String[languages.countTokens()];
 				int i = 0;
 				while(languages.hasMoreTokens()) {
@@ -872,15 +872,15 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private URL getFullDigestURL(ExtendedSite site, String country, String language) throws MalformedURLException {
 		
-		String digestURL = site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/digest";
+		String digestURL = site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/digest"; //$NON-NLS-1$ //$NON-NLS-2$
 		// TODO Auto-generated method stub
 		if ( isLocalSupported(site, country, language)) {
-			return new URL(digestURL + "_" + language + "_" + country + ".zip");
+			return new URL(digestURL + "_" + language + "_" + country + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		if ( isLangaugeSupported(site, language)) {
-			return new URL(digestURL + "_" + language + ".zip");
+			return new URL(digestURL + "_" + language + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return new URL(digestURL + ".zip");
+		return new URL(digestURL + ".zip"); //$NON-NLS-1$
 	}
 
 	private boolean isLangaugeSupported(ExtendedSite site, String language) {
@@ -897,7 +897,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	}
 
 	private boolean isLocalSupported(ExtendedSite site, String country, String language) {
-		String localeCode = language + "_" + country;
+		String localeCode = language + "_" + country; //$NON-NLS-1$
 		String[] availableLocals =  site.getAvailableLanguages();
 		if ((availableLocals == null) || (availableLocals.length == 0)) {
 			return false;
