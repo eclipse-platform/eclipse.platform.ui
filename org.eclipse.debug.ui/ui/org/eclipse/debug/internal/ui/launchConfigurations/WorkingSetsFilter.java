@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,19 +32,7 @@ import org.eclipse.ui.IWorkingSet;
  * @since 3.2
  */
 public class WorkingSetsFilter extends ViewerFilter {
-
-	/**
-	 * The id for a breakpoint working set
-	 */
-	private static String bpid = "org.eclipse.debug.ui.breakpointWorkingSet"; //$NON-NLS-1$
 	
-	/**
-	 * Constructor
-	 */
-	public WorkingSetsFilter() {
-		super();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
@@ -69,20 +60,19 @@ public class WorkingSetsFilter extends ViewerFilter {
 					if(wsets.length < 1) {
 						return true;
 					}
-					IResource res = null;
-					for(int i = 0; i < wsets.length; i++) {
-						if(!wsets[i].getId().equals(bpid)) {
-							IAdaptable[] elements = wsets[i].getElements();
-							for(int j = 0; j < elements.length; j++) {
-								res = (IResource)elements[j].getAdapter(IResource.class);
-								if(res != null) {
-									for(int k = 0; k < resources.length; k++) {
-										if(resources[k].equals(res)) {
-											return true;
-										}
-									}
-								}
-							}
+					//remove breakpoint workingsets
+					ArrayList ws = new ArrayList();
+					for (int i = 0; i < wsets.length; i++) {
+						if(!wsets[i].getId().equals(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET)) {
+							ws.add(wsets[i]);
+						}
+					}
+					if(ws.isEmpty()) {
+						return true;
+					}
+					for (int i = 0; i < resources.length; i++) {
+						if(workingSetContains((IWorkingSet[]) ws.toArray(new IWorkingSet[ws.size()]), resources[i])) {
+							return true;
 						}
 					}
 				} 
@@ -92,4 +82,35 @@ public class WorkingSetsFilter extends ViewerFilter {
 		return false;
 	}
 
+	/**
+	 * Determines if the specified group of working sets contains the specified resource.
+	 * @param wsets the set of working sets to examine
+	 * @param res the resource to check for containment
+	 * @return true iff any one of the specified working sets contains the specified resource
+	 * @since 3.2
+	 */
+	public static boolean workingSetContains(IWorkingSet[] wsets, IResource res) {
+		ArrayList parents = new ArrayList();
+		parents.add(res);
+		while(res != null) {
+			res = res.getParent();
+			if(res != null) {
+				parents.add(res);
+			}
+		}
+		IResource lres = null;
+		for(int i = 0; i < wsets.length; i++) {	
+			IAdaptable[] elements = wsets[i].getElements();
+			for(int j = 0; j < elements.length; j++) {
+				lres = (IResource)elements[j].getAdapter(IResource.class);
+				if(lres != null) {
+					if(parents.contains(lres)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 }

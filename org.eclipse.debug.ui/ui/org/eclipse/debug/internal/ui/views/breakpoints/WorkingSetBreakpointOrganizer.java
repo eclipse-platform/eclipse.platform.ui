@@ -57,15 +57,13 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         }
         IWorkingSet[] workingSets = fWorkingSetManager.getWorkingSets();
         for (int i = 0; i < workingSets.length; i++) {
-            IWorkingSet set = workingSets[i];
-            if (!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
-		        IAdaptable[] elements = set.getElements();
+            if (!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(workingSets[i].getId())) {
+		        IAdaptable[] elements = workingSets[i].getElements();
 		        for (int j = 0; j < elements.length; j++) {
-		            IAdaptable adaptable = elements[j];
-		            IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+		            IResource resource = (IResource) elements[j].getAdapter(IResource.class);
 		            if (resource != null) {
 		                if (parents.contains(resource)) {
-		                	result.add(new WorkingSetCategory(set));
+		                	result.add(new WorkingSetCategory(workingSets[i]));
 		                	break;
 		                }
 		            }
