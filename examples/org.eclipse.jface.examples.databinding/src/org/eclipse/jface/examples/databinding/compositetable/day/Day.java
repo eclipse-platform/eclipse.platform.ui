@@ -58,15 +58,15 @@ public class Day extends Canvas {
 		addPaintListener(paintListener);
 		addDisposeListener(disposeListener);
 		
-      Display display = Display.getCurrent();
+        Display display = Display.getCurrent();
       
-      WHITE = display.getSystemColor(SWT.COLOR_WHITE);
-      BLACK = display.getSystemColor(SWT.COLOR_BLACK);
+        WHITE = display.getSystemColor(SWT.COLOR_WHITE);
+        BLACK = display.getSystemColor(SWT.COLOR_BLACK);
       
-      // Bluish color scheme by default; change as necessary.
-      CELL_BACKGROUND = new Color(display, 250, 250, 255);
-      CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
-      CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
+        // Bluish color scheme by default; change as necessary.
+        CELL_BACKGROUND = new Color(display, 250, 250, 255);
+        CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
+        CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
       
 		setBackground(CELL_BACKGROUND);
 	}
@@ -81,10 +81,10 @@ public class Day extends Canvas {
 			removePaintListener(paintListener);
 			removeDisposeListener(disposeListener);
          
-         // Dispose colors here
-         CELL_BACKGROUND.dispose();
-         CELL_BORDER_EMPHASIZED.dispose();
-         CELL_BORDER_LIGHT.dispose();
+           // Dispose colors here
+           CELL_BACKGROUND.dispose();
+           CELL_BORDER_EMPHASIZED.dispose();
+           CELL_BORDER_LIGHT.dispose();
 		}
 	};
    

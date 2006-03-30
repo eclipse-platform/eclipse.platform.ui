@@ -12,9 +12,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * A DayEditor is an SWT control that can display events on a time line that can
+ * span one or more days.
+ * 
+ * @since 3.2
+ */
 public class DayEditor extends Composite {
    private CompositeTable compositeTable = null;
 
+   /**
+    * Constructor DayEditor
+    * 
+	* @param parent
+	* @param style
+	*/
    public DayEditor(Composite parent, int style) {
       super(parent, style);
       this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));

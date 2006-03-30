@@ -5,6 +5,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @since 3.2
+ *
+ */
 public class DayEditorTest {
 
    private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
@@ -16,7 +20,7 @@ public class DayEditorTest {
     */
    private void createDayEditor() {
       dayEditor = new DayEditor(sShell, SWT.NONE);
-      dayEditor.setTimeBreakdown(7, 4);
+      dayEditor.setTimeBreakdown(7, 2);
    }
 
    /**
