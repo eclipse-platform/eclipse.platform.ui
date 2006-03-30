@@ -18,8 +18,11 @@ package org.eclipse.ui.internal.navigator.extensions;
 public interface IViewerExtPtConstants {
 
 	/** */
-	String TAG_VIEWER = "viewer"; //$NON-NLS-1$
+	String TAG_SAVEABLES_PROVIDER_FACTORY = "saveablesProviderFactory"; //$NON-NLS-1$
 
+	/** */
+	String TAG_VIEWER = "viewer"; //$NON-NLS-1$
+	
 	/** */
 	String TAG_VIEWER_CONTENT_BINDING = "viewerContentBinding"; //$NON-NLS-1$
 

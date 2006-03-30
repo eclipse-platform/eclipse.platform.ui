@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 /**
  * The main plugin class for the Navigator. 
@@ -26,6 +29,12 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 
 	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
+
+	private BundleListener bundleListener = new BundleListener() {
+		public void bundleChanged(BundleEvent event) {
+			NavigatorSaveablesService.bundleChanged(event);
+		}
+	};
 
 	/**
 	 * Creates a new instance of the receiver
@@ -116,5 +125,15 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	public static IStatus createErrorStatus(int aCode, String aMessage,
 			Throwable exception) {
 		return createStatus(IStatus.ERROR, aCode, aMessage, exception);
+	}
+	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		context.addBundleListener(bundleListener);
+	}
+	
+	public void stop(BundleContext context) throws Exception {
+		context.removeBundleListener(bundleListener);
+		super.stop(context);
 	}
 }

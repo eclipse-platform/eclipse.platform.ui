@@ -24,8 +24,11 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
@@ -93,7 +96,7 @@ import org.eclipse.ui.part.ViewPart;
  *  
  * @since 3.2
  */
-public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
+public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablesSource {
 
 	/**
 	 * <p>
@@ -113,6 +116,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 	private boolean isLinkingEnabled = false;
 
 	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$ 
+
+	private ISaveablesSourceHelper saveablesSourceHelper;
 
 	/**
 	 * 
@@ -167,7 +172,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 
 		commonActionGroup = createCommonActionGroup();
 		commonActionGroup.fillActionBars(getViewSite().getActionBars());
-
+		
+		saveablesSourceHelper = commonViewer.getNavigatorContentService()
+				.getSaveablesService().createHelper(
+						this,
+						getCommonViewer(),
+						(ISaveablesLifecycleListener) getSite().getService(
+								ISaveablesLifecycleListener.class));
 	}
 
 	/**
@@ -188,6 +199,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 		}
 		if(commonActionGroup != null) {
 			commonActionGroup.dispose();
+		}
+		if (saveablesSourceHelper != null) {
+			saveablesSourceHelper.dispose();
+			saveablesSourceHelper = null;
 		}
 		super.dispose();
 	}
@@ -509,6 +524,20 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget {
 					.getText(anElement);
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
+	 */
+	public Saveable[] getSaveables() {
+		return saveablesSourceHelper.getSaveables();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
+	 */
+	public Saveable[] getActiveSaveables() {
+		return saveablesSourceHelper.getActiveSaveables();
 	}
 
 }

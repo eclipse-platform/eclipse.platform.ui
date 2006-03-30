@@ -52,6 +52,7 @@ import org.eclipse.ui.navigator.INavigatorContentServiceListener;
 import org.eclipse.ui.navigator.INavigatorDnDService;
 import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eclipse.ui.navigator.INavigatorPipelineService;
+import org.eclipse.ui.navigator.INavigatorSaveablesService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
@@ -123,6 +124,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	private boolean contentProviderInitialized;
 
 	private boolean labelProviderInitialized;
+
+	private NavigatorSaveablesService navigatorSaveablesService;
 
 	/**
 	 * @param aViewerId
@@ -986,6 +989,16 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 		return (ILabelProvider[]) resultProvidersList
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#getSaveableService()
+	 */
+	public INavigatorSaveablesService getSaveablesService() {
+		if (navigatorSaveablesService == null) {
+			navigatorSaveablesService = new NavigatorSaveablesService();
+		}
+		return navigatorSaveablesService;
 	}
 
 }

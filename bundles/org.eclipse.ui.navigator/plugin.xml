@@ -5,6 +5,7 @@
    <extension-point id="navigatorContent" name="%ExtPoint_navigatorContent" schema="schema/navigatorContent.exsd"/>
    <extension-point id="viewer" name="%ExtPoint_navigatorViewer" schema="schema/viewer.exsd"/>
    <extension-point id="linkHelper" name="%Link_Helper" schema="schema/linkHelper.exsd"/>
+   <extension-point id="saveablesProviderFactory" name="%ExtPoint_Saveables_Provider_Factory" schema="schema/saveableProviderFactory.exsd"/>
  
    <extension
          point="org.eclipse.ui.dropActions">

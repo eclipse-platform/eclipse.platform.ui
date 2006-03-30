@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablesSource;
 
 /**
  * 
@@ -414,5 +415,12 @@ public interface INavigatorContentService {
 	 * @return The {@link INavigatorActivationService} for this content service.
 	 */
 	INavigatorActivationService getActivationService();
+	
+	/**
+	 * The saveable service helps implementing {@link ISaveablesSource}.
+	 * 
+	 * @return the {@link INavigatorSaveablesService} for this content service.
+	 */
+	INavigatorSaveablesService getSaveablesService();
 
 }
