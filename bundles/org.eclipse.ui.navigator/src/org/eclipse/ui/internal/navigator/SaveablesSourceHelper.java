@@ -25,9 +25,8 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptorManager;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorSaveablesProviderFactoryManager;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.ISaveablesSourceHelper;
 import org.eclipse.ui.navigator.SaveablesProvider;
 import org.eclipse.ui.navigator.SaveablesProviderFactory;
@@ -43,10 +42,10 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 			Saveable[] saveables = event.getSaveables();
 			switch (event.getEventType()) {
 			case SaveablesLifecycleEvent.POST_OPEN:
-				recomputeSaveablesAndNotify();
+				recomputeSaveablesAndNotify(false);
 				break;
 			case SaveablesLifecycleEvent.POST_CLOSE:
-				recomputeSaveablesAndNotify();
+				recomputeSaveablesAndNotify(false);
 				break;
 			case SaveablesLifecycleEvent.DIRTY_CHANGED:
 				Saveable[] shownSaveables = getShownSaveables(saveables);
@@ -72,14 +71,21 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 
 	private final StructuredViewer viewer;
 
+	private final NavigatorContentService contentService;
+
+	private SaveablesProvider[] saveablesProviders;
+
 	/**
+	 * @param contentService
 	 * @param saveablesSource
 	 * @param viewer
 	 * @param outsideListener
 	 */
-	public SaveablesSourceHelper(final ISaveablesSource saveablesSource,
+	public SaveablesSourceHelper(NavigatorContentService contentService,
+			final ISaveablesSource saveablesSource,
 			final StructuredViewer viewer,
 			ISaveablesLifecycleListener outsideListener) {
+		this.contentService = contentService;
 		this.saveablesSource = saveablesSource;
 		this.viewer = viewer;
 		this.outsideListener = outsideListener;
@@ -93,7 +99,7 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 		List result = new ArrayList();
 		Set roots = new HashSet(Arrays.asList(contentProvider
 				.getElements(viewerInput)));
-		SaveablesProvider[] saveablesProviders = getSaveablesProviders(saveablesLifecycleListener);
+		SaveablesProvider[] saveablesProviders = getSaveablesProviders();
 		for (int i = 0; i < saveablesProviders.length; i++) {
 			SaveablesProvider saveablesProvider = saveablesProviders[i];
 			Saveable[] saveables = saveablesProvider.getSaveables();
@@ -104,7 +110,8 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 					Object element = elements[k];
 					while (element != null) {
 						if (roots.contains(element)) {
-							// found a parent chain leading to a root. The saveable
+							// found a parent chain leading to a root. The
+							// saveable
 							// is part of the tree.
 							result.add(saveable);
 							break findParentChainLoop;
@@ -143,7 +150,7 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 	 * @return the saveable associated with the given element
 	 */
 	private Saveable getSaveable(Object element) {
-		SaveablesProvider[] saveablesProviders = getSaveablesProviders(saveablesLifecycleListener);
+		SaveablesProvider[] saveablesProviders = getSaveablesProviders();
 		for (int i = 0; i < saveablesProviders.length; i++) {
 			SaveablesProvider saveablesProvider = saveablesProviders[i];
 			Saveable saveable = saveablesProvider.getSaveable(element);
@@ -164,29 +171,32 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 	/**
 	 * @return all SaveablesProvider objects
 	 */
-	private SaveablesProvider[] getSaveablesProviders(
-			ISaveablesLifecycleListener saveablesLifecycleListener) {
+	private SaveablesProvider[] getSaveablesProviders() {
 		// TODO optimize this
-		NavigatorContentDescriptor[] descriptors = NavigatorContentDescriptorManager
-				.getInstance().getAllContentDescriptors();
-		List result = new ArrayList();
-		for (int i = 0; i < descriptors.length; i++) {
-			NavigatorContentDescriptor descriptor = descriptors[i];
-			String id = descriptor.getId();
-			SaveablesProviderFactory[] saveablesProviderFactories = NavigatorSaveablesProviderFactoryManager
-					.getInstance().getSaveablesProviderFactories(id);
-			for (int j = 0; j < saveablesProviderFactories.length; j++) {
-				SaveablesProviderFactory factory = saveablesProviderFactories[j];
-				SaveablesProvider saveablesProvider = factory
-						.createSaveablesProvider(viewer.getContentProvider(),
-								saveablesLifecycleListener);
-				if (saveablesProvider != null) {
-					result.add(saveablesProvider);
+		if (saveablesProviders == null) {
+			INavigatorContentDescriptor[] descriptors = contentService
+					.getVisibleExtensions();
+			List result = new ArrayList();
+			for (int i = 0; i < descriptors.length; i++) {
+				INavigatorContentDescriptor descriptor = descriptors[i];
+				String id = descriptor.getId();
+				SaveablesProviderFactory[] saveablesProviderFactories = NavigatorSaveablesProviderFactoryManager
+						.getInstance().getSaveablesProviderFactories(id);
+				for (int j = 0; j < saveablesProviderFactories.length; j++) {
+					SaveablesProviderFactory factory = saveablesProviderFactories[j];
+					SaveablesProvider saveablesProvider = factory
+							.createSaveablesProvider(viewer
+									.getContentProvider(),
+									saveablesLifecycleListener);
+					if (saveablesProvider != null) {
+						result.add(saveablesProvider);
+					}
 				}
 			}
+			saveablesProviders = (SaveablesProvider[]) result
+					.toArray(new SaveablesProvider[result.size()]);
 		}
-		return (SaveablesProvider[]) result
-				.toArray(new SaveablesProvider[result.size()]);
+		return saveablesProviders;
 	}
 
 	private Saveable[] getShownSaveables(Saveable[] saveables) {
@@ -195,7 +205,13 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 		return (Saveable[]) result.toArray(new Saveable[result.size()]);
 	}
 
-	private void recomputeSaveablesAndNotify() {
+	/* package */void recomputeSaveablesAndNotify(boolean recomputeProviders) {
+		if (recomputeProviders && saveablesProviders != null) {
+			for (int i = 0; i < saveablesProviders.length; i++) {
+				saveablesProviders[i].dispose();
+			}
+			saveablesProviders = null;
+		}
 		Set oldSaveables = new HashSet(Arrays.asList(currentSaveables));
 		currentSaveables = computeSaveables();
 		Set newSaveables = new HashSet(Arrays.asList(currentSaveables));
@@ -233,7 +249,7 @@ public class SaveablesSourceHelper implements ISaveablesSourceHelper {
 	 * @see org.eclipse.ui.navigator.ISaveablesSourceHelper#dispose()
 	 */
 	public void dispose() {
-
+		NavigatorSaveablesService.remove(this);
 	}
 
 }

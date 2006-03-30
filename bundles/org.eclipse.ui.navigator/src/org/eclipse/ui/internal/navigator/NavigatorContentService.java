@@ -996,7 +996,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public INavigatorSaveablesService getSaveablesService() {
 		if (navigatorSaveablesService == null) {
-			navigatorSaveablesService = new NavigatorSaveablesService();
+			navigatorSaveablesService = new NavigatorSaveablesService(this);
 		}
 		return navigatorSaveablesService;
 	}

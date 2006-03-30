@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.navigator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
@@ -24,13 +28,25 @@ import org.osgi.framework.BundleEvent;
  */
 public class NavigatorSaveablesService implements INavigatorSaveablesService {
 
-	public NavigatorSaveablesService() {
+	private final NavigatorContentService contentService;
+
+	private static List helpers = new ArrayList();
+
+	/**
+	 * @param contentService
+	 */
+	public NavigatorSaveablesService(NavigatorContentService contentService) {
+		this.contentService = contentService;
 	}
 
 	/**
 	 * @param event
 	 */
 	/* package */static void bundleChanged(BundleEvent event) {
+		for (Iterator it = helpers.iterator(); it.hasNext();) {
+			SaveablesSourceHelper helper = (SaveablesSourceHelper) it.next();
+			helper.recomputeSaveablesAndNotify(true);
+		}
 	}
 
 	/*
@@ -42,7 +58,24 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService {
 	 */
 	public ISaveablesSourceHelper createHelper(ISaveablesSource source,
 			StructuredViewer viewer, ISaveablesLifecycleListener listener) {
-		return new SaveablesSourceHelper(source, viewer, listener);
+		SaveablesSourceHelper saveablesSourceHelper = new SaveablesSourceHelper(
+				contentService, source, viewer, listener);
+		add(saveablesSourceHelper);
+		return saveablesSourceHelper;
+	}
+
+	/**
+	 * @param saveablesSourceHelper
+	 */
+	private void add(SaveablesSourceHelper saveablesSourceHelper) {
+		helpers.add(saveablesSourceHelper);
+	}
+
+	/**
+	 * @param helper
+	 */
+	public static void remove(SaveablesSourceHelper helper) {
+		helpers.remove(helper);
 	}
 
 }

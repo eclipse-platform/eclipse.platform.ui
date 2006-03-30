@@ -17,7 +17,9 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -181,6 +183,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 						getCommonViewer(),
 						(ISaveablesLifecycleListener) getSite().getService(
 								ISaveablesLifecycleListener.class));
+		
+		getCommonViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				firePropertyChange(PROP_DIRTY);
+			}});
 	}
 
 	/**
@@ -560,6 +568,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
+		Saveable[] saveables = getSaveables();
+		for (int i = 0; i < saveables.length; i++) {
+			if(saveables[i].isDirty()) {
+				return true;
+			}
+		}
 		return false;
 	}
 
