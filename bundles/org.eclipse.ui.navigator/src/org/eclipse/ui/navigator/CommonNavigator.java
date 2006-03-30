@@ -11,6 +11,7 @@
 package org.eclipse.ui.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -24,6 +25,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
@@ -96,7 +98,7 @@ import org.eclipse.ui.part.ViewPart;
  *  
  * @since 3.2
  */
-public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablesSource {
+public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource {
 
 	/**
 	 * <p>
@@ -538,6 +540,41 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	public Saveable[] getActiveSaveables() {
 		return saveablesSourceHelper.getActiveSaveables();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		// ignore, save should target the Saveable objects
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+		// ignore
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		return false;
 	}
 
 }
