@@ -1563,7 +1563,7 @@
             icon="$nl$/icons/full/obj16/changelog_obj.gif"
             id="org.eclipse.team.cvs.ui.changeSetContent"
             labelProvider="org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetLabelProvider"
-            name="CVS Change Sets"
+            name="%ChangeSets"
             priority="normal">
          <enablement>
            <or>         

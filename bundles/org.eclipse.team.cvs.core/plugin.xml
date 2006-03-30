@@ -215,7 +215,7 @@
    </extension>
    <extension
          id="changeSetModel"
-         name="Change Sets"
+         name="%ChangeSets"
          point="org.eclipse.core.resources.modelProviders">
       <modelProvider
             class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider"/>
