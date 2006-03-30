@@ -152,7 +152,7 @@ final public class SWTObservableFactory implements IObservableFactory {
 			int updatePolicy = new int[] { SWT.Modify, SWT.FocusOut, SWT.None }[updateTime];
 			return new TextObservableValue((Text) description, updatePolicy);
 		} else if (description instanceof Button) {
-			int updatePolicy = new int[] { SWT.Modify, SWT.FocusOut, SWT.None }[updateTime];
+			// int updatePolicy = new int[] { SWT.Modify, SWT.FocusOut, SWT.None }[updateTime];
 			return new ButtonObservableValue((Button) description);
 		} else if (description instanceof Label) {
 			return new LabelObservableValue((Label) description);

@@ -323,7 +323,6 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 		Set adds = new HashSet();
 		List listAdds = new ArrayList();
 		Iterator it = c.iterator();
-		int i = index;
 		while (it.hasNext()) {
 			Object element = it.next();
 			if (elementsAsSet.add(element)) {

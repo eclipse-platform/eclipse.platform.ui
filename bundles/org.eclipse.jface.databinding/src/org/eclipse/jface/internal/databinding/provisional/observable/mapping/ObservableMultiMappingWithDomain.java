@@ -73,7 +73,6 @@ abstract public class ObservableMultiMappingWithDomain extends
 			IObservableList listDomain = (IObservableList) domain;
 			listDomain.addListChangeListener(listListener);
 		} else {
-			IObservableSet setDomain = (IObservableSet) domain;
 			((IObservableSet) domain).addSetChangeListener(listener);
 		}
 		for (Iterator it = getDomainIterator(domain); it.hasNext();) {
