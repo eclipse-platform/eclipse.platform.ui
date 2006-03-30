@@ -10,13 +10,23 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configurator.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
 
 
 /**
@@ -72,7 +82,7 @@ public class UpdateManagerLogWriter {
 			ConfigurationActivity[] activities = new ConfigurationActivity[sites.length];
 			for (int i=0; i<sites.length; i++) {
 				activities[i] = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
-				activities[i].setLabel(Platform.asLocalURL(sites[i].getURL()).toExternalForm());
+				activities[i].setLabel(FileLocator.toFileURL(sites[i].getURL()).toExternalForm());
 				activities[i].setDate(new Date());
 				activities[i].setStatus(IActivity.STATUS_OK);
 			}

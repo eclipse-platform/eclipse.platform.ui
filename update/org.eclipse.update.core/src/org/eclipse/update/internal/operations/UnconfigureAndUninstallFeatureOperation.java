@@ -29,7 +29,7 @@ public class UnconfigureAndUninstallFeatureOperation extends FeatureOperation
 		
 		IUnconfigFeatureOperation unconfigOperation = OperationsManager.getOperationFactory().createUnconfigOperation(targetSite, feature);
 
-		boolean isRestartNeeded = unconfigOperation.execute(pm, listener);
+		/*boolean isRestartNeeded = */unconfigOperation.execute(pm, listener);
 		
 
 		URL platformXML = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation();

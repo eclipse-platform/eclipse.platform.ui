@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteFeatureReference;
@@ -78,7 +78,7 @@ public class InstallConfigurationParser {
 		//site url
 		siteURL = siteEntry.getURL();
 		try {
-			siteURL = Platform.asLocalURL(siteURL);
+			siteURL = FileLocator.toFileURL(siteURL);
 			// TODO workaround bug in platform url resolution
 			if (siteURL.getProtocol().equals("file")) //$NON-NLS-1$
 				siteURL = new File(siteURL.getFile()).toURL();

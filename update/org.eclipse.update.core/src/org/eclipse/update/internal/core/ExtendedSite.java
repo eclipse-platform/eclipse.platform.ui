@@ -3,10 +3,6 @@ package org.eclipse.update.internal.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.ISiteFeatureReference;
-import org.eclipse.update.core.Site;
-import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.SiteWithTimestamp;
 
 public class ExtendedSite extends SiteWithTimestamp /*Site*/ {

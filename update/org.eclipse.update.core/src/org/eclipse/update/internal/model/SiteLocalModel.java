@@ -9,13 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.MissingResourceException;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.internal.core.BaseSiteLocalFactory;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * This class manages the configurations.
@@ -234,7 +241,7 @@ public class SiteLocalModel extends ModelObject {
 	private void processHistory() {
 		try {
 			URL historyURL = new URL(getLocationURL(), "history"); //$NON-NLS-1$
-			historyURL = Platform.asLocalURL(historyURL);
+			historyURL = FileLocator.toFileURL(historyURL);
 			File historyDir = new File(historyURL.getFile());
 			if (historyDir.exists()) {
 				File[] backedConfigs = historyDir.listFiles();

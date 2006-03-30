@@ -11,13 +11,22 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.*;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Stack;
 
-import org.eclipse.core.runtime.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IUpdateConstants;
 import org.eclipse.update.core.model.ContentEntryModel;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureModelFactory;
@@ -27,9 +36,11 @@ import org.eclipse.update.core.model.InstallHandlerEntryModel;
 import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Default feature parser.

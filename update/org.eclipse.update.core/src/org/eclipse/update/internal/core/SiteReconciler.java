@@ -9,16 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.configurator.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.model.ModelObject;
 
 /**
  * This class manages the reconciliation.
@@ -41,7 +52,7 @@ public class SiteReconciler extends ModelObject {
 	URL resolveSiteEntry(IPlatformConfiguration.ISiteEntry newSiteEntry) throws CoreException {
 		URL resolvedURL = null;
 		try {
-			resolvedURL = Platform.resolve(newSiteEntry.getURL());
+			resolvedURL = FileLocator.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
 			throw Utilities.newCoreException(NLS.bind(Messages.SiteLocal_UnableToResolve, (new String[] { newSiteEntry.getURL().toExternalForm() })), e);
 		}

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
@@ -746,7 +747,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				String location = fragments[i].getLocation();
 				try {
 					URL locationURL = new URL(location);
-					locationURL = Platform.asLocalURL(Platform.resolve(locationURL));
+					locationURL = FileLocator.toFileURL(FileLocator.resolve(locationURL));
 					list.add(asInstallRelativeURL(locationURL));
 				} catch (IOException e) {
 					// skip bad fragments

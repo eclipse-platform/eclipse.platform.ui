@@ -11,18 +11,51 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.model.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.configurator.*;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IConfiguredSiteChangedListener;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IProblemHandler;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.model.ConfiguredSiteModel;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * A Configured site manages the Configured and unconfigured features of a Site
@@ -1073,7 +1106,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			IPlatformConfiguration.ISiteEntry[] sites = runtimeConfig.getConfiguredSites();
 			for (int i = 0; i < sites.length; i++) {
 				siteURL = sites[i].getURL();
-				URL resolvedURL = Platform.resolve(siteURL);
+				URL resolvedURL = FileLocator.resolve(siteURL);
 				if (UpdateManagerUtils.sameURL(resolvedURL, urlToCheck))
 					return true;
 			}

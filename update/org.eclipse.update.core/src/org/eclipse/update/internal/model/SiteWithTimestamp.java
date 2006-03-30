@@ -11,31 +11,9 @@
 
 package org.eclipse.update.internal.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.core.IArchiveReference;
-import org.eclipse.update.core.ICategory;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureContentConsumer;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISiteContentProvider;
-import org.eclipse.update.core.ISiteFeatureReference;
-import org.eclipse.update.core.IURLEntry;
-import org.eclipse.update.core.IVerificationListener;
-import org.eclipse.update.core.IVerifier;
 import org.eclipse.update.core.Site;
-import org.eclipse.update.core.SiteFeatureReferenceModel;
-import org.eclipse.update.core.model.ArchiveReferenceModel;
-import org.eclipse.update.core.model.CategoryModel;
-import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.core.model.URLEntryModel;
 
 /**
  * This is a wrapper class for Site class that adds timestamp
