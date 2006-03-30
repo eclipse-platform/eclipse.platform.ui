@@ -57,7 +57,7 @@ public class ViewersBindingFactory implements IBindingFactory {
 				try {
 					propertyDescriptor = new PropertyDescriptor("string", objectDef.getMethod("toString", null), null); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (Throwable t) {
-					throw new IllegalStateException("Automatic creation of toString() IObservableMultiMappingWithDomain failed.", t); //$NON-NLS-1$
+					throw new RuntimeException("Automatic creation of toString() IObservableMultiMappingWithDomain failed.", t); //$NON-NLS-1$
 				} 
 
 				PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[1];
