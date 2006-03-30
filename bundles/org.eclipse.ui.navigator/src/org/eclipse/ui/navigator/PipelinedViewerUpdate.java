@@ -12,7 +12,7 @@
 package org.eclipse.ui.navigator;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +63,7 @@ public final class PipelinedViewerUpdate {
 
 	private static final String[] NO_PROPERTIES = new String[0];
 
-	private final Set refreshTargets = new LinkedHashSet();
+	private final Set refreshTargets = new HashSet();
 
 	private boolean updateLabels = false;
 

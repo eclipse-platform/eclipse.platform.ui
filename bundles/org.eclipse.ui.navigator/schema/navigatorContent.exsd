@@ -485,7 +485,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
          <documentation>
             When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element must also provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
 &lt;br&gt;&lt;br&gt;
-
+When clients provide their content through the pipeline, the contribution memory does not track who contributed what elements. Clients who take advantage of this capability are required to maintain accurate triggerPoints and possibleChildren expressions as part of their extension.
          </documentation>
       </annotation>
       <complexType>

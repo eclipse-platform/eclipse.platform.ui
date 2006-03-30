@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
@@ -56,7 +58,8 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
 		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
- 
+
+	private final ILabelDecorator decorator;
 	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
 
@@ -70,7 +73,8 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 *            The associated NavigatorContentService that should be used to acquire information.
 	 */
 	public NavigatorContentServiceLabelProvider(NavigatorContentService aContentService) {
-		contentService = aContentService; 
+		contentService = aContentService;
+		decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
 		isContentServiceSelfManaged = false;
 	}
 
@@ -93,7 +97,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		for (int i = 0; i < labelProviders.length && image == null; i++) {
 			image = labelProviders[i].getImage(anElement);
 		}
-		return image;  
+		return image == null ? null : decorator.decorateImage(image, anElement);  
 	}
 
 	/**

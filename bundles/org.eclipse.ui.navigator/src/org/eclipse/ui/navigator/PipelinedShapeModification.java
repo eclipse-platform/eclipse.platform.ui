@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.navigator;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -42,7 +43,7 @@ public final class PipelinedShapeModification {
 
 	private Object parent;
 
-	private final Set children;
+	private final Set children = new HashSet();
 
 	/**
 	 * Create a shape modification. The given parent and children will be set as
@@ -55,7 +56,7 @@ public final class PipelinedShapeModification {
 	 */
 	public PipelinedShapeModification(Object aParent, Set theChildren) {
 		parent = aParent;
-		children = theChildren;
+		children.addAll(theChildren);
 	}
 
 	/**

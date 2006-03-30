@@ -309,7 +309,6 @@ public class NavigatorContentServiceContentProvider implements
 				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());				
 				pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
 						pipelinedChildren);
-				
 				pipelinedChildren.setContributor(null);
 				
 				overridingExtensions = theOverridingExtensions[i]

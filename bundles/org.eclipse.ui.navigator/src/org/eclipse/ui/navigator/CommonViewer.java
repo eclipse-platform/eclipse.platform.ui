@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -25,9 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
 
 /**
  * 
@@ -70,6 +69,7 @@ public class CommonViewer extends TreeViewer {
 	protected void removeWithoutRefresh(Object[] elements) {
 		super.remove(elements);
 	}
+ 
 
 	/**
 	 * <p>
@@ -248,21 +248,7 @@ public class CommonViewer extends TreeViewer {
 	 */
 	public void add(Object parentElement, Object[] childElements) {
 		// TODO Intercept ADD for the pipeline service.
-
-		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
-				.getPipelineService();
-
-		PipelinedShapeModification modification = new PipelinedShapeModification(
-				parentElement, new ContributorTrackingSet(contentService,
-						childElements));
-
-		pipeDream.interceptAdd(modification);
-
-		Object parent = (parentElement == getInput()) ? getInput()
-				: modification.getParent();
-
-		super.add(parent, modification.getChildren().toArray());
-
+		super.add(parentElement, childElements);
 	}
 
 	/**
@@ -277,17 +263,11 @@ public class CommonViewer extends TreeViewer {
 
 		// TODO Intercept REMOVE for the pipeline service.
 
-		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
-				.getPipelineService();
-
-		PipelinedShapeModification modification = new PipelinedShapeModification(
-				null, new ContributorTrackingSet(contentService, elements));
-
-		PipelinedShapeModification interceptedModification = pipeDream
-				.interceptRemove(modification);
-
-		super.remove(interceptedModification.getChildren().toArray());
-
+		super.remove(elements);
+		ITreeContentProvider contentProvider = (ITreeContentProvider) getContentProvider();
+		for (int i = 0; i < elements.length; i++) {
+			super.internalRefresh(contentProvider.getParent(elements[i]));
+		}
 	}
 
 	/*
@@ -333,24 +313,8 @@ public class CommonViewer extends TreeViewer {
 	 *      java.lang.String[])
 	 */
 	public void update(Object element, String[] properties) {
-
-		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
-				.getPipelineService();
-
-		PipelinedViewerUpdate update = new PipelinedViewerUpdate();
-		update.getRefreshTargets().add(element);
-		update.setUpdateLabels(true);
-		/* if the update is modified */
-		if (pipeDream.interceptUpdate(update)) {
-			/* intercept and apply the update */
-			boolean toUpdateLabels = update.isUpdateLabels();
-			for (Iterator iter = update.getRefreshTargets().iterator(); iter
-					.hasNext();) {
-				super.refresh(iter.next(), toUpdateLabels);
-			}
-		} else {
-			super.update(element, properties);
-		}
+		// TODO Intercept UPDATE for the pipeline service.
+		super.update(element, properties);
 	}
 
 	/*
@@ -361,15 +325,12 @@ public class CommonViewer extends TreeViewer {
 	public String toString() {
 		return contentService.toString() + " Viewer"; //$NON-NLS-1$
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object,
-	 *      boolean)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object, boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
-		if (element == null && getRoot() == null) {
+		if(element == null && getRoot() == null) {
 			return;
 		}
 		super.internalRefresh(element, updateLabels);
