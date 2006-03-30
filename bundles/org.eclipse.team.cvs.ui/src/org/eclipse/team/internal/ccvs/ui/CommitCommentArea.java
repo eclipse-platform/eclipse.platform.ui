@@ -141,6 +141,7 @@ public class CommitCommentArea extends DialogArea {
             
             fCombo = new Combo(composite, SWT.READ_ONLY);
             fCombo.setLayoutData(SWTUtils.createHFillGridData());
+            fCombo.setVisibleItemCount(20);
             
             // populate the previous comment list
             populateList();
