@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
 
+import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.AbstractListViewer;
@@ -31,6 +32,8 @@ public class AbstractListViewerObservableCollectionWithLabels extends
 	private LabelProvider labelProvider = new LabelProvider();
 
 	private IMultiMapping labelMapping;
+	
+	protected IConverter[] modelToTargetConverters;
 
 	private class LabelProvider implements IViewerLabelProvider, ILabelProvider {
 
@@ -146,4 +149,10 @@ public class AbstractListViewerObservableCollectionWithLabels extends
 		getViewer().refresh();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.viewers.IObservableCollectionWithLabels#setModelToTargetConverters(org.eclipse.jface.internal.databinding.provisional.conversion.IConverter[])
+	 */
+	public void setModelToTargetConverters(IConverter[] converters) {
+		this.modelToTargetConverters = converters;
+	}
 }

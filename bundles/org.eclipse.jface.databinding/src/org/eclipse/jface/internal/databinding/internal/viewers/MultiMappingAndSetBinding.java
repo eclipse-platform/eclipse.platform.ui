@@ -136,13 +136,13 @@ public class MultiMappingAndSetBinding extends Binding {
 		targetSet.clear();
 		targetSet.addAll(modelSet);
 		target.init(new IMultiMapping() {
-			public Object[] getMappingValues(Object element, int[] indices) {
-				return model.getMappingValues(element, indices);
+			public Object[] getMappingValues(Object element, int[] columnIndices) {
+				return model.getMappingValues(element, columnIndices);
 			}
 
-			public void setMappingValues(Object element, int[] indices,
+			public void setMappingValues(Object element, int[] columnIndices,
 					Object[] values) {
-				model.setMappingValues(element, indices, values);
+				model.setMappingValues(element, columnIndices, values);
 			}
 		});
 	}

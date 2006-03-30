@@ -29,11 +29,11 @@ import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
  */
 public class BindSpec {
 
-	private IConverter modelToTargetConverter;
+	private IConverter[] modelToTargetConverters = new IConverter[1];;
 
-	private IConverter targetToModelConverter;
+	private IConverter[] targetToModelConverters = new IConverter[1];;
 
-	private IValidator targetValidator;
+	private IValidator[] targetValidators = new IValidator[1];
 
 	private IDomainValidator domainValidator;
 
@@ -64,9 +64,37 @@ public class BindSpec {
 			IConverter targetToModelConverter, IValidator targetValidator,
 			IDomainValidator domainValidator, Integer modelUpdatePolicy,
 			Integer validatePolicy, Integer targetUpdatePolicy) {
-		this.modelToTargetConverter = modelToTargetConverter;
-		this.targetToModelConverter = targetToModelConverter;
-		this.targetValidator = targetValidator;
+		
+		this.modelToTargetConverters[0] = modelToTargetConverter;
+		this.targetToModelConverters[0] = targetToModelConverter;
+		this.targetValidators[0] = targetValidator;
+		this.domainValidator = domainValidator;
+		this.modelUpdatePolicy = modelUpdatePolicy;
+		this.validatePolicy = validatePolicy;
+		this.targetUpdatePolicy = targetUpdatePolicy;
+	}
+
+	/**
+	 * Creates a bind spec with the given converters, validators, and update
+	 * policies.
+	 * 
+	 * @param modelToTargetConverter
+	 * @param targetToModelConverter
+	 * @param targetValidator
+	 * @param domainValidator
+	 * @param modelUpdatePolicy
+	 * @param validatePolicy
+	 * @param targetUpdatePolicy
+	 * 
+	 */
+	public BindSpec(IConverter[] modelToTargetConverter,
+			IConverter[] targetToModelConverter, IValidator[] targetValidator,
+			IDomainValidator domainValidator, Integer modelUpdatePolicy,
+			Integer validatePolicy, Integer targetUpdatePolicy) {
+		
+		this.modelToTargetConverters = modelToTargetConverter;
+		this.targetToModelConverters = targetToModelConverter;
+		this.targetValidators = targetValidator;
 		this.domainValidator = domainValidator;
 		this.modelUpdatePolicy = modelUpdatePolicy;
 		this.validatePolicy = validatePolicy;
@@ -94,7 +122,7 @@ public class BindSpec {
 	 * 
 	 */
 	public BindSpec() {
-		this(null, null, null, null, null, null, null);
+		this((IConverter)null, null, null, null, null, null, null);
 	}
 
 	/**
@@ -104,7 +132,16 @@ public class BindSpec {
 	 * @return the converter, or <code>null</code>
 	 */
 	public IConverter getModelToTargetConverter() {
-		return modelToTargetConverter;
+		return modelToTargetConverters[0];
+	}
+
+	/**
+	 * Returns the converters to be used
+	 * 
+	 * @return the converters</code>
+	 */
+	public IConverter[] getModelToTargetConverters() {
+		return modelToTargetConverters;
 	}
 
 	/**
@@ -114,8 +151,17 @@ public class BindSpec {
 	 * @return the converter, or <code>null</code>
 	 */
 	public IConverter getTargetToModelConverter() {
-		return targetToModelConverter;
+		return targetToModelConverters[0];
 	}
+	
+	/**
+	 * Returns the converters to be used
+	 * 
+	 * @return the converters</code>
+	 */
+	public IConverter[] getTargetToModelConverters() {
+		return targetToModelConverters;
+	}	
 
 	/**
 	 * Returns the validator to be used, or <code>null</code> if a default
@@ -124,9 +170,18 @@ public class BindSpec {
 	 * @return the validator, or <code>null</code>
 	 */
 	public IValidator getTypeConversionValidator() {
-		return targetValidator;
+		return targetValidators[0];
 	}
 
+	/**
+	 * Returns the validators to be used.
+	 * 
+	 * @return the validators</code>
+	 */
+	public IValidator[] getTypeConversionValidators() {
+		return targetValidators;
+	}
+	
 	/**
 	 * Returns the validator to be used, or <code>null</code> if a default
 	 * validator should be used.
@@ -181,7 +236,16 @@ public class BindSpec {
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setModelToTargetConverter(IConverter converter) {
-		this.modelToTargetConverter = converter;
+		this.modelToTargetConverters[0] = converter;
+		return this;
+	}
+
+	/**
+	 * @param converters
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setModelToTargetConverters(IConverter[] converters) {
+		this.modelToTargetConverters = converters;
 		return this;
 	}
 
@@ -190,7 +254,16 @@ public class BindSpec {
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setTargetToModelConverter(IConverter converter) {
-		this.targetToModelConverter = converter;
+		this.targetToModelConverters[0] = converter;
+		return this;
+	}
+
+	/**
+	 * @param converters
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setTargetToModelConverters(IConverter[] converters) {
+		this.modelToTargetConverters = converters;
 		return this;
 	}
 
@@ -199,10 +272,19 @@ public class BindSpec {
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setValidator(IValidator validator) {
-		this.targetValidator = validator;
+		this.targetValidators[0] = validator;
 		return this;
 	}
 
+	/**
+	 * @param validators
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setValidators(IValidator[] validators) {
+		this.targetValidators = validators;
+		return this;
+	}
+	
 	/**
 	 * @param validator
 	 * @return this BindSpec, to enable chaining of method calls

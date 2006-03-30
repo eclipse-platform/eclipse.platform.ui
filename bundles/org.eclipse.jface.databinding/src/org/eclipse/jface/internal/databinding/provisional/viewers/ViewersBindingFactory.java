@@ -57,7 +57,7 @@ public class ViewersBindingFactory implements IBindingFactory {
 				try {
 					propertyDescriptor = new PropertyDescriptor("string", objectDef.getMethod("toString", null), null); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (Throwable t) {
-					throw new IllegalStateException("Automatic creation of toString() IObservableMultiMappingWithDomain failed."); //$NON-NLS-1$
+					throw new IllegalStateException("Automatic creation of toString() IObservableMultiMappingWithDomain failed.", t); //$NON-NLS-1$
 				} 
 
 				PropertyDescriptor[] propertyDescriptors = new PropertyDescriptor[1];
@@ -73,10 +73,14 @@ public class ViewersBindingFactory implements IBindingFactory {
 					IObservableList modelList = (IObservableList) model
 							.getDomain();
 					IObservableCollectionWithLabels target = (IObservableCollectionWithLabels) targetObservable;
+					
 					IObservableList targetList = (IObservableList) targetObservable;
 					dataBindingContext.fillBindSpecDefaults(dataBindingContext,
 							bindSpec, targetList.getElementType(), modelList
 									.getElementType());
+					
+					target.setModelToTargetConverters(bindSpec.getModelToTargetConverters());
+					
 					MultiMappingAndListBinding binding = new MultiMappingAndListBinding(
 							dataBindingContext, targetList, target, modelList,
 							model, bindSpec);

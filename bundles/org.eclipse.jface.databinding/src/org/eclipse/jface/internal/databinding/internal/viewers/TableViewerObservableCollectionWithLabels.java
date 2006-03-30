@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
 
+import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -34,15 +35,40 @@ public class TableViewerObservableCollectionWithLabels extends
 	private TabelLabelProvider labelProvider = new TabelLabelProvider();
 
 	private IMultiMapping labelMapping;
+	
+	private IConverter[] modelToTargetConverters;
 
 	private class TabelLabelProvider implements ITableLabelProvider,
 			ITableColorProvider, ITableFontProvider {
 
 		ListenerList listeners = new ListenerList();
 
-		private Object getColumnValue(Object element, int columnIndex) {
-			return labelMapping.getMappingValues(element,
+		private Object getColumnValue(Object element, int columnIndex) {			
+			Object object = labelMapping.getMappingValues(element,
 					new int[] { columnIndex })[0];
+			return convertColumnValue(object, columnIndex);
+		}
+		
+		/**
+		 * @param object
+		 * @param columnIndex
+		 * @return converted value
+		 */
+		private Object convertColumnValue(Object object, int columnIndex) {
+			if (modelToTargetConverters[0] != null) {
+				if (modelToTargetConverters.length == 1) {
+					return modelToTargetConverters[0].convert(object);
+				}
+
+				if (modelToTargetConverters.length >= columnIndex) {
+					if (modelToTargetConverters[columnIndex] != null) {
+						return modelToTargetConverters[columnIndex].convert(object);
+					}
+					return object;
+				}
+				throw new IllegalStateException("A converter was not specified for column index " + columnIndex); //$NON-NLS-1$
+			}
+			return object;
 		}
 
 		private ViewerLabel getColumnValueAsViewerLabel(Object element,
@@ -158,4 +184,10 @@ public class TableViewerObservableCollectionWithLabels extends
 		((TableViewer) getViewer()).insert(element, index);
 	}
 
+	/**
+	 * @param converters
+	 */
+	public void setModelToTargetConverters(IConverter[] converters) {
+		this.modelToTargetConverters = converters;
+	}
 }
