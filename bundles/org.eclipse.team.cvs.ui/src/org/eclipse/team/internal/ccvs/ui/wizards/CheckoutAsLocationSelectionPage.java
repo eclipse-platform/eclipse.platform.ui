@@ -93,6 +93,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 */
 	public void setProject(IProject project) {
 		singleProject = project;
+		setLocationForSelection(true);
 	}
 	
 	/**
