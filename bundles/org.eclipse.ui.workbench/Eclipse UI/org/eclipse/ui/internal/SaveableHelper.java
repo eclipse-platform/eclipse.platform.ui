@@ -26,8 +26,8 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.ISaveableModel;
-import org.eclipse.ui.ISaveableModelSource;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
@@ -120,8 +120,8 @@ public class SaveableHelper {
 			}
 		}
 
-		if (saveable instanceof ISaveableModelSource) {
-			return saveModels((ISaveableModelSource) saveable, window);
+		if (saveable instanceof ISaveablesSource) {
+			return saveModels((ISaveablesSource) saveable, window);
 		}
 
 		// Create save block.
@@ -144,11 +144,11 @@ public class SaveableHelper {
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 *   was cancelled.
 	 */
-	private static boolean saveModels(ISaveableModelSource modelSource, final IWorkbenchWindow window) {
-		ISaveableModel[] selectedModels = modelSource.getActiveModels();
+	private static boolean saveModels(ISaveablesSource modelSource, final IWorkbenchWindow window) {
+		Saveable[] selectedModels = modelSource.getActiveSaveables();
 		final ArrayList dirtyModels = new ArrayList();
 		for (int i = 0; i < selectedModels.length; i++) {
-			ISaveableModel model = selectedModels[i];
+			Saveable model = selectedModels[i];
 			if (model.isDirty()) {
 				dirtyModels.add(model);
 			}
@@ -163,7 +163,7 @@ public class SaveableHelper {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
 				monitorWrap.beginTask("", dirtyModels.size()); //$NON-NLS-1$
 				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
-					ISaveableModel model = (ISaveableModel) i.next();
+					Saveable model = (Saveable) i.next();
 					// handle case where this model got saved as a result of saving another
 					if (!model.isDirty()) {
 						monitor.worked(1);
@@ -279,10 +279,10 @@ public class SaveableHelper {
 	 *         otherwise
 	 * @since 3.2
 	 */
-	public static boolean needsSave(ISaveableModelSource modelSource) {
-		ISaveableModel[] selectedModels = modelSource.getActiveModels();
+	public static boolean needsSave(ISaveablesSource modelSource) {
+		Saveable[] selectedModels = modelSource.getActiveSaveables();
 		for (int i = 0; i < selectedModels.length; i++) {
-			ISaveableModel model = selectedModels[i];
+			Saveable model = selectedModels[i];
 			if (model.isDirty()) {
 				return true;
 			}

@@ -83,9 +83,9 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
@@ -1217,7 +1217,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private final void initializeDefaultServices() {
 		
-		serviceLocator.registerService(ISaveableModelManager.class, new SaveableModelManager());
+		serviceLocator.registerService(ISaveablesLifecycleListener.class, new SaveablesList());
 		
 		/*
 		 * Phase 1 of the initialization of commands. When this phase completes,

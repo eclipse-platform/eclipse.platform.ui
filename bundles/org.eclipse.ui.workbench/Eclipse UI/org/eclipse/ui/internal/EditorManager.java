@@ -68,8 +68,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.ISaveableModel;
-import org.eclipse.ui.ISaveableModelSource;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewPart;
@@ -1166,7 +1166,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				}
 			}
 
-            modelsToSave = convertToModels(dirtyParts, closing);
+            modelsToSave = convertToSaveables(dirtyParts, closing);
             
             // If nothing to save, return.
             if (modelsToSave.isEmpty()) {
@@ -1174,7 +1174,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			}
             // Use a simpler dialog if there's only one
             if (modelsToSave.size() == 1) {
-            	ISaveableModel model = (ISaveableModel) modelsToSave.get(0);
+            	Saveable model = (Saveable) modelsToSave.get(0);
 				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, model.getName()); 
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
@@ -1221,7 +1221,7 @@ public class EditorManager implements IExtensionChangeHandler {
             }
         }
         else {
-        	modelsToSave = convertToModels(dirtyParts, closing);
+        	modelsToSave = convertToSaveables(dirtyParts, closing);
 		}
 
         // If the editor list is empty return.
@@ -1237,7 +1237,7 @@ public class EditorManager implements IExtensionChangeHandler {
 						monitor);
 				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
-					ISaveableModel model = (ISaveableModel) i.next();
+					Saveable model = (Saveable) i.next();
 					// handle case where this model got saved as a result of saving another
 					if (!model.isDirty()) {
 						monitor.worked(1);
@@ -1273,20 +1273,20 @@ public class EditorManager implements IExtensionChangeHandler {
 	 *            whether the parts are being closed
 	 * @return the dirty models
 	 */
-	private static List convertToModels(List parts, boolean closing) {
+	private static List convertToSaveables(List parts, boolean closing) {
 		ArrayList result = new ArrayList();
 		HashSet seen = new HashSet();
 		for (Iterator i = parts.iterator(); i.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			ISaveableModel[] models = getSaveableModels(part);
-			for (int j = 0; j < models.length; j++) {
-				ISaveableModel model = models[j];
-				if (model.isDirty() && !seen.contains(model)) {
-					seen.add(model);
+			Saveable[] saveables = getSaveables(part);
+			for (int j = 0; j < saveables.length; j++) {
+				Saveable saveable = saveables[j];
+				if (saveable.isDirty() && !seen.contains(saveable)) {
+					seen.add(saveable);
 					if (!closing
-							|| closingLastPartShowingModel(model, parts, part
+							|| closingLastPartShowingModel(saveable, parts, part
 									.getSite().getPage())) {
-						result.add(model);
+						result.add(saveable);
 					}
 				}
 			}
@@ -1302,12 +1302,12 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @param part the workbench part
 	 * @return the saveable models
 	 */
-	private static ISaveableModel[] getSaveableModels(IWorkbenchPart part) {
-		if (part instanceof ISaveableModelSource) {
-			ISaveableModelSource source = (ISaveableModelSource) part;
-			return source.getModels();
+	private static Saveable[] getSaveables(IWorkbenchPart part) {
+		if (part instanceof ISaveablesSource) {
+			ISaveablesSource source = (ISaveablesSource) part;
+			return source.getSaveables();
 		}
-		return new ISaveableModel[] { new DefaultSaveableModel(part) };
+		return new Saveable[] { new DefaultSaveable(part) };
 	}
 
 	/**
@@ -1323,12 +1323,12 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @return <code>true</code> if no more parts in the page will reference
 	 *         the given model, <code>false</code> otherwise
 	 */
-	private static boolean closingLastPartShowingModel(ISaveableModel model,
+	private static boolean closingLastPartShowingModel(Saveable model,
 			List closingParts, IWorkbenchPage page) {
 		HashSet closingPartsWithSameModel = new HashSet();
 		for (Iterator i = closingParts.iterator(); i.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			ISaveableModel[] models = getSaveableModels(part);
+			Saveable[] models = getSaveables(part);
 			if (Arrays.asList(models).contains(model)) {
 				closingPartsWithSameModel.add(part);
 			}
@@ -1339,7 +1339,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			IWorkbenchPartReference partRef = pagePartRefs[i];
 			IWorkbenchPart part = partRef.getPart(false);
 			if (part != null) {
-				ISaveableModel[] models = getSaveableModels(part);
+				Saveable[] models = getSaveables(part);
 				if (Arrays.asList(models).contains(model)) {
 					pagePartsWithSameModels.add(part);
 				}

@@ -49,7 +49,7 @@ public class IViewPartTest extends IWorkbenchPartTest {
      * views: namely, that the contribution items are disposed in the correct
      * order with respect to the disposal of the view. 
      * 
-     * @see ISaveable#isSaveOnCloseNeeded()
+     * @see ISaveablePart#isSaveOnCloseNeeded()
      */
     public void testOpenAndCloseSaveNotNeeded() throws Throwable {
         // Open a part.

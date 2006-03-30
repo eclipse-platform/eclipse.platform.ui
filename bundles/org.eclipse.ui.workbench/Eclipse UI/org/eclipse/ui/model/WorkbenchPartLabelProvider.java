@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -54,8 +54,8 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         if (element instanceof IWorkbenchPart) {
             return ((IWorkbenchPart) element).getTitleImage();
         }
-        if (element instanceof ISaveableModel) {
-        	ISaveableModel model = (ISaveableModel) element;
+        if (element instanceof Saveable) {
+        	Saveable model = (Saveable) element;
         	ImageDescriptor imageDesc = model.getImageDescriptor();
         	// convert from ImageDescriptor to Image
         	if (imageDesc == null) {
@@ -88,8 +88,8 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
             }
             return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-        if (element instanceof ISaveableModel) {
-        	ISaveableModel model = (ISaveableModel) element;
+        if (element instanceof Saveable) {
+        	Saveable model = (Saveable) element;
             String path = model.getToolTipText();
             if (path == null || path.trim().length() == 0) {
                 return model.getName();

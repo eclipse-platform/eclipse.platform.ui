@@ -23,8 +23,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
@@ -278,7 +278,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
         	IWorkbenchPart actualPart = getPart(false);
         	if (actualPart != null) {
-				SaveableModelManager modelManager = (SaveableModelManager) actualPart.getSite().getService(ISaveableModelManager.class);
+				SaveablesList modelManager = (SaveablesList) actualPart.getSite().getService(ISaveablesLifecycleListener.class);
 	        	modelManager.dirtyChanged(actualPart);
         	}
         }

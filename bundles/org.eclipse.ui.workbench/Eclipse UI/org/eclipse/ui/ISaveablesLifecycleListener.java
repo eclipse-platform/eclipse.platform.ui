@@ -18,12 +18,12 @@ package org.eclipse.ui;
  * 
  * @since 3.2
  */
-public interface IModelLifecycleListener {
+public interface ISaveablesLifecycleListener {
 	
 	/**
 	 * Handle the given model lifecycle event. 
 	 * @param event
 	 */
-	public void handleModelLifecycleEvent(ModelLifecycleEvent event);
+	public void handleLifecycleEvent(SaveablesLifecycleEvent event);
 
 }

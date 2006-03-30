@@ -15,11 +15,11 @@ import java.util.EventObject;
 
 
 /**
- * Event object describing a change to a set of ISaveableModel objects.
+ * Event object describing a change to a set of Saveable objects.
  * 
  * @since 3.2
  */
-public class ModelLifecycleEvent extends EventObject {
+public class SaveablesLifecycleEvent extends EventObject {
 
 	/**
 	 * Serial version UID for this class.
@@ -30,57 +30,57 @@ public class ModelLifecycleEvent extends EventObject {
 	private static final long serialVersionUID = -3530773637989046452L;
 
 	/**
-	 * Event type constant specifying that the given models have been opened.
+	 * Event type constant specifying that the given saveables have been opened.
 	 */
 	public static final int POST_OPEN = 1;
 
 	/**
-	 * Event type constant specifying that the given models are about to be
+	 * Event type constant specifying that the given saveables are about to be
 	 * closed. Listeners may veto the closing if isForce() is false.
 	 */
 	public static final int PRE_CLOSE = 2;
 
 	/**
-	 * Event type constant specifying that the given models have been closed.
+	 * Event type constant specifying that the given saveables have been closed.
 	 */
 	public static final int POST_CLOSE = 3;
 
 	/**
-	 * Event type constant specifying that the dirty state of the given models
+	 * Event type constant specifying that the dirty state of the given saveables
 	 * has changed.
 	 */
 	public static final int DIRTY_CHANGED = 4;
 
 	private int eventType;
 
-	private ISaveableModel[] models;
+	private Saveable[] saveables;
 
 	private boolean force;
 
 	private boolean veto = false;
 
 	/**
-	 * Creates a new ModelLifecycleEvent.
+	 * Creates a new SaveablesLifecycleEvent.
 	 * 
 	 * @param source
-	 *            The source of the event. If an ISaveableModelSource notifies
-	 *            about changes to the models returned by
-	 *            {@link ISaveableModelSource#getModels()}, the source must be
-	 *            the ISaveableModelSource object.
+	 *            The source of the event. If an ISaveablesSource notifies
+	 *            about changes to the saveables returned by
+	 *            {@link ISaveablesSource#getSaveables()}, the source must be
+	 *            the ISaveablesSource object.
 	 * @param eventType
 	 *            the event type, currently one of POST_OPEN, PRE_CLOSE,
 	 *            POST_CLOSE, DIRTY_CHANGED
-	 * @param models
-	 *            The affected models
+	 * @param saveables
+	 *            The affected saveables
 	 * @param force
 	 *            true if the event type is PRE_CLOSE and this is a closed force
 	 *            that cannot be canceled.
 	 */
-	public ModelLifecycleEvent(Object source, int eventType,
-			ISaveableModel[] models, boolean force) {
+	public SaveablesLifecycleEvent(Object source, int eventType,
+			Saveable[] saveables, boolean force) {
 		super(source);
 		this.eventType = eventType;
-		this.models = models;
+		this.saveables = saveables;
 		this.force = force;
 	}
 
@@ -96,12 +96,12 @@ public class ModelLifecycleEvent extends EventObject {
 	}
 
 	/**
-	 * Returns the affected models.
+	 * Returns the affected saveables.
 	 * 
-	 * @return the models
+	 * @return the saveables
 	 */
-	public ISaveableModel[] getModels() {
-		return models;
+	public Saveable[] getSaveables() {
+		return saveables;
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class ModelLifecycleEvent extends EventObject {
 	}
 
 	/**
-	 * Sets the veto. This value is ignored for POST_OPEN, POST_CLOSE, and
+	 * Sets the force flag. This value is ignored for POST_OPEN, POST_CLOSE, and
 	 * DIRTY_CHANGED.
 	 * 
 	 * @return Returns the force.

@@ -14,35 +14,35 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISaveableModel;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 
 /**
- * A default {@link ISaveableModel} implementation that wrappers a regular
- * workbench part (one that does not itself adapt to ISaveableModel).
+ * A default {@link Saveable} implementation that wrappers a regular
+ * workbench part (one that does not itself adapt to Saveable).
  * 
  * @since 3.2
  */
-public class DefaultSaveableModel implements ISaveableModel {
+public class DefaultSaveable extends Saveable {
 
 	private IWorkbenchPart part;
 
 	/**
-	 * Creates a new DefaultSaveableModel.
+	 * Creates a new DefaultSaveable.
 	 * 
 	 * @param part
 	 *            the part represented by this model
 	 */
-	public DefaultSaveableModel(IWorkbenchPart part) {
+	public DefaultSaveable(IWorkbenchPart part) {
 		this.part = part;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISaveableModel#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.Saveable#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		if (part instanceof ISaveablePart) {
@@ -54,7 +54,7 @@ public class DefaultSaveableModel implements ISaveableModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISaveableModel#getName()
+	 * @see org.eclipse.ui.Saveable#getName()
 	 */
 	public String getName() {
 		if (part instanceof IWorkbenchPart2) {
@@ -66,7 +66,7 @@ public class DefaultSaveableModel implements ISaveableModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISaveableModel#getImageDescriptor()
+	 * @see org.eclipse.ui.Saveable#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		Image image = part.getTitleImage();
@@ -79,7 +79,7 @@ public class DefaultSaveableModel implements ISaveableModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISaveableModel#getToolTipText()
+	 * @see org.eclipse.ui.Saveable#getToolTipText()
 	 */
 	public String getToolTipText() {
 		return part.getTitleToolTip();
@@ -88,7 +88,7 @@ public class DefaultSaveableModel implements ISaveableModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.ISaveableModel#isDirty()
+	 * @see org.eclipse.ui.Saveable#isDirty()
 	 */
 	public boolean isDirty() {
 		if (part instanceof ISaveablePart) {
@@ -114,7 +114,7 @@ public class DefaultSaveableModel implements ISaveableModel {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final DefaultSaveableModel other = (DefaultSaveableModel) obj;
+		final DefaultSaveable other = (DefaultSaveable) obj;
 		if (part == null) {
 			if (other.part != null)
 				return false;

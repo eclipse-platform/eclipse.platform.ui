@@ -36,41 +36,49 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IModelLifecycleListener;
-import org.eclipse.ui.ISaveableModel;
-import org.eclipse.ui.ISaveableModelManager;
-import org.eclipse.ui.ISaveableModelSource;
+import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.ModelLifecycleEvent;
+import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
- * @since 3.2
+ * The model manager maintains a list of open saveable models.
  * 
+ * @see Saveable
+ * @see ISaveablesSource
+ * 
+ * @since 3.2
  */
-public class SaveableModelManager implements ISaveableModelManager {
+public class SaveablesList implements ISaveablesLifecycleListener {
 
 	private ListenerList listeners = new ListenerList();
 
-	// event source (mostly ISaveableModelSource) -> Set of ISaveableModel
+	// event source (mostly ISaveablesSource) -> Set of Saveable
 	private Map modelMap = new HashMap();
 
-	// reference counting map, ISaveableModel -> Integer
+	// reference counting map, Saveable -> Integer
 	private Map modelRefCounts = new HashMap();
 
-	public ISaveableModel[] getOpenModels() {
-		return (ISaveableModel[]) modelRefCounts.keySet().toArray(
-				new ISaveableModel[modelRefCounts.size()]);
+	/**
+	 * Returns the list of open models managed by this model manager.
+	 * 
+	 * @return a list of models
+	 */
+	public Saveable[] getOpenModels() {
+		return (Saveable[]) modelRefCounts.keySet().toArray(
+				new Saveable[modelRefCounts.size()]);
 	}
 
 	// returns true if this model has not yet been in getModels()
-	private boolean addModel(Object source, ISaveableModel model) {
+	private boolean addModel(Object source, Saveable model) {
 		boolean result = false;
 		Set modelsForSource = (Set) modelMap.get(source);
 		if (modelsForSource == null) {
@@ -122,7 +130,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 	}
 
 	// returns true if this model was removed from getModels();
-	private boolean removeModel(Object source, ISaveableModel model) {
+	private boolean removeModel(Object source, Saveable model) {
 		boolean result = false;
 		Set modelsForSource = (Set) modelMap.get(source);
 		if (modelsForSource == null) {
@@ -138,14 +146,33 @@ public class SaveableModelManager implements ISaveableModelManager {
 		return result;
 	}
 
-	public void handleModelLifecycleEvent(ModelLifecycleEvent event) {
-		ISaveableModel[] modelArray = event.getModels();
+	/**
+	 * This implementation of handleModelLifecycleEvent must be called by
+	 * implementers of ISaveablesSource whenever the list of models of the
+	 * model source changes, or when the dirty state of models changes. The
+	 * ISaveablesSource instance must be passed as the source of the event
+	 * object.
+	 * <p>
+	 * This method may also be called by objects that hold on to models but are
+	 * not workbench parts. In this case, the event source must be set to an
+	 * object that is not an instanceof IWorkbenchPart.
+	 * </p>
+	 * <p>
+	 * Corresponding open and close events must originate from the same
+	 * (identical) event source.
+	 * </p>
+	 * <p>
+	 * This method must be called on the UI thread.
+	 * </p>
+	 */
+	public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
+		Saveable[] modelArray = event.getSaveables();
 		switch (event.getEventType()) {
-		case ModelLifecycleEvent.POST_OPEN:
+		case SaveablesLifecycleEvent.POST_OPEN:
 			addModels(event.getSource(), modelArray);
 			break;
-		case ModelLifecycleEvent.PRE_CLOSE:
-			ISaveableModel[] models = event.getModels();
+		case SaveablesLifecycleEvent.PRE_CLOSE:
+			Saveable[] models = event.getSaveables();
 			Map modelsDecrementing = new HashMap();
 			Set modelsClosing = new HashSet();
 			for (int i = 0; i < models.length; i++) {
@@ -160,12 +187,12 @@ public class SaveableModelManager implements ISaveableModelManager {
 				event.setVeto(true);
 			}
 			break;
-		case ModelLifecycleEvent.POST_CLOSE:
+		case SaveablesLifecycleEvent.POST_CLOSE:
 			removeModels(event.getSource(), modelArray);
 			break;
-		case ModelLifecycleEvent.DIRTY_CHANGED:
-			fireModelLifecycleEvent(new ModelLifecycleEvent(this, event
-					.getEventType(), event.getModels(), false));
+		case SaveablesLifecycleEvent.DIRTY_CHANGED:
+			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this, event
+					.getEventType(), event.getSaveables(), false));
 			break;
 		}
 	}
@@ -174,18 +201,18 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 * @param source
 	 * @param modelArray
 	 */
-	private void removeModels(Object source, ISaveableModel[] modelArray) {
+	private void removeModels(Object source, Saveable[] modelArray) {
 		List removed = new ArrayList();
 		for (int i = 0; i < modelArray.length; i++) {
-			ISaveableModel model = modelArray[i];
+			Saveable model = modelArray[i];
 			if (removeModel(source, model)) {
 				removed.add(model);
 			}
 		}
 		if (removed.size() > 0) {
-			fireModelLifecycleEvent(new ModelLifecycleEvent(this,
-					ModelLifecycleEvent.POST_OPEN, (ISaveableModel[]) removed
-							.toArray(new ISaveableModel[removed.size()]), false));
+			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
+					SaveablesLifecycleEvent.POST_OPEN, (Saveable[]) removed
+							.toArray(new Saveable[removed.size()]), false));
 		}
 	}
 
@@ -193,37 +220,57 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 * @param source
 	 * @param modelArray
 	 */
-	private void addModels(Object source, ISaveableModel[] modelArray) {
+	private void addModels(Object source, Saveable[] modelArray) {
 		List added = new ArrayList();
 		for (int i = 0; i < modelArray.length; i++) {
-			ISaveableModel model = modelArray[i];
+			Saveable model = modelArray[i];
 			if (addModel(source, model)) {
 				added.add(model);
 			}
 		}
 		if (added.size() > 0) {
-			fireModelLifecycleEvent(new ModelLifecycleEvent(this,
-					ModelLifecycleEvent.POST_OPEN, (ISaveableModel[]) added
-							.toArray(new ISaveableModel[added.size()]), false));
+			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
+					SaveablesLifecycleEvent.POST_OPEN, (Saveable[]) added
+							.toArray(new Saveable[added.size()]), false));
 		}
 	}
 
 	/**
 	 * @param event
 	 */
-	private void fireModelLifecycleEvent(ModelLifecycleEvent event) {
+	private void fireModelLifecycleEvent(SaveablesLifecycleEvent event) {
 		Object[] listenerArray = listeners.getListeners();
 		for (int i = 0; i < listenerArray.length; i++) {
-			((IModelLifecycleListener) listenerArray[i])
-					.handleModelLifecycleEvent(event);
+			((ISaveablesLifecycleListener) listenerArray[i])
+					.handleLifecycleEvent(event);
 		}
 	}
 
-	public void addModelLifecycleListener(IModelLifecycleListener listener) {
+	/**
+	 * Adds the given listener to the list of listeners. Has no effect if the
+	 * same (identical) listener has already been added. The listener will be
+	 * notified about changes to the models managed by this model manager. Event
+	 * types include: <br>
+	 * POST_OPEN when models were added to the list of models <br>
+	 * POST_CLOSE when models were removed from the list of models <br>
+	 * DIRTY_CHANGED when the dirty state of models changed
+	 * <p>
+	 * Listeners should ignore all other event types, including PRE_CLOSE. There
+	 * is no guarantee that listeners are notified before models are closed.
+	 * 
+	 * @param listener
+	 */
+	public void addModelLifecycleListener(ISaveablesLifecycleListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeModelLifecycleListener(IModelLifecycleListener listener) {
+	/**
+	 * Removes the given listener from the list of listeners. Has no effect if
+	 * the given listener is not contained in the list.
+	 * 
+	 * @param listener
+	 */
+	public void removeModelLifecycleListener(ISaveablesLifecycleListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -259,7 +306,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 					continue;
 				}
 			}
-			ISaveableModel[] modelsFromSource = getSaveableModels(part);
+			Saveable[] modelsFromSource = getSaveables(part);
 			for (int i = 0; i < modelsFromSource.length; i++) {
 				incrementRefCount(postCloseInfo.modelsDecrementing,
 						modelsFromSource[i]);
@@ -291,7 +338,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 
 		List modelsToSave = new ArrayList();
 		for (Iterator it = modelsClosing.iterator(); it.hasNext();) {
-			ISaveableModel modelClosing = (ISaveableModel) it.next();
+			Saveable modelClosing = (Saveable) it.next();
 			if (modelClosing.isDirty()) {
 				modelsToSave.add(modelClosing);
 			}
@@ -306,7 +353,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 */
 	private void fillModelsClosing(Set modelsClosing, Map modelsDecrementing) {
 		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
-			ISaveableModel model = (ISaveableModel) it.next();
+			Saveable model = (Saveable) it.next();
 			if (modelsDecrementing.get(model).equals(modelRefCounts.get(model))) {
 				modelsClosing.add(model);
 			}
@@ -324,7 +371,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
 			if (modelsToSave.size() == 1) {
-				ISaveableModel model = (ISaveableModel) modelsToSave.get(0);
+				Saveable model = (Saveable) modelsToSave.get(0);
 				String message = NLS.bind(
 						WorkbenchMessages.EditorManager_saveChangesQuestion,
 						model.getName());
@@ -381,7 +428,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 						monitor);
 				monitorWrap.beginTask("", finalModels.size()); //$NON-NLS-1$
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
-					ISaveableModel model = (ISaveableModel) i.next();
+					Saveable model = (Saveable) i.next();
 					// handle case where this model got saved as a result of
 					// saving another
 					if (!model.isDirty()) {
@@ -427,18 +474,18 @@ public class SaveableModelManager implements ISaveableModelManager {
 		List removed = new ArrayList();
 		for (Iterator it = postCloseInfo.partsClosing.iterator(); it.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) it.next();
-			ISaveableModel[] modelArray = getSaveableModels(part);
+			Saveable[] modelArray = getSaveables(part);
 			for (int i = 0; i < modelArray.length; i++) {
-				ISaveableModel model = modelArray[i];
+				Saveable model = modelArray[i];
 				if (removeModel(part, model)) {
 					removed.add(model);
 				}
 			}
 		}
 		if (removed.size() > 0) {
-			fireModelLifecycleEvent(new ModelLifecycleEvent(this,
-					ModelLifecycleEvent.POST_CLOSE, (ISaveableModel[]) removed
-							.toArray(new ISaveableModel[removed.size()]), false));
+			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
+					SaveablesLifecycleEvent.POST_CLOSE, (Saveable[]) removed
+							.toArray(new Saveable[removed.size()]), false));
 		}
 	}
 
@@ -451,14 +498,14 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 *            the workbench part
 	 * @return the saveable models
 	 */
-	private ISaveableModel[] getSaveableModels(IWorkbenchPart part) {
-		if (part instanceof ISaveableModelSource) {
-			ISaveableModelSource source = (ISaveableModelSource) part;
-			return source.getModels();
+	private Saveable[] getSaveables(IWorkbenchPart part) {
+		if (part instanceof ISaveablesSource) {
+			ISaveablesSource source = (ISaveablesSource) part;
+			return source.getSaveables();
 		} else if (part instanceof ISaveablePart) {
-			return new ISaveableModel[] { new DefaultSaveableModel(part) };
+			return new Saveable[] { new DefaultSaveable(part) };
 		} else {
-			return new ISaveableModel[0];
+			return new Saveable[0];
 		}
 	}
 
@@ -466,17 +513,17 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 * @param actualPart
 	 */
 	public void postOpen(IWorkbenchPart part) {
-		addModels(part, getSaveableModels(part));
+		addModels(part, getSaveables(part));
 	}
 
 	/**
 	 * @param actualPart
 	 */
 	public void dirtyChanged(IWorkbenchPart part) {
-		ISaveableModel[] saveableModels = getSaveableModels(part);
-		if (saveableModels.length > 0) {
-			fireModelLifecycleEvent(new ModelLifecycleEvent(this,
-					ModelLifecycleEvent.DIRTY_CHANGED, saveableModels, false));
+		Saveable[] saveables = getSaveables(part);
+		if (saveables.length > 0) {
+			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
+					SaveablesLifecycleEvent.DIRTY_CHANGED, saveables, false));
 		}
 	}
 
@@ -486,7 +533,7 @@ public class SaveableModelManager implements ISaveableModelManager {
 	 * @param model
 	 * @return
 	 */
-	public Object[] testGetSourcesForModel(ISaveableModel model) {
+	public Object[] testGetSourcesForModel(Saveable model) {
 		List result = new ArrayList();
 		for (Iterator it = modelMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry) it.next();

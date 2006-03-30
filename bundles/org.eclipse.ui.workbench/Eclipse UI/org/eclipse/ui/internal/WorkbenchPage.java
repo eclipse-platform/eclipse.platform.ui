@@ -63,13 +63,13 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.ISaveableModelManager;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IShowEditorInput;
@@ -1226,10 +1226,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             	partsToClose.add(refPart);
             }
         }
-        SaveableModelManager modelManager = null;
+        SaveablesList modelManager = null;
         Object postCloseInfo = null;
         if(partsToClose.size()>0) {
-        	modelManager = (SaveableModelManager) getWorkbenchWindow().getService(ISaveableModelManager.class);
+        	modelManager = (SaveablesList) getWorkbenchWindow().getService(ISaveablesLifecycleListener.class);
         	// this may prompt for saving and return null if the user canceled:
         	postCloseInfo = modelManager.preCloseParts(partsToClose, save, getWorkbenchWindow());
         	if (postCloseInfo==null) {
@@ -2113,14 +2113,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         
         int refCount = getViewFactory().getReferenceCount(ref);
-        SaveableModelManager saveableModelManager = null;
+        SaveablesList saveablesList = null;
         Object postCloseInfo = null;
         if (refCount == 1) {
         	IWorkbenchPart actualPart = ref.getPart(false);
         	if (actualPart != null) {
-				saveableModelManager = (SaveableModelManager) actualPart
-						.getSite().getService(ISaveableModelManager.class);
-				postCloseInfo = saveableModelManager.preCloseParts(Collections
+				saveablesList = (SaveablesList) actualPart
+						.getSite().getService(ISaveablesLifecycleListener.class);
+				postCloseInfo = saveablesList.preCloseParts(Collections
 						.singletonList(actualPart), true, this
 						.getWorkbenchWindow());
 				if (postCloseInfo==null) {
@@ -2145,8 +2145,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Notify interested listeners after the hide
         window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
         
-        if (saveableModelManager != null) {
-        	saveableModelManager.postClose(postCloseInfo);
+        if (saveablesList != null) {
+        	saveablesList.postClose(postCloseInfo);
         }
     }
 

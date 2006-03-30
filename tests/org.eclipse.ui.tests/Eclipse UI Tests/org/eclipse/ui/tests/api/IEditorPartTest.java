@@ -53,7 +53,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
     /**
      * Tests that the editor is closed without saving if isSaveOnCloseNeeded()
      * returns false.
-     * @see ISaveable#isSaveOnCloseNeeded()
+     * @see ISaveablePart#isSaveOnCloseNeeded()
      */
     public void testOpenAndCloseSaveNotNeeded() throws Throwable {
         // Open a part.

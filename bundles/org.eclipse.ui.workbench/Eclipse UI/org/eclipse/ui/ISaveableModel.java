@@ -31,6 +31,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @see ISaveableModelSource
  * @since 3.2
+ * @deprecated replaced by {@link Saveable}
  */
 public interface ISaveableModel {
 

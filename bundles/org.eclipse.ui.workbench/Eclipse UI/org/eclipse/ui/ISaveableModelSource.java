@@ -17,6 +17,7 @@ package org.eclipse.ui;
  * like the Save command, prompts to save on part close or shutdown, etc.
  * 
  * @since 3.2
+ * @deprecated replaced by {@link ISaveablesSource}
  */
 public interface ISaveableModelSource {
 
