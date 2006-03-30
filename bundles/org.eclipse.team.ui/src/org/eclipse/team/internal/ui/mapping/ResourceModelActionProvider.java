@@ -12,14 +12,14 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ui.synchronize.actions.RefactorActionGroup;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.navigator.ICommonViewerSite;
-import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
+import org.eclipse.ui.navigator.*;
 
 /**
  * This is the synchronization action handler for the resources model
@@ -55,11 +55,20 @@ public class ResourceModelActionProvider extends SynchronizationActionProvider {
 			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
 			final IWorkbenchPartSite wps = cvws.getSite();
 			if (wps instanceof IViewSite) {
-				refactorActions = new RefactorActionGroup(configuration.getSite());
+				refactorActions = new RefactorActionGroup(configuration.getSite(), getNavigatorContentService(configuration));
 			}
 		}
 	}
 	
+	private INavigatorContentService getNavigatorContentService(ISynchronizePageConfiguration configuration) {
+		Viewer v = configuration.getPage().getViewer();
+		if (v instanceof CommonViewer) {
+			CommonViewer cv = (CommonViewer) v;
+			return cv.getNavigatorContentService();
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SynchronizationActionProvider#fillActionBars(org.eclipse.ui.IActionBars)
 	 */

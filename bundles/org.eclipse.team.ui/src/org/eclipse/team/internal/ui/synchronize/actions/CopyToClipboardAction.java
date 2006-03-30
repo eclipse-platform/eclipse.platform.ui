@@ -18,12 +18,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -42,8 +43,11 @@ class CopyToClipboardAction extends SelectionListenerAction {
     private final Shell fShell;
     private final Clipboard fClipboard;
 
-    protected CopyToClipboardAction(Shell shell) {
-        super(TeamUIMessages.CopyToClipboardAction_1); 
+	private final INavigatorContentService navigatorContentService;
+
+    protected CopyToClipboardAction(Shell shell, INavigatorContentService navigatorContentService) {
+        super(TeamUIMessages.CopyToClipboardAction_1);
+		this.navigatorContentService = navigatorContentService; 
         Assert.isNotNull(shell);
         fShell= shell;
         fClipboard= new Clipboard(shell.getDisplay());
@@ -63,16 +67,67 @@ class CopyToClipboardAction extends SelectionListenerAction {
     private String getTextualClipboardContents() {
 		StringBuffer buf = new StringBuffer();
 		int i = 0;
-		for (Iterator it = getStructuredSelection().iterator(); it.hasNext();) {
-			Object element = it.next();
-			if (element instanceof ITypedElement) {
-				if (i > 0)
-					buf.append(EOL);
-				buf.append(((ITypedElement)element).getName());
-				i++;
+		IStructuredSelection structuredSelection = getStructuredSelection();
+		if (structuredSelection instanceof TreeSelection) {
+			TreeSelection ts = (TreeSelection) structuredSelection;
+			TreePath[] paths = ts.getPaths();
+			for (int j = 0; j < paths.length; j++) {
+				TreePath path = paths[j];
+				String text = getTextFor(path);
+				if (text != null && text.length() > 0) {
+					if (i > 0)
+						buf.append(EOL);
+					buf.append(text);
+					i++;
+				}
+			}
+		} else {
+			for (Iterator it = structuredSelection.iterator(); it.hasNext();) {
+				Object element = it.next();
+				if (element instanceof ITypedElement) {
+					if (i > 0)
+						buf.append(EOL);
+					buf.append(((ITypedElement)element).getName());
+					i++;
+				} else {
+					IResource resource = Utils.getResource(element);
+					if (resource != null) {
+						if (i > 0)
+							buf.append(EOL);
+						buf.append(resource.getName());
+						i++;
+					}
+				}
 			}
 		}
 		return buf.toString();
+	}
+
+	private String getTextFor(TreePath path) {
+		Object element = path.getLastSegment();
+		if (element instanceof ITypedElement) {
+			return ((ITypedElement)element).getName();
+		}
+		INavigatorContentService service = getNavigatorContentService();
+		if (service != null) {
+			ILabelProvider provider = service.createCommonLabelProvider();
+			if (provider instanceof ITreePathLabelProvider) {
+				ITreePathLabelProvider tplp = (ITreePathLabelProvider) provider;
+				ViewerLabel viewerLabel = new ViewerLabel(null, null);
+				tplp.updateLabel(viewerLabel, path);
+				return viewerLabel.getText();
+			}
+			return provider.getText(element);
+		}
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			return resource.getName();
+		}
+		return null;
+	}
+
+	private INavigatorContentService getNavigatorContentService() {
+		return navigatorContentService;
 	}
 
 	private void copyResources(List selectedResources, String text) {
@@ -107,20 +162,24 @@ class CopyToClipboardAction extends SelectionListenerAction {
     private void setClipboard(IResource[] resources, String[] fileNames, String names) {
         try {
             // set the clipboard contents
-            if (resources.length > 0 && fileNames.length > 0) {
-                fClipboard.setContents(new Object[] { resources, fileNames,
-                        names },
-                        new Transfer[] { ResourceTransfer.getInstance(),
-                                FileTransfer.getInstance(),
-                                TextTransfer.getInstance() });
-            } else if(resources.length > 0 ) {
-                fClipboard.setContents(new Object[] { resources, names },
-                        new Transfer[] { ResourceTransfer.getInstance(),
-                                TextTransfer.getInstance() });
-            } else if(resources.length == 0) {
-            	fClipboard.setContents(new Object[] { names },
-                        new Transfer[] { TextTransfer.getInstance() });
+        	List data = new ArrayList();
+        	List dataTypes = new ArrayList();
+        	 if (resources.length > 0) {
+        		 data.add(resources);
+        		 dataTypes.add(ResourceTransfer.getInstance());
+        	 }
+            if (fileNames.length > 0) {
+       		 	data.add(fileNames);
+       		 	dataTypes.add(FileTransfer.getInstance());
             }
+            if (names != null && names.length() > 0) {
+       		 	data.add(names);
+       		 	dataTypes.add(TextTransfer.getInstance());
+            }
+            if (!data.isEmpty())
+                fClipboard.setContents(
+                		data.toArray(), 
+                		(Transfer[]) dataTypes.toArray(new Transfer[dataTypes.size()]));
         } catch (SWTError e) {
             if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
                 throw e;

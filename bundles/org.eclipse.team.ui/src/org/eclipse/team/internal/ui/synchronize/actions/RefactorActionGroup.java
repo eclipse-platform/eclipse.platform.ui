@@ -23,6 +23,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * This action group is modeled after the class of the same name in 
@@ -36,9 +37,15 @@ public class RefactorActionGroup extends ActionGroup {
 	private RenameResourceAction renameAction;
 	private ISynchronizePageSite site;
 	private DeleteResourceAction deleteAction;
+	private final INavigatorContentService navigatorContentService;
 	
 	public RefactorActionGroup(ISynchronizePageSite site) {
+		this(site, null);
+	}
+
+	public RefactorActionGroup(ISynchronizePageSite site, INavigatorContentService navigatorContentService) {
 		this.site = site;
+		this.navigatorContentService = navigatorContentService;
 		makeActions();
 	}
 
@@ -84,7 +91,7 @@ public class RefactorActionGroup extends ActionGroup {
         final Shell shell = site.getShell();
         final ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         
-        copyAction= new CopyToClipboardAction(shell);
+        copyAction= new CopyToClipboardAction(shell, navigatorContentService);
         moveAction= new MoveResourceAction(shell);
         renameAction= new RenameResourceAction(shell);
         deleteAction = new DeleteResourceAction(shell) {
