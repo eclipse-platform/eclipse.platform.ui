@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Export-Package: com.jcraft.jsch, com.jcraft.jsch.jce;x-internal:=true,
+  com.jcraft.jsch.jcraft;x-internal:=true
+Bundle-Version: 0.1.25
+Created-By: 1.4.0 (Sun Microsystems Inc.)
+Bundle-SymbolicName: com.jcraft.jsch
+Bundle-Name: Jsch Plug-in
+Bundle-Localization: plugin
+Bundle-Vendor: JCraft
+Bundle-ClassPath: .
+
