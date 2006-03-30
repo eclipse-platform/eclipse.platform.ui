@@ -43,8 +43,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -539,7 +538,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_DEBUG_PROTOCOL, false);
 		store.setDefault(ICVSUIConstants.PREF_WARN_REMEMBERING_MERGES, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, false);
-		store.setDefault(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, false);
 		store.setDefault(ICVSUIConstants.PREF_COMMIT_SET_DEFAULT_ENABLEMENT, false);
 		store.setDefault(ICVSUIConstants.PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG, false);
         store.setDefault(ICVSUIConstants.PREF_AUTO_SHARE_ON_IMPORT, true);
@@ -620,6 +618,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
         CVSProviderPlugin.getPlugin().setProxyHost(store.getString(ICVSUIConstants.PREF_PROXY_HOST));
         CVSProviderPlugin.getPlugin().setProxyPort(store.getString(ICVSUIConstants.PREF_PROXY_PORT));
         CVSProviderPlugin.getPlugin().setUseProxyAuth(store.getBoolean(ICVSUIConstants.PREF_PROXY_AUTH));
+        
+        // code to transfer CVS preference to Team preference
+        if (store.getBoolean(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR)) {
+        	store.setValue(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, false);
+        	IPreferenceStore teamStore = TeamUIPlugin.getPlugin().getPreferenceStore();
+        	if (teamStore.isDefault(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR))
+        		teamStore.setValue(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR, true);
+        }
 	}
 	
 	/**

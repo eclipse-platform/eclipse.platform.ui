@@ -23,6 +23,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.*;
@@ -60,7 +62,7 @@ public class CVSParticipant extends SubscriberParticipant implements IChangeSetP
      */
     protected static void updateLabelsForCVS(ISynchronizeModelElement element, CompareConfiguration config, IProgressMonitor monitor) {
         // Add the author to the remote or base
-        if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR)) {
+        if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
 	        SyncInfo info = getSyncInfo(element);
 	        if (info != null) {
 	    		final IResourceVariant remote = info.getRemote();
