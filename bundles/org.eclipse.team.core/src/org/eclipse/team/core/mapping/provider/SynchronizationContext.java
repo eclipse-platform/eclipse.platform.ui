@@ -13,8 +13,7 @@ package org.eclipse.team.core.mapping.provider;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.Cache;
@@ -27,7 +26,7 @@ import org.eclipse.team.internal.core.Policy;
  * @see ISynchronizationContext
  * @since 3.2
  */
-public abstract class SynchronizationContext implements ISynchronizationContext {
+public abstract class SynchronizationContext extends PlatformObject implements ISynchronizationContext {
 
     private final int type;
     private final IResourceDiffTree diffTree;

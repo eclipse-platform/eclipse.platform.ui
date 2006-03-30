@@ -14,8 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
@@ -57,7 +56,7 @@ import org.eclipse.team.internal.core.mapping.*;
  * 
  * @since 3.2
  */
-public class SynchronizationScopeManager implements ISynchronizationScopeManager {
+public class SynchronizationScopeManager extends PlatformObject implements ISynchronizationScopeManager {
 
 	private static final int MAX_ITERATION = 10;
 	private final ResourceMappingContext context;
