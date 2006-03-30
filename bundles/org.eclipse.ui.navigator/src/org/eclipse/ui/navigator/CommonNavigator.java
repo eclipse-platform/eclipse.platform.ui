@@ -33,6 +33,7 @@ import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.Saveable;
+import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
@@ -177,12 +178,20 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		commonActionGroup = createCommonActionGroup();
 		commonActionGroup.fillActionBars(getViewSite().getActionBars());
 		
+		ISaveablesLifecycleListener saveablesLifecycleListener = new ISaveablesLifecycleListener() {
+			ISaveablesLifecycleListener siteSaveablesLifecycleListener = (ISaveablesLifecycleListener) getSite()
+					.getService(ISaveablesLifecycleListener.class);
+
+			public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
+				if (event.getEventType() == SaveablesLifecycleEvent.DIRTY_CHANGED) {
+					firePropertyChange(PROP_DIRTY);
+				}
+				siteSaveablesLifecycleListener.handleLifecycleEvent(event);
+			}
+		};
 		saveablesSourceHelper = commonViewer.getNavigatorContentService()
-				.getSaveablesService().createHelper(
-						this,
-						getCommonViewer(),
-						(ISaveablesLifecycleListener) getSite().getService(
-								ISaveablesLifecycleListener.class));
+				.getSaveablesService().createHelper(this, getCommonViewer(),
+						saveablesLifecycleListener);
 		
 		getCommonViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -588,7 +597,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
 	public boolean isSaveOnCloseNeeded() {
-		return false;
+		return isDirty();
 	}
 
 }
