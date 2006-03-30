@@ -14,11 +14,10 @@ public class LiteFeatureFactory extends BaseFeatureFactory {
 	public LiteFeatureFactory() {
 		super();
 	}
-	//DG: must compile using JRE 1.4.*
-	//@Override
+
 	public IFeature createFeature(URL url, ISite site, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
