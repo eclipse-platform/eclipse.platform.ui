@@ -11,8 +11,8 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 

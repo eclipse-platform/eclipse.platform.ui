@@ -26,13 +26,13 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.Saveable;
-import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 

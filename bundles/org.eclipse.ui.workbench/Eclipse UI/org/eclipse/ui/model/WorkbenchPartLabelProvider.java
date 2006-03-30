@@ -20,8 +20,8 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.Saveable;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
