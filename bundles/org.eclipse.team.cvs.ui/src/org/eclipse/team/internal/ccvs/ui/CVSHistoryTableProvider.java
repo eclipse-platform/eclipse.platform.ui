@@ -17,6 +17,8 @@ import java.util.Date;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -65,6 +67,12 @@ public class CVSHistoryTableProvider {
 		Image remoteRevImage = null;
 		ImageDescriptor remoteRevDesc = null;
 		
+		ThemeListener themeListener;
+		
+		public HistoryLabelProvider(CVSHistoryTableProvider provider){
+				PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener= new ThemeListener(provider));
+		}
+		
 		public void dispose() {
 			if (dateImage != null){
 				JFaceResources.getResources().destroyImage(dateDesc);
@@ -79,6 +87,10 @@ public class CVSHistoryTableProvider {
 			if (remoteRevImage != null) {
 				JFaceResources.getResources().destroyImage(remoteRevDesc);
 				remoteRevImage = null;
+			}
+			
+			if (themeListener != null){
+				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(themeListener);
 			}
 		}
 		
@@ -397,7 +409,7 @@ public class CVSHistoryTableProvider {
 		
 		createColumns(tree, layout);
 
-		viewer.setLabelProvider(new HistoryLabelProvider());
+		viewer.setLabelProvider(new HistoryLabelProvider(this));
 
 		// By default, reverse sort by revision. 
 		// If local filter is on sort by date
@@ -541,5 +553,17 @@ public class CVSHistoryTableProvider {
 
 	public void setBaseModified(boolean modified) {
 		this.baseModified=modified;
+	}
+	
+	private static class ThemeListener implements IPropertyChangeListener {
+
+		private final CVSHistoryTableProvider provider;
+		
+		ThemeListener(CVSHistoryTableProvider provider) {
+			this.provider= provider;
+		}
+		public void propertyChange(PropertyChangeEvent event) {
+			provider.viewer.refresh();
+		}
 	}
 }
