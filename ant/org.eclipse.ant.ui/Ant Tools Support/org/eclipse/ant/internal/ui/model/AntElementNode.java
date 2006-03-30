@@ -320,6 +320,10 @@ public class AntElementNode implements IAdaptable {
 			buffer.append(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
 			buffer.append('/');
 			buffer.append(getElementIdentifier());
+			buffer.append('[');
+			buffer.append(getParentNode() != null ? getParentNode().getElementIndexOf(this) : 0);
+			buffer.append(']');
+			
 			fElementPath= buffer.toString();
 		}
 		return fElementPath;
@@ -344,6 +348,28 @@ public class AntElementNode implements IAdaptable {
 		}
 
 		return sb;
+	}
+
+	private int getElementIndexOf(AntElementNode child) {
+		if (getChildNodes() == null) {
+			return -1;
+		}
+		
+		int result= -1;
+		
+		Iterator iter= getChildNodes().iterator();
+		AntElementNode current= null;
+		while (current != child && iter.hasNext()) {
+			current= (AntElementNode) iter.next();
+			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
+				result++;
+		}
+		
+		if (current != child) {
+			return -1;
+		}
+		
+		return result;
 	}
 
 	/* (non-Javadoc)
