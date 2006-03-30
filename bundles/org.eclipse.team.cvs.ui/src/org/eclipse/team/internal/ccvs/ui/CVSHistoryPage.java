@@ -1304,14 +1304,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public boolean inputSet() {
-		//blank current input
-		this.treeViewer.setInput(null);
 		//reset currentFileRevision
 		currentFileRevision = null;
 		ICVSFile cvsFile = getCVSFile(getInput());
 		this.file = cvsFile;
 		if (cvsFile == null)
 			return false;
+		
+		//blank current input only after we're sure that we have a file
+		//to fetch history for
+		this.treeViewer.setInput(null);
 		
 		cvsFileHistory = new CVSFileHistory(cvsFile);
 		//fetch both local and remote revisions the first time around
