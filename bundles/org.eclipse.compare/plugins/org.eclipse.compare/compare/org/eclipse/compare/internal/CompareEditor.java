@@ -36,7 +36,7 @@ import org.eclipse.compare.*;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor, ISaveableModelSource, ISaveableModel {
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource {
 	
 	/**
 	 * Internal property change listener for handling changes in the editor's input.
@@ -59,7 +59,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private Control fControl;
 	/** the outline page */
 	private CompareOutlinePage fOutlinePage;
-	/** enable outline */
+
+	private CompareSaveable fSaveable;
 	
 	
 	public CompareEditor() {
@@ -258,11 +259,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 */
 	public boolean isDirty() {
 		IEditorInput input= getEditorInput();
-		if (input instanceof ISaveableModelSource) {
-			ISaveableModelSource sms = (ISaveableModelSource) input;
-			ISaveableModel[] models = sms.getModels();
-			for (int i = 0; i < models.length; i++) {
-				ISaveableModel model = models[i];
+		if (input instanceof ISaveablesSource) {
+			ISaveablesSource sms= (ISaveablesSource) input;
+			Saveable[] models= sms.getSaveables();
+			for (int i= 0; i < models.length; i++) {
+				Saveable model= models[i];
 				if (model.isDirty())
 					return true;
 			}
@@ -280,48 +281,65 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
+	 * @see org.eclipse.ui.ISaveablesSource#getModels()
 	 */
-	public ISaveableModel[] getModels() {
+	public Saveable[] getSaveables() {
 		IEditorInput input= getEditorInput();
-		if (input instanceof ISaveableModelSource) {
-			ISaveableModelSource source = (ISaveableModelSource) input;
-			return source.getModels();
+		if (input instanceof ISaveablesSource) {
+			ISaveablesSource source= (ISaveablesSource) input;
+			return source.getSaveables();
 		}
-		return new ISaveableModel[] { this };
+		return new Saveable[] { getSaveable() };
+	}
+
+	private Saveable getSaveable() {
+		if (fSaveable == null) {
+			fSaveable= new CompareSaveable();
+		}
+		return fSaveable;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveModels()
 	 */
-	public ISaveableModel[] getActiveModels() {
+	public Saveable[] getActiveSaveables() {
 		IEditorInput input= getEditorInput();
-		if (input instanceof ISaveableModelSource) {
-			ISaveableModelSource source = (ISaveableModelSource) input;
-			return source.getActiveModels();
+		if (input instanceof ISaveablesSource) {
+			ISaveablesSource source= (ISaveablesSource) input;
+			return source.getActiveSaveables();
 		}
-		return new ISaveableModel[] { this };
+		return new Saveable[] { getSaveable() };
 	}
+	
+	private class CompareSaveable extends Saveable {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getName()
-	 */
-	public String getName() {
-		return getPartName();
-	}
+		public String getName() {
+			return CompareEditor.this.getPartName();
+		}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getToolTipText()
-	 */
-	public String getToolTipText() {
-		return getTitleToolTip();
-	}
+		public String getToolTipText() {
+			return CompareEditor.this.getTitleToolTip();
+		}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return ImageDescriptor.createFromImage(getTitleImage());
+		public ImageDescriptor getImageDescriptor() {
+			return ImageDescriptor.createFromImage(CompareEditor.this.getTitleImage());
+		}
+
+		public void doSave(IProgressMonitor monitor) throws CoreException {
+			CompareEditor.this.doSave(monitor);
+		}
+
+		public boolean isDirty() {
+			return CompareEditor.this.isDirty();
+		}
+
+		public boolean equals(Object object) {
+			return object == this;
+		}
+
+		public int hashCode() {
+			return CompareEditor.this.hashCode();
+		}
 	}
 }
 

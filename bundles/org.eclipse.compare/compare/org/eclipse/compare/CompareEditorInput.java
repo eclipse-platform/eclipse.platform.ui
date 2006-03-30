@@ -88,7 +88,7 @@ import org.eclipse.compare.structuremergeviewer.*;
  * If a subclass cannot use the <code>DiffTreeViewer</code> which is installed by default in the
  * top left pane, method <code>createDiffViewer</code> can be overridden.
  * <p>
- * If subclasses of this class implement {@link ISaveableModelSource}, the compare editor will
+ * If subclasses of this class implement {@link ISaveablesSource}, the compare editor will
  * pass these models through to the workbench. The editor will still show the dirty indicator 
  * if one of these underlying models is dirty. It is the reponsibility of subclasses that
  * implement this interface to call {@link #setDirty(boolean)} when the dirty state of
