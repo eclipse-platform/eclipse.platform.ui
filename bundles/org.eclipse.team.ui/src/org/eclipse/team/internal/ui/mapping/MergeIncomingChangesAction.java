@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 import org.eclipse.ui.PlatformUI;
@@ -46,7 +46,7 @@ public class MergeIncomingChangesAction extends ModelParticipantAction implement
 		if (handler == null || !handler.isEnabled())
 			return;
 		try {
-			handleModelChange();
+			handleTargetSaveableChange();
 		} catch (InvocationTargetException e) {
 			handle(e);
 			return;
@@ -95,21 +95,21 @@ public class MergeIncomingChangesAction extends ModelParticipantAction implement
 		};
 	}
 	
-	protected void handleModelChange() throws InvocationTargetException, InterruptedException {
-		final ISaveableCompareModel currentBuffer = getActiveModel();
+	protected void handleTargetSaveableChange() throws InvocationTargetException, InterruptedException {
+		final SaveableComparison currentBuffer = getActiveSaveable();
 		if (currentBuffer != null && currentBuffer.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						handleBufferChange(getConfiguration().getSite().getShell(), null, currentBuffer, true, monitor);
+						handleTargetSaveableChange(getConfiguration().getSite().getShell(), null, currentBuffer, true, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
 			});
 		}
-		setActiveModel(null);
+		setActiveSaveable(null);
 	}
 
 	public void dispose() {

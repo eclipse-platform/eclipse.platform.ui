@@ -380,13 +380,11 @@ public class SynchronizeManager implements ISynchronizeManager {
 	}
 
 	private boolean isDirty(ISynchronizeParticipant p) {
-		if (p instanceof ISaveableModelSource) {
-			ISaveableModelSource sms = (ISaveableModelSource) p;
-			ISaveableModel[] models = sms.getModels();
-			for (int i = 0; i < models.length; i++) {
-				ISaveableModel model = models[i];
-				if (model.isDirty())
-					return true;
+		if (p instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) p;
+			Saveable s = msp.getActiveSaveable();
+			if (s != null && s.isDirty()) {
+				return true;
 			}
 		}
 		return false;

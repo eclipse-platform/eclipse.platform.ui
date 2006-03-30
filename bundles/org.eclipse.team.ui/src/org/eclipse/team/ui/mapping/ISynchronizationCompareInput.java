@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This interface defines extensions to the {@link ICompareInput}
- * interface that are used for compae inputs that are returned from the 
+ * interface that are used for compare inputs that are returned from the 
  * {@link ISynchronizationCompareAdapter#asCompareInput(org.eclipse.team.core.mapping.ISynchronizationContext, Object)}
  * method.
  * <p>
@@ -30,12 +30,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ISynchronizationCompareInput extends ICompareInput {
 	
 	/**
-	 * Return the saveable compare model for this compare input or
+	 * Return the saveable for this compare input or
 	 * <code>null</code> if the input is saved directly to disk when the
 	 * compare editor input is changed or the compare editor is closed.
-	 * @return the saveable compare model for this compare input
+	 * @return the saveable for this compare input
 	 */
-	ISaveableCompareModel getSaveableModel();
+	SaveableComparison getSaveable();
 	
 	/**
 	 * Prepare the compare input associated with a model element for display using 
@@ -48,14 +48,14 @@ public interface ISynchronizationCompareInput extends ICompareInput {
 	
 	/**
 	 * Return a human readable path for the compare input that can be
-	 * used in a tooltip or other displays that can show more detailed infornation.
+	 * used in a tooltip or other displays that can show more detailed information.
 	 * @return a human readable path for the compare input
 	 */
 	String getFullPath();
 
 	/**
 	 * Return whether this compare input matches the given object for the
-	 * purpose of chaneg navigation.
+	 * purpose of change navigation.
 	 * @param object the object
 	 * @return whether
 	 */

@@ -25,8 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.PageSaveablePart;
-import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
-import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -105,7 +104,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	public boolean isDirty() {
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;		
-			ISaveableCompareModel currentBuffer = msp.getActiveModel();
+			SaveableComparison currentBuffer = msp.getActiveSaveable();
 			if (currentBuffer != null) {
 				return currentBuffer.isDirty();
 			}

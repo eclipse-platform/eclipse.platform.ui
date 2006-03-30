@@ -69,7 +69,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 	private void removeCurrent() {
 		final ISynchronizeParticipant participant = view.getParticipant();
 		if (participant != null) {
-			final List dirtyModels = getDirtyModels(participant);
+			final List dirtyModels = getDirtyModels(new ISynchronizeParticipant[] { participant });
 			if (participant.isPinned() || !dirtyModels.isEmpty()) {
 				final boolean[] keepGoing = new boolean[] { false };
 				Display.getDefault().syncExec(new Runnable() {
@@ -128,7 +128,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 
 	private boolean promptToSave(List dirtyModels) {
         if (dirtyModels.size() == 1) {
-        	ISaveableModel model = (ISaveableModel) dirtyModels.get(0);
+        	Saveable model = (Saveable) dirtyModels.get(0);
 			String message = NLS.bind(TeamUIMessages.RemoveSynchronizeParticipantAction_2, model.getName()); 
 			// Show a dialog.
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
@@ -176,7 +176,7 @@ public class RemoveSynchronizeParticipantAction extends Action {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(null, finalModels.size());
 				for (Iterator i = finalModels.iterator(); i.hasNext();) {
-					ISaveableModel model = (ISaveableModel) i.next();
+					Saveable model = (Saveable) i.next();
 					if (model.isDirty()) {
 						try {
 							model.doSave(new SubProgressMonitor(monitor, 1));
@@ -201,35 +201,18 @@ public class RemoveSynchronizeParticipantAction extends Action {
 		// TODO: How do we handle a cancel during save?
 		return true;
 	}
-
-	private List getDirtyModels(ISynchronizeParticipant participant) {
-		ISaveableModelSource source = getSaveableModelSource(participant);
-		List dirtyModels = new ArrayList();
-		if (source != null) {
-			ISaveableModel[] models = source.getModels();
-			for (int i = 0; i < models.length; i++) {
-				ISaveableModel model = models[i];
-				if (model.isDirty()) {
-					dirtyModels.add(model);
-				}
-			}
-		}
-		return dirtyModels;
-	}
 	
 	private List getDirtyModels(ISynchronizeParticipant[] participants) {
 		List result = new ArrayList();
 		for (int i = 0; i < participants.length; i++) {
 			ISynchronizeParticipant participant = participants[i];
-			result.addAll(getDirtyModels(participant));
+			if (participant instanceof ModelSynchronizeParticipant) {
+				ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+				Saveable s = msp.getActiveSaveable();
+				if (s != null && s.isDirty())
+					result.add(s);
+			}
 		}
 		return result;
-	}
-	
-	private ISaveableModelSource getSaveableModelSource(ISynchronizeParticipant participant) {
-		if (participant instanceof ISaveableModelSource) {
-			return (ISaveableModelSource) participant;
-		}
-		return null;
 	}
 }

@@ -11,32 +11,37 @@
 package org.eclipse.team.ui.mapping;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.*;
 
 /**
- * A saveable model is used to buffer changes made when comparing
- * or merging a model. A buffer can be shared between multiple
- * typed elements within a comparison. The saveable model is used by the comparison
+ * A saveable comparison is used to buffer changes made when comparing
+ * or merging model elements. A buffer can be shared between multiple
+ * typed elements within a comparison. The saveable is used by the comparison
  * container in order to determine when a save is required.
  * <p>
  * Clients may subclass this class.
  * 
  * @since 3.2
  */
-public abstract class SaveableCompareModel implements ISaveableCompareModel {
+public abstract class SaveableComparison extends Saveable {
 
+    /**
+     * The property id for <code>isDirty</code>.
+     */
+    public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
+    
 	private boolean dirty;
 	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.IModelBuffer#isDirty()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isDirty() {
 		return dirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void doSave(IProgressMonitor monitor) throws CoreException {
 		if (!isDirty())
@@ -45,8 +50,10 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 		setDirty(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.ISaveableCompareModel#doRevert(org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * Revert any changes in the buffer back to the last saved state.
+	 * @param monitor a progress monitor on <code>null</code>
+	 * if progress feedback is not required
 	 */
 	public void doRevert(IProgressMonitor monitor) {
 		if (!isDirty())
@@ -55,15 +62,19 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 		setDirty(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.IModelBuffer#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/**
+	 * Add a property change listener. Adding a listener
+	 * that is already registered has no effect.
+	 * @param listener the listener
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
 		listeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.compare.IModelBuffer#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	/**
+	 * Remove a property change listener. Removing a listener
+	 * that is not registered has no effect.
+	 * @param listener the listener
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
 		listeners.remove(listener);
@@ -90,9 +101,9 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 		Object[] allListeners = listeners.getListeners();
 		for (int i = 0; i < allListeners.length; i++) {
 			final Object object = allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					((IPropertyListener)object).propertyChanged(SaveableCompareModel.this, property);
+					((IPropertyListener)object).propertyChanged(SaveableComparison.this, property);
 				}
 				public void handleException(Throwable exception) {
 					// handled by platform
@@ -104,7 +115,7 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	/**
 	 * Method invoked from {@link #doSave(IProgressMonitor)} to write
 	 * out the buffer. By default, this method invokes <code>doSave</code>
-	 * on the buffers savable model.
+	 * on the buffers saveable model.
 	 * @param monitor a progress monitor
 	 * @throws CoreException if errors occur
 	 */
@@ -116,13 +127,4 @@ public abstract class SaveableCompareModel implements ISaveableCompareModel {
 	 * @param monitor a progress monitor
 	 */
 	protected abstract void performRevert(IProgressMonitor monitor);
-
-	/** 
-	 * Handle an exception that occurred during a save.
-	 * @param exception the exception
-	 */
-	protected void handleException(CoreException exception) {
-		// TODO Auto-generated method stub
-		
-	}
 }

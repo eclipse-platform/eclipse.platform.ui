@@ -28,17 +28,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
-import org.eclipse.team.ui.mapping.ISaveableCompareModel;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.*;
 
-public class ModelCompareEditorInput extends CompareEditorInput implements ISaveableModelSource, IPropertyListener {
+public class ModelCompareEditorInput extends CompareEditorInput implements ISaveablesSource, IPropertyListener {
 
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
-	private final ISaveableModel model;
+	private final Saveable model;
 
 	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input) {
 		super(new CompareConfiguration());
@@ -46,19 +45,19 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		Assert.isNotNull(input);
 		this.participant = participant;
 		this.input = input;
-		this.model = asSaveableModel(input);
+		this.model = asSaveable(input);
 		setDirty(model.isDirty());
 	}
 
-	private ISaveableModel asSaveableModel(ICompareInput input) {
+	private Saveable asSaveable(ICompareInput input) {
 		if (input instanceof ISynchronizationCompareInput) {
 			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
-			ISaveableCompareModel compareModel = mci.getSaveableModel();
+			SaveableComparison compareModel = mci.getSaveable();
 			if (compareModel != null)
 				return compareModel;
 		}
-		// TODO: Shoudl fail if the input is the wroong type
-		return new ResourceSaveableCompareModel(input, participant, this);
+		// TODO: Should fail if the input is the wrong type
+		return new ResourceSaveableComparison(input, participant, this);
 	}
 	
 	/* (non-Javadoc)
@@ -66,8 +65,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 */
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
-		if (model instanceof ISaveableCompareModel) {
-			final ISaveableCompareModel scm = (ISaveableCompareModel) model;
+		if (model instanceof SaveableComparison) {
+			final SaveableComparison scm = (SaveableComparison) model;
 			scm.addPropertyListener(this);
 			control.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
@@ -109,7 +108,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * Return whether the compare input of this editor input matches the
 	 * given object.
 	 * @param object the object
-	 * @param participant the participant associatd with the given object
+	 * @param participant the participant associated with the given object
 	 * @return whether the compare input of this editor input matches the
 	 * given object
 	 */
@@ -122,24 +121,10 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
-	 */
-	public ISaveableModel[] getModels() {
-		return new ISaveableModel[] { model };
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
-	 */
-	public ISaveableModel[] getActiveModels() {
-		return new ISaveableModel[] { model };
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
 	 */
 	public void propertyChanged(Object source, int propId) {
-		if (propId == ISaveableCompareModel.PROP_DIRTY) {
+		if (propId == SaveableComparison.PROP_DIRTY) {
 			setDirty(model.isDirty());
 		}
 	}
@@ -233,6 +218,20 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			);
 		}
 		return newViewer;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Saveable[] getActiveSaveables() {
+		return new Saveable[] { model };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Saveable[] getSaveables() {
+		return getActiveSaveables();
 	}
 
 }

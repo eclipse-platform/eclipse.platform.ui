@@ -23,7 +23,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.mapping.ResourceSaveableCompareModel.ResourceDiffCompareInput;
+import org.eclipse.team.internal.ui.mapping.ResourceSaveableComparison.ResourceDiffCompareInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**

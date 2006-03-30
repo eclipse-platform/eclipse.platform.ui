@@ -34,11 +34,11 @@ import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 /**
  * A saveable compare model that wraps an {@link IFile} based compare input.
  * 
- * TODO Need to avoid overwritting changes made in other editors!
- * TODO Need top cache file contents in prepare
+ * TODO Need to avoid overwriting changes made in other editors!
+ * TODO Need to cache file contents in prepare
  * @see SyncInfoCompareInput
  */
-public class ResourceSaveableCompareModel extends SaveableCompareModel implements IPropertyChangeListener {
+public class ResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
 
 	ICompareInput input;
 	ISynchronizeParticipant participant;
@@ -170,9 +170,9 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#getCompareModel()
+		 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#getSaveable()
 		 */
-		public ISaveableCompareModel getSaveableModel() {
+		public SaveableComparison getSaveable() {
 			return null;
 		}
 
@@ -217,7 +217,7 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 		
 	}
 	
-	public ResourceSaveableCompareModel(ICompareInput input, ISynchronizeParticipant participant, ModelCompareEditorInput editorInput) {
+	public ResourceSaveableComparison(ICompareInput input, ISynchronizeParticipant participant, ModelCompareEditorInput editorInput) {
 		this.input = input;
 		this.participant = participant;
 		this.editorInput = editorInput;
@@ -342,6 +342,18 @@ public class ResourceSaveableCompareModel extends SaveableCompareModel implement
 				changed= ((Boolean)newValue).booleanValue();
 			setDirty(changed);
 		}			
+	}
+
+	public boolean equals(Object object) {
+		if (object instanceof ResourceSaveableComparison) {
+			ResourceSaveableComparison rscm = (ResourceSaveableComparison) object;
+			return rscm.input.equals(input);
+		}
+		return false;
+	}
+
+	public int hashCode() {
+		return input.hashCode();
 	}
 
 }

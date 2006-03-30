@@ -49,20 +49,20 @@ public class MergeAction extends Action {
 	public void runWithEvent(Event event) {
 		IHandler handler = getHandler();
 		if (handler != null && handler.isEnabled()) {
-			final ISaveableCompareModel currentBuffer = ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModel();
+			final SaveableComparison currentBuffer = ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveSaveable();
 			if (currentBuffer != null && currentBuffer.isDirty()) {
-				ISaveableCompareModel targetBuffer = null;
+				SaveableComparison targetBuffer = null;
 				if (handler instanceof MergeActionHandler) {
 					MergeActionHandler mah = (MergeActionHandler) handler;
-					targetBuffer = mah.getSaveableModel();
+					targetBuffer = mah.getSaveable();
 				}
-				final ISaveableCompareModel target = targetBuffer;
+				final SaveableComparison target = targetBuffer;
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException,
 								InterruptedException {
 							try {
-								ModelParticipantAction.handleBufferChange(configuration.getSite().getShell(), target, currentBuffer, true, monitor);
+								ModelParticipantAction.handleTargetSaveableChange(configuration.getSite().getShell(), target, currentBuffer, true, monitor);
 							} catch (CoreException e) {
 								throw new InvocationTargetException(e);
 							}
@@ -74,7 +74,7 @@ public class MergeAction extends Action {
 				} catch (InterruptedException e) {
 					return;
 				}
-				((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveModel(targetBuffer);
+				((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveSaveable(targetBuffer);
 			}
 			try {
 				handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, event, null));

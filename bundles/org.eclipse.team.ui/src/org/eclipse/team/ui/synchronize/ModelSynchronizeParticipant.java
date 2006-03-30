@@ -39,7 +39,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.2
  */
 public class ModelSynchronizeParticipant extends
-		AbstractSynchronizeParticipant implements ISaveableModelSource {
+		AbstractSynchronizeParticipant {
 	
 	/**
 	 * Property constant used to store and retrieve the id of the active
@@ -52,13 +52,13 @@ public class ModelSynchronizeParticipant extends
 	
 	/**
 	 * Constant used with the <code>P_ACTIVE_MODEL_PROVIDER</code> property to indicate
-	 * that all rnabled model providers are active.
+	 * that all enabled model providers are active.
 	 */
 	public static final String ALL_MODEL_PROVIDERS_VISIBLE = TeamUIPlugin.ID + ".activeModelProvider"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant used during property change notification to indicate
-	 * that the enabled model providers for this participanbt have changed.
+	 * that the enabled model providers for this participant have changed.
 	 */
 	public static final String PROP_ENABLED_MODEL_PROVIDERS = TeamUIPlugin.ID + ".ENABLED_MODEL_PROVIDERS"; //$NON-NLS-1$
 	
@@ -66,7 +66,7 @@ public class ModelSynchronizeParticipant extends
 	 * Property constant used during property change notification to indicate
 	 * that the active model of this participant has changed.
 	 */
-	public static final String PROP_ACTIVE_SAVEABLE_MODEL = TeamUIPlugin.ID + ".ACTIVE_SAVEABLE_MODEL"; //$NON-NLS-1$
+	public static final String PROP_ACTIVE_SAVEABLE = TeamUIPlugin.ID + ".ACTIVE_SAVEABLE"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant used during property change notification to indicate
@@ -100,12 +100,12 @@ public class ModelSynchronizeParticipant extends
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
-	private ISaveableCompareModel activeModel;
+	private SaveableComparison activeSaveable;
 
 	private IPropertyListener dirtyListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
-			if (source instanceof ISaveableCompareModel && propId == ISaveableCompareModel.PROP_DIRTY) {
-				ISaveableCompareModel scm = (ISaveableCompareModel) source;
+			if (source instanceof SaveableComparison && propId == SaveableComparison.PROP_DIRTY) {
+				SaveableComparison scm = (SaveableComparison) source;
 				boolean isDirty = scm.isDirty();
 				firePropertyChange(ModelSynchronizeParticipant.this, PROP_DIRTY, Boolean.valueOf(!isDirty), Boolean.valueOf(isDirty));
 			}
@@ -278,7 +278,7 @@ public class ModelSynchronizeParticipant extends
 
 	/**
 	 * Return whether their is a compare input associated with the given object.
-	 * In otherwords, return <code>true</code> if {@link #asCompareInput(Object) }
+	 * In other words, return <code>true</code> if {@link #asCompareInput(Object) }
 	 * would return a value and <code>false</code> if it would return <code>null</code>.
 	 * @param object the object.
 	 * @return whether their is a compare input associated with the given object
@@ -348,7 +348,7 @@ public class ModelSynchronizeParticipant extends
 	 */
     protected String getLongTaskName(ResourceMapping[] mappings) {
         if (mappings == null || (mappings.length == getContext().getScope().getMappings().length)) {
-            // Assume we are refrshing everything
+            // Assume we are refreshing everything
             return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); 
         }
         int mappingCount = mappings.length;
@@ -511,77 +511,61 @@ public class ModelSynchronizeParticipant extends
 		// Always fir the event since the schedule may have been changed
         firePropertyChange(this, AbstractSynchronizeParticipant.P_SCHEDULED, schedule, schedule);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
-	 */
-	public final ISaveableModel[] getModels() {
-		if (getActiveModel() == null)
-			return new ISaveableModel[0];
-		return new ISaveableModel[] { getActiveModel() };
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
-	 */
-	public final ISaveableModel[] getActiveModels() {
-		return getModels();
-	}
 
 	/**
-	 * Return the active saveable model for this participant.
-	 * There is at most one saveable model active at any
+	 * Return the active saveable for this participant.
+	 * There is at most one saveable active at any
 	 * time.
-	 * @return the active saveable model for this participant
+	 * @return the active saveable for this participant
 	 * or <code>null</code>
 	 */
-	public ISaveableCompareModel getActiveModel() {
-		return activeModel;
+	public SaveableComparison getActiveSaveable() {
+		return activeSaveable;
 	}
 
 	/**
-	 * Set the active saveable model of this participant.
-	 * @param activeModel the active saveable model (may be <code>null</code>)
+	 * Set the active saveable of this participant.
+	 * @param activeSaveable the active saveable (may be <code>null</code>)
 	 */
-	public void setActiveModel(ISaveableCompareModel activeModel) {
+	public void setActiveSaveable(SaveableComparison activeSaveable) {
 		boolean wasDirty = false;
-		ISaveableCompareModel oldModel = this.activeModel;
+		SaveableComparison oldModel = this.activeSaveable;
 		if (oldModel != null) {
 			oldModel.removePropertyListener(dirtyListener);
 			wasDirty = oldModel.isDirty();
 		}
-		this.activeModel = activeModel;
-		firePropertyChange(this, PROP_ACTIVE_SAVEABLE_MODEL, oldModel, activeModel);
+		this.activeSaveable = activeSaveable;
+		firePropertyChange(this, PROP_ACTIVE_SAVEABLE, oldModel, activeSaveable);
 		boolean isDirty = false;
-		if (activeModel != null) {
-			activeModel.addPropertyListener(dirtyListener);
-			isDirty = activeModel.isDirty();
+		if (activeSaveable != null) {
+			activeSaveable.addPropertyListener(dirtyListener);
+			isDirty = activeSaveable.isDirty();
 		}
 		if (isDirty != wasDirty)
 			firePropertyChange(this, PROP_DIRTY, Boolean.valueOf(wasDirty), Boolean.valueOf(isDirty));
 	}
 	
 	/**
-	 * Convenience method for switching the active saveable model of this participant
-	 * to the model of the given input.
+	 * Convenience method for switching the active saveable of this participant
+	 * to the saveable of the given input.
 	 * @param shell a shell
-	 * @param input the compar einput about to be displayed
-	 * @param cancelAllowed whether the display of the compar einput can be cancelled
+	 * @param input the compare input about to be displayed
+	 * @param cancelAllowed whether the display of the compare input can be canceled
 	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not required
 	 * @return whether the user choose to continue with the display of the given compare input
 	 * @throws CoreException
 	 */
 	public boolean checkForBufferChange(Shell shell, ISynchronizationCompareInput input, boolean cancelAllowed, IProgressMonitor monitor) throws CoreException {
-		ISaveableCompareModel currentBuffer = getActiveModel();
-		ISaveableCompareModel targetBuffer = input.getSaveableModel();
+		SaveableComparison currentBuffer = getActiveSaveable();
+		SaveableComparison targetBuffer = input.getSaveable();
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
-			ModelParticipantAction.handleBufferChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
+			ModelParticipantAction.handleTargetSaveableChange(shell, targetBuffer, currentBuffer, cancelAllowed, Policy.subMonitorFor(monitor, 10));
 		} catch (InterruptedException e) {
 			return false;
 		}
-		setActiveModel(targetBuffer);
+		setActiveSaveable(targetBuffer);
 		return true;
 	}
 	

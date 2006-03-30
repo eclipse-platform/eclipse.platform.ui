@@ -26,8 +26,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.ui.mapping.ISaveableCompareModel;
-import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
@@ -141,48 +140,48 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 	}
 	
 	/**
-	 * Check to see if the target saveable mode; differs from the currently 
-	 * active model. If it does, prompt to save changes in the
-	 * active model if it is dirty.
+	 * Check to see if the target saveable differs from the currently 
+	 * active saveable. If it does, prompt to save changes in the
+	 * active saveable if it is dirty.
 	 * @throws InterruptedException 
 	 * @throws InvocationTargetException 
 	 */
-	protected void handleModelChange() throws InvocationTargetException, InterruptedException {
-		final ISaveableCompareModel targetBuffer = getTargetModel();
-		final ISaveableCompareModel  currentBuffer = getActiveModel();
-		if (currentBuffer != null && currentBuffer.isDirty()) {
+	protected void handleTargetSaveableChange() throws InvocationTargetException, InterruptedException {
+		final SaveableComparison targetSaveable = getTargetSaveable();
+		final SaveableComparison  activeSaveable = getActiveSaveable();
+		if (activeSaveable != null && activeSaveable.isDirty()) {
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {	
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 						InterruptedException {
 					try {
-						handleBufferChange(configuration.getSite().getShell(), targetBuffer, currentBuffer, true, monitor);
+						handleTargetSaveableChange(configuration.getSite().getShell(), targetSaveable, activeSaveable, true, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
 			});
 		}
-		setActiveModel(targetBuffer);
+		setActiveSaveable(targetSaveable);
 	}
 
 	/**
-	 * Convenience method that prompts if the currently active model is dirty
-	 * and either saves or reverts the model depending on the users input.
+	 * Convenience method that prompts if the currently active saveable is dirty
+	 * and either saves or reverts the saveable depending on the users input.
 	 * @param shell a parent shell
-	 * @param targetModel the new model
-	 * @param activeModel the current model
+	 * @param targetSaveable the new saveable
+	 * @param activeSaveable the current saveable
 	 * @param allowCancel whether canceling the action is an option
 	 * @param monitor a progress monitor
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
-	public static void handleBufferChange(Shell shell, ISaveableCompareModel targetModel, ISaveableCompareModel activeModel, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		if (activeModel != null && targetModel != activeModel) {
-			if (activeModel.isDirty()) {
-				if (promptToSaveChanges(shell, activeModel, allowCancel)) {
-					activeModel.doSave(monitor);
+	public static void handleTargetSaveableChange(Shell shell, SaveableComparison targetSaveable, SaveableComparison activeSaveable, boolean allowCancel, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		if (activeSaveable != null && targetSaveable != activeSaveable) {
+			if (activeSaveable.isDirty()) {
+				if (promptToSaveChanges(shell, activeSaveable, allowCancel)) {
+					activeSaveable.doSave(monitor);
 				} else {
-					activeModel.doRevert(monitor);
+					activeSaveable.doRevert(monitor);
 				}
 			}
 		}
@@ -191,12 +190,12 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 	/**
 	 * Convenience method that prompts to save changes in the given dirty model.
 	 * @param shell a shell
-	 * @param saveableModel a dirty saveable model
+	 * @param saveable a dirty saveable model
 	 * @param allowCancel whether canceling the action is an option
 	 * @return whether the user choose to save (<code>true</code>) or revert (<code>false</code>() the model
 	 * @throws InterruptedException thrown if the user choose to cancel
 	 */
-	public static boolean promptToSaveChanges(final Shell shell, final ISaveableCompareModel saveableModel, final boolean allowCancel) throws InterruptedException {
+	public static boolean promptToSaveChanges(final Shell shell, final SaveableComparison saveable, final boolean allowCancel) throws InterruptedException {
 		final int[] result = new int[] { 0 };
 		Runnable runnable = new Runnable() {
 			public void run() {
@@ -209,7 +208,7 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 				MessageDialog dialog = new MessageDialog(
 						shell, 
 						TeamUIMessages.ModelParticipantAction_0, null, 
-						NLS.bind(TeamUIMessages.ModelParticipantAction_1, saveableModel.getName()),
+						NLS.bind(TeamUIMessages.ModelParticipantAction_1, saveable.getName()),
 						MessageDialog.QUESTION,
 						options,
 						result[0]);
@@ -223,32 +222,32 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 	}
 
 	/**
-	 * Return the currently active buffer. By default,
-	 * the active buffer is obtained from the synchronization
+	 * Return the currently active saveable. By default,
+	 * the active saveable is obtained from the synchronization
 	 * page configuration.
-	 * @return the currently active buffer (or <code>null</code> if
+	 * @return the currently active saveable (or <code>null</code> if
 	 * no buffer is active).
 	 */
-	protected ISaveableCompareModel getActiveModel() {
-		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveModel();
+	protected SaveableComparison getActiveSaveable() {
+		return ((ModelSynchronizeParticipant)configuration.getParticipant()).getActiveSaveable();
 	}
 
 	/**
-	 * Set the active buffer. By default to active buffer is stored with the
+	 * Set the active saveable. By default to active saveable is stored with the
 	 * synchronize page configuration.
-	 * @param buffer the buffer that is now active (or <code>null</code> if
-	 * no buffer is active).
+	 * @param saveable the saveable that is now active (or <code>null</code> if
+	 * no saveable is active).
 	 */
-	protected void setActiveModel(ISaveableCompareModel buffer) {
-		((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveModel(buffer);
+	protected void setActiveSaveable(SaveableComparison saveable) {
+		((ModelSynchronizeParticipant)configuration.getParticipant()).setActiveSaveable(saveable);
 	}
 	
 	/**
-	 * Return the buffer that is the target of this operation.
+	 * Return the saveable that is the target of this operation.
 	 * By default, <code>null</code> is returned.
-	 * @return the buffer that is the target of this operation
+	 * @return the saveable that is the target of this operation
 	 */
-	protected ISaveableCompareModel getTargetModel() {
+	protected SaveableComparison getTargetSaveable() {
 		return null;
 	}
 	

@@ -48,7 +48,7 @@ public interface ISynchronizationCompareAdapter {
 	 * <p>
 	 * Model providers can choose to return an instance of {@link ISynchronizationCompareInput}
 	 * if they wish to tailor the compare editor used to show the compare input
-	 * of provide an {@link ISaveableCompareModel} in order to have more contol
+	 * of provide an {@link SaveableComparison} in order to have more control
 	 * over the save lifecycle during a merge.
 	 * 
 	 * @param context the synchronization context

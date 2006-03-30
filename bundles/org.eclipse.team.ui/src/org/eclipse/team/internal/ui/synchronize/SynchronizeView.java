@@ -34,7 +34,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
  */
-public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener, ISaveableModelSource, ISaveablePart {
+public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener, ISaveablesSource, ISaveablePart {
 	
 	/**
 	 * Suggested maximum length of participant names when shown in certain menus and dialog.
@@ -67,7 +67,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	private PinParticipantAction fPinAction;
 	
 	/**
-	 * Action to remove the currently shown partipant
+	 * Action to remove the currently shown participant
 	 */
 	private RemoveSynchronizeParticipantAction fRemoveCurrentAction;
 	
@@ -100,6 +100,15 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 						firePropertyChange(PROP_DIRTY);
 					}
 				});
+			} else if (event.getProperty().equals(ModelSynchronizeParticipant.PROP_ACTIVE_SAVEABLE)) {
+				Saveable oldSaveable = (Saveable)event.getOldValue();
+				Saveable newSaveable = (Saveable)event.getNewValue();
+				ISaveablesLifecycleListener listener = (ISaveablesLifecycleListener)getSite().getPage().getWorkbenchWindow()
+					.getService(ISaveablesLifecycleListener.class);
+				if (listener != null && oldSaveable != null)
+					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, new Saveable[] { oldSaveable }, false));
+				if (listener != null && newSaveable != null)
+					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { oldSaveable }, false));
 			}
 		}
 		if (source instanceof ISynchronizePageConfiguration) {
@@ -314,13 +323,6 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			};
 			asyncExec(r);
 		}
-	}
-
-	private ISaveableModelSource getSaveableModelSource(ISynchronizeParticipant participant) {
-		if (participant instanceof ISaveableModelSource) {
-			return (ISaveableModelSource) participant;
-		}
-		return null;
 	}
 
 	/**
@@ -547,54 +549,53 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			getDialogSettings().addSection(new DialogSettings(key));
 		}
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getModels()
+	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 */
-	public ISaveableModel[] getModels() {
+	public Saveable[] getSaveables() {
 		Set result = new HashSet();
 		for (Iterator iter = fPartToParticipant.keySet().iterator(); iter.hasNext();) {
 			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart) iter.next();
-			ISaveableModelSource ms = getSaveableModelSource(part.getParticipant());
-			if (ms != null) {
-				ISaveableModel[] models = ms.getModels();
-				for (int i = 0; i < models.length; i++) {
-					ISaveableModel model = models[i];
-					result.add(model);
-				}
+			Saveable saveable = getSaveable(part.getParticipant());
+			if (saveable != null) {
+				result.add(saveable);
 			}
 		}
-		return (ISaveableModel[]) result.toArray(new ISaveableModel[result.size()]);
+		return (Saveable[]) result.toArray(new Saveable[result.size()]);
+	}
+
+	private Saveable getSaveable(ISynchronizeParticipant participant) {
+		if (participant instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+			return msp.getActiveSaveable();
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModelSource#getActiveModels()
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 */
-	public ISaveableModel[] getActiveModels() {
-		Set result = new HashSet();
-		for (Iterator iter = fPartToParticipant.keySet().iterator(); iter.hasNext();) {
-			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart) iter.next();
-			ISaveableModelSource ms = getSaveableModelSource(part.getParticipant());
-			if (ms != null) {
-				ISaveableModel[] models = ms.getActiveModels();
-				for (int i = 0; i < models.length; i++) {
-					ISaveableModel model = models[i];
-					result.add(model);
-				}
-			}
-		}
-		return (ISaveableModel[]) result.toArray(new ISaveableModel[result.size()]);
+	public Saveable[] getActiveSaveables() {
+		ISynchronizeParticipant participant = getParticipant();
+		Saveable s = getSaveable(participant);
+		if (s != null)
+			return new Saveable[] { s };
+		return new Saveable[0];
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void doSave(IProgressMonitor monitor) {
-		ISaveableModel[] models = getModels();
-		if (models.length == 0)
+		Saveable[] saveables = getSaveables();
+		if (saveables.length == 0)
 			return;
-		monitor.beginTask(null, 100* models.length);
-		for (int i = 0; i < models.length; i++) {
-			ISaveableModel model = models[i];
+		monitor.beginTask(null, 100* saveables.length);
+		for (int i = 0; i < saveables.length; i++) {
+			Saveable saveable = saveables[i];
 			try {
-				model.doSave(Policy.subMonitorFor(monitor, 100));
+				saveable.doSave(Policy.subMonitorFor(monitor, 100));
 			} catch (CoreException e) {
 				ErrorDialog.openError(getSite().getShell(), null, e.getMessage(), e.getStatus());
 			}
@@ -604,24 +605,36 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		firePropertyChange(PROP_DIRTY);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
 	public void doSaveAs() {
 		// Not allowed
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
 	public boolean isDirty() {
-		ISaveableModel[] models = getModels();
-		for (int i = 0; i < models.length; i++) {
-			ISaveableModel model = models[i];
-			if (model.isDirty())
+		Saveable[] saveables = getSaveables();
+		for (int i = 0; i < saveables.length; i++) {
+			Saveable saveable = saveables[i];
+			if (saveable.isDirty())
 				return true;
 		}
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
 	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
