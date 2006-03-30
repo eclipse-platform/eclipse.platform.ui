@@ -153,7 +153,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				//Also, hang on to this selection for future use in case the history view is not visible
 				lastSelectedElement = structSelection.getFirstElement();
 				
-				if (!isLinkingEnabled()) {
+				if (!isLinkingEnabled() || !checkIfPageIsVisible()) {
 					return;
 				}
 				
@@ -163,6 +163,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 						itemDropped((IResource) resource, false);
 					else
 						itemDropped(lastSelectedElement, false);
+					//reset lastSelectedElement
+					lastSelectedElement = null;
 				}
 			}
 		}
@@ -325,6 +327,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 					else
 						itemDropped(lastSelectedElement, false);
 				}
+				//reset lastSelectedElement to null to prevent updating history view if it just gets focus
+				lastSelectedElement  = null;
 			}
 		}
 		
