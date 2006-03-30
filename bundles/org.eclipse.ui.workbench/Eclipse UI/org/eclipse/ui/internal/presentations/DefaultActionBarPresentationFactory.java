@@ -55,7 +55,7 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createToolBarManager()
 	 */
 	public IToolBarManager2 createToolBarManager() {
-		return new ToolBarManager2(SWT.FLAT | SWT.RIGHT | SWT.WRAP);
+		return new ToolBarManager2(SWT.FLAT | SWT.RIGHT);
 	}
 
 	/* (non-Javadoc)
