@@ -182,13 +182,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		return STATUS_ERROR;
 	}
 
-	private InputStream getFileContents(IFileStore file, IProgressMonitor monitor) {
-		try {
-			if (file != null)
-				return file.openInputStream(EFS.NONE, null);
-		} catch (CoreException e) {
-		}
-		return null;
+	private InputStream getFileContents(IFileStore file, IProgressMonitor monitor) throws CoreException {
+		if (file == null)
+			return null;
+		
+		return file.openInputStream(EFS.NONE, null);
 	}
 
 	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) {
@@ -383,24 +381,26 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
 
-		InputStream stream= getFileContents(fFileStore, monitor);
-		if (stream != null) {
+		InputStream stream= null;
+		try {
+			stream= getFileContents(fFileStore, monitor);
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
+			if (description != null) {
+				fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+				if (fEncoding == null)
+					fEncoding= description.getCharset();
+			}
+		} catch (CoreException e) {
+			// do nothing
+		} catch (IOException e) {
+			// do nothing
+		} finally {
 			try {
-				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
-				if (description != null) {
-					fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
-					if (fEncoding == null)
-						fEncoding= description.getCharset();
-				}
-			} catch (IOException e) {
-				// do nothing
-			} finally {
-				try {
+				if (stream != null)
 					stream.close();
-				} catch (IOException ex) {
-					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.JavaTextFileBuffer_error_closeStream, ex));
-				}
+			} catch (IOException ex) {
+				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.JavaTextFileBuffer_error_closeStream, ex));
 			}
 		}
 	}

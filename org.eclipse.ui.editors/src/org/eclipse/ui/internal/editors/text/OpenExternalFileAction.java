@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -185,7 +186,10 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 			EditorsPlugin.log(x);
 			return null;
 		} catch (CoreException x) {
-			EditorsPlugin.log(x);
+			// Do not log FileNotFoundException (no access)
+			if (!(x.getStatus().getException() instanceof FileNotFoundException))
+				EditorsPlugin.log(x);
+			
 			return null;
 		} finally {
 			try {
