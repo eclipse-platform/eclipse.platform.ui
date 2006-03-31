@@ -29,6 +29,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
 
@@ -209,6 +210,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		//Contribute toolbars
 		configureToolbars(getViewSite().getActionBars());
 
+		// add global action handler
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
+		
 		//initialize the drag and drop
 		initDragAndDrop();
 
@@ -257,7 +261,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		};
 		refreshAction.setToolTipText(TeamUIMessages.GenericHistoryView_RefreshTooltip);
-
+		refreshAction.setActionDefinitionId(ActionFactory.REFRESH.getId());
+		
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
 				setLinkingEnabled(isViewPinned() ? false : isChecked());
@@ -281,6 +286,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	/**
 	 * Enabled linking to the active editor
+	 * @param enabled	flag indiciating whether linking is enabled
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
