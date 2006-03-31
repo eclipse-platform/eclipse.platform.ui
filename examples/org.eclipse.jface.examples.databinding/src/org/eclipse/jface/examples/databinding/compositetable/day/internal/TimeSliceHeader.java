@@ -1,4 +1,4 @@
-package org.eclipse.jface.examples.databinding.compositetable.day;
+package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -8,19 +8,24 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 
 /**
- * @since 3.2
+ * Represents a time slice that is the same time but may span several days.
+ * For example: 11:00 - 11:15 PM from Sunday through Saturday.
  * 
+ * @since 3.2
  */
-public class Days extends Composite {
+public class TimeSliceHeader extends Composite {
 
+	private final Image allDayImage = new Image(Display.getCurrent(), TimeSliceHeader.class.getResourceAsStream("clock.png"));
+	
 	/**
 	 * The 0th control in the layout may have a java.lang.Integer LayoutData
 	 * indicating its preferred width. Otherwise, DaysLayout will ask the
@@ -28,7 +33,7 @@ public class Days extends Composite {
 	 * that computation. All other controls will be equally allotted horizontal
 	 * width in the parent control.
 	 */
-	private static class DaysLayout extends Layout {
+	private static class TimeSliceAcrossTimeLayout extends Layout {
 		Point preferredSize = new Point(-1, -1);
 
 		protected Point computeSize(Composite composite, int wHint, int hHint,
@@ -82,13 +87,13 @@ public class Days extends Composite {
 
 	private LinkedList days = new LinkedList();
 
-	private Label timeLabel = null;
+	private CLabel timeLabel = null;
 
 	/**
 	 * @param parent
 	 * @param style
 	 */
-	public Days(Composite parent, int style) {
+	public TimeSliceHeader(Composite parent, int style) {
 		super(parent, style);
 		initialize();
 	}
@@ -97,16 +102,16 @@ public class Days extends Composite {
 	 * Initialize the control
 	 */
 	private void initialize() {
-		timeLabel = new Label(this, SWT.RIGHT);
+		timeLabel = new CLabel(this, SWT.RIGHT);
 		timeLabel.setText("23:00 PM");
 		Integer preferredWidth = new Integer(timeLabel.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT, false).x + 5);
 		timeLabel.setLayoutData(preferredWidth);
 		setBackground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		days.addLast(new Day(this, SWT.NONE));
+		days.addLast(new TimeSlot(this, SWT.NONE));
 		setSize(new Point(537, 16));
-		setLayout(new DaysLayout());
+		setLayout(new TimeSliceAcrossTimeLayout());
 	}
 
 	private int numberOfColumns = 1;
@@ -136,7 +141,7 @@ public class Days extends Composite {
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
 		for (int i = numberOfColumns - 1; i > 0; --i) {
-			days.add(new Day(this, SWT.NONE));
+			days.add(new TimeSlot(this, SWT.NONE));
 		}
 	}
 
@@ -153,6 +158,14 @@ public class Days extends Composite {
 	 * @param currentTime
 	 */
 	public void setCurrentTime(Date currentTime) {
+		// if currentTime is null, we are becoming an all-day event row
+		if (currentTime == null) {
+			timeLabel.setImage(allDayImage);
+			timeLabel.setText("");
+			return;
+		}
+		timeLabel.setImage(null);
+		
 		this.currentTime = currentTime;
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(currentTime);
@@ -171,7 +184,7 @@ public class Days extends Composite {
 
 	private void setHourStartOnDays(boolean isHourStart) {
 		for (Iterator daysIter = days.iterator(); daysIter.hasNext();) {
-			Day day = (Day) daysIter.next();
+			TimeSlot day = (TimeSlot) daysIter.next();
 			day.setHourStart(isHourStart);
 		}
 	}

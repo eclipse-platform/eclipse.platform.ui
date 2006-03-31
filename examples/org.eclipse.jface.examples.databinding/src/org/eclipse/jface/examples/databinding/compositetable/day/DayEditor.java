@@ -1,11 +1,16 @@
 package org.eclipse.jface.examples.databinding.compositetable.day;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.IRowConstructionListener;
 import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -18,11 +23,16 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since 3.2
  */
-public class DayEditor extends Composite {
+public class DayEditor extends Composite implements IEventEditor {
+	/**
+	 * The default start hour.  Normally 8:00 AM
+	 */
+	private static final int DEFAULT_START_HOUR = 8;
 	private CompositeTable compositeTable = null;
 
 	/**
-	 * Constructor DayEditor
+	 * Constructor DayEditor.  Constructs a calendar control that can display
+	 * events on one or more days.
 	 * 
 	 * @param parent
 	 * @param style
@@ -65,11 +75,14 @@ public class DayEditor extends Composite {
 	private void createCompositeTable(final int numberOfColumns,
 			final int numberOfDivisionsInHour) {
 		compositeTable = new CompositeTable(this, SWT.NONE);
-		compositeTable.setNumRowsInCollection(24 * numberOfDivisionsInHour);
+		new TimeSlice(compositeTable, SWT.NONE);		// The prototype row
+		
+		compositeTable.setNumRowsInCollection( (24-startHour) * numberOfDivisionsInHour+1);
 		compositeTable.setRunTime(true);
+		
 		compositeTable.addRowConstructionListener(new IRowConstructionListener() {
 					public void rowConstructed(Control newRow) {
-						Days days = (Days) newRow;
+						TimeSlice days = (TimeSlice) newRow;
 						days.setNumberOfColumns(numberOfColumns);
 					}
 				});
@@ -78,17 +91,77 @@ public class DayEditor extends Composite {
 
 			public void refresh(CompositeTable sender, int currentObjectOffset,
 					Control row) {
-				calendar.set(Calendar.HOUR_OF_DAY, currentObjectOffset
-						/ numberOfDivisionsInHour);
-				calendar.set(Calendar.MINUTE,
-						(int) ((double) currentObjectOffset
-								% numberOfDivisionsInHour
-								/ numberOfDivisionsInHour * 60));
-				Days days = (Days) row;
-				days.setCurrentTime(calendar.getTime());
+
+				// Decrement currentObjectOffset for each all-day event line we need.
+				--currentObjectOffset;
+				
+				TimeSlice timeSlice = (TimeSlice) row;
+				if (currentObjectOffset < 0) {
+					timeSlice.setCurrentTime(null);
+				} else {
+					calendar.set(Calendar.HOUR_OF_DAY, 
+							computeHourFromRow(currentObjectOffset));
+					calendar.set(Calendar.MINUTE,
+							computeMinuteFromRow(currentObjectOffset));
+					timeSlice.setCurrentTime(calendar.getTime());
+				}
+			}
+
+			private int computeHourFromRow(int currentObjectOffset) {
+				return currentObjectOffset
+						/ numberOfDivisionsInHour + startHour;
+			}
+
+			private int computeMinuteFromRow(int currentObjectOffset) {
+				int minute = (int) ((double) currentObjectOffset
+						% numberOfDivisionsInHour
+						/ numberOfDivisionsInHour * 60);
+				return minute;
 			}
 		});
-		new Days(compositeTable, SWT.NONE);
+	}
+	
+	private int startHour = DEFAULT_START_HOUR;
+	private int defaultStartHour = DEFAULT_START_HOUR;
+
+	/**
+	 * @return Returns the defaultStartHour.
+	 */
+	public int getDefaultStartHour() {
+		return defaultStartHour;
+	}
+
+	/**
+	 * @param defaultStartHour The defaultStartHour to set.
+	 */
+	public void setDefaultStartHour(int defaultStartHour) {
+		this.defaultStartHour = defaultStartHour;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
+	 */
+	public void setStartDate(Date startDate) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
+	 */
+	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
+	 */
+	public void setEventContentProvider(EventContentProvider eventContentProvider) {
+		// TODO Auto-generated method stub
+		
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
+
+

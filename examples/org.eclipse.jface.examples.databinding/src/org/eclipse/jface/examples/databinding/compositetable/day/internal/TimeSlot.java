@@ -9,7 +9,7 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.jface.examples.databinding.compositetable.day;
+package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -30,9 +30,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @author djo
+ * Represents a particular range in time in a single day.
+ * 
+ * @since 3.2
  */
-public class Day extends Canvas {
+public class TimeSlot extends Canvas {
 
 	private static final int FOCUS_LINE_WIDTH = 2;
 
@@ -55,7 +57,7 @@ public class Day extends Canvas {
 	 * @param style
 	 *            Style bits. These are the same as what Canvas accepts.
 	 */
-	public Day(Composite parent, int style) {
+	public TimeSlot(Composite parent, int style) {
 		super(parent, style);
 
 		addTraverseListener(traverseListener);
