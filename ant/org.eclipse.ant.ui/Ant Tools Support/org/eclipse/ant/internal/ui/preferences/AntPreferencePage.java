@@ -85,6 +85,16 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.AntPreferencePage__Names__3, getFieldEditorParent());
 		addField(editor);
 		
+		IntegerFieldEditor timeout = new IntegerFieldEditor(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
+        int minValue= AntUIPlugin.getDefault().getPreferenceStore().getDefaultInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
+        int maxValue = 1200000;
+        timeout.setValidRange(minValue, maxValue);
+        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)})); 
+        addField(timeout);
+        
+        editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());
+		addField(editor);
+		
 		createSpace();
 	
 		if (!AntUIPlugin.isMacOS()) {
@@ -98,32 +108,21 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			label.setFont(font);
 			fToolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent());
 			addField(fToolsWarningEditor);
-			new Label(getFieldEditorParent(), SWT.NONE);
+			 createSpace();
 		}
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent()));
+		createSpace();
+		
+		label= new Label(getFieldEditorParent(), SWT.WRAP);
+		label.setText(AntPreferencesMessages.AntPreferencePage_16);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 3;
+		gd.widthHint= convertWidthInCharsToPixels(60);
+		label.setLayoutData(gd);
+		label.setFont(font);
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CREATE_MARKERS, AntPreferencesMessages.AntPreferencePage_15, getFieldEditorParent()));
-		 label= new Label(getFieldEditorParent(), SWT.WRAP);
-			label.setText(AntPreferencesMessages.AntPreferencePage_16);
-			gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			gd.horizontalSpan= 3;
-			gd.widthHint= convertWidthInCharsToPixels(60);
-			label.setLayoutData(gd);
-			label.setFont(font);
-		createSpace();
-		
-		editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());
-		addField(editor);
-		
-		createSpace();
-		
-        IntegerFieldEditor timeout = new IntegerFieldEditor(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
-        int minValue= AntUIPlugin.getDefault().getPreferenceStore().getDefaultInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
-        int maxValue = 1200000;
-        timeout.setValidRange(minValue, maxValue);
-        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)})); 
-        addField(timeout);
-        
+		 
         createSpace();
 		createColorComposite();
 		getPreferenceStore().addPropertyChangeListener(this);
