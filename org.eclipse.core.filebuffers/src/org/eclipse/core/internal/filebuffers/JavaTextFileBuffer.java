@@ -182,11 +182,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		return STATUS_ERROR;
 	}
 
-	private InputStream getFileContents(IFileStore file, IProgressMonitor monitor) throws CoreException {
-		if (file == null)
+	private InputStream getFileContents(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
+		if (fileStore == null)
 			return null;
 		
-		return file.openInputStream(EFS.NONE, null);
+		return fileStore.openInputStream(EFS.NONE, null);
 	}
 
 	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) {
@@ -384,6 +384,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		InputStream stream= null;
 		try {
 			stream= getFileContents(fFileStore, monitor);
+			if (stream == null)
+				return;
+			
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
 			if (description != null) {
