@@ -47,8 +47,9 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
             	IStatus status = getStatus();
                 if (status != null && !status.isOK()) {
                 	getModel().getViewer().handlePresentationFailure(AsynchronousRequestMonitor.this, status);
+                } else {
+                	performUpdate();
                 }
-                performUpdate();
             }
             getModel().viewerUpdateComplete(AsynchronousRequestMonitor.this);
             return Status.OK_STATUS;
