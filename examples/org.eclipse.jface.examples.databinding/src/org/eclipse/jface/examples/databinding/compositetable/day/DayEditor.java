@@ -43,36 +43,32 @@ public class DayEditor extends Composite implements IEventEditor {
 		this.setLayout(new FillLayout());
 	}
 
-	/**
-	 * Method setTimeBreakdown. Call this method exactly once after constructing
-	 * the day control in order to set the number of day columns to display.
-	 * <p>
-	 * This method may be executed exactly once. Executing more than once will
-	 * result in undefined behavior.
-	 * 
-	 * @param numberOfColumns
-	 *            The number of columns to display.
-	 * @param numberOfDivisionsInHour
-	 *            1 == one line per hour; 2 == every 1/2 hour; 4 = every 1/4
-	 *            hour; etc...
+	private int numberOfDays = -1;
+	private int numberOfDivisionsInHour = -1;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
 	 */
-	public void setTimeBreakdown(int numberOfColumns, int numberOfDivisionsInHour) {
+	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
+		this.numberOfDays = numberOfDays;
+		this.numberOfDivisionsInHour = numberOfDivisionsInHour;
+		
 		if (numberOfDivisionsInHour < 1) {
 			throw new IllegalArgumentException("There must be at least one division in the hour");
 		}
 		if (compositeTable != null) {
 			compositeTable.dispose();
 		}
-		createCompositeTable(numberOfColumns, numberOfDivisionsInHour);
+		createCompositeTable(numberOfDays, numberOfDivisionsInHour);
 	}
 
 	/**
 	 * This method initializes compositeTable
 	 * 
-	 * @param numberOfColumns
+	 * @param numberOfDays
 	 *            The number of day columns to display
 	 */
-	private void createCompositeTable(final int numberOfColumns,
+	private void createCompositeTable(final int numberOfDays,
 			final int numberOfDivisionsInHour) {
 		compositeTable = new CompositeTable(this, SWT.NONE);
 		new TimeSlice(compositeTable, SWT.NONE);		// The prototype row
@@ -83,7 +79,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		compositeTable.addRowConstructionListener(new IRowConstructionListener() {
 					public void rowConstructed(Control newRow) {
 						TimeSlice days = (TimeSlice) newRow;
-						days.setNumberOfColumns(numberOfColumns);
+						days.setNumberOfColumns(numberOfDays);
 					}
 				});
 		compositeTable.addRowContentProvider(new IRowContentProvider() {
@@ -137,28 +133,47 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setDefaultStartHour(int defaultStartHour) {
 		this.defaultStartHour = defaultStartHour;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
-	 */
-	public void setStartDate(Date startDate) {
-		// TODO Auto-generated method stub
-		
-	}
+	
+	private EventCountProvider eventCountProvider = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
 	 */
 	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
-		// TODO Auto-generated method stub
-		
+		this.eventCountProvider = eventCountProvider;
+		refresh();
 	}
+	
+	private EventContentProvider eventContentProvider = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
-		// TODO Auto-generated method stub
+		this.eventContentProvider = eventContentProvider;
+		refresh();
+	}
+	
+	private Date startDate = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
+	 */
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	/**
+	 * Refresh everything in the display.
+	 */
+	private void refresh() {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
+	 */
+	public void refresh(Date date) {
 		
 	}
 

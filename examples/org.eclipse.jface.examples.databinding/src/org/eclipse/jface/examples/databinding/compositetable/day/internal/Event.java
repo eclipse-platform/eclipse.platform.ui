@@ -77,7 +77,6 @@ public class Event extends Canvas implements IEvent {
         fillLayout.marginWidth = 5;
         this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE));
         this.setLayout(fillLayout);
-        this.setSize(new org.eclipse.swt.graphics.Point(402,328));
 	}
 
 	/* (non-Javadoc)

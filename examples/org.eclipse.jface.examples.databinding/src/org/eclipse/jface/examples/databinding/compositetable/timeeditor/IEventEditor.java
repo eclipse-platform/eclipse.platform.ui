@@ -20,6 +20,25 @@ import java.util.Date;
  * @since 3.2
  */
 public interface IEventEditor {
+
+	/**
+	 * Method setTimeBreakdown. Call this method exactly once after constructing
+	 * the control in order to set the number of day columns to display.
+	 * <p>
+	 * This method may be executed exactly once. Executing more than once will
+	 * result in undefined behavior.
+	 * <p>
+	 * This method is a <b>hint</b>.  It may be ignored by specific 
+	 * implementations (ie: a month view).
+	 * 
+	 * @param numberOfDays
+	 *            The number of days to display.
+	 * @param numberOfDivisionsInHour
+	 *            1 == one line per hour; 2 == every 1/2 hour; 4 = every 1/4
+	 *            hour; etc...
+	 */
+	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour);
+
 	/**
 	 * Set the start date for this event editor.  How this is interpreted depends
 	 * on how time is being visualized.
@@ -48,6 +67,15 @@ public interface IEventEditor {
 	 * @param eventContentProvider The eventContentProvider to set.
 	 */
 	void setEventContentProvider(EventContentProvider eventContentProvider);
+	
+	/**
+	 * Tells the IEvent editor to refresh its display for the specified date.
+	 * If the specified date is not being displayed, the request will be ignored.
+	 * If null is passed as the date, the entire display is refreshed.
+	 * 
+	 * @param date The date to refresh or null to refresh everything.
+	 */
+	void refresh(Date date);
 	
 	/* Not needed for now? */
 //	void addInsertHandler(IInsertHandler);
