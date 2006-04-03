@@ -48,6 +48,20 @@ public class CalendarableModel {
 	}
 
 	/**
+	 * @return
+	 */
+	public int getNumberOfDays() {
+		return numberOfDays;
+	}
+
+	/**
+	 * @return
+	 */
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	/**
 	 * @param numberOfDays
 	 */
 	private void initializeColumns(int numberOfDays) {
@@ -170,10 +184,25 @@ public class CalendarableModel {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
+		GregorianCalendar dateToRefresh = new GregorianCalendar();
+		dateToRefresh.setTime(date);
+		for (int offset=0; offset < numberOfDays; ++offset) {
+			Date refreshTarget = calculateDate(offset);
+			GregorianCalendar target = new GregorianCalendar();
+			target.setTime(refreshTarget);
+			
+			if (target.get(Calendar.DATE) == dateToRefresh.get(Calendar.DATE) &&
+				target.get(Calendar.MONTH) == dateToRefresh.get(Calendar.MONTH) &&
+				target.get(Calendar.YEAR) == dateToRefresh.get(Calendar.YEAR)) 
+			{
+				refresh(date, offset);
+				break;
+			}
+		}
 	}
 
 	/**
-	 * Return the 
+	 * Return the events for a particular day offset.
 	 * 
 	 * @param dayOffset
 	 * @return
