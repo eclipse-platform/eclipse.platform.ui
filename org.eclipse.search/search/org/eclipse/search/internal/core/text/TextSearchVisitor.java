@@ -30,6 +30,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.core.resources.IFile;
 
@@ -209,11 +212,16 @@ public class TextSearchVisitor {
 			IDocument document= getOpenDocument(file);
 			
 			if (document != null) {
-				locateMatches(file, new DocumentCharSequence(document));
+				DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
+				// assume all documents are non-binary
+				locateMatches(file, documentCharSequence);
 			} else {
 				CharSequence seq= null;
 				try {
 					seq= fFileCharSequenceProvider.newCharSequence(file);
+					if (hasBinaryContent(seq, file) && !fCollector.reportBinaryFile(file)) {
+						return;
+					}
 					locateMatches(file, seq);
 				} catch (FileCharSequenceProvider.FileCharSequenceException e) {
 					e.throwWrappedException();
@@ -248,6 +256,28 @@ public class TextSearchVisitor {
 		}		
 	}
 	
+	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {
+		IContentDescription desc= file.getContentDescription();
+		if (desc != null) {
+			IContentType contentType= desc.getContentType();
+			if (contentType != null && contentType.isKindOf(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT))) {
+				return false;
+			}
+		}
+		
+		// avoid calling seq.length() at it runs through the complete file,
+		// thus it would do so for all binary files.
+		try {
+			int limit= FileCharSequenceProvider.BUFFER_SIZE;
+			int i= 0;
+			for (i= 0; i < limit && seq.charAt(i) != 0; i++) {
+			}
+			return i < limit;
+		} catch (IndexOutOfBoundsException e) {
+			return false;
+		}
+	}
+
 	private void locateMatches(IFile file, CharSequence searchInput) throws CoreException {
 		fMatcher.reset(searchInput);
 		int k= 0;
