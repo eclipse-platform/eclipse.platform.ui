@@ -105,12 +105,12 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 	 * Create a scope manager that uses the given context to 
 	 * determine what resources should be included in the scope.
 	 * If <code>consultModels</code> is <code>true</code> then
-	 * the moel providers will be queried in order to determine if
+	 * the model providers will be queried in order to determine if
 	 * additional mappings should be included in the scope
 	 * @param name the name of the scope
 	 * @param inputMappings the input mappings
 	 * @param resourceMappingContext a resource mapping context
-	 * @param consultModels whether modle providers should be consulted
+	 * @param consultModels whether model providers should be consulted
 	 */
 	public SynchronizationScopeManager(String name, ResourceMapping[] inputMappings, ResourceMappingContext resourceMappingContext, boolean consultModels) {
 		this.name = name;

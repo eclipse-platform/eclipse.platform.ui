@@ -52,7 +52,7 @@ public interface ISynchronizationScopeManager {
 	 * Build the scope that is used to determine the complete set of resource
 	 * mappings, and hence resources, that an operation should be performed on.
 	 * <p>
-	 * This method obtaines a lock on the workspace root to avoid workspace
+	 * This method obtains a lock on the workspace root to avoid workspace
 	 * changes while calculating the scope.
 	 * @param monitor a progress monitor
 	 * when building the scope
@@ -78,7 +78,7 @@ public interface ISynchronizationScopeManager {
 	/**
 	 * Method to be invoked when the scope of this
 	 * manager is no longer needed. It is typically the
-	 * reponsibility of the client that creates a scope manager 
+	 * responsibility of the client that creates a scope manager 
 	 * to dispose of it.
 	 */
 	void dispose();
