@@ -84,7 +84,6 @@ public class FormatTableRenderingDialog extends TrayDialog
 			data.grabExcessVerticalSpace = true;
 			data.horizontalAlignment = SWT.FILL;
 			data.verticalAlignment = SWT.FILL;
-			data.widthHint = 300;
 			composite.setLayoutData(data);
 			
 			fMsgLabel = new Label(composite, SWT.NONE);
@@ -480,6 +479,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 			
 			fDefaultColValue.setText(String.valueOf(getDefaultColumnSize()));
 			fDefaultRowValue.setText(String.valueOf(getDefaultRowSize()));
+			
+			fDefaultRowValue.getParent().layout();
 		}
 
 		private void restoreDefaults() {
