@@ -18,7 +18,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 import junit.framework.TestCase;
 
-public class TestEventing extends TestCase {
+public class TestCheatSheetManagerEvents extends TestCase {
 	
 	private CheatSheetElement element;
 	private CheatSheetManager manager;

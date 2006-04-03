@@ -145,5 +145,49 @@ public class TestState extends TestCase {
 		assertEquals(task4, TaskStateUtilities.getRestartTasks(group)[0]);
 		assertEquals(3, TaskStateUtilities.getRestartTasks(root).length);
 	}
+	
+	/**
+	 * Test that resetting a task resets dependents and their children also
+	 */
+	public void testResetDependents() {
+		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SET);
+		TaskGroup group = new TaskGroup(model, "group1", "gname", ITaskGroup.SET);
+		TaskGroup subGroup = new TaskGroup(model, "group2", "gname2", ITaskGroup.SET);
+		EditableTask task1 = new EditableTask(model, "id1", "name1", "ua.junit");
+		EditableTask task2 = new EditableTask(model, "id2", "name2", "ua.junit");
+		EditableTask task3 = new EditableTask(model, "id3", "name3", "ua.junit");
+		EditableTask task4 = new EditableTask(model, "id4", "name4", "ua.junit");
+		EditableTask task5 = new EditableTask(model, "id5", "name5", "ua.junit");
+		task2.addRequiredTask(task1);
+		task3.addRequiredTask(task2);
+		subGroup.addRequiredTask(task3);
+		task4.addRequiredTask(subGroup);
+		root.addSubtask(group);
+		group.addSubtask(task1);
+		group.addSubtask(task2);
+		group.addSubtask(task3);
+		group.addSubtask(subGroup);
+		group.addSubtask(task4);
+		subGroup.addSubtask(task5);
+		task1.complete();
+		task2.complete();
+		task3.complete();
+		task5.setStarted();
+		assertEquals(4, TaskStateUtilities.getRestartTasks(root).length);
+		assertEquals(4, TaskStateUtilities.getRestartTasks(task1).length);
+		assertEquals(3, TaskStateUtilities.getRestartTasks(task2).length);
+		assertEquals(2, TaskStateUtilities.getRestartTasks(task3).length);
+		assertEquals(1, TaskStateUtilities.getRestartTasks(subGroup).length);
+		// Reset task5 and  start task 1 and 3 and skip task 2.
+		// Resetting task1 will not require task2 or task3 to be reset
+		task5.setState(ICompositeCheatSheetTask.NOT_STARTED);
+		task3.setState(ICompositeCheatSheetTask.NOT_STARTED);
+		task2.setState(ICompositeCheatSheetTask.NOT_STARTED);
+		task2.setState(ICompositeCheatSheetTask.SKIPPED);
+		task3.setStarted();
+		assertEquals(3, TaskStateUtilities.getRestartTasks(root).length);
+		assertEquals(1, TaskStateUtilities.getRestartTasks(task1).length);
+		assertEquals(2, TaskStateUtilities.getRestartTasks(task2).length);
+	}
 
 }

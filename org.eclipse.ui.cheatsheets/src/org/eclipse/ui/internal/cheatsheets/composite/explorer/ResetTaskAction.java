@@ -47,9 +47,7 @@ public class ResetTaskAction extends Action {
 		labelProvider.dispose();
 		if (dlg.getReturnCode() == ConfirmRestartDialog.OK) {
 			CompositeCheatSheetModel model = (CompositeCheatSheetModel) restartTasks[0].getCompositeCheatSheet();
-			for (int i = 0; i < restartTasks.length; i++) {
-				model.resetTask(restartTasks[i]);
-			}
+			model.resetTasks(restartTasks);
 		}
 	}
 

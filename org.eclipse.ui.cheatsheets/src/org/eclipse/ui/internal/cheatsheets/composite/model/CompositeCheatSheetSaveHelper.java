@@ -54,6 +54,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
         loadTaskState(taskMementoMap, (AbstractTask)model.getRootTask());
         loadCheatsheetManagerData(readMemento, model.getCheatSheetManager());
         loadLayoutData(readMemento, layoutData);
+        model.sendTaskChangeEvents();
         return Status.OK_STATUS;
 	}
 
@@ -75,7 +76,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		if (memento != null) {
 			String state = memento.getString(ICompositeCheatsheetTags.STATE);
 			if (state != null) {
-				task.setState(Integer.parseInt(state));
+				task.setStateNoNotify(Integer.parseInt(state));
 			}
 		}
 		if (task instanceof TaskGroup) {

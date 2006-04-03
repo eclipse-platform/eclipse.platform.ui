@@ -16,8 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
@@ -123,26 +121,6 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		setState(COMPLETED);
 	}
 
-	private void updateSuccessorTasks(int newState) {
-		// Find out all successor tasks which were blocked before the state change
-		List blockedTasks = new ArrayList();
-		ICompositeCheatSheetTask[] successorTasks = getSuccessorTasks();
-		for (int i = 0; i < successorTasks.length; i++) {
-			if (!successorTasks[i].requiredTasksCompleted()) {
-				blockedTasks.add(successorTasks[i]);
-			}
-		}
-		// Update the state of this task
-		this.state = newState;
-		// Did any tasks get unblocked
-		for (Iterator iter = blockedTasks.iterator(); iter.hasNext();) {
-			ICompositeCheatSheetTask nextTask = (ICompositeCheatSheetTask)iter.next();
-			if (nextTask.requiredTasksCompleted()) {
-			    model.notifyStateChanged(nextTask);
-			}
-		}
-	}
-
 	public boolean requiredTasksCompleted() {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
@@ -171,15 +149,22 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 * @param state
 	 */
 	public void setState(int state) {
-		if (state == COMPLETED ||
-			state == SKIPPED) {
-		    updateSuccessorTasks(state);
-		}
+	    setStateNoNotify(state);
+		model.sendTaskChangeEvents();
+	}
+	
+	/**
+	 * Set the state of a task but don't send out any events yet,
+	 * let them collect so we don't send out multiple events for 
+	 * one task
+	 * @param state
+	 */
+	public void setStateNoNotify(int state) {
 		this.state = state;	
 		if (parent != null) {
 		    parent.checkState();
 		}
-		model.notifyStateChanged(this);
+		model.stateChanged(this);
 	}
 
 	public URL getInputUrl(String path) throws MalformedURLException {
@@ -208,6 +193,10 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 
 	public ITaskGroup getParent() {
 		return parent;
+	}
+	
+	public int hashCode() {
+		return getId().hashCode();
 	}
 
 }

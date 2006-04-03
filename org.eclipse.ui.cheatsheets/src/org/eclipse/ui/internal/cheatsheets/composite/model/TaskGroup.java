@@ -69,7 +69,7 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 	public void checkState() {
 		int newState = computeState();
 		if (newState != state) {
-			setState(newState);
+			setStateNoNotify(newState);
 		}
 	}
 

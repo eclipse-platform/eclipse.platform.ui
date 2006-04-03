@@ -12,7 +12,9 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
@@ -94,6 +96,22 @@ public class TaskStateUtilities {
 	 */
 	public static boolean isStartEnabled(ICompositeCheatSheetTask task) {
 		if (!(task instanceof IEditableTask)) return false;
+		return isStartable(task);
+	}
+	
+	/**
+	 * Determines whether a task is in a state where it has net been started and
+	 * cannot be started. This is used to determine when to gray out the icon for a task.
+	 */
+	public static boolean isBlocked(ICompositeCheatSheetTask task) {
+		return (task.getState() == ICompositeCheatSheetTask.NOT_STARTED && !isStartable(task));
+	}
+
+	/**
+	 * Determines whether an editable task, or a task group has anything
+	 * that would prevent it or its children from being started.
+	 */
+	private static boolean isStartable(ICompositeCheatSheetTask task) {
 		if (task.getState() != ICompositeCheatSheetTask.NOT_STARTED) return false;
 	    if (findSkippedAncestor(task) != null) return false;
 	    if (findCompletedAncestor(task) != null) return false;
@@ -107,20 +125,39 @@ public class TaskStateUtilities {
 	 */
 	public static AbstractTask[] getRestartTasks(ICompositeCheatSheetTask task) {
 		List restartables = new ArrayList();
-		addRestartableTasks(restartables, task);
+		Set visited = new HashSet();
+		addRestartableTasks(restartables, task, visited);
 		return (AbstractTask[])restartables.toArray(new AbstractTask[restartables.size()]);
 	}
 
-	private static void addRestartableTasks(List restartables, ICompositeCheatSheetTask task) {
+	
+	private static void addRestartableTasks(List restartables, ICompositeCheatSheetTask task, Set visited) {
+		if (visited.contains(task)) {
+			return;
+		}
+		visited.add(task);
 		if (task instanceof IEditableTask && task.getState() != ICompositeCheatSheetTask.NOT_STARTED) {
 			restartables.add(task);
 		} else if (task.getState() == ICompositeCheatSheetTask.SKIPPED){
 			restartables.add(task);
 		}
+		
+		// Add all children
 		ICompositeCheatSheetTask[] children = task.getSubtasks();
 		for (int i = 0; i < children.length; i++) {
-			addRestartableTasks(restartables, children[i]);
+			addRestartableTasks(restartables, children[i], visited);
+		}
+		
+		// Add all dependents that are started or in progress but not skipped
+		ICompositeCheatSheetTask[] successors = ((AbstractTask)task).getSuccessorTasks();
+		for (int i = 0; i < successors.length; i++) {
+			int state = successors[i].getState();
+			if (state == ICompositeCheatSheetTask.COMPLETED || state == ICompositeCheatSheetTask.IN_PROGRESS) {
+			    addRestartableTasks(restartables, successors[i], visited);
+			}
 		}
 	}
+	
+	
 
 }

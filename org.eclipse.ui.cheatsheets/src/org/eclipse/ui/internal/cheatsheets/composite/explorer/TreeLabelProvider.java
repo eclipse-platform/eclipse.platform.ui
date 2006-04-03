@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.composite.model.TaskStateUtilities;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.composite.views.TaskEditorManager;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
@@ -80,21 +81,21 @@ public class TreeLabelProvider extends LabelProvider {
 	public Image getImage(Object obj) {
 		if (obj instanceof ICompositeCheatSheetTask) {
 			ICompositeCheatSheetTask task = (ICompositeCheatSheetTask) obj;
-			return lookupImage(task.getKind(), task.getState(), task.requiredTasksCompleted());		
+			return lookupImage(task.getKind(), task.getState(), TaskStateUtilities.isBlocked(task));		
 		}
 		return super.getImage(obj);
 	}
 
-	public Image lookupImage(String kind, int state, boolean isStartable) {
+	public Image lookupImage(String kind, int state, boolean isBlocked) {
 		ImageSet images = (ImageSet) imageMap.get(kind);
 		if (images == null) {
 			images = createImages(kind);
 			imageMap.put(kind, images);
 		}
-		if (isStartable) {
-		    return images.getImage(state);
+		if (isBlocked) {
+			return images.getImage(BLOCKED);
 		}
-		return images.getImage(BLOCKED);
+	    return images.getImage(state);
 	}
 
 	/**

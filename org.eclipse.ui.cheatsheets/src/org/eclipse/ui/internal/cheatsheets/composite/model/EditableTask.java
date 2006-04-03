@@ -60,7 +60,7 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 	}
 
 	public void reset() {
-		setState(NOT_STARTED);	
+		setStateNoNotify(NOT_STARTED);	
 		editorInitialized = false;
 	}
 	

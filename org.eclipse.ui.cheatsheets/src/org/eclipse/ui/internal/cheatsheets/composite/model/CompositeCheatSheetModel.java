@@ -12,9 +12,12 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
@@ -34,6 +37,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	private CompositeCheatSheetSaveHelper saveHelper;
 	private URL contentURL;
 	private CheatSheetManager manager;
+	private Set stateChangedSet = new HashSet();
 	
 	public void setRootTask(ICompositeCheatSheetTask task) {
 		rootTask = task;
@@ -90,9 +94,33 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		this.saveHelper = saveHelper;
 	}
 	
-	void notifyStateChanged(ICompositeCheatSheetTask task) {
-		setChanged();
-		notifyObservers(task);
+	/**
+	 * Maintain a set of tasks which have been changed which will
+	 * be used to send events to observers.
+	 * @param task
+	 */
+	void stateChanged(ICompositeCheatSheetTask task) {
+		if (!stateChangedSet.contains(task)) {
+			stateChangedSet.add(task);
+		}
+	}
+	
+	/**
+	 * At this point we need to determine which blocked tasks  have 
+	 * become unblocked and which unblocked tasks are now blocked and
+	 * send events for those also.
+	 */
+	public void sendTaskChangeEvents() {
+		Set blockedStateChanged = new BlockedTaskFinder().findBlockedTaskChanges(stateChangedSet);
+		for (Iterator iter = stateChangedSet.iterator(); iter.hasNext();) {
+			setChanged();
+			notifyObservers(iter.next());
+		}
+		for (Iterator iter = blockedStateChanged.iterator(); iter.hasNext();) {
+			setChanged();
+			notifyObservers(iter.next());
+		}
+		stateChangedSet.clear();
 	}
 	
 	public IMemento getTaskMemento(String id) {
@@ -114,18 +142,20 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	/*
 	 * Reset the state of a task and it's children
 	 */
-	public void resetTask(ICompositeCheatSheetTask task) {
+	private void resetTask(ICompositeCheatSheetTask task) {
 		if (task instanceof EditableTask) {
 		    EditableTask editable = (EditableTask)task;
 			editable.reset();
-			saveHelper.clearTaskMemento(task.getId());
+			if (saveHelper != null) {
+			    saveHelper.clearTaskMemento(task.getId());
+			}
 		} else if (task instanceof TaskGroup) { 
 			TaskGroup group = (TaskGroup)task;
 		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
 		    for (int i = 0; i < subtasks.length; i++) {
 			    resetTask(subtasks[i]);
 		    }
-		   group.setState(ICompositeCheatSheetTask.NOT_STARTED);
+		   group.setStateNoNotify(ICompositeCheatSheetTask.NOT_STARTED);
 		}
 	}
 
@@ -139,6 +169,18 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
         }
         saveHelper.clearTaskMementos();	
 	    resetTask(getRootTask());
+	    sendTaskChangeEvents();
+	}
+
+	/**
+	 * Restart one or more tasks
+	 * @param restartTasks An array of the tasks to be restarted
+	 */
+	public void resetTasks(ICompositeCheatSheetTask[] restartTasks) {
+		for (int i = 0; i < restartTasks.length; i++) {
+			resetTask(restartTasks[i]);
+		}	
+		sendTaskChangeEvents();
 	}
 
 }
