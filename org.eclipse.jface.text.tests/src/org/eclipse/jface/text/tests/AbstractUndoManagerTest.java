@@ -434,11 +434,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	}
 	
 	private static final char getRandomCharacter() {
-//		return Math.random() < 0.5
-//			? '\r'
-//			: '\n';
-					
-		// XXX must include \r, \n, \t
+		// XXX should include \t
 		return (char) (32 + 95 * Math.random());
 	}
 	
@@ -449,8 +445,12 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	
 	private static Position createRandomPositionPoisson(int documentLength) {
 
-		final float random= (float) Math.random();
-		final int offset= (int) (random * (documentLength + 1));
+		float random= (float) Math.random();
+		int offset= (int) (random * (documentLength + 1));
+		
+		// Catch potential rounding issue
+		if (offset == documentLength + 1)
+			offset= documentLength;
 
 		int length= getRandomPoissonValue(2);
 		if (offset + length > documentLength)
