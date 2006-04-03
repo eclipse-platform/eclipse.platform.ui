@@ -2013,7 +2013,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param provider the document provider
 	 */
 	protected void setDocumentProvider(IDocumentProvider provider) {
-		Assert.isNotNull(provider);
 		fExplicitDocumentProvider= provider;
 	}
 
@@ -3329,8 +3328,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fElementStateListener= null;
 			}
 
-			fExplicitDocumentProvider= null;
 		}
+		fExplicitDocumentProvider= null;
 	}
 
 	/**
