@@ -40,6 +40,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMe
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -63,6 +64,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
@@ -83,6 +85,27 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * @since 2.0
  */
 public class CommonTab extends AbstractLaunchConfigurationTab {
+	
+	/**
+	 * Provides a persistable dialog for selecting the sharded project location
+	 * @since 3.2
+	 */
+	class SharedLocationSelectionDialog extends ContainerSelectionDialog {
+		private final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
+		
+		public SharedLocationSelectionDialog(Shell parentShell, IContainer initialRoot, boolean allowNewContainerName, String message) {
+			super(parentShell, initialRoot, allowNewContainerName, message);
+		}
+
+		protected IDialogSettings getDialogBoundsSettings() {
+			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section = settings.getSection(SETTINGS_ID);
+			if (section == null) {
+				section = settings.addNewSection(SETTINGS_ID);
+			} 
+			return section;
+		}
+	}
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
@@ -379,22 +402,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Handles the shared location button being selected
 	 */
-	private void handleSharedLocationButtonSelected() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-																	   getWorkspaceRoot(),
-																	   false,
-																	   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13); 
-		
+	private void handleSharedLocationButtonSelected() { 
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
-		if (currentContainer != null) {
-			IPath path = currentContainer.getFullPath();
-			dialog.setInitialSelections(new Object[] {path});
-		}
-		
+		SharedLocationSelectionDialog dialog = new SharedLocationSelectionDialog(getShell(),
+				   currentContainer,
+				   false,
+				   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
 		dialog.showClosedProjects(false);
 		dialog.open();
-		Object[] results = dialog.getResult();		
+		Object[] results = dialog.getResult();	
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
 			IPath path = (IPath)results[0];
 			String containerName = path.toOSString();
