@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * @see ILaunchConfigurationTab
  * @since 2.0
+ * 
+ * @TODO Add in accessor methods for createGroup, createLabel and createSingleText from SWTUtil post 3.2 API freeze
  */
 public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
 	

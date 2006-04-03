@@ -23,8 +23,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Utility class to simplify access to some SWT resources. 
@@ -103,6 +107,64 @@ public class SWTUtil {
 		SWTUtil.setButtonDimensionHint(button);
 		return button;	
 	}	
+	
+	/**
+	 * Creates a new label widget
+	 * @param parent the parent composite to add this label widget to
+	 * @param text the text for the label
+	 * @param hspan the horizontal span to take up in the parent composite
+	 * @return the new label
+	 * @since 3.2
+	 * 
+	 */
+	public static Label createLabel(Composite parent, String text, int hspan) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setFont(parent.getFont());
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @return the new text widget
+	 * @since 3.2
+	 * 
+	 */
+	public static Text createSingleText(Composite parent, int hspan) {
+    	Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	return t;
+    }
+	
+	/**
+	 * Creates a Group widget
+	 * @param parent the parent composite to add this group to
+	 * @param text the text for the heading of the group
+	 * @param columns the number of columns within the group
+	 * @param hspan the horizontal span the group should take up on the parent
+	 * @param fill the style for how this composite should fill into its parent
+	 * @return the new group
+	 * @since 3.2
+	 * 
+	 */
+	public static Group createGroup(Composite parent, String text, int columns, int hspan, int fill) {
+    	Group g = new Group(parent, SWT.NONE);
+    	g.setLayout(new GridLayout(columns, false));
+    	g.setText(text);
+    	g.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+    }
 	
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
