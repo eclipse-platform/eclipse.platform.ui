@@ -7,12 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - bug 134177
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -81,7 +81,7 @@ public class StepOverAction extends StepIntoAction {
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#checkCapability(org.eclipse.debug.core.model.IStep, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
      */
-    protected void checkCapability(IStep element, IBooleanRequestMonitor monitor) {
+    protected void checkCapability(Object element, IBooleanRequestMonitor monitor) {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
@@ -94,7 +94,7 @@ public class StepOverAction extends StepIntoAction {
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#stepAction(org.eclipse.debug.core.model.IStep)
      */
-    protected void stepAction(IStep element) {
+    protected void stepAction(Object element) {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);

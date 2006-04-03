@@ -7,11 +7,11 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - bug 134177
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 
 public abstract class StepAction extends AbstractDebugContextAction {
@@ -21,9 +21,7 @@ public abstract class StepAction extends AbstractDebugContextAction {
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#doAction(java.lang.Object)
 	 */
 	protected void doAction(Object object) {
-        if (object instanceof IStep) {
-			stepAction((IStep)object);
-		}
+		stepAction(object);
 	}
 
 	/*
@@ -31,17 +29,15 @@ public abstract class StepAction extends AbstractDebugContextAction {
      * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#isEnabledFor(java.lang.Object)
 	 */
 	protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
-		if (element instanceof IStep) {
-			checkCapability((IStep)element, monitor);
-		}
+	    checkCapability(element, monitor);
 	}
 
 
-    protected abstract void checkCapability(IStep element, IBooleanRequestMonitor monitor);
+    protected abstract void checkCapability(Object element, IBooleanRequestMonitor monitor);
 	/**
 	 * Performs the specific step action.
 	 *
 	 * @exception DebugException if the action fails
 	 */
-	protected abstract void stepAction(IStep element);
+	protected abstract void stepAction(Object element);
 }
