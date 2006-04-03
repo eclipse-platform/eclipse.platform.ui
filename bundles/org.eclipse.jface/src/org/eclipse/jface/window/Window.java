@@ -434,7 +434,7 @@ public abstract class Window implements IShellProvider {
 	 * Creates and returns this window's contents. Subclasses may attach any
 	 * number of children to the parent. As a convenience, the return value of
 	 * this method will be remembered and returned by subsequent calls to
-	 * getControl(). Subclasses may modify the parent's layout if they overload
+	 * getContents(). Subclasses may modify the parent's layout if they overload
 	 * getLayout() to return null.
 	 * 
 	 * <p>
@@ -452,7 +452,7 @@ public abstract class Window implements IShellProvider {
 	 *            of layout used is determined by getLayout()
 	 * 
 	 * @return the control that will be returned by subsequent calls to
-	 *         getControl()
+	 *         getContents()
 	 */
 	protected Control createContents(Composite parent) {
 		// by default, just create a composite
