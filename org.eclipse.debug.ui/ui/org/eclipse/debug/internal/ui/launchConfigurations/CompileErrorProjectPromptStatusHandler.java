@@ -23,6 +23,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -73,10 +74,14 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 		}
 
-        boolean continueLaunch = MessageDialog.openQuestion(shell, title, message);
-        if (continueLaunch) {
+		MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.QUESTION,new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0}, 0);
+        int returnValue = dialog.open();
+        if (returnValue == 2) {
+            store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
             return Boolean.TRUE;
-		}
-		return Boolean.FALSE;
+        } else if (returnValue == 0)
+            return Boolean.TRUE;
+        else
+            return Boolean.FALSE;
 	}
 }
