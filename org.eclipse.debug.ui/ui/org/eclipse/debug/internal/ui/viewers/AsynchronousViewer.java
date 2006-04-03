@@ -646,6 +646,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 		if (currentSelection != null) {
 			updateSelection(currentSelection);
+			firePostSelectionChanged(new SelectionChangedEvent(this, currentSelection));
 		}
 	}
 	
