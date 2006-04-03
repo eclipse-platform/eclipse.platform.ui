@@ -1107,7 +1107,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
 				ArrayList toexpand = new ArrayList();
 				// if we have a selection make sure it is expanded
-				if(!fInitialSelection.isEmpty()) {
+				if(fInitialSelection != null && !fInitialSelection.isEmpty()) {
 					Object obj = fInitialSelection.getFirstElement();
 					if(obj instanceof ILaunchConfigurationType) {
 						toexpand.add(obj);
