@@ -193,8 +193,4 @@ final class RegExMessages extends NLS {
 	public static String displayString_replace_bs;
 	public static String displayString_tab;
 	public static String additionalInfo_tab;
-	public static String displayString_nl;
-	public static String additionalInfo_nl;
-	public static String displayString_cr;
-	public static String additionalInfo_cr;
 }

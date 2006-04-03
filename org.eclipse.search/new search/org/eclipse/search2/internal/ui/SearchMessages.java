@@ -36,15 +36,9 @@ public final class SearchMessages extends NLS {
 	public static String SearchesDialog_remove_label;
 	public static String SearchDropDownAction_running_message;
 	public static String Search_Error_openResultView_message;
-	public static String SearchView_refresh_progress_job_label;
-	public static String SearchView_update_title_job_name;
 	public static String Search_Error_openResultView_title;
 	public static String ShowSearchesAction_label;
 	public static String ShowSearchesAction_tooltip;
-	public static String ShowSearchesAction_dialog_title;
-	public static String ShowSearchesAction_dialog_message;
-	public static String SearchView_empty_message;
-	public static String SearchView_title_search;
 	public static String SearchView_showIn_menu;
 	public static String SearchesDialog_title;
 	public static String SearchesDialog_message;
@@ -54,11 +48,6 @@ public final class SearchMessages extends NLS {
 	public static String RemoveAllMatchesAction_tooltip;
 	public static String ShowNextResultAction_label;
 	public static String ShowNextResultAction_tooltip;
-	public static String SortDropDownActon_label;
-	public static String SortDropDownActon_tooltip;
-	public static String SortDropDownActon_ascending_label;
-	public static String SortDropDownActon_descending_label;
-	public static String SortDropDownActon_nosort_label;
 	public static String ShowPreviousResultAction_label;
 	public static String ShowPreviousResultAction_tooltip;
 	public static String RemoveMatchAction_label;
@@ -80,7 +69,6 @@ public final class SearchMessages extends NLS {
 	public static String InternalSearchUI_error_unexpected;
 	public static String NewSearchUI_error_title;
 	public static String NewSearchUI_error_label;
-	public static String AnnotationHighlighter_error_badLocation;
 	public static String AnnotationHighlighter_error_noDocument;
 	public static String EditorAccessHighlighter_error_badLocation;
 	public static String PinSearchViewAction_label;
@@ -88,7 +76,6 @@ public final class SearchMessages extends NLS {
 	public static String SearchPageRegistry_error_creating_extensionpoint;
     public static String TextSearchGroup_submenu_text;
     public static String FindInWorkspaceActionDelegate_text;
-    public static String FindInRecentScopeActionDelegate_text;
     public static String FindInProjectActionDelegate_text;
     public static String FindInWorkingSetActionDelegate_text;
     public static String FindInFileActionDelegate_text;

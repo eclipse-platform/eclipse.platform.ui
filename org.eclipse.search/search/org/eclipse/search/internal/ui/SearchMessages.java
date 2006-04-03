@@ -16,6 +16,7 @@ public final class SearchMessages extends NLS {
 
 	private static final String BUNDLE_NAME= "org.eclipse.search.internal.ui.SearchMessages";//$NON-NLS-1$
 
+
 	private SearchMessages() {
 		// Do not instantiate
 	}
@@ -77,7 +78,6 @@ public final class SearchMessages extends NLS {
 	public static String Search_Error_createSearchPage_message;
 	public static String Search_Error_createSorter_title;
 	public static String Search_Error_createSorter_message;
-	public static String Search_Error_incorrectIconLocation_message;
 	public static String SearchPage_containingText_text;
 	public static String SearchPage_containingText_hint;
 	public static String SearchPage_browse;
@@ -123,10 +123,6 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchPage_limited_format;
 	public static String WorkspaceScope;
 	public static String WorkingSetScope;
-	public static String SelectionScope;
-	public static String FileScope;
-	public static String EnclosingProjectsScope;
-	public static String EnclosingProjectScope;
 	public static String ScopePart_group_text;
 	public static String ScopePart_selectedResourcesScope_text;
 	public static String ScopePart_enclosingProjectsScope_text;
@@ -198,5 +194,6 @@ public final class SearchMessages extends NLS {
 	public static String ReplaceDialog2_nomatches_error;
     public static String SearchPreferencePage_textSearchEngine;
 	public static String TextSearchEngineRegistry_defaulttextsearch_label;
-    public static String SearchPreferencePage_textSearchUI;
+	public static String FileSearchQuery_singularPatternWithFileExt;
+	public static String FileSearchQuery_pluralPatternWithFileExt;
 }

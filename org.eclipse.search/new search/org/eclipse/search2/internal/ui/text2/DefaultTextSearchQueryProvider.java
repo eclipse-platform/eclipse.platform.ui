@@ -16,17 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
-import org.eclipse.search.internal.ui.text.FileSearchPage;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
-
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.SearchView;
 
 public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 
@@ -64,30 +57,9 @@ public class DefaultTextSearchQueryProvider extends TextSearchQueryProvider {
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(ws, getPreviousFileNamePatterns(), false);
 		return new FileSearchQuery(selectedText, false, true, scope);
 	}
-
-	private FileSearchQuery findLastUsedOldQuery() {
-		ISearchResultViewPart searchView= InternalSearchUI.getInstance().getSearchViewManager().getActiveSearchView();
-		if (searchView instanceof SearchView) {
-			FileSearchPage searchPage= (FileSearchPage) ((SearchView) searchView).getSearchPageRegistry().findPageForPageId("org.eclipse.search.text.FileSearchResultPage", false); //$NON-NLS-1$
-			if (searchPage != null) {
-				AbstractTextSearchResult searchResult= searchPage.getInput();
-				if (searchResult instanceof FileSearchResult) {
-					ISearchQuery query= searchResult.getQuery();
-					if (query instanceof FileSearchQuery) {
-						return (FileSearchQuery) query;
-					}
-				}
-			}
-		}
-		return null;	
-	}
 	
 	private String[] getPreviousFileNamePatterns() {
-		FileSearchQuery lastQuery= findLastUsedOldQuery();
-		if (lastQuery != null) {
-			return lastQuery.getSearchScope().getFileNamePatterns();
-		}
-		return null;
+		return new String[] { "*" }; //$NON-NLS-1$
 	}
 	
 }

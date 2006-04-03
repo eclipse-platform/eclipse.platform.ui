@@ -269,13 +269,14 @@ public class TextSearchVisitor {
 		// thus it would do so for all binary files.
 		try {
 			int limit= FileCharSequenceProvider.BUFFER_SIZE;
-			int i= 0;
-			for (i= 0; i < limit && seq.charAt(i) != 0; i++) {
+			for (int i= 0; i < limit; i++) {
+				if (seq.charAt(i) == '\0') {
+					return true;
+				}
 			}
-			return i < limit;
 		} catch (IndexOutOfBoundsException e) {
-			return false;
 		}
+		return false;
 	}
 
 	private void locateMatches(IFile file, CharSequence searchInput) throws CoreException {

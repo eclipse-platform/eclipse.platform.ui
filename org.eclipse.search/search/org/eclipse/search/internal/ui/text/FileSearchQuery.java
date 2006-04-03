@@ -40,10 +40,13 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		private final AbstractTextSearchResult fResult;
 		private final boolean fIsFileSearchOnly;
+		private final boolean fSearchInBinaries;
 		
-		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly) {
+		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
+			fSearchInBinaries= searchInBinaries;
+			
 		}
 		
 		public boolean acceptFile(IFile file) throws CoreException {
@@ -51,6 +54,13 @@ public class FileSearchQuery implements ISearchQuery {
 				fResult.addMatch(new FileMatch(file, 0, 0));
 			}
 			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.core.text.TextSearchRequestor#reportBinaryFile(org.eclipse.core.resources.IFile)
+		 */
+		public boolean reportBinaryFile(IFile file) {
+			return fSearchInBinaries;
 		}
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
@@ -88,10 +98,22 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		Pattern searchPattern= getSearchPattern();
 		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
+		boolean searchInBinaries= !isScopeAllFileTypes();
 		
-		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileSearchOnly);
+		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileSearchOnly, searchInBinaries);
 		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
+	
+	private boolean isScopeAllFileTypes() {
+		String[] fileNamePatterns= fScope.getFileNamePatterns();
+		for (int i= 0; i < fileNamePatterns.length; i++) {
+			if ("*".equals(fileNamePatterns[i])) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	public String getLabel() {
 		return SearchMessages.FileSearchQuery_label; 
@@ -103,17 +125,29 @@ public class FileSearchQuery implements ISearchQuery {
 	
 	public String getResultLabel(int nMatches) {
 		String searchString= getSearchString();
-		if (nMatches == 1) {
-			if (searchString.length() > 0) {
-				Object[] args= { searchString, fScope.getDescription() };
-				return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args); 
+		if (searchString.length() > 0) {
+			// text search
+			if (isScopeAllFileTypes()) {
+				// search all file extensions
+				if (nMatches == 1) {
+					Object[] args= { searchString, fScope.getDescription() };
+					return Messages.format(SearchMessages.FileSearchQuery_singularLabel, args);
+				}
+				Object[] args= { searchString, new Integer(nMatches), fScope.getDescription() };
+				return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
 			}
+			// search selected file extensions
+			if (nMatches == 1) {
+				Object[] args= { searchString, fScope.getDescription(), fScope.getFilterDescription() };
+				return Messages.format(SearchMessages.FileSearchQuery_singularPatternWithFileExt, args);
+			}
+			Object[] args= { searchString, new Integer(nMatches), fScope.getDescription(), fScope.getFilterDescription() };
+			return Messages.format(SearchMessages.FileSearchQuery_pluralPatternWithFileExt, args);
+		}
+		// file search
+		if (nMatches == 1) {
 			Object[] args= { fScope.getFilterDescription(), fScope.getDescription() };
 			return Messages.format(SearchMessages.FileSearchQuery_singularLabel_fileNameSearch, args); 
-		}
-		if (searchString.length() > 0) {
-			Object[] args= { searchString, new Integer(nMatches), fScope.getDescription() };
-			return Messages.format(SearchMessages.FileSearchQuery_pluralPattern, args); 
 		}
 		Object[] args= { fScope.getFilterDescription(), new Integer(nMatches), fScope.getDescription() };
 		return Messages.format(SearchMessages.FileSearchQuery_pluralPattern_fileNameSearch, args); 
@@ -130,7 +164,7 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		Pattern searchPattern= getSearchPattern();
 		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
-		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileSearchOnly);
+		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileSearchOnly, true);
 		
 		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}
