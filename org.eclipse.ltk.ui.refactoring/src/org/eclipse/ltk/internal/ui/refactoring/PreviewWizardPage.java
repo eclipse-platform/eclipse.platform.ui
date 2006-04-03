@@ -34,13 +34,18 @@ import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -218,6 +223,15 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 		public Menu getMenu(Menu parent) {
 			return null;
+		}
+		public void runWithEvent(Event event) {
+			ToolItem toolItem= (ToolItem) event.widget;
+			ToolBar toolBar= toolItem.getParent();
+			Menu menu= getMenu(toolBar);
+			Rectangle toolItemBounds= toolItem.getBounds();
+			Point location= toolBar.toDisplay(toolItemBounds.x, toolItemBounds.y + toolItemBounds.height);
+			menu.setLocation(location);
+			menu.setVisible(true);
 		}
 		public void executed(Action action) {
 			if (fActiveAction == action)
