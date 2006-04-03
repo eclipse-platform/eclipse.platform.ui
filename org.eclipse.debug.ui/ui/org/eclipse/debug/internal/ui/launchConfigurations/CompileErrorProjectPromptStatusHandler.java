@@ -74,12 +74,12 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 		}
 
-		MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.QUESTION,new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0}, 0);
+		MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.QUESTION,new String[] {LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
         int returnValue = dialog.open();
-        if (returnValue == 2) {
+        if (returnValue == 0) {
             store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
             return Boolean.TRUE;
-        } else if (returnValue == 0)
+        } else if (returnValue == 1)
             return Boolean.TRUE;
         else
             return Boolean.FALSE;
