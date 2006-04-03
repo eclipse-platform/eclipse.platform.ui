@@ -100,13 +100,13 @@ public class ViewerState extends AbstractViewerState {
 			if (index < item.getItemCount()) {
 				item = item.getItem(index);
 			} else {
-				return null;
+				break; // return partial path
 			}		
 			element = item.getData();
 			if (element != null) {
 				elements.add(element);
 			} else {
-				return null;
+				break; // return partial path
 			}			
 		}
 		
