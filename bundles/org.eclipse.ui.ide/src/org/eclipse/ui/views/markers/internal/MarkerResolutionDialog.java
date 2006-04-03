@@ -22,14 +22,18 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -49,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
@@ -186,8 +191,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
-						addMatching
-								.setEnabled(getSelectedWorkbenchResolution() != null);
+
+						WorkbenchMarkerResolution resolution = getSelectedWorkbenchResolution();
+						if (resolution == null
+								|| markerMap.containsKey(resolution))
+							addMatching.setEnabled(false);
+						else
+							addMatching.setEnabled(true);
 						markersTable.refresh();
 					}
 				});
@@ -310,7 +320,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		addMatching.setText(MarkerMessages.MarkerResolutionDialog_AddOthers);
 		addMatching
 				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
-		addMatching.setEnabled(getMatchingButtonEnablement());
+		addMatching.setEnabled(true);
 		addMatching.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -439,16 +449,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Return whether or not the add button should be enabled.
-	 * 
-	 * @return boolean
-	 */
-	private boolean getMatchingButtonEnablement() {
-
-		return getSelectedResolution() != null;
-	}
-
-	/**
 	 * Create the table for the markers/
 	 * 
 	 * @param control
@@ -456,6 +456,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	private void createMarkerTable(Composite control) {
 		markersTable = CheckboxTableViewer.newCheckList(control, SWT.BORDER
 				| SWT.V_SCROLL);
+
+		createTableColumns();
 
 		markersTable.setContentProvider(new IStructuredContentProvider() {
 			/*
@@ -496,19 +498,77 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			}
 		});
 
-		markersTable.setLabelProvider(new LabelProvider() {
+		markersTable.setLabelProvider(new ITableLabelProvider() {
+
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
+			 *      int)
 			 */
-			public String getText(Object element) {
-				return Util.getResourceName((IMarker) element);
+			public Image getColumnImage(Object element, int columnIndex) {
+				if (columnIndex == 0)
+					return Util.getImage(((IMarker) element).getAttribute(
+							IMarker.SEVERITY, -1));
+				return null;
 			}
 
-			public Image getImage(Object element) {
-				return Util.getImage(((IMarker) element).getAttribute(
-						IMarker.SEVERITY, -1));
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+			 *      int)
+			 */
+			public String getColumnText(Object element, int columnIndex) {
+				if (columnIndex == 0)
+					return Util.getResourceName((IMarker) element);
+				int line = ((IMarker) element).getAttribute(IMarker.LINE_NUMBER, -1);
+				if (line < 0) {
+					return MarkerMessages.Unknown;
+				}	    	   
+    	        return NLS.bind(
+    	        		MarkerMessages.label_lineNumber,
+    	        		Integer.toString(line));
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+			 */
+			public void addListener(ILabelProviderListener listener) {
+				// do nothing
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+			 */
+			public void dispose() {
+				// do nothing
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+			 *      java.lang.String)
+			 */
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+			 */
+			public void removeListener(ILabelProviderListener listener) {
+				// do nothing
+
 			}
 		});
 
@@ -530,6 +590,26 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		markersTable.setInput(this);
 		markersTable.setAllChecked(true);
+	}
+
+	/**
+	 * Create the table columns for the receiver.
+	 */
+	private void createTableColumns() {
+		TableLayout layout = new TableLayout();
+		markersTable.getTable().setLayout(layout);
+		markersTable.getTable().setLinesVisible(true);
+
+		// Description column
+		layout.addColumnData(new ColumnPixelData(200, true, true));
+		TableColumn tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
+		tc.setResizable(true);
+
+		//Line column
+		layout.addColumnData(new ColumnPixelData(50, true, true));
+		tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
+		tc.setResizable(true);
+
 	}
 
 	/**
