@@ -11,12 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
-import java.util.Date;
-
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -25,11 +21,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Represents an event inside a multi-day event editor.
+ * Represents a graphical item inside a multi-day event editor.
  * 
  * @since 3.2
  */
-public class Event extends Canvas implements IEvent {
+public class CalendarableTimedEvent extends Canvas  {
 
 	private Label label = null;
 
@@ -60,7 +56,7 @@ public class Event extends Canvas implements IEvent {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public Event(Composite parent, int style) {
+	public CalendarableTimedEvent(Composite parent, int style) {
 		super(parent, style);
 		initialize();
 	}
@@ -78,75 +74,5 @@ public class Event extends Canvas implements IEvent {
         this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE));
         this.setLayout(fillLayout);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#reset()
-	 */
-	public void reset() {
-		label.setText("");
-		label.setImage(null);
-		startTime = null;
-		endTime = null;
-	}
-
-	private Date startTime = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#getStartTime()
-	 */
-	public Date getStartTime() {
-		return startTime;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#setStartTime(java.util.Date)
-	 */
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-	
-	private Date endTime = null;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#getEndTime()
-	 */
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#setEndTime(java.util.Date)
-	 */
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#getImage()
-	 */
-	public Image getImage() {
-		return label.getImage();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#setImage(org.eclipse.swt.graphics.Image)
-	 */
-	public void setImage(Image image) {
-		label.setImage(image);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#getText()
-	 */
-	public String getText() {
-		return label.getText();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEvent#setText(java.lang.String)
-	 */
-	public void setText(String string) {
-		label.setText(string);
-	}
-
+		
 } // @jve:decl-index=0:visual-constraint="10,10"

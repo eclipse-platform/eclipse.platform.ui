@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
@@ -17,11 +17,60 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Represents a SWT control that displays a calenderable event.
+ * Represents a calenderable event that can be displayed in an SWT UI.
  * 
  * @since 3.2
  */
-public interface IEvent extends ISWTCanvas {
+public interface ICalendarable {
+	
+	/**
+	 * Disposes of the operating system resources associated with
+	 * the receiver and all its descendents. After this method has
+	 * been invoked, the receiver and all descendents will answer
+	 * <code>true</code> when sent the message <code>isDisposed()</code>.
+	 * Any internal connections between the widgets in the tree will
+	 * have been removed to facilitate garbage collection.
+	 *
+	 * @see #addDisposeListener
+	 * @see #removeDisposeListener
+	 */
+	void dispose();
+
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notifed when the widget is disposed. When the widget is
+	 * disposed, the listener is notified by sending it the
+	 * <code>widgetDisposed()</code> message.
+	 *
+	 * @param listener the listener which should be notified when the receiver is disposed
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 *
+	 * @see DisposeListener
+	 * @see #removeDisposeListener
+	 */
+	void addDisposeListener(DisposeListener listener);
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notifed when the widget is disposed.
+	 * @param listener the listener which should no longer be notified when the receiver is disposed
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 *
+	 * @see DisposeListener
+	 * @see #addDisposeListener
+	 */	
+	void removeDisposeListener(DisposeListener listener);
+	
 	/**
 	 * Reset the event object to its default state.  This method does not
 	 * dispose any Color or Image objects that may be set into it.

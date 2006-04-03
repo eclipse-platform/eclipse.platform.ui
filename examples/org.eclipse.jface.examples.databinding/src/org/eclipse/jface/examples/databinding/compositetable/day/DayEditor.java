@@ -8,6 +8,7 @@ import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.IRowConstructionListener;
 import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
@@ -43,22 +44,19 @@ public class DayEditor extends Composite implements IEventEditor {
 		this.setLayout(new FillLayout());
 	}
 
-	private int numberOfDays = -1;
-	private int numberOfDivisionsInHour = -1;
+	
+	private CalendarableModel model = new CalendarableModel();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
 	 */
 	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
-		this.numberOfDays = numberOfDays;
-		this.numberOfDivisionsInHour = numberOfDivisionsInHour;
+		model.setTimeBreakdown(numberOfDays, numberOfDivisionsInHour);
 		
-		if (numberOfDivisionsInHour < 1) {
-			throw new IllegalArgumentException("There must be at least one division in the hour");
-		}
 		if (compositeTable != null) {
 			compositeTable.dispose();
 		}
+		
 		createCompositeTable(numberOfDays, numberOfDivisionsInHour);
 	}
 
@@ -132,50 +130,48 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public void setDefaultStartHour(int defaultStartHour) {
 		this.defaultStartHour = defaultStartHour;
+		startHour = defaultStartHour;	// temporary; used for layout purposes
+		refresh();
 	}
 	
-	private EventCountProvider eventCountProvider = null;
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
 	 */
 	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
-		this.eventCountProvider = eventCountProvider;
+		model.setDayEventCountProvider(eventCountProvider);
 		refresh();
 	}
 	
-	private EventContentProvider eventContentProvider = null;
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
-		this.eventContentProvider = eventContentProvider;
+		model.setEventContentProvider(eventContentProvider);
 		refresh();
 	}
-	
-	private Date startDate = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
 	 */
 	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+		model.setStartDate(startDate);
+		refresh();
 	}
 
 	/**
 	 * Refresh everything in the display.
 	 */
 	private void refresh() {
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
-		
+		model.refresh(date);
+		refresh();
 	}
+
 
 } // @jve:decl-index=0:visual-constraint="10,10"
 

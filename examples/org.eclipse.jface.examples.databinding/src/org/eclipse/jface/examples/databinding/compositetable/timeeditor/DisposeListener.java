@@ -11,21 +11,20 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 
-import java.util.Date;
-
 /**
- * A strategy pattern object that can refresh all of the event controls
- * for a given day.
+ * A calendarable dispose listener because Calendarable objects don't have
+ * any SWT parent.
  * 
  * @since 3.2
  */
-public abstract class EventContentProvider {
+public interface DisposeListener {
+
 	/**
-	 * Refreshes the contents of the specified event controls for the specified
-	 * day.
+	 * Called when the calendarable object is about to be removed from the
+	 * GUI.  GUI elements hooked up to the calenderable should then dispose
+	 * themselves.
 	 * 
-	 * @param day The day
-	 * @param controls The controls to refresh
+	 * @param sender The Calendarable being disposed.
 	 */
-	abstract public void refresh(Date day, ICalendarable[] controls);
+	public void widgetDisposed(Calendarable sender);
 }
