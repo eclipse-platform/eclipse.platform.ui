@@ -16,13 +16,17 @@ import java.util.Set;
 import org.eclipse.core.runtime.*;
 
 /**
- * An abstract change set collector that is not tied to a particular type of change set.
+ * An abstract class that managers a collection of change sets.
  */
-public abstract class ChangeSetCollector {
+public abstract class ChangeSetManager {
 
     private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
     private Set sets = new HashSet();
     
+    /**
+     * Return the list of listeners registered with this change set manager.
+     * @return the list of listeners registered with this change set manager
+     */
     protected Object[] getListeners() {
         return listeners.getListeners();
     }

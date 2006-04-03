@@ -26,7 +26,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -206,7 +206,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
      */
     protected CVSChangeSetCapability createChangeSetCapability() {
         return new CVSChangeSetCapability() {
-            public SubscriberChangeSetCollector getActiveChangeSetManager() {
+            public ActiveChangeSetManager getActiveChangeSetManager() {
                 return CVSUIPlugin.getPlugin().getChangeSetManager();
             }
             /* (non-Javadoc)

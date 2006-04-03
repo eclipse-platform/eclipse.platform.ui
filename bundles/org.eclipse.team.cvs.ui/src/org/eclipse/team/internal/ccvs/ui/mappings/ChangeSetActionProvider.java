@@ -371,7 +371,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 		Utils.syncExec(runnable, ctrl);
     }
 
-	private SubscriberChangeSetCollector getActiveChangeSetManager() {
+	private ActiveChangeSetManager getActiveChangeSetManager() {
 		return CVSUIPlugin.getPlugin().getChangeSetManager();
 	}
 

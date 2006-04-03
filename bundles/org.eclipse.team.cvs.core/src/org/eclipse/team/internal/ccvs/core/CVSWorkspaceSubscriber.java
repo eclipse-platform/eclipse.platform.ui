@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 
 /**
  * CVSWorkspaceSubscriber
@@ -415,4 +416,10 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (adapter == ActiveChangeSetManager.class) {
+			return CVSProviderPlugin.getPlugin().getChangeSetManager();
+		}
+		return super.getAdapter(adapter);
+	}
 }

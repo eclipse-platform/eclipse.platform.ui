@@ -16,7 +16,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.internal.core.Policy;
 
-public class BatchedChangeSetCollector extends ChangeSetCollector {
+/**
+ * A change set manager that batches change event notification.
+ */
+public class BatchingChangeSetManager extends ChangeSetManager {
 
 	private ILock lock = Platform.getJobManager().newLock();
 	
@@ -25,9 +28,9 @@ public class BatchedChangeSetCollector extends ChangeSetCollector {
 		Set added = new HashSet();
 		Set removed = new HashSet();
 		Map changed = new HashMap();
-		private final BatchedChangeSetCollector collector;
+		private final BatchingChangeSetManager collector;
 		
-		public CollectorChangeEvent(BatchedChangeSetCollector collector) {
+		public CollectorChangeEvent(BatchingChangeSetManager collector) {
 			this.collector = collector;
 		}
 
@@ -83,7 +86,7 @@ public class BatchedChangeSetCollector extends ChangeSetCollector {
 			return (IPath[])changed.get(set);
 		}
 
-		public BatchedChangeSetCollector getSource() {
+		public BatchingChangeSetManager getSource() {
 			return collector;
 		}
 	}

@@ -38,7 +38,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
-public class CheckedInChangeSetCollector extends BatchedChangeSetCollector implements ILogsFetchedListener {
+public class CheckedInChangeSetCollector extends BatchingChangeSetManager implements ILogsFetchedListener {
 
 	/*
      * Constant used to store the log entry handler in the configuration so it can

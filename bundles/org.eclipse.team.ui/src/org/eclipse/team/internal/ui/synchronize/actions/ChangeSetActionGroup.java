@@ -371,7 +371,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
      * Return the change set manager for the current page.
      * @return the change set manager for the current page
      */
-    protected SubscriberChangeSetCollector getActiveChangeSetManager() {
+    protected ActiveChangeSetManager getActiveChangeSetManager() {
         return getChangeSetCapability().getActiveChangeSetManager();
     }
 

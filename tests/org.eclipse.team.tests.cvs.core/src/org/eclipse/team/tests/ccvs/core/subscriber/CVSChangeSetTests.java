@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -206,7 +206,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
         SynchronizeViewTestAdapter.getCollector(workspaceSubscriber);
         ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
         ChangeSetCapability capability = ((IChangeSetProvider)participant).getChangeSetCapability();
-        SubscriberChangeSetCollector activeManager = capability.getActiveChangeSetManager();
+        SubscriberChangeSetManager activeManager = (SubscriberChangeSetManager)capability.getActiveChangeSetManager();
         activeManager.waitUntilDone(eventLoopProgressMonitor);
         SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
         ChangeSetModelManager manager = (ChangeSetModelManager)page.getConfiguration().getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
@@ -215,7 +215,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
         return provider.getModelRoot();
     }
 
-    private SubscriberChangeSetCollector getActiveChangeSetManager() {
+    private ActiveChangeSetManager getActiveChangeSetManager() {
         return CVSUIPlugin.getPlugin().getChangeSetManager();
     }
     
@@ -225,7 +225,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
      */
     private void assertInActiveSet(IResource[] resources, ActiveChangeSet set) throws CoreException {
         assertResourcesAreTheSame(resources, set.getResources(), true);
-        ISynchronizeModelElement root = getModelRoot(getActiveChangeSetManager().getSubscriber());
+        ISynchronizeModelElement root = getModelRoot(((SubscriberChangeSetManager)getActiveChangeSetManager()).getSubscriber());
         ChangeSetDiffNode node = getChangeSetNodeFor(root, set);
         assertNotNull("Change set " + set.getTitle() + " did not appear in the sync view", node);
         IResource[] outOfSync = getOutOfSyncResources(node);
@@ -328,7 +328,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
      * resources that are not part of an active change set.
      */
     private void assertInRootSet(IResource[] resources) throws CoreException {
-        ISynchronizeModelElement[] nodes = getNonChangeSetRoots(getModelRoot(getActiveChangeSetManager().getSubscriber()));
+        ISynchronizeModelElement[] nodes = getNonChangeSetRoots(getModelRoot(((SubscriberChangeSetManager)getActiveChangeSetManager()).getSubscriber()));
         List list = new ArrayList();
         for (int i = 0; i < nodes.length; i++) {
             ISynchronizeModelElement element = nodes[i];
@@ -404,7 +404,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
         IFile newFile = newFolder.getFile("file.txt");
         newFile.create(new ByteArrayInputStream("Hi There".getBytes()), false, null);
         // Create an active commit set and assert that it appears in the sync view
-        SubscriberChangeSetCollector manager = getActiveChangeSetManager();
+        ActiveChangeSetManager manager = getActiveChangeSetManager();
         ActiveChangeSet set = manager.createSet("test", new IDiff[0]);
         manager.add(set);
         assertInActiveSet(new IResource[] { }, set);

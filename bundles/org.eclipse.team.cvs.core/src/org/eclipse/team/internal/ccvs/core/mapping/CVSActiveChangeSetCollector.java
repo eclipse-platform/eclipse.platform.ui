@@ -12,9 +12,9 @@ package org.eclipse.team.internal.ccvs.core.mapping;
 
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetManager;
 
-public class CVSActiveChangeSetCollector extends SubscriberChangeSetCollector {
+public class CVSActiveChangeSetCollector extends SubscriberChangeSetManager {
 
 	public CVSActiveChangeSetCollector(Subscriber subscriber) {
 		super(subscriber);

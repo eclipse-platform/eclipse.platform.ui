@@ -31,7 +31,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * methods in response to seed set changes. 
  * @since 3.1
  */
-public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
+public abstract class SyncInfoSetChangeSetCollector extends ChangeSetManager {
     
     private final ISynchronizePageConfiguration configuration;
     private ChangeSetModelProvider provider;

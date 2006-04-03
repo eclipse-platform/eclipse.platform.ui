@@ -37,12 +37,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
 import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -80,8 +79,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * The repository manager
 	 */
 	private RepositoryManager repositoryManager;
-	
-    private CVSActiveChangeSetCollector changeSetManager;
 
 	/**
 	 * CVSUIPlugin constructor
@@ -265,13 +262,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		}
 		return repositoryManager;
 	}
-	
-    public synchronized SubscriberChangeSetCollector getChangeSetManager() {
-        if (changeSetManager == null) {
-            changeSetManager = new CVSActiveChangeSetCollector(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
-        }
-        return changeSetManager;
-    }
     
 	/**
 	 * Initializes the table of images used in this plugin.
@@ -648,9 +638,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
             // Don't let the console bring down the CVS UI
             log(IStatus.ERROR, "Errors occurred starting the CVS console", e); //$NON-NLS-1$
         }
-
-		// Must load the change set manager on startup since it listens to deltas
-		getChangeSetManager();
 		
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {
@@ -680,7 +667,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			
 			if (console != null)
 			    console.shutdown();
-			getChangeSetManager().dispose();
 		} finally {
 			super.stop(context);
 		}
@@ -745,5 +731,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public boolean isUseProjectNameOnCheckout() {
 		return getPreferenceStore().getBoolean(ICVSUIConstants.PREF_USE_PROJECT_NAME_ON_CHECKOUT);
+	}
+
+	public ActiveChangeSetManager getChangeSetManager() {
+		return CVSProviderPlugin.getPlugin().getChangeSetManager();
 	}
 }

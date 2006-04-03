@@ -75,7 +75,7 @@ public class CommitSetTests extends EclipseTest {
      */
     protected ActiveChangeSet createCommitSet(String title, IFile[] files, boolean manageSet) throws CoreException {
         assertIsModified(getName(), files);
-        SubscriberChangeSetCollector manager = CVSUIPlugin.getPlugin().getChangeSetManager();
+        ActiveChangeSetManager manager = CVSUIPlugin.getPlugin().getChangeSetManager();
         ActiveChangeSet set = manager.createSet(title, files);
         assertEquals("Not all files were added to the set", files.length, set.getResources().length);
         if (manageSet) {

@@ -24,7 +24,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.core.subscribers.*;
-import org.eclipse.team.internal.core.subscribers.BatchedChangeSetCollector.CollectorChangeEvent;
+import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
@@ -35,7 +35,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class ChangeSetContentProvider extends ResourceModelContentProvider implements ITreePathContentProvider {
 
-	private final class CollectorListener implements IChangeSetChangeListener, BatchedChangeSetCollector.IChangeSetCollectorChangeListener {
+	private final class CollectorListener implements IChangeSetChangeListener, BatchingChangeSetManager.IChangeSetCollectorChangeListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#setAdded(org.eclipse.team.internal.core.subscribers.ChangeSet)
 		 */
@@ -472,7 +472,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		List result = new ArrayList();
 		ChangeSetCapability csc = getChangeSetCapability();
 		if (csc.supportsActiveChangeSets()) {
-			SubscriberChangeSetCollector collector = csc.getActiveChangeSetManager();
+			ActiveChangeSetManager collector = csc.getActiveChangeSetManager();
 			ChangeSet[] sets = collector.getSets();	
 			for (int i = 0; i < sets.length; i++) {
 				ChangeSet set = sets[i];
@@ -498,7 +498,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		super.init(site);
 		ChangeSetCapability csc = getChangeSetCapability();
 		if (csc.supportsActiveChangeSets()) {
-			SubscriberChangeSetCollector collector = csc.getActiveChangeSetManager();
+			ActiveChangeSetManager collector = csc.getActiveChangeSetManager();
 			collector.addListener(collectorListener);
 		}
 	}

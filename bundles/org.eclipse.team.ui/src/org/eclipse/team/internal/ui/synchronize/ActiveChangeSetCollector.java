@@ -127,7 +127,7 @@ public class ActiveChangeSetCollector implements IDiffChangeListener {
         return configuration;
     }
     
-    public SubscriberChangeSetCollector getActiveChangeSetManager() {
+    public ActiveChangeSetManager getActiveChangeSetManager() {
         ISynchronizeParticipant participant = getConfiguration().getParticipant();
         if (participant instanceof IChangeSetProvider) {  
             return ((IChangeSetProvider)participant).getChangeSetCapability().getActiveChangeSetManager();
@@ -261,7 +261,7 @@ public class ActiveChangeSetCollector implements IDiffChangeListener {
     }
 
     private ChangeSet[] findChangeSets(SyncInfo info) {
-        SubscriberChangeSetCollector manager = getActiveChangeSetManager();
+        ActiveChangeSetManager manager = getActiveChangeSetManager();
         ChangeSet[] sets = manager.getSets();
         List result = new ArrayList();
         for (int i = 0; i < sets.length; i++) {
@@ -280,7 +280,7 @@ public class ActiveChangeSetCollector implements IDiffChangeListener {
 	    if (!info.getComparator().isThreeWay()) {
 	        try {
                 // Obtain the sync info from the subscriber and use it to see if the change is local
-                info = getActiveChangeSetManager().getSubscriber().getSyncInfo(info.getLocal());
+                info = ((SubscriberChangeSetManager)getActiveChangeSetManager()).getSubscriber().getSyncInfo(info.getLocal());
             } catch (TeamException e) {
                 TeamUIPlugin.log(e);
             }

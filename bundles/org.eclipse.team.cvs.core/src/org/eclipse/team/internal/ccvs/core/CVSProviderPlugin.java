@@ -17,7 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
@@ -26,8 +26,10 @@ import org.eclipse.team.internal.ccvs.core.client.ConsoleListeners;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
 import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.util.*;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.osgi.framework.BundleContext;
 
 public class CVSProviderPlugin extends Plugin {
@@ -117,6 +119,8 @@ public class CVSProviderPlugin extends Plugin {
     private String proxyHost;
     private String proxyPort;
     private boolean useProxyAuth;
+    
+    private CVSActiveChangeSetCollector changeSetManager;
 
     private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
     private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
@@ -291,6 +295,9 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		
 		getCVSWorkspaceSubscriber();
+		
+		// Must load the change set manager on startup since it listens to deltas
+		getChangeSetManager();
 	}
 	
 	/**
@@ -309,6 +316,8 @@ public class CVSProviderPlugin extends Plugin {
 			// remove all of this plugin's save participants. This is easier than having
 			// each class that added itself as a participant to have to listen to shutdown.
 			workspace.removeSaveParticipant(this);
+			
+			getChangeSetManager().dispose();
 			
 			deleteCrashFile();
 		} finally {
@@ -701,6 +710,13 @@ public class CVSProviderPlugin extends Plugin {
             // We should probably wrap the CoreException here!
             CVSProviderPlugin.log(e);
         }
+    }
+    
+    public synchronized ActiveChangeSetManager getChangeSetManager() {
+        if (changeSetManager == null) {
+            changeSetManager = new CVSActiveChangeSetCollector(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+        }
+        return changeSetManager;
     }
     
 }

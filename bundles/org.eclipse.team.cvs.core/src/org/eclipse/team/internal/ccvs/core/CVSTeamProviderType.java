@@ -20,6 +20,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 
 
 /**
@@ -27,7 +28,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * particular project.
  */
 
-public class CVSTeamProviderType extends RepositoryProviderType {
+public class CVSTeamProviderType extends RepositoryProviderType implements IAdaptable {
 	
 	private static AutoShareJob autoShareJob;
 	
@@ -183,5 +184,14 @@ public class CVSTeamProviderType extends RepositoryProviderType {
 	 */
 	public Subscriber getSubscriber() {
 		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == ActiveChangeSetManager.class)
+			return CVSProviderPlugin.getPlugin().getChangeSetManager();
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }

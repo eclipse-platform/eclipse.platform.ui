@@ -14,10 +14,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.osgi.service.prefs.Preferences;
 
@@ -32,15 +30,16 @@ public class ActiveChangeSet extends DiffChangeSet {
     private static final String CTX_COMMENT = "comment"; //$NON-NLS-1$
     private static final String CTX_RESOURCES = "resources"; //$NON-NLS-1$
     
+    private final ActiveChangeSetManager manager;
     private String comment;
-    private final SubscriberChangeSetCollector manager;
+	private boolean userCreated;
     
 	/**
 	 * Create a change set with the given title
 	 * @param manager the manager that owns this set
      * @param title the title of the set
      */
-    public ActiveChangeSet(SubscriberChangeSetCollector manager, String title) {
+    public ActiveChangeSet(ActiveChangeSetManager manager, String title) {
         super(title);
         this.manager = manager;
     }
@@ -101,14 +100,13 @@ public class ActiveChangeSet extends DiffChangeSet {
     }
 
     private void addResource(IResource resource) throws CoreException {
-        Subscriber subscriber = getManager().getSubscriber();
-        IDiff diff = subscriber.getDiff(resource);
+        IDiff diff = getManager().getDiff(resource);
         if (diff != null) {
             add(diff);
         }
     }
 
-    private SubscriberChangeSetCollector getManager() {
+    private ActiveChangeSetManager getManager() {
         return manager;
     }
 
@@ -151,19 +149,14 @@ public class ActiveChangeSet extends DiffChangeSet {
 	                String next = tokenizer.nextToken();
 	                if (next.trim().length() > 0) {
 	                    IResource resource = getResource(root, next);
-	                    try {
-	                        // Only include the resource if it is out-of-sync
-                            if (resource != null && manager.getSubscriber().getSyncInfo(resource) != null) {
-                                try {
-                                    addResource(resource);
-                                } catch (CoreException e) {
-                                    TeamPlugin.log(e);
-                                }
-                            }
-                        } catch (TeamException e) {
-                            // Log and continue
-                            TeamPlugin.log(e);
-                        }
+                        // Only include the resource if it is out-of-sync
+                        try {
+							if (resource != null && getManager().getDiff(resource) != null) {
+								addResource(resource);
+							}
+						} catch (CoreException e) {
+							TeamPlugin.log(e);
+						}
 	                }
 	            }
             } finally {
@@ -211,4 +204,20 @@ public class ActiveChangeSet extends DiffChangeSet {
             add((IDiff[]) toAdd.toArray(new IDiff[toAdd.size()]));
         }
     }
+
+    /**
+     * Set whether this set was created by the user.
+     * @param userCreated whether this set was created by the user
+     */
+	public void setUserCreated(boolean userCreated) {
+		this.userCreated = userCreated;
+	}
+
+	/**
+	 * Return whether this set was created by the user.
+	 * @return whether this set was created by the user
+	 */
+	public boolean isUserCreated() {
+		return userCreated;
+	}
 }

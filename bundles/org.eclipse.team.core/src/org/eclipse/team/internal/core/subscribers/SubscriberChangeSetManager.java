@@ -12,15 +12,13 @@ package org.eclipse.team.internal.core.subscribers;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.*;
-import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
@@ -30,7 +28,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * This class manages the active change sets associated with a subscriber.
  */
-public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector implements IDiffChangeListener {
+public class SubscriberChangeSetManager extends ActiveChangeSetManager {
     
     private static final String PREF_CHANGE_SETS = "changeSets"; //$NON-NLS-1$
     private static final String CTX_DEFAULT_SET = "defaultSet"; //$NON-NLS-1$
@@ -38,7 +36,6 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
     private static final int RESOURCE_REMOVAL = 1;
     private static final int RESOURCE_CHANGE = 2;
     
-    private ActiveChangeSet defaultSet;
     private EventHandler handler;
     private ResourceCollector collector;
     
@@ -191,8 +188,8 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
                 if (containingSets.length == 0) {
 	                // Consider for inclusion in the default set
 	                // if the resource is not already a member of another set
-                    if (defaultSet != null) {
-                        defaultSet.add(diff);
+                    if (getDefaultSet() != null) {
+                    	getDefaultSet().add(diff);
                      }
                 } else {
                     for (int i = 0; i < containingSets.length; i++) {
@@ -265,11 +262,11 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
         }
         
         protected boolean hasMembers(IResource resource) {
-            return SubscriberChangeSetCollector.this.hasMembers(resource);
+            return SubscriberChangeSetManager.this.hasMembers(resource);
         }
     }
     
-    public SubscriberChangeSetCollector(Subscriber subscriber) {
+    public SubscriberChangeSetManager(Subscriber subscriber) {
         collector = new ResourceCollector(subscriber);
         load();
         handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); // 
@@ -282,118 +279,11 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
             if (set.getDiffTree().getChildren(resource.getFullPath()).length > 0)
             	return true;
         }
-        if (defaultSet != null)
-            return (defaultSet.getDiffTree().getChildren(resource.getFullPath()).length > 0);
+        if (getDefaultSet() != null)
+            return (getDefaultSet().getDiffTree().getChildren(resource.getFullPath()).length > 0);
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.core.subscribers.ChangeSetCollector#add(org.eclipse.team.internal.core.subscribers.ChangeSet)
-     */
-    public void add(ChangeSet set) {
-        Assert.isTrue(set instanceof ActiveChangeSet);
-        super.add(set);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.core.subscribers.DiffTreeChangeSetCollector#handleSetAdded(org.eclipse.team.internal.core.subscribers.ChangeSet)
-     */
-    protected void handleSetAdded(ChangeSet set) {
-    	Assert.isTrue(set instanceof ActiveChangeSet);
-    	super.handleSetAdded(set);
-    	handleAddedResources(set, ((ActiveChangeSet)set).internalGetDiffTree().getDiffs());
-    }
-    
-    /**
-     * Return whether the manager allows a resource to
-     * be in multiple sets. By default, a resource
-     * may only be in one set.
-     * @return whether the manager allows a resource to
-     * be in multiple sets.
-     */
-    protected boolean isSingleSetPerResource() {
-        return true;
-    }
-    
-    /**
-     * Create a commit set with the given title and files. The created
-     * set is not added to the control of the commit set manager
-     * so no events are fired. The set can be added using the
-     * <code>add</code> method.
-     * @param title the title of the commit set
-     * @param diffs the files contained in the set
-     * @return the created set
-     */
-    public ActiveChangeSet createSet(String title, IDiff[] diffs) {
-        ActiveChangeSet commitSet = doCreateSet(title);
-        if (diffs != null && diffs.length > 0) {
-            commitSet.add(diffs);
-        }
-        return commitSet;
-    }
-
-    /**
-     * Create a change set with the given name.
-     * @param name the name of the change set
-     * @return the created change set
-     */
-	protected ActiveChangeSet doCreateSet(String name) {
-		return new ActiveChangeSet(this, name);
-	}
-
-    /**
-     * Create a change set containing the given files if
-     * they have been modified locally.
-     * @param title the title of the commit set
-     * @param files the files contained in the set
-     * @return the created set
-     * @throws CoreException
-     */
-    public ActiveChangeSet createSet(String title, IFile[] files) throws CoreException {
-        List infos = new ArrayList();
-        for (int i = 0; i < files.length; i++) {
-            IFile file = files[i];
-            IDiff diff = getDiff(file);
-            if (diff != null) {
-                infos.add(diff);
-            }
-        }
-        return createSet(title, (IDiff[]) infos.toArray(new IDiff[infos.size()]));
-    }
-
-    /**
-     * Make the given set the default set into which all new modifications
-     * that are not already in another set go.
-     * @param set the set which is to become the default set
-     */
-    public void makeDefault(ActiveChangeSet set) {
-        // The default set must be an active set
-        if (!contains(set)) {
-            add(set);
-        }
-        ActiveChangeSet oldSet = defaultSet;
-        defaultSet = set;
-        fireDefaultChangedEvent(oldSet, defaultSet);
-    }
-
-    /**
-     * Return the set which is currently the default or
-     * <code>null</code> if there is no default set.
-     * @return the default change set
-     */
-    public ActiveChangeSet getDefaultSet() {
-        return defaultSet;
-    }
-    /**
-     * Return whether the given set is the default set into which all
-     * new modifications will be placed.
-     * @param set the set to test
-     * @return whether the set is the default set
-     */
-    public boolean isDefault(ActiveChangeSet set) {
-        return set == defaultSet;
-    }
-    
     /**
      * Return the sync info for the given resource obtained
      * from the subscriber.
@@ -401,7 +291,7 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
      * @return the sync info for the resource
      * @throws CoreException
      */
-    protected IDiff getDiff(IResource resource) throws CoreException {
+    public IDiff getDiff(IResource resource) throws CoreException {
         Subscriber subscriber = getSubscriber();
         return subscriber.getDiff(resource);
     }
@@ -412,19 +302,6 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
      */
     public Subscriber getSubscriber() {
         return collector.getSubscriber();
-    }
-
-    protected boolean isModified(IDiff diff) {
-        if (diff != null) {
-        	if (diff instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) diff;
-				int dir = twd.getDirection();
-				return dir == IThreeWayDiff.OUTGOING || dir == IThreeWayDiff.CONFLICTING;
-			} else {
-				return diff.getKind() != IDiff.NO_CHANGE;
-			}
-        }
-        return false;
     }
 
     /* (non-Javadoc)
@@ -457,8 +334,8 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
 			    ((ActiveChangeSet)set).save(child);
 			}
 		}
-		if (defaultSet != null) {
-		    prefs.put(CTX_DEFAULT_SET, defaultSet.getTitle());
+		if (getDefaultSet() != null) {
+		    prefs.put(CTX_DEFAULT_SET, getDefaultSet().getTitle());
 		}
 		try {
             prefs.flush();
@@ -477,8 +354,8 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
                 Preferences childPrefs = prefs.node(string);
                 ActiveChangeSet set = createSet(string, childPrefs);
                 if (!set.isEmpty()) {
-	            	if (defaultSet == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
-	            	    defaultSet = set;
+	            	if (getDefaultSet() == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
+	            	    makeDefault(set);
 	            	}
 	            	add(set);
                 }
@@ -521,59 +398,6 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
         return getSubscriber().getName();
     }
 
-    private IPath[] getAllResources(IDiffChangeEvent event) {
-    	Set allResources = new HashSet();
-		IDiff[] addedResources = event.getAdditions();
-		for (int i = 0; i < addedResources.length; i++) {
-			IDiff diff = addedResources[i];
-			allResources.add(diff.getPath());
-		}
-		IDiff[] changedResources = event.getChanges();
-		for (int i = 0; i < changedResources.length; i++) {
-			IDiff diff = changedResources[i];
-			allResources.add(diff.getPath());
-		}
-		IPath[] removals = event.getRemovals();
-		for (int i = 0; i < removals.length; i++) {
-			IPath path = removals[i];
-			allResources.add(path);
-		}
-        return (IPath[]) allResources.toArray(new IPath[allResources.size()]);
-    }
-
-    private void handleAddedResources(ChangeSet set, IDiff[] diffs) {
-        if (isSingleSetPerResource()) {
-            IResource[] resources = new IResource[diffs.length];
-            for (int i = 0; i < resources.length; i++) {
-				resources[i] = ((DiffChangeSet)set).getDiffTree().getResource(diffs[i]);
-			}
-	        // Remove the added files from any other set that contains them
-            ChangeSet[] sets = getSets();
-            for (int i = 0; i < sets.length; i++) {
-                ChangeSet otherSet = sets[i];
-	            if (otherSet != set) {
-	                otherSet.remove(resources);
-	            }
-	        }
-        }
-    }
-    
-    private void handleSyncSetChange(IResourceDiffTree tree, IDiff[] addedDiffs, IPath[] allAffectedResources) {
-        ChangeSet changeSet = getChangeSet(tree);
-        if (tree.isEmpty() && changeSet != null) {
-            remove(changeSet);
-        }
-        fireResourcesChangedEvent(changeSet, allAffectedResources);
-        handleAddedResources(changeSet, addedDiffs);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.core.subscribers.ChangeSetCollector#getChangeSetSyncSetChangeListener()
-     */
-    protected IDiffChangeListener getDiffTreeListener() {
-        return this;
-    }
-
     /**
      * Wait until the collector is done processing any events.
      * This method is for testing purposes only.
@@ -592,13 +416,4 @@ public class SubscriberChangeSetCollector extends DiffTreeChangeSetCollector imp
 		}
 		monitor.worked(1);
     }
-
-	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
-        IResourceDiffTree tree = (IResourceDiffTree)event.getTree();
-        handleSyncSetChange(tree, event.getAdditions(), getAllResources(event));
-	}
-
-	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
-		// ignore
-	}
 }

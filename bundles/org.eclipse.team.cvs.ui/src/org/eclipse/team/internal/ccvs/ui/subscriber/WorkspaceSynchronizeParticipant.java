@@ -26,8 +26,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -171,7 +170,7 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
         /* (non-Javadoc)
          * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#getActiveChangeSetManager()
          */
-        public SubscriberChangeSetCollector getActiveChangeSetManager() {
+        public ActiveChangeSetManager getActiveChangeSetManager() {
             return CVSUIPlugin.getPlugin().getChangeSetManager();
         }
 	}

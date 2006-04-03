@@ -18,10 +18,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CommitSetDialog;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class WorkspaceChangeSetCapability extends ModelParticipantChangeSetCapability {
@@ -79,7 +80,7 @@ public class WorkspaceChangeSetCapability extends ModelParticipantChangeSetCapab
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#getActiveChangeSetManager()
      */
-    public SubscriberChangeSetCollector getActiveChangeSetManager() {
+    public ActiveChangeSetManager getActiveChangeSetManager() {
         return CVSUIPlugin.getPlugin().getChangeSetManager();
     }
     

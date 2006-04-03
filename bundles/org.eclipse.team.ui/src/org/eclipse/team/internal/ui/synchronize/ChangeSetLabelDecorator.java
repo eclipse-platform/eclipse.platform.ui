@@ -27,7 +27,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 public class ChangeSetLabelDecorator extends LabelProvider implements ILabelDecorator, IFontDecorator{
 
 	private Font boldFont;
-	private SubscriberChangeSetCollector collector;
+	private ActiveChangeSetManager collector;
 
     public ChangeSetLabelDecorator(ISynchronizePageConfiguration configuration) {
         ISynchronizeParticipant participant = configuration.getParticipant();

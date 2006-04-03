@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
@@ -62,7 +62,7 @@ public abstract class ChangeSetCapability {
      * set for the participant associated with this capability or
      * <code>null</code> if active change sets are not supported.
      */
-    public SubscriberChangeSetCollector getActiveChangeSetManager() {
+    public ActiveChangeSetManager getActiveChangeSetManager() {
         return null;
     }
     
