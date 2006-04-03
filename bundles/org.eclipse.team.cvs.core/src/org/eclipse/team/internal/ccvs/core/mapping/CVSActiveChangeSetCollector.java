@@ -14,12 +14,18 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetManager;
 
+/**
+ * The CVS Active change set manager
+ */
 public class CVSActiveChangeSetCollector extends SubscriberChangeSetManager {
 
 	public CVSActiveChangeSetCollector(Subscriber subscriber) {
 		super(subscriber);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager#doCreateSet(java.lang.String)
+	 */
 	protected ActiveChangeSet doCreateSet(String name) {
 		return new CVSActiveChangeSet(this, name);
 	}

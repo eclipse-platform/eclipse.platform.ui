@@ -84,7 +84,13 @@ public class CommitWizard extends ResizableWizard {
                 op.addModesForExtensions(fModesForExtensionsForOneTime);
                 op.addModesForNames(fModesForNamesForOneTime);
                 op.run(monitor);
-                new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment).run(monitor);
+                CommitOperation commitOperation = new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment) {
+                	public boolean consultModelsForMappings() {
+                		// Do not consult models from the commit wizard
+                		return false;
+                	}
+                };
+				commitOperation.run(monitor);
             } catch (InvocationTargetException e) {
                 throw CVSException.wrapException(e);
             }
@@ -291,7 +297,7 @@ public class CommitWizard extends ResizableWizard {
 			// Ignore
 		}
     }
-
+	
 	public static void run(IWorkbenchPart part, Shell shell, final ResourceTraversal[] traversals) throws CVSException {
         try {
         	final IResource [][] resources = new IResource[][] { null };

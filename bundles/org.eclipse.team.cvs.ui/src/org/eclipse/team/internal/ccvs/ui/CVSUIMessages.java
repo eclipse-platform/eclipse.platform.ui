@@ -32,11 +32,15 @@ public class CVSUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
 	}
 	
+	public static String CommitAction_0;
+	public static String CommitAction_1;
+	public static String CommitAction_2;
 	public static String CompareRevisionAction_Local;
 	public static String CompareRevisionAction_Revision;
 	public static String CVSHistoryPage_CollapseAllAction;
 	public static String CVSHistoryPage_CollapseAllTooltip;
 	public static String CVSHistoryPage_FilterOn;
+	public static String CVSPreferencesPage_46;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String OpenRevisionAction_DeletedRevMessage;
 	public static String OpenRevisionAction_DeletedRevTitle;

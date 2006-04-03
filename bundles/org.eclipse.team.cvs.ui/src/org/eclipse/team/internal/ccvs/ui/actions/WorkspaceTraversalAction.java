@@ -17,18 +17,21 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
-import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.mapping.BuildScopeOperation;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -47,19 +50,21 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return getSelectedResourceMappings(CVSProviderPlugin.getTypeId());
     }
 
-    protected static ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-        CompoundResourceTraversal traversal = new CompoundResourceTraversal();
-        for (int i = 0; i < mappings.length; i++) {
-            ResourceMapping mapping = mappings[i];
-            ResourceTraversal[] traversals = mapping.getTraversals(context, monitor);
-            traversal.addTraversals(traversals);
-        }
-        return traversal.asTraversals();
+    private static ResourceTraversal[] getTraversals(IWorkbenchPart part, ISynchronizationScopeManager manager, IProgressMonitor monitor) throws CoreException {
+    	try {
+    		BuildScopeOperation op = new BuildScopeOperation(part, manager);
+    		op.run(monitor);
+    		return manager.getScope().getTraversals();
+    	} catch (InvocationTargetException e) {
+			throw TeamException.asTeamException(e);
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
+		}
     }
     
-    private static IResource[] getRootTraversalResources(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+    private static IResource[] getRootTraversalResources(ISynchronizationScopeManager manager, IProgressMonitor monitor) throws CoreException {
     	Set result = new HashSet();
-    	ResourceTraversal[] traversals = getTraversals(mappings, context, monitor);
+    	ResourceTraversal[] traversals = getTraversals(null, manager, monitor);
     	for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
             IResource[] resources = traversal.getResources();
@@ -78,14 +83,20 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
     }
     
     protected IResource[] getResourcesToCompare(final Subscriber subscriber) throws InvocationTargetException {
-        return getResourcesToCompare(getCVSResourceMappings(), subscriber);
+    	ISynchronizationScopeManager manager = new SynchronizationScopeManager("",  //$NON-NLS-1$
+    			getCVSResourceMappings(), SubscriberResourceMappingContext.createContext(subscriber), true);
+    	try {
+    		return getResourcesToCompare(manager);
+    	} finally {
+    		manager.dispose();
+    	}
     }
     
     protected ResourceMappingContext getResourceMappingContext() {
 		return SubscriberResourceMappingContext.createContext(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
 	}
 
-	public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {
+	public static IResource[] getResourcesToCompare(final ISynchronizationScopeManager manager) throws InvocationTargetException {
         // Determine what resources need to be synchronized.
         // Use a resource mapping context to include any relevant remote resources
         final IResource[][] resources = new IResource[][] { null };
@@ -94,8 +105,7 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
                         resources[0] = getRootTraversalResources(
-                                mappings, 
-                                SubscriberResourceMappingContext.createContext(subscriber), 
+                                manager, 
                                 monitor);
                     } catch (CoreException e) {
                         throw new InvocationTargetException(e);
@@ -165,5 +175,34 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
 			}
 		});
 		return hasChange[0];
+	}
+	
+	/**
+	 * Return the complete set of traversals to be targeted by the action
+	 * including those that are included by consulting the models.
+	 * 
+	 * @param monitor
+	 *            a progress monitor
+	 * @return the complete set of traversals to be targeted by the action
+	 * @throws CoreException
+	 */
+	protected ResourceTraversal[] getTraversals(IProgressMonitor monitor) throws CoreException {
+		SynchronizationScopeManager scopeManager = getScopeManager();
+		try {
+			return getTraversals(getTargetPart(), scopeManager, monitor);
+		} finally {
+			scopeManager.dispose();
+		}
+	}
+	
+	/**
+	 * Return a scope manager that provides the scope for the action.
+	 * @return a scope manager that provides the scope for the action
+	 */
+	protected SynchronizationScopeManager getScopeManager() {
+		return new SynchronizationScopeManager(
+    			"",  //$NON-NLS-1$
+    			getCVSResourceMappings(), 
+    			getResourceMappingContext(), true);
 	}
 }

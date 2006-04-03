@@ -25,6 +25,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInfoFilter;
@@ -43,6 +44,10 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
 	private final int type;
 
+	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels) {
+		return new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels);
+	}
+	
 	public static WorkspaceSubscriberContext createContext(ISynchronizationScopeManager manager, int type) {
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, manager, type);

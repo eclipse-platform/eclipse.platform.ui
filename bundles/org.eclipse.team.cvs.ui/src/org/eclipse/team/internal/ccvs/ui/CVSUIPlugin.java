@@ -565,6 +565,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, MessageDialogWithToggle.PROMPT);
 		store.setDefault(ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE, MessageDialogWithToggle.PROMPT);
 		store.setDefault(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS, MessageDialogWithToggle.PROMPT);
+		store.setDefault(ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, MessageDialogWithToggle.NEVER);
 		
 		store.setDefault(ICVSUIConstants.PREF_UPDATE_HANDLING, ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);
 		store.setDefault(ICVSUIConstants.PREF_UPDATE_PREVIEW, ICVSUIConstants.PREF_UPDATE_PREVIEW_IN_DIALOG);

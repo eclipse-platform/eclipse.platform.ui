@@ -12,13 +12,20 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for checking in files to a CVS provider.
@@ -26,15 +33,44 @@ import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
  */
 public class CommitAction extends WorkspaceTraversalAction {
 	
+	private final class CommitScopeManager extends SynchronizationScopeManager {
+		private boolean includeChangeSets;
+
+		private CommitScopeManager(ResourceMapping[] mappings, ResourceMappingContext context, boolean models) {
+			super("", mappings, context, models); //$NON-NLS-1$
+			includeChangeSets = isIncludeChangeSets();
+		}
+
+		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
+			if (includeChangeSets)
+				return ((CVSActiveChangeSetCollector)CVSUIPlugin.getPlugin().getChangeSetManager()).adjustInputTraversals(traversals);
+			return super.adjustInputTraversals(traversals);
+		}
+	}
+
 	/*
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		final ResourceTraversal[][] traversals = new ResourceTraversal[][] { null };
+		PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException, InterruptedException {
+	            try {
+	            	monitor.beginTask(CVSUIMessages.CommitAction_0, 100);
+	                traversals[0] = getTraversals(Policy.subMonitorFor(monitor, 80));
+	            } catch (CoreException e) {
+	                throw new InvocationTargetException(e);
+	            } finally {
+	            	monitor.done();
+	            }
+            }
+        });
         run(new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
 	            try {
-	                CommitWizard.run(getTargetPart(), getShell(), getTraversals(getCVSResourceMappings(), getResourceMappingContext(), monitor));
+	            	CommitWizard.run(getTargetPart(), getShell(), traversals[0]);
 	            } catch (CoreException e) {
 	                throw new InvocationTargetException(e);
 	            }
@@ -68,5 +104,47 @@ public class CommitAction extends WorkspaceTraversalAction {
 	 */
 	public String getId() {
 		return ICVSUIConstants.CMD_COMMIT;
-}
+	}
+	
+	protected SynchronizationScopeManager getScopeManager() {
+		return new CommitScopeManager(getCVSResourceMappings(), getResourceMappingContext(), true);
+	}
+
+	protected boolean isIncludeChangeSets() {
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String option = store.getString(ICVSUIConstants.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT);
+		if (option.equals(MessageDialogWithToggle.ALWAYS))
+			return true; // no, always switch
+		
+		if (option.equals(MessageDialogWithToggle.NEVER))
+			return false; // no, never switch
+		
+	    // Ask the user whether to switch
+		final int[] result = new int[] { 0 };
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
+						getShell(),
+						CVSUIMessages.CommitAction_1, 
+						CVSUIMessages.CommitAction_2, 
+						CVSUIMessages.ShowAnnotationOperation_4,   
+						false /* toggle state */,
+						store,
+						ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS);
+				
+				result[0] = m.getReturnCode();
+			}
+		}, getShell());
+		
+		switch (result[0]) {
+		// yes
+		case IDialogConstants.YES_ID:
+		case IDialogConstants.OK_ID :
+		    return true;
+		// no
+		case IDialogConstants.NO_ID :
+		    return false;
+		}
+		return false;
+	}
 }

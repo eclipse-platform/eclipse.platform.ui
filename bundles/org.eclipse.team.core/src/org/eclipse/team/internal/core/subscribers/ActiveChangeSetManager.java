@@ -14,9 +14,11 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 
 /**
  * A change set manager that contains sets that represent collections of
@@ -278,5 +280,33 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
     public ActiveChangeSet getDefaultSet() {
         return defaultSet;
     }
+    
+	/**
+	 * If the given traversals contain any resources in the active change sets, ensure
+	 * that the traversals cover all the resources in the overlapping change set.
+	 * @param traversals the traversals
+	 * @return the traversals adjusted to contain all the resources of intersecting change sets
+	 */
+	public ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
+		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
+		traversal.addTraversals(traversals);
+		ChangeSet[] sets = getSets();
+		for (int i = 0; i < sets.length; i++) {
+			ChangeSet set = sets[i];
+			handleIntersect(traversal, set);
+		}
+		return traversal.asTraversals();
+	}
+
+	private void handleIntersect(CompoundResourceTraversal traversal, ChangeSet set) {
+		IResource[] resources = set.getResources();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (traversal.isCovered(resource, IResource.DEPTH_ZERO)) {
+				traversal.addResources(resources, IResource.DEPTH_ZERO);
+				return;
+			}
+		}
+	}
 
 }

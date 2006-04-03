@@ -68,7 +68,7 @@ public class CompoundResourceTraversal {
 		}
 	}
 
-	private boolean isCovered(IResource resource, int depth) {
+	public boolean isCovered(IResource resource, int depth) {
 		IPath fullPath = resource.getFullPath();
 		// Regardless of the depth, look for a deep folder that covers the resource
 		for (Iterator iter = deepFolders.iterator(); iter.hasNext();) {
@@ -164,7 +164,7 @@ public class CompoundResourceTraversal {
 				IResource.DEPTH_ZERO);
 	}
 
-	private void addResources(IResource[] resources, int depth) {
+	public void addResources(IResource[] resources, int depth) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			addResource(resource, depth);

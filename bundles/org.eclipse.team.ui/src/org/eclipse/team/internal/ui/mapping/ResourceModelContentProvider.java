@@ -358,10 +358,11 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	public TreePath[] getParents(Object element) {
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
-			IResource[] resourcePath = new IResource[resource.getFullPath().segmentCount()];
+			IResource parent = resource.getParent();
+			IResource[] resourcePath = new IResource[parent.getFullPath().segmentCount()];
 			for (int i = resourcePath.length - 1; i >= 0; i--) {
-				resourcePath[i] = resource;
-				resource = resource.getParent();
+				resourcePath[i] = parent;
+				parent = parent.getParent();
 			}
 			TreePath treePath = TreePath.EMPTY;
 			for (int i = 0; i < resourcePath.length; i++) {

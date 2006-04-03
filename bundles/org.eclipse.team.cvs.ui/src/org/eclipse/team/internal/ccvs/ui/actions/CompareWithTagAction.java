@@ -44,7 +44,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 			return;
 		}
 		
-        // Create a subscriber that can cover all projects invlived
+        // Create a subscriber that can cover all projects involved
         CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
 		if (isShowModelSync()) {
 			try {

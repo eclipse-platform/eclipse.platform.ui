@@ -13,9 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
@@ -25,9 +24,7 @@ import org.eclipse.team.ui.synchronize.*;
 public class ModelSynchronizeWizard extends ModelParticipantWizard {
 
 	public static ISynchronizeParticipant createWorkspaceParticipant(ResourceMapping[] selectedMappings) {
-		ISynchronizationScopeManager manager = new SubscriberScopeManager(
-				CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), selectedMappings, 
-				CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
+		ISynchronizationScopeManager manager = WorkspaceSubscriberContext.createWorkspaceScopeManager(selectedMappings, true);
 		WorkspaceModelParticipant p =  new WorkspaceModelParticipant( 
 				WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY));
 		return p;

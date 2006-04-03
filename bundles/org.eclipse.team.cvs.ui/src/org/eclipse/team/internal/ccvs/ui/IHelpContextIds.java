@@ -88,7 +88,8 @@ public interface IHelpContextIds {
 	public static final String PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS = PREFIX + "change_perspective_on_show_annotations"; //$NON-NLS-1$
 	public static final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS = PREFIX + "allow_empty_commit_comment"; //$NON-NLS-1$
 	public static final String PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS = PREFIX + "show_annotations_perspective"; //$NON-NLS-1$
-
+	public static final String PREF_INCLUDE_CHANGE_SETS_IN_COMMIT = PREFIX + "include_change_sets"; //$NON-NLS-1$
+	
 	public static final String PREF_TREAT_NEW_FILE_AS_BINARY = PREFIX + "treat_new_files_as_binary_pref"; //$NON-NLS-1$
 	public static final String PREF_DETERMINE_SERVER_VERSION = PREFIX + "determine_server_version"; //$NON-NLS-1$
 	public static final String PREF_CONFIRM_MOVE_TAG = PREFIX + "confirm_move_tag"; //$NON-NLS-1$

@@ -19,8 +19,6 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
-import org.eclipse.team.core.subscribers.SubscriberScopeManager;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
@@ -32,7 +30,8 @@ import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
 
 public class WorkspaceModelParticipant extends
 	CVSModelSynchronizeParticipant implements IChangeSetProvider {
@@ -219,8 +218,7 @@ public class WorkspaceModelParticipant extends
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), 
-				mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), true);
+		return WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true);
 	}
 	
     public ChangeSetCapability getChangeSetCapability() {

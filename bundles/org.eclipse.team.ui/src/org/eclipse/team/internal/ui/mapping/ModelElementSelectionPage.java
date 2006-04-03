@@ -52,8 +52,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			// TODO
 			manager.initialize(new NullProgressMonitor());
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Utils.handleError(getShell(), e, null, null);
 		}
 	}
 
