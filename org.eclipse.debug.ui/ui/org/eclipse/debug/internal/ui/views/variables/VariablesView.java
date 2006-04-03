@@ -424,7 +424,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		
 		if (current != null) {
 			// save state
-			fLastState = getViewerState();
+			fLastState = (AbstractViewerState) getViewerState().clone();
 			cacheViewerState(current, fLastState);
 		}		
 		
@@ -478,7 +478,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
                 if (state == null) {
                     // attempt to restore selection/expansion based on last
                     // frame
-                    state = fLastState;
+                	if (fLastState != null) {
+                		state = (AbstractViewerState) fLastState.clone();
+                	}
                 }
                 if (state != null) {
                     state.restoreState(viewer);

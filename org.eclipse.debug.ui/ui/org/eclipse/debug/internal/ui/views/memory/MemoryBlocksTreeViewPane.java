@@ -243,10 +243,12 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 	}
 	
-	class MemoryViewerState extends ViewerState
+	class MemoryViewerState extends ViewerState implements Cloneable
 	{
 		private Hashtable fPathMap = new Hashtable(); 
 		private AsynchronousTreeViewer fViewer;
+		
+		public MemoryViewerState() {}
 		public MemoryViewerState(AsynchronousTreeViewer viewer) {
 			super(viewer);
 			fViewer = viewer;
@@ -269,6 +271,16 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 
 		protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
 			return (TreePath)fPathMap.get(path);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#clone()
+		 */
+		public Object clone() {
+			MemoryViewerState clone = (MemoryViewerState) super.clone();
+			clone.fViewer = fViewer;
+			clone.fPathMap = fPathMap;
+			return clone;
 		}
 	}
 	

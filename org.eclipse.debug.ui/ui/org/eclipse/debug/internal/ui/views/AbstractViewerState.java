@@ -11,9 +11,11 @@
 package org.eclipse.debug.internal.ui.views;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.jface.viewers.TreePath;
@@ -24,11 +26,14 @@ import org.eclipse.swt.widgets.TreeItem;
  * The abstract superclass for mementos of the expanded and 
  * selected items in a tree viewer.
  */
-public abstract class AbstractViewerState {
+public abstract class AbstractViewerState implements Cloneable {
 
 	// paths to expanded elements
 	private List fSavedExpansion = null;
 	private IPath[] fSelection;
+	
+	public AbstractViewerState() {
+	}
 	
 	/**
 	 * Constructs a memento for the given viewer.
@@ -178,4 +183,33 @@ public abstract class AbstractViewerState {
 	 */
 	protected abstract TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException;
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone() {
+		AbstractViewerState clone = null;
+		try {
+			clone = (AbstractViewerState) this.getClass().newInstance();
+		} catch (InstantiationException e) {
+			return null;
+		} catch (IllegalAccessException e) {
+			return null;
+		}
+		if (fSavedExpansion != null) {
+			clone.fSavedExpansion = new ArrayList(fSavedExpansion.size());
+			Iterator iterator = fSavedExpansion.iterator();
+			while (iterator.hasNext()) {
+				IPath path = (IPath) iterator.next();
+				IPath clonePath = Path.fromPortableString(path.toPortableString());
+				clone.fSavedExpansion.add(clonePath);
+			}
+		}
+		if (fSelection != null) {
+			clone.fSelection = new IPath[fSelection.length];
+			for (int i = 0; i < fSelection.length; i++) {
+				clone.fSelection[i] = Path.fromPortableString(fSelection[i].toPortableString());
+			}
+		}
+		return clone;
+	}
 }

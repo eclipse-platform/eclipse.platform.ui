@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class ViewerState extends AbstractViewerState {
 
+	public ViewerState() {
+	}
+	
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
@@ -41,12 +44,18 @@ public class ViewerState extends AbstractViewerState {
 	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
 	 */
 	protected IPath encodeElement(TreeItem item) throws DebugException {
-		StringBuffer path = new StringBuffer(item.getText());
+		StringBuffer path = new StringBuffer();
 		TreeItem parent = item.getParentItem();
 		while (parent != null) {
-			path.insert(0, parent.getText()+'/');
-			parent = parent.getParentItem();
+			int i = parent.indexOf(item);
+			path.insert(0, i);
+			path.insert(0, '/');
+			item = parent;
+			parent = item.getParentItem();
 		}
+		Tree tree = item.getParent();
+		int i = tree.indexOf(item);
+		path.insert(0, i);
 		return new Path(path.toString());
 	}
 
@@ -55,40 +64,54 @@ public class ViewerState extends AbstractViewerState {
 	 *      org.eclipse.jface.viewers.TreeViewer)
 	 */
 	protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
-		String[] names = path.segments();
+		String[] indicies = path.segments();
+		if (indicies.length == 0) {
+			return null;
+		}
 		Tree tree = viewer.getTree();
-		TreeItem[] items = tree.getItems();
+		int index = -1;
+		try {
+			index = Integer.parseInt(indicies[0]);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		TreeItem item = null;
+		if (index < tree.getItemCount()) {
+			item = tree.getItem(index);
+		} else {
+			return null;
+		}
 		
 		List elements = new ArrayList();
 		elements.add(viewer.getInput());
-		
-		boolean pathFound = false;
-		
-		for (int i = 0; i < names.length; i++) {
-			String name = names[i];
-			TreeItem item = findItem(name, items);
-			if (item != null) {
-				pathFound = true;
-				elements.add(item.getData());
-				items = item.getItems();
-			}
+		Object element = item.getData();
+		if (element != null) {
+			elements.add(element);
+		} else {
+			return null;
 		}
 		
-		if (pathFound) {
-			return new TreePath(elements.toArray());
+		for (int i = 1; i < indicies.length; i++) {
+			try {
+				index = Integer.parseInt(indicies[i]);
+			} catch (NumberFormatException e) {
+				return null;
+			}	
+			if (index < item.getItemCount()) {
+				item = item.getItem(index);
+			} else {
+				return null;
+			}		
+			element = item.getData();
+			if (element != null) {
+				elements.add(element);
+			} else {
+				return null;
+			}			
 		}
 		
-		return null;
+		return new TreePath(elements.toArray());
 	}
 
-	private TreeItem findItem(String name, TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
-			if (item.getText().equals(name)) {
-				return item;
-			}
-		}
-		return null;
-	}
 
 }
