@@ -30,7 +30,7 @@ class JSchSession {
 	private static java.util.Hashtable pool = new java.util.Hashtable();
 
 	private static String current_ssh_home = null;
-	private static String current_pkeys = null;
+	private static String current_pkeys = ""; //$NON-NLS-1$
     private final Session session;
     private final UserInfo prompter;
     private final ICVSRepositoryLocation location;
@@ -353,30 +353,46 @@ class JSchSession {
 		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
 		String pkeys = store.getString(ISSHContants.KEY_PRIVATEKEY);
 
-		if (current_ssh_home == null || 
-			!current_ssh_home.equals(ssh_home) ||
-			!current_pkeys.equals(pkeys)) {
-			current_ssh_home = ssh_home;
-			current_pkeys = pkeys;
+		try {
+			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
+				loadKnownHosts();
+				current_ssh_home = ssh_home;
+			}
+
 			if (ssh_home.length() == 0)
 				ssh_home = CVSSSH2Plugin.SSH_HOME_DEFAULT;
 
-			try {
-			  loadKnownHosts();
-			  
-			  java.io.File file;
-			  String[] pkey=pkeys.split(","); //$NON-NLS-1$
-			  for(int i=0; i<pkey.length;i++){
-				file = new java.io.File(pkey[i]);
-			    if(!file.isAbsolute()){
-				  file = new java.io.File(ssh_home, pkey[i]);
+			if (!current_pkeys.equals(pkeys)) {
+				java.io.File file;
+				String[] pkey = pkeys.split(","); //$NON-NLS-1$
+				String[] _pkey = current_pkeys.split(","); //$NON-NLS-1$
+				current_pkeys = ""; //$NON-NLS-1$
+				for (int i = 0; i < pkey.length; i++) {
+					file = new java.io.File(pkey[i]);
+					if (!file.isAbsolute()) {
+						file = new java.io.File(ssh_home, pkey[i]);
+					}
+					if (file.exists()) {
+						boolean notyet = true;
+						for (int j = 0; j < _pkey.length; j++) {
+							if (pkey[i].equals(_pkey[j])) {
+								notyet = false;
+								break;
+							}
+						}
+						if (notyet)
+							jsch.addIdentity(file.getPath());
+						if (current_pkeys.length() == 0) {
+							current_pkeys = pkey[i];
+						} else {
+							current_pkeys += ("," + pkey[i]); //$NON-NLS-1$
+						}
+					}
 				}
-			    if (file.exists())
-			      jsch.addIdentity(file.getPath());
-			  }
-			} catch (Exception e) {
 			}
+		} catch (Exception e) {
 		}
+		
 
 		String key = getPoolKey(username, hostname, port);
 
