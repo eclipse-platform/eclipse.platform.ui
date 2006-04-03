@@ -670,6 +670,7 @@ class ProgressInfoItem extends Composite {
 		barData.right = new FormAttachment(actionBar,
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 		barData.height = MAX_PROGRESS_HEIGHT;
+		barData.width = 0;//default is too large
 		progressBar.setLayoutData(barData);
 
 		if (taskEntries.size() > 0) {
