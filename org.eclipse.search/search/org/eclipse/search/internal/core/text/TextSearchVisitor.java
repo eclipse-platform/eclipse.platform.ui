@@ -155,7 +155,9 @@ public class TextSearchVisitor {
 	private void processFiles(IFile[] files) {
 		fDocumentsInEditors= evalNonFileBufferDocuments();
         for (int i= 0; i < files.length; i++) {
-            processFile(files[i]);
+            boolean res= processFile(files[i]);
+            if (!res)
+            	break;
 		}
 		fDocumentsInEditors= null;
 	}
@@ -203,10 +205,10 @@ public class TextSearchVisitor {
 		}
 	}
 
-	public void processFile(IFile file) {
+	public boolean processFile(IFile file) {
 		try {
 		    if (!fCollector.acceptFile(file) || fMatcher == null) {
-		       return;
+		       return true;
 		    }
 		        
 			IDocument document= getOpenDocument(file);
@@ -220,7 +222,7 @@ public class TextSearchVisitor {
 				try {
 					seq= fFileCharSequenceProvider.newCharSequence(file);
 					if (hasBinaryContent(seq, file) && !fCollector.reportBinaryFile(file)) {
-						return;
+						return true;
 					}
 					locateMatches(file, seq);
 				} catch (FileCharSequenceProvider.FileCharSequenceException e) {
@@ -251,9 +253,14 @@ public class TextSearchVisitor {
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
 			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+		} catch (StackOverflowError e) {
+			String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			return false;
 		} finally {
 			updateProgressMonitor();
-		}		
+		}
+		return true;
 	}
 	
 	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {
@@ -280,26 +287,29 @@ public class TextSearchVisitor {
 	}
 
 	private void locateMatches(IFile file, CharSequence searchInput) throws CoreException {
-		fMatcher.reset(searchInput);
-		int k= 0;
-		while (fMatcher.find()) {
-			int start= fMatcher.start();
-			int end= fMatcher.end();
-			if (end != start) { // don't report 0-length matches
-				fMatchAccess.initialize(file, start, end - start, searchInput);
-				boolean res= fCollector.acceptPatternMatch(fMatchAccess);
-				if (!res) {
-					return; // no further reporting requested
+		try {
+			fMatcher.reset(searchInput);
+			int k= 0;
+			while (fMatcher.find()) {
+				int start= fMatcher.start();
+				int end= fMatcher.end();
+				if (end != start) { // don't report 0-length matches
+					fMatchAccess.initialize(file, start, end - start, searchInput);
+					boolean res= fCollector.acceptPatternMatch(fMatchAccess);
+					if (!res) {
+						return; // no further reporting requested
+					}
+				}
+				if (k++ == 20) {
+					if (fProgressMonitor.isCanceled()) {
+						throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+					}
+					k= 0;
 				}
 			}
-			if (k++ == 20) {
-				if (fProgressMonitor.isCanceled()) {
-					throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled); 
-				}
-				k= 0;
-			}
+		} finally {
+			fMatchAccess.initialize(null, 0, 0, new String()); // clear references
 		}
-		fMatchAccess.initialize(null, 0, 0, new String()); // clear references
 	}
 	
 	

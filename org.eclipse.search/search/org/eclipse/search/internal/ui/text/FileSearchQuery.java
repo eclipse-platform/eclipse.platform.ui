@@ -28,7 +28,6 @@ import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -160,7 +159,7 @@ public class FileSearchQuery implements ISearchQuery {
 	 * @return returns the status of the operation
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("", new IResource[] { file }, true); //$NON-NLS-1$
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { file }, new String[] { "*" }, true); //$NON-NLS-1$
 		
 		Pattern searchPattern= getSearchPattern();
 		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
