@@ -1344,14 +1344,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private void uninstall() {
 		Job job= fInitializationJob;
-		if (job != null) {
+		if (job != null)
 			job.cancel();
-			try {
-				job.join();
-			} catch (InterruptedException x) {
-				// ignore
-			}
-		}
 
 		synchronized (this) {
 			fState= SUSPENDED;
