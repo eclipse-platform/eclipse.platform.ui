@@ -22,11 +22,13 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
+import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -389,6 +391,9 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (parentPath.getSegmentCount() == 0)
 			return getRootElements();
 		Object first = parentPath.getFirstSegment();
+		if (!isVisibleInMode(first)) {
+			return new Object[0];
+		}
 		IResourceDiffTree diffTree;
 		Object parent = parentPath.getLastSegment();
 		if (first instanceof DiffChangeSet) {
@@ -414,6 +419,34 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return result.toArray();
 	}
 
+	private boolean isVisibleInMode(Object first) {
+		if (first instanceof ChangeSet) {
+			ChangeSet cs = (ChangeSet) first;
+			int mode = getConfiguration().getMode();
+			switch (mode) {
+			case ISynchronizePageConfiguration.BOTH_MODE:
+				return true;
+			case ISynchronizePageConfiguration.CONFLICTING_MODE:
+				return containsConflicts(cs);
+			case ISynchronizePageConfiguration.INCOMING_MODE:
+				return cs instanceof CVSCheckedInChangeSet;
+			case ISynchronizePageConfiguration.OUTGOING_MODE:
+				return cs instanceof ActiveChangeSet;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+
+	private boolean containsConflicts(ChangeSet cs) {
+		if (cs instanceof DiffChangeSet) {
+			DiffChangeSet dcs = (DiffChangeSet) cs;
+			return dcs.getDiffTree().hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), ResourceModelLabelProvider.CONFLICT_FILTER);
+		}
+		return false;
+	}
+
 	private boolean isVisible(Object object, IResourceDiffTree tree) {
 		//TODO: need to match diff direction with mode
 		if (object instanceof IResource) {
@@ -427,6 +460,12 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	public boolean hasChildren(TreePath path) {
+		if (path.getSegmentCount() == 1) {
+			Object first = path.getFirstSegment();
+			if (first instanceof ChangeSet) {
+				return isVisibleInMode(first);
+			}
+		}
 		return getChildren(path).length > 0;
 	}
 
