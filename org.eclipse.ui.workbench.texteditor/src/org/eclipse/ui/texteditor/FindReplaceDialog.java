@@ -1330,11 +1330,12 @@ class FindReplaceDialog extends Dialog {
 			initIncrementalBaseLocation();
 
 		String findString= getFindString();
+		boolean somethingFound= false;
 
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
+				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
 				if (somethingFound) {
 					statusMessage(""); //$NON-NLS-1$
 				} else {
@@ -1347,7 +1348,7 @@ class FindReplaceDialog extends Dialog {
 			}
 		}
 		writeSelection();
-		updateButtonState();
+		updateButtonState(!somethingFound);
 	}
 
 	/**
