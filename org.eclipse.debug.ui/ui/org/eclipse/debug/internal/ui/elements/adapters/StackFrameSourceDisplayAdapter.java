@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -48,6 +49,8 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 					DebugEvent event = events[i];
 					switch (event.getKind()) {
 						case DebugEvent.TERMINATE:
+							clearCachedModel(event.getSource());
+							// fall thru
 						case DebugEvent.RESUME:
 							if (!event.isEvaluation()) {
 								clearSourceSelection(event.getSource());
@@ -160,5 +163,23 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 			InstructionPointerManager.getDefault().removeAnnotations(target);
 		}
 	}	
+	
+	/**
+	 * Clear any cached results associated with the given object.
+	 * 
+	 * @param source
+	 */
+	private synchronized void clearCachedModel(Object source) {
+		if (fPrevFrame != null) {
+			IDebugTarget target = null;
+			if (source instanceof IDebugElement) {
+				target = ((IDebugElement)source).getDebugTarget();
+			}
+			if (fPrevFrame.getDebugTarget().equals(target)) {
+				fPrevFrame = null;
+				fPrevResult = null;
+			}
+		}
+	}
 	
 }
