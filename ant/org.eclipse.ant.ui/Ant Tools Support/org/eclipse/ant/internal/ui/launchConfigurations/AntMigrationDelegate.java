@@ -62,7 +62,7 @@ public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		if (mappedResources != null && mappedResources.length > 0) {
 			return false;
 		}
-		return true;
+		return getFileForCandidate(candidate) != null;
 	}
 
 	/* (non-Javadoc)
