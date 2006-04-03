@@ -20,8 +20,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -48,7 +46,7 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		// pop up dialog and ask what renderings to create
 		Shell shell = DebugUIPlugin.getShell();
 		
-		IDebugElement elem = getDebugElement(fCurrentSelection);
+		IDebugElement elem = getDebugElement(fCurrentContext); 
 		
 		if (elem != null)
 		{	
@@ -95,19 +93,8 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		}
 	}
 	
-	private IDebugElement getDebugElement(ISelection selection)
+	private IDebugElement getDebugElement(Object elem)
 	{
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		//only single selection of PICLDebugElements is allowed for this action
-		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
-		{
-			return null;
-		}
-
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
-
 		// if not debug element
 		if (!(elem instanceof IDebugElement))
 			return null;

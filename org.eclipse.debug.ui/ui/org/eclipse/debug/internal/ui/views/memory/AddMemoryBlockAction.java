@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,6 +36,8 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -43,10 +46,8 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 
 
@@ -55,9 +56,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.0
  */
-public class AddMemoryBlockAction extends Action implements ISelectionListener, IDebugEventSetListener{
+public class AddMemoryBlockAction extends Action implements IDebugContextListener, IDebugEventSetListener{
 	
-	protected ISelection fCurrentSelection = null;
+	protected IAdaptable fCurrentContext = null;
 	protected IMemoryBlock fLastMemoryBlock;
 	private boolean fAddDefaultRenderings = true;
 	protected IMemoryRenderingSite fSite;
@@ -81,46 +82,37 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	 * 
 	 */
 	private void initialize(IMemoryRenderingSite site) {
-		fSite = site;
 		setText(DebugUIMessages.AddMemoryBlockAction_title);
-		
-		setToolTipText(DebugUIMessages.AddMemoryBlockAction_tooltip);
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
-		
-		// get selection from Debug View
-		fSite.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		
-		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		fCurrentSelection = selection;
-		
-		// set up enablement based on current selection
-		updateAction(selection);
-		
-		DebugPlugin.getDefault().addDebugEventListener(this);
+		doInitialization(site);
 	}
-	
+
+
 	public AddMemoryBlockAction(String text, int style, IMemoryRenderingSite site)
 	{
 		super(text, style);
-		
+		doInitialization(site);	
+	}
+	
+	/**
+	 * 
+	 */
+	private void doInitialization(IMemoryRenderingSite site) {
 		fSite = site;
 		setToolTipText(DebugUIMessages.AddMemoryBlockAction_tooltip);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		
-		fSite.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		// listen for context changed
+		DebugContextManager.getDefault().addDebugContextListener(this, site.getSite().getWorkbenchWindow());
 		
-		// check to see if something is selected in the debug view since a selection event won't be generated for something selected prior to creating this action
-		ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		fCurrentSelection = selection;
-		updateAction(selection);
+		// get current context
+		fCurrentContext = DebugUITools.getDebugContext();
+		
+		// set up enablement based on current selection
+		updateAction(fCurrentContext);
 		
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		
 	}
 
 	/* (non-Javadoc)
@@ -133,25 +125,17 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		while (!exit)
 		{
 			exit = true;
-			//	get current selection from Debug View
-			 ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-			Object elem = ((IStructuredSelection)selection).getFirstElement();
-			if (!(elem instanceof IDebugElement))
-				 return;
-			// ask debug element about memeory retrieval
-			IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-			IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
-			if (standardMemRetrieval == null)
-			{
-				// if getAdapter returns null, assume debug target as memory block retrieval
-				standardMemRetrieval = debugTarget;
-			}
-			if (standardMemRetrieval == null)
+			
+			Object elem = DebugUITools.getDebugContext();
+			
+			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(elem);
+			
+			if (retrieval == null)
 				return;
 			
 			Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 			// create dialog to ask for expression/address to block
-			MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, standardMemRetrieval, prefillExp, prefillLength);
+			MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, retrieval, prefillExp, prefillLength);
 			dialog.open();
 			int returnCode = dialog.getReturnCode();
 			if (returnCode == Window.CANCEL)
@@ -184,7 +168,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			
 			final boolean finalExit = exit;
 			final Object finalElement = elem;
-			final IMemoryBlockRetrieval finalRetrieval = standardMemRetrieval;
+			final IMemoryBlockRetrieval finalRetrieval = retrieval;
 			final MonitorMemoryBlockDialog finalDialog = dialog;
 			Job job = new Job("Add Memory Block") { //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
@@ -312,15 +296,6 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		return exit;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		
-		// update enablement state based on selection from Debug View
-		updateAction(selection);
-		fCurrentSelection = selection;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
@@ -344,13 +319,9 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				srcDT = ((IDebugElement)src).getDebugTarget();
 			}
 			
-			if (fCurrentSelection instanceof IStructuredSelection)
+			if (fCurrentContext instanceof IDebugElement)
 			{
-				Object elem = ((IStructuredSelection)fCurrentSelection).getFirstElement();
-				if (elem instanceof IDebugElement)
-				{
-					selectionDT = ((IDebugElement)elem).getDebugTarget();
-				}
+				selectionDT = ((IDebugElement)fCurrentContext).getDebugTarget();
 			}
 
 			// disable action if the debug target is terminated.
@@ -373,14 +344,13 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		
 		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		fSite.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		DebugContextManager.getDefault().removeDebugContextListener(this, fSite.getSite().getWorkbenchWindow());
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)
 	{
 		IMemoryRenderingType primaryType = DebugUITools.getMemoryRenderingManager().getPrimaryRenderingType(memoryBlock);
 		IMemoryRenderingType renderingTypes[] = DebugUITools.getMemoryRenderingManager().getDefaultRenderingTypes(memoryBlock);
-		
 		
 		// create primary rendering
 		try {
@@ -433,14 +403,23 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 		return null;
 	}
 	
-	protected void updateAction(final ISelection debugContext)
+	protected void updateAction(final Object debugContext)
 	{
 		Job job = new Job("Update Add Memory Block Action") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				setEnabled(MemoryViewUtil.isValidSelection(debugContext));
+				setEnabled(MemoryViewUtil.isValidContext(debugContext));
 				return Status.OK_STATUS;
 			}};
 		job.setSystem(true);
 		job.schedule();
+	}
+
+	public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		IAdaptable context = DebugUITools.getDebugContext();
+		updateAction(context);
+		fCurrentContext = context;
+	}
+
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {		
 	}
 }

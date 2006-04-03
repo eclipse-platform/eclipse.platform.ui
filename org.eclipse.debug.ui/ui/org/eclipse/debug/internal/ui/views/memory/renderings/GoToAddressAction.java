@@ -31,8 +31,6 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -176,8 +174,7 @@ public class GoToAddressAction extends Action
 	
 	private void addNewMemoryBlock(String expression, IMemoryBlockRetrievalExtension retrieval)
 	{
-		ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
+		Object elem = DebugUITools.getDebugContext();
 		
 		if (!(elem instanceof IDebugElement))
 			return;

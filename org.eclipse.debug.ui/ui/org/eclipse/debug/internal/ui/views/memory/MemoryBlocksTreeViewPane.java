@@ -387,13 +387,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	 */
 	private void populateViewPane() {
 		
-		ISelection selected = fParent.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW); 
-		if (selected instanceof IStructuredSelection)
-		{
-			Object obj = ((IStructuredSelection)selected).getFirstElement();
-			IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(obj);
-			fRetrieval = retrieval;
-		}
+		Object context = DebugUITools.getDebugContext();
+		fRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 		
 		ISelection selection = null;
 		if (fParent.getSite().getSelectionProvider() != null)

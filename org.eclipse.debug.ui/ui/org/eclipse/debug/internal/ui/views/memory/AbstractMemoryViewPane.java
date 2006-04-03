@@ -15,17 +15,16 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.debug.core.IMemoryBlockListener;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -41,7 +40,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane{
+public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, ISelectionListener, SelectionListener, IMemoryView, ISelectionChangedListener, IMemoryViewPane, IDebugContextListener{
 	
 	public static final String BEGINNING_POPUP = "popUpBegin"; //$NON-NLS-1$
 	protected static final StructuredSelection EMPTY = new StructuredSelection();
@@ -110,12 +109,12 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		addListeners();
 		
-		// check current selection and create folder if something is already selected from debug view
-		ISelection selection = fParent.getViewSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-
-		if (MemoryViewUtil.isValidSelection(selection))
+		Object context = DebugUITools.getDebugContext();
+		if (context != null)
 		{
-			createFolder(selection);
+			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
+			if (retrieval != null)
+				createFolder(retrieval);
 		}
 		
 		fVisible = true;
@@ -127,12 +126,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
+		DebugContextManager.getDefault().addDebugContextListener(this, fParent.getSite().getWorkbenchWindow());
 	}
 	
 	protected void removeListeners()
 	{
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this);
+		DebugContextManager.getDefault().removeDebugContextListener(this, fParent.getSite().getWorkbenchWindow());
 		
 		if (fStackLayout.topControl != null)
 		{
@@ -188,35 +189,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	}	
 	
 	
-	private void createFolder(ISelection selection)
-	{
-		if (!(selection instanceof IStructuredSelection))
-			return;
-
-		//only single selection of PICLDebugElements is allowed for this action
-		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
-		{
-			return;
-		}
-
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
-
-		// if not debug element
-		if (!(elem instanceof IDebugElement))
-			return;
-
-		IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-		IMemoryBlockRetrieval memRetrieval =(IMemoryBlockRetrieval) ((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
-		
-		if (memRetrieval == null)
-		{
-			// if debug element returns null from getAdapter, assume its debug target is going to retrieve memory blocks
-			memRetrieval = debugTarget;
-		}	
-		
-		if (memRetrieval == null)
-			return;
-		
+	private void createFolder(IMemoryBlockRetrieval memRetrieval)
+	{	
 		//if we've got a tabfolder to go with the IMemoryBlockRetrieval, display it
 		if (fTabFolderForDebugView.containsKey(memRetrieval)) {
 			if (fStackLayout.topControl != (TabFolder)fTabFolderForDebugView.get(memRetrieval)) {

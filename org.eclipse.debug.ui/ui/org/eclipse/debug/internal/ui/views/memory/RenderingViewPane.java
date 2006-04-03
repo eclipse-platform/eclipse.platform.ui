@@ -424,23 +424,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 							handleMemoryBlockSelection(lastViewTab, memBlock);
 						}
 					}
-					else if (elem instanceof IDebugElement)
-					{	
-						handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
-					}
-					else
-					{
-						if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW))
-						{
-							if (lastViewTab != null)
-								lastViewTab.setEnabled(false);
-							emptyFolder();
-						}
-						
-						updateToolBarActionsEnablement();
-						return Status.OK_STATUS;
-						
-					}
 				}
 				catch(SWTException se)
 				{
@@ -748,18 +731,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}
 	
 	private void handleDebugElementSelection(final IMemoryViewTab lastViewTab, final IDebugElement element)
-	{
-		if (element.getDebugTarget() == null)
-			return;
-		
-		// don't do anything if the debug target is already terminated
-		if (element.getDebugTarget().isDisconnected() ||
-			element.getDebugTarget().isTerminated())
-		{
-			emptyFolder();
-			return;
-		}
-		
+	{	
 		// get current memory block retrieval and debug target
 		IMemoryBlockRetrieval currentRetrieve = null;
 		
@@ -792,11 +764,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		// if IMemoryBlockRetrieval is null, use debugtarget
 		if (retrieve == null)
 			retrieve = debugTarget;
-
-		if (debugTarget == null ||debugTarget.isTerminated() || debugTarget.isDisconnected()) {
-			emptyFolder();
-			return;
-		}
 
 		// if debug target has changed
 		// switch to that tab folder
@@ -1123,18 +1090,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	private IDebugTarget getSelectedDebugTarget()
 	{
-		ISelection selection = fParent.getViewSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (selection instanceof IStructuredSelection && !selection.isEmpty())
+		Object context = DebugUITools.getDebugContext();
+		if (context != null && context instanceof IDebugElement)
 		{
-			Object elem = ((IStructuredSelection)selection).getFirstElement();
-			if (elem != null)
-			{	
-				if (elem instanceof IDebugElement)
-				{	
-					return ((IDebugElement)elem).getDebugTarget();
-				}
-			}		
-			return null;
+			return ((IDebugElement)context).getDebugTarget();
 		}
         return null;
 	}
@@ -1340,5 +1299,36 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	private boolean isDisposed()
 	{
 		return fIsDisposed;
+	}
+
+	public void contextActivated(final ISelection selection, IWorkbenchPart part) {
+		
+		if (MemoryViewUtil.isValidSelection(selection))
+		{	
+			UIJob job = new UIJob("contextActivated"){ //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) 
+				{
+					if (isDisposed())
+						return Status.OK_STATUS;
+					
+					IMemoryViewTab lastViewTab = getTopMemoryTab();
+					
+					if (!(selection instanceof IStructuredSelection))
+						return Status.OK_STATUS;
+
+					Object elem = ((IStructuredSelection)selection).getFirstElement();
+					
+					if (elem instanceof IDebugElement)
+					{	
+						handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
+					}
+					return Status.OK_STATUS;
+				}};
+			job.setSystem(true);
+			job.schedule();
+		}
+	}
+
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {
 	}
 }

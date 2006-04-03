@@ -21,7 +21,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -323,12 +322,12 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				
 			if (fWindow != null)
 			{
-				DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fWindow, IDebugUIConstants.ID_DEBUG_VIEW);
+				DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fWindow);
 			}
 			
 			if (window != null)
 			{
-				DebugContextManager.getDefault().addDebugContextListener(fDebugContextListener, window, IDebugUIConstants.ID_DEBUG_VIEW);
+				DebugContextManager.getDefault().addDebugContextListener(fDebugContextListener, window);
 			}
 			fWindow = window;
 		}
@@ -337,7 +336,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			fPart = part;
 		
 		if (fWindow != null)
-			setupActionDelegate(DebugContextManager.getDefault().getActiveContext(fWindow, IDebugUIConstants.ID_DEBUG_VIEW));
+			setupActionDelegate(DebugContextManager.getDefault().getActiveContext(fWindow));
 	}
 
 }

@@ -13,16 +13,12 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
  * This is the retargettable add memory block action in the Memory View.
@@ -49,8 +45,8 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 
 	public void run() {
 		//	get current selection from Debug View
-		ISelection selection = fSite.getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		IAddMemoryBlocksTarget target = getAddMemoryBlocksTarget(selection);
+		Object debugContext = DebugUITools.getDebugContext();
+		IAddMemoryBlocksTarget target = getAddMemoryBlocksTarget(debugContext);
 		
 		if (target != null)
 		{
@@ -71,7 +67,7 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 		}
 	}
 
-	protected void updateAction(ISelection debugContext) {
+	protected void updateAction(Object debugContext) {
 		
 		try {
 			IAddMemoryBlocksTarget target = getAddMemoryBlocksTarget(debugContext);
@@ -97,9 +93,9 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 		}
 	}
 	
-	private IAddMemoryBlocksTarget getAddMemoryBlocksTarget(ISelection debugContext)
+	private IAddMemoryBlocksTarget getAddMemoryBlocksTarget(Object debugContext)
 	{
-		IMemoryBlockRetrieval standardMemRetrieval = getMemoryBlockRetrieval(debugContext);
+		IMemoryBlockRetrieval standardMemRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(debugContext);
 		
 		if (standardMemRetrieval == null)
 			return null;
@@ -115,34 +111,5 @@ public class RetargetAddMemoryBlockAction extends AddMemoryBlockAction {
 			target = (IAddMemoryBlocksTarget)((IAdaptable)standardMemRetrieval).getAdapter(IAddMemoryBlocksTarget.class);
 		}
 		return target;
-	}
-	
-	private IMemoryBlockRetrieval getMemoryBlockRetrieval(ISelection debugContext)
-	{
-		if (!(debugContext instanceof IStructuredSelection))
-		{
-			return null;
-		}
-		
-		Object elem = ((IStructuredSelection)debugContext).getFirstElement();
-		if (!(elem instanceof IDebugElement))
-		{
-			return null;
-		}
-		
-		// ask debug element about memeory retrieval
-		IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-		IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
-		if (standardMemRetrieval == null)
-		{
-			// if getAdapter returns null, assume debug target as memory block retrieval
-			standardMemRetrieval = debugTarget;
-		}
-		if (standardMemRetrieval == null)
-		{
-			return null;
-		}
-		
-		return standardMemRetrieval;
 	}
 }
