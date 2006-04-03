@@ -117,6 +117,11 @@ public class AntElementNode implements IAdaptable {
 	private IProblem fProblem;
 	
 	/**
+	 * The unique index of this element in it's parents child collection
+     */
+	private int fIndex= 0;
+	
+	/**
 	 * Only used when opening an import element to indicate the location in the imported file
 	 */
 	private int fLine;
@@ -186,9 +191,14 @@ public class AntElementNode implements IAdaptable {
                 fChildNodes= new ArrayList();
             }
             fChildNodes.add(childElement);
+            childElement.setIndex(fChildNodes.size() - 1);
         }
     }
     
+	private void setIndex(int index) {
+		fIndex= index;
+	}
+
 	protected void setParent(AntElementNode node) {
 		fParent= node;
 	}
@@ -321,10 +331,11 @@ public class AntElementNode implements IAdaptable {
 			buffer.append('/');
 			buffer.append(getElementIdentifier());
 			buffer.append('[');
-			buffer.append(getParentNode() != null ? getParentNode().getElementIndexOf(this) : 0);
+			buffer.append(fIndex);
 			buffer.append(']');
 			
 			fElementPath= buffer.toString();
+			System.out.println(fElementPath);
 		}
 		return fElementPath;
 	}
@@ -350,27 +361,27 @@ public class AntElementNode implements IAdaptable {
 		return sb;
 	}
 
-	private int getElementIndexOf(AntElementNode child) {
-		if (getChildNodes() == null) {
-			return -1;
-		}
-		
-		int result= -1;
-		
-		Iterator iter= getChildNodes().iterator();
-		AntElementNode current= null;
-		while (current != child && iter.hasNext()) {
-			current= (AntElementNode) iter.next();
-			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
-				result++;
-		}
-		
-		if (current != child) {
-			return -1;
-		}
-		
-		return result;
-	}
+//	private int getElementIndexOf(AntElementNode child) {
+//		if (getChildNodes() == null) {
+//			return -1;
+//		}
+//		
+//		int result= -1;
+//		
+//		Iterator iter= getChildNodes().iterator();
+//		AntElementNode current= null;
+//		while (current != child && iter.hasNext()) {
+//			current= (AntElementNode) iter.next();
+//			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
+//				result++;
+//		}
+//		
+//		if (current != child) {
+//			return -1;
+//		}
+//		
+//		return result;
+//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
