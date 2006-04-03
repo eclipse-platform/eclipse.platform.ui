@@ -318,7 +318,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private boolean canDiscardCurrentConfig() {				
 		if (getTabViewer().isDirty()) {
-			return showUnsavedChangesDialog();
+			if (getTabViewer().canSave()) {
+				return showSaveChangesDialog() == IDialogConstants.NO_ID;
+			}
+			return showUnsavedChangesDialog() == IDialogConstants.YES_ID;
 		}
 		return true;
 	}
@@ -868,43 +871,59 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				}
  			}
  		}
- 		ILaunchConfiguration original = getTabViewer().getOriginal();
- 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
-			// the current config is about to be deleted ignore this change
-			return;
-		}
- 		
  		if (!isEqual(input, newInput)) {
- 			ILaunchConfigurationTabGroup group = getTabGroup();
+ 			LaunchConfigurationTabGroupViewer viewer = getTabViewer();
+ 			ILaunchConfiguration original = viewer.getOriginal();
+ 	 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
+ 				return;
+ 			}
+ 			boolean deleted = false;
  			if (original != null) {
- 				boolean deleted = !original.exists();
- 				boolean renamed = false;
- 				if (newInput instanceof ILaunchConfiguration) {
- 					ILaunchConfiguration lc = (ILaunchConfiguration)newInput;
- 					renamed = getLaunchManager().getMovedFrom(lc) != null;
- 				}
-	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
-	 				IStructuredSelection sel;
-	 				if (!showUnsavedChangesDialog()) {
-	 					sel = new StructuredSelection(input);
-	 				}
-	 				else {
-	 					sel = new StructuredSelection(newInput);
-	 				}
-	 				fLaunchConfigurationView.getViewer().setSelection(sel);
-	 				return;
-	 			}
+ 				deleted = !original.exists();
  			}
-			getTabViewer().setInput(newInput);
- 			if (getTabViewer().isDirty()) {
- 				getTabViewer().handleApplyPressed();
- 			} 	
- 			ILaunchConfigurationTabGroup newGroup = getTabGroup();
- 			if (!isEqual(group, newGroup)) {
+			boolean renamed = false;
+			if (newInput instanceof ILaunchConfiguration) {
+				renamed = getLaunchManager().getMovedFrom((ILaunchConfiguration)newInput) != null;
+			}
+			Object in = input;
+ 			if (viewer.isDirty() && !deleted && !renamed) {
+ 				if(fLaunchConfigurationView != null) {
+ 					fLaunchConfigurationView.setAutoSelect(false);
+ 				}
+ 				int ret = showUnsavedChangesDialog();
+ 				boolean cansave = viewer.canSave();
+ 				if(ret == IDialogConstants.YES_ID) {
+ 					if(cansave) {
+ 						viewer.handleApplyPressed();
+ 					}
+ 					else {
+ 						viewer.handleRevertPressed();
+ 					}
+ 					in = newInput;
+ 				}
+ 				else if(ret == IDialogConstants.NO_ID) {
+ 					if(cansave) {
+ 						viewer.handleRevertPressed();
+ 						if(viewer.isDirty()) {
+ 							viewer.handleApplyPressed();
+ 						}
+ 						in = newInput;
+ 					}
+ 				}
+ 				if(fLaunchConfigurationView != null) {
+	 				if(in != null) {
+	 	 				fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(in));
+	 	 			}
+ 					fLaunchConfigurationView.setAutoSelect(true);
+ 				}
+  			}
+ 			else {
+ 				viewer.setInput(newInput);
  				if (getShell() != null && getShell().isVisible()) {
- 					resize();
+					resize();
  				}
  			}
+ 			
  		}
   	}
 	
@@ -1304,10 +1323,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Create and return a dialog that asks the user whether they want to discard
 	 * unsaved changes.
 	 *   
-	 * @return Return <code>true</code> if they chose to discard changes,
-	 * <code>false</code> otherwise.
+	 * @return the return code based on the button selected.
+	 * The value will be one of <code>YES_ID</code> or <code>NO_ID</code> from
+	 * <code>IDialogConstants</code>.
 	 */
-	private boolean showDiscardChangesDialog() {
+	private int showDiscardChangesDialog() {
 		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{getTabViewer().getWorkingCopy().getName()})); 
 		buffer.append(getTabViewer().getErrorMesssage());
 		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37); 
@@ -1319,27 +1339,29 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 												 new String[] {LaunchConfigurationsMessages.LaunchConfigurationDialog_Yes_32, 
 															   LaunchConfigurationsMessages.LaunchConfigurationDialog_No_33},  
 												 1);
+		int val = IDialogConstants.NO_ID;
 		if (dialog.open() == 0) {
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(false);
 			}
 			getTabViewer().handleRevertPressed();
+			val = IDialogConstants.YES_ID;
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(true);
 			}
-			return true;
 		}
-		return false;
+		return val;
 	}
 
 	/**
 	 * Create and return a dialog that asks the user whether they want to save
 	 * unsaved changes.  
 	 * 
-	 * @return Return <code>true </code> if they chose to save changes,
-	 * <code>false</code> otherwise.
+	 * @return the return code based on the button selected.
+	 * The value will be one of <code>YES_ID</code>, <code>NO_ID</code>, or <code>CANCEL_ID</code>, from
+	 * <code>IDialogConstants</code>.
 	 */
-	private boolean showSaveChangesDialog() {
+	private int showSaveChangesDialog() {
 		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{getTabViewer().getWorkingCopy().getName()}); 
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_changes__31, 
@@ -1351,21 +1373,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 															   LaunchConfigurationsMessages.LaunchConfigurationsDialog_c_ancel},  
 												 0);
 		int ret = dialog.open();
+		int val = IDialogConstants.CANCEL_ID;
 		if (ret == 0 || ret == 1) {
-			if (fLaunchConfigurationView != null) {
-				fLaunchConfigurationView.setAutoSelect(false);
-			}
 			if (ret == 0) {
-				getTabViewer().handleApplyPressed();
-			} else {
-				getTabViewer().handleRevertPressed();	
+				val = IDialogConstants.YES_ID;
+			} 
+			else {
+				val = IDialogConstants.NO_ID;
 			}
-			if (fLaunchConfigurationView != null) {
-				fLaunchConfigurationView.setAutoSelect(true);
-			}
-			return true;
 		}
-		return false;
+		return val;
 	}
 
 	/**
@@ -1376,7 +1393,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return returns the <code>showSaveChangesDialog</code> return value
 	 */
-	private boolean showUnsavedChangesDialog() {
+	private int showUnsavedChangesDialog() {
 		if (getTabViewer().canSave()) {
 			return showSaveChangesDialog();
 		}
