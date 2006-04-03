@@ -127,7 +127,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		gotoMarker(marker);
 	}
 	
-	public void gotoMarker(IMarker marker) {
+	private void gotoMarker(IMarker marker) {
 		
 		// Use the provided adapter if any
 		IGotoMarker gotoMarkerAdapter= (IGotoMarker)fTextEditor.getAdapter(IGotoMarker.class);
