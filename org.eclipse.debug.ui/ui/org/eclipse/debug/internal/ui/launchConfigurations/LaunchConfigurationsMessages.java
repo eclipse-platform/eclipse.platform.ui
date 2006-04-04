@@ -159,6 +159,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationTabGroupViewer_5;
     public static String LaunchConfigurationTabGroupViewer_6;
 
+	public static String SaveScopeResourcesHandler_1;
+
 	public static String SaveScopeResourcesHandler_2;
 	public static String SaveScopeResourcesHandler_3;
 
