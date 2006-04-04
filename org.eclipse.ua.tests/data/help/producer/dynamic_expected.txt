@@ -29,6 +29,9 @@ This paragraph, which has filter attribute "plugin!=my.invalid.plugin.id.012345"
    should never be filtered out.
 </p>
 
+<p id="my.paragraph.id">
+   This paragraph comes from <code>include.xhtml</code>.
+</p>
 
 </body>
 </html>
