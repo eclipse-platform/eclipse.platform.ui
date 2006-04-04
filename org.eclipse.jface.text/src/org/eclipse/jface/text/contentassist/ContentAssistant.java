@@ -323,24 +323,33 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		protected void showAssist(final int showStyle) {
-			Display d= fContentAssistSubjectControlAdapter.getControl().getDisplay();
-			if (d != null) {
-				try {
-					d.syncExec(new Runnable() {
-						public void run() {
-							if (fProposalPopup.isActive())
-								return;
-							promoteKeyListener();
-							if (showStyle == SHOW_PROPOSALS) {
-								fireSessionBeginEvent();
-								fProposalPopup.showProposals(true);
-							} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
-								fContextInfoPopup.showContextProposals(true);
-							}
+			final Control control= fContentAssistSubjectControlAdapter.getControl();
+			if (control == null)
+				return;
+			
+			final Display d= control.getDisplay();
+			if (d == null)
+				return;
+			
+			try {
+				d.syncExec(new Runnable() {
+					public void run() {
+						if (fProposalPopup.isActive())
+							return;
+						
+						if (control.isDisposed() || !control.isFocusControl())
+							return;
+						
+						promoteKeyListener();
+						if (showStyle == SHOW_PROPOSALS) {
+							fireSessionBeginEvent();
+							fProposalPopup.showProposals(true);
+						} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
+							fContextInfoPopup.showContextProposals(true);
 						}
-					});
-				} catch (SWTError e) {
-				}
+					}
+				});
+			} catch (SWTError e) {
 			}
 		}
 	}
