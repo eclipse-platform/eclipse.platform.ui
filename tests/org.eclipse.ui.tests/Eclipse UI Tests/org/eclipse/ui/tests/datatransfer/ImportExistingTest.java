@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
+import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileManipulations;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
@@ -691,6 +692,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	}
 	
 	public void testImportArchiveMultiProject(){
+		Shell shell = getShell();
 		try{
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			zipLocation = copyZipLocation();
@@ -700,6 +702,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 	        	FileUtil.deleteProject(workspaceProjects[i]);
 
 			WizardProjectsImportPage wpip = getNewWizard();
+			shell = wpip.getShell();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			projects.add("WorldHello");
@@ -739,6 +742,10 @@ public class ImportExistingTest extends DataTransferTestCase {
 			fail(e.toString());
 		} catch (CoreException e){
 			fail(e.toString());
+		}
+		finally{
+			// archive file is not closed before attempt to delete it in tearDown
+			ArchiveFileManipulations.clearProviderCache(shell);
 		}
 	}
 	
