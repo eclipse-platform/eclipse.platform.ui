@@ -919,8 +919,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
   			}
  			else {
  				viewer.setInput(newInput);
- 				if (getShell() != null && getShell().isVisible()) {
-					resize();
+ 				if(newInput != null) {
+	 				if(viewer.isDirty()) {
+	 					viewer.handleApplyPressed();
+	 				}
+	 				if (getShell() != null && getShell().isVisible()) {
+						resize();
+	 				}
  				}
  			}
  			

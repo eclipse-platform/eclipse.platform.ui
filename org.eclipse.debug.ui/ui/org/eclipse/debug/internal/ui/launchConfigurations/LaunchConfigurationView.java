@@ -384,24 +384,21 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
     private void handleConfigurationRemoved(ILaunchConfiguration configuration) {
         ILaunchConfigurationType type = null;
         TreeViewer viewer = getTreeViewer();
-		int typeIndex= -1; // The index of the deleted configuration's type
-		int configIndex= -1; // The index of the deleted configuration		
-		// Initialize data used to set the selection after deletion
-		TreeItem[] items= viewer.getTree().getItems();
-		TreeItem typeItem;
-		for (int i= 0, numTypes= items.length; (i < numTypes && type == null); i++) {
-			typeItem= items[i];
-			typeIndex= i;
-			TreeItem[] configs= typeItem.getItems();
+		int typeIndex = -1; 
+		int configIndex = -1; 		
+		TreeItem[] types = viewer.getTree().getItems();
+		TreeItem[] configs = null;
+		for (int i= 0, numTypes = types.length; (i < numTypes && type == null); i++) {
+			typeIndex = i;
+			configs = types[i].getItems();
 			for (int j= 0, numConfigs= configs.length; j < numConfigs; j++) {
 				if (configuration.equals(configs[j].getData())) {
-					configIndex= j;
-					type = (ILaunchConfigurationType)typeItem.getData();
+					configIndex = j;
+					type = (ILaunchConfigurationType)types[i].getData();
 					break;
 				}
 			}
-		}			
-			
+		}
 		viewer.remove(configuration);
 		if (getViewer().getSelection().isEmpty()) {
 			IStructuredSelection newSelection= null;
