@@ -18,33 +18,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.ui.IWorkingSet;
-
 import org.eclipse.search.core.text.TextSearchScope;
-
-import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.ScopePart;
-import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileNamePatternSearchScope extends TextSearchScope {
 
-	/**
-	 * Returns a workspace scope.
-	 * @return a workspace scope.
-	 */
-	public static FileNamePatternSearchScope newWorkspaceScope(boolean includeDerived) {
-		return new FileNamePatternSearchScope(SearchMessages.WorkspaceScope, new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, includeDerived); 
-	}
-	
 	/**
 	 * Returns a scope for the given resources.
 	 * @param description description of the scope
@@ -53,21 +37,6 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 */
 	public static FileNamePatternSearchScope newSearchScope(String description, IResource[] resources, boolean includeDerived) {
 		return new FileNamePatternSearchScope(description, removeRedundantEntries(resources, includeDerived), includeDerived);
-	}
-
-	/**
-	 * Returns a scope for the given working sets
-	 * @param description description of the scope
-	 * @param workingSets the working sets to be contained
-	 * @return a scope for the given working sets
-	 */
-	public static FileNamePatternSearchScope newSearchScope(String description, IWorkingSet[] workingSets, boolean includeDerived) {
-		return new FileNamePatternSearchScope(description, convertToResources(workingSets, includeDerived), includeDerived);
-	}
-	
-	public static FileNamePatternSearchScope newSearchScope(IWorkingSet[] workingSets, boolean includeDerived) {
-		String desc= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets));
-		return newSearchScope(desc, workingSets, includeDerived);
 	}
 	
 	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -195,24 +164,6 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 			addToList(res, curr, includeDerived);
 		}
 		return (IResource[])res.toArray(new IResource[res.size()]);
-	}
-
-	private static IResource[] convertToResources(IWorkingSet[] workingSets, boolean includeDerived) {
-		ArrayList res= new ArrayList();
-		for (int i= 0; i < workingSets.length; i++) {
-			IWorkingSet workingSet= workingSets[i];
-			if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-				return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
-			}
-			IAdaptable[] elements= workingSet.getElements();
-			for (int k= 0; k < elements.length; k++) {
-				IResource curr= (IResource) elements[k].getAdapter(IResource.class);
-				if (curr != null) {
-					addToList(res, curr, includeDerived);
-				}
-			}
-		}
-		return (IResource[]) res.toArray(new IResource[res.size()]);
 	}
 	
 	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {

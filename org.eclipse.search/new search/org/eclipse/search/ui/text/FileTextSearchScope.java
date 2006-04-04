@@ -31,8 +31,8 @@ import org.eclipse.search.core.text.TextSearchScope;
 
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
-import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.WorkingSetComparator;
 
 /**
  * A text search scope used by the file search dialog. Additionally to roots it allows to define file name
@@ -71,22 +71,22 @@ public final class FileTextSearchScope extends TextSearchScope {
 	 * @return a scope containing the resources and its children if they match the given file name patterns.
 	 */
 	public static FileTextSearchScope newSearchScope(IResource[] roots, String[] fileNamePatterns, boolean includeDerived) {
-		StringBuffer buf= new StringBuffer();
+		roots= removeRedundantEntries(roots, includeDerived);
 		
-		int n= roots.length > 3 ? 3 : roots.length;
-		for (int i= 0; i < n; i++) {
-			if (i > 0)
-				buf.append(", "); //$NON-NLS-1$
-			buf.append('\'');
-			buf.append(roots[i].getName());
-			buf.append('\'');
+		String description;
+		if (roots.length == 0) {
+			description= SearchMessages.FileTextSearchScope_scope_empty;
+		} else if (roots.length == 1) {
+			String label= SearchMessages.FileTextSearchScope_scope_single;
+			description= Messages.format(label, roots[0].getName());
+		} else if (roots.length == 2) {
+			String label= SearchMessages.FileTextSearchScope_scope_double;
+			description= Messages.format(label, new String[] { roots[0].getName(), roots[1].getName()});
+		} else {
+			String label= SearchMessages.FileTextSearchScope_scope_multiple;
+			description= Messages.format(label, new String[] { roots[0].getName(), roots[1].getName()});
 		}
-		if (roots.length > n)
-			buf.append("..."); //$NON-NLS-1$
-		
-		
-		String description= buf.toString();
-		return new FileTextSearchScope(description, removeRedundantEntries(roots, includeDerived), null, fileNamePatterns, includeDerived);
+		return new FileTextSearchScope(description, roots, null, fileNamePatterns, includeDerived);
 	}	
 
 	/**
@@ -100,7 +100,20 @@ public final class FileTextSearchScope extends TextSearchScope {
 	 * @return a scope containing the resources in the working set if they match the given file name patterns.
 	 */
 	public static FileTextSearchScope newSearchScope(IWorkingSet[] workingSets, String[] fileNamePatterns, boolean includeDerived) {
-		String description= Messages.format(SearchMessages.WorkingSetScope, ScopePart.toString(workingSets));
+		String description;
+		Arrays.sort(workingSets, new WorkingSetComparator());
+		if (workingSets.length == 0) {
+			description= SearchMessages.FileTextSearchScope_ws_scope_empty;
+		} else if (workingSets.length == 1) {
+			String label= SearchMessages.FileTextSearchScope_ws_scope_single;
+			description= Messages.format(label, workingSets[0].getLabel());
+		} else if (workingSets.length == 2) {
+			String label= SearchMessages.FileTextSearchScope_ws_scope_double;
+			description= Messages.format(label, new String[] { workingSets[0].getLabel(), workingSets[1].getLabel()});
+		} else {
+			String label= SearchMessages.FileTextSearchScope_ws_scope_multiple;
+			description= Messages.format(label, new String[] { workingSets[0].getLabel(), workingSets[1].getLabel()});
+		}
 		FileTextSearchScope scope= new FileTextSearchScope(description, convertToResources(workingSets, includeDerived), workingSets, fileNamePatterns, includeDerived);
 		return scope;
 	}

@@ -21,6 +21,16 @@ public final class SearchMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String FileTextSearchScope_scope_empty;
+	public static String FileTextSearchScope_scope_single;
+	public static String FileTextSearchScope_scope_double;
+	public static String FileTextSearchScope_scope_multiple;
+	
+	public static String FileTextSearchScope_ws_scope_empty;
+	public static String FileTextSearchScope_ws_scope_single;
+	public static String FileTextSearchScope_ws_scope_double;
+	public static String FileTextSearchScope_ws_scope_multiple;
+
 	public static String SearchDialog_title;
 	public static String SearchDialog_searchAction;
 	public static String SearchDialog_replaceAction;
@@ -123,7 +133,6 @@ public final class SearchMessages extends NLS {
 	public static String FileSearchPage_sort_by_label;
 	public static String FileSearchPage_limited_format;
 	public static String WorkspaceScope;
-	public static String WorkingSetScope;
 	public static String ScopePart_group_text;
 	public static String ScopePart_selectedResourcesScope_text;
 	public static String ScopePart_enclosingProjectsScope_text;
