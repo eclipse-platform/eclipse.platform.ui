@@ -96,7 +96,7 @@ public class AnnotationPreferenceLookup {
 	 *
 	 * @return the map between annotation type names and annotation preference fragments
 	 */
-	private Map getPreferenceFragments() {
+	private synchronized Map getPreferenceFragments() {
 		if (fFragments == null) {
 			fFragments= new HashMap();
 			MarkerAnnotationPreferences p= new MarkerAnnotationPreferences();
