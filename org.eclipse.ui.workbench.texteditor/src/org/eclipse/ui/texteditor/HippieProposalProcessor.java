@@ -240,7 +240,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		IDocument document= viewer.getDocument();
 		ArrayList completions= new ArrayList();
 		completions.addAll(fEngine.getCompletionsBackwards(document, prefix, offset));
-		completions.addAll(fEngine.getCompletionsForward(document, prefix, offset));
+		completions.addAll(fEngine.getCompletionsForward(document, prefix, offset - prefix.length(), true));
 
 		return completions;
 	}
@@ -272,7 +272,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 				IEditorInput input= textEditor.getEditorInput();
 				IDocument doc= textEditor.getDocumentProvider().getDocument(input);
 				if (!currentDocument.equals(doc))
-					suggestions.addAll(fEngine.getCompletions(doc, prefix));
+					suggestions.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
 			}
 		}
 		// add the empty suggestion

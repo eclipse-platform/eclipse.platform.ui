@@ -43,8 +43,8 @@ public class HippieCompletionTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		documents = new IDocument[5];
-		documents[0] = new Document("package ui.TestPackage;\n" + 
+		documents= new IDocument[5];
+		documents[0]= new Document("package ui.TestPackage;\n" + 
 				"\n" + 
 				"/**\n" + 
 				" * This is a testing class that tests the hippie completion engine.\n" +
@@ -56,10 +56,10 @@ public class HippieCompletionTest extends TestCase {
 				"        System.out.println(\"I will be printing Hello world!\");\n" + 
 				"    }\n" + 
 				"}");
-		documents[1] = new Document("This is a simple text file\n" + 
+		documents[1]= new Document("This is a simple text file\n" + 
 				"with some testssome test that is also used in the completion engine tests");
 		
-		documents[2] = new Document("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+		documents[2]= new Document("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 				"<plugin\n" + 
 				"   id=\"org.eclipse.ui.workbench.texteditor.tests\"\n" + 
 				"   name=\"%Plugin.name\"\n" + 
@@ -84,7 +84,7 @@ public class HippieCompletionTest extends TestCase {
 				"</plugin>\n" + 
 				"");
 		
-		documents[3] = new Document("###############################################################################\n" + 
+		documents[3]= new Document("###############################################################################\n" + 
 				"# Copyright (c) 2000, 2004 IBM Corporation and others.\n" + 
 				"# All rights reserved. This program and the accompanying materials \n" + 
 				"# are made available under the terms of the Eclipse Public License v1.0\n" + 
@@ -94,17 +94,17 @@ public class HippieCompletionTest extends TestCase {
 				"# Contributors:\n" + 
 				"#     IBM Corporation - initial API and implementation\n" + 
 				"###############################################################################\n" + 
-				"bin.includes = plugin.xml,\\\n" + 
+				"bin.includes= plugin.xml,\\\n" + 
 				"               plugin.properties,\\\n" + 
 				"               test.xml,\\\n" + 
 				"               about.html,\\\n" + 
 				"               *.jar\n" + 
 				"\n" + 
-				"src.includes = about.html\n" + 
+				"src.includes= about.html\n" + 
 				"               \n" + 
-				"source.workbenchtexteditortests.jar = src/\n" + 
+				"source.workbenchtexteditortests.jar= src/\n" + 
 				"");
-		documents[4] = new Document("/**\n" +
+		documents[4]= new Document("/**\n" +
 				" * This class tests the hippie completion functionality.\n" +
 				" * \u05D4\u05DE\u05D7\u05DC\u05E7\u05D4 \u05D4\u05D6\u05D5 \u05D1\u05D5\u05D3\u05E7\u05EA \u05D0\u05EA \u05DE\u05E0\u05D2\u05E0\u05D5\u05DF \u05D4\u05D4\u05E9\u05DC\u05DE\u05D5\u05EA\n" +
 				" * This is an arabic word - \u0647\u0630\u0627 \u0643\u0644\u0645\u0629 \u0639\u0631\u0628\u064A\u0651\u0629\n" +
@@ -114,18 +114,18 @@ public class HippieCompletionTest extends TestCase {
 				"public class HippieTester2 {\n" +
 				"\n" +
 				"\tpublic static void main(String[] args) {\n" +
-					"\t\tchar \u05DE\u05D7 = '9';\n" +   // hebrew text
-				"\t\tString $arabic\u20ACDigits = \"\u0661\u0662\u0663\u0664\u0665\u0666" + // Euro symbol in variable name, arabic digits from 1 to 6
+					"\t\tchar \u05DE\u05D7= '9';\n" +   // hebrew text
+				"\t\tString $arabic\u20ACDigits= \"\u0661\u0662\u0663\u0664\u0665\u0666" + // Euro symbol in variable name, arabic digits from 1 to 6
 									"\u2021\u0667\u0668\u0669\u0660\";\n" + // double dagger, arabic digits 7-0
-				"\t\tString $arabic\u20AAWord = \"\u0628\u064E\u0627\u0628\u0650\";\n" + // shekel (israeli) currency symbol + arabic word
-				"\t\tString \u0628\u0627\u0628 = \"\u044D\u0442\";\n" + // arabic var, russian string
-				"\t\tint \u20A31 = 3;\n" + // frank currency symbol
-				"\t\tint \u00A3\u0661\u0662\u0663 = \u20A31 + \u05DE\u05D7;\n" + // pound, arabic digits 1-3, partial hebrew word  
-				"\t\tint a\u0300\u0301b = 18;\n" + // combining diactritical marks
+				"\t\tString $arabic\u20AAWord= \"\u0628\u064E\u0627\u0628\u0650\";\n" + // shekel (israeli) currency symbol + arabic word
+				"\t\tString \u0628\u0627\u0628= \"\u044D\u0442\";\n" + // arabic var, russian string
+				"\t\tint \u20A31= 3;\n" + // frank currency symbol
+				"\t\tint \u00A3\u0661\u0662\u0663= \u20A31 + \u05DE\u05D7;\n" + // pound, arabic digits 1-3, partial hebrew word  
+				"\t\tint a\u0300\u0301b= 18;\n" + // combining diactritical marks
 				"\t\t}\n" +
 				"\t\t\n" +
 				"\tpublic void \u05D4\u05D4\u05E9(int \u0441\u0430\u043C) {\n" + // hebrew word prexif, russian word prefix
-				"\t\tString \u043B\u0443\u0447\u0448 = \"\u05D1\u05D5\u05D3\u05E7\";\n" +
+				"\t\tString \u043B\u0443\u0447\u0448= \"\u05D1\u05D5\u05D3\u05E7\";\n" +
 				"\t\tchar \u20AA129;\n" + // shekel (israeli) currency 
 				"\t}\n" +
 				"}");
@@ -135,29 +135,27 @@ public class HippieCompletionTest extends TestCase {
 	
 	public void testSearchBackwards1() {
 		try {
-			List list = fEngine.getCompletionsBackwards(documents[0], 
+			List list= fEngine.getCompletionsBackwards(documents[0], 
 					"pri", documents[0].get().indexOf("println") + 10);
 			assertEquals(list.size(), 2);
 			assertEquals(list.get(0), "ntln");
 			assertEquals(list.get(1), "nt");
 			
-			list = fEngine.getCompletionsBackwards(documents[0], 
+			list= fEngine.getCompletionsBackwards(documents[0], 
 					"pri", documents[0].getLength());
 			assertEquals(list.size(), 3);
 			assertEquals(list.get(0), "nting");
 			assertEquals(list.get(1), "ntln");
 			assertEquals(list.get(2), "nt");
 			
-			list = fEngine.getCompletionsBackwards(documents[0], 
+			list= fEngine.getCompletionsBackwards(documents[0], 
 					"pri", documents[0].get().indexOf("println") + 1);
-			assertEquals(list.size(), 2);
-			assertEquals(list.get(0), "ntln");
-            assertEquals(list.get(1), "nt");
-
-			list = fEngine.getCompletionsBackwards(documents[0], 
-					"pa", 2);
 			assertEquals(list.size(), 1);
-			assertEquals("ckage", list.get(0));
+            assertEquals(list.get(0), "nt");
+
+			list= fEngine.getCompletionsBackwards(documents[0], 
+					"pa", 2);
+			assertEquals(list.size(), 0);
 
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
@@ -166,14 +164,14 @@ public class HippieCompletionTest extends TestCase {
 	
 	public void testSearchBackwards2() {
 		try {
-			List list = fEngine.getCompletionsBackwards(documents[2], 
+			List list= fEngine.getCompletionsBackwards(documents[2], 
 					"plugi", documents[2].getLength());
 			assertEquals(8, list.size());
-			list = fEngine.makeUnique(list);
+			list= fEngine.makeUnique(list);
 			assertEquals(1, list.size());
 			assertEquals("n", list.get(0));
 			
-			list = fEngine.getCompletionsBackwards(documents[2], 
+			list= fEngine.getCompletionsBackwards(documents[2], 
 					"plugin", documents[2].getLength());
 			assertEquals(0, list.size()); // empty completions discarded
 			
@@ -184,35 +182,34 @@ public class HippieCompletionTest extends TestCase {
 	
     public void testSearchBackwards3() {
         try {
-            List list = fEngine.getCompletionsBackwards(documents[1], 
+            List list= fEngine.getCompletionsBackwards(documents[1], 
                     "test", documents[1].getLength());
             assertEquals("Number of backwards suggestions does not match", 2, list.size());
-            list = fEngine.getCompletionsBackwards(documents[1], 
+            list= fEngine.getCompletionsBackwards(documents[1], 
                     "tests", documents[1].getLength());
             assertEquals("Number of backwards suggestions does not match", 1, list.size());
 
-            list = fEngine.getCompletionsBackwards(documents[1], 
+            list= fEngine.getCompletionsBackwards(documents[1], 
                     "test", documents[1].getLength() - 1);
-            assertEquals("Number of backwards suggestions does not match", 2, list.size());
+            assertEquals("Number of backwards suggestions does not match", 1, list.size());
         } catch (BadLocationException e) {
             assertTrue("Got out of document bounds", false);
         }
     }
 	
-	
 	public void testSearch() {
-		ArrayList docsList = new ArrayList(Arrays.asList(this.documents));
-		List result = createSuggestions("te", docsList);
+		ArrayList docsList= new ArrayList(Arrays.asList(this.documents));
+		List result= createSuggestions("te", docsList);
 		assertEquals("Number of completions does not match", 15, result.size());
-		result = fEngine.makeUnique(result);
+		result= fEngine.makeUnique(result);
 		assertEquals("Number of completions does not match", 7, result.size());
 		
-		result = createSuggestions("Plug", docsList);
+		result= createSuggestions("Plug", docsList);
 		assertEquals("Number of completions does not match", 2, result.size());
 		
-		result = createSuggestions("p", docsList);
+		result= createSuggestions("p", docsList);
 		assertEquals("Number of completions does not match", 23, result.size());
-		result = fEngine.makeUnique(result);
+		result= fEngine.makeUnique(result);
 		assertEquals("Number of completions does not match", 10, result.size());
 		assertEquals("Incorrect completion", "ackage", result.get(0));
 		assertEquals("Incorrect completion", "rint", result.get(1));
@@ -227,69 +224,117 @@ public class HippieCompletionTest extends TestCase {
 	}
 	
 	public void testSearch2() {
-		ArrayList docsList = new ArrayList(Arrays.asList(this.documents));
-		List result = createSuggestions("printe", docsList);
+		ArrayList docsList= new ArrayList(Arrays.asList(this.documents));
+		List result= createSuggestions("printe", docsList);
 		assertEquals("Number of completions does not match", 0, result.size());
 		
-		result = createSuggestions("s", docsList);
+		result= createSuggestions("s", docsList);
 		assertEquals("Number of completions does not match", 8, result.size());
 		
-		result = createSuggestions("pack", documents[0]);
+		result= createSuggestions("pack", documents[0]);
 		assertEquals("Number of completions does not match", 1, result.size());
 	}
 	
+	
+	public void testForwardSearch() {
+		try {
+			List result= fEngine.getCompletionsForward(documents[0], 
+					"cl", documents[0].get().indexOf("cl"), true);
+			assertEquals(2, result.size());
+			
+			result= fEngine.getCompletionsForward(documents[0], 
+					"cl", documents[0].get().indexOf("cl") + 1, true);
+			assertEquals(1, result.size());
+
+			result= fEngine.getCompletionsForward(documents[1], 
+					"Thi", 0, true);
+			assertEquals(1, result.size());
+
+			result= fEngine.getCompletionsForward(documents[1], 
+					"Thi", 1, true);
+			assertEquals(0, result.size());
+		} catch (BadLocationException e) {
+			assertTrue("Got out of document bounds", false);
+		}
+	}
+	
+	public void testForwardSearchInternational() {
+		List result;
+		try {
+			result= fEngine.getCompletionsForward(documents[4], 
+					"$", documents[4].get().indexOf('$'), true);
+			assertEquals(2, result.size());		
+			assertEquals("arabic\u20AAWord", result.get(0));
+			assertEquals("arabic\u20ACDigits", result.get(1));
+
+			result= fEngine.getCompletionsForward(documents[4], 
+					"$", documents[4].get().indexOf('$'), false);
+			assertEquals(2, result.size());		
+			assertEquals("arabic\u20ACDigits", result.get(0));
+			assertEquals("arabic\u20AAWord", result.get(1));
+
+			result= fEngine.getCompletionsForward(documents[4], 
+					"$", documents[4].get().indexOf('$') + 1, true);
+			assertEquals(1, result.size());
+			assertEquals("arabic\u20AAWord", result.get(0));
+		} catch (BadLocationException e) {
+			assertTrue("Got out of document bounds", false);
+		}
+	}
+	
+	
 	public void testPrefix() {
 		try {
-			String prefix = fEngine.getPrefixString(documents[0], 
+			String prefix= fEngine.getPrefixString(documents[0], 
 					documents[0].get().indexOf("testing") + 3);
 			assertEquals(prefix, "tes");
 			
-			prefix = fEngine.getPrefixString(documents[0], 
+			prefix= fEngine.getPrefixString(documents[0], 
 					documents[0].get().indexOf("public") + 4);
 			assertEquals(prefix, "publ");
 
-			prefix = fEngine.getPrefixString(documents[0], 
+			prefix= fEngine.getPrefixString(documents[0], 
 					documents[0].get().indexOf("println") + 7);
 			assertEquals(prefix, "println");
 
-			prefix = fEngine.getPrefixString(documents[0], 
+			prefix= fEngine.getPrefixString(documents[0], 
 					documents[0].get().indexOf("println") + 8);
 			assertEquals(prefix, null);
 
-			prefix = fEngine.getPrefixString(documents[1], 3);
+			prefix= fEngine.getPrefixString(documents[1], 3);
 			assertEquals(prefix, "Thi");
 
-			prefix = fEngine.getPrefixString(documents[1], 0);
+			prefix= fEngine.getPrefixString(documents[1], 0);
 			assertEquals(prefix, null);
 
-			prefix = fEngine.getPrefixString(documents[1], documents[1].getLength());
+			prefix= fEngine.getPrefixString(documents[1], documents[1].getLength());
 			assertEquals(prefix, "tests");
 			
-			prefix = fEngine.getPrefixString(documents[3], 
+			prefix= fEngine.getPrefixString(documents[3], 
 					documents[3].get().indexOf("Copyright") - 2);
 			assertEquals(prefix, null);
 			
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("IDE") + 2);
 			assertEquals(prefix, "ID");
 
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("$arabic\u20ACDigits") + 8);
 			assertEquals(prefix, "$arabic\u20AC");
 			
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("$arabic\u20AAWord") + 8);
 			assertEquals(prefix, "$arabic\u20AA");
 			
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("\u00A3\u0661\u0662\u0663") + 3);
 			assertEquals(prefix, "\u00A3\u0661\u0662");
 			
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("a\u0300\u0301b") + 3);
 			assertEquals(prefix, "a\u0300\u0301");
 
-			prefix = fEngine.getPrefixString(documents[4], 
+			prefix= fEngine.getPrefixString(documents[4], 
 					documents[4].get().indexOf("\u0667\u0668\u0669\u0660") + 2);
 			assertEquals(prefix, "\u0667\u0668");
 		
@@ -299,97 +344,95 @@ public class HippieCompletionTest extends TestCase {
 	}
 	
 	public void testInternational() {
-		IDocument intlDoc = documents[4];
+		IDocument intlDoc= documents[4];
 		
-		List result = createSuggestions("\u05D4", intlDoc); // hebrew letter heh
+		List result= createSuggestions("\u05D4", intlDoc); // hebrew letter heh
 		assertEquals("Number of completions does not match", 4, result.size());
 		assertEquals(result.get(0), "\u05DE\u05D7\u05DC\u05E7\u05D4");
 		assertEquals(result.get(1), "\u05D6\u05D5");
 		assertEquals(result.get(2), "\u05D4\u05E9\u05DC\u05DE\u05D5\u05EA");
 		assertEquals(result.get(3), "\u05D4\u05E9");
 		
-		result = createSuggestions("\u0661", intlDoc); // arabic digit "1"
+		result= createSuggestions("\u0661", intlDoc); // arabic digit "1"
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "\u0662\u0663\u0664\u0665\u0666");
 
-		result = createSuggestions("\u0628\u064E", intlDoc); // arabic letter bah and fatha
+		result= createSuggestions("\u0628\u064E", intlDoc); // arabic letter bah and fatha
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "\u0627\u0628\u0650");
-		result = createSuggestions("\u0628", intlDoc); // arabic letter bah
+		result= createSuggestions("\u0628", intlDoc); // arabic letter bah
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "\u064E\u0627\u0628\u0650");
 		assertEquals(result.get(1), "\u0627\u0628");
 
-		result = createSuggestions("$ara", intlDoc);
+		result= createSuggestions("$ara", intlDoc);
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "bic\u20ACDigits");
 		assertEquals(result.get(1), "bic\u20AAWord");
 
-		result = createSuggestions("\u0441\u0430", intlDoc); // russian letters "s" and "a"
+		result= createSuggestions("\u0441\u0430", intlDoc); // russian letters "s" and "a"
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "\u043C\u044B\u0439");
 		assertEquals(result.get(1), "\u043C");
 
-		result = createSuggestions("\u05D1\u05D5", intlDoc); // hebrew letters bet and vav
+		result= createSuggestions("\u05D1\u05D5", intlDoc); // hebrew letters bet and vav
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "\u05D3\u05E7\u05EA");
 		assertEquals(result.get(1), "\u05D3\u05E7");
 
-		result = createSuggestions("a", intlDoc); 
+		result= createSuggestions("a", intlDoc); 
 		assertEquals("Number of completions does not match", 4, result.size());
 		assertEquals(result.get(0), "n");
 		assertEquals(result.get(1), "rabic");
 		assertEquals(result.get(2), "rgs");
 		assertEquals(result.get(3), "\u0300\u0301b");
 
-		result = createSuggestions("\u20AA", intlDoc);  // israeli currency (shekel)
+		result= createSuggestions("\u20AA", intlDoc);  // israeli currency (shekel)
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "129");
 
-		result = createSuggestions("\u20A3", intlDoc);  // french currency (frank)
+		result= createSuggestions("\u20A3", intlDoc);  // french currency (frank)
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "1");
 		assertEquals(result.get(1), "1");
 
-		result = createSuggestions("\u044D", intlDoc);  // russial letter "hard e"
+		result= createSuggestions("\u044D", intlDoc);  // russial letter "hard e"
 		assertEquals("Number of completions does not match", 2, result.size());
 		assertEquals(result.get(0), "\u0442\u043E");
 		assertEquals(result.get(1), "\u0442");
 
-		result = createSuggestions("\u00A3", intlDoc);  // pound currency sign
+		result= createSuggestions("\u00A3", intlDoc);  // pound currency sign
 		assertEquals("Number of completions does not match", 1, result.size());
 		assertEquals(result.get(0), "\u0661\u0662\u0663");
 		
-		result = createSuggestions("\u00A5", intlDoc);  // yen currency sign
+		result= createSuggestions("\u00A5", intlDoc);  // yen currency sign
 		assertEquals("Number of completions does not match", 0, result.size());		
 	}
 	
 	
 	public void testInternationalBackwards() {
-		IDocument intlDoc = documents[4];
+		IDocument intlDoc= documents[4];
 		try {
-			List list = fEngine.getCompletionsBackwards(intlDoc, 
+			List list= fEngine.getCompletionsBackwards(intlDoc, 
 					"\u043B\u0443", intlDoc.get().indexOf("129"));
 			assertEquals(2, list.size());
 			assertEquals(list.get(0), "\u0447\u0448");
 			assertEquals(list.get(1), "\u0447\u0448\u0438\u0439");
 
-			list = fEngine.getCompletionsBackwards(intlDoc, 
+			list= fEngine.getCompletionsBackwards(intlDoc, 
 					"\u05DE", intlDoc.get().lastIndexOf('+'));
 			assertEquals(2, list.size());
 			assertEquals(list.get(0), "\u05D7");
 			assertEquals(list.get(1), "\u05E0\u05D2\u05E0\u05D5\u05DF");
 
-			list = fEngine.getCompletionsBackwards(intlDoc, 
+			list= fEngine.getCompletionsBackwards(intlDoc, 
 					"\u0667", intlDoc.get().indexOf("\u2021\u0667") + 1);
-			assertEquals(1, list.size());
-			assertEquals(list.get(0), "\u0668\u0669\u0660");
+			assertEquals(0, list.size());
 			
-			list = fEngine.getCompletionsBackwards(intlDoc, 
+			list= fEngine.getCompletionsBackwards(intlDoc, 
 					"\u0628", intlDoc.get().lastIndexOf("\u0628"));
-			assertEquals(2, list.size());
-			assertEquals(list.get(0), "\u0627\u0628");
-			assertEquals(list.get(1), "\u064E\u0627\u0628\u0650");
+			assertEquals(1, list.size());
+			assertEquals(list.get(0), "\u064E\u0627\u0628\u0650");
 			
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
@@ -405,11 +448,11 @@ public class HippieCompletionTest extends TestCase {
 	}
 
 	private List createSuggestions(String prefix, List docsList) {
-		ArrayList results = new ArrayList();
-		for (Iterator i = docsList.iterator(); i.hasNext();) {
-			IDocument doc = (IDocument) i.next();
+		ArrayList results= new ArrayList();
+		for (Iterator i= docsList.iterator(); i.hasNext();) {
+			IDocument doc= (IDocument) i.next();
 			try {
-				results.addAll(fEngine.getCompletions(doc, prefix));
+				results.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
 			} catch (BadLocationException e) {
 				assertTrue("No exception should be thrown here", false);
 			}

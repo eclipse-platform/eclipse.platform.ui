@@ -166,7 +166,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		fLastCompletion.advance();
 		
 		// move the caret to the insertion point
-		ISourceViewer sourceViewer = ((AbstractTextEditor) getTextEditor()).getSourceViewer();
+		ISourceViewer sourceViewer= ((AbstractTextEditor) getTextEditor()).getSourceViewer();
 		sourceViewer.setSelectedRange(fLastCompletion.startOffset + fLastCompletion.length, 0);
 		sourceViewer.revealRange(fLastCompletion.startOffset, fLastCompletion.length);
 		
@@ -186,7 +186,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		ArrayList completions= new ArrayList();
 		completions.addAll(fEngine.getCompletionsBackwards(fDocument, prefix, selectionOffset));
-		completions.addAll(fEngine.getCompletionsForward(fDocument, prefix, selectionOffset));
+		completions.addAll(fEngine.getCompletionsForward(fDocument, prefix, selectionOffset - prefix.length(), true));
 
 		return completions;
 	}
@@ -260,7 +260,7 @@ final class HippieCompleteAction extends TextEditorAction {
 				IEditorInput input= textEditor.getEditorInput();
 				IDocument doc= textEditor.getDocumentProvider().getDocument(input);
 
-				suggestions.addAll(fEngine.getCompletions(doc, prefix));
+				suggestions.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
 			}
 		}
 		// add the empty suggestion

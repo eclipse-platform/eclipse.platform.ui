@@ -51,12 +51,20 @@ public final class HippieCompletionEngine {
 	 * @since 3.2
 	 */
 	private static final Pattern COMPLETION_WORD_PATTERN= Pattern.compile(COMPLETION_WORD_REGEX);
+	
+	/**
+	 * Word boundary pattern that does not allow searching at the beginning of the document.
+	 * 
+	 * @since 3.2
+	 */
+	private static final String NON_EMPTY_COMPLETION_BOUNDARY= "[\\s\\p{Z}[\\p{P}&&[\\P{Pc}]][\\p{S}&&[\\P{Sc}]]]+"; //$NON-NLS-1$
+	
 	/**
 	 * The word boundary pattern string.
 	 * 
 	 * @since 3.2
 	 */
-	private static final String COMPLETION_BOUNDARY= "(^|[\\s\\p{Z}[\\p{P}&&[\\P{Pc}]][\\p{S}&&[\\P{Sc}]]]+)";  //$NON-NLS-1$
+	private static final String COMPLETION_BOUNDARY= "(^|" + NON_EMPTY_COMPLETION_BOUNDARY + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 	// with a 1.5 JRE, you can do this:
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaUnicodeIdentifierPart}+"; //$NON-NLS-1$
 //	private static final String COMPLETION_WORD_REGEX= "\\p{javaJavaIdentifierPart}+"; //$NON-NLS-1$
@@ -110,21 +118,6 @@ public final class HippieCompletionEngine {
 	}
 
 	/**
-	 * The method is equivalent to
-	 * <code>getCompletionsForward(document, prefix, 0)</code>
-	 *
-	 * @param document the document to scan
-	 * @param prefix the completion prefix
-	 * @return the list of completions that are result of this document scan.
-	 * @throws BadLocationException if some error occurs. Should not be ever
-	 *         thrown.
-	 * @see #getCompletionsForward(IDocument, CharSequence, int)
-	 */
-	public List getCompletions(IDocument document, CharSequence prefix) throws BadLocationException {
-		return getCompletionsForward(document, prefix, 0);
-	}
-
-	/**
 	 * Return the list of completion suggestions that correspond to the
 	 * provided prefix.
 	 * 
@@ -133,14 +126,20 @@ public final class HippieCompletionEngine {
 	 * @param firstPosition the initial position in the document that
 	 *        the search will start from. In order to search from the
 	 *        beginning of the document use <code>firstPosition=0</code>.
+	 * @param currentWordLast if <code>true</code> the word at caret position
+	 * 		  should be that last completion. <code>true</code> is good
+	 * 		  for searching in the currently open document and <code>false</code>
+	 * 		  is good for searching in other documents. 
 	 * @return a {@link List} of possible completions (as {@link String}s),
 	 *         excluding the common prefix
 	 * @throws BadLocationException if there is some error scanning the
 	 *         document.
-	 * @see #getCompletions(IDocument, CharSequence)
 	 */
-	public List getCompletionsForward(IDocument document, CharSequence prefix, int firstPosition) throws BadLocationException {
+	public List getCompletionsForward(IDocument document, CharSequence prefix, 
+			int firstPosition, boolean currentWordLast) throws BadLocationException {
 		ArrayList res= new ArrayList();
+		String currentWordCompletion= null; // fix bug 132533
+		
         if (firstPosition == document.getLength()) {
             return res;
         }
@@ -148,8 +147,20 @@ public final class HippieCompletionEngine {
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 
 		// search only at word boundaries
-		String searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
+		String searchPattern;
 
+		// unless we are at the beginning of the document, the completion boundary
+		// matches one character. It is enough to move just one character backwards
+		// because the boundary pattern has the (....)+ form.
+		// see HippieCompletionTest#testForwardSearch().
+		if (firstPosition > 0) {
+			firstPosition--; 
+			// empty spacing is not permitted now.
+			searchPattern= NON_EMPTY_COMPLETION_BOUNDARY + asRegPattern(prefix);
+		} else {
+			searchPattern= COMPLETION_BOUNDARY + asRegPattern(prefix);
+		}
+		
 		IRegion reg= searcher.find(firstPosition, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
 			// since the boundary may be of nonzero length
@@ -157,14 +168,24 @@ public final class HippieCompletionEngine {
 			// try to complete to a word. case is irrelevant here.
 			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
 			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
-				String found= document.get(word.getOffset(), word.getLength());
-				res.add(found.substring(prefix.length()));
+				String wholeWord= document.get(word.getOffset(), word.getLength());
+				String completion= wholeWord.substring(prefix.length());
+				if (currentWordLast && reg.getOffset() == firstPosition) { // we got the word at caret as completion
+					currentWordCompletion= completion; // add it as the last word.
+				} else {
+					res.add(completion);
+				}
 			}
 			int nextPos= word.getOffset() + word.getLength();
 			if (nextPos >= document.getLength() ) {
 				break;
 			}
 			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
+		}
+		
+		// the word at caret position goes last (bug 132533).
+		if (currentWordCompletion != null) {
+			res.add(currentWordCompletion);
 		}
 
 		return res;
@@ -173,7 +194,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Search for possible completions in the backward direction. If there
      * is a possible completion that begins before <code>firstPosition</code>
-     * but ends after that position, it will be included in the results.
+     * but ends after that position, it will not be included in the results.
 	 *
 	 * @param document the document to be scanned
 	 * @param prefix the completion prefix
@@ -203,7 +224,7 @@ public final class HippieCompletionEngine {
 			int wordSearchPos= reg.getOffset() + reg.getLength() - prefix.length();
 			// try to complete to a word. case is of no matter here
 			IRegion word= searcher.find(wordSearchPos, COMPLETION_WORD_REGEX, true, true, false, true);
-            if (word.getOffset() > firstPosition) {
+            if (word.getOffset() + word.getLength() > firstPosition) {
                 break;
             }
 			if (word.getLength() > prefix.length() ) { // empty suggestion will be added later
