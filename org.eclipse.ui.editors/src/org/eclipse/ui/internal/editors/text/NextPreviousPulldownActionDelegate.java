@@ -168,7 +168,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 * @return the navigation enablement actions
 	 */
 	private IAction[] getActionsFromDescriptors() {
-		MarkerAnnotationPreferences fMarkerAnnotationPreferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences fMarkerAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		SortedSet containers= new TreeSet();
 
 		Iterator iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();

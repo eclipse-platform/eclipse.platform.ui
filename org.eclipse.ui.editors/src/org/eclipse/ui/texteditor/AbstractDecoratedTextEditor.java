@@ -239,7 +239,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	public AbstractDecoratedTextEditor() {
 		super();
-		fAnnotationPreferences= new MarkerAnnotationPreferences();
+		fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		setRangeIndicator(new DefaultRangeIndicator());
 		initializeKeyBindingScopes();
 		initializeEditor();

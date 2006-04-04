@@ -90,7 +90,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	public QuickDiffConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		fStore= store;
-		MarkerAnnotationPreferences markerAnnotationPreferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences markerAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		fStore.addKeys(createOverlayStoreKeys(markerAnnotationPreferences));
 		fQuickDiffModel= createQuickDiffModel(markerAnnotationPreferences);
 		fQuickDiffProviderListModel= createQuickDiffReferenceListModel();

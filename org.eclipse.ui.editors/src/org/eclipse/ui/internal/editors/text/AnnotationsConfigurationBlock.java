@@ -201,7 +201,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	public AnnotationsConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
-		MarkerAnnotationPreferences markerAnnotationPreferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences markerAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		fStore= store;
 		fStore.addKeys(createOverlayStoreKeys(markerAnnotationPreferences));
 		fListModel= createAnnotationTypeListModel(markerAnnotationPreferences);

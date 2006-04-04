@@ -18,19 +18,25 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
+import org.osgi.framework.Bundle;
+
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.osgi.framework.Bundle;
 
 
 /**
@@ -52,7 +58,7 @@ public class MarkerAnnotationPreferences {
 		boolean ignoreAnnotationsPrefPage= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE);
 		boolean ignoreQuickDiffPrefPage= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE);
 
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
@@ -106,7 +112,7 @@ public class MarkerAnnotationPreferences {
 
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, Boolean.toString(true));
 
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
@@ -155,7 +161,7 @@ public class MarkerAnnotationPreferences {
 
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, Boolean.toString(true));
 
-		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		Iterator e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
@@ -210,6 +216,19 @@ public class MarkerAnnotationPreferences {
 	 * marker annotation preferences.
 	 */
 	public MarkerAnnotationPreferences() {
+		this(false);
+	}
+
+	/**
+	 * Creates a new marker annotation preferences to access
+	 * marker annotation preferences.
+	 * @param initFromPreferences tells this instance to initialize itself from the preferences
+	 * 
+	 * @since 3.2
+	 */
+	private MarkerAnnotationPreferences(boolean initFromPreferences) {
+		if (initFromPreferences)
+			initializeSharedMakerAnnotationPreferences();
 	}
 
 	/**
@@ -239,18 +258,15 @@ public class MarkerAnnotationPreferences {
 	}
 
 	private void initialize() {
-		MarkerAnnotationPreferences prefs= null;
-		synchronized (getClass()) {
-			prefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-			if (prefs == null) {
-				prefs= new MarkerAnnotationPreferences();
-				prefs.initializeSharedMakerAnnotationPreferences();
-				EditorsPlugin.getDefault().setMarkerAnnotationPreferences(prefs);
-			}
+		synchronized (EditorsPlugin.getDefault()) {
+			if (!EditorsPlugin.getDefault().isMarkerAnnotationPreferencesInitialized())
+				EditorsPlugin.getDefault().setMarkerAnnotationPreferences(new MarkerAnnotationPreferences(true));
 		}
-		
-		fFragments= cloneAnnotationPreferences(prefs.fFragments);
-		fPreferences= cloneAnnotationPreferences(prefs.fPreferences);
+
+		MarkerAnnotationPreferences sharedPrefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
+
+		fFragments= cloneAnnotationPreferences(sharedPrefs.fFragments);
+		fPreferences= cloneAnnotationPreferences(sharedPrefs.fPreferences);
 	}
 			
 	/**
@@ -370,7 +386,7 @@ public class MarkerAnnotationPreferences {
 		int i;
 		boolean b;
 
-		AnnotationPreference info= new AnnotationPreference();
+		ReadOnlyAnnotationPreference info= new ReadOnlyAnnotationPreference();
 
 		s= element.getAttribute("annotationType");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
@@ -518,6 +534,8 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("includeOnPreferencePage");  //$NON-NLS-1$
 		info.setIncludeOnPreferencePage(s == null || StringConverter.asBoolean(s, true));
 
+		info.markReadOnly();
+		
 		return info;
 	}
 

@@ -147,7 +147,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	
 	public LinkedModeConfigurationBlock(OverlayPreferenceStore store) {
 		fStore= store;
-		final MarkerAnnotationPreferences prefs= new MarkerAnnotationPreferences();
+		final MarkerAnnotationPreferences prefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 		getPreferenceStore().addKeys(createOverlayStoreKeys(prefs));
 		fListModel= createAnnotationTypeListModel(prefs);
 	}

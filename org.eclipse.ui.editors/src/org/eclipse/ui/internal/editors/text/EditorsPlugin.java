@@ -140,18 +140,30 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @param markerAnnotationPreferences the marker annotation preferences
 	 * @since 3.1
 	 */
-	public void setMarkerAnnotationPreferences(MarkerAnnotationPreferences markerAnnotationPreferences) {
+	public synchronized void setMarkerAnnotationPreferences(MarkerAnnotationPreferences markerAnnotationPreferences) {
 		Assert.isTrue(fMarkerAnnotationPreferences == null);
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;
 	}
 	
+	/**
+	 * Tells whether the marker annotation preferences are initialized.
+	 *
+	 * @return <code>true</code> if initialized
+	 * @since 3.2
+	 */
+	public boolean isMarkerAnnotationPreferencesInitialized() {
+		return fMarkerAnnotationPreferences != null;
+	}
+
 	/**
 	 * Returns the marker annotation preferences.
 	 *
 	 * @return the marker annotation preferences
 	 * @since 3.1
 	 */
-	public MarkerAnnotationPreferences getMarkerAnnotationPreferences() {
+	public synchronized MarkerAnnotationPreferences getMarkerAnnotationPreferences() {
+		if (!isMarkerAnnotationPreferencesInitialized())
+			new MarkerAnnotationPreferences().getAnnotationPreferences(); // force creation of shared preferences
 		return fMarkerAnnotationPreferences;
 	}
 
