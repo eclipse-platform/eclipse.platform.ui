@@ -113,6 +113,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 				addActionToMenu(fMenu, action);
 			}
 			new MenuItem(fMenu, SWT.SEPARATOR);
+			addActionToMenu(fMenu, new ShowSearchHistoryDialogAction(fSearchView));
 			addActionToMenu(fMenu, new RemoveAllSearchesAction());
 		}
 		return fMenu;
