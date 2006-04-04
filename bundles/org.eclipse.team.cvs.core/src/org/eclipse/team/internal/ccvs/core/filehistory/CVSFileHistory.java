@@ -81,7 +81,7 @@ public class CVSFileHistory extends FileHistory {
 	 * @param monitor	a progress monitor
 	 * @return boolean	true if operation terminated normally,false otherwise
 	 */
-	public boolean refresh(IProgressMonitor monitor) throws TeamException {
+	public void refresh(IProgressMonitor monitor) throws TeamException {
 		if (refetchRevisions) {
 			monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()), 300);
 			try {
@@ -152,9 +152,14 @@ public class CVSFileHistory extends FileHistory {
 					includesExists = false;
 					if (localResource != null && localResource instanceof IFile) {
 						//get the local revisions
-						IFileState[] localHistoryState = ((IFile) localResource).getHistory(new SubProgressMonitor(monitor, 100));
-						localRevisions = convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
-						includesExists = (localRevisions.length > 0);
+						IFileState[] localHistoryState;
+						try {
+							localHistoryState = ((IFile) localResource).getHistory(new SubProgressMonitor(monitor, 100));
+							localRevisions = convertToFileRevision(localHistoryState, new SubProgressMonitor(monitor, 100));
+							includesExists = (localRevisions.length > 0);
+						} catch (CoreException e) {
+							TeamException.asTeamException(e);
+						}
 					}
 
 					//always fetch the remote revisions, just filter them out from the returned array
@@ -166,9 +171,7 @@ public class CVSFileHistory extends FileHistory {
 					revisions = new IFileRevision[0];
 					arrangeRevisions();
 				}
-			} catch (CoreException e) {
-				return false;
-			} finally {
+			}  finally {
 				monitor.done();
 			}
 		} else {
@@ -176,7 +179,6 @@ public class CVSFileHistory extends FileHistory {
 			arrangeRevisions();
 		}
 		
-		return true;
 	}
 
 	private void arrangeRevisions() {
@@ -320,6 +322,5 @@ public class CVSFileHistory extends FileHistory {
 		} finally {
 			monitor.done();
 		}
-	}
-		
+	}		
 }

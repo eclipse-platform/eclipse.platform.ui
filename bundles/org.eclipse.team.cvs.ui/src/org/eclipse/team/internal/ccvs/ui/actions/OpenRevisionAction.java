@@ -63,7 +63,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 								if (!editorAlreadyOpenOnContents(fileRevEditorInput))
 									page.getSite().getPage().openEditor(fileRevEditorInput, id);
 							} catch (CoreException e) {
-								//TODO: Better error handling here - a message would be good
+								throw new InvocationTargetException(e);
 							}
 							
 						}
@@ -73,6 +73,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 					try {
 						progressService.run(false, false, runnable);
 					} catch (InvocationTargetException e) {
+						CVSUIPlugin.openError(page.getSite().getShell(), "Open Revision", "An error occurred while trying to open the revision.", e);
 					} catch (InterruptedException e) {
 					}
 				}
