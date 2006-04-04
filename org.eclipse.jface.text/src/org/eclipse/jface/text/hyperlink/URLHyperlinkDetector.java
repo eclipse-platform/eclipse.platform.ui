@@ -87,7 +87,7 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 			if (urlOffsetInLine > -1)
 				ch= line.charAt(urlOffsetInLine);
 			startDoubleQuote= ch == '"';
-		} while (!Character.isWhitespace(ch) && !startDoubleQuote);
+		} while (Character.isUnicodeIdentifierStart(ch));
 		urlOffsetInLine++;
 
 		// Right to "://"
