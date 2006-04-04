@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -38,7 +39,7 @@ public class CommitAction extends WorkspaceTraversalAction {
 
 		private CommitScopeManager(ResourceMapping[] mappings, ResourceMappingContext context, boolean models) {
 			super("", mappings, context, models); //$NON-NLS-1$
-			includeChangeSets = isIncludeChangeSets();
+			includeChangeSets = isIncludeChangeSets(getShell(), CVSUIMessages.CommitAction_2);
 		}
 
 		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
@@ -110,7 +111,9 @@ public class CommitAction extends WorkspaceTraversalAction {
 		return new CommitScopeManager(getCVSResourceMappings(), getResourceMappingContext(), true);
 	}
 
-	protected boolean isIncludeChangeSets() {
+	public static boolean isIncludeChangeSets(final Shell shell, final String message) {
+		if (CVSUIPlugin.getPlugin().getChangeSetManager().getSets().length == 0)
+			return false;
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		final String option = store.getString(ICVSUIConstants.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT);
 		if (option.equals(MessageDialogWithToggle.ALWAYS))
@@ -124,9 +127,9 @@ public class CommitAction extends WorkspaceTraversalAction {
 		Utils.syncExec(new Runnable() {
 			public void run() {
 				final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
-						getShell(),
+						shell,
 						CVSUIMessages.CommitAction_1, 
-						CVSUIMessages.CommitAction_2, 
+						message, 
 						CVSUIMessages.ShowAnnotationOperation_4,   
 						false /* toggle state */,
 						store,
@@ -134,7 +137,7 @@ public class CommitAction extends WorkspaceTraversalAction {
 				
 				result[0] = m.getReturnCode();
 			}
-		}, getShell());
+		}, shell);
 		
 		switch (result[0]) {
 		// yes

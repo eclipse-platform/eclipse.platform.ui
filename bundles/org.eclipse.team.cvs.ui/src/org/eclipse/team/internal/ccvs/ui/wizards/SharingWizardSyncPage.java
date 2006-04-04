@@ -149,7 +149,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 	}
 
 	private ISynchronizeParticipant createParticipant() {
-		return ModelSynchronizeWizard.createWorkspaceParticipant(Utils.getResourceMappings(new IProject[] { project }));
+		return ModelSynchronizeWizard.createWorkspaceParticipant(Utils.getResourceMappings(new IProject[] { project }), getShell());
 	}
 	
 	/* (non-Javadoc)

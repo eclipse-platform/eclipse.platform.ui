@@ -21,6 +21,7 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext.ChangeSetSubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -32,6 +33,8 @@ import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
 
 public class WorkspaceModelParticipant extends
 	CVSModelSynchronizeParticipant implements IChangeSetProvider {
@@ -45,6 +48,8 @@ public class WorkspaceModelParticipant extends
 	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_4 = "otherActions2"; //$NON-NLS-1$
 
 	public static final String ID = "org.eclipse.team.cvs.ui.workspace-participant"; //$NON-NLS-1$
+	
+	private static final String CTX_CONSULT_CHANGE_SETS = "consultChangeSets"; //$NON-NLS-1$
 	
 	/**
 	 * CVS workspace action contribution
@@ -178,6 +183,8 @@ public class WorkspaceModelParticipant extends
 	}
 
 	private WorkspaceChangeSetCapability capability;
+
+	private boolean isConsultChangeSets;
 	
 	public WorkspaceModelParticipant() {
 	}
@@ -190,6 +197,7 @@ public class WorkspaceModelParticipant extends
 			TeamUIPlugin.log(e);
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
+		isConsultChangeSets = isConsultChangeSets(context.getScopeManager());
 	}
 	
 	/* (non-Javadoc)
@@ -218,7 +226,7 @@ public class WorkspaceModelParticipant extends
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true);
+		return WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true, isConsultChangeSets);
 	}
 	
     public ChangeSetCapability getChangeSetCapability() {
@@ -226,6 +234,29 @@ public class WorkspaceModelParticipant extends
             capability = new WorkspaceChangeSetCapability();
         }
         return capability;
+	}
+    
+    public void saveState(IMemento memento) {
+    	super.saveState(memento);
+    	memento.putString(CTX_CONSULT_CHANGE_SETS, Boolean.toString(isConsultChangeSets));
+    }
+    
+    public void init(String secondaryId, IMemento memento) throws PartInitException {
+    	try {
+    		String consult = memento.getString(CTX_CONSULT_CHANGE_SETS);
+    		if (consult != null)
+    			isConsultChangeSets = Boolean.valueOf(consult).booleanValue();
+    	} finally {
+    		super.init(secondaryId, memento);
+    	}
+    }
+
+	private boolean isConsultChangeSets(ISynchronizationScopeManager manager) {
+		if (manager instanceof ChangeSetSubscriberScopeManager) {
+			ChangeSetSubscriberScopeManager man = (ChangeSetSubscriberScopeManager) manager;
+			return man.isConsultSets();
+		}
+		return false;
 	}
 	
 }

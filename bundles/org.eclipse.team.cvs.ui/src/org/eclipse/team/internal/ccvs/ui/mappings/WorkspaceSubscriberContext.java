@@ -32,9 +32,10 @@ import org.eclipse.team.core.synchronize.SyncInfoFilter.ContentComparisonSyncInf
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
+import org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSetCollector;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
@@ -42,9 +43,32 @@ import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
+	public static final class ChangeSetSubscriberScopeManager extends SubscriberScopeManager {
+		private final boolean consultSets;
+
+		private ChangeSetSubscriberScopeManager(String name, ResourceMapping[] mappings, Subscriber subscriber, boolean consultModels, boolean consultSets) {
+			super(name, mappings, subscriber, consultModels);
+			this.consultSets = consultSets;
+		}
+
+		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
+			if (isConsultSets())
+				return ((CVSActiveChangeSetCollector)CVSUIPlugin.getPlugin().getChangeSetManager()).adjustInputTraversals(traversals);
+			return super.adjustInputTraversals(traversals);
+		}
+
+		public boolean isConsultSets() {
+			return consultSets;
+		}
+	}
+
 	private final int type;
 
-	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels) {
+	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, final boolean consultChangeSets) {
+		return new ChangeSetSubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels, consultChangeSets);
+	}
+	
+	public static SubscriberScopeManager createUpdateScopeManager(ResourceMapping[] mappings, boolean consultModels) {
 		return new SubscriberScopeManager(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getName(), mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), consultModels);
 	}
 	

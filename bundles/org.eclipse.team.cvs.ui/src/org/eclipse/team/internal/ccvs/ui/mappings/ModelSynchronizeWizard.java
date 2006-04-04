@@ -13,18 +13,20 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutWizard;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 
 public class ModelSynchronizeWizard extends ModelParticipantWizard {
 
-	public static ISynchronizeParticipant createWorkspaceParticipant(ResourceMapping[] selectedMappings) {
-		ISynchronizationScopeManager manager = WorkspaceSubscriberContext.createWorkspaceScopeManager(selectedMappings, true);
+	public static ISynchronizeParticipant createWorkspaceParticipant(ResourceMapping[] selectedMappings, Shell shell) {
+		ISynchronizationScopeManager manager = WorkspaceSubscriberContext.createWorkspaceScopeManager(selectedMappings, true, CommitAction.isIncludeChangeSets(shell, CVSUIMessages.SyncAction_1));
 		WorkspaceModelParticipant p =  new WorkspaceModelParticipant( 
 				WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY));
 		return p;
@@ -35,7 +37,7 @@ public class ModelSynchronizeWizard extends ModelParticipantWizard {
 	}
 
 	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
-		return createWorkspaceParticipant(selectedMappings);
+		return createWorkspaceParticipant(selectedMappings, getShell());
 	}
 
 	protected String getPageTitle() {

@@ -27,6 +27,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
@@ -51,7 +52,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 				ResourceMapping[] mappings = getCVSResourceMappings();
 				if (mappings.length == 0)
 					return;
-				new ModelUpdateOperation(getTargetPart(), mappings) {
+				new ModelUpdateOperation(getTargetPart(), WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true, CommitAction.isIncludeChangeSets(getShell(), CVSUIMessages.SyncAction_1))) {
 					protected boolean isAttemptHeadlessMerge() {
 						return false;
 					}

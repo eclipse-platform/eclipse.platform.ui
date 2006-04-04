@@ -51,6 +51,7 @@ public class CVSUIMessages extends NLS {
 	public static String PasswordManagementPreferencePage_6;
 	public static String ShowAnnotationOperation_QDAnnotateMessage;
 	public static String ShowAnnotationOperation_QDAnnotateTitle;
+	public static String SyncAction_1;
 	public static String UserValidationDialog_5;
 	public static String UserValidationDialog_6;
 	public static String UserValidationDialog_7;

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
@@ -20,11 +21,15 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	
 	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] selectedResourceMappings, boolean consultModels) {
-		super(targetPart, WorkspaceSubscriberContext.createWorkspaceScopeManager(selectedResourceMappings, consultModels), true);
+		this(targetPart, WorkspaceSubscriberContext.createUpdateScopeManager(selectedResourceMappings, consultModels));
 	}
 	
 	public ModelUpdateOperation(IWorkbenchPart targetPart, ResourceMapping[] resourceMappings) {
 		this(targetPart, resourceMappings, true);
+	}
+
+	public ModelUpdateOperation(IWorkbenchPart targetPart, SubscriberScopeManager manager) {
+		super(targetPart, manager, true);
 	}
 
 	/* (non-Javadoc)
