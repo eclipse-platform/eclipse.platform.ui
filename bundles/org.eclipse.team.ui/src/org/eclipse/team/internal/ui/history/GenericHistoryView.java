@@ -210,7 +210,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		//Contribute toolbars
 		configureToolbars(getViewSite().getActionBars());
 
-		// add global action handler
+		//add global action handler
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
 		
 		//initialize the drag and drop
@@ -261,7 +261,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			}
 		};
 		refreshAction.setToolTipText(TeamUIMessages.GenericHistoryView_RefreshTooltip);
-		refreshAction.setActionDefinitionId(ActionFactory.REFRESH.getId());
+		refreshAction.setEnabled(true);
+		
 		
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
