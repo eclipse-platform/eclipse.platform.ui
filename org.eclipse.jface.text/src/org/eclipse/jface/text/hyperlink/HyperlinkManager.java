@@ -31,9 +31,11 @@ import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextEvent;
 
 
 /**
@@ -41,7 +43,7 @@ import org.eclipse.jface.text.Region;
  *
  * @since 3.1
  */
-public class HyperlinkManager implements Listener, KeyListener, MouseListener, MouseMoveListener, FocusListener {
+public class HyperlinkManager implements ITextListener, Listener, KeyListener, MouseListener, MouseMoveListener, FocusListener {
 
 	/**
 	 * Detection strategy.
@@ -152,6 +154,8 @@ public class HyperlinkManager implements Listener, KeyListener, MouseListener, M
 		text.addMouseMoveListener(this);
 		text.addFocusListener(this);
 
+		fTextViewer.addTextListener(this);
+		
 		fHyperlinkPresenter.install(fTextViewer);
 	}
 
@@ -203,6 +207,8 @@ public class HyperlinkManager implements Listener, KeyListener, MouseListener, M
 			text.removeMouseMoveListener(this);
 			text.removeFocusListener(this);
 		}
+		fTextViewer.removeTextListener(this);
+		
 		fHyperlinkPresenter.uninstall();
 
 		fHyperlinkPresenter= null;
@@ -437,4 +443,14 @@ public class HyperlinkManager implements Listener, KeyListener, MouseListener, M
 	public void handleEvent(Event event) {
 		deactivate();
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextListener#textChanged(TextEvent)
+	 * @since 3.2
+	 */
+	public void textChanged(TextEvent event) {
+		if (event.getDocumentEvent() != null)
+			deactivate();
+	}
+
 }
