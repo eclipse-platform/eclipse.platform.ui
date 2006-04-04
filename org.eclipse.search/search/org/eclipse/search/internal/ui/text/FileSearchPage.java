@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
@@ -72,7 +73,24 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			fLabelProvider= labelProvider;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
+		 */
+		public int category(Object element) {
+			if (element instanceof IContainer) {
+				return 1;
+			}
+			return 2;
+		}
+		
 	    public int compare(Viewer viewer, Object e1, Object e2) {
+	        int cat1 = category(e1);
+	        int cat2 = category(e2);
+
+	        if (cat1 != cat2) {
+				return cat1 - cat2;
+			}
+	    	
 	        String name1= fLabelProvider.getText(e1);
 	        String name2= fLabelProvider.getText(e2);
 	        if (name1 == null)
