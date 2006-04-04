@@ -63,7 +63,7 @@ public class LinkedResourceTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
 		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new LinkedResourceTest("testMoveProjectWithLinks2"));
+		//		suite.addTest(new LinkedResourceTest("testCreateProjectWithDeepLinks"));
 		//		return suite;
 	}
 
@@ -667,22 +667,24 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("2.99", e1);
 		}
 	}
-	
+
 	/**
 	 * Tests creating a project whose .project file already defines links at
 	 * depth greater than one. See bug 121322.
 	 */
 	public void testCreateProjectWithDeepLinks() {
 		IProject project = existingProject;
+		IFolder parent = existingFolderInExistingProject;
 		IFolder folder = nonExistingFolderInExistingFolder;
 		try {
 			folder.createLink(localFolder, IResource.NONE, getMonitor());
 			//delete and recreate the project
 			project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
 			project.create(getMonitor());
-			project.open(getMonitor());
-
+			project.open(IResource.BACKGROUND_REFRESH, getMonitor());
 			assertTrue("1.0", folder.exists());
+			assertTrue("1.1", parent.exists());
+			assertTrue("1.2", parent.isLocal(IResource.DEPTH_INFINITE));
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -788,7 +790,7 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.1", !child.isLinked());
 		assertTrue("2.2", !child.isLinked(IResource.NONE));
 		assertTrue("2.3", child.isLinked(IResource.CHECK_ANCESTORS));
-		
+
 	}
 
 	/**
