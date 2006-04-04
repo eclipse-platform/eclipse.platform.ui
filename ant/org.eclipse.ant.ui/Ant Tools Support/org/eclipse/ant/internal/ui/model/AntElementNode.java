@@ -335,7 +335,6 @@ public class AntElementNode implements IAdaptable {
 			buffer.append(']');
 			
 			fElementPath= buffer.toString();
-			System.out.println(fElementPath);
 		}
 		return fElementPath;
 	}
