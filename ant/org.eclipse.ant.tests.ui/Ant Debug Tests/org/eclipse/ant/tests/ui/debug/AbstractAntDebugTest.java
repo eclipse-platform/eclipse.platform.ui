@@ -60,7 +60,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	public static final int DEFAULT_TIMEOUT = 20000;
 	
 	/**
-	 * The last relevent event set - for example, that caused
+	 * The last relevant event set - for example, that caused
 	 * a thread to suspend
 	 */
 	protected DebugEvent[] fEventSet;
