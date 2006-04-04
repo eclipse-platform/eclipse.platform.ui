@@ -51,18 +51,14 @@ public class TextSearchQueryProviderRegistry {
 	}
 
 	private void updateProvider(String preferredId) {
+		fPreferredProviderId= preferredId;
+		fPreferredProvider= null;
 		if (preferredId.length() != 0) { // empty string: default engine
-			TextSearchQueryProvider engine= createFromExtension(preferredId);
-			if (engine != null) {
-				fPreferredProviderId= preferredId;
-				fPreferredProvider= engine;
-				return;
-			}
-			// creation failed, clear preference
-			setPreferredEngineID(""); // set to default //$NON-NLS-1$
+			fPreferredProvider= createFromExtension(preferredId);
 		}
-		fPreferredProviderId= ""; //$NON-NLS-1$
-		fPreferredProvider= new DefaultTextSearchQueryProvider();
+		if (fPreferredProvider == null) {
+			fPreferredProvider= new DefaultTextSearchQueryProvider();
+		}
 	}
 
 	private String getPreferredEngineID() {
@@ -71,10 +67,10 @@ public class TextSearchQueryProviderRegistry {
 		return preferedEngine;
 	}
 
-	private void setPreferredEngineID(String id) {
-		Preferences prefs= SearchPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(SearchPreferencePage.TEXT_SEARCH_QUERY_PROVIDER, id);
-	}
+//	private void setPreferredEngineID(String id) {
+//		Preferences prefs= SearchPlugin.getDefault().getPluginPreferences();
+//		prefs.setValue(SearchPreferencePage.TEXT_SEARCH_QUERY_PROVIDER, id);
+//	}
 
 	private TextSearchQueryProvider createFromExtension(final String id) {
 		final TextSearchQueryProvider[] res= new TextSearchQueryProvider[] { null };
