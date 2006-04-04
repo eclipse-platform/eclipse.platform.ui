@@ -403,6 +403,8 @@ public class ShowAnnotationOperation extends CVSOperation {
 		
 		if (option.equals(MessageDialogWithToggle.ALWAYS))
 			return true; //use live annotate
+		else if (option.equals(MessageDialogWithToggle.NEVER))
+			return false; //don't use live annotate
 		
 		final MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(Utils.getShell(null), CVSUIMessages.ShowAnnotationOperation_QDAnnotateTitle,
 				CVSUIMessages.ShowAnnotationOperation_QDAnnotateMessage,CVSUIMessages.ShowAnnotationOperation_4, false, store, ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE);
