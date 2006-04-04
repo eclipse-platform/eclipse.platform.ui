@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ILiveHelpAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -45,6 +46,26 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 
 		if (serializedCommand == null) {
 			// No command to execute!
+			return;
+		}
+		
+		// workaround problem described in https://bugs.eclipse.org/bugs/show_bug.cgi?id=133694
+		// by making sure we can get the workbench before running the command.  In standalone
+		// help mode the attempt to get the workbench will fail and we will show an error dialog.
+		IWorkbench workbench = null;
+		try {
+			workbench = PlatformUI.getWorkbench();
+		}
+		catch (IllegalStateException ex) {
+			// this will happen when there is no workbench
+		}
+		if (workbench == null) {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					MessageDialog.openError(null, Messages.Help_Error,
+							Messages.NoWorkbenchForExecuteCommand_msg);
+				}
+			});
 			return;
 		}
 

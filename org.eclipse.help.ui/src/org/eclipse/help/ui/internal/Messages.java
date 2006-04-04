@@ -183,4 +183,6 @@ public final class Messages extends NLS {
 	public static String ScopeSet_errorSaving;
 	public static String IndexInstructions;
 	public static String IndexButton;
+	
+	public static String NoWorkbenchForExecuteCommand_msg;
 }
