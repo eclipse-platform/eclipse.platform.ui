@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,18 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,6 +59,43 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
  */
 public class SaveScopeResourcesHandler implements IStatusHandler {
 
+	/**
+	 * Provides a custom class for a resizable selection dialog with a don't ask again button on it
+	 * @since 3.2
+	 */
+	class ScopedResourcesSelectionDialog extends ListSelectionDialog {
+
+		private final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SCOPED_SAVE_SELECTION_DIALOG"; //$NON-NLS-1$
+		Button fSavePref;
+		
+		public ScopedResourcesSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
+			super(parentShell, input, contentProvider, labelProvider, message);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}
+		
+		protected Control createDialogArea(Composite parent) {
+			Composite ctrl = (Composite) super.createDialogArea(parent);
+			fSavePref = new Button(ctrl, SWT.CHECK);
+			fSavePref.setText(LaunchConfigurationsMessages.SaveScopeResourcesHandler_1);
+			return ctrl;
+		}
+		
+		protected void okPressed() {
+			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+			String val = (fSavePref.getSelection() ? MessageDialogWithToggle.ALWAYS : MessageDialogWithToggle.PROMPT);
+			store.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, val);
+			super.okPressed();
+		}
+
+		protected IDialogSettings getDialogBoundsSettings() {
+			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section = settings.getSection(SETTINGS_ID);
+			if (section == null) {
+				section = settings.addNewSection(SETTINGS_ID);
+			} 
+			return section;
+		}
+	}
 	
 	/**
 	 * The objects to save (if any)
@@ -146,7 +192,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		if(save) {
 			IEditorPart[] editors = getScopedDirtyEditors(projects);
 			if(prompt && (editors.length > 0)) {
-				ListSelectionDialog lsd = new ListSelectionDialog(DebugUIPlugin.getShell(),
+				ScopedResourcesSelectionDialog lsd = new ScopedResourcesSelectionDialog(DebugUIPlugin.getShell(),
 						new AdaptableList(editors),
 						new WorkbenchContentProvider(),
 						new WorkbenchPartLabelProvider(),
