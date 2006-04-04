@@ -39,11 +39,14 @@ public class CVSUIMessages extends NLS {
 	public static String CompareRevisionAction_Revision;
 	public static String CVSHistoryPage_CollapseAllAction;
 	public static String CVSHistoryPage_CollapseAllTooltip;
+	public static String CVSHistoryPage_CompareModeTooltip;
 	public static String CVSHistoryPage_FilterOn;
 	public static String CVSPreferencesPage_46;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String OpenRevisionAction_DeletedRevMessage;
 	public static String OpenRevisionAction_DeletedRevTitle;
+	public static String OpenRevisionAction_ErrorMessage;
+	public static String OpenRevisionAction_ErrorTitle;
 	public static String PasswordManagementPreferencePage_2;
 	public static String PasswordManagementPreferencePage_3;
 	public static String PasswordManagementPreferencePage_4;

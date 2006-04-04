@@ -85,7 +85,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextAction;
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
-	private IAction toggleCompareAction;
 	private IAction toggleFilterAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
@@ -99,6 +98,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Action remoteLocalMode;
 	private Action groupByDateMode;
 	private Action collapseAll;
+	private Action compareModeAction;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -291,7 +291,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		groupByDateMode = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY)){
 			public void run() {
 				groupingOn = !groupingOn;
-				toggleCompareAction.setChecked(groupingOn);
+				compareModeAction.setChecked(groupingOn);
 				store.setValue(ICVSUIConstants.PREF_GROUPBYDATE_MODE, groupingOn);
 				refreshHistory(false);
 			}
@@ -312,6 +312,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		collapseAll.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		collapseAll.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		
+		//Compare Mode Action
+		compareModeAction = new Action(CVSUIMessages.CVSHistoryPage_CompareModeToggleAction,plugin.getImageDescriptor(ICVSUIConstants.IMG_COMPARE_VIEW)) {
+			public void run() {
+				compareMode = !compareMode;
+				compareModeAction.setChecked(compareMode);
+			}
+		};
+		compareModeAction.setToolTipText(CVSUIMessages.CVSHistoryPage_CompareModeTooltip); 
+		compareModeAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COMPARE_VIEW));
+		compareModeAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COMPARE_VIEW));
+		compareModeAction.setChecked(false);
 		
 		// Click Compare action
 		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
@@ -495,15 +506,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		};
 		toggleFilterAction.setEnabled(historyFilter != null);
 		
-		
-		toggleCompareAction = new Action(CVSUIMessages.CVSHistoryPage_CompareModeToggleAction){
-			public void run() {
-				compareMode = !compareMode;
-				toggleCompareAction.setChecked(compareMode);
-			}
-		};
-		toggleCompareAction.setChecked(false);
-	
 		//Create the filter action
 		cvsHistoryFilter = new CVSHistoryFilterAction(this);
 		cvsHistoryFilter.setText(CVSUIMessages.CVSHistoryPage_FilterOn);
@@ -534,8 +536,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				// Contribute toggle text visible to the toolbar drop-down
 				IMenuManager actionBarsMenu = actionBars.getMenuManager();
 				if (actionBarsMenu != null){
-					actionBarsMenu.add(toggleCompareAction);
-					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextWrapAction);
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextAction);
@@ -571,6 +571,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
 			tbm.add(new Separator("collapse")); //$NON-NLS-1$
 			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
+			tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
 			tbm.update(false);
 		}
 
@@ -1254,7 +1255,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//toggleCompareAction is going to switch the mode
 		//so make sure that we're in the appropriate mode before
 		compareMode = !compare;
-		toggleCompareAction.run();
+		compareModeAction.run();
 	}
 
 	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {

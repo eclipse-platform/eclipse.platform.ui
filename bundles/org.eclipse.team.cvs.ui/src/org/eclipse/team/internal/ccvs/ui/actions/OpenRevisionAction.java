@@ -73,7 +73,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 					try {
 						progressService.run(false, false, runnable);
 					} catch (InvocationTargetException e) {
-						CVSUIPlugin.openError(page.getSite().getShell(), "Open Revision", "An error occurred while trying to open the revision.", e);
+						CVSUIPlugin.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_ErrorTitle, CVSUIMessages.OpenRevisionAction_ErrorMessage, e);
 					} catch (InterruptedException e) {
 					}
 				}
