@@ -28,8 +28,9 @@ public class CalendarableModel {
 	private int numberOfDivisionsInHour = -1;
 	private ArrayList[] dateColumns = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
+	/**
+	 * @param numberOfDays
+	 * @param numberOfDivisionsInHour
 	 */
 	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
 		if (numberOfDivisionsInHour < 1) {
@@ -148,8 +149,8 @@ public class CalendarableModel {
 		resizeList(dateColumns[column], numberOfEventsInDay);
 		clearCalendarables(dateColumns[column]);
 		
-		ICalendarable[] tempEvents = (ICalendarable[]) dateColumns[column]
-				.toArray(new ICalendarable[numberOfEventsInDay]);
+		Calendarable[] tempEvents = (Calendarable[]) dateColumns[column]
+				.toArray(new Calendarable[numberOfEventsInDay]);
 
 		eventContentProvider.refresh(
 				date, 
@@ -175,7 +176,7 @@ public class CalendarableModel {
 	 */
 	private void clearCalendarables(ArrayList calendarables) {
 		for (Iterator i = calendarables.iterator(); i.hasNext();) {
-			ICalendarable c = (ICalendarable) i.next();
+			Calendarable c = (Calendarable) i.next();
 			c.reset();
 		}
 	}
