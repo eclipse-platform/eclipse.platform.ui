@@ -267,8 +267,13 @@ function isCollapsed(node) {
  * Highlights link
  */
 function highlightTopic(topic) {
-	if (isMozilla)
-		window.getSelection().removeAllRanges();
+	if (isMozilla) {
+		// try-catch is a workaround for the getSelection() problem
+		// reported for Safari 2.0.3
+		try {
+			window.getSelection().removeAllRanges();
+		} catch (e) {}
+	}
 
 	var a = getAnchorNode(topic);
 	if (a != null) {
