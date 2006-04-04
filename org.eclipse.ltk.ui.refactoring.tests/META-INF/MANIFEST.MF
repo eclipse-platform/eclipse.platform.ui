@@ -18,3 +18,4 @@ Require-Bundle: org.junit,
  org.eclipse.ui,
  org.eclipse.ltk.ui.refactoring
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
