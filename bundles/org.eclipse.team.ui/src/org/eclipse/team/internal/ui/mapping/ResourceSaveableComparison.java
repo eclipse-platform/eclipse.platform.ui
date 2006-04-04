@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,6 +25,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -96,7 +96,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			// For a resource diff, use the after state
 			if (node instanceof IResourceDiff) {
 				IResourceDiff rd = (IResourceDiff) node;
-				return asTypedElement(rd.getAfterState());
+				return asTypedElement(rd.getAfterState(), getLocalEncoding(node));
 			}
 			if (node instanceof IThreeWayDiff) {
 				IThreeWayDiff twd = (IThreeWayDiff) node;
@@ -106,7 +106,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 					return getRightContributor(diff);
 				// There's no remote change so use the before state of the local
 				diff = (IResourceDiff)twd.getLocalChange();
-				return asTypedElement(diff.getBeforeState());
+				return asTypedElement(diff.getBeforeState(), getLocalEncoding(node));
 				
 			}
 			return null;
@@ -139,16 +139,29 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 				IResourceDiff diff = (IResourceDiff)twd.getLocalChange();
 				if (diff == null)
 					diff = (IResourceDiff)twd.getRemoteChange();
-				return asTypedElement(diff.getBeforeState());
+				return asTypedElement(diff.getBeforeState(), getLocalEncoding(node));
 				
 			}
 			return null;
 		}
 
-		private static ITypedElement asTypedElement(IFileRevision state) {
+		private static String getLocalEncoding(IDiff node) {
+			IResource resource = ResourceDiffTree.getResourceFor(node);
+			if (resource instanceof IEncodedStorage) {
+				IEncodedStorage es = (IEncodedStorage) resource;
+				try {
+					return es.getCharset();
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+			}
+			return null;
+		}
+
+		private static ITypedElement asTypedElement(IFileRevision state, String localEncoding) {
 			if (state == null)
 				return null;
-			return new FileStateTypedElement(state);
+			return new FileRevisionTypedElement(state, localEncoding);
 		}
 
 		/* (non-Javadoc)
@@ -158,13 +171,13 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			Utils.updateLabels(node, configuration, monitor);
 			// We need to cache contents here as well
 			Object ancestor = getAncestor();
-			if (ancestor instanceof FileStateTypedElement) {
-				FileStateTypedElement fste = (FileStateTypedElement) ancestor;
+			if (ancestor instanceof FileRevisionTypedElement) {
+				FileRevisionTypedElement fste = (FileRevisionTypedElement) ancestor;
 				fste.cacheContents(monitor);
 			}
 			Object right = getRight();
-			if (right instanceof FileStateTypedElement) {
-				FileStateTypedElement fste = (FileStateTypedElement) right;
+			if (right instanceof FileRevisionTypedElement) {
+				FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
 				fste.cacheContents(monitor);
 			}
 		}

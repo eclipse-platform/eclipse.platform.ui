@@ -12,12 +12,14 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * A diff node used to display the synchronization state for resources described by
@@ -215,13 +217,25 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	 * Create an ITypedElement for the given remote resource. The contents for the remote resource
 	 * will be retrieved from the given IStorage which is a local cache used to buffer the remote contents
 	 */
-	protected static ITypedElement createTypeElement(IResourceVariant remoteResource) {
-		return new RemoteResourceTypedElement(remoteResource);
+	protected static ITypedElement createTypeElement(IResourceVariant remoteResource, String encoding) {
+		return new RemoteResourceTypedElement(remoteResource,encoding);
 	}
 
 	protected static ITypedElement createRemoteTypeElement(SyncInfo info) {
 		if(info != null && info.getRemote() != null) {
-			return createTypeElement(info.getRemote());
+			return createTypeElement(info.getRemote(), getEncoding(info.getLocal()));
+		}
+		return null;
+	}
+
+	private static String getEncoding(IResource local) {
+		if (local instanceof IEncodedStorage) {
+			IEncodedStorage es = (IEncodedStorage) local;
+			try {
+				return es.getCharset();
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
 		}
 		return null;
 	}
@@ -235,7 +249,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 
 	protected static ITypedElement createBaseTypeElement(SyncInfo info) {
 		if(info != null && info.getBase() != null) {
-			return createTypeElement(info.getBase());
+			return createTypeElement(info.getBase(), getEncoding(info.getLocal()));
 		}
 		return null;
 	}

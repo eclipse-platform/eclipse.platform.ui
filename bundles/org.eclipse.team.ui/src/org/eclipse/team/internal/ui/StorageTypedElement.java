@@ -22,7 +22,12 @@ import org.eclipse.team.core.TeamException;
 public abstract class StorageTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
 	private IStorage bufferedContents;
-
+	private final String localEncoding;
+	
+	public StorageTypedElement(String localEncoding){
+		this.localEncoding = localEncoding;
+	}
+	
 	/* (non-Javadoc)
 	 * @see BufferedContent#createStream()
 	 */
@@ -77,7 +82,10 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 			cacheContents(new NullProgressMonitor());
 		}
 		if (bufferedContents instanceof IEncodedStorage) {
-			return ((IEncodedStorage) bufferedContents).getCharset();
+			String charset = ((IEncodedStorage)bufferedContents).getCharset();
+			if (charset == null)
+				return localEncoding;
+			return charset;
 		}
 		return null;
 	}

@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.StorageTypedElement;
 
@@ -28,11 +27,21 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 	IFile file;
 	
 	public FileRevisionTypedElement(IFileRevision fileRevision){
+		this(fileRevision,null);
+	}
+	
+	public FileRevisionTypedElement(IFile file){
+		this(file,null);
+	}
+	
+	public FileRevisionTypedElement(IFileRevision fileRevision, String localEncoding){
+		super(localEncoding);
 		this.fileRevision = fileRevision;
 		this.file = null;
 	}
 	
-	public FileRevisionTypedElement(IFile file){
+	public FileRevisionTypedElement(IFile file, String localEncoding){
+		super(localEncoding);
 		this.file = file;
 		this.fileRevision = null;
 	}
@@ -41,10 +50,6 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 			return file.getName();
 		
 		return fileRevision.getName();
-	}
-
-	public Image getImage() {
-		return null;
 	}
 
 	protected IStorage getElementStorage(IProgressMonitor monitor) throws CoreException {
@@ -56,7 +61,7 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 	}
 
 	public boolean isEditable() {
-		return true;
+		return false;
 	}
 
 	public ITypedElement replace(ITypedElement dest, ITypedElement src) {

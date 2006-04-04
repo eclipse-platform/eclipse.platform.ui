@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.StorageTypedElement;
@@ -28,7 +27,8 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 	/**
 	 * Creates a new content buffer for the given team node.
 	 */
-	public RemoteResourceTypedElement(IResourceVariant remote) {
+	public RemoteResourceTypedElement(IResourceVariant remote, String encoding) {
+		super(encoding);
 		Assert.isNotNull(remote);
 		this.remote = remote;
 	}
@@ -92,6 +92,5 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 		remote = variant;
 		fireContentChanged();
 	}
-
 	
 }
