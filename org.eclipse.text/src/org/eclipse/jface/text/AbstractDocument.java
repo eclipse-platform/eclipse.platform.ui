@@ -13,11 +13,14 @@ package org.eclipse.jface.text;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
+
+import org.eclipse.core.runtime.ListenerList;
 
 
 /**
@@ -86,11 +89,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	/** The document's line tracker */
 	private ILineTracker fTracker;
 	/** The registered document listeners */
-	private List fDocumentListeners;
+	private ListenerList fDocumentListeners;
 	/** The registered pre-notified document listeners */
-	private List fPrenotifiedDocumentListeners;
+	private ListenerList fPrenotifiedDocumentListeners;
 	/** The registered document partitioning listeners */
-	private List fDocumentPartitioningListeners;
+	private ListenerList fDocumentPartitioningListeners;
 	/** All positions managed by the document */
 	private Map fPositions;
 	/** All registered document position updaters */
@@ -206,16 +209,16 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @return the document's document listeners
 	 */
 	protected List getDocumentListeners() {
-		return fDocumentListeners;
+		return Arrays.asList(fDocumentListeners.getListeners());
 	}
 
 	/**
-	 * Returns the document's partitioning listeners .
+	 * Returns the document's partitioning listeners.
 	 *
 	 * @return the document's partitioning listeners
 	 */
 	protected List getDocumentPartitioningListeners() {
-		return fDocumentPartitioningListeners;
+		return Arrays.asList(fDocumentPartitioningListeners.getListeners());
 	}
 
 	/**
@@ -274,9 +277,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		fPositions= new HashMap();
 		fPositionUpdaters= new ArrayList();
-		fDocumentListeners= new ArrayList();
-		fPrenotifiedDocumentListeners= new ArrayList();
-		fDocumentPartitioningListeners= new ArrayList();
+		fDocumentListeners= new ListenerList();
+		fPrenotifiedDocumentListeners= new ListenerList();
+		fDocumentPartitioningListeners= new ListenerList();
 		fDocumentRewriteSessionListeners= new ArrayList();
 
 		addPositionCategory(DEFAULT_CATEGORY);
@@ -291,8 +294,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public void addDocumentListener(IDocumentListener listener) {
 		Assert.isNotNull(listener);
-		if (! fDocumentListeners.contains(listener))
-			fDocumentListeners.add(listener);
+		fDocumentListeners.add(listener);
 	}
 
 	/*
@@ -308,8 +310,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public void addPrenotifiedDocumentListener(IDocumentListener listener) {
 		Assert.isNotNull(listener);
-		if (! fPrenotifiedDocumentListeners.contains(listener))
-			fPrenotifiedDocumentListeners.add(listener);
+		fPrenotifiedDocumentListeners.add(listener);
 	}
 
 	/*
@@ -325,8 +326,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	public void addDocumentPartitioningListener(IDocumentPartitioningListener listener) {
 		Assert.isNotNull(listener);
-		if (! fDocumentPartitioningListeners.contains(listener))
-			fDocumentPartitioningListeners.add(listener);
+		fDocumentPartitioningListeners.add(listener);
 	}
 
 	/*
@@ -509,16 +509,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @deprecated as of 2.0. Use <code>fireDocumentPartitioningChanged(IRegion)</code> instead.
 	 */
 	protected void fireDocumentPartitioningChanged() {
-
-		if (fDocumentPartitioningListeners != null && fDocumentPartitioningListeners.size() > 0) {
-
-			List list= new ArrayList(fDocumentPartitioningListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
-				l.documentPartitioningChanged(this);
-			}
-		}
+		if (fDocumentPartitioningListeners == null)
+			return;
+		
+		Object[] listeners= fDocumentPartitioningListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDocumentPartitioningListener)listeners[i]).documentPartitioningChanged(this);
 	}
 
 	/**
@@ -534,18 +530,16 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *             instead.
 	 */
 	protected void fireDocumentPartitioningChanged(IRegion region) {
-
-		if (fDocumentPartitioningListeners != null && fDocumentPartitioningListeners.size() > 0) {
-
-			List list= new ArrayList(fDocumentPartitioningListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
-				if (l instanceof IDocumentPartitioningListenerExtension)
-					((IDocumentPartitioningListenerExtension) l).documentPartitioningChanged(this, region);
-				else
-					l.documentPartitioningChanged(this);
-			}
+		if (fDocumentPartitioningListeners == null)
+			return;
+		
+		Object[] listeners= fDocumentPartitioningListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			IDocumentPartitioningListener l= (IDocumentPartitioningListener)listeners[i];
+			if (l instanceof IDocumentPartitioningListenerExtension)
+				((IDocumentPartitioningListenerExtension) l).documentPartitioningChanged(this, region);
+			else
+				l.documentPartitioningChanged(this);
 		}
 	}
 
@@ -559,13 +553,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	protected void fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent event) {
-		if (fDocumentPartitioningListeners == null || fDocumentPartitioningListeners.size() == 0)
+		if (fDocumentPartitioningListeners == null)
 			return;
 
-		List list= new ArrayList(fDocumentPartitioningListeners);
-		Iterator e= list.iterator();
-		while (e.hasNext()) {
-			IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
+		Object[] listeners= fDocumentPartitioningListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			IDocumentPartitioningListener l= (IDocumentPartitioningListener)listeners[i];
 			if (l instanceof IDocumentPartitioningListenerExtension2) {
 				IDocumentPartitioningListenerExtension2 extension2= (IDocumentPartitioningListenerExtension2) l;
 				extension2.documentPartitioningChanged(event);
@@ -576,7 +569,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				l.documentPartitioningChanged(this);
 			}
 		}
-
 	}
 
 	/**
@@ -604,25 +596,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			}
 		}
 
-		if (fPrenotifiedDocumentListeners.size() > 0) {
-
-			List list= new ArrayList(fPrenotifiedDocumentListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentListener l= (IDocumentListener) e.next();
-				l.documentAboutToBeChanged(event);
-			}
-		}
-
-		if (fDocumentListeners.size() > 0) {
-
-			List list= new ArrayList(fDocumentListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentListener l= (IDocumentListener) e.next();
-				l.documentAboutToBeChanged(event);
-			}
-		}
+		Object[] listeners= fPrenotifiedDocumentListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
+		
+		listeners= fDocumentListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDocumentListener)listeners[i]).documentAboutToBeChanged(event);
 	}
 
 
@@ -710,25 +690,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (p != null && !p.isEmpty())
 			fireDocumentPartitioningChanged(p);
 
-		if (fPrenotifiedDocumentListeners.size() > 0) {
+		Object[] listeners= fPrenotifiedDocumentListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDocumentListener)listeners[i]).documentChanged(event);
 
-			List list= new ArrayList(fPrenotifiedDocumentListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentListener l= (IDocumentListener) e.next();
-				l.documentChanged(event);
-			}
-		}
-
-		if (fDocumentListeners.size() > 0) {
-
-			List list= new ArrayList(fDocumentListeners);
-			Iterator e= list.iterator();
-			while (e.hasNext()) {
-				IDocumentListener l= (IDocumentListener) e.next();
-				l.documentChanged(event);
-			}
-		}
+		listeners= fDocumentListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDocumentListener)listeners[i]).documentChanged(event);
 
 		// IDocumentExtension
 		++ fReentranceCount;
