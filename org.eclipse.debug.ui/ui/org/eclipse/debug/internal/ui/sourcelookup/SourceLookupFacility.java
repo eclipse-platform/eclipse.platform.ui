@@ -264,8 +264,8 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		if (fReuseEditor) {
 			editor = page.getActiveEditor();
 			if (editor != null) {
-				// The active editor is the one we want to reuse
-				if (!editor.getEditorInput().equals(input)) {
+				// The active editor is the one we want to  reuse
+				if (!(editor.getEditorInput().equals(input) && editor.getSite().getId().equals(id))) {
 					editor = null;
 				}
 			}
@@ -274,7 +274,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				IEditorReference[] refs = page.getEditorReferences();
 				for (int i = 0; i < refs.length; i++) {
 					IEditorPart refEditor= refs[i].getEditor(false);
-					if (refEditor != null && input.equals(refEditor.getEditorInput())) {
+					if (refEditor != null && input.equals(refEditor.getEditorInput()) && refEditor.getSite().getId().equals(id)) {
 						editor = refEditor;
 						page.bringToTop(editor);
 						break;
@@ -366,7 +366,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			public void run() {
 				if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
 					try {
-						editor[0] = page.openEditor(input, id, false);
+						editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
 					} catch (PartInitException e) {
 						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), 
 							DebugUIViewsMessages.LaunchView_Error_1,  
