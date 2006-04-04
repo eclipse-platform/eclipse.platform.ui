@@ -108,12 +108,14 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			label.setFont(font);
 			fToolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.AntPreferencePage_1, getFieldEditorParent());
 			addField(fToolsWarningEditor);
-			 createSpace();
+			createSpace();
 		}
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent()));
 		createSpace();
 		
+		
+		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CREATE_MARKERS, AntPreferencesMessages.AntPreferencePage_15, getFieldEditorParent()));
 		label= new Label(getFieldEditorParent(), SWT.WRAP);
 		label.setText(AntPreferencesMessages.AntPreferencePage_16);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -121,8 +123,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		gd.widthHint= convertWidthInCharsToPixels(60);
 		label.setLayoutData(gd);
 		label.setFont(font);
-		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CREATE_MARKERS, AntPreferencesMessages.AntPreferencePage_15, getFieldEditorParent()));
-		 
+		
         createSpace();
 		createColorComposite();
 		getPreferenceStore().addPropertyChangeListener(this);
