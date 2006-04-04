@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -451,10 +450,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempPageSource = null;
 			if (fileHistory != null) {
-				tempPageSource = Platform.getAdapterManager().getAdapter(fileHistory, IHistoryPageSource.class);
+				tempPageSource = Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
 			}
 			if (tempPageSource == null) {
-				tempPageSource = Platform.getAdapterManager().getAdapter(teamProvider, IHistoryPageSource.class);
+				tempPageSource = Utils.getAdapter(teamProvider, IHistoryPageSource.class,true);
 			}
 			if (tempPageSource instanceof IHistoryPageSource) {
 				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
