@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
 import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -80,6 +81,14 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 			private String getTextFor(String modelProviderId) {
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(modelProviderId);
 				if (desc != null) {
+					// Only do this for the resource model since we don;t want to 
+					// load all model providers (see bug 133604)
+					if (desc.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID))
+						try {
+							return Utils.getLabel(desc.getModelProvider());
+						} catch (CoreException e) {
+							TeamUIPlugin.log(e);
+						}
 					return desc.getLabel();
 				}
 				return modelProviderId;
