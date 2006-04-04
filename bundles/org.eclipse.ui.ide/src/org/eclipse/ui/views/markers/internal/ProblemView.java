@@ -41,6 +41,7 @@ import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * The ProblemView is the view that displays problem markers.
@@ -128,7 +129,13 @@ public class ProblemView extends MarkerView {
 					}
 				};
 				categoryJob.setSystem(true);
-				getProgressService().schedule(categoryJob);			
+				
+				IWorkbenchSiteProgressService progressService = getProgressService();
+				if (progressService == null)
+					categoryJob.schedule();
+				else
+					getProgressService().schedule(categoryJob);		
+					
 				
 			}
 

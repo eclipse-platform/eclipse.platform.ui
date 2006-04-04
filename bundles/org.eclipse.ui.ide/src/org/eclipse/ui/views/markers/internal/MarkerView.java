@@ -127,6 +127,8 @@ public abstract class MarkerView extends TableView {
 	// Section from a 3.1 or earlier workbench
 	private static final String OLD_FILTER_SECTION = "filter"; //$NON-NLS-1$
 
+	static final Object MARKER_UPDATE_FAMILY = new Object();
+
 	class MarkerProcessJob extends Job {
 
 		/**
@@ -155,6 +157,15 @@ public abstract class MarkerView extends TableView {
 		 */
 		public boolean shouldRun() {
 			return PlatformUI.isWorkbenchRunning();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return MARKER_UPDATE_FAMILY == family;
 		}
 
 	}
@@ -195,7 +206,8 @@ public abstract class MarkerView extends TableView {
 					MarkerCategory[] categories = getMarkerAdapter()
 							.getCategories();
 					if (categories != null) {
-						if (categories.length == 1)//Expand if there is only one
+						if (categories.length == 1)// Expand if there is only
+							// one
 							getViewer().expandAll();
 						else {
 							for (int i = 0; i < categories.length; i++) {
@@ -235,6 +247,15 @@ public abstract class MarkerView extends TableView {
 
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+		 */
+		public boolean belongsTo(Object family) {
+			return family == MARKER_UPDATE_FAMILY;
+		}
+
 	}
 
 	private UpdateJob updateJob = new UpdateJob();
@@ -262,7 +283,13 @@ public abstract class MarkerView extends TableView {
 			}
 
 			// After 30 seconds do updates anyways
-			getProgressService().schedule(markerProcessJob, Util.LONG_DELAY);
+
+			IWorkbenchSiteProgressService progressService = getProgressService();
+			if (progressService == null)
+				markerProcessJob.schedule(Util.LONG_DELAY);
+			else
+				getProgressService()
+						.schedule(markerProcessJob, Util.LONG_DELAY);
 
 		}
 
@@ -432,6 +459,7 @@ public abstract class MarkerView extends TableView {
 					ResourcesPlugin.FAMILY_MANUAL_BUILD);
 			getProgressService().showBusyForFamily(
 					ResourcesPlugin.FAMILY_AUTO_BUILD);
+			getProgressService().showBusyForFamily(MARKER_UPDATE_FAMILY);
 		}
 		loadFiltersPreferences();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(

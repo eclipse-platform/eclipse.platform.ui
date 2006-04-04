@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -423,31 +425,30 @@ public abstract class TableView extends ViewPart {
 
 				final IField field = (IField) e.widget.getData();
 				try {
-					getProgressService().busyCursorWhile(
-							new IRunnableWithProgress() {
-								public void run(IProgressMonitor monitor) {
-									TableSorter sorter = getTableSorter();
+					IWorkbenchSiteProgressService progressService = getProgressService();
+					if (progressService == null)
+						BusyIndicator.showWhile(getSite().getShell()
+								.getDisplay(), new Runnable() {
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see java.lang.Runnable#run()
+							 */
+							public void run() {
+								resortTable(field, new NullProgressMonitor());
 
-									monitor.beginTask(MarkerMessages.sortDialog_title, 100);
-									monitor.worked(10);
-									if (field.equals(sorter.getTopField())) {
-										sorter.reverseTopPriority();
-									} else {
-										sorter.setTopPriority(field);
+							}
+						});
+					else
+						getProgressService().busyCursorWhile(
+								new IRunnableWithProgress() {
+									/* (non-Javadoc)
+									 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+									 */
+									public void run(IProgressMonitor monitor) {
+										resortTable(field, monitor);
 									}
-									monitor.worked(15);
-									PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
-										/* (non-Javadoc)
-										 * @see java.lang.Runnable#run()
-										 */
-										public void run() {
-											viewer.refresh();											
-										}
-									});
-									
-									monitor.done();
-								}
-							});
+								});
 				} catch (InvocationTargetException e1) {
 					IDEWorkbenchPlugin.getDefault().getLog().log(
 							Util.errorStatus(e1));
@@ -455,6 +456,39 @@ public abstract class TableView extends ViewPart {
 					return;
 				}
 
+			}
+
+			/**
+			 * Resort the table based on field.
+			 * 
+			 * @param field
+			 * @param monitor
+			 */
+			private void resortTable(final IField field,
+					IProgressMonitor monitor) {
+				TableSorter sorter = getTableSorter();
+
+				monitor.beginTask(MarkerMessages.sortDialog_title, 100);
+				monitor.worked(10);
+				if (field.equals(sorter.getTopField())) {
+					sorter.reverseTopPriority();
+				} else {
+					sorter.setTopPriority(field);
+				}
+				monitor.worked(15);
+				PlatformUI.getWorkbench().getDisplay().asyncExec(
+						new Runnable() {
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see java.lang.Runnable#run()
+							 */
+							public void run() {
+								viewer.refresh();
+							}
+						});
+
+				monitor.done();
 			}
 		};
 	}
@@ -472,7 +506,7 @@ public abstract class TableView extends ViewPart {
 		for (int i = 0; i < fields.length; i++) {
 			int width = getWidth(fields[i]);
 			boolean resizable = width > 0;
-			datas[i] = new ColumnPixelData(width,resizable,resizable);
+			datas[i] = new ColumnPixelData(width, resizable, resizable);
 		}
 		return datas;
 	}
