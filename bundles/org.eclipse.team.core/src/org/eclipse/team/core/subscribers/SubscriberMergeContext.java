@@ -72,6 +72,7 @@ public abstract class SubscriberMergeContext extends MergeContext {
 		GroupProgressMonitor group = getGroup(monitor);
 		if (group != null)
 			handler.setProgressGroupHint(group.getGroup(), group.getTicks());
+		handler.initializeIfNeeded();
 		subscriber.refresh(traversals, monitor);
 	}
 	
@@ -120,6 +121,15 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 */
 	protected void runInBackground(IWorkspaceRunnable runnable) {
 		handler.run(runnable, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == SubscriberDiffTreeEventHandler.class)
+			return handler;
+		return super.getAdapter(adapter);
 	}
 
 }

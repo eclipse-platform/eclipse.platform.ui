@@ -209,6 +209,8 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 		int depth,
 		IProgressMonitor monitor) {
 		
+		Policy.checkCanceled(monitor);
+		
 		// handle any preemptive events before continuing
 		handlePreemptiveEvents(monitor);
 		

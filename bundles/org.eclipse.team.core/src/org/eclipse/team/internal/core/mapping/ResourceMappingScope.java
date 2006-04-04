@@ -151,4 +151,11 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	public void refresh(ResourceMapping[] mappings) {
 		manager.refresh(mappings);
 	}
+	
+	public void reset() {
+		mappingsToTraversals.clear();
+		compoundTraversal.clear();
+		hasAdditionalMappings = false;
+		hasAdditionalResources = false;
+	}
 }

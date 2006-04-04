@@ -276,4 +276,11 @@ public class CompoundResourceTraversal {
 		return uncovered.asTraversals();
 	}
 
+	public void clear() {
+		deepFolders.clear();
+		shallowFolders.clear();
+		zeroFolders.clear();
+		files.clear();
+	}
+
 }

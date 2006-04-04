@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core.subscribers;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.diff.*;
@@ -20,19 +21,32 @@ import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.core.Messages;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A subscriber event handler whose output is a diff tree
  */
 public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 
+	// State constants for the event handler
+	private static final int STATE_NEW = 0;
+	public static final int STATE_STARTED = 1;
+	private static final int STATE_OK_TO_INITIALIZE = 3;
+	private static final int STATE_COLLECTING_CHANGES = 5;
+	private static final int STATE_SHUTDOWN = 8;
+	
+	// state constants for exceptions
+	private static final int EXCEPTION_NONE = 0;
+	private static final int EXCEPTION_CANCELED = 1;
+	private static final int EXCEPTION_ERROR = 2;
+	
 	private ResourceDiffTree tree;
 	private SubscriberDiffCollector collector;
 	private ISynchronizationScopeManager manager;
 	private Object family;
 	private DiffFilter filter;
+	private int state = STATE_NEW;
+	private int exceptionState = EXCEPTION_NONE;
 	
 	public interface IDiffFilterProvider {
 		public DiffFilter getFilter();
@@ -102,14 +116,31 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	}
 
 	protected void reset(ResourceTraversal[] traversals, int type) {
-		if (type == SubscriberEvent.INITIALIZE && traversals.length == 0) {
+		// Reset the exception state since we are reseting
+		exceptionState = EXCEPTION_NONE;
+		if (!manager.isInitialized() && state == STATE_OK_TO_INITIALIZE) {
 			// This means the scope has not been initialized
 			queueEvent(new RunnableEvent(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					prepareScope(monitor);
+					// Only initialize the scope if we are in the STARTED state
+					if (state == STATE_OK_TO_INITIALIZE) {
+						try {
+							prepareScope(monitor);
+							state = STATE_COLLECTING_CHANGES;
+						} finally {
+							// If the initialization didn't complete,
+							// return to the STARTED state.
+							if (state != STATE_COLLECTING_CHANGES) {
+								state = STATE_STARTED;
+								if (exceptionState == EXCEPTION_NONE)
+									exceptionState = EXCEPTION_CANCELED;
+							}
+						}
+					}
 				}
 			}, true), true);
-		} else {
+		} else if (manager.isInitialized()) {
+			state = STATE_COLLECTING_CHANGES;
 			super.reset(traversals, type);
 		}
 	}
@@ -144,13 +175,17 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 */
 	protected void collectAll(IResource resource, int depth,
 			final IProgressMonitor monitor) {
+		Policy.checkCanceled(monitor);
+		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		ResourceTraversal[] traversals = new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) };
 		try {
 			getSubscriber().accept(traversals, new IDiffVisitor() {
-				public boolean visit(IDiff node) {
+				public boolean visit(IDiff diff) {
+					Policy.checkCanceled(monitor);
+					monitor.subTask(NLS.bind("Checking {0}", tree.getResource(diff).getFullPath().toString()));
 					// Queue up any found diffs for inclusion into the output tree
 					queueDispatchEvent(
-							new SubscriberDiffChangedEvent(tree.getResource(node), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, node));
+							new SubscriberDiffChangedEvent(tree.getResource(diff), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, diff));
 					// Handle any pending dispatches
 					handlePreemptiveEvents(monitor);
 					handlePendingDispatch(monitor);
@@ -159,6 +194,8 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 			});
 		} catch (CoreException e) {
 			handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -222,6 +259,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @see org.eclipse.team.internal.core.subscribers.SubscriberEventHandler#shutdown()
 	 */
 	public void shutdown() {
+		state = STATE_SHUTDOWN;
 		collector.dispose();
 		super.shutdown();
 	}
@@ -247,6 +285,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	protected void handleException(CoreException e, IResource resource, int code, String message) {
 		super.handleException(e, resource, code, message);
 		tree.reportError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, code, message, e, resource));
+		exceptionState = EXCEPTION_ERROR;
 	}
 	
 	/* (non-Javadoc)
@@ -255,6 +294,8 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	protected void handleCancel(OperationCanceledException e) {
 		super.handleCancel(e);
 		tree.reportError(new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.SYNC_INFO_SET_CANCELLATION, Messages.SubscriberEventHandler_12, e, ResourcesPlugin.getWorkspace().getRoot()));
+		if (exceptionState == EXCEPTION_NONE)
+			exceptionState = EXCEPTION_CANCELED;
 	}
 
 	public DiffFilter getFilter() {
@@ -265,4 +306,26 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 		this.filter = filter;
 	}
 
+	/**
+	 * If the handler is not initialized or not in the process
+	 * of initializing, start the initialization process.
+	 */
+	public synchronized void initializeIfNeeded() {
+		if (state == STATE_STARTED) {
+			state = STATE_OK_TO_INITIALIZE;
+			reset(getScope().getTraversals(), SubscriberEvent.INITIALIZE);
+		} else if (exceptionState != EXCEPTION_NONE) {
+			reset(getScope().getTraversals(), SubscriberEvent.INITIALIZE);
+		}
+	}
+
+	public synchronized void start() {
+		super.start();
+		if (state == STATE_NEW)
+			state = STATE_STARTED;
+	}
+
+	public int getState() {
+		return state;
+	}
 }

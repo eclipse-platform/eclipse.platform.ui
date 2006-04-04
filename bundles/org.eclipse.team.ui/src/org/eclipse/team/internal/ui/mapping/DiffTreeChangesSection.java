@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
+import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
@@ -51,6 +53,28 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		context = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		context.getDiffTree().addDiffChangeListener(this);
 		getConfiguration().addPropertyChangeListener(this);
+		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+			public void running(IJobChangeEvent event) {
+				if (isJobOfInterest(event.getJob())) {
+					if (context.getDiffTree().isEmpty())
+						calculateDescription();
+				}
+			}
+			private boolean isJobOfInterest(Job job) {
+				if (job.belongsTo(getConfiguration().getParticipant()))
+					return true;
+				SubscriberDiffTreeEventHandler handler = getHandler();
+				if (handler != null && handler.getEventHandlerJob() == job)
+					return true;
+				return false;
+			}
+			public void done(IJobChangeEvent event) {
+				if (isJobOfInterest(event.getJob())) {
+					if (context.getDiffTree().isEmpty())
+						calculateDescription();
+				}
+			}
+		});
 	}
 
 	public void dispose() {
@@ -181,26 +205,97 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 	
 	protected Composite getEmptyChangesComposite(Composite parent) {
-		ISynchronizePageConfiguration configuration = getConfiguration();
-		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
-		if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
-			// A particular model is active so we need to look for a model that has changes in this
-			// same mode before offering to change modes.
-			ModelProvider[] providers =context.getScope().getModelProviders();
-			providers = ModelOperation.sortByExtension(providers);
-			for (int i = 0; i < providers.length; i++) {
-				ModelProvider provider = providers[i];
-				ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
-				if (adapter != null) {
-					boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
-					if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
-						return getPointerToModel(parent, provider, id);
+		if (context.getDiffTree().isEmpty()) {
+			SubscriberDiffTreeEventHandler handler = getHandler();
+			if (handler != null && handler.getState() == SubscriberDiffTreeEventHandler.STATE_STARTED) {
+				// The context has not been initialized yet
+				return getInitializationPane(parent);
+			}
+			if (isRefreshRunning() || (handler != null && handler.getEventHandlerJob().getState() != Job.NONE)) {
+				return getInitializingMessagePane(parent);
+			}
+		} else {
+			ISynchronizePageConfiguration configuration = getConfiguration();
+			String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+			if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+				// A particular model is active so we need to look for a model that has changes in this
+				// same mode before offering to change modes.
+				ModelProvider[] providers =context.getScope().getModelProviders();
+				providers = ModelOperation.sortByExtension(providers);
+				for (int i = 0; i < providers.length; i++) {
+					ModelProvider provider = providers[i];
+					ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
+					if (adapter != null) {
+						boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
+						if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
+							return getPointerToModel(parent, provider, id);
+						}
 					}
 				}
+				// TODO: More to do but we'll do it later
 			}
-			// TODO: More to do but we'll do it later
 		}
 		return super.getEmptyChangesComposite(parent);
+	}
+
+	private Composite getInitializationPane(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(getBackgroundColor());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		composite.setLayoutData(data);	
+
+		createDescriptionLabel(composite, NLS.bind("{0} has not been initialized.", new String[] { getConfiguration().getParticipant().getName() })); 
+
+		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
+		link.setText("Initialize"); 
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				getHandler().initializeIfNeeded();
+			}
+		});
+		link.setBackground(getBackgroundColor());
+		link.setUnderlined(true);
+		
+		link = new Hyperlink(composite, SWT.WRAP);
+		link.setText("Synchronize"); 
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
+			}
+		});
+		link.setBackground(getBackgroundColor());
+		link.setUnderlined(true);
+		
+		return composite;
+	}
+
+	private Composite getInitializingMessagePane(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(getBackgroundColor());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		composite.setLayoutData(data);
+		if (isRefreshRunning()) {
+			createDescriptionLabel(composite,NLS.bind("Synchronizing {0}", new String[] { getConfiguration().getParticipant().getName() }));
+		} else {
+			createDescriptionLabel(composite,NLS.bind("Initializing {0}", new String[] { getConfiguration().getParticipant().getName() }));
+		}
+		return composite;
+	}
+
+	private boolean isRefreshRunning() {
+		return Platform.getJobManager().find(getConfiguration().getParticipant()).length > 0;
+	}
+
+	private SubscriberDiffTreeEventHandler getHandler() {
+		return (SubscriberDiffTreeEventHandler)Utils.getAdapter(context, SubscriberDiffTreeEventHandler.class);
 	}
 
 	private Composite getPointerToModel(Composite parent, final ModelProvider provider, String oldId) {
@@ -309,7 +404,11 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 			public void linkActivated(HyperlinkEvent e) {
 				errors = null;
 				calculateDescription();
-				// TODO: Should refresh
+				SubscriberDiffTreeEventHandler handler = getHandler();
+				if (handler != null)
+					handler.initializeIfNeeded();
+				else 
+					getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
 			}
 		});
 		link.setBackground(getBackgroundColor());

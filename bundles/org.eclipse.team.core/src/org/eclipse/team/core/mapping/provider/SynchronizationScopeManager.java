@@ -87,6 +87,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 			ResourceMapping[] mappings = getMappings(descriptor, traversals,
 					context, monitor);
 			result.addAll(Arrays.asList(mappings));
+			Policy.checkCanceled(monitor);
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
@@ -169,12 +170,14 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 			return;
 		monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 		// Accumulate the initial set of mappings we need traversals for
+		((ResourceMappingScope)scope).reset();
 		ResourceMapping[] targetMappings = scope.getInputMappings();
 		ResourceTraversal[] newTraversals;
 		boolean firstTime = true;
 		boolean hasAdditionalResources = false;
 		int count = 0;
 		do {
+			Policy.checkCanceled(monitor);
 			newTraversals = addMappingsToScope(targetMappings,
 					Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
 			if (newTraversals.length > 0 && consultModels) {
@@ -377,6 +380,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 				ResourceTraversal[] newOnes = addMappingToScope(mapping, traversals);
 				result.addTraversals(newOnes);
 			}
+			Policy.checkCanceled(monitor);
 		}
 		return result.asTraversals();
 	}

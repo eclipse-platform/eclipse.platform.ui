@@ -32,7 +32,7 @@ import org.eclipse.ui.progress.UIJob;
  * Job to refresh a {@link Subscriber} in the background. The job can be configured
  * to be re-scheduled and run at a specified interval.
  * <p>
- * The job supports a basic workflow for modal/non-modal usage. If the job is
+ * The job supports a basic work flow for modal/non-modal usage. If the job is
  * run in the foreground (e.g. in a modal progress dialog) the refresh listeners
  * action is invoked immediately after the refresh is completed. Otherwise the refresh
  * listeners action is associated to the job as a <i>goto</i> action. This will
@@ -54,7 +54,7 @@ public abstract class RefreshParticipantJob extends Job {
 	private boolean reschedule = false;
 	
 	/**
-	 * If true a rescheduled refresh job should be retarted when cancelled
+	 * If true a rescheduled refresh job should be restarted when canceled
 	 */
 	private boolean restartOnCancel = true; 
 	
@@ -167,14 +167,14 @@ public abstract class RefreshParticipantJob extends Job {
 			notify(listener);
 		}
 		/**
-		 * Subsclasses overide this method to send an event safely to a lsistener
+		 * Subclasses override this method to send an event safely to a listener
 		 * @param listener
 		 */
 		protected abstract void notify(IRefreshSubscriberListener listener);
 	}
 	
 	/**
-	 * Monitor wrapper that will indicate that the job is cancelled 
+	 * Monitor wrapper that will indicate that the job is canceled 
 	 * if the job is blocking another.
 	 */
 	private class NonblockingProgressMonitor extends ProgressMonitorWrapper {
@@ -277,7 +277,7 @@ public abstract class RefreshParticipantJob extends Job {
 		}
 		// Only allow one refresh job at a time
 		// NOTE: It would be cleaner if this was done by a scheduling
-		// rule but at the time of writting, it is not possible due to
+		// rule but at the time of writing, it is not possible due to
 		// the scheduling rule containment rules.
 		// Acquiring lock to ensure only one refresh job is running at a particular time
 		boolean acquired = false;
@@ -310,10 +310,10 @@ public abstract class RefreshParticipantJob extends Job {
 				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
-					// The refresh was cancelled by the user
+					// The refresh was canceled by the user
 					status = Status.CANCEL_STATUS;
 				} else {
-					// The refresh was cancelled due to a blockage or a cancelled authentication
+					// The refresh was canceled due to a blockage or a canceled authentication
 					if (wrappedMonitor != null && wrappedMonitor.wasBlocking()) {
 						status = POSTPONED;
 					} else {
@@ -417,7 +417,7 @@ public abstract class RefreshParticipantJob extends Job {
 		setProperty(IProgressConstants.ICON_PROPERTY, participant.getImageDescriptor());
 		setProperty(IProgressConstants.ACTION_PROPERTY, actionWrapper);
 		setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
-		// Listener delagate
+		// Listener delegate
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
 				if(listener != null) {
@@ -429,7 +429,7 @@ public abstract class RefreshParticipantJob extends Job {
 					boolean isModal = isJobModal();
 					final ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
 					if(runnable != null) {
-						// If the job is being run modally then simply prompt the user immediatly
+						// If the job is being run modally then simply prompt the user immediately
 						if(isModal) {
 							if(runnable != null) {
 								Job update = new UIJob("") { //$NON-NLS-1$

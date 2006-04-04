@@ -184,7 +184,7 @@ public interface ISynchronizationContext {
 	 * scope of this context. If new resources are included in the scope, a
 	 * property change event will be fired from the scope. If the
 	 * synchronization state of any of the resources covered by the mapping
-	 * change, a change event will be fired from the diff tree of this contet.
+	 * change, a change event will be fired from the diff tree of this context.
 	 * <p>
 	 * Changes to the diff tree may be triggered by a call to this method or by
 	 * a refresh triggered by some other source. Hence, the callback from the

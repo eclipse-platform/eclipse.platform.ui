@@ -221,7 +221,7 @@ public class ModelSynchronizeParticipant extends
 	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
 	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
 	 * running operation that will update the participant's context with new changes detected on the
-	 * server. Passing an empty array of resource mappings will refresh all mappings in the context.
+	 * server.
 	 * 
 	 * @param site the workbench site the synchronize is running from. This can be used to notify the site
 	 * that a job is running.
