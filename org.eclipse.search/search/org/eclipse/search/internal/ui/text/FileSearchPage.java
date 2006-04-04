@@ -47,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -61,6 +62,8 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
+
+import org.eclipse.search2.internal.ui.OpenSearchPreferencesAction;
 
 
 public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
@@ -248,6 +251,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	public void setViewPart(ISearchResultViewPart part) {
 		super.setViewPart(part);
 		fActionGroup= new NewTextSearchActionGroup(part);
+	}
+	
+	public void init(IPageSite site) {
+		super.init(site);
+		IMenuManager menuManager = site.getActionBars().getMenuManager();
+		menuManager.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, new OpenSearchPreferencesAction());
 	}
 	
 	public void dispose() {

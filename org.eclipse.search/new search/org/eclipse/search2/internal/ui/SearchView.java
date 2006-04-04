@@ -208,6 +208,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public void init(IPageSite pageSite) {
 			super.init(pageSite);
 			getSite().setSelectionProvider(null);
+			// add something to avoid the empty menu
+			IMenuManager menuManager= pageSite.getActionBars().getMenuManager();
+			menuManager.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, new OpenSearchPreferencesAction());
 		}
 
 		/* (non-Javadoc)
@@ -529,7 +532,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		createViewMenuGroups(site.getActionBars().getMenuManager());
+		IMenuManager menuManager= site.getActionBars().getMenuManager();
+		createViewMenuGroups(menuManager);
 		fPageState= memento;
 		IWorkbenchSiteProgressService progressService= getProgressService();
 		if (progressService != null)

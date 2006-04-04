@@ -25,6 +25,8 @@ public final class SearchMessages extends NLS {
     }
 
 	public static String AbstractTextSearchViewPage_update_job_name;
+	public static String OpenSearchPreferencesAction_label;
+	public static String OpenSearchPreferencesAction_tooltip;
 	public static String RemoveSelectedMatchesAction_label;
 	public static String RemoveSelectedMatchesAction_tooltip;
 	public static String SearchAgainAction_label;

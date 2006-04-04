@@ -48,6 +48,9 @@ import org.eclipse.search.internal.ui.util.ComboFieldEditor;
  */
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String PAGE_ID= "org.eclipse.search.preferences.SearchPreferencePage"; //$NON-NLS-1$
+	
+	
 	public static final String IGNORE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.ignore"; //$NON-NLS-1$
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
