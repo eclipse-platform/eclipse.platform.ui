@@ -120,7 +120,8 @@ import org.eclipse.swt.widgets.Layout;
  * layout managers).
  * 
  * @author djo
- * @since 1.0 TODO: eliminate flicker when scrolling backwards
+ * @since 3.2
+ * TODO: eliminate flicker when scrolling backwards
  */
 public class CompositeTable extends Canvas {
 
