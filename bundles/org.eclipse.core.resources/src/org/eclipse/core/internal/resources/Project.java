@@ -327,18 +327,6 @@ public class Project extends Container implements IProject {
 		}
 	}
 
-	/**
-	 * Creates all parent folder of the given resource in this project.
-	 * This project must be accessible.
-	 */
-	private void createParentFolders(IResource resource) throws CoreException {
-		IContainer parent = resource.getParent();
-		if (parent == null || parent.exists() || parent.getType() == PROJECT)
-			return;
-		createParentFolders(parent);
-		workspace.createResource(parent, false);
-	}
-
 	/* (non-Javadoc)
 	 * @see IProject#delete(boolean, boolean, IProgressMonitor)
 	 */
@@ -939,7 +927,9 @@ public class Project extends Container implements IProject {
 			LinkDescription newLink = (LinkDescription) it.next();
 			try {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
-				createParentFolders(toLink);
+				IContainer parent = toLink.getParent();
+				if (parent != null && !parent.exists() && parent.getType() == FOLDER)
+					((Folder)parent).ensureExists(Policy.monitorFor(null));
 				toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 			} catch (CoreException e) {
 				status.merge(e.getStatus());
