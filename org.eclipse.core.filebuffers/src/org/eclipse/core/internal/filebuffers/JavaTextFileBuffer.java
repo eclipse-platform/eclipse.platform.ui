@@ -123,6 +123,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @since 3.2
 	 */
 	private final Object fAnnotationModelCreationLock= new Object();
+	/**
+	 * Tells whether the cache is up to date.
+	 * @since 3.2
+	 */
+	private boolean fIsCacheUpdated= false;
 
 
 	public JavaTextFileBuffer(TextFileBufferManager manager) {
@@ -130,7 +135,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#getDocument()
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getDocument()
 	 */
 	public IDocument getDocument() {
 		return fDocument;
@@ -151,19 +156,21 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#getEncoding()
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getEncoding()
 	 */
 	public String getEncoding() {
+		if (!fIsCacheUpdated)
+			cacheEncodingState(null);
 		return fEncoding;
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedTextFile#setEncoding(java.lang.String)
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#setEncoding(java.lang.String)
 	 */
 	public void setEncoding(String encoding) {
 		fExplicitEncoding= encoding;
 		if (encoding == null || encoding.equals(fEncoding))
-			cacheEncodingState(null);
+			fIsCacheUpdated= false;
 		else {
 			fEncoding= encoding;
 			fHasBOM= false;
@@ -171,7 +178,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 
 	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedFile#getStatus()
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getStatus()
 	 */
 	public IStatus getStatus() {
 		if (!isDisconnected()) {
@@ -237,7 +244,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			original= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			setDocumentContent(original, fFileStore, fEncoding, monitor);
+			setDocumentContent(original, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
 		}
@@ -352,7 +359,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			setDocumentContent(fDocument, fFileStore, fEncoding, monitor);
+			setDocumentContent(fDocument, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			fStatus= x.getStatus();
@@ -380,6 +387,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	protected void cacheEncodingState(IProgressMonitor monitor) {
 		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
+		fIsCacheUpdated= true;
 
 		InputStream stream= null;
 		try {
@@ -511,6 +519,10 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 
 	private String computeEncoding() {
+		// Make sure cache is up to date
+		if (!fIsCacheUpdated)
+			cacheEncodingState(null);
+		
 		// User-defined encoding has first priority
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
@@ -551,10 +563,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 * @param document the document to be initialized
 	 * @param file the file which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
+	 * @param hasBOM tell whether the given file has a BOM
 	 * @param monitor the progress monitor
 	 * @exception CoreException if the given stream can not be read
 	 */
-	private void setDocumentContent(IDocument document, IFileStore file, String encoding, IProgressMonitor monitor) throws CoreException {
+	private void setDocumentContent(IDocument document, IFileStore file, String encoding, boolean hasBOM, IProgressMonitor monitor) throws CoreException {
 		InputStream contentStream= getFileContents(file, monitor);
 		if (contentStream == null)
 			return;
@@ -570,7 +583,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+			if (hasBOM && CHARSET_UTF_8.equals(encoding)) {
 				int n= 0;
 				do {
 					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
