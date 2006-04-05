@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents a bunch of stuff that is intended to be displayed in a calendar control
@@ -49,22 +50,12 @@ public class CalendarableModel {
 	}
 
 	/**
-	 * @return
+	 * @return The number of days to display
 	 */
 	public int getNumberOfDays() {
 		return numberOfDays;
 	}
 
-	/**
-	 * @return
-	 */
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	/**
-	 * @param numberOfDays
-	 */
 	private void initializeColumns(int numberOfDays) {
 		dateColumns  = new ArrayList[numberOfDays]; 
 		for (int i=0; i < numberOfDays; ++i) {
@@ -72,10 +63,30 @@ public class CalendarableModel {
 		}
 	}
 
+	private Date startDate = null;
+	
+	/**
+	 * @param startDate The starting date to display
+	 */
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+		refresh();
+	}
+
+	/**
+	 * @return The starting date to display
+	 */
+	public Date getStartDate() {
+		return startDate;
+	}
+
 	private EventCountProvider eventCountProvider = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
+	/**
+	 * Sets a strategy pattern object that can return the number of events 
+	 * to display on a particulr day.
+	 * 
+	 * @param eventCountProvider
 	 */
 	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
 		this.eventCountProvider = eventCountProvider;
@@ -84,24 +95,17 @@ public class CalendarableModel {
 	
 	private EventContentProvider eventContentProvider = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
+	/**
+	 * Sets a strategy pattern object that can set the data for the actual events for
+	 * a particular day.
+	 * 
+	 * @param eventContentProvider
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
 		this.eventContentProvider = eventContentProvider;
 		refresh();
 	}
 	
-	private Date startDate = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
-	 */
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-		refresh();
-	}
-
 	/**
 	 * Refresh everything in the display.
 	 */
@@ -121,7 +125,7 @@ public class CalendarableModel {
 	 * Returns the date that is the numberOfDaysFromStartDate.
 	 * 
 	 * @param numberOfDaysFromStartDate
-	 * @return
+	 * @return Date
 	 */
 	public Date calculateDate(int numberOfDaysFromStartDate) {
 		GregorianCalendar gc = new GregorianCalendar();
@@ -157,10 +161,6 @@ public class CalendarableModel {
 				tempEvents);
 	}
 
-	/**
-	 * @param list
-	 * @param numberOfEventsInDay
-	 */
 	private void resizeList(ArrayList list, int numberOfEventsInDay) {
 		while (list.size() < numberOfEventsInDay) {
 			list.add(new Calendarable());
@@ -171,9 +171,6 @@ public class CalendarableModel {
 		}
 	}
 
-	/**
-	 * @param calendarables
-	 */
 	private void clearCalendarables(ArrayList calendarables) {
 		for (Iterator i = calendarables.iterator(); i.hasNext();) {
 			Calendarable c = (Calendarable) i.next();
@@ -181,8 +178,11 @@ public class CalendarableModel {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
+	/**
+	 * Refresh the display for the specified Date.  If Date isn't being
+	 * displayed, this method ignores the request.
+	 * 
+	 * @param date the date to refresh.
 	 */
 	public void refresh(Date date) {
 		GregorianCalendar dateToRefresh = new GregorianCalendar();
@@ -206,9 +206,9 @@ public class CalendarableModel {
 	 * Return the events for a particular day offset.
 	 * 
 	 * @param dayOffset
-	 * @return
+	 * @return A List of events.
 	 */
-	public ArrayList getCalendarableEvents(int dayOffset) {
+	public List getCalendarableEvents(int dayOffset) {
 		return dateColumns[dayOffset];
 	}
 
