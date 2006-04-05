@@ -23,6 +23,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -1179,7 +1180,38 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         return list;
     }
 
-    /**
+    /*
+     * Overridden in AbstractTreeViewer to fix bug 108102 (code copied from StructuredViewer
+     * to avoid introducing new API)
+     * (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#handleDoubleSelect(org.eclipse.swt.events.SelectionEvent)
+     */
+	protected void handleDoubleSelect(SelectionEvent event) {
+		// handle case where an earlier selection listener disposed the control.
+		Control control = getControl();
+		if (control != null && !control.isDisposed()) {
+			// If the double-clicked element can be obtained from the event, use it
+			// otherwise get it from the control.  Some controls like List do
+			// not have the notion of item.
+			// For details, see bug 90161 [Navigator] DefaultSelecting folders shouldn't always expand first one
+			ISelection selection;
+			if (event.item != null && event.item.getData() != null) {
+				
+				// changes to fix bug 108102 follow
+				TreePath treePath = getTreePathFromItem((Item) event.item);
+				selection = new TreeSelection(treePath);
+				// end of changes 
+				
+			}
+			else {
+				selection = getSelection();
+				updateSelection(selection);
+			}
+			fireDoubleClick(new DoubleClickEvent(this, selection));
+		}
+	}
+
+	/**
      * Handles a tree collapse event from the SWT widget.
      * 
      * @param event

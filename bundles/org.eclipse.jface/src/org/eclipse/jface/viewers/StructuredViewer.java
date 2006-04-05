@@ -1004,6 +1004,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the SWT selection event
 	 */
 	protected void handleDoubleSelect(SelectionEvent event) {
+		// This method is reimplemented in AbstractTreeViewer to fix bug 108102.
+		
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
