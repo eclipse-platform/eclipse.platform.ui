@@ -394,16 +394,15 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 	
 	public boolean isDirty(final ICVSResource cvsResource, IProgressMonitor monitor) throws CVSException {
-		return !cvsResource.isIgnored() && cvsResource.isModified(monitor);
+		if (cvsResource.exists())
+			return !cvsResource.isIgnored() && cvsResource.isModified(monitor);
+		return cvsResource.isManaged() && cvsResource.isModified(monitor);
 	}
 	
 	public boolean isDirty(IResource resource, IProgressMonitor monitor) throws CVSException {
-
-		// No need to decorate non-existant resources
-		if (!resource.exists()) return false;
-
 		try {
-			return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource), monitor);
+			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			return isDirty(cvsResource, monitor);
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty.
 			boolean accessible = resource.getProject().isAccessible();
