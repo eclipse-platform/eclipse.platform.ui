@@ -342,10 +342,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 						// re-open the window if minimized 
 						Shell shell= window.getShell();
 						if (shell != null) {
-							if (shell.getMinimized()) {
-								shell.setMinimized(false);
-							}
 							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+								if (shell.getMinimized()) {
+									shell.setMinimized(false);
+								}
 								shell.forceActive();
 							}
 						}
