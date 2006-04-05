@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sean Montgomery, smontgomery@mediaspansoftware.com - https://bugs.eclipse.org/bugs/show_bug.cgi?id=45095
  *******************************************************************************/
 
 package org.eclipse.jface.text;
@@ -710,7 +711,7 @@ abstract public class AbstractInformationControlManager {
 			if (lowerRightX > displayLowerRightX)
 				location.x= location.x - (lowerRightX - displayLowerRightX);
 
-			return (location.x >= 0 && location.y >= 0);
+			return (location.x >= displayArea.x && location.y >= displayArea.y);
 
 		} else if (ANCHOR_RIGHT == anchor || ANCHOR_LEFT == anchor) {
 
@@ -725,7 +726,7 @@ abstract public class AbstractInformationControlManager {
 			if (lowerRightY > displayLowerRightY)
 				location.y= location.y - (lowerRightY - displayLowerRightY);
 
-			return (location.x >= 0 && location.y >= 0);
+			return (location.x >= displayArea.x && location.y >= displayArea.y);
 
 		} else if (ANCHOR_GLOBAL == anchor) {
 
@@ -735,7 +736,7 @@ abstract public class AbstractInformationControlManager {
 			if (lowerRightY > displayLowerRightY)
 				location.y= location.y - (lowerRightY - displayLowerRightY);
 
-			return (location.x >= 0 && location.y >= 0);
+			return (location.x >= displayArea.x && location.y >= displayArea.y);
 		}
 
 		return false;
