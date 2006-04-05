@@ -443,7 +443,7 @@ public class CoreItem extends ViewItem {
 	
 	/*package*/
 	IStatus runExecutable(CheatSheetManager csm) {
-		return runExecutable(this.getItem().getExecutable(), csm);	
+		return runExecutable(getExecutable(), csm);	
 	}
 	
 	IStatus runExecutable(AbstractExecutable executable, CheatSheetManager csm) {
