@@ -262,7 +262,8 @@
                helpContextId="org.eclipse.ui.open_workspace_file_action_context"
                class="org.eclipse.ui.internal.ide.handlers.OpenResourceHandler"
                menubarPath="navigate/open.ext2"
-               id="org.eclipse.ui.OpenWorkspaceFile">
+               id="org.eclipse.ui.OpenWorkspaceFile"
+               definitionId="org.eclipse.ui.navigate.openResource">
          </action>
       </actionSet>
       <actionSet
