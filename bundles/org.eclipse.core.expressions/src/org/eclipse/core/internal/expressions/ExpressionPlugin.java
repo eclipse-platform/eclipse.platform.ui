@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import org.eclipse.core.runtime.Plugin;
-
 import org.osgi.framework.BundleContext;
+
+import org.eclipse.core.runtime.Plugin;
 
 public class ExpressionPlugin extends Plugin {
 	

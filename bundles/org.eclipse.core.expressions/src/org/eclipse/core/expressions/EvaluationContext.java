@@ -13,9 +13,8 @@ package org.eclipse.core.expressions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.internal.expressions.Assert;
 
 /**
  * A default implementation of an evaluation context.

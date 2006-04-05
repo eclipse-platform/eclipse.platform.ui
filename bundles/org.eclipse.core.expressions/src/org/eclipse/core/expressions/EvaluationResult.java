@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.expressions;
 
-import org.eclipse.core.internal.expressions.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * An evaluation result represents the result of an expression

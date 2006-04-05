@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.osgi.framework.Bundle;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -17,8 +20,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.expressions.IPropertyTester;
-
-import org.osgi.framework.Bundle;
 
 public class PropertyTesterDescriptor implements IPropertyTester {
 	

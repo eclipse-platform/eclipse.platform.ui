@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
