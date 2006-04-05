@@ -21,7 +21,17 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
-    public static String ExportProjectSetMainPage_Browse;
+    public static String DiffTreeChangesSection_3;
+
+	public static String DiffTreeChangesSection_4;
+
+	public static String DiffTreeChangesSection_5;
+
+	public static String DiffTreeChangesSection_6;
+
+	public static String DiffTreeChangesSection_7;
+
+	public static String ExportProjectSetMainPage_Browse;
 
 	public static String ExportProjectSetMainPage_DeselectAll;
 

@@ -37,6 +37,8 @@ public class Messages extends NLS {
 	public static String RepositoryProvider_invalidClass;
     public static String RepositoryProvider_toString;
 
+	public static String SubscriberDiffTreeEventHandler_0;
+
 	public static String Team_readError;
 	public static String PollingInputStream_readTimeout;
 	public static String PollingInputStream_closeTimeout;

@@ -248,10 +248,10 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);	
 
-		createDescriptionLabel(composite, NLS.bind("{0} has not been initialized.", new String[] { getConfiguration().getParticipant().getName() })); 
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_3, new String[] { getConfiguration().getParticipant().getName() })); 
 
 		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText("Initialize"); 
+		link.setText(TeamUIMessages.DiffTreeChangesSection_4); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				getHandler().initializeIfNeeded();
@@ -261,7 +261,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText("Synchronize"); 
+		link.setText(TeamUIMessages.DiffTreeChangesSection_5); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
@@ -283,9 +283,9 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);
 		if (isRefreshRunning()) {
-			createDescriptionLabel(composite,NLS.bind("Synchronizing {0}", new String[] { getConfiguration().getParticipant().getName() }));
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_6, new String[] { getConfiguration().getParticipant().getName() }));
 		} else {
-			createDescriptionLabel(composite,NLS.bind("Initializing {0}", new String[] { getConfiguration().getParticipant().getName() }));
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_7, new String[] { getConfiguration().getParticipant().getName() }));
 		}
 		return composite;
 	}

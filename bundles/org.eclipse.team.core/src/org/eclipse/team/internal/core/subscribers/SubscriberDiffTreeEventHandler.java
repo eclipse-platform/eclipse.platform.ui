@@ -182,7 +182,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 			getSubscriber().accept(traversals, new IDiffVisitor() {
 				public boolean visit(IDiff diff) {
 					Policy.checkCanceled(monitor);
-					monitor.subTask(NLS.bind("Checking {0}", tree.getResource(diff).getFullPath().toString()));
+					monitor.subTask(NLS.bind(Messages.SubscriberDiffTreeEventHandler_0, tree.getResource(diff).getFullPath().toString()));
 					// Queue up any found diffs for inclusion into the output tree
 					queueDispatchEvent(
 							new SubscriberDiffChangedEvent(tree.getResource(diff), SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, diff));
