@@ -67,7 +67,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void ignoreFileChanged(IFile file) {
-		if (isSharedWithCVS(file))
+		//if (isSharedWithCVS(file))
 			queueEvent(new ResourceEvent(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
