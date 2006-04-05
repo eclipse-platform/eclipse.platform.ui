@@ -34,11 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -244,24 +240,16 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	protected void removeTerminatedLaunches(final ILaunch newLaunch) {
-		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-		    Job launchRemovalJob = new Job(LaunchConfigurationsMessages.LaunchConfigurationManager_0) { 
-		        protected IStatus run(IProgressMonitor monitor) {
-		            ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-					Object[] launches= lManager.getLaunches();
-					for (int i= 0; i < launches.length; i++) {
-						ILaunch launch= (ILaunch)launches[i];
-						if (launch != newLaunch && launch.isTerminated()) {
-							lManager.removeLaunch(launch);
-						}
-					}
-					return Status.OK_STATUS;
-		        }
-		        
-		    };
-		    launchRemovalJob.setPriority(Job.DECORATE);
-		    launchRemovalJob.schedule();
-		}
+	    if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
+	        ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+	        Object[] launches= lManager.getLaunches();
+	        for (int i= 0; i < launches.length; i++) {
+	            ILaunch launch= (ILaunch)launches[i];
+	            if (launch != newLaunch && launch.isTerminated()) {
+	                lManager.removeLaunch(launch);
+	            }
+	        }
+	    }
 	}
 	
 	/**

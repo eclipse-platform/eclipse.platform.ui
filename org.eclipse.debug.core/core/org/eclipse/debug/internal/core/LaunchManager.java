@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -72,6 +73,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1847,10 +1849,19 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * @see ILaunchManager#removeLaunch(ILaunch)
 	 */
-	public void removeLaunch(ILaunch launch) {
+	public void removeLaunch(final ILaunch launch) {
 		if (internalRemoveLaunch(launch)) {
-			fireUpdate(launch, REMOVED);
-			fireUpdate(new ILaunch[] {launch}, REMOVED);
+            Job job = new Job("Notify Launch Removal") { //$NON-NLS-1$
+                protected IStatus run(IProgressMonitor monitor) {
+                    if (!monitor.isCanceled()) {
+                        fireUpdate(launch, REMOVED);
+                        fireUpdate(new ILaunch[] {launch}, REMOVED);
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
+            job.setSystem(true);
+            job.schedule();
 		}
 	}
 	
