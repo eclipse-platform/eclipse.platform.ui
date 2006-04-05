@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -27,7 +28,7 @@ import org.eclipse.team.internal.core.BackgroundEventHandler;
 public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 
 	public DeferredResourceChangeHandler() {
-		super(CVSMessages.DeferredResourceChangeHandler_0, CVSMessages.DeferredResourceChangeHandler_1); // 
+		super(CVSMessages.DeferredResourceChangeHandler_0, CVSMessages.DeferredResourceChangeHandler_1);
 	}
 
 	private static final int IGNORE_FILE_CHANGED = 1;
@@ -66,7 +67,8 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void ignoreFileChanged(IFile file) {
-		queueEvent(new ResourceEvent(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
+		if (isSharedWithCVS(file))
+			queueEvent(new ResourceEvent(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
 	/**
@@ -76,7 +78,8 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	 * @param resource the recently add resource
 	 */
 	public void recreated(IResource resource) {
-		queueEvent(new ResourceEvent(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
+		if (isSharedWithCVS(resource))
+			queueEvent(new ResourceEvent(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
 	}
 	
 	/* (non-Javadoc)
@@ -137,9 +140,19 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void handleConflictingDeletion(IResource local) {
-		queueEvent(new ResourceEvent(local, CONFLICTING_DELETION, IResource.DEPTH_ZERO), false);
+		if (isSharedWithCVS(local))
+			queueEvent(new ResourceEvent(local, CONFLICTING_DELETION, IResource.DEPTH_ZERO), false);
 	}
 	
+	private boolean isSharedWithCVS(IResource resource) {
+		IProject project = resource.getProject();
+		if (project.isAccessible()) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+			return provider != null;
+		}
+		return false;
+	}
+
 	protected Object getJobFamiliy() {
 		return this;
 	}
