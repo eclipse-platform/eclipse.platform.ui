@@ -59,7 +59,9 @@ public abstract class AbstractResourceMappingScope extends AbstractSynchronizati
 		CompoundResourceTraversal traversal = new CompoundResourceTraversal();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			traversal.addTraversals(getTraversals(mapping));
+			ResourceTraversal[] traversals = getTraversals(mapping);
+			if (traversals != null)
+				traversal.addTraversals(traversals);
 		}
 		return traversal.asTraversals();
 	}
