@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -595,12 +597,23 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			ISelectionProvider selectionProvider = activeEditor.getSite()
 					.getSelectionProvider();
 			if (selectionProvider != null) {
-				SelectionChangedEvent event = new SelectionChangedEvent(
-						selectionProvider, selectionProvider.getSelection());
-				MultiPageSelectionProvider provider = (MultiPageSelectionProvider) getSite()
+				ISelectionProvider outerProvider = getSite()
 						.getSelectionProvider();
-				provider.fireSelectionChanged(event);
-				provider.firePostSelectionChanged(event);
+				if (outerProvider instanceof MultiPageSelectionProvider) {
+					SelectionChangedEvent event = new SelectionChangedEvent(
+							selectionProvider, selectionProvider.getSelection());
+
+					MultiPageSelectionProvider provider = (MultiPageSelectionProvider) outerProvider;
+					provider.fireSelectionChanged(event);
+					provider.firePostSelectionChanged(event);
+				} else {
+					WorkbenchPlugin
+							.log(new Status(
+									IStatus.WARNING,
+									"org.eclipse.ui.workbench", IStatus.OK, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$ //$NON-NLS-2$
+											+ " did not propogate selection for " //$NON-NLS-1$
+											+ activeEditor.getTitle(), null));
+				}
 			}
 		}
 	}
