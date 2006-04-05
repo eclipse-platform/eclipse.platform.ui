@@ -39,7 +39,8 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	private Color introColor;
 	private Color activeColor;
 
-	private Color alternateColor;
+	private Color inactiveColor1;
+	private Color inactiveColor2;
 
 	private CheatSheet cheatSheet;
 
@@ -82,7 +83,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		// the intro item.
 		ArrayList items = cheatSheet.getItems();
 		for (int i = 0; i < items.size(); i++) {
-			Color color = (i % 2) == 0 ? backgroundColor : alternateColor;
+			Color color = (i % 2) == 0 ? getInactiveColor1() : getInactiveColor2();
 
 			CoreItem coreItem = new CoreItem(this,
 					(org.eclipse.ui.internal.cheatsheets.data.Item) items
@@ -92,6 +93,14 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		CheatSheetStopWatch
 				.printLapTime(
 						"CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createPart(): "); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private Color getInactiveColor2() {
+		return inactiveColor2;
+	}
+
+	private Color getInactiveColor1() {
+		return inactiveColor1;
 	}
 
 	/**
@@ -110,15 +119,18 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	public void dispose() {
 		super.dispose();
 
-		if (alternateColor != null)
-			alternateColor.dispose();
+		if (getInactiveColor1() != null)
+			getInactiveColor1().dispose();
+		if (getInactiveColor2() != null)
+			getInactiveColor2().dispose();
 
 		if (activeColor != null)
 			activeColor.dispose();
 		
 		if (introColor != null)
 			introColor.dispose();
-		alternateColor = null;
+		inactiveColor1 = null;
+		inactiveColor2 = null;
 		activeColor = null;
 		introColor = null;
 	}
@@ -132,6 +144,11 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		RGB rgb;
 		RGB white = new RGB(255, 255, 255);
 		RGB black = new RGB(0, 0, 0);
+		
+		if (isReverseVideo()) {
+			computeReverseVideoColors(display);
+			return;
+		}
 
 		if (toolkit.getColors().isWhiteBackground()) {
 			rgb = toolkit.getColors().getSystemColor(SWT.COLOR_LIST_SELECTION);
@@ -169,7 +186,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 				// too dark - add 20% white
 				rgb = FormColors.blend(rgb, white, 80);
 			}
-			alternateColor = new Color(display, rgb);
+			inactiveColor1 = new Color(display, rgb);
 		} else {
 			// colored background
 			rgb = toolkit.getColors().getSystemColor(SWT.COLOR_LIST_SELECTION);
@@ -209,11 +226,30 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 			// white by 60%
 			else if (FormColors.testTwoPrimaryColors(rgb, 230, 256))
 				rgb = FormColors.blend(rgb, black, 40);
-			alternateColor = new Color(display, rgb);
+			inactiveColor1 = new Color(display, rgb);
 		}
 		rgb = activeColor.getRGB();
 		rgb = FormColors.blend(rgb, white, 40);
 		introColor = new Color(display, rgb);
+		inactiveColor2 = new Color(display, backgroundColor.getRGB());
+	}
+
+	private void computeReverseVideoColors(Display display) {
+        Color background = toolkit.getColors().getBackground();
+		RGB white = new RGB(255, 255, 255);
+        // Create new colors, they will get disposed
+        RGB rgb = background.getRGB();
+		activeColor = new Color(display, rgb ); 
+		rgb = FormColors.blend(rgb, white, 85);
+		inactiveColor1 = new Color(display, rgb);
+		rgb = FormColors.blend(rgb, white, 85);
+		inactiveColor2 = new Color(display, rgb ); 
+        introColor = new Color(display, rgb ); 
+	}
+	
+	private boolean isReverseVideo() {
+        Color bg = toolkit.getColors().getBackground();
+		return ((bg.getBlue() + bg.getRed() + bg.getGreen()) < 380);
 	}
 
 	public void initialized() {
@@ -225,10 +261,6 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 
 	public Color getActiveColor() {
 		return activeColor;
-	}
-
-	public Color getAlternateColor() {
-		return alternateColor;
 	}
 
 	public ScrolledForm getForm() {
