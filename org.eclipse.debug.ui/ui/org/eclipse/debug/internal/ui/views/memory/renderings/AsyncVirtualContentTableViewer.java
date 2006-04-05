@@ -430,7 +430,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 			int minHeight = table.getItemHeight();
 			for (int i=0; i<items.length; i++)
 			{
-				minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+				if (items[i].getData() != null)
+					minHeight = Math.min(items[i].getBounds(0).height, minHeight);
 			}
 			
 			return minHeight;

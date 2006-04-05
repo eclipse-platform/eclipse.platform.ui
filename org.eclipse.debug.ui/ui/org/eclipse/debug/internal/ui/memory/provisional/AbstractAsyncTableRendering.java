@@ -1302,7 +1302,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			int minHeight = table.getItemHeight();
 			for (int i=0; i<items.length; i++)
 			{
-				minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+				if (items[i].getData() != null)
+					minHeight = Math.min(items[i].getBounds(0).height, minHeight);
 			}
 			
 			return minHeight;
@@ -2521,12 +2522,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		TableItem[] items = fTableViewer.getTable().getItems();
 		for (int i=0; i<items.length; i++)
 		{
-			Point start = new Point(items[i].getBounds(0).x, items[i].getBounds(0).y);
-			start = fTableViewer.getTable().toDisplay(start);
-			Point end = new Point(start.x + items[i].getBounds(0).width, start.y + items[i].getBounds(0).height);
-			
-			if (start.y < point.y && point.y < end.y)
-				return items[i];
+			TableItem item = items[i];
+			if (item.getData() != null)
+			{
+				Point start = new Point(item.getBounds(0).x, item.getBounds(0).y);
+				start = fTableViewer.getTable().toDisplay(start);
+				Point end = new Point(start.x + item.getBounds(0).width, start.y + item.getBounds(0).height);
+				
+				if (start.y < point.y && point.y < end.y)
+					return item;
+			}
 		}
 		return null;
 	}
@@ -2539,15 +2544,26 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private int getColumn(Point point)
 	{
 		int colCnt = fTableViewer.getTable().getColumnCount();
-		TableItem item = fTableViewer.getTable().getItem(0);
-		for (int i=0; i<colCnt; i++)
+		
+		TableItem item = null;
+		for (int i=0; i<fTableViewer.getTable().getItemCount(); i++)
 		{
-			Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
-			start = fTableViewer.getTable().toDisplay(start);
-			Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
-			
-			if (start.x < point.x && end.x > point.x)
-				return i;
+			item = fTableViewer.getTable().getItem(i);
+			if (item.getData() != null)
+				break;
+		}
+		
+		if (item != null)
+		{
+			for (int i=0; i<colCnt; i++)
+			{
+				Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
+				start = fTableViewer.getTable().toDisplay(start);
+				Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
+				
+				if (start.x < point.x && end.x > point.x)
+					return i;
+			}
 		}
 		return -1;
 	}

@@ -534,16 +534,21 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		for (int j=0; j<tableItems.length; j++)
 		{
 			TableItem item = tableItems[j];
-			for (int i=0; i<numCol; i++)
+			if (item.getData() != null)
 			{
-				Rectangle bound = item.getBounds(i);
-				if (bound.contains(e.x, e.y))
+				for (int i=0; i<numCol; i++)
 				{
-					colNum = i;
-					selectedRow = item;
-					break;
+					Rectangle bound = item.getBounds(i);
+					if (bound.contains(e.x, e.y))
+					{
+						colNum = i;
+						selectedRow = item;
+						break;
+					}
 				}
 			}
+			if (colNum >= 0)
+				break;
 		}
 		
 		// if column position cannot be determined, return
