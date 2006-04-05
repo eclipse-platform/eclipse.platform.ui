@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,10 +31,12 @@ public class HttpResponse extends AbstractResponse {
 	 */
 	private class MonitoringInputStream extends FilterInputStream {
 		InputStream in;
+		private URLConnection connection;
 
-		public MonitoringInputStream(InputStream in) {
+		public MonitoringInputStream(InputStream in, URLConnection connection) {
 			super(in);
 			this.in = in;
+			this.connection = connection;
 		}
 
 		public int available() throws IOException {
@@ -48,6 +51,9 @@ public class HttpResponse extends AbstractResponse {
 		public void close() throws IOException {
 			try {
 				super.close();
+				if (connection instanceof HttpURLConnection) {
+					((HttpURLConnection)connection).disconnect();
+				}
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -118,7 +124,7 @@ public class HttpResponse extends AbstractResponse {
 			if (offset > 0)
 				connection.setRequestProperty("Range", "bytes=" + offset + "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			try {
-				in = new MonitoringInputStream(connection.getInputStream());
+				in = new MonitoringInputStream(connection.getInputStream(), connection);
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -141,7 +147,7 @@ public class HttpResponse extends AbstractResponse {
 			if (monitor != null) {
 				try {
 					this.in = new MonitoringInputStream(openStreamWithCancel(
-							connection, monitor));
+							connection, monitor), connection);
 				} catch (IOException ioe) {
 					connection = null;
 					throw ioe;
@@ -149,7 +155,7 @@ public class HttpResponse extends AbstractResponse {
 			} else {
 				try {
 					this.in = new MonitoringInputStream(connection
-							.getInputStream());
+							.getInputStream(), connection);
 				} catch (IOException ioe) {
 					connection = null;
 					throw ioe;
