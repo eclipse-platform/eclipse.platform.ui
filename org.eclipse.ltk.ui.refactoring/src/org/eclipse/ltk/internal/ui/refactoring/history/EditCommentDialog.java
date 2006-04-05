@@ -111,7 +111,7 @@ public final class EditCommentDialog extends Dialog {
 		}
 		fCommentField= new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
 		final GridData data= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-		data.heightHint= convertHeightInCharsToPixels(3);
+		data.heightHint= convertHeightInCharsToPixels(4);
 		fCommentField.setLayoutData(data);
 		applyDialogFont(composite);
 		return composite;
