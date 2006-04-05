@@ -26,6 +26,11 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.NotHandledException;
+
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,11 +47,14 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextEvent;
 
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+
 /**
  * An incremental find target. Replace is always disabled.
  * @since 2.0
  */
-class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ISelectionChangedListener, ITextListener {
+class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ISelectionChangedListener, ITextListener, IExecutionListener {
 
 	/** The string representing rendered tab */
 	private final static String TAB= EditorMessages.Editor_FindIncremental_render_tab;
@@ -362,6 +370,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			((ITextViewerExtension) fTextViewer).prependVerifyKeyListener(this);
 		else
 			text.addVerifyKeyListener(this);
+		
+		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		if (commandService != null)
+			commandService.addExecutionListener(this);
 
 		fInstalled= true;
 	}
@@ -390,6 +402,10 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			if (text != null)
 				text.removeVerifyKeyListener(this);
 		}
+
+		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		if (commandService != null)
+			commandService.removeExecutionListener(this);
 
 		fInstalled= false;
 	}
@@ -782,5 +798,37 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	void setStatusField(IStatusField statusField) {
 		fStatusField= statusField;
 		fIsStatusFieldExtension= fStatusField instanceof IStatusFieldExtension;
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.IExecutionListener#notHandled(java.lang.String, org.eclipse.core.commands.NotHandledException)
+	 * @since 3.2
+	 */
+	public void notHandled(String commandId, NotHandledException exception) {
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.IExecutionListener#postExecuteFailure(java.lang.String, org.eclipse.core.commands.ExecutionException)
+	 * @since 3.2
+	 */
+	public void postExecuteFailure(String commandId, ExecutionException exception) {
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.IExecutionListener#postExecuteSuccess(java.lang.String, java.lang.Object)
+	 * @since 3.2
+	 */
+	public void postExecuteSuccess(String commandId, Object returnValue) {
+	}
+
+	/*
+	 * @see org.eclipse.core.commands.IExecutionListener#preExecute(java.lang.String, org.eclipse.core.commands.ExecutionEvent)
+	 * @since 3.2
+	 */
+	public void preExecute(String commandId, ExecutionEvent event) {
+		if (IWorkbenchActionDefinitionIds.FIND_INCREMENTAL.equals(commandId)
+				|| IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE.equals(commandId))
+			return;
+		leave();
 	}
 }
