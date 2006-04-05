@@ -41,7 +41,7 @@ public class HelloWorld {
 		dbc.bind(combo, list, null);
 		combo.select(0);
 		Text text = new Text(shell, SWT.BORDER);
-		Person person = new Person("Boris", "2670 Queensview Dr", "Ottawa",
+		Person person = new Person("Boris", "1234 Carling Ave", "Ottawa",
 				"Canada");
 		dbc.bind(text, new Property(person, "name"), null);
 		// shell.setLayout(new GridLayout(2, false));
