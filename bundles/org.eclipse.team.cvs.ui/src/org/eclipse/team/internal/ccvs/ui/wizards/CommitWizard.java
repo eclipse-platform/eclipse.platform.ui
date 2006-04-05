@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -80,19 +81,22 @@ public class CommitWizard extends ResizableWizard {
         
         protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
             try {
+            	monitor.beginTask(null, 100);
                 final AddOperation op= new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fNewResources));
                 op.addModesForExtensions(fModesForExtensionsForOneTime);
                 op.addModesForNames(fModesForNamesForOneTime);
-                op.run(monitor);
+                op.run(Policy.subMonitorFor(monitor, 20));
                 CommitOperation commitOperation = new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment) {
                 	public boolean consultModelsForMappings() {
                 		// Do not consult models from the commit wizard
                 		return false;
                 	}
                 };
-				commitOperation.run(monitor);
+				commitOperation.run(Policy.subMonitorFor(monitor, 80));
             } catch (InvocationTargetException e) {
                 throw CVSException.wrapException(e);
+            } finally {
+            	monitor.done();
             }
         }
         
