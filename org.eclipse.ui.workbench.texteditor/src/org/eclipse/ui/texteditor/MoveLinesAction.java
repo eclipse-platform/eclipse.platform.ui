@@ -25,6 +25,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
@@ -220,9 +221,11 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) {
 		int skippedLineN= (fUpwards ? selection.getStartLine() - 1 : selection.getEndLine() + 1);
-		if (skippedLineN < 0 || skippedLineN >= document.getNumberOfLines())
+		if (skippedLineN > document.getNumberOfLines() || (!fCopy && (skippedLineN < 0 ||  skippedLineN == document.getNumberOfLines())))
 			return null;
 		try {
+			if (fCopy && skippedLineN == -1)
+				skippedLineN= 0;
 			IRegion line= document.getLineInformation(skippedLineN);
 			return new TextSelection(document, line.getOffset(), line.getLength());
 		} catch (BadLocationException e) {
@@ -289,7 +292,7 @@ public class MoveLinesAction extends TextEditorAction {
 			// get the content to be moved around: the moving (selected) area and the skipped line
 			String moving= movingArea.getText();
 			String skipped= skippedLine.getText();
-			if (moving == null || skipped == null)
+			if (moving == null || skipped == null || document.getLength() == 0)
 				return;
 
 			String delim;
@@ -297,24 +300,30 @@ public class MoveLinesAction extends TextEditorAction {
 			int offset, deviation;
 			if (fUpwards) {
 				delim= document.getLineDelimiter(skippedLine.getEndLine());
-				Assert.isNotNull(delim);
 				if (fCopy) {
+					delim= TextUtilities.getDefaultLineDelimiter(document);
 					insertion= moving + delim;
 					offset= movingArea.getOffset();
 					deviation= 0;
 				} else {
+					Assert.isNotNull(delim);
 					insertion= moving + delim + skipped;
 					offset= skippedLine.getOffset();
 					deviation= -skippedLine.getLength() - delim.length();
 				}
 			} else {
 				delim= document.getLineDelimiter(movingArea.getEndLine());
-				Assert.isNotNull(delim);
 				if (fCopy) {
-					insertion= moving + delim;
+					if (delim == null) {
+						delim= TextUtilities.getDefaultLineDelimiter(document);
+						insertion= delim + moving;
+					} else {
+						insertion= moving + delim;
+					}
 					offset= skippedLine.getOffset();
 					deviation= movingArea.getLength() + delim.length();
 				} else {
+					Assert.isNotNull(delim);
 					insertion= skipped + delim + moving;
 					offset= movingArea.getOffset();
 					deviation= skipped.length() + delim.length();
