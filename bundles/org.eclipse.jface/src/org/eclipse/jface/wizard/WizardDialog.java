@@ -1160,9 +1160,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      */
     private void updateDescriptionMessage() {
         pageDescription = currentPage.getDescription();
-        if (pageMessage == null) {
-			setMessage(currentPage.getDescription());
-		}
+		setMessage(currentPage.getDescription());
     }
 
     /* (non-Javadoc)
