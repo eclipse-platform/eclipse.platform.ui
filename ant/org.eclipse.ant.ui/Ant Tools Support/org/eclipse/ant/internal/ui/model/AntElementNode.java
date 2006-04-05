@@ -320,7 +320,13 @@ public class AntElementNode implements IAdaptable {
 		fIsExternal = isExternal;
 	}
 	
-	protected String getElementPath() {
+    /**
+     * Returns a unique string representation of this element. The format of
+     * the string is not specified.
+     *
+     * @return the string representation
+     */
+	public String getElementPath() {
 		if (fElementPath == null) {
 			StringBuffer buffer= new StringBuffer();
 			String buildFileName= getProjectNode().getBuildFileName();
