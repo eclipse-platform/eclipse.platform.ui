@@ -191,5 +191,10 @@ public class TableRenderingContentDescriptor{
 	{
 		return fIsDynamicLoad;
 	}
+	
+	public boolean isMemoryBlockBaseAddressInitialized()
+	{
+		return (fMemoryBlockBaseAddress != null);
+	}
 
 }

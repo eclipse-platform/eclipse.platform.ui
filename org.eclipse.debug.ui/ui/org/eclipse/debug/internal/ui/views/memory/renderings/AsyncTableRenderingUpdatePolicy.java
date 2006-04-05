@@ -112,7 +112,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 					if (descriptor != null)
 					{
 						final BigInteger address = getMemoryBlockBaseAddress(mb);
-						if (!address.equals(descriptor.getContentBaseAddress()))
+						if (!descriptor.isMemoryBlockBaseAddressInitialized() || !address.equals(descriptor.getContentBaseAddress()))
 						{
 							descriptor.updateContentBaseAddress();
 							UIJob job = new UIJob("go to address"){ //$NON-NLS-1$

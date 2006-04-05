@@ -307,7 +307,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			String msgToShow = null;
 			boolean showMsgPage = false;
 			synchronized (fLock) {
-				System.out.println("show message?  " + fShowMessagePage); //$NON-NLS-1$
 				msgToShow = fMessage;
 				showMsgPage = fShowMessagePage;
 			}
