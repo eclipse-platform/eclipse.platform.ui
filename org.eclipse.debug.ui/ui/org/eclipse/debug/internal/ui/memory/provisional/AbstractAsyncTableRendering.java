@@ -64,6 +64,7 @@ import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
+import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -278,6 +279,56 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
+	private class SwitchPageJob extends UIJob {
+		private Object fLock = new Object();
+		private boolean fShowMessagePage = false;
+		private String fMessage = ""; //$NON-NLS-1$
+
+		private SwitchPageJob() {
+			super("SwitchPageJob");//$NON-NLS-1$
+			setSystem(true);
+		}
+
+		private void setShowMessagePage(boolean showMsg) {
+			synchronized(fLock)
+			{
+				fShowMessagePage = showMsg;
+			}
+		}
+
+		private void setMessage(String message) {
+			synchronized(fLock)
+			{
+				fMessage = message;
+			}
+		}
+
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			String msgToShow = null;
+			boolean showMsgPage = false;
+			synchronized (fLock) {
+				System.out.println("show message?  " + fShowMessagePage); //$NON-NLS-1$
+				msgToShow = fMessage;
+				showMsgPage = fShowMessagePage;
+			}
+			
+			if (showMsgPage) {
+				StyledText styleText = null;
+				fShowMessage = true;
+
+				styleText = fTextViewer.getTextWidget();
+
+				if (styleText != null)
+					styleText.setText(msgToShow);
+				fPageBook.showPage(fTextViewer.getControl());
+			} else {
+				fShowMessage = false;
+				fPageBook.showPage(fTableViewer.getControl().getParent());
+			}
+			return Status.OK_STATUS;
+		}
+	}
+	
 	private PageBook fPageBook;
 	private AsyncTableRenderingViewer fTableViewer;
 	private TextViewer fTextViewer;
@@ -312,6 +363,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean fIsCreated = false;
 	private boolean fIsDisposed = false;
 	private boolean fIsShowAddressColumn = true;
+	
+	private SwitchPageJob fSwitchPageJob = new SwitchPageJob();
+	private boolean fError = false;
 	
 	private PendingPropertyChanges fPendingSyncProperties;
 	
@@ -449,11 +503,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private void createTableViewer(final Composite parent)
 	{
-		Job job = new Job("Create Table Viewer") { //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
+		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getRenderingId());
+		buffer.append(type.getLabel());
+		buffer.append(": "); //$NON-NLS-1$
+		buffer.append(DebugUIMessages.AbstractAsyncTableRendering_2);
+		
+		Job job = new Job(buffer.toString()) {
 
 			protected IStatus run(IProgressMonitor monitor) {
-				
-				showMessage(DebugUIMessages.AbstractAsyncTableRendering_0);
 				
 				// gather info from memory block
 				initAddressableSize();					
@@ -462,13 +520,36 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				try {
 					mbBaseAddress = getMemoryBlockBaseAddress();
 				} catch (DebugException e) {
+					fError = true;
 					showMessage(e.getMessage());
+				}
+				
+				// if it takes too long to get the base address, and user has canceled
+				// remove this rendering.
+				if (monitor.isCanceled())
+				{
+					getMemoryRenderingContainer().removeMemoryRendering(AbstractAsyncTableRendering.this);
+					return Status.CANCEL_STATUS;
 				}
 				
 				final BigInteger finalMbBaseAddress = mbBaseAddress;
 				final BigInteger initialSelectedAddress = getInitialSelectedAddress();
 				
+				if (monitor.isCanceled())
+				{
+					getMemoryRenderingContainer().removeMemoryRendering(AbstractAsyncTableRendering.this);
+					return Status.CANCEL_STATUS;
+				}
+				
 				createContentDescriptor(topVisibleAddress);
+				
+				// if it takes too long to get other info, and user has canceled
+				// remove this rendering.
+				if (monitor.isCanceled())
+				{
+					getMemoryRenderingContainer().removeMemoryRendering(AbstractAsyncTableRendering.this);
+					return Status.CANCEL_STATUS;
+				}
 				
 				// batch update on UI thread
 				UIJob uiJob = new UIJob("Create Table Viewer UI Job"){ //$NON-NLS-1$
@@ -523,7 +604,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						// set to a non-proportional font
 						fTableViewer.getTable().setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
 						
-						if (finalMbBaseAddress != null)
+						if (!fError)
 							showTable();
 						
 						fTableViewer.addVirtualContentListener(fViewerListener);
@@ -556,7 +637,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 			}};
 			
-		job.setSystem(true);
 		job.schedule();
 	}
 	
@@ -1326,22 +1406,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	protected void showMessage(final String message)
 	{
-		UIJob job = new UIJob("Display Message Job"){ //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				StyledText styleText = null;
-				fShowMessage = true;
-
-				styleText = fTextViewer.getTextWidget();
-				
-				if (styleText != null)
-					styleText.setText(message);
-				fPageBook.showPage(fTextViewer.getControl());
-				
-				return Status.OK_STATUS;
-			}};
-			
-		job.setSystem(true);
-		job.schedule();
+		fSwitchPageJob.setShowMessagePage(true);
+		fSwitchPageJob.setMessage(message);
+		fSwitchPageJob.schedule();
 	}
 	
 	/**
@@ -1379,14 +1446,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void showTable()
 	{
-		UIJob job = new UIJob("Display Table Job"){ //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {	
-				fShowMessage = false;
-				fPageBook.showPage(fTableViewer.getControl().getParent());
-				return Status.OK_STATUS;
-			}};
-		job.setSystem(true);
-		job.schedule();
+		fSwitchPageJob.setShowMessagePage(false);
+		fSwitchPageJob.schedule();
 	}
 	
 	private BigInteger getTopVisibleAddress() {
@@ -2220,6 +2281,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				
 				fTableViewer.setTopIndex(pageStartAddress);
 			}
+			
+			showTable();
 			refresh();
 		}
 
@@ -2711,6 +2774,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			fContentDescriptor.updateContentBaseAddress();
 			
 		} catch (DebugException e) {
+			fError = true;
 			showMessage(e.getMessage());
 		}
 		
@@ -2732,6 +2796,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 			fContentDescriptor.setAddressSize(addressSize);
 		} catch (DebugException e) {
+			fError = true;
 			showMessage(e.getMessage());
 		} finally {
 			if (fContentDescriptor.getAddressSize() <= 0)

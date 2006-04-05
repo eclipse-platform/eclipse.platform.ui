@@ -14,7 +14,9 @@ import org.eclipse.osgi.util.NLS;
 public class DebugUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.DebugUIMessages";//$NON-NLS-1$
 
-    public static String DebugUIPlugin_23;
+    public static String AbstractAsyncTableRendering_2;
+
+	public static String DebugUIPlugin_23;
 	public static String DebugUIPlugin_24;
 	public static String DebugUIPlugin_0;
 	public static String DebugUIPlugin_Build_error__Check_log_for_details__2;
