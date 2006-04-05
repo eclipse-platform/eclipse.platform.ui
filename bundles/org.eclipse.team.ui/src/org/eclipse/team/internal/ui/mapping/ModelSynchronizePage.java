@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.actions.RefreshActionContribution;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * A synchronize page for displaying a {@link ModelSynchronizeParticipant}.
@@ -81,6 +88,68 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 	 */
 	protected ChangesSection createChangesSection(Composite parent) {
 		return new DiffTreeChangesSection(parent, this, getConfiguration());
+	}
+	
+	public void init(ISynchronizePageSite site) {
+		super.init(site);
+		IDialogSettings pageSettings = site.getPageSettings();
+		if(pageSettings != null) {
+			String savedId = pageSettings.get(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+			if (savedId != null && ! savedId.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, savedId);
+			}
+		}
+	}
+	
+	public boolean aboutToChangeProperty(ISynchronizePageConfiguration configuration, String key, Object newValue) {
+		if (key.equals(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER)) {
+			if (!(newValue instanceof String)) {
+				return false;
+			}
+			String currentSetting = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+			if (currentSetting != null && currentSetting.equals(newValue))
+				return false;
+			
+			Object input = null;
+			if (!newValue.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+				ModelProvider provider = getModelProvider((String)newValue);
+				if (provider != null) {
+					input = provider;
+					configuration.setProperty(
+							ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
+							NLS.bind(TeamUIMessages.ShowModelProviderAction_0, new String[] {Utils.getLabel(provider), configuration.getParticipant().getName()}));
+				}	
+			} else {
+				input = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+				configuration.setProperty(
+						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
+						configuration.getParticipant().getName());
+				IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+				if(pageSettings != null) {
+					pageSettings.put(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, (String)newValue);
+				}
+			}
+			if (input != null) {
+				Viewer viewer = getViewer();
+				if (viewer != null)
+					viewer.setInput(input);
+				return true;
+			}
+			return false;
+		}
+		return super.aboutToChangeProperty(configuration, key, newValue);
+	}
+
+	private ModelProvider getModelProvider(String id) {
+		try {
+			IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor((String)id);
+			if (desc != null) {
+				return desc.getModelProvider();
+			}
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		}
+		return null;
 	}
 
 }

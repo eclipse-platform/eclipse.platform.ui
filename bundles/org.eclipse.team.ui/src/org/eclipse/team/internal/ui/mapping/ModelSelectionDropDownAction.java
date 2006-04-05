@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
@@ -82,14 +81,9 @@ public class ModelSelectionDropDownAction extends Action implements ISynchroniza
 		getSynchronizationContext().getScope().addScopeChangeListener(this);
 		showAllAction = new Action(TeamUIMessages.ModelSelectionDropDownAction_0, IAction.AS_RADIO_BUTTON) { 
 			public void run() {
-				Viewer v = ModelSelectionDropDownAction.this.configuration.getPage().getViewer();
-				v.setInput(getSynchronizationContext());
 				ModelSelectionDropDownAction.this.configuration.setProperty(
 						ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER,
 						ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE);
-				ModelSelectionDropDownAction.this.configuration.setProperty(
-						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
-						ModelSelectionDropDownAction.this.configuration.getParticipant().getName());
 			}
 		};
 		//showAllAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));

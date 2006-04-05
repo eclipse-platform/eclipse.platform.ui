@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -23,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.AbstractTreeViewerAdvisor;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
@@ -154,6 +156,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			if (desc != null && desc.isEnabled())
 				return new String[] { desc.getContentExtensionId() };
 		}
+		configuration.setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE);
 		ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)configuration.getParticipant();
 		ModelProvider[] providers = participant.getEnabledModelProviders();
 		Set result = new HashSet();
@@ -249,6 +252,16 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	}
 
 	private Object getInitialInput() {
+		String visible = (String)getConfiguration().getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+		if (visible != null && !visible.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+			try {
+				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(visible);
+				if (desc != null)
+					return desc.getModelProvider();
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
 		return getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 	}
 	
