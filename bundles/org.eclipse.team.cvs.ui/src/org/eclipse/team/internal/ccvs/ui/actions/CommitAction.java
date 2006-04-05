@@ -133,7 +133,7 @@ public class CommitAction extends WorkspaceTraversalAction {
 						CVSUIMessages.ShowAnnotationOperation_4,   
 						false /* toggle state */,
 						store,
-						ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS);
+						ICVSUIConstants.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT);
 				
 				result[0] = m.getReturnCode();
 			}
