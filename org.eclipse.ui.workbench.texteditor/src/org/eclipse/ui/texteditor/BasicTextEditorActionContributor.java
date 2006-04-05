@@ -15,15 +15,14 @@ package org.eclipse.ui.texteditor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.text.Assert;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.Separator;
-
-import org.eclipse.jface.text.Assert;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -255,13 +254,15 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
 
-			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_OPEN));
-			editMenu.add(new Separator(ITextEditorActionConstants.GROUP_GENERATE));
-			final String GENERATE_END= "group.generate.end"; //$NON-NLS-1$
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new GroupMarker(GENERATE_END));
-			editMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_OPEN));
+			String GROUP_INFORMATION= "group.information"; //$NON-NLS-1$ // TODO make this an IWorkbenchActionConstants constant in 3.3
+			addOrInsert(editMenu, new Separator(GROUP_INFORMATION));
+			String GROUP_ASSIST= "group.assist"; //$NON-NLS-1$ // TODO make this an IWorkbenchActionConstants constant in 3.3
+			addOrInsert(editMenu, new Separator(GROUP_ASSIST));
+			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_GENERATE));
+			addOrInsert(editMenu, new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-			editMenu.appendToGroup(GENERATE_END, fHippieCompletion);
+			editMenu.appendToGroup(GROUP_ASSIST, fHippieCompletion);
 		}
 
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
@@ -269,6 +270,24 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, fGotoLine);
 		}
 	}
+
+	/**
+	 * The <code>item</code> is {@link IContributionManager#add(IContributionItem) added} to
+	 * <code>menu</code> if no item with the same id currently exists. If there already is an
+	 * contribution item with the same id, the new item gets
+	 * {@link IContributionManager#insertAfter(String, IContributionItem) inserted after} it.
+	 * 
+	 * @param menu the contribution manager
+	 * @param item the contribution item
+	 * @since 3.2
+	 */
+	private void addOrInsert(IContributionManager menu, IContributionItem item) {
+	    String id= item.getId();
+		if (menu.find(id) == null)
+	    	menu.add(item);
+	    else
+	    	menu.insertAfter(id, item);
+    }
 
 	/*
 	 * @see EditorActionBarContributor#contributeToStatusLine(org.eclipse.jface.action.IStatusLineManager)
