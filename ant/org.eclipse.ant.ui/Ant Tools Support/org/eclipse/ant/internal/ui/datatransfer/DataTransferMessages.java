@@ -47,14 +47,12 @@ public class DataTransferMessages extends NLS {
 	public static String AntNewJavaProjectPage_18;
 	public static String AntNewJavaProjectPage_19;
 	public static String AntNewJavaProjectPage_1;
-	public static String AntNewJavaProjectPage_20;
 	public static String AntNewJavaProjectPage_21;
 	public static String AntNewJavaProjectPage_22;
 	public static String AntNewJavaProjectPage_2;
     public static String AntNewJavaProjectPage_3;
 	public static String ProjectCreator_0;
     public static String JavacTableLabelProvider_0;
-    public static String BuildFileCreator_0;
     public static String SourceAnalyzer_0;
     public static String SourceAnalyzer_1;
     public static String SourceAnalyzer_2;
