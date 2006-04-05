@@ -322,7 +322,9 @@ public final class NavigatorContentDescriptor implements
 		}
 
 		try {
-			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
+			EvaluationContext context = new EvaluationContext(null, anElement);
+			context.setAllowPluginActivation(true);
+			return (enablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);
 		}
@@ -353,12 +355,12 @@ public final class NavigatorContentDescriptor implements
 		}
 
 		try {
+			EvaluationContext context = new EvaluationContext(null, anElement);
+			context.setAllowPluginActivation(true);
 			if (possibleChildren != null) {
-				return (possibleChildren.evaluate(new EvaluationContext(null,
-						anElement)) == EvaluationResult.TRUE);
+				return (possibleChildren.evaluate(context) == EvaluationResult.TRUE);
 			} else if (enablement != null) {
-				return (enablement.evaluate(new EvaluationContext(null,
-						anElement)) == EvaluationResult.TRUE);
+				return (enablement.evaluate(context) == EvaluationResult.TRUE);
 			}
 		} catch (CoreException e) {
 			NavigatorPlugin.logError(0, e.getMessage(), e);

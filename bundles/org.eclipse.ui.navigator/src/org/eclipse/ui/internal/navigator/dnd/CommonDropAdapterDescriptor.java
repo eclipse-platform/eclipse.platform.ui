@@ -86,8 +86,10 @@ public final class CommonDropAdapterDescriptor implements
 	public boolean isDropElementSupported(Object anElement) {
 		if (dropExpr != null && anElement != null) {
 			try {
+				EvaluationContext context = new EvaluationContext(null, anElement);
+				context.setAllowPluginActivation(true);
 				return dropExpr
-						.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE;
+						.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
 				NavigatorPlugin.logError(0, e.getMessage(), e);
 			}

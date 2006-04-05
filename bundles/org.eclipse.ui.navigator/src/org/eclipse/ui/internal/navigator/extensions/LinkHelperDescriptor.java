@@ -119,8 +119,9 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 		}
 
 		try {
-			return (editorInputEnablement.evaluate(new EvaluationContext(null,
-					anInput)) == EvaluationResult.TRUE);
+			EvaluationContext context = new EvaluationContext(null, anInput);
+			context.setAllowPluginActivation(true);
+			return (editorInputEnablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}
@@ -139,6 +140,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 		}
 
 		IEvaluationContext context = new EvaluationContext(null, anObject);
+		context.setAllowPluginActivation(true);
 		try {
 			if (selectionEnablement.evaluate(context) != EvaluationResult.TRUE) {
 				return false;

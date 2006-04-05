@@ -212,7 +212,8 @@ public class CommonActionProviderDescriptor implements
 		Iterator elements = aStructuredSelection.iterator();
 		while (elements.hasNext()) {
 			context = new EvaluationContext(null, elements.next());
-			try {
+			context.setAllowPluginActivation(true);
+			try { 
 				if (enablement.evaluate(context) == EvaluationResult.FALSE
 						|| enablement.evaluate(context) == EvaluationResult.NOT_LOADED) {
 					return false;
@@ -238,7 +239,9 @@ public class CommonActionProviderDescriptor implements
 		}
 
 		try {
-			return (enablement.evaluate(new EvaluationContext(null, anElement)) == EvaluationResult.TRUE);
+			EvaluationContext context = new EvaluationContext(null, anElement);
+			context.setAllowPluginActivation(true);
+			return (enablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 		}

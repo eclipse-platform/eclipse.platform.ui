@@ -76,6 +76,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 		if (parentExpression != null) {
 			EvaluationContext context = new EvaluationContext(null, aParent);
+			context.setAllowPluginActivation(true);
 			try {
 				return parentExpression.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
