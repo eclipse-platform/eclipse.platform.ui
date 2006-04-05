@@ -503,8 +503,15 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		List result = new ArrayList(children.length);
 		for (int i = 0; i < children.length; i++) {
 			Object object = children[i];
+			// If the parent is a TreePath then the subclass is
+			// TreePath aware and we can send a TrePath to the
+			// isVisible method
+			if (parent instanceof TreePath) {
+				TreePath tp = (TreePath) parent;
+				object = tp.createChildPath(object);
+			}
 			if (isVisible(context, object))
-				result.add(object);
+				result.add(internalGetElement(object));
 		}
 		return result.toArray(new Object[result.size()]);
 	}
