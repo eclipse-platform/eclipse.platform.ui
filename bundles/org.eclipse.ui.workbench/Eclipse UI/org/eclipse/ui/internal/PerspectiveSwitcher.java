@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
@@ -74,7 +72,22 @@ import org.eclipse.ui.presentations.PresentationUtil;
  */
 public class PerspectiveSwitcher implements IWindowTrim {
 
-    private IWorkbenchWindow window;
+	/**
+	 * The minimal width for the switcher (i.e. for the open button and chevron).
+	 */
+	private static final int MIN_WIDTH = 45;
+	
+	/**
+	 * The average width for each perspective button.
+	 */
+	private static final int ITEM_WIDTH = 80;
+	
+	/**
+	 * The minimum default width.
+	 */
+	private static final int MIN_DEFAULT_WIDTH = 160;
+	
+	private IWorkbenchWindow window;
 
     private CBanner topBar;
 
@@ -115,8 +128,6 @@ public class PerspectiveSwitcher implements IWindowTrim {
     private static final int TOP_LEFT = 2;
 
     private static final int LEFT = 3;
-
-    private static final int DEFAULT_RIGHT_X = 160;
 
     private int currentLocation = INITIAL;
 
@@ -159,11 +170,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		}
 
 		public void pageClosed(IWorkbenchPage page) {
-			removeExtras(page);
 		}
 
 		public void pageOpened(IWorkbenchPage page) {
-			addExtras(page);
 		}
     }
     
@@ -324,7 +333,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		case TOP_RIGHT:
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBarWrapper.getControl());
-			topBar.setRightWidth(DEFAULT_RIGHT_X);
+			topBar.setRightWidth(getDefaultWidth());
 			break;
 		case LEFT:
 			topBar.setBottom(null);
@@ -337,6 +346,18 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		}
 
 		LayoutUtil.resize(perspectiveBar.getControl());
+	}
+
+	/**
+	 * Returns the default width for the switcher.
+	 */
+	private int getDefaultWidth() {
+        String extras = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.PERSPECTIVE_BAR_EXTRAS);
+        StringTokenizer tok = new StringTokenizer(extras, ", "); //$NON-NLS-1$
+        int numExtras = tok.countTokens();
+        int numPersps = Math.max(numExtras, 1); // assume initial perspective is also listed in extras
+		return Math.max(MIN_DEFAULT_WIDTH, MIN_WIDTH + (numPersps*ITEM_WIDTH));
 	}
 
 	/**
@@ -1042,44 +1063,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         return barManager;
     }
 
-    /**
-     * Add buttons for PERSPECTIVE_BAR_EXTRAS (see bug 71701). 
-     */ 
-    private void addExtras(IWorkbenchPage page) {
-        String extras = PrefUtil.getAPIPreferenceStore().getString(
-				IWorkbenchPreferenceConstants.PERSPECTIVE_BAR_EXTRAS);
-        List descs = new ArrayList();
-		StringTokenizer tok = new StringTokenizer(extras, ", "); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String id = tok.nextToken();
-			IPerspectiveDescriptor desc = window.getWorkbench()
-					.getPerspectiveRegistry().findPerspectiveWithId(id);
-			if (desc != null && findPerspectiveShortcut(desc, page) == null) {
-				descs.add(desc);
-			}
-		}
-		// process the list in reverse order so they appear in the order in which
-		// they were declared (addPerspectiveShortcut adds to the beginning)
-		for (int i = descs.size(); --i >= 0;) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) descs.get(i);
-			addPerspectiveShortcut(desc, page);
-		}
-    }
-    
-    private void removeExtras(IWorkbenchPage page) {
-    	IContributionItem[] items = perspectiveBar.getItems();
-    	for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
-			if (item instanceof PerspectiveBarContributionItem) {
-				PerspectiveBarContributionItem pbci = (PerspectiveBarContributionItem) item;
-				if (page.equals(pbci.getPage())) {
-					removePerspectiveShortcut(pbci.getPerspective(), pbci.getPage());
-				}
-			}
-		}
-    	
-    }
-    
+
     private void updateLocationItems(Menu parent, int newLocation) {
         MenuItem left;
         MenuItem topLeft;
@@ -1247,7 +1231,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
         if (currentLocation == TOP_RIGHT && topBar != null) {
 			x = topBar.getRightWidth();
 		} else {
-			x = DEFAULT_RIGHT_X;
+			x = getDefaultWidth();
 		}
 
         childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(x));
@@ -1273,7 +1257,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
             if (x != null) {
 				topBar.setRightWidth(x.intValue());
 			} else {
-				topBar.setRightWidth(DEFAULT_RIGHT_X);
+				topBar.setRightWidth(getDefaultWidth());
 			}
         }
     }
@@ -1314,7 +1298,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
             }
             // This sets the CBanner's minimum height to support large fonts
             // TODO: Actually calculate the correct 'min' size for the right side
-            topBar.setRightMinimumSize(new Point(45, maxRowHeight));
+            topBar.setRightMinimumSize(new Point(MIN_WIDTH, maxRowHeight));
         }
 
         LayoutUtil.resize(perspectiveBar.getControl());

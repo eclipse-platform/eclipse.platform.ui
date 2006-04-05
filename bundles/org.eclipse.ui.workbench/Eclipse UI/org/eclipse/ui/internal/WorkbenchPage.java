@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -80,6 +81,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -97,6 +99,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
@@ -537,7 +540,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (layoutID == null) {
 			throw new WorkbenchException(WorkbenchMessages.WorkbenchPage_UndefinedPerspective);
 		}
-        init(w, layoutID, input);
+        init(w, layoutID, input, true);
     }
 
     /**
@@ -553,7 +556,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
             throws WorkbenchException {
         super();
-        init(w, null, input);
+        init(w, null, input, false);
     }
 
     /**
@@ -2170,8 +2173,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            may be <code>null</code> if restoring from file
      * @param input
      *            the page input
+     * @param openExtras
+     *            whether to process the perspective extras preference
      */
-    private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
+    private void init(WorkbenchWindow w, String layoutID, IAdaptable input, boolean openExtras)
             throws WorkbenchException {
         // Save args.
         this.window = w;
@@ -2192,6 +2197,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		});
 		
+		if (openExtras) {
+			openPerspectiveExtras();
+		}
+		
         // Get perspective descriptor.
         if (layoutID != null) {
             PerspectiveDescriptor desc = (PerspectiveDescriptor) WorkbenchPlugin
@@ -2200,11 +2209,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (desc == null) {
 				throw new WorkbenchException(
                         NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,layoutID ));
-			} 
-            Perspective persp = createPerspective(desc, true);
-            if (persp == null) {
-				return;
 			}
+            Perspective persp = findPerspective(desc);
+            if (persp == null) {
+	            persp = createPerspective(desc, true);
+            }
             perspList.setActive(persp);
             window.firePerspectiveActivated(this, desc);
         }
@@ -2215,8 +2224,33 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         ExtensionTracker
                                 .createExtensionPointFilter(getPerspectiveExtensionPoint()));
     }
-
+    
     /**
+	 * Opens the perspectives specified in the PERSPECTIVE_BAR_EXTRAS preference (see bug 84226).
+	 */
+	public void openPerspectiveExtras() {
+        String extras = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.PERSPECTIVE_BAR_EXTRAS);
+		StringTokenizer tok = new StringTokenizer(extras, ", "); //$NON-NLS-1$
+		ArrayList descs = new ArrayList();
+		while (tok.hasMoreTokens()) {
+			String id = tok.nextToken();
+            IPerspectiveDescriptor desc = WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId(id);
+            if (desc != null) {
+            	descs.add(desc);
+            }
+		}
+		// HACK: The perspective switcher currently adds the button for a new perspective to the beginning of the list.
+		// So, we process the extra perspectives in reverse order here to have their buttons appear in the order declared. 
+		for (int i = descs.size(); --i >= 0;) {
+			PerspectiveDescriptor desc = (PerspectiveDescriptor) descs.get(i);
+            if (findPerspective(desc) == null) {
+            	createPerspective(desc, true);
+            }
+		}
+	}
+
+	/**
      * See IWorkbenchPage.
      */
     public boolean isPartVisible(IWorkbenchPart part) {
