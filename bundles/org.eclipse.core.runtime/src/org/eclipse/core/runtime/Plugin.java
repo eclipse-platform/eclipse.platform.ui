@@ -213,8 +213,7 @@ public abstract class Plugin implements BundleActivator {
 		// on plugin start, find and start the corresponding bundle.
 		bundle = InternalPlatform.getDefault().getBundle(descriptor.getUniqueIdentifier());
 		try {
-			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
-				bundle.start();
+			InternalPlatform.start(bundle);
 		} catch (BundleException e) {
 			String message = NLS.bind(Messages.plugin_startupProblems, descriptor.getUniqueIdentifier());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);

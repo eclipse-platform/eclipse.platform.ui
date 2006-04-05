@@ -113,6 +113,8 @@ public final class InternalPlatform {
 
 	private static final String UPDATE = "-update"; //$NON-NLS-1$
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
+	private static final String HEADER_LAZY_START = "Eclipse-LazyStart"; //$NON-NLS-1$;
+	private static final String HEADER_AUTO_START = "Eclipse-AutoStart"; //$NON-NLS-1$;
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;
@@ -1113,5 +1115,30 @@ public final class InternalPlatform {
 		buffer.append("] "); //$NON-NLS-1$
 		buffer.append(message);
 		System.out.println(buffer.toString());
+	}
+
+	public static void start(Bundle bundle) throws BundleException {
+		if ((bundle.getState() & (Bundle.INSTALLED | Bundle.RESOLVED)) == 0)
+			return; // bundle is already active
+		try {
+			// attempt to lazy activate the bundle
+			bundle.loadClass("does.not.exist.aaaNoClass"); //$NON-NLS-1$
+		} catch (ClassNotFoundException e) {
+			// expected
+		}
+		// if the bundle is not active now then one of the following is true:
+		//  1) the bundle is not marked for lazy start 
+		//  2) the bundle is marked for lazy start but an error occured activating it
+		// 
+		// In both cases we do not want to explicitly start the bundle because
+		// it may cause the bundle to be persistly started on relaunch.
+		// Throw an exception only if the bundle is a lazy start bundle.
+		if ((bundle.getState() & (Bundle.INSTALLED | Bundle.RESOLVED)) != 0) {
+			String lazyHeader = (String) bundle.getHeaders("").get(HEADER_LAZY_START); //$NON-NLS-1$
+			if (lazyHeader == null)
+				lazyHeader = (String) bundle.getHeaders("").get(HEADER_AUTO_START); //$NON-NLS-1$
+			if (lazyHeader != null && !"false".equalsIgnoreCase(lazyHeader)) //$NON-NLS-1$
+				throw new BundleException(NLS.bind(Messages.plugin_startupProblems, bundle.getSymbolicName()));
+		}
 	}
 }
