@@ -570,6 +570,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					CVSUIMessages.ConfigurationWizardMainPage_invalidUserName, null); 
 		}
+		if (user.startsWith(" ") || user.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					CVSUIMessages.ConfigurationWizardMainPage_6, null); 
+		}		
 		return Status.OK_STATUS;
 	}
 	public static final IStatus validateHost(String host) {

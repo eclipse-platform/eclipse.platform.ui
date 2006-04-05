@@ -339,6 +339,7 @@ public class CVSUIMessages extends NLS {
 	public static String ConfigurationWizardMainPage_host;
 	public static String ConfigurationWizardMainPage_0;
 	public static String ConfigurationWizardMainPage_5;
+	public static String ConfigurationWizardMainPage_6;
 	public static String ConfigurationWizardMainPage_1;
 	public static String ConfigurationWizardMainPage_2;
 	public static String ConfigurationWizardMainPage_3;
