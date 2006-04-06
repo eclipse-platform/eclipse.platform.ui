@@ -154,7 +154,14 @@ public class ThreadEventHandler extends DebugEventHandler {
 		} catch (DebugException e) {
 		}
     	if (isEqual(frame, prev)) {
-    		node = node.addNode(thread, flags);
+    		if (frame == null) {
+    			if (thread.isSuspended()) {
+	    			// no frames, but suspended - update & select
+	    			node = node.addNode(thread, flags | IModelDelta.STATE | IModelDelta.SELECT);
+    			}
+    		} else {
+    			node = node.addNode(thread, flags);
+    		}
     	} else {
 			node = node.addNode(thread, flags | IModelDelta.CONTENT);
     	}
