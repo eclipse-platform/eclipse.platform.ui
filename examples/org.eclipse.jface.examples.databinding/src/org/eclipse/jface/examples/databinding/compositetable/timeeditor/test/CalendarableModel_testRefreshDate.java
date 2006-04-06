@@ -156,5 +156,4 @@ public class CalendarableModel_testRefreshDate extends TestCase {
 		cm.refresh(getNextDate(cmf.startDate));  // This refresh should
 		verifyModel(cm, data);
 	}
-
 }

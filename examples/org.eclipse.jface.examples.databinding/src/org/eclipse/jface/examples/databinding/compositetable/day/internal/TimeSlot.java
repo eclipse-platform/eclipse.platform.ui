@@ -1,14 +1,13 @@
-/*
- * Copyright (C) 2005 David Orme <djo@coconut-palm-software.com>
- * 
+/*******************************************************************************
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     David Orme     - Initial API and implementation
- */
+ *     The Pampered Chef - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import org.eclipse.swt.SWT;

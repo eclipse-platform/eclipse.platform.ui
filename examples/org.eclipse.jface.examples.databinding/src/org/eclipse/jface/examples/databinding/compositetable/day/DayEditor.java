@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006 The Pampered Chef and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     The Pampered Chef - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.jface.examples.databinding.compositetable.day;
 
 import java.util.Calendar;
@@ -158,12 +168,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		refresh();
 	}
 
-	/**
-	 * Refresh everything in the display.
-	 */
-	private void refresh() {
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
@@ -172,6 +176,13 @@ public class DayEditor extends Composite implements IEventEditor {
 		refresh();
 	}
 
+	/**
+	 * Refresh everything in the display.
+	 */
+	private void refresh() {
+		// Compute the real start hour
+		startHour = defaultStartHour;
+	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
 
