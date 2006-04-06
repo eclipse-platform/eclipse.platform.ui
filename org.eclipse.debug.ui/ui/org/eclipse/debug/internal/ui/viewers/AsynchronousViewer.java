@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -130,7 +131,22 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		setContentProvider(new NullContentProvider());
 		setUseHashlookup(true);
 	}
-	
+
+	/**
+	 * Hash lookup is required, don't let subclasses change behavior.
+	 */
+	public final void setUseHashlookup(boolean enable) {
+		Assert.isTrue(enable);
+		super.setUseHashlookup(enable);
+	}
+
+	public Control getControl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
