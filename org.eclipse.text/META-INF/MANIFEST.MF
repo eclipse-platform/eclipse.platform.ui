@@ -16,3 +16,4 @@ Export-Package:
 Require-Bundle: 
  org.eclipse.core.commands;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
