@@ -72,7 +72,7 @@ public interface ITextViewerExtension3 {
 	 * or <code>null</code> if there is no such region.
 	 *
 	 * @param widgetRange the widget region
-	 * @return the minimal region of the viewer's document comprising <code>widgetlRange</code> or <code>null</code>
+	 * @return the minimal region of the viewer's document comprising <code>widgetRange</code> or <code>null</code>
 	 */
 	IRegion widgetRange2ModelRange(IRegion widgetRange);
 
