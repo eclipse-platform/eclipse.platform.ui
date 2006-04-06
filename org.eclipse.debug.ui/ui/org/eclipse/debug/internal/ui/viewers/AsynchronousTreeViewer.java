@@ -620,15 +620,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     		presentationContext.setColumns(null);
     	}
     	columns = tree.getColumns();
-    	int avgColumnWdith = tree.getSize().x;
+    	int avgColumnWidth = tree.getSize().x;
     	if (visibleColumnIds != null)
-    		avgColumnWdith /= visibleColumnIds.length;
+    		avgColumnWidth /= visibleColumnIds.length;
     	
     	for (int i = 0; i < columns.length; i++) {
     		TreeColumn treeColumn = columns[i];
 			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
     		if (width == null) {
-    			treeColumn.setWidth(avgColumnWdith);
+    			treeColumn.setWidth(avgColumnWidth);
     		} else {
     			treeColumn.setWidth(width.intValue());
     		}
