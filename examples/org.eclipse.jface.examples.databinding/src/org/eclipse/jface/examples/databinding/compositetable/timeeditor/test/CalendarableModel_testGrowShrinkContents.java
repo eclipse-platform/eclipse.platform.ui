@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @since 3.2
  *
  */
-public class CopyOfCalendarableModel_testRefreshContents extends TestCase {
+public class CalendarableModel_testGrowShrinkContents extends TestCase {
 
 	public void testGrowDateData() throws Exception {
 		
