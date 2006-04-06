@@ -80,12 +80,14 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 	 *            the file revision
 	 * @param set
 	 *            the set of refactoring descriptor proxies
+	 * @param project
+	 *            the non-empty name of the project
 	 * @param direction
 	 *            the direction
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	private void getRefactorings(final IFileRevision revision, final Set set, final int direction, final IProgressMonitor monitor) {
+	private void getRefactorings(final IFileRevision revision, final Set set, final String project, final int direction, final IProgressMonitor monitor) {
 		IStorage storage= null;
 		try {
 			storage= revision.getStorage(new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -102,7 +104,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 				if (history != null && !history.isEmpty()) {
 					final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 					for (int offset= 0; offset < proxies.length; offset++) {
-						final RefactoringDescriptorSynchronizationProxy proxy= new RefactoringDescriptorSynchronizationProxy(proxies[offset], direction);
+						final RefactoringDescriptorSynchronizationProxy proxy= new RefactoringDescriptorSynchronizationProxy(proxies[offset], project, direction);
 						if (!set.contains(proxy))
 							set.add(proxy);
 						else
@@ -152,6 +154,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			final IProgressMonitor finalMonitor= monitor;
 			final Set remote= new HashSet();
 			final Set local= new HashSet();
+			final String name= project.getName();
 			final IResourceDiffTree tree= context.getDiffTree();
 			tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), new IDiffVisitor() {
 
@@ -164,19 +167,19 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 							if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
 								final IFileRevision afterRevision= ((IResourceDiff) remoteDiff).getAfterState();
 								if (afterRevision != null)
-									getRefactorings(afterRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+									getRefactorings(afterRevision, remote, name, IThreeWayDiff.INCOMING, finalMonitor);
 								final IFileRevision beforeRevision= ((IResourceDiff) remoteDiff).getBeforeState();
 								if (beforeRevision != null)
-									getRefactorings(beforeRevision, remote, IThreeWayDiff.INCOMING, finalMonitor);
+									getRefactorings(beforeRevision, remote, name, IThreeWayDiff.INCOMING, finalMonitor);
 							}
 							final ITwoWayDiff localDiff= threeWay.getLocalChange();
 							if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
 								final IFileRevision beforeRevision= ((IResourceDiff) localDiff).getBeforeState();
 								if (beforeRevision != null)
-									getRefactorings(beforeRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
+									getRefactorings(beforeRevision, local, name, IThreeWayDiff.OUTGOING, finalMonitor);
 								final IFileRevision afterRevision= ((IResourceDiff) localDiff).getAfterState();
 								if (afterRevision != null)
-									getRefactorings(afterRevision, local, IThreeWayDiff.OUTGOING, finalMonitor);
+									getRefactorings(afterRevision, local, name, IThreeWayDiff.OUTGOING, finalMonitor);
 							}
 						}
 					}

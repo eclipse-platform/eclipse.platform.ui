@@ -29,6 +29,9 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	/** The direction of the difference */
 	private final int fDirection;
 
+	/** The non-empty name of the associated project */
+	private final String fProject;
+
 	/** The encapsulated descriptor proxy */
 	private final RefactoringDescriptorProxy fProxy;
 
@@ -42,14 +45,20 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	 * 
 	 * @param proxy
 	 *            the descriptor proxy to encapsulate
+	 * @param project
+	 *            the non-empty name of the project the refactoring is
+	 *            associated with
 	 * @param direction
 	 *            the direction of the difference
 	 * 
 	 * @see IThreeWayDiff#getDirection()
 	 */
-	public RefactoringDescriptorSynchronizationProxy(final RefactoringDescriptorProxy proxy, final int direction) {
+	public RefactoringDescriptorSynchronizationProxy(final RefactoringDescriptorProxy proxy, final String project, final int direction) {
 		Assert.isNotNull(proxy);
+		Assert.isNotNull(project);
+		Assert.isTrue(!"".equals(project)); //$NON-NLS-1$
 		fProxy= proxy;
+		fProject= project;
 		fDirection= direction;
 	}
 
@@ -87,7 +96,7 @@ public final class RefactoringDescriptorSynchronizationProxy extends Refactoring
 	 * {@inheritDoc}
 	 */
 	public String getProject() {
-		return fProxy.getProject();
+		return fProject;
 	}
 
 	/**

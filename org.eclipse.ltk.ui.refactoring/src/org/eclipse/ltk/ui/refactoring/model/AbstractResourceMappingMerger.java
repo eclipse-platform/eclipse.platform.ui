@@ -51,6 +51,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImple
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy;
 import org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMergeWizard;
 
 import org.eclipse.swt.widgets.Display;
@@ -335,7 +336,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 					if (direction == IThreeWayDiff.INCOMING || direction == IThreeWayDiff.CONFLICTING) {
 						final ITwoWayDiff remoteDiff= threeWay.getRemoteChange();
 						if (remoteDiff instanceof IResourceDiff) {
-							final IFileRevision remoteRevision= ((IResourceDiff) remoteDiff).getAfterState();
+							final IResourceDiff resourceDiff= (IResourceDiff) remoteDiff;
+							final String project= resourceDiff.getResource().getProject().getName();
+							final IFileRevision remoteRevision= resourceDiff.getAfterState();
 							if (remoteRevision != null) {
 								final String name= remoteRevision.getName();
 								if (name.equalsIgnoreCase(RefactoringHistoryService.NAME_INDEX_FILE)) {
@@ -354,7 +357,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 												stream= storage.getContents();
 												final RefactoringDescriptorProxy[] proxies= RefactoringHistoryService.getInstance().readRefactoringDescriptorProxies(stream, RefactoringDescriptor.MULTI_CHANGE);
 												for (int offset= 0; offset < proxies.length; offset++)
-													existing.add(proxies[offset]);
+													existing.add(new RefactoringDescriptorSynchronizationProxy(proxies[offset], project, IThreeWayDiff.OUTGOING));
 
 											} catch (CoreException exception) {
 												RefactoringUIPlugin.log(exception);
@@ -384,7 +387,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 											if (history != null && !history.isEmpty()) {
 												final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 												for (int offset= 0; offset < proxies.length; offset++)
-													incoming.add(proxies[offset]);
+													incoming.add(new RefactoringDescriptorSynchronizationProxy(proxies[offset], project, IThreeWayDiff.INCOMING));
 											}
 										} catch (CoreException exception) {
 											RefactoringUIPlugin.log(exception);
