@@ -285,7 +285,7 @@ public class CVSProviderPlugin extends Plugin {
 		loadOldState();
 		crash = createCrashFile();
 		
-		// Initialize CVS change listeners. Note tha the report type is important.
+		// Initialize CVS change listeners. Note that the report type is important.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		addDeleteMoveListener = new BuildCleanupListener();
 		fileModificationManager = new FileModificationManager();

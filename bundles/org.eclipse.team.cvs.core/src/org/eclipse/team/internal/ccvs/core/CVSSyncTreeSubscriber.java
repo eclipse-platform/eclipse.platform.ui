@@ -96,9 +96,9 @@ public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscribe
 			}
 			return true;
 		} catch (TeamException e) {
-			// If there is no resource in coe this measn there is no local and no remote
+			// If there is no resource in core this means there is no local and no remote
 			// so the resource is not supervised.
-			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND || !resource.getProject().isAccessible()) {
 				return false;
 			}
 			throw e;
