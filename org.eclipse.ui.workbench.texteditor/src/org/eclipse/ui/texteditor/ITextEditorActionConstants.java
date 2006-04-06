@@ -487,6 +487,20 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	String GROUP_RESTORE= "restore"; //$NON-NLS-1$
 
 	/**
+	 * Context menu group for actions that display additional information. Value:
+	 * <code>"group.information"</code>.
+	 * @since 3.2
+	 */
+	String GROUP_INFORMATION= "group.information"; //$NON-NLS-1$
+
+	/**
+	 * Context menu group for typing aid actions such as content assist. Value:
+	 * <code>"group.assist"</code>.
+	 * @since 3.2
+	 */
+	String GROUP_ASSIST= "group.assist"; //$NON-NLS-1$
+
+	/**
 	 * Name of the action for showing the preferences from the editor context
 	 * menu. Value: <code>"Preferences.ContextAction"</code>
 	 * @since 3.1

@@ -17,7 +17,6 @@
    <type name="GotoAnnotationAction" subclass="false"/>
    <type name="GotoLineAction" subclass="false"/>
    <type name="IncrementalFindAction" subclass="false"/>
-   <type name="ITextEditorActionConstants" implement="false"/>
    <type name="ITextEditorDropTargetListener" implement="false"/>
    <type name="RevertToSavedAction" subclass="false"/>
    <type name="SaveAction" subclass="false"/>

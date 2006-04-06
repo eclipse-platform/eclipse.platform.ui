@@ -255,14 +255,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			editMenu.prependToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
 
 			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_OPEN));
-			String GROUP_INFORMATION= "group.information"; //$NON-NLS-1$ // TODO make this an IWorkbenchActionConstants constant in 3.3
-			addOrInsert(editMenu, new Separator(GROUP_INFORMATION));
-			String GROUP_ASSIST= "group.assist"; //$NON-NLS-1$ // TODO make this an IWorkbenchActionConstants constant in 3.3
-			addOrInsert(editMenu, new Separator(GROUP_ASSIST));
+			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_INFORMATION));
+			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_ASSIST));
 			addOrInsert(editMenu, new Separator(ITextEditorActionConstants.GROUP_GENERATE));
 			addOrInsert(editMenu, new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-			editMenu.appendToGroup(GROUP_ASSIST, fHippieCompletion);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fHippieCompletion);
 		}
 
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
