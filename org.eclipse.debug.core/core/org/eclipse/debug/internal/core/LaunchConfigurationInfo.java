@@ -55,6 +55,21 @@ public class LaunchConfigurationInfo {
 	private ILaunchConfigurationType fType;
 	
 	/**
+	 * Whether running on Sun 1.4 VM - see bug 110215
+	 */
+	private static boolean fgIsSun14x = false;
+	
+	static {
+		String vendor = System.getProperty("java.vm.vendor"); //$NON-NLS-1$
+		if (vendor.startsWith("Sun Microsystems")) { //$NON-NLS-1$
+			String version = System.getProperty("java.vm.version"); //$NON-NLS-1$
+			if (version.startsWith("1.4")) { //$NON-NLS-1$
+				fgIsSun14x = true;
+			}
+		}
+	}
+	
+	/**
 	 * Constructs a new empty info
 	 */
 	protected LaunchConfigurationInfo() {
@@ -549,11 +564,13 @@ public class LaunchConfigurationInfo {
 				}
 				Comparator comp = manager.getComparator(key);
 				if (comp == null) {
-					if(attr2 instanceof String & attr1 instanceof String) {
-						//this is a hack for bug 110215, on SUN 1.4.x, \r is stripped off when the stream is written to the DOM
-						//this is not the case for 1.5.x, so to be safe we are stripping \r off all strings before we compare for equality
-						attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					if (fgIsSun14x) {
+						if(attr2 instanceof String & attr1 instanceof String) {
+							//this is a hack for bug 110215, on SUN 1.4.x, \r is stripped off when the stream is written to the DOM
+							//this is not the case for 1.5.x, so to be safe we are stripping \r off all strings before we compare for equality
+							attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 					}
 					if (!attr1.equals(attr2)) {
 						return false;
