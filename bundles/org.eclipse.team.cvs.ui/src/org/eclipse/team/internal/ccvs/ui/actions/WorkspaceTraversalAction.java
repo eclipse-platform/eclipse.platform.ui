@@ -82,6 +82,16 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
     }
     
+	public static IResource[] getResourcesToCompare(ResourceMapping[] mappings, Subscriber subscriber) throws InvocationTargetException {
+    	ISynchronizationScopeManager manager = new SynchronizationScopeManager("",  //$NON-NLS-1$
+    			mappings, SubscriberResourceMappingContext.createContext(subscriber), true);
+    	try {
+    		return getResourcesToCompare(manager);
+    	} finally {
+    		manager.dispose();
+    	}
+	}
+	
     protected IResource[] getResourcesToCompare(final Subscriber subscriber) throws InvocationTargetException {
     	ISynchronizationScopeManager manager = new SynchronizationScopeManager("",  //$NON-NLS-1$
     			getCVSResourceMappings(), SubscriberResourceMappingContext.createContext(subscriber), true);

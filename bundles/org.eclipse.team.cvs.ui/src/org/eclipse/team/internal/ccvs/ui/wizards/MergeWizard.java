@@ -23,10 +23,14 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceTraversalAction;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeOperation;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelMergeParticipant;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class MergeWizard extends Wizard {
@@ -66,23 +70,55 @@ public class MergeWizard extends Wizard {
                 // Ignore
             }
 		} else {
-			ModelMergeParticipant participant = ModelMergeParticipant.getMatchingParticipant(mappings, startTag, endTag);
-			if(participant == null) {
-		    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
-		    	try {
-					new ModelMergeOperation(getPart(), mappings, s, page.isOnlyPreviewConflicts()).run();
-				} catch (InvocationTargetException e) {
-					CVSUIPlugin.log(IStatus.ERROR, "Internal error", e.getTargetException()); //$NON-NLS-1$
-				} catch (InterruptedException e) {
-					// Ignore
+			if (isShowModelSync()) {
+				ModelMergeParticipant participant = ModelMergeParticipant.getMatchingParticipant(mappings, startTag, endTag);
+				if(participant == null) {
+			    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
+			    	try {
+						new ModelMergeOperation(getPart(), mappings, s, page.isOnlyPreviewConflicts()).run();
+					} catch (InvocationTargetException e) {
+						CVSUIPlugin.log(IStatus.ERROR, "Internal error", e.getTargetException()); //$NON-NLS-1$
+					} catch (InterruptedException e) {
+						// Ignore
+					}
+				} else {
+					participant.refresh(null, mappings);
 				}
 			} else {
-				participant.refresh(null, mappings);
+				// First check if there is an existing matching participant, if so then re-use it
+	            try {
+	                resources = getAllResources(startTag, endTag);
+	            } catch (InvocationTargetException e) {
+	                // Log and continue with the original resources
+	                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
+	            }
+				MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
+				if(participant == null) {
+					CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
+					participant = new MergeSynchronizeParticipant(s);
+					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+				}
+				participant.refresh(resources, null, null, null);
+
 			}
 		}
 		return true;
 	}
 
+	private IResource[] getAllResources(CVSTag startTag, CVSTag endTag) throws InvocationTargetException {
+        // Only do the extra work if the model is a logical model (i.e. not IResource)
+        if (!WorkspaceTraversalAction.isLogicalModel(mappings))
+            return resources;
+        CVSMergeSubscriber s = new CVSMergeSubscriber(WorkspaceTraversalAction.getProjects(resources), startTag, endTag);
+        IResource[] allResources = WorkspaceTraversalAction.getResourcesToCompare(mappings, s);
+        s.cancel();
+        return allResources;
+    }
+	
+    private boolean isShowModelSync() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
+	}
+    
 	private IResource[] getProjects(IResource[] resources) {
 		Set projects = new HashSet();
 		for (int i = 0; i < resources.length; i++) {
