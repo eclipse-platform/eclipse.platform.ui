@@ -44,6 +44,8 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
@@ -589,7 +591,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected void buildColumns(IColumnPresentation presentation) {
     	// dispose current columns, persisting their weigts
     	Tree tree = getTree();
-		TreeColumn[] columns = tree.getColumns();
+		final TreeColumn[] columns = tree.getColumns();
 		String[] visibleColumnIds = getVisibleColumns();
     	for (int i = 0; i < columns.length; i++) {
     		TreeColumn treeColumn = columns[i];
@@ -619,23 +621,38 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     		tree.setLinesVisible(false);
     		presentationContext.setColumns(null);
     	}
-    	columns = tree.getColumns();
-    	int avgColumnWidth = tree.getSize().x;
+
+    	int avg = tree.getSize().x;
     	if (visibleColumnIds != null)
-    		avgColumnWidth /= visibleColumnIds.length;
+    		avg /= visibleColumnIds.length;
     	
-    	for (int i = 0; i < columns.length; i++) {
-    		TreeColumn treeColumn = columns[i];
-			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
-    		if (width == null) {
-    			treeColumn.setWidth(avgColumnWidth);
-    		} else {
-    			treeColumn.setWidth(width.intValue());
-    		}
-    		treeColumn.addControlListener(fListener);
-		}
+        if (avg == 0) {
+            tree.addPaintListener(new PaintListener() {
+                public void paintControl(PaintEvent e) {
+                    Tree tree2 = getTree();
+                    int avg1 = tree2.getSize().x / getVisibleColumns().length;
+                    initColumns(avg1);
+                    tree2.removePaintListener(this);
+                }
+            });
+        } else {
+            initColumns(avg);
+        }
     }
 
+    private void initColumns(int widthHint) {
+        TreeColumn[] columns = getTree().getColumns();
+        for (int i = 0; i < columns.length; i++) {
+            TreeColumn treeColumn = columns[i];
+            Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
+            if (width == null) {
+                treeColumn.setWidth(widthHint);
+            } else {
+                treeColumn.setWidth(width.intValue());
+            }
+            treeColumn.addControlListener(fListener);
+        }
+    }
     /**
      * Persists column sizes in cache
      */
