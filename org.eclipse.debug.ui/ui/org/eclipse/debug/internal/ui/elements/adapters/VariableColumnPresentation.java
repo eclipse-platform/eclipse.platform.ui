@@ -10,19 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.elements.adapters;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.VariableValueEditorManager;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractColumnPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.IVariableValueEditor;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Columns for Java variables.
@@ -71,69 +60,6 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 			return Messages.VariableColumnPresentation_3;
 		}
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getCellEditor(java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
-	 */
-	public CellEditor getCellEditor(String id, Object element, Composite parent) {
-		return new TextCellEditor(parent);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getCellModifier()
-	 */
-	public ICellModifier getCellModifier() {
-		return new ICellModifier() {
-		
-			public void modify(Object element, String property, Object value) {
-				if (COLUMN_VARIABLE_VALUE.equals(property)) {
-					if (element instanceof IVariable) {
-						IVariable variable = (IVariable) element;
-						IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
-						Shell shell = null;
-						IWorkbenchPart part = getPresentationContext().getPart();
-						if (part != null) {
-							shell = part.getSite().getShell();
-						}
-						if (editor != null) {
-							if  (editor.saveVariable(variable, (String) value, shell)) {
-								return;
-							}
-						}
-						try {
-							variable.setValue((String) value);
-						} catch (DebugException e) {
-							DebugUIPlugin.errorDialog(shell, Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
-						}
-					}
-				}
-			}
-		
-			public Object getValue(Object element, String property) {
-				if (COLUMN_VARIABLE_VALUE.equals(property)) {
-					if (element instanceof IVariable) {
-						IVariable variable = (IVariable) element;
-						try {
-							return variable.getValue().getValueString();
-						} catch (DebugException e) {
-							DebugUIPlugin.log(e);
-						}
-					}
-				}
-				return null;
-			}
-		
-			public boolean canModify(Object element, String property) {
-				if (COLUMN_VARIABLE_VALUE.equals(property)) {
-					if (element instanceof IVariable) {
-						return ((IVariable) element).supportsValueModification();
-					}
-				}
-				return false;
-			}
-		
-		};
 	}
 
 	/* (non-Javadoc)
