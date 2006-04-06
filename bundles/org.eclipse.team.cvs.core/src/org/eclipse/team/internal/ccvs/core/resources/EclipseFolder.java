@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -325,7 +326,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	
 	/**
 	 * Assumption this is only called from decorator and isIgnored() is purposely
-	 * ommited here for performance reasons. 
+	 * ommitted here for performance reasons. 
 	 */
 	public boolean isModified(IProgressMonitor monitor) throws CVSException {
 		try {
@@ -333,6 +334,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			monitor.beginTask(NLS.bind(CVSMessages.EclipseFolder_isModifiedProgress, new String[] { resource.getFullPath().toString() }), 1000); 
 			
 			IContainer container = (IContainer)getIResource();
+			
+			if(RepositoryProvider.getProvider(container.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+				return false;
+			}
 			
 			// Added optimization to avoid loading sync info if possible
 			// This will place a modified indicator on non-cvs folders
@@ -342,7 +347,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			boolean modified;
 			if (state == ICVSFile.UNKNOWN) {
 				
-				if (!isCVSFolder()) {
+				if (!isCVSFolder() && container.getType() == IResource.FOLDER) {
 					return container.exists();
 				}
 				
