@@ -1989,8 +1989,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 													.getString(IWorkbenchConstants.TAG_STANDBY))
 									.booleanValue());
 		}
-		result.add(restoreTrimState(memento
-				.getChild(IWorkbenchConstants.TAG_TRIM)));
+		
+		// Only restore the trim state if we're using the default layout
+		if (defaultLayout != null) {
+			// Restore the trim state. We pass in the 'root'
+			// memento since we have to check for pre-3.2
+			// state.
+			result.add(restoreTrimState(memento));
+		}
+		
 		return result;
 	}
 
@@ -2463,8 +2470,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				.createChild(IWorkbenchConstants.TAG_ACTION_BAR_ADVISOR);
 		result.add(getActionBarAdvisor().saveState(actionBarAdvisorState));
 
-		IMemento trimState = memento.createChild(IWorkbenchConstants.TAG_TRIM);
-		result.add(saveTrimState(trimState));
+		// Only save the trim state if we're using the default layout
+		if (defaultLayout != null) {
+			IMemento trimState = memento.createChild(IWorkbenchConstants.TAG_TRIM);
+			result.add(saveTrimState(trimState));
+		}
 
 		return result;
 	}
@@ -2501,51 +2511,68 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * Restore the trim layout state from the memento.
 	 * 
 	 * @param memento
-	 *            the memento to restore
+	 *            the 'root' Workbench memento to restore
 	 * @return the status, OK or not
 	 * @since 3.2
 	 */
 	private IStatus restoreTrimState(IMemento memento) {
-		if (memento == null) {
-			return Status.OK_STATUS;
-		}
+		// Determine if we have saved state. If we don't have any 3.2
+		// type state we're not done because the FastViewBar maintained
+		// its own 'side' state in 3.1 so we'll honor its value
+		IMemento trimState = memento.getChild(IWorkbenchConstants.TAG_TRIM);
+		if (trimState != null) {
+			// first pass sets up ordering for all trim areas
+			IMemento[] areas = trimState
+					.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
+			
+			// We need to remember all the trim that was repositioned
+			// here so we can re-site -newly contributed- trim after
+			// we're done
+			List knownIds = new ArrayList();
+			
+			List[] trimOrder = new List[areas.length];
+			for (int i = 0; i < areas.length; i++) {
+				trimOrder[i] = new ArrayList();
+				IMemento area = areas[i];
+				IMemento[] items = area
+						.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
+				for (int j = 0; j < items.length; j++) {
+					IMemento item = items[j];
+					knownIds.add(item.getID());
+					
+					IWindowTrim t = defaultLayout.getTrim(item.getID());
+					if (t != null) {
+						trimOrder[i].add(t);
+					}
+				}
+			}
+	
+			// second pass applies all of the window trim
+			for (int i = 0; i < areas.length; i++) {
+				IMemento area = areas[i];
+				int id = Integer.parseInt(area.getID());
+				defaultLayout.updateAreaTrim(id, trimOrder[i], false);
+			}
 
-		// first pass sets up ordering for all trim areas
-		IMemento[] areas = memento
-				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
-		
-		// We need to remember all the trim that was repositioned
-		// here so we can re-site -newly contributed- trim after
-		// we're done
-		List knownIds = new ArrayList();
-		
-		List[] trimOrder = new List[areas.length];
-		for (int i = 0; i < areas.length; i++) {
-			trimOrder[i] = new ArrayList();
-			IMemento area = areas[i];
-			IMemento[] items = area
-					.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
-			for (int j = 0; j < items.length; j++) {
-				IMemento item = items[j];
-				knownIds.add(item.getID());
-				
-				IWindowTrim t = defaultLayout.getTrim(item.getID());
-				if (t != null) {
-					trimOrder[i].add(t);
+			// get the trim manager to re-locate any -newly contributed-
+			// trim widgets
+			trimMgr.updateLocations(knownIds);
+		}
+		else {
+			// No 3.2 state...check if the FVB has state
+			IMemento fastViewMem = memento
+					.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+			if (fastViewMem != null) {
+				if (fastViewBar != null) {
+			        Integer bigInt;
+			        bigInt = fastViewMem.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
+			        if (bigInt != null) {
+			        	fastViewBar.dock(bigInt.intValue());
+			        	getTrimManager().addTrim(bigInt.intValue(), fastViewBar);
+			        }
 				}
 			}
 		}
-
-		// second pass applies all of the window trim
-		for (int i = 0; i < areas.length; i++) {
-			IMemento area = areas[i];
-			int id = Integer.parseInt(area.getID());
-			defaultLayout.updateAreaTrim(id, trimOrder[i], false);
-		}
-
-		// get the trim manager to re-locate any -newly contributed-
-		// trim widgets
-		trimMgr.updateLocations(knownIds);
 		
 		return Status.OK_STATUS;
 	}
