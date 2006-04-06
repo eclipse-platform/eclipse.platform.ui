@@ -284,4 +284,25 @@ public class ResourceManagerTest extends TestCase {
         Assert.assertEquals(initialCount, TestDescriptor.refCount);
         
     }
+    
+    /*
+     * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135088
+     */
+    public void testResourceManagerFind() throws Exception {
+    	DeviceResourceDescriptor descriptor = descriptors[0];
+    	Object resource = globalResourceManager.find(descriptor);
+    	assertNull("Resource should be null since it is not allocated", resource);
+    	resource = globalResourceManager.create(descriptor);
+    	
+        // Ensure that the resource was allocated correctly
+        validateResource(resource);
+        
+        // Now the resource should be found
+        Object foundResource = globalResourceManager.find(descriptor);
+    	assertNotNull("Found resource should not be null", foundResource);
+    	assertTrue("Found resource should be an image", foundResource instanceof Image);
+    	
+    	// Destroy the resource we created
+    	globalResourceManager.destroy(descriptor);
+    }
 }

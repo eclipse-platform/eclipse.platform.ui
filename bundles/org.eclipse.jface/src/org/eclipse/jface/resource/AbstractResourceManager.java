@@ -153,6 +153,9 @@ abstract class AbstractResourceManager extends ResourceManager {
         if (map == null) {
             return null;
         }
-        return map.get(descriptor);
+        RefCount refCount = (RefCount)map.get(descriptor);
+        if (refCount == null)
+        	return null;
+		return refCount.resource;
     }
 }
