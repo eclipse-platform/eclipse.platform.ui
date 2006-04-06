@@ -24,6 +24,7 @@ public class HelpURLConnection extends URLConnection {
 
 	private final static String LANG = "lang"; //$NON-NLS-1$
 	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
+	private final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
@@ -53,6 +54,10 @@ public class HelpURLConnection extends URLConnection {
 
 		String urlFile = url.getFile();
 
+		// Strip off everything before and including the PLUGINS_ROOT
+		int index = urlFile.indexOf(PLUGINS_ROOT);
+		if (index!= -1) 
+			urlFile = urlFile.substring(index+PLUGINS_ROOT.length());
 		// Strip off the leading "/" and the query
 		if (urlFile.startsWith("/")) //$NON-NLS-1$
 			urlFile = urlFile.substring(1);
