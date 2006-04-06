@@ -191,7 +191,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			if (fromClass.isPrimitive()) {
 				fromClass = autoboxed(fromClass);
 			}
-			return new Boolean((toClass).isAssignableFrom(fromClass));
+			return Boolean.valueOf((toClass).isAssignableFrom(fromClass));
 		}
 		return null;
 	}
