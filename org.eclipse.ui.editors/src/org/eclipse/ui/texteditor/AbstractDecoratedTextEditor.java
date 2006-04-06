@@ -1406,6 +1406,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			};
 		}
+		
+		if (adapter != null && adapter.getName().equals("org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider")) { //$NON-NLS-1$
+			IRevisionRulerColumn revisionColumn= getRevisionColumn();
+			if (revisionColumn instanceof ChangeRulerColumn)
+				return ((ChangeRulerColumn) revisionColumn).getRevisionSelectionProvider();
+			if (revisionColumn instanceof LineNumberChangeRulerColumn)
+				return ((LineNumberChangeRulerColumn) revisionColumn).getRevisionSelectionProvider();
+		}
 	
 		return super.getAdapter(adapter);
 	

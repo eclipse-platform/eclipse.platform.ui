@@ -21,6 +21,7 @@ import org.eclipse.jface.text.revisions.RevisionInformation;
 
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
 import org.eclipse.jface.internal.text.source.DiffPainter;
+import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
@@ -161,7 +162,8 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		Color foreground= gc.getForeground();
 		if (visibleLines != null) {
 			fRevisionPainter.paint(gc, visibleLines);
-			fDiffPainter.paint(gc, visibleLines);
+			if (!fRevisionPainter.hasInformation()) // don't paint quick diff colors if revisions are painted
+				fDiffPainter.paint(gc, visibleLines);
 		}
 		gc.setForeground(foreground);
 		super.doPaint(gc, visibleLines);
@@ -223,4 +225,14 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void setRevisionInformation(RevisionInformation info) {
 		fRevisionPainter.setRevisionInformation(info);
 	}
+
+	/**
+     * Returns the revision selection provider.
+     * 
+     * @return the revision selection provider
+     * @since 3.2
+     */
+    public ISelectionProvider getRevisionSelectionProvider() {
+	    return fRevisionPainter.getRevisionSelectionProvider();
+    }
 }

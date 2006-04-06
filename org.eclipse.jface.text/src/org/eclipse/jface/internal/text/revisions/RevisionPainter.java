@@ -27,6 +27,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
@@ -155,7 +156,12 @@ public final class RevisionPainter {
 			// relative age: newest is 0, oldest is 1
 			// if there is only one revision, use an intermediate value to avoid extreme coloring
 			int size= fRevisions.size();
-			float relativeAge= size == 1 ? 0.5f : (float) fRevisions.indexOf(new Long(age)) / (size - 1);
+			int index= fRevisions.indexOf(new Long(age));
+			float relativeAge;
+			if (index == -1 || size <= 1)
+				relativeAge= 0.5f;
+			else
+				relativeAge= (float) index / (size - 1);
 
 			return getShadedColor(rgb, 1 - relativeAge, focus);
 		}
@@ -338,12 +344,42 @@ public final class RevisionPainter {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	private class MouseHandler implements MouseMoveListener, MouseTrackListener, Listener {
+	private class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener, Listener {
 
+		private ChangeRegion fMouseDownRegion;
+		
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
-		public void mouseUp(MouseEvent event) {
+		public void mouseUp(MouseEvent e) {
+			if (e.button == 1) {
+				ChangeRegion upRegion= fFocusRegion;
+				ChangeRegion downRegion= fMouseDownRegion;
+				fMouseDownRegion= null;
+
+				if (upRegion == downRegion) {
+					Revision revision= upRegion == null ? null : upRegion.getRevision();
+					handleRevisionSelected(revision);
+				}
+			}
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+			if (e.button == 3)
+				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
+			if (e.button == 1)
+				fMouseDownRegion= fFocusRegion;
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+		    // TODO Auto-generated method stub
+		    
 		}
 
 		/*
@@ -614,6 +650,8 @@ public final class RevisionPainter {
 	private final RevisionHover fHover= new RevisionHover();
 	/** The annotation listener. */
 	private final AnnotationListener fAnnotationListener= new AnnotationListener();
+	/** The selection provider. */
+	private final RevisionSelectionProvider fRevisionSelectionProvider= new RevisionSelectionProvider(this);
 
 	/* The context - column and viewer we are connected to. */
 
@@ -753,6 +791,7 @@ public final class RevisionPainter {
 
 		fControl.addMouseTrackListener(fMouseHandler);
 		fControl.addMouseMoveListener(fMouseHandler);
+		fControl.addMouseListener(fMouseHandler);
 		fControl.addDisposeListener(new DisposeListener() {
 			/*
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
@@ -761,6 +800,8 @@ public final class RevisionPainter {
 				handleDispose();
 			}
 		});
+		
+		fRevisionSelectionProvider.install(fViewer);
 	}
 
 	/**
@@ -827,6 +868,8 @@ public final class RevisionPainter {
 			((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
 			fLineDiffer= null;
 		}
+		
+		fRevisionSelectionProvider.uninstall();
 	}
 
 	/**
@@ -1187,6 +1230,24 @@ public final class RevisionPainter {
 			endOffset= document.getLineOffset(nextLine);
 		return new Region(offset, endOffset - offset);
 	}
+	
+	/**
+	 * Handles the selection of a revision and informs listeners.
+	 * 
+     * @param revision the selected revision, <code>null</code> for none
+     */
+    private void handleRevisionSelected(Revision revision) {
+    	fRevisionSelectionProvider.revisionSelected(revision);
+    }
+    
+    /**
+     * Returns the selection provider.
+     * 
+     * @return the selection provider
+     */
+    public RevisionSelectionProvider getRevisionSelectionProvider() {
+		return fRevisionSelectionProvider;
+    }
 
 	/**
 	 * Updates the focus line with a new line.
@@ -1233,9 +1294,13 @@ public final class RevisionPainter {
 			System.out.println("region: " + previousRegion + " > " + nextRegion); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusRegion= nextRegion;
 		Revision revision= nextRegion == null ? null : nextRegion.getRevision();
-		if (fFocusRevision != revision)
-			onFocusRevisionChanged(fFocusRevision, revision);
+		updateFocusRevision(revision);
 	}
+
+	private void updateFocusRevision(Revision revision) {
+	    if (fFocusRevision != revision)
+			onFocusRevisionChanged(fFocusRevision, revision);
+    }
 
 	/**
 	 * Handles a changing focus revision.
@@ -1248,6 +1313,7 @@ public final class RevisionPainter {
 			System.out.println("revision: " + previousRevision + " > " + nextRevision); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusRevision= nextRevision;
 		uninstallWheelHandler();
+		installWheelHandler();
 		showOverviewAnnotations(fFocusRevision);
 		redraw(); // pick up new highlights
 	}
@@ -1274,7 +1340,6 @@ public final class RevisionPainter {
 	 * Handles a hover event on the focus revision.
 	 */
 	private void onHover() {
-		installWheelHandler();
 	}
 
 	/**
@@ -1437,4 +1502,35 @@ public final class RevisionPainter {
 	public boolean hasHover(int activeLine) {
 		return fViewer instanceof ISourceViewer && fHover.getHoverLineRange((ISourceViewer) fViewer, activeLine) != null;
 	}
+
+	/**
+	 * Returns the revision at a certain document offset, or <code>null</code> for none.
+	 * 
+	 * @param offset the document offset
+	 * @return the revision at offset, or <code>null</code> for none
+	 */
+    Revision getRevision(int offset) {
+    	IDocument document= fViewer.getDocument();
+    	int line;
+        try {
+	        line= document.getLineOfOffset(offset);
+        } catch (BadLocationException x) {
+        	return null;
+        }
+    	if (line != -1) {
+    		ChangeRegion region= getChangeRegion(line);
+    		if (region != null)
+    			return region.getRevision();
+    	}
+    	return null;
+    }
+
+	/**
+	 * Returns <code>true</code> if a revision model has been set, <code>false</code> otherwise.
+	 * 
+     * @return <code>true</code> if a revision model has been set, <code>false</code> otherwise
+     */
+    public boolean hasInformation() {
+	    return fRevisionInfo != null;
+    }
 }
