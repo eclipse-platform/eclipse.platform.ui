@@ -330,7 +330,7 @@ abstract public class RetrieverAction extends Action {
 					searchFor= extractSearchTextFromWidget(focus);
 			}
 		}
-		return searchFor;
+		return searchFor == null ? "" : searchFor; //$NON-NLS-1$
 	}
 	
 }
