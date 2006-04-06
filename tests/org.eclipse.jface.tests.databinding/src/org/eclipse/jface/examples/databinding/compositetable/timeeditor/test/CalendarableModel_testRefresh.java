@@ -26,7 +26,7 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendar
  * @since 3.2
  *
  */
-public class CalendarableModel_testRefreshDate extends TestCase {
+public class CalendarableModel_testRefresh extends TestCase {
 	
 	// Test fixtures ----------------------------------------------------------
 	
