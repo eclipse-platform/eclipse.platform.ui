@@ -15,17 +15,12 @@ import org.eclipse.jface.internal.databinding.provisional.validation.IDomainVali
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 
 /**
- * A concrete implementation of IBindSpec, suitable either for instantiating or
- * subclassing.
+ * Data binding has three concerns, the target, the model, and the data flow
+ * between the target and model.  BindSpec contains values and settings that
+ * influence how data binding manages this data flow between the target and
+ * the model.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will remain
- * unchanged during the 3.2 release cycle. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
- * @since 1.0
+ * @since 3.2
  */
 public class BindSpec {
 
