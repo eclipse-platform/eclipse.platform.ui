@@ -590,16 +590,16 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     	// dispose current columns, persisting their weigts
     	Tree tree = getTree();
 		TreeColumn[] columns = tree.getColumns();
+		String[] visibleColumnIds = getVisibleColumns();
     	for (int i = 0; i < columns.length; i++) {
     		TreeColumn treeColumn = columns[i];
     		treeColumn.removeControlListener(fListener);
 			treeColumn.dispose();
 		}
     	PresentationContext presentationContext = (PresentationContext) getPresentationContext();
-    	if (presentation != null) {
-	    	String[] columnIds = getVisibleColumns();
-	    	for (int i = 0; i < columnIds.length; i++) {
-				String id = columnIds[i];
+    	if (presentation != null) {	    	
+	    	for (int i = 0; i < visibleColumnIds.length; i++) {
+				String id = visibleColumnIds[i];
 				String header = presentation.getHeader(id);
 				// TODO: allow client to specify style
 				TreeColumn column = new TreeColumn(tree, SWT.LEFT, i);
@@ -620,11 +620,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     		presentationContext.setColumns(null);
     	}
     	columns = tree.getColumns();
+    	int avgColumnWdith = tree.getSize().x;
+    	if (visibleColumnIds != null)
+    		avgColumnWdith /= visibleColumnIds.length;
+    	
     	for (int i = 0; i < columns.length; i++) {
     		TreeColumn treeColumn = columns[i];
 			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
     		if (width == null) {
-    			treeColumn.pack();
+    			treeColumn.setWidth(avgColumnWdith);
     		} else {
     			treeColumn.setWidth(width.intValue());
     		}
@@ -1127,16 +1131,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
                 item.setImage(getImages(image));
             }
         }
-    	TreeColumn[] columns = getTree().getColumns();
-    	for (int i = 0; i < columns.length; i++) {
-    		TreeColumn treeColumn = columns[i];
-			Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
-    		if (width == null) {
-    			treeColumn.removeControlListener(fListener);
-    			treeColumn.pack();
-    			treeColumn.addControlListener(fListener);
-    		}
-		}        
     }
 
 	/* (non-Javadoc)
