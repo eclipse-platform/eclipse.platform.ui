@@ -286,6 +286,14 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		registerHandler(MARK_AS_MERGE_ACTION_ID, new RefactoringHandlerDelegate(MergeActionHandler.getDefaultHandler(MARK_AS_MERGE_ACTION_ID, configuration)));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void initializeOpenActions() {
+		if (!hasRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration()))
+			super.initializeOpenActions();
+	}
+
 	private boolean isRefactoringElementSelected() {
 		final ISelection selection= getContext().getSelection();
 		if (selection instanceof IStructuredSelection) {
