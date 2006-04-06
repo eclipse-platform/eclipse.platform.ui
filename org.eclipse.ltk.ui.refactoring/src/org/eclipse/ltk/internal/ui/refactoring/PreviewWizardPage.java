@@ -576,10 +576,22 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (fChange == null)
 			return false;
 		if (fChange instanceof CompositeChange)
-			return ((CompositeChange)fChange).getChildren().length > 0;
+			return hasChanges((CompositeChange) fChange);
 		return true;
 	}
-	
+
+	private boolean hasChanges(CompositeChange change) {
+		final Change[] children= change.getChildren();
+		for (int index= 0; index < children.length; index++) {
+			if (children[index] instanceof CompositeChange) {
+				if (hasChanges((CompositeChange) children[index]))
+					return true;
+			} else
+				return true;
+		}
+		return false;
+	}
+
 	//---- manage group categories --------------------------------------------
 	
 	private Collection collectGroupCategories() {
