@@ -45,7 +45,8 @@ public class TextObservableValue extends AbstractVetoableValue {
 				// event change the buffered value
 				if (updatePolicy == SWT.FocusOut) {
 					bufferedValue = text.getText();
-					if (!oldValue.equals(newValue)) {
+					
+					if (!newValue.equals(oldValue)) {
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								newValue));
 					}
