@@ -721,7 +721,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
 				}
 			} else if (!Platform.getOS().equals(Constants.OS_UNKNOWN)){
-				nativeCommand= "printenv";		 //$NON-NLS-1$
+				nativeCommand= "env";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
 				return;
