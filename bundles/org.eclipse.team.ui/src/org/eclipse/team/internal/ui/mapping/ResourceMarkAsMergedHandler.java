@@ -119,7 +119,7 @@ public class ResourceMarkAsMergedHandler extends ResourceMergeActionHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.MergeActionHandler#updateEnablement(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	protected void updateEnablement(IStructuredSelection selection) {
+	public void updateEnablement(IStructuredSelection selection) {
 		synchronized (this) {
 			operation = null;
 		}

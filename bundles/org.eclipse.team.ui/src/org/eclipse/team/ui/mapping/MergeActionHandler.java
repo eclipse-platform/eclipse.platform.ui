@@ -50,11 +50,17 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 */
 	public static IHandler getDefaultHandler(String mergeActionId, ISynchronizePageConfiguration configuration) {
 		if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
-			return new ResourceMergeHandler(configuration, false /* no overwrite */);
+			ResourceMergeHandler resourceMergeHandler = new ResourceMergeHandler(configuration, false /* no overwrite */);
+			resourceMergeHandler.updateEnablement((IStructuredSelection)configuration.getSite().getSelectionProvider().getSelection());
+			return resourceMergeHandler;
 		} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
-			return new ResourceMergeHandler(configuration, true /* overwrite */);
+			ResourceMergeHandler resourceMergeHandler = new ResourceMergeHandler(configuration, true /* overwrite */);
+			resourceMergeHandler.updateEnablement((IStructuredSelection)configuration.getSite().getSelectionProvider().getSelection());
+			return resourceMergeHandler;
 		} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
-			return new ResourceMarkAsMergedHandler(configuration);
+			ResourceMarkAsMergedHandler resourceMarkAsMergedHandler = new ResourceMarkAsMergedHandler(configuration);
+			resourceMarkAsMergedHandler.updateEnablement((IStructuredSelection)configuration.getSite().getSelectionProvider().getSelection());
+			return resourceMarkAsMergedHandler;
 		}
 		return null;
 	}
