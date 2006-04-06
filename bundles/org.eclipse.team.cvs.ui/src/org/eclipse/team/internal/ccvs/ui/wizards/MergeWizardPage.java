@@ -89,10 +89,12 @@ public class MergeWizardPage extends CVSWizardPage {
     	composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
     	
         previewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_0);
-        onlyPreviewConflicts = SWTUtils.createCheckBox(composite, CVSUIMessages.MergeWizardPage_14);
-        GridData data = SWTUtils.createHFillGridData(1);
-        data.horizontalIndent = 10;
-        onlyPreviewConflicts.setLayoutData(data);
+        if (MergeWizard.isShowModelSync()) {
+	        onlyPreviewConflicts = SWTUtils.createCheckBox(composite, CVSUIMessages.MergeWizardPage_14);
+	        GridData data = SWTUtils.createHFillGridData(1);
+	        data.horizontalIndent = 10;
+	        onlyPreviewConflicts.setLayoutData(data);
+        }
         noPreviewButton = SWTUtils.createRadioButton(composite, CVSUIMessages.MergeWizardPage_1); 
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -101,16 +103,18 @@ public class MergeWizardPage extends CVSWizardPage {
             }
         };
         previewButton.setSelection(preview);
-        onlyPreviewConflicts.setEnabled(preview);
-        onlyPreviewConflicts.setSelection(isOnlyPreviewConflicts);
         noPreviewButton.setSelection(!preview);
         previewButton.addSelectionListener(selectionAdapter);
         noPreviewButton.addSelectionListener(selectionAdapter);
-        onlyPreviewConflicts.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				isOnlyPreviewConflicts = onlyPreviewConflicts.getSelection();
-			}
-		});
+        if (onlyPreviewConflicts != null) {
+	        onlyPreviewConflicts.setEnabled(preview);
+	        onlyPreviewConflicts.setSelection(isOnlyPreviewConflicts);
+	        onlyPreviewConflicts.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					isOnlyPreviewConflicts = onlyPreviewConflicts.getSelection();
+				}
+			});
+        }
     }
     private void createTagRefreshArea(Composite composite) {
 	    tagRefreshArea = new TagRefreshButtonArea(getShell(), getTagSource(), null);
@@ -260,7 +264,8 @@ public class MergeWizardPage extends CVSWizardPage {
     }
 
     private void updateEnablements() {
-    	onlyPreviewConflicts.setEnabled(preview);
+    	if (onlyPreviewConflicts != null)
+    		onlyPreviewConflicts.setEnabled(preview);
         if (endTag == null && endTagField.getText().length() > 0) {
             setErrorMessage(CVSUIMessages.MergeWizardPage_10); 
         } else if (startTag == null && startTagField.getText().length() > 0) {

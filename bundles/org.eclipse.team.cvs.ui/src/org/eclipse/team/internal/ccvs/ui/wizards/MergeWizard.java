@@ -115,7 +115,7 @@ public class MergeWizard extends Wizard {
         return allResources;
     }
 	
-    private boolean isShowModelSync() {
+    public static boolean isShowModelSync() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
 	}
     
