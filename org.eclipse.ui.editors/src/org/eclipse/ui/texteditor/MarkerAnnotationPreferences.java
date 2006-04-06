@@ -192,6 +192,11 @@ public class MarkerAnnotationPreferences {
 		}
 	}
 
+	private static final class AccessChecker extends SecurityManager {
+		public Class[] getClassContext() {
+			return super.getClassContext();
+		}
+	}
 	/**
 	 * Checks correct access.
 	 *
@@ -199,9 +204,9 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private static void checkAccess() throws IllegalStateException {
-		StackTraceElement[] elements=  new Throwable().getStackTrace();
-		if (!(elements[2].getClassName().equals(EditorsUI.class.getName())
-				|| elements[3].getClassName().equals(EditorsUI.class.getName())))
+		Class[] elements = new AccessChecker().getClassContext();
+		if (!(elements[3].equals(EditorsUI.class)
+				|| elements[4].equals(EditorsUI.class)))
 			throw new IllegalStateException();
 	}
 
