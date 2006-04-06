@@ -242,7 +242,8 @@ public final class DataBindingContext {
 	 * @param targetObservable
 	 * @param modelObservable
 	 * @param bindSpec
-	 *            the bind spec, or null
+	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bind(IObservable targetObservable,
@@ -281,7 +282,8 @@ public final class DataBindingContext {
 	 * @param targetObservable
 	 * @param modelDescription
 	 * @param bindSpec
-	 *            the bind spec, or null
+	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bind(IObservable targetObservable, Object modelDescription,
@@ -297,7 +299,8 @@ public final class DataBindingContext {
 	 * @param targetDescription
 	 * @param modelObservable
 	 * @param bindSpec
-	 *            the bind spec, or null
+	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bind(Object targetDescription, IObservable modelObservable,
@@ -313,7 +316,8 @@ public final class DataBindingContext {
 	 * @param targetDescription
 	 * @param modelDescription
 	 * @param bindSpec
-	 *            the bind spec, or null
+	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bind(Object targetDescription, Object modelDescription,
