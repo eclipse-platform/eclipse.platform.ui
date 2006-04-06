@@ -174,7 +174,31 @@ public abstract class MarkerView extends TableView {
 
 	private class UpdateJob extends WorkbenchJob {
 
+		private class MarkerDescriptor {
+			String description;
+			String folder;
+			String resource;
+			int line;
+
+			MarkerDescriptor(ConcreteMarker marker) {
+				description = marker.getDescription();
+				folder = marker.getFolder();
+				resource = marker.getResourceName();
+				line = marker.getLine();
+			}
+
+			boolean isEquivalentTo(ConcreteMarker marker) {
+				return marker.getDescription().equals(description)
+						&& marker.getFolder().equals(folder)
+						&& marker.getResourceName().equals(resource)
+						&& marker.getLine() == line;
+			}
+
+		}
+
 		private Collection categoriesToExpand = new HashSet();
+
+		private Collection preservedSelection = new ArrayList();
 
 		UpdateJob() {
 			super(MarkerMessages.MarkerView_queueing_updates);
@@ -224,6 +248,28 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 
+			if (preservedSelection.size() > 0) {
+
+				Collection newSelection = new ArrayList();
+				ConcreteMarker[] markers = getCurrentMarkers().toArray();
+
+				for (int i = 0; i < markers.length; i++) {
+					Iterator preserved = preservedSelection.iterator();
+					while (preserved.hasNext()) {
+						MarkerDescriptor next = (MarkerDescriptor) preserved
+								.next();
+						if (next.isEquivalentTo(markers[i])) {
+							newSelection.add(markers[i]);
+							continue;
+						}
+					}
+				}
+
+				getViewer().setSelection(
+						new StructuredSelection(newSelection.toArray()), true);
+				preservedSelection.clear();
+			}
+
 			return Status.OK_STATUS;
 		}
 
@@ -254,6 +300,27 @@ public abstract class MarkerView extends TableView {
 		 */
 		public boolean belongsTo(Object family) {
 			return family == MARKER_UPDATE_FAMILY;
+		}
+
+		/**
+		 * Preserve the selection for reselection after the next update.
+		 * 
+		 * @param selection
+		 */
+		public void saveSelection(ISelection selection) {
+			preservedSelection.clear();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structured = (IStructuredSelection) selection;
+				Iterator iterator = structured.iterator();
+				while (iterator.hasNext()) {
+					MarkerNode next = (MarkerNode) iterator.next();
+					if (next.isConcrete()) {
+						preservedSelection.add(new MarkerDescriptor(next
+								.getConcreteRepresentative()));
+					}
+				}
+			}
+
 		}
 
 	}
@@ -1611,6 +1678,14 @@ public abstract class MarkerView extends TableView {
 			updateFilterSelection(focusElements);
 			refreshViewer();
 		}
+	}
+
+	/**
+	 * Save the current selection in the update for reselection after update.
+	 */
+	protected void preserveSelection() {
+		updateJob.saveSelection(getViewer().getSelection());
+
 	}
 
 }

@@ -129,6 +129,7 @@ public class ProblemView extends MarkerView {
 					}
 				};
 				categoryJob.setSystem(true);
+				problemView.preserveSelection();
 				
 				IWorkbenchSiteProgressService progressService = getProgressService();
 				if (progressService == null)
