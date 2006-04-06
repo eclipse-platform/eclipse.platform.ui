@@ -11,12 +11,7 @@
 
 package org.eclipse.ui.internal.ide.undo;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,16 +19,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
  * 
  */
 public abstract class RenameResourceOperation extends
-		AbstractWorkspaceOperation {
+		AbstractResourcesOperation {
 
 	String previousName;
 
@@ -44,19 +37,13 @@ public abstract class RenameResourceOperation extends
 	 *            the resource to be named
 	 * @param newName
 	 *            the new name of the resource.
-	 * @param modelProviderIds
 	 * @param label
 	 *            the label of the operation
 	 */
 	public RenameResourceOperation(IResource resource, String newName,
 			String label) {
-		super(label);
+		super(new IResource[] { resource }, label);
 		previousName = newName;
-		setTargetResources(new IResource[] { resource });
-	}
-
-	private IResource getResource() {
-		return resources[0];
 	}
 
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
@@ -78,40 +65,7 @@ public abstract class RenameResourceOperation extends
 			throws CoreException {
 		IResource resource = getResource();
 		String currentName = resource.getName();
-		IPath newPath = getProposedPath();
-		monitor.beginTask(getLabel(), 100);
-		IWorkspaceRoot workspaceRoot = resource.getWorkspace().getRoot();
-
-		IResource newResource = workspaceRoot.findMember(newPath);
-		// If it already exists, we must overwrite it.
-		if (newResource != null) {
-			if (resource.getType() == IResource.FILE
-					&& newResource.getType() == IResource.FILE) {
-				IFile file = (IFile) resource;
-				IFile newFile = (IFile) newResource;
-				if (validateEdit(file, newFile, getShell(uiInfo))) {
-					IProgressMonitor subMonitor = new SubProgressMonitor(
-							monitor, 50);
-					newFile.setContents(file.getContents(),
-							IResource.KEEP_HISTORY, subMonitor);
-					file.delete(IResource.KEEP_HISTORY, subMonitor);
-				}
-				monitor.worked(100);
-				return;
-			}
-			newResource.delete(IResource.KEEP_HISTORY, new SubProgressMonitor(
-					monitor, 50));
-		}
-		if (resource.getType() == IResource.PROJECT) {
-			IProject project = (IProject) resource;
-			IProjectDescription description = project.getDescription();
-			description.setName(newPath.segment(0));
-			project.move(description, IResource.FORCE | IResource.SHALLOW,
-					monitor);
-		} else {
-			resource.move(newPath, IResource.KEEP_HISTORY | IResource.SHALLOW,
-					new SubProgressMonitor(monitor, 50));
-		}
+		rename(resource, getProposedPath(), monitor, uiInfo);
 		previousName = currentName;
 	}
 
@@ -175,34 +129,5 @@ public abstract class RenameResourceOperation extends
 		return Status.OK_STATUS;
 	}
 
-	/**
-	 * Validates the destination file if it is read-only and additionally the
-	 * source file if both are read-only. Returns true if both files could be
-	 * made writeable.
-	 * 
-	 * @param source
-	 *            source file
-	 * @param destination
-	 *            destination file
-	 * @param shell
-	 *            ui context for the validation
-	 * @return boolean <code>true</code> both files could be made writeable.
-	 *         <code>false</code> either one or both files were not made
-	 *         writeable
-	 */
-	boolean validateEdit(IFile source, IFile destination, Shell shell) {
-		if (destination.isReadOnly()) {
-			IWorkspace workspace = getWorkspace();
-			IStatus status;
-			if (source.isReadOnly()) {
-				status = workspace.validateEdit(new IFile[] { source,
-						destination }, shell);
-			} else {
-				status = workspace.validateEdit(new IFile[] { destination },
-						shell);
-			}
-			return status.isOK();
-		}
-		return true;
-	}
+
 }
