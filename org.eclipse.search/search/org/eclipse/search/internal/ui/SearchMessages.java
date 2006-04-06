@@ -100,10 +100,13 @@ public final class SearchMessages extends NLS {
 	public static String TextSearchPage_replace_querycreationproblem_message;
 	public static String TextSearchPage_replace_runproblem_message;
 	public static String TextSearchPage_searchDerived_label;
+	public static String TextSearchVisitor_filesearch_task_label;
 	public static String TextSearchVisitor_patterntoocomplex0;
+	public static String TextSearchVisitor_progress_updating_job;
 	public static String TextSearchVisitor_scanning;
 	public static String TextSearchVisitor_error;
 	public static String TextSearchVisitor_canceled;
+	public static String TextSearchVisitor_textsearch_task_label;
 	public static String TextSearchVisitor_unsupportedcharset;
 	public static String TextSearchVisitor_illegalcharset;
 	public static String SortDropDownAction_label;
