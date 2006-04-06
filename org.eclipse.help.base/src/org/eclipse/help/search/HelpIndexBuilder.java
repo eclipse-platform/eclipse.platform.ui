@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
-import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
 import org.eclipse.help.internal.search.PluginVersionInfo;
 import org.eclipse.help.internal.search.SearchIndex;
@@ -580,21 +579,6 @@ public class HelpIndexBuilder {
 			String href = (String) it.next();
 			URL url = localeDir.findURL(href);
 			if (url != null) {
-				/*
-				 * Index unfiltered documents (but with extensions and includes
-				 * resolved). We perform a second search pass on filtered content to
-				 * weed out false positives at search time.
-				 */
-				String file = url.getFile();
-				file += (file.indexOf('?') == -1) ? '?' : '&';
-				file += "filter=false"; //$NON-NLS-1$
-				try {
-					url = new URL("help", null, -1, file, HelpURLStreamHandler.getDefault()); //$NON-NLS-1$
-				}
-				catch (MalformedURLException e) {
-					HelpBasePlugin.logError("Error occured while adding filter parameter to URL of document to be indexed", e); //$NON-NLS-1$
-				}
-
 				IStatus status = index
 						.addDocument(getName(pluginId, href), url);
 				if (status.getCode() != IStatus.OK) {
