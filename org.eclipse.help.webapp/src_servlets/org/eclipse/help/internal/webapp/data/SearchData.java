@@ -167,7 +167,7 @@ public class SearchData extends ActivitiesData {
 	 * @return whether or not the hit is a potential hit
 	 */
 	public boolean isPotentialHit(int i) {
-		return (showPotentialHits && hits[i].getFilters() != null);
+		return (showPotentialHits && (getMode() != MODE_INFOCENTER) && hits[i].getFilters() != null);
 	}
 
 	/**
