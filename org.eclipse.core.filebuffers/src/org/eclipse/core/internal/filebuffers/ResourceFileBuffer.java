@@ -471,7 +471,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronized()
 	 */
 	public boolean isSynchronized() {
-		return fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO);
+		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO))
+			return true;
+		
+		fSynchronizationStamp= IResource.NULL_STAMP;
+		return false;
 	}
 
 	/*
