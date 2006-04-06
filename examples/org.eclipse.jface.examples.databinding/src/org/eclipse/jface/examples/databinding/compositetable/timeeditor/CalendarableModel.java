@@ -55,6 +55,13 @@ public class CalendarableModel {
 	public int getNumberOfDays() {
 		return numberOfDays;
 	}
+	
+	/**
+	 * @return Returns the numberOfDivisionsInHour.
+	 */
+	public int getNumberOfDivisionsInHour() {
+		return numberOfDivisionsInHour;
+	}
 
 	private void initializeColumns(int numberOfDays) {
 		dateColumns  = new ArrayList[numberOfDays]; 

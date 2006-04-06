@@ -21,6 +21,12 @@ import java.util.Date;
  */
 public interface IEventEditor {
 
+	/** 
+	 * The number of hours to display at a time.  Normally this is the number
+	 * of hours in a day.
+	 */
+	public static final int DISPLAYED_HOURS = 24;
+
 	/**
 	 * Method setTimeBreakdown. Call this method exactly once after constructing
 	 * the control in order to set the number of day columns to display.
@@ -37,7 +43,15 @@ public interface IEventEditor {
 	 *            1 == one line per hour; 2 == every 1/2 hour; 4 = every 1/4
 	 *            hour; etc...
 	 */
-	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour);
+	void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour);
+	
+	/**
+	 * Returns the numberOfDivisionsInHour.  For example, to have a new
+	 * time slice every 1/4 hour, this value would be 4.
+	 * 
+	 * @return Returns the numberOfDivisionsInHour.
+	 */
+	int getNumberOfDivisionsInHour();
 
 	/**
 	 * Set the start date for this event editor.  How this is interpreted depends

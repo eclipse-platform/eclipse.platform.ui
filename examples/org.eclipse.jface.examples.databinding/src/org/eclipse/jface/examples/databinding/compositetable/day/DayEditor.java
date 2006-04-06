@@ -81,7 +81,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		compositeTable = new CompositeTable(this, SWT.NONE);
 		new TimeSlice(compositeTable, SWT.NONE);		// The prototype row
 		
-		compositeTable.setNumRowsInCollection( (24-startHour) * numberOfDivisionsInHour+1);
+		compositeTable.setNumRowsInCollection( (DISPLAYED_HOURS-startHour+1) * numberOfDivisionsInHour+1);
 		compositeTable.setRunTime(true);
 		
 		compositeTable.addRowConstructionListener(new IRowConstructionListener() {
@@ -182,6 +182,14 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void refresh() {
 		// Compute the real start hour
 		startHour = defaultStartHour;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDivisionsInHour()
+	 */
+	public int getNumberOfDivisionsInHour() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
