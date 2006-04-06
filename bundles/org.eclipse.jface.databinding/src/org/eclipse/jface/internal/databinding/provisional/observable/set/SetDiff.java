@@ -30,4 +30,20 @@ public abstract class SetDiff implements IDiff {
 	 * @return the set of removed elements
 	 */
 	public abstract Set getRemovals();
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer
+			.append(getClass().getName())
+			.append("{additions [") //$NON-NLS-1$
+			.append(getAdditions() != null ? getAdditions().toString() : "null") //$NON-NLS-1$
+			.append("], removals [") //$NON-NLS-1$
+			.append(getRemovals() != null ? getRemovals().toString() : "null") //$NON-NLS-1$
+			.append("]}"); //$NON-NLS-1$
+		
+		return buffer.toString();
+	}
 }

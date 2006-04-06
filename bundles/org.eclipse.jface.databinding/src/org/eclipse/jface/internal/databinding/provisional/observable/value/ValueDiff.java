@@ -46,5 +46,20 @@ public abstract class ValueDiff implements IDiff {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer
+			.append(getClass().getName())
+			.append("{oldValue [") //$NON-NLS-1$
+			.append(getOldValue() != null ? getOldValue().toString() : "null") //$NON-NLS-1$
+			.append("], newValue [") //$NON-NLS-1$
+			.append(getNewValue() != null ? getNewValue().toString() : "null") //$NON-NLS-1$
+			.append("]}"); //$NON-NLS-1$
+		
+		return buffer.toString();
+	}
 }

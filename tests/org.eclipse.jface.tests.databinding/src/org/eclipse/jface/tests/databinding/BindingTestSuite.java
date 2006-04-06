@@ -31,6 +31,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(JavaBeansScalarObservableValueFactoryTest.class);
 		addTestSuite(DatabindingContextTest.class);
 		addTestSuite(DefaultBindSupportFactoryTest.class);
+		addTestSuite(IDiffsTest.class);
 		// addTestSuite(ObservableCollectionTest.class);
 		addTestSuite(SelectionAwareObservableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());

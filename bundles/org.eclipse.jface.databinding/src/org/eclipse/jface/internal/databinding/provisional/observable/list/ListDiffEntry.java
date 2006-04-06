@@ -32,4 +32,22 @@ public abstract class ListDiffEntry {
 	 * @return the element that was added or removed
 	 */
 	public abstract Object getElement();
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer
+			.append(this.getClass().getName())
+			.append("{position [") //$NON-NLS-1$
+			.append(getPosition())
+			.append("], isAddition [") //$NON-NLS-1$
+			.append(isAddition())
+			.append("], element [") //$NON-NLS-1$
+			.append(getElement() != null ? getElement().toString() : "null") //$NON-NLS-1$
+			.append("]}"); //$NON-NLS-1$
+		
+		return buffer.toString();
+	}
 }
