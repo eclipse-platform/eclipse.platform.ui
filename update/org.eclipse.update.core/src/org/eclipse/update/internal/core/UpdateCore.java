@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -77,6 +78,7 @@ public class UpdateCore extends Plugin {
 	// bundle data
 	private BundleContext context;
 	private ServiceTracker pkgAdminTracker;
+	private ServiceTracker verifierFactoryTracker;
 	
 	/**
 	 * The constructor.
@@ -278,6 +280,10 @@ public class UpdateCore extends Plugin {
 			pkgAdminTracker.close();
 			pkgAdminTracker = null;
 		}
+		if (verifierFactoryTracker != null) {
+			verifierFactoryTracker.close();
+			verifierFactoryTracker = null;
+		}
 	}
 	
 	BundleContext getBundleContext() {
@@ -312,5 +318,14 @@ public class UpdateCore extends Plugin {
 				: getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE);
 		
 		SiteManager.setHttpProxyInfo(httpProxyEnable, httpProxyHost, httpProxyPort );
+	}
+
+
+	public CertificateVerifierFactory getVerifierFactory() {
+		if (verifierFactoryTracker == null) {
+			verifierFactoryTracker = new ServiceTracker(context, CertificateVerifierFactory.class.getName(), null);
+			verifierFactoryTracker.open();
+		}
+		return (CertificateVerifierFactory)verifierFactoryTracker.getService();
 	}
 }

@@ -14,9 +14,11 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.security.*;
+import org.eclipse.update.internal.security.JarVerifier;
+import org.eclipse.update.internal.verifier.CertVerifier;
 
 /**
  * Content Provider of a Feature Package
@@ -49,8 +51,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * otherwise reinitialize)
 	 */
 	public IVerifier getVerifier() throws CoreException {
+		CertificateVerifierFactory factory = UpdateCore.getPlugin().getVerifierFactory();
 		if (jarVerifier == null || jarVerifier.getParent() == null) {
-			jarVerifier = new JarVerifier();
+			if (factory != null)
+				jarVerifier = new CertVerifier(UpdateCore.getPlugin().getVerifierFactory());
+			else
+				jarVerifier = new JarVerifier();
 			return jarVerifier;
 		}
 
