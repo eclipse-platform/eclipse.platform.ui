@@ -282,8 +282,8 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		super.fillContextMenu(menu);
 		if (isContentProviderEnabled()) {
+			super.fillContextMenu(menu);
 			if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
 				appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
 			}

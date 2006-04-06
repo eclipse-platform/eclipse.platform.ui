@@ -23,7 +23,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * An abstract superclass that enables models to create handlers
  * for the basic merge operations (merge, overwrite and mark-as-merged).
  * This class makes use of a {@link SynchronizationOperation} to determine its 
- * enablement state and execute the handler. Enablement is detemermined
+ * enablement state and execute the handler. Enablement is determined
  * using {@link SynchronizationOperation#shouldRun()} and the handler will
  * invoke {@link SynchronizationOperation#run()} when executed.
  * 
