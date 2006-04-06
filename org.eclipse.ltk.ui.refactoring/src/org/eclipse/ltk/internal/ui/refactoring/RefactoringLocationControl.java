@@ -54,7 +54,10 @@ public class RefactoringLocationControl extends Composite {
 	 */
 	public RefactoringLocationControl(final IWizard wizard, final Composite parent, final String key) {
 		super(parent, SWT.NONE);
-		setLayout(new GridLayout(1, true));
+		final GridLayout gridLayout= new GridLayout(1, true);
+		gridLayout.horizontalSpacing= 0;
+		gridLayout.marginWidth= 0;
+		setLayout(gridLayout);
 		fCombo= new Combo(this, SWT.SINGLE | SWT.BORDER);
 		fCombo.setLayoutData(createGridData(GridData.FILL_BOTH, 1, 0));
 		Assert.isNotNull(wizard);
