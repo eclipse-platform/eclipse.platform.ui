@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sean Montgomery, smontgomery@mediaspansoftware.com - https://bugs.eclipse.org/bugs/show_bug.cgi?id=45095
+ *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=45095
  *******************************************************************************/
 
 package org.eclipse.jface.text;
