@@ -120,6 +120,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 			execute(Policy.subMonitorFor(monitor, 90));
 		} finally {
 			clearContextBusy(Policy.subMonitorFor(monitor, 5));
+			monitor.done();
 		}
 	}
 

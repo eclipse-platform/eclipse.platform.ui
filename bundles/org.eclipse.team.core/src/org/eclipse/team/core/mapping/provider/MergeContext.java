@@ -80,16 +80,21 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		final List failedFiles = new ArrayList();
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < deltas.length; i++) {
-					IDiff delta = deltas[i];
-					IStatus s = merge(delta, force, monitor);
-					if (!s.isOK()) {
-						if (s.getCode() == IMergeStatus.CONFLICTS) {
-							failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
-						} else {
-							throw new CoreException(s);
+				try {
+					monitor.beginTask(null, deltas.length * 100);
+					for (int i = 0; i < deltas.length; i++) {
+						IDiff delta = deltas[i];
+						IStatus s = merge(delta, force, Policy.subMonitorFor(monitor, 100));
+						if (!s.isOK()) {
+							if (s.getCode() == IMergeStatus.CONFLICTS) {
+								failedFiles.addAll(Arrays.asList(((IMergeStatus)s).getConflictingFiles()));
+							} else {
+								throw new CoreException(s);
+							}
 						}
 					}
+				} finally {
+					monitor.done();
 				}
 			}
 		}, getMergeRule(deltas), IWorkspace.AVOID_UPDATE, monitor);
@@ -104,6 +109,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * @see org.eclipse.team.core.mapping.IMergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(IDiff diff, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+		Policy.checkCanceled(monitor);
 		if (getDiffTree().getResource(diff).getType() != IResource.FILE)
 			return Status.OK_STATUS;
     	if (diff instanceof IThreeWayDiff && !ignoreLocalChanges && getMergeType() == THREE_WAY) {
@@ -142,6 +148,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
     		performReplace(diff, monitor);
     		return Status.OK_STATUS;
     	}
+    	
 	}
 
 	/**
@@ -159,10 +166,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		final IStatus[] result = new IStatus[] { Status.OK_STATUS };
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
+				monitor.beginTask(null, 100);
 				IResourceDiff localDiff = (IResourceDiff)diff.getLocalChange();
 				IResourceDiff remoteDiff = (IResourceDiff)diff.getRemoteChange();
 				IStorageMerger merger = DelegatingStorageMerger.getInstance();
 				IFile file = (IFile)localDiff.getResource();
+				monitor.subTask(NLS.bind("Merging {0}", file.getFullPath().toString()));
 				String osEncoding = file.getCharset();
 				IFileRevision ancestorState = localDiff.getBeforeState();
 				IFileRevision remoteState = remoteDiff.getAfterState();
@@ -185,6 +194,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 		        } finally {
 		            disposeTempOutputStream(file, os);
 		        }
+		        monitor.done();
 			}
 		}, getMergeRule(diff), IWorkspace.AVOID_UPDATE, monitor);
 		return result[0];
@@ -312,28 +322,34 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	private void performReplace(final IDiff diff, final IFile file, final IFileRevision remote, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if ((remote == null || !remote.exists()) && file.exists()) {
-					file.delete(false, true, monitor);
-				} else if (remote != null) {
-					ensureParentsExist(file, monitor);
-					InputStream stream = remote.getStorage(monitor).getContents();
-					stream = new BufferedInputStream(stream);
-					try {
-						if (file.exists()) {
-							file.setContents(stream, false, true, monitor);
-						} else {
-							file.create(stream, false, monitor);
-						}
-					} finally {
+				try {
+					monitor.beginTask(null, 100);
+					monitor.subTask(NLS.bind("Updating {0}", file.getFullPath().toString()));
+					if ((remote == null || !remote.exists()) && file.exists()) {
+						file.delete(false, true, Policy.subMonitorFor(monitor, 95));
+					} else if (remote != null) {
+						ensureParentsExist(file, monitor);
+						InputStream stream = remote.getStorage(monitor).getContents();
+						stream = new BufferedInputStream(stream);
 						try {
-							stream.close();
-						} catch (IOException e) {
-							// Ignore
+							if (file.exists()) {
+								file.setContents(stream, false, true, Policy.subMonitorFor(monitor, 95));
+							} else {
+								file.create(stream, false, Policy.subMonitorFor(monitor, 95));
+							}
+						} finally {
+							try {
+								stream.close();
+							} catch (IOException e) {
+								// Ignore
+							}
 						}
 					}
+					// Performing a replace should leave the file in-sync
+					makeInSync(diff, Policy.subMonitorFor(monitor, 5));
+				} finally {
+					monitor.done();
 				}
-				// Performing a replace should leave the file in-sync
-				makeInSync(diff, monitor);
 			}
 		}, getMergeRule(diff), IWorkspace.AVOID_UPDATE, monitor);
 	}

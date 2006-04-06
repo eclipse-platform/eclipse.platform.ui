@@ -122,8 +122,9 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 					SyncInfo info = getSyncInfo(resource);
 					ensureRemotesMatch(resource, node, info);
 					if (info instanceof CVSSyncInfo) {
-						CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
-						cvsInfo.makeOutgoing(monitor);
+						CVSSyncInfo cvsInfo = (CVSSyncInfo) info;
+						monitor.beginTask(null, 50 + (inSyncHint ? 100 : 0));
+						cvsInfo.makeOutgoing(Policy.subMonitorFor(monitor, 50));
 						if (inSyncHint) {
 							// Compare the contents of the file with the remote
 							// and make the file in-sync if they match
@@ -135,6 +136,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 								}
 							}
 						}
+						monitor.done();
 					}
 				}
 			}
@@ -210,17 +212,21 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 //		if (!equals(currentState, delta)) {
 //			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
 //		}
-		IStatus status = super.merge(delta, force, monitor);
-		if (status.isOK() && delta.getKind() == IDiff.REMOVE) {
-			IResource resource = getDiffTree().getResource(delta);
-			if (resource.getType() == IResource.FILE && !resource.exists()) {
-				// TODO: This behavior is specific to an update from the same branch
-				ICVSResource localResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				localResource.unmanage(monitor);
+		try {
+			monitor.beginTask(null, 100);
+			IStatus status = super.merge(delta, force, Policy.subMonitorFor(monitor, 99));
+			if (status.isOK() && delta.getKind() == IDiff.REMOVE) {
+				IResource resource = getDiffTree().getResource(delta);
+				if (resource.getType() == IResource.FILE && !resource.exists()) {
+					ICVSResource localResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					localResource.unmanage(Policy.subMonitorFor(monitor, 1));
+				}
+				pruneEmptyParents(new IDiff[] { delta });
 			}
-			pruneEmptyParents(new IDiff[] { delta });
+			return status;
+		} finally {
+			monitor.done();
 		}
-		return status;
 	}
 
 	private void pruneEmptyParents(IDiff[] deltas) throws CVSException {
@@ -308,12 +314,29 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	
 	public IStatus merge(IDiff[] deltas, boolean force, IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(null, 100);
-			cacheContents(getTraversals(deltas), getDiffTree(deltas), monitor);
+			if (deltas.length == 0) 
+				return Status.OK_STATUS;
+			String taskName = getMergeTaskName(deltas, force);
+			monitor.beginTask(taskName, 100);
+			monitor.setTaskName(taskName);
+			cacheContents(getTraversals(deltas), getDiffTree(deltas), Policy.subMonitorFor(monitor, 20));
 			return super.merge(deltas, force, Policy.subMonitorFor(monitor, 80));
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private String getMergeTaskName(IDiff[] deltas, boolean force) {
+		if (force) {
+			if (deltas.length == 1) {
+				return NLS.bind("Overwriting {0}", getDiffTree().getResource(deltas[0]).getFullPath());
+			}
+			return NLS.bind("Overwriting {0} resources", new Integer(deltas.length));
+		}
+		if (deltas.length == 1) {
+			return NLS.bind("Updating {0}", getDiffTree().getResource(deltas[0]).getFullPath());
+		}
+		return NLS.bind("Updating {0} resources", new Integer(deltas.length));
 	}
 
 	private ResourceTraversal[] getTraversals(IDiff[] deltas) {
