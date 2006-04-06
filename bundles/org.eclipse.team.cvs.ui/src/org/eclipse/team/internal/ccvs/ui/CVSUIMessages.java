@@ -61,6 +61,10 @@ public class CVSUIMessages extends NLS {
 	public static String simpleInternal;
 	public static String internal;
 	public static String WorkspaceModelParticipant_0;
+	public static String WorkspaceSubscriberContext_1;
+	public static String WorkspaceSubscriberContext_2;
+	public static String WorkspaceSubscriberContext_3;
+	public static String WorkspaceSubscriberContext_4;
 	public static String yes;
 	public static String no;
 	public static String information;

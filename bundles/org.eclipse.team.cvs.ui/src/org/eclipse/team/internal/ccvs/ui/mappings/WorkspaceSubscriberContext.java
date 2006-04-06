@@ -329,14 +329,14 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	private String getMergeTaskName(IDiff[] deltas, boolean force) {
 		if (force) {
 			if (deltas.length == 1) {
-				return NLS.bind("Overwriting {0}", getDiffTree().getResource(deltas[0]).getFullPath());
+				return NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_1, getDiffTree().getResource(deltas[0]).getFullPath());
 			}
-			return NLS.bind("Overwriting {0} resources", new Integer(deltas.length));
+			return NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_2, new Integer(deltas.length));
 		}
 		if (deltas.length == 1) {
-			return NLS.bind("Updating {0}", getDiffTree().getResource(deltas[0]).getFullPath());
+			return NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_3, getDiffTree().getResource(deltas[0]).getFullPath());
 		}
-		return NLS.bind("Updating {0} resources", new Integer(deltas.length));
+		return NLS.bind(CVSUIMessages.WorkspaceSubscriberContext_4, new Integer(deltas.length));
 	}
 
 	private ResourceTraversal[] getTraversals(IDiff[] deltas) {

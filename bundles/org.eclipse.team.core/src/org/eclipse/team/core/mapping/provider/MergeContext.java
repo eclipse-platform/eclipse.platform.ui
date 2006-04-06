@@ -171,7 +171,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				IResourceDiff remoteDiff = (IResourceDiff)diff.getRemoteChange();
 				IStorageMerger merger = DelegatingStorageMerger.getInstance();
 				IFile file = (IFile)localDiff.getResource();
-				monitor.subTask(NLS.bind("Merging {0}", file.getFullPath().toString()));
+				monitor.subTask(NLS.bind(Messages.MergeContext_5, file.getFullPath().toString()));
 				String osEncoding = file.getCharset();
 				IFileRevision ancestorState = localDiff.getBeforeState();
 				IFileRevision remoteState = remoteDiff.getAfterState();
@@ -324,7 +324,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 			public void run(IProgressMonitor monitor) throws CoreException {
 				try {
 					monitor.beginTask(null, 100);
-					monitor.subTask(NLS.bind("Updating {0}", file.getFullPath().toString()));
+					monitor.subTask(NLS.bind(Messages.MergeContext_6, file.getFullPath().toString()));
 					if ((remote == null || !remote.exists()) && file.exists()) {
 						file.delete(false, true, Policy.subMonitorFor(monitor, 95));
 					} else if (remote != null) {

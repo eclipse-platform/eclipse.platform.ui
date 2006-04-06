@@ -15,6 +15,10 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.team.internal.core.messages";//$NON-NLS-1$
 
+	public static String MergeContext_5;
+
+	public static String MergeContext_6;
+
 	public static String ok;
 	public static String concatStrings;
 
