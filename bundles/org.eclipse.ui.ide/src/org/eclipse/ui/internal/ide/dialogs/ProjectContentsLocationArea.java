@@ -126,6 +126,7 @@ public class ProjectContentsLocationArea {
 
 	/**
 	 * Create the contents of the receiver.
+	 * 
 	 * @param composite
 	 * @param defaultEnabled
 	 */
@@ -156,7 +157,8 @@ public class ProjectContentsLocationArea {
 
 				if (useDefaults) {
 					userPath = locationPathField.getText();
-					locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
+					locationPathField.setText(TextProcessor
+							.process(getDefaultPathDisplayString()));
 				} else {
 					locationPathField.setText(TextProcessor.process(userPath));
 				}
@@ -188,7 +190,6 @@ public class ProjectContentsLocationArea {
 		locationLabel
 				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel);
 
-		
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -204,17 +205,18 @@ public class ProjectContentsLocationArea {
 				handleLocationBrowseButtonPressed();
 			}
 		});
-		
+
 		createFileSystemSelection(composite);
 
 		if (defaultEnabled) {
-			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
+			locationPathField.setText(TextProcessor
+					.process(getDefaultPathDisplayString()));
 		} else {
 			if (existingProject == null) {
 				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
 			} else {
-				locationPathField.setText(TextProcessor.process(existingProject.getLocation()
-						.toString()));
+				locationPathField.setText(TextProcessor.process(existingProject
+						.getLocation().toString()));
 			}
 		}
 
@@ -241,9 +243,9 @@ public class ProjectContentsLocationArea {
 		if (FileSystemSupportRegistry.getInstance().hasOneFileSystem()) {
 			return;
 		}
-		
-		new Label(composite,SWT.NONE);
-		
+
+		new Label(composite, SWT.NONE);
+
 		fileSystemSelectionArea = new FileSystemSelectionArea();
 		fileSystemSelectionArea.createContents(composite);
 	}
@@ -279,7 +281,7 @@ public class ProjectContentsLocationArea {
 		locationLabel.setEnabled(enabled);
 		locationPathField.setEnabled(enabled);
 		browseButton.setEnabled(enabled);
-		if (fileSystemSelectionArea != null){
+		if (fileSystemSelectionArea != null) {
 			fileSystemSelectionArea.setEnabled(enabled);
 		}
 	}
@@ -298,23 +300,39 @@ public class ProjectContentsLocationArea {
 	 * Open an appropriate directory browser
 	 */
 	private void handleLocationBrowseButtonPressed() {
-		DirectoryDialog dialog = new DirectoryDialog(locationPathField
-				.getShell());
-		dialog
-				.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
 
+		String selectedDirectory = null;
 		String dirName = getPathFromLocationField();
+
 		if (!dirName.equals(IDEResourceInfoUtils.EMPTY_STRING)) {
-			IFileInfo info = IDEResourceInfoUtils.getFileInfo(dirName);
-			if (info != null && info.exists()) {
-				dialog.setFilterPath(dirName);
-			}
+			IFileInfo info;
+			info = IDEResourceInfoUtils.getFileInfo(dirName);
+
+			if (info == null || !(info.exists()))
+				dirName = IDEResourceInfoUtils.EMPTY_STRING;
 		}
 
-		String selectedDirectory = dialog.open();
-		if (selectedDirectory != null) {
-			updateLocationField(selectedDirectory);
+		if (getSelectedConfiguration().equals(
+				FileSystemSupportRegistry.getInstance()
+						.getDefaultConfiguration())) {
+			DirectoryDialog dialog = new DirectoryDialog(locationPathField
+					.getShell());
+			dialog
+					.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
+
+			dialog.setFilterPath(dirName);
+
+			selectedDirectory = dialog.open();
+
+		} else {
+			URI uri = getSelectedConfiguration().getContributor()
+					.browseFileSystem(dirName, browseButton.getShell());
+			if (uri != null)
+				selectedDirectory = uri.toString();
 		}
+
+		if (selectedDirectory != null)
+			updateLocationField(selectedDirectory);
 	}
 
 	/**
@@ -429,7 +447,8 @@ public class ProjectContentsLocationArea {
 	public void updateProjectName(String newName) {
 		projectName = newName;
 		if (isDefault()) {
-			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
+			locationPathField.setText(TextProcessor
+					.process(getDefaultPathDisplayString()));
 		}
 
 	}
