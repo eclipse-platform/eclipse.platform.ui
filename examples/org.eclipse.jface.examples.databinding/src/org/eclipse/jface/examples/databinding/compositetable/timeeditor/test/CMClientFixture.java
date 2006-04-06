@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor.test;
@@ -53,7 +53,7 @@ public class CMClientFixture {
 	 */
 	private class ECTP extends EventCountProvider {
 		public int getNumberOfEventsInDay(Date day) {
-			return data.length;
+			return data[getOffset(day)].length;
 		}
 	}
 
@@ -61,12 +61,12 @@ public class CMClientFixture {
 	 */
 	private class ECNP extends EventContentProvider {
 		public void refresh(Date day, Calendarable[] controls) {
-			if (controls.length != data.length) {
+			if (controls.length != data[getOffset(day)].length) {
 				throw new RuntimeException("Number of elements to fill != amount of data we've got");
 			}
 			int dateOffset = getOffset(day);
 			for (int i = 0; i < controls.length; i++) {
-				controls[i].setText(data[dateOffset-1][i]);
+				controls[i].setText(data[dateOffset][i]);
 			}
 		}
 	}
