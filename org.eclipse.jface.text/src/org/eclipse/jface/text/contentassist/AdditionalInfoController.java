@@ -84,6 +84,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		fDelay= delay;
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] { ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
+		setMargins(0, 0); // margin is set depending on the anchor in computeLocation
 	}
 
 	/*
@@ -96,7 +97,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			return;
 		}
 
-		super.install(control);
+		super.install(control.getShell());
 
 		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
@@ -227,14 +228,31 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 				setCustomInformationControlCreator(null);
 
 			// compute subject area
-			setMargins(4, 0);
-			Rectangle area= fProposalTable.getBounds();
-			area.x= 0; // subject area is the whole subject control
-			area.y= 0;
+			Point size= fProposalTable.getShell().getSize();
 
 			// set information & subject area
-			setInformation(information, area);
+			setInformation(information, new Rectangle(0, 0, size.x, size.y));
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
+	 */
+	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
+	    final Point location= super.computeLocation(subjectArea, controlSize, anchor);
+	    final int spacing= 4;
+	    
+		if (ANCHOR_BOTTOM == anchor) {
+			location.y += spacing;
+		} else if (ANCHOR_RIGHT == anchor) {
+			location.x += spacing;
+		} else if (ANCHOR_TOP == anchor) {
+			location.y -= spacing;
+		} else if (ANCHOR_LEFT == anchor) {
+			location.x -= spacing;
+		}
+	    
+		return location;
 	}
 
 	/*
@@ -244,10 +262,6 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
 
-//		Rectangle otherTrim= subjectControl.getShell().computeTrim(0, 0, 0, 0);
-//		size.x += otherTrim.width;
-//		size.y += otherTrim.height;
-//
 		if (informationControl instanceof IInformationControlExtension3) {
 			Rectangle thisTrim= ((IInformationControlExtension3)informationControl).computeTrim();
 			size.x -= thisTrim.width;
