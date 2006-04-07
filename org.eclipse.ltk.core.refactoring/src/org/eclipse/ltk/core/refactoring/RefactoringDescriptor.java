@@ -61,8 +61,13 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * generation should choose a short, informative and human-readable description
  * of the particular refactoring instance and pass appropriate descriptor flags
  * to the constructor. More details about a particular refactoring can be
- * revealed in the comment, which can contain more text with
- * refactoring-specific information.
+ * revealed in the comment, which contains more text with refactoring-specific
+ * information.
+ * </p>
+ * <p>
+ * Refactoring descriptors do not provide version information. It is the
+ * responsibility of the client to enhance subclasses with refactoring version
+ * information in order to provide a means of schema evolution.
  * </p>
  * <p>
  * All time stamps are measured in UTC milliseconds from the epoch (see

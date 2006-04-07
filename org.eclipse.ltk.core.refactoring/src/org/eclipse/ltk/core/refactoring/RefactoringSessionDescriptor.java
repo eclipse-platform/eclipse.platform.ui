@@ -13,13 +13,40 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Descriptor object of a refactoring session. Refactoring session descriptors
- * encapsulate a series of refactoring descriptors and provide additional
- * information such as version information and comments.
+ * Descriptor object of a refactoring session.
+ * <p>
+ * Refactoring session descriptors encapsulate a series of refactoring
+ * descriptors. They are used to represent chunks of the global workspace
+ * refactoring history or refactoring scripts created by the user.
+ * </p>
+ * <p>
+ * Refactoring session descriptors contain the following information:
+ * <ul>
+ * <li> an optional comment string, which provides a full human-readable
+ * description of the refactoring session. Comments are automatically generated
+ * by refactorings and provide more refactoring-specific information, such as
+ * which elements have participated in which refactorings. </li>
+ * <li> a list of refactoring descriptors describing the refactorings executed
+ * during a refactoring session. The refactoring list is sorted in ascending
+ * order by the execution time of the refactorings. </li>
+ * <li> a version tag describing version information of the refactoring session
+ * descriptor format. The version tag is used to provide a means of schema
+ * evolution on the refactoring framework level. Clients which would like to
+ * version their refactoring descriptors are required to implement this in their
+ * specific subclasses of {@link RefactoringDescriptor}. </li>
+ * </ul>
+ * </p>
  * <p>
  * Refactoring session descriptors are potentially heavy weight objects which
- * should not be held on to. Use refactoring descriptor proxies implemented by
- * class {@link RefactoringDescriptorProxy} to store refactoring information.
+ * should not be held on to. Use refactoring descriptor proxies
+ * {@link RefactoringDescriptorProxy} to present refactoring descriptors in the
+ * user interface or otherwise manipulate refactoring histories. More details
+ * about a particular refactoring session can be revealed in the comment, which
+ * contains more text with refactoring-specific information.
+ * </p>
+ * <p>
+ * All time stamps are measured in UTC milliseconds from the epoch (see
+ * {@link java.util#Calendar}).
  * </p>
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring
@@ -32,13 +59,13 @@ import org.eclipse.core.runtime.Assert;
  */
 public class RefactoringSessionDescriptor {
 
-	/** The version constant for v1.0 */
+	/** The version constant for v1.0 (value: 1.0) */
 	public static final String VERSION_1_0= "1.0"; //$NON-NLS-1$
 
-	/** The comment associated with this refactoring, or <code>null</code> */
+	/** The comment , or <code>null</code> for no comment */
 	private final String fComment;
 
-	/** The refactoring descriptors in recorded order */
+	/** The refactoring descriptors */
 	private final RefactoringDescriptor[] fDescriptors;
 
 	/** The non-empty version string */
@@ -51,10 +78,11 @@ public class RefactoringSessionDescriptor {
 	 *            the refactoring descriptors in executed order, or the empty
 	 *            array
 	 * @param version
-	 *            the non-empty version tag
+	 *            the non-empty version tag, one of the <code>VERSION_xxx</code>
+	 *            constants
 	 * @param comment
-	 *            the comment associated with the refactoring session, or
-	 *            <code>null</code> for no comment
+	 *            the comment of the refactoring session, or <code>null</code>
+	 *            for no comment
 	 */
 	public RefactoringSessionDescriptor(final RefactoringDescriptor[] descriptors, final String version, final String comment) {
 		Assert.isNotNull(descriptors);
@@ -66,16 +94,16 @@ public class RefactoringSessionDescriptor {
 	}
 
 	/**
-	 * Returns the comment associated with this refactoring session.
+	 * Returns the comment.
 	 * 
-	 * @return the associated comment, or the empty string
+	 * @return the comment, or the empty string
 	 */
 	public final String getComment() {
 		return (fComment != null) ? fComment : ""; //$NON-NLS-1$
 	}
 
 	/**
-	 * Returns the refactoring descriptors of the refactorings in this session.
+	 * Returns the refactoring descriptors.
 	 * 
 	 * @return the array of refactoring descriptors in executed order, or the
 	 *         empty array
