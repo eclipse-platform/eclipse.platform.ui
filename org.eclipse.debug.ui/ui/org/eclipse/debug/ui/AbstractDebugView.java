@@ -13,9 +13,12 @@ package org.eclipse.debug.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
@@ -49,6 +52,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.Page;
@@ -145,6 +149,18 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * created. The message is cached until it can be properly displayed.
 	 */
 	private String fEarlyMessage= null;
+	
+	private static Set fgGlobalActionIds;
+	static {
+		fgGlobalActionIds = new HashSet();
+		fgGlobalActionIds.add(SELECT_ALL_ACTION);
+		fgGlobalActionIds.add(COPY_ACTION);
+		fgGlobalActionIds.add(CUT_ACTION);
+		fgGlobalActionIds.add(PASTE_ACTION);
+		fgGlobalActionIds.add(FIND_ACTION);
+		fgGlobalActionIds.add(ActionFactory.UNDO.getId());
+		fgGlobalActionIds.add(ActionFactory.REDO.getId());
+	}
 
 	/**
 	 * Part listener that disables updating when the view is not visible and
@@ -663,19 +679,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				fUpdateables.add(action);
 			}
 		}
-		if (actionID.equals(SELECT_ALL_ACTION)) {
-			IActionBars actionBars = getViewSite().getActionBars();	
-			actionBars.setGlobalActionHandler(actionID, action);
-		} else if (actionID.equals(COPY_ACTION)) {
-			IActionBars actionBars = getViewSite().getActionBars();	
-			actionBars.setGlobalActionHandler(actionID, action);
-		} else if (actionID.equals(CUT_ACTION)) {
-			IActionBars actionBars = getViewSite().getActionBars();	
-			actionBars.setGlobalActionHandler(actionID, action);
-		} else if (actionID.equals(PASTE_ACTION)) {
-			IActionBars actionBars = getViewSite().getActionBars();	
-			actionBars.setGlobalActionHandler(actionID, action);
-		} else if (actionID.equals(FIND_ACTION)) {
+		if (fgGlobalActionIds.contains(actionID)) {
 			IActionBars actionBars = getViewSite().getActionBars();	
 			actionBars.setGlobalActionHandler(actionID, action);
 		}

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -78,6 +79,8 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -111,10 +114,16 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
@@ -266,7 +275,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	/**
 	 * The detail pane viewer and its associated document.
 	 */
-	private ISourceViewer fDetailViewer;
+	private SourceViewer fDetailViewer;
 	private IDocument fDetailDocument;
 	
 	/**
@@ -517,6 +526,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		//update actions that depend on the configuration of the details viewer
 		updateAction("ContentAssist"); //$NON-NLS-1$
 		setDetailViewerConfiguration(svc);
+		createUndoRedoActions();
 	}
 	
 	/**
@@ -653,7 +663,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void createDetailsViewer() {
 		// Create & configure a SourceViewer
 		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
-		setDetailViewer(detailsViewer);
+		fDetailViewer = detailsViewer;
 		detailsViewer.setDocument(getDetailDocument());
 		detailsViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
@@ -864,6 +874,54 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IStatusLineManager manager= actionBars.getStatusLineManager();
 		manager.add(fStatusLineItem);
 	} 
+	
+	/**
+	 * Creates this editor's undo/redo actions.
+	 * <p>
+	 * Subclasses may override or extend.</p>
+	 *
+	 * @since 3.2
+	 */
+	protected void createUndoRedoActions() {
+		disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
+		disposeUndoRedoAction(ITextEditorActionConstants.REDO);
+		IUndoContext undoContext= getUndoContext();
+		if (undoContext != null) {
+			// Use actions provided by global undo/redo
+			
+			// Create the undo action
+			OperationHistoryActionHandler undoAction= new UndoActionHandler(getSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			setAction(ITextEditorActionConstants.UNDO, undoAction);
+
+			// Create the redo action.
+			OperationHistoryActionHandler redoAction= new RedoActionHandler(getSite(), undoContext);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			setAction(ITextEditorActionConstants.REDO, redoAction);
+		}
+	}	
+	
+	private void disposeUndoRedoAction(String actionId) {
+		OperationHistoryActionHandler action = (OperationHistoryActionHandler) getAction(actionId);
+		if (action != null) {
+			action.dispose();
+			setAction(actionId, null);
+		}
+	}
+	/**
+	 * Returns this editor's viewer's undo manager undo context.
+	 *
+	 * @return the undo context or <code>null</code> if not available
+	 * @since 3.2
+	 */
+	private IUndoContext getUndoContext() {
+		IUndoManager undoManager= fDetailViewer.getUndoManager();
+		if (undoManager instanceof IUndoManagerExtension)
+			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		return null;
+	}		
 	
 	private void createOrientationActions(VariablesViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
@@ -1194,15 +1252,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			fModelPresentation = new VariablesViewModelPresentation();
 		}
 		return fModelPresentation;
-	}
-	
-	/**
-	 * Sets the viewer used to display value details.
-	 * 
-	 * @param viewer source viewer
-	 */
-	private void setDetailViewer(ISourceViewer viewer) {
-		fDetailViewer = viewer;
 	}
 	
 	/**
