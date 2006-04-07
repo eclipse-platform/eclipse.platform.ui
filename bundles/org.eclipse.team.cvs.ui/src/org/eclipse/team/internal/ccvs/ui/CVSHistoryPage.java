@@ -838,16 +838,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * Select the revision in the receiver.
 	 */
 	public void selectRevision(String revision) {
-		if (entries == null) {
-			return;
-		}
-	
 		IFileRevision entry = null;
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getContentIdentifier().equals(revision)) {
-				entry = entries[i];
-				break;
+		if (entries != null) {
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getContentIdentifier().equals(revision)) {
+					entry = entries[i];
+					break;
+				}
 			}
+		} else if (cvsFileHistory != null) {
+			entry = cvsFileHistory.getFileRevision(revision);
 		}
 	
 		if (entry != null) {
@@ -1218,6 +1218,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			return file.getName();
 		
 		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the path of the file currently being shown in the CVS History Page.
+	 * @return an IPath or <code>null</code> if the file is null
+	 */
+	public IPath getFilePath() {
+		if (file != null)
+			return file.getIResource().getFullPath();
+		
+		return null; 
 	}
 
 	/*

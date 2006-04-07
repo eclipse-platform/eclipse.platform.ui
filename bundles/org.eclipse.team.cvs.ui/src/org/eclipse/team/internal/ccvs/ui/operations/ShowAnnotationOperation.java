@@ -19,10 +19,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -95,16 +97,69 @@ public class ShowAnnotationOperation extends CVSOperation {
 					useQuickDiffAnnotate = promptForQuickDiffAnnotate();
 				if (useQuickDiffAnnotate){
 					//is there an open editor for the given input? If yes, use live annotate
-					AbstractDecoratedTextEditor editor= getEditor();
+					final AbstractDecoratedTextEditor editor= getEditor();
 					if (editor != null){
 						editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
+						final IWorkbenchPage page= getPart().getSite().getPage();
+						final GenericHistoryView historyView;
 						try {
-							GenericHistoryView historyView = (GenericHistoryView) getPart().getSite().getPage().showView(GenericHistoryView.VIEW_ID);
+							historyView= (GenericHistoryView) page.showView(GenericHistoryView.VIEW_ID);
 							historyView.showHistoryFor(fCVSResource.getIResource());
 							IHistoryPage historyPage = historyView.getHistoryPage();
 							if (historyPage instanceof CVSHistoryPage){
 								CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
 								cvsHistoryPage.setMode(CVSHistoryPage.REMOTE_MODE);
+							}
+							final ISelectionProvider provider= (ISelectionProvider) editor.getAdapter(RevisionSelectionProvider.class);
+							if (provider != null) {
+								final ISelectionChangedListener selectionListener= new ISelectionChangedListener() {
+									public void selectionChanged(SelectionChangedEvent event) {
+										GenericHistoryView historyView= (GenericHistoryView) page.findView(GenericHistoryView.VIEW_ID);
+										if (historyView == null)
+											return; // user has manually closed the view after it being originally open -> don't reopen
+
+										ISelection selection= event.getSelection();
+										Revision selected= null;
+										if (selection instanceof IStructuredSelection)
+											selected= (Revision) ((IStructuredSelection) selection).getFirstElement();
+
+										if (selected == null)
+											return;
+
+										IHistoryPage historyPage = historyView.getHistoryPage();
+										if (historyPage instanceof CVSHistoryPage){
+											CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
+											IPath fileInHistoryViewPath = cvsHistoryPage.getFilePath();
+											IPath annotateFilePath = fCVSResource.getIResource().getFullPath();
+											if (fileInHistoryViewPath != null && annotateFilePath != null &&
+												fileInHistoryViewPath.equals(annotateFilePath))
+												cvsHistoryPage.selectRevision(selected.getId());
+										}
+									}
+								};
+								provider.addSelectionChangedListener(selectionListener);
+								page.addPartListener(new IPartListener() {
+
+									public void partOpened(IWorkbenchPart part) {
+									}
+
+									public void partDeactivated(IWorkbenchPart part) {
+									}
+
+									public void partClosed(IWorkbenchPart part) {
+										if (part == historyView || part == editor) {
+											page.removePartListener(this);
+											provider.removeSelectionChangedListener(selectionListener);
+										}
+									}
+
+									public void partBroughtToTop(IWorkbenchPart part) {
+									}
+
+									public void partActivated(IWorkbenchPart part) {
+									}
+
+								});
 							}
 						} catch (PartInitException e) {
 							CVSException.wrapException(e);
