@@ -22,8 +22,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 1.0
+ * Class TextObservableValue.  An IObservableValue implementation for an
+ * SWT Text control with the ability to add an additional change listener that
+ * can veto change events.
  * 
+ * @since 3.2
  */
 public class TextObservableValue extends AbstractVetoableValue {
 
@@ -62,8 +65,11 @@ public class TextObservableValue extends AbstractVetoableValue {
 	private KeyListener keyListener;
 
 	/**
-	 * @param text
-	 * @param updatePolicy
+	 * Construct a TextObservableValue, wrapping a specific SWT Text object
+	 * and specifying a particular update policy.
+	 * 
+	 * @param text The SWT Text object
+	 * @param updatePolicy The update policy.  The valid values are: SWT.Modify, SWT.FocusOut, SWT.None.
 	 */
 	public TextObservableValue(final Text text, int updatePolicy) {
 		this.text = text;
@@ -115,6 +121,9 @@ public class TextObservableValue extends AbstractVetoableValue {
 		text.addKeyListener(keyListener);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue#doSetValue(java.lang.Object)
+	 */
 	public void doSetValue(final Object value) {
 		try {
 			updating = true;
@@ -125,14 +134,23 @@ public class TextObservableValue extends AbstractVetoableValue {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue#doGetValue()
+	 */
 	public Object doGetValue() {
 		return text.getText();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue#getValueType()
+	 */
 	public Object getValueType() {
 		return String.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#dispose()
+	 */
 	public void dispose() {
 		if (!text.isDisposed()) {
 			if (updatePolicy != SWT.None) {
