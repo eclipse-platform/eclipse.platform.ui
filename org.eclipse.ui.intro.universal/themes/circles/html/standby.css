@@ -27,7 +27,7 @@ body {
 	width:expression(document.body.clientWidth < 230? "230px": "auto" );
 	background-repeat : no-repeat;
 	background-position : top left;
-	background-color : #345365;
+	background-color : #6d7e85;
 }
 
 .page { 
@@ -62,6 +62,7 @@ body {
 	margin-top : 0px;
 	vertical-align : top;
 }
+
 #page-links a span, #page-links a p {
 	display : block;
 	width : 160px;
@@ -79,7 +80,6 @@ body {
 	position : relative;
 	left : 60px;
 	top : -50px;
-
 }
 
 #page-links a img {
@@ -97,23 +97,46 @@ body {
 #page-links a:active p  { margin : 0px; padding : 0px; }
 
 /* properties for each of the page-links  */
-a#overview img { background-image : url(../graphics/icons/etool/overview48.gif); }
+
+#page-links a .background-image {
+	display: none;
+}
+
+#page-links a .link-extra-div {
+	display :none;
+}
+
+a#overview img { background-image : url(../graphics/icons/ctool/ov_nav_32.gif); }
+/*
 a#overview:hover img,
 a#overview:focus img,
 a#overview:active img { background-image : url(../graphics/icons/ctool/overview48.gif); }
+*/
 
-a#tutorials img { background-image : url(../graphics/icons/etool/tutorials48.gif); }
+a#tutorials img { background-image : url(../graphics/icons/ctool/tu_nav_32.gif); }
+/*
 a#tutorials:hover img,
 a#tutorials:focus img,
 a#tutorials:active img { background-image : url(../graphics/icons/ctool/tutorials48.gif); }
+*/
 
-a#samples img { background-image : url(../graphics/icons/etool/samples48.gif); }
+a#samples img { background-image : url(../graphics/icons/ctool/sa_nav_32.gif); }
+/*
 a#samples:hover img,
 a#samples:focus img,
 a#samples:active img { background-image : url(../graphics/icons/ctool/samples48.gif); }
+*/
 
-a#news img { background-image : url(../graphics/icons/etool/whatsnew48.gif); }
+
+a#whatsnew img { background-image : url(../graphics/icons/ctool/wn_nav_32.gif); }
+/*
 a#news:hover img,
 a#news:focus img,
 a#news:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
+*/
 
+a#firststeps img { background-image : url(../graphics/icons/ctool/fs_nav_32.gif); }
+a#webresources img { background-image : url(../graphics/icons/ctool/wr_nav_32.gif); }
+a#migrate img { background-image : url(../graphics/icons/ctool/mi_nav_32.gif); }
+
+a#workbench img { background-image : url(../graphics/icons/ctool/wb_nav_32.gif); }
