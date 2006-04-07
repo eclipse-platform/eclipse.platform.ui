@@ -49,9 +49,9 @@ public class BooleanRequestMonitor extends AbstractRequestMonitor implements IBo
 	public void done() {
 		if (isCanceled()) {
 			fAction.setEnabled(false);
-		} else if (fNumOfVotes == fNumVoters) {
-			fAction.setEnabled(true);
-		}
+		} else {
+			fAction.setEnabled(fNumOfVotes == fNumVoters);
+		} 
 	}
 
 }
