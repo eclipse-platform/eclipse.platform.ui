@@ -93,9 +93,9 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * 	<code>null</code> if not supported
 	 */
 	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {		
-		setLaunchConfiguration(launchConfiguration);
+		fConfiguration = launchConfiguration;
 		setSourceLocator(locator);
-		setLaunchMode(mode);
+		fMode = mode;
 		fSuppressChange = false;
 	}
 	
@@ -114,7 +114,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	private void removeListeners() {
 		getLaunchManager().removeLaunchListener(this);
-		getLaunchManager().removeLaunchConfigurationListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 	
@@ -158,15 +157,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		return null;
 	}
 		
-	/**
-	 * Sets the configuration that was launched
-	 * 
-	 * @param configuration the configuration that was launched
-	 */
-	private void setLaunchConfiguration(ILaunchConfiguration configuration) {
-		fConfiguration = configuration;
-	}	
-
 	/**
 	 * @see ILaunch#getProcesses()
 	 */
@@ -282,18 +272,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	public String getLaunchMode() {
 		return fMode;
-	}
-	
-	/**
-	 * Sets the mode in which this launch was 
-	 * launched.
-	 * 
-	 * @param mode the mode in which this launch
-	 *  was launched - one of the constants defined
-	 *  by <code>ILaunchManager</code>.
-	 */
-	private void setLaunchMode(String mode) {
-		fMode = mode;
 	}
 	
 	/**
@@ -459,7 +437,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
         return false;
 	}
 
-
 	/**
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
@@ -515,10 +492,9 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
 			removeListeners();
+			getLaunchManager().removeLaunchConfigurationListener(this);
 		}
 	}
-
-
 
 	/**
 	 * Returns the launch manager.
@@ -551,7 +527,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
 		if (from != null && from.equals(getLaunchConfiguration())) {
-			setLaunchConfiguration(configuration);
+			fConfiguration = configuration;
 			fireChanged();
 		}
 	}
@@ -559,8 +535,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-	}
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
 	/* (non-Javadoc)
 	 * 
@@ -572,7 +547,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		if (configuration.equals(getLaunchConfiguration())) {
 			if (getLaunchManager().getMovedTo(configuration) == null) {
-				setLaunchConfiguration(null);
+				fConfiguration = null;
 				fireChanged();
 			}
 		}

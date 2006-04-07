@@ -312,11 +312,23 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}	
 
-	
+	/**
+	 * Returns the launch manager.
+	 * 
+	 * @return the launch manager.
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
+		if (from != null && from.equals(getLaunchConfiguration())) {
+			fConfig = configuration;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -348,6 +360,11 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		if (configuration.equals(getLaunchConfiguration())) {
+			if (getLaunchManager().getMovedTo(configuration) == null) {
+				fConfig = null;
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
