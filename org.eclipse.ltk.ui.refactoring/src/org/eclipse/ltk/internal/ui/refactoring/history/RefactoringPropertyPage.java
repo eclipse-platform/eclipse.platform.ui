@@ -255,7 +255,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		fShareHistoryButton.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
 		fShareHistoryButton.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);
 
-		fShareHistoryButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.verticalIndent= convertHeightInCharsToPixels(1) / 2;
+		fShareHistoryButton.setLayoutData(data);
 		fShareHistoryButton.setSelection(hasSharedRefactoringHistory());
 
 		new Label(composite, SWT.NONE);
