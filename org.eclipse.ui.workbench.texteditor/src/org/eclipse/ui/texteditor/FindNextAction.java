@@ -190,13 +190,34 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 				statusNotFound();
 				return;
 			}
+			
+			boolean wholeWord= fWholeWordInit && !fRegExSearch && isWord(fFindString);
 
 			statusClear();
-			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, fWholeWordInit && !fRegExSearch, fRegExSearch))
+			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, wholeWord, fRegExSearch))
 				statusNotFound();
 
 			writeConfiguration();
 		}
+	}
+	
+	/**
+	 * Tests whether each character in the given
+	 * string is a letter.
+	 *
+	 * @param str
+	 * @return <code>true</code> if the given string is a word
+	 * @since 3.2
+	 */
+	private boolean isWord(String str) {
+		if (str == null || str.length() == 0)
+			return false;
+
+		for (int i= 0; i < str.length(); i++) {
+			if (!Character.isJavaIdentifierPart(str.charAt(i)))
+				return false;
+		}
+		return true;
 	}
 
 	/*
