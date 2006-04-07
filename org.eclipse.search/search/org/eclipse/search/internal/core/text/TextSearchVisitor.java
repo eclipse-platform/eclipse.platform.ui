@@ -179,7 +179,7 @@ public class TextSearchVisitor {
 	}
 		
 	public IStatus search(TextSearchScope scope, IProgressMonitor monitor) {
-		return search(new FilesOfScopeCalculator(scope, fStatus).process(), monitor);
+		return search(scope.evaluateFilesInScope(fStatus), monitor);
     }
     
 	private void processFiles(IFile[] files) {
