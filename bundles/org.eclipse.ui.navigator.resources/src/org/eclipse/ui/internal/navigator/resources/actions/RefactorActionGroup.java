@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * This is the action group for refactor actions, including global action
@@ -150,21 +151,27 @@ public class RefactorActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		pasteAction.setImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
 		copyAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		copyAction.setImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 
 		moveAction = new MoveResourceAction(shell);
+		moveAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.MOVE);
+		
 		renameAction = new RenameResourceAction(shell, tree);
+		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
 
 		deleteAction = new DeleteResourceAction(shell);
 		deleteAction.setDisabledImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		deleteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 	}
 
 	public void updateActionBars() {

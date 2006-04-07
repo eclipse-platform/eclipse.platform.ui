@@ -17,6 +17,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * Adds the properties action to the menu.
@@ -37,6 +38,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 				return aSite.getViewSite().getShell();
 			}
 		},delegateSelectionProvider);
+		propertiesAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES); 
 	}
 
 	/*

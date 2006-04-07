@@ -13,8 +13,10 @@
 package org.eclipse.ui.internal.navigator.resources.actions;
 
 import java.net.URL;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -126,9 +128,7 @@ public class PortingActionProvider extends CommonActionProvider {
 		Assert.isTrue(!disposed);
 
 		ISelection selection = getContext().getSelection();
-		if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
-			addSimplePortingMenus(aMenu);
-		} else if (((IStructuredSelection) selection).size() > 1) {
+		if (!(selection instanceof IStructuredSelection) || ((IStructuredSelection) selection).size() > 1) {
 			addSimplePortingMenus(aMenu);
 		} else {
 			addImportMenu(aMenu);
@@ -141,8 +141,7 @@ public class PortingActionProvider extends CommonActionProvider {
 	 */
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
 		String iconPath = "icons/full/"; //$NON-NLS-1$ 
-		URL url = WorkbenchNavigatorPlugin.getDefault().find(
-				new Path(iconPath + relativePath));
+		URL url = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(), new Path(iconPath + relativePath), Collections.EMPTY_MAP);
 		if (url == null) {
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
