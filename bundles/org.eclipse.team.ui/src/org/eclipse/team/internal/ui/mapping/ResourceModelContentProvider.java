@@ -405,10 +405,10 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		List removals = new ArrayList(changedProjects.length);
 		for (int i = 0; i < changedProjects.length; i++) {
 			IProject project = changedProjects[i];
-			if (hasDiffs(event.getTree(), project)) {
+			if (hasVisibleChanges(event.getTree(), project)) {
 				if (existingProjects.contains(project)) {
 					refreshes.add(project);
-				} else if (hasVisibleChanges(event.getTree(), project)){
+				} else {
 					additions.add(project);
 				}
 			} else if (existingProjects.contains(project)) {
@@ -443,10 +443,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 				return isVisible(diff);
 			}
 		});
-	}
-
-	private boolean hasDiffs(IDiffTree tree, IProject project) {
-		return tree.getChildren(project.getFullPath()).length > 0;
 	}
 
 	private IProject[] getChangedProjects(IDiffChangeEvent event) {
