@@ -11,8 +11,13 @@
 package org.eclipse.ui.navigator;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
@@ -147,9 +152,11 @@ public final class WizardActionGroup extends ActionGroup {
 		if (aContext != null) {
 			ISelection selection = aContext.getSelection();
 			Object element = null;
-			if (!selection.isEmpty()
-					&& selection instanceof IStructuredSelection) {
+			if (selection instanceof IStructuredSelection) {
 				element = ((IStructuredSelection) selection).getFirstElement();
+			}
+			if(element == null) {
+				element = Collections.EMPTY_LIST;
 			}
 			// null should be okay here
 			setWizardActionIds(CommonWizardDescriptorManager.getInstance()
@@ -169,11 +176,16 @@ public final class WizardActionGroup extends ActionGroup {
 
 		IAction action = null;
 		if (wizardActionIds != null) {
+			SortedSet sortedWizards = new TreeSet(ActionComparator.INSTANCE); 
 			for (int i = 0; i < wizardActionIds.length; i++) {
 				if ((action = getAction(wizardActionIds[i])) != null) {
-					menu.add(action);
+					sortedWizards.add(action);
 				}
 			}
+			for (Iterator iter = sortedWizards.iterator(); iter.hasNext();) {
+				menu.add((IAction) iter.next());				
+			}
+
 		}
 
 	}
@@ -237,4 +249,14 @@ public final class WizardActionGroup extends ActionGroup {
 		wizardActionIds = theWizardActionIds;
 	}
 
+	private static class ActionComparator implements Comparator {
+		
+		private static final ActionComparator INSTANCE = new ActionComparator();
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object arg0, Object arg1) {
+			return ((IAction)arg0).getText().compareTo(((IAction)arg1).getText());
+		}
+	}
 }
