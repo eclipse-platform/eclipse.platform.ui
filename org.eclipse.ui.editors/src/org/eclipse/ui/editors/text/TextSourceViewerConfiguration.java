@@ -279,29 +279,11 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null)
+		if (fPreferenceStore == null || !fPreferenceStore.contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE))
 			return super.getUndoManager(sourceViewer);
 
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
 		return new TextViewerUndoManager(undoHistorySize);
 	}
 	
-	/*
-	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
-	 * <p>
-	 * XXX: This is work in progress and can change anytime until API for 3.2 is frozen.
-	 * </p>
-	 * @since 3.2
-	 */
-//	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-//		if (fPreferenceStore == null)
-//			return super.getReconciler(sourceViewer);
-//		
-//		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService(), "org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$
-//		MonoReconciler reconciler= new MonoReconciler(strategy, false);
-//		reconciler.setIsIncrementalReconciler(false);
-//		reconciler.setProgressMonitor(new NullProgressMonitor());
-//		reconciler.setDelay(500);
-//		return reconciler;
-//	}
 }
