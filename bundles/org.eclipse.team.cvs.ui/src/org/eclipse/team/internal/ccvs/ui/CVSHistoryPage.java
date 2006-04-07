@@ -575,7 +575,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
 			tbm.add(new Separator("collapse")); //$NON-NLS-1$
 			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
-			tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
+			if (!parentSite.isModal()) {
+				//don't bother adding the compare mode toolbar button if in 
+				//a dialog; you can only compare from dialogs
+				tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
+			}
 			tbm.update(false);
 		}
 
