@@ -18,10 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.fieldassist.DecoratedField;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.TextContentAdapter;
-import org.eclipse.jface.fieldassist.TextControlCreator;
+import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,7 +36,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.fieldassist.RequiredFieldColorer;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownComposite;
@@ -200,17 +196,15 @@ public class ContainerSelectionGroup extends Composite {
         label.setFont(this.getFont());
 
         if (allowNewContainerName) {
-        	DecoratedField field = new DecoratedField(this, SWT.SINGLE | SWT.BORDER, new TextControlCreator());
-    		field.addFieldDecoration(FieldDecorationRegistry.getDefault().getFieldDecoration(
-    				FieldDecorationRegistry.DEC_REQUIRED), SWT.BOTTOM
-    				| SWT.LEFT, false);
-            containerNameField = (Text)field.getControl();
+            containerNameField = new Text(this, SWT.SINGLE | SWT.BORDER);
             GridData gd = new GridData(GridData.FILL_HORIZONTAL);
             gd.widthHint = widthHint;
-            field.getLayoutControl().setLayoutData(gd);
+            containerNameField.setLayoutData(gd);
             containerNameField.addListener(SWT.Modify, listener);
             containerNameField.setFont(this.getFont());
-            containerNameField.addFocusListener(new RequiredFieldColorer(containerNameField, new TextContentAdapter()));
+            // Mark as required field.
+            containerNameField.setBackground(
+            		FieldAssistColors.getRequiredFieldBackgroundColor(containerNameField));
         } else {
             // filler...
             new Label(this, SWT.NONE);
@@ -232,12 +226,6 @@ public class ContainerSelectionGroup extends Composite {
         GridData spec = new GridData(SWT.FILL, SWT.FILL, true, true);
         spec.widthHint = SIZING_SELECTION_PANE_WIDTH;
         spec.heightHint = heightHint;
-        
-        // Must indent if we provided a container name field, since it has required 
-        // field indicator.
-        if (allowNewContainerName) {
-        	spec.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
-        }
         drillDown.setLayoutData(spec);
 
         // Create tree viewer inside drill down.
