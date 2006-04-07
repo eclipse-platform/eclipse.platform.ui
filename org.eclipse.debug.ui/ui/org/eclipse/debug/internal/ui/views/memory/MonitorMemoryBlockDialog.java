@@ -74,7 +74,6 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		Label textLabel = new Label(parent, SWT.NONE);
 		textLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor);
 		GridData textLayout = new GridData();
-		textLayout.widthHint = 280;
 		textLabel.setLayoutData(textLayout);
 		
 		expressionInput = new Combo(parent, SWT.BORDER);
@@ -83,7 +82,6 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		spec.grabExcessHorizontalSpace= true;
 		spec.horizontalAlignment= GridData.FILL;
 		spec.verticalAlignment= GridData.BEGINNING;
-		spec.heightHint = 50;
 		expressionInput.setLayoutData(spec);
 		
 		// add HISTORY
@@ -107,7 +105,6 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 			Label lengthLabel = new Label(parent, SWT.NONE);
 			lengthLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes);
 			GridData lengthLayout = new GridData();
-			lengthLayout.widthHint = 280;
 			lengthLabel.setLayoutData(lengthLayout);
 			
 			lengthInput = new Text(parent, SWT.BORDER);
