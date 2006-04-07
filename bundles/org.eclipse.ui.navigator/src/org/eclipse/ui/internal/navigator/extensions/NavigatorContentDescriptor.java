@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
@@ -403,7 +403,7 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public Set getOverriddingExtensions() {
 		if (overridingExtensions == null) {
-			overridingExtensions = new HashSet();
+			overridingExtensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		}
 		return overridingExtensions;
 	}
