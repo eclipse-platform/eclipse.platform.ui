@@ -852,7 +852,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 		if (entry != null) {
 			IStructuredSelection selection = new StructuredSelection(entry);
+			treeViewer.getTree().setRedraw(false);
 			treeViewer.setSelection(selection, true);
+			treeViewer.getTree().setRedraw(true);
 		}
 	}
 	
