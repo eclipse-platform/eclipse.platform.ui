@@ -18,6 +18,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.history.SelectRefactoringHistoryControl;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -92,6 +93,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			}
 		};
 		fHistoryControl.createControl();
+		GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		data.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(24);
+		fHistoryControl.setLayoutData(data);
 		fHistoryControl.setInput(fWizard.getRefactoringHistory());
 		fHistoryControl.addCheckStateListener(new ICheckStateListener() {
 
@@ -101,7 +105,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		});
 		final Label label= new Label(composite, SWT.NONE);
 		label.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
-		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
+		data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
 		data.horizontalIndent= 0;
 		data.horizontalSpan= 1;
 		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);

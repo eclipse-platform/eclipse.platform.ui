@@ -66,7 +66,7 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void createButtonBar(final Composite parent) {
+	protected void createRightButtonBar(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
 		final GridLayout layout= new GridLayout(1, false);
