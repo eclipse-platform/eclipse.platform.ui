@@ -1407,7 +1407,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			};
 		}
 		
-		if (adapter != null && adapter.getName().equals("org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider")) { //$NON-NLS-1$
+		// XXX: This will go away in 3.3, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=135231
+		if (adapter != null && "org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider".equals(adapter.getName())) { //$NON-NLS-1$
 			IRevisionRulerColumn revisionColumn= getRevisionColumn();
 			if (revisionColumn instanceof ChangeRulerColumn)
 				return ((ChangeRulerColumn) revisionColumn).getRevisionSelectionProvider();
