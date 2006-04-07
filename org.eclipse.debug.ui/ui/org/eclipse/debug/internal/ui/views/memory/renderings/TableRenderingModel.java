@@ -331,11 +331,29 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 	private MemorySegment[] convertMemoryBytesToSegments(BigInteger address, MemoryByte[] bytes, int bytesPerLine, int numAddressableUnitPerLine) {
 		
 		ArrayList segments = new ArrayList();
+		MemoryByte[] temp = bytes;
+		
+		if (bytes.length % bytesPerLine != 0)
+		{
+			int numBytesNeeded = bytesPerLine - (bytes.length % bytesPerLine);
+			temp = new MemoryByte[bytes.length + numBytesNeeded];
+			System.arraycopy(bytes, 0, temp, 0, bytes.length);
+			
+			for (int i=bytes.length; i<temp.length; i++)
+			{
+				temp[i] = new MemoryByte();
+				temp[i].setReadable(false);
+				temp[i].setWritable(false);
+				temp[i].setEndianessKnown(false);	
+			}	
+			bytes = temp;
+		}
+		
 		if (bytesPerLine > 0 && numAddressableUnitPerLine > 0)
 		{
 			int idx = 0;
 			
-			while (idx < bytes.length && (idx + bytesPerLine)< bytes.length)
+			while (idx < bytes.length && (idx + bytesPerLine)<= bytes.length)
 			{
 				MemoryByte[] newBytes = new MemoryByte[bytesPerLine];
 				System.arraycopy(bytes, idx, newBytes, 0, bytesPerLine);
@@ -349,21 +367,6 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		}
 		return (MemorySegment[])segments.toArray(new MemorySegment[segments.size()]);
 	}
-
-	
-//	private void printSegment(MemorySegment segment)
-//	{
-//		StringBuffer buf = new StringBuffer();
-//		buf.append(segment.getAddress().toString(16));
-//		buf.append(": ");
-//		MemoryByte[] bytes = segment.getBytes();
-//		for (int i=0; i<bytes.length; i++)
-//		{
-//			buf.append(bytes[i].getValue());
-//			buf.append(" ");
-//		}
-//		System.out.println(buf.toString());
-//	}
 	
 	private AsynchronousTableViewer getTableViewer()
 	{
