@@ -14,7 +14,9 @@ package org.eclipse.ui.texteditor;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
@@ -1698,18 +1700,47 @@ class FindReplaceDialog extends Dialog {
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
 		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		s.put("isRegEx", fIsRegExInit); //$NON-NLS-1$
+		
 		List history= getFindHistory();
-		while (history.size() > 8)
-			history.remove(8);
-		String[] names= new String[history.size()];
-		history.toArray(names);
-		s.put("findhistory", names); //$NON-NLS-1$
+		String findString= getFindString();
+		if (findString.length() > 0)
+			history.add(0, findString);
+		writeHistory(history, s, "findhistory"); //$NON-NLS-1$
 
 		history= getReplaceHistory();
-		while (history.size() > 8)
+		String replaceString= getReplaceString();
+		if (replaceString.length() > 0)
+			history.add(0, replaceString);
+		writeHistory(history, s, "replacehistory"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Writes the given history into the given dialog store.
+	 * 
+	 * @param history the history 
+	 * @param settings the dialog settings
+	 * @param sectionName the section name
+	 * @since 3.2
+	 */
+	private void writeHistory(List history, IDialogSettings settings, String sectionName) {
+		int itemCount= history.size();
+		Set distinctItems= new HashSet(itemCount);
+		for (int i= 0; i < itemCount; i++) {
+			String item= (String)history.get(i);
+			if (distinctItems.contains(item)) {
+				history.remove(i--);
+				itemCount--;
+			} else {
+				distinctItems.add(item);
+			}
+		}
+		
+		while (itemCount > 8)
 			history.remove(8);
-		names= new String[history.size()];
+		
+		String[] names= new String[history.size()];
 		history.toArray(names);
-		s.put("replacehistory", names); //$NON-NLS-1$
+		settings.put(sectionName, names);
+		
 	}
 }
