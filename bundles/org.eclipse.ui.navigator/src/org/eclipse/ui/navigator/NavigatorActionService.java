@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2003, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.ui.navigator;
 
 import java.util.HashMap;
@@ -40,53 +38,36 @@ import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 
 /**
  * <p>
- * Provides context menu items and {@link IActionBars} contributions for a
- * particular abstract viewer. The interface matches that of {@link ActionGroup}
- * and may be used in the same manner. Clients must call
+ * Provides context menu items and {@link IActionBars} contributions for a particular abstract
+ * viewer. The interface matches that of {@link ActionGroup} and may be used in the same manner.
+ * Clients must call
  * {@link NavigatorActionService#prepareMenuForPlatformContributions(MenuManager, ISelectionProvider, boolean)}
  * when using this class to allow object or viewer contributions. The
- * <b>org.eclipse.ui.navigator.viewer/viewer/popupMenu</b> element may override
- * whether platform contributions are allowed to the menu with its
- * <i>allowsPlatformContributions</i> attribute. "Platform Contributions" are
- * menu items that are added through the <b>org.eclipse.ui.popupMenus</b>
+ * <b>org.eclipse.ui.navigator.viewer/viewer/popupMenu</b> element may override whether platform
+ * contributions are allowed to the menu with its <i>allowsPlatformContributions</i> attribute.
+ * "Platform Contributions" are menu items that are added through the <b>org.eclipse.ui.popupMenus</b>
  * extension point.
  * </p>
  * <p>
- * A {@link CommonActionProvider} has opportunities to contribute to the context
- * menu and {@link org.eclipse.ui.IActionBars} whenever the selection in the
- * viewer changes. Action Providers are selected based on the enablement
- * expressions of their associated content extension or their own enablement
- * expression if it is declared as a top-level &lt;actionProvider /&gt; element
- * (of the <b>org.eclipse.ui.navigator.navigatorContent</b> extension point).
- * See the schema documentation of <b>org.eclipse.ui.navigator.navigatorContent</b>
- * for more information on how to specify an Action Provider.
+ * A {@link CommonActionProvider} has opportunities to contribute to the context menu and
+ * {@link org.eclipse.ui.IActionBars} whenever the selection in the viewer changes. Action Providers
+ * are selected based on the enablement expressions of their associated content extension or their
+ * own enablement expression if it is declared as a top-level &lt;actionProvider /&gt; element (of
+ * the <b>org.eclipse.ui.navigator.navigatorContent</b> extension point). See the schema
+ * documentation of <b>org.eclipse.ui.navigator.navigatorContent</b> for more information on how to
+ * specify an Action Provider.
  * </p>
  * <p>
- * Clients that reuse this service outside of an instance of
- * {@link CommonNavigator} must be sure that {{@link #fillActionBars(IActionBars)}
- * is called whenever the selection changes. The retargetable actions for each
- * selection could change, based on who contributed the items.
+ * Clients that reuse this service outside of an instance of {@link CommonNavigator} must be sure
+ * that {{@link #fillActionBars(IActionBars)} is called whenever the selection changes. The
+ * retargetable actions for each selection could change, based on who contributed the items.
  * 
  * @since 3.2
  * 
  */
-public final class NavigatorActionService extends ActionGroup implements
-		IMementoAware {
+public final class NavigatorActionService extends ActionGroup implements IMementoAware {
 
-	private static final IContributionItem[] DEFAULT_GROUPS = new IContributionItem[] {
-			new Separator(ICommonMenuConstants.GROUP_NEW),
-			new GroupMarker(ICommonMenuConstants.GROUP_GOTO),
-			new GroupMarker(ICommonMenuConstants.GROUP_OPEN),
-			new GroupMarker(ICommonMenuConstants.GROUP_OPEN_WITH),
-			new Separator(ICommonMenuConstants.GROUP_EDIT),
-			new GroupMarker(ICommonMenuConstants.GROUP_SHOW),
-			new GroupMarker(ICommonMenuConstants.GROUP_REORGANIZE),
-			new GroupMarker(ICommonMenuConstants.GROUP_PORT),
-			new Separator(ICommonMenuConstants.GROUP_GENERATE),
-			new Separator(ICommonMenuConstants.GROUP_SEARCH),
-			new Separator(ICommonMenuConstants.GROUP_BUILD),
-			new Separator(ICommonMenuConstants.GROUP_ADDITIONS),
-			new Separator(ICommonMenuConstants.GROUP_PROPERTIES) };
+	private static final IContributionItem[] DEFAULT_GROUPS = new IContributionItem[]{new Separator(ICommonMenuConstants.GROUP_NEW), new GroupMarker(ICommonMenuConstants.GROUP_GOTO), new GroupMarker(ICommonMenuConstants.GROUP_OPEN), new GroupMarker(ICommonMenuConstants.GROUP_OPEN_WITH), new Separator(ICommonMenuConstants.GROUP_EDIT), new GroupMarker(ICommonMenuConstants.GROUP_SHOW), new GroupMarker(ICommonMenuConstants.GROUP_REORGANIZE), new GroupMarker(ICommonMenuConstants.GROUP_PORT), new Separator(ICommonMenuConstants.GROUP_GENERATE), new Separator(ICommonMenuConstants.GROUP_SEARCH), new Separator(ICommonMenuConstants.GROUP_BUILD), new Separator(ICommonMenuConstants.GROUP_ADDITIONS), new Separator(ICommonMenuConstants.GROUP_PROPERTIES)};
 
 	private final ICommonViewerSite commonViewerSite;
 
@@ -111,19 +92,16 @@ public final class NavigatorActionService extends ActionGroup implements
 
 	/**
 	 * @param aCommonViewerSite
-	 *            A site that provides information about the context for
-	 *            extensions.
+	 *            A site that provides information about the context for extensions.
 	 * @param aStructuredViewer
-	 *            The associated StructuredViewer. Used to initialize
-	 *            extensions. <b>May NOT be null.</b>
+	 *            The associated StructuredViewer. Used to initialize extensions. <b>May NOT be
+	 *            null.</b>
 	 * @param aContentService
-	 *            The associated INavigatorContentService (for extensions that
-	 *            coordinate behavior with content extensions -- either nested
-	 *            or top-level action providers). <b>May NOT be null.</b>
+	 *            The associated INavigatorContentService (for extensions that coordinate behavior
+	 *            with content extensions -- either nested or top-level action providers). <b>May
+	 *            NOT be null.</b>
 	 */
-	public NavigatorActionService(ICommonViewerSite aCommonViewerSite,
-			StructuredViewer aStructuredViewer,
-			INavigatorContentService aContentService) {
+	public NavigatorActionService(ICommonViewerSite aCommonViewerSite, StructuredViewer aStructuredViewer, INavigatorContentService aContentService) {
 		super();
 		Assert.isNotNull(aCommonViewerSite);
 		Assert.isNotNull(aStructuredViewer);
@@ -137,53 +115,41 @@ public final class NavigatorActionService extends ActionGroup implements
 	}
 
 	/**
-	 * Prepares the menu for object contributions, if the option is set in the
-	 * extension. The option is controlled by the &lgt;popupMenu /&gt; element's
-	 * 'allowPlatformContributions' attribute. Clients may choose to ignore this
-	 * setting by supplying a value of <b>true</b> for the <code>force</code>
-	 * attribute.
+	 * Prepares the menu for object contributions, if the option is set in the extension. The option
+	 * is controlled by the &lgt;popupMenu /&gt; element's 'allowPlatformContributions' attribute.
+	 * Clients may choose to ignore this setting by supplying a value of <b>true</b> for the
+	 * <code>force</code> attribute.
 	 * 
 	 * @param menu
 	 *            The context menu of the IViewPart
 	 * @param aSelectionProvider
-	 *            The selection provider that will supplement actions with a
-	 *            valid, current selection.
+	 *            The selection provider that will supplement actions with a valid, current
+	 *            selection.
 	 * @param force
-	 *            A value of 'true' forces the menu to be registered for
-	 *            object/view contributions. Otherwise, the option from the
-	 *            extension point will be respected. See
-	 *            <b>org.eclipse.ui.navigator.viewer/viewer</b> for more
-	 *            information.
+	 *            A value of 'true' forces the menu to be registered for object/view contributions.
+	 *            Otherwise, the option from the extension point will be respected. See
+	 *            <b>org.eclipse.ui.navigator.viewer/viewer</b> for more information.
 	 */
-	public void prepareMenuForPlatformContributions(MenuManager menu,
-			ISelectionProvider aSelectionProvider, boolean force) {
+	public void prepareMenuForPlatformContributions(MenuManager menu, ISelectionProvider aSelectionProvider, boolean force) {
 		Assert.isTrue(!disposed);
 
 		if (commonViewerSite instanceof ICommonViewerWorkbenchSite) {
 			/*
-			 * Hooks into the Eclipse framework for Object contributions, and
-			 * View contributions.
+			 * Hooks into the Eclipse framework for Object contributions, and View contributions.
 			 */
-			if (force
-					|| viewerDescriptor
-							.allowsPlatformContributionsToContextMenu()) {
-				((ICommonViewerWorkbenchSite) commonViewerSite)
-						.registerContextMenu(contentService
-								.getViewerDescriptor().getPopupMenuId(), menu,
-								aSelectionProvider);
+			if (force || viewerDescriptor.allowsPlatformContributionsToContextMenu()) {
+				((ICommonViewerWorkbenchSite) commonViewerSite).registerContextMenu(contentService.getViewerDescriptor().getPopupMenuId(), menu, aSelectionProvider);
 			}
 		}
 	}
 
 	/**
-	 * Requests that the service invoke extensions to fill the given menu with
-	 * Action Providers that are interested in elements from the given
-	 * selection.
+	 * Requests that the service invoke extensions to fill the given menu with Action Providers that
+	 * are interested in elements from the given selection.
 	 * 
 	 * <p>
-	 * Object contributions (see <b>org.eclipes.ui.popupMenus</b>) may also
-	 * respected by this method if <code>toRespectObjectContributions</code>
-	 * is true.
+	 * Object contributions (see <b>org.eclipes.ui.popupMenus</b>) may also respected by this
+	 * method if <code>toRespectObjectContributions</code> is true.
 	 * </p>
 	 * 
 	 * @param aMenu
@@ -206,8 +172,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	}
 
 	private void createMenuGroups() {
-		MenuInsertionPoint[] customPoints = viewerDescriptor
-				.getCustomInsertionPoints();
+		MenuInsertionPoint[] customPoints = viewerDescriptor.getCustomInsertionPoints();
 
 		if (customPoints == null) {
 			menuGroups = DEFAULT_GROUPS;
@@ -218,9 +183,9 @@ public final class NavigatorActionService extends ActionGroup implements
 					menuGroups[i] = new Separator(customPoints[i].getName());
 				} else {
 					menuGroups[i] = new GroupMarker(customPoints[i].getName());
+				}
 			}
 		}
-	}
 	}
 
 	/**
@@ -228,9 +193,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	 */
 	private void addCommonActionProviderMenu(IMenuManager aMenu) {
 
-		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
-				.getInstance().findRelevantActionDescriptors(contentService,
-						getContext());
+		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager.getInstance().findRelevantActionDescriptors(contentService, getContext());
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
@@ -246,9 +209,9 @@ public final class NavigatorActionService extends ActionGroup implements
 	}
 
 	/**
-	 * Request that the service invoke extensions to fill the given IActionBars
-	 * with retargetable actions or view menu contributions from Action
-	 * Providers that are interested in the given selection.
+	 * Request that the service invoke extensions to fill the given IActionBars with retargetable
+	 * actions or view menu contributions from Action Providers that are interested in the given
+	 * selection.
 	 * 
 	 * @param theActionBars
 	 *            The action bars in use by the current view site.
@@ -259,13 +222,11 @@ public final class NavigatorActionService extends ActionGroup implements
 
 		theActionBars.clearGlobalActionHandlers();
 		ActionContext context = getContext();
-		if(context == null) {
+		if (context == null) {
 			context = new ActionContext(StructuredSelection.EMPTY);
 		}
 
-		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
-				.getInstance().findRelevantActionDescriptors(contentService,
-						context);
+		CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager.getInstance().findRelevantActionDescriptors(contentService, context);
 		if (providerDescriptors.length > 0) {
 			CommonActionProvider provider = null;
 			for (int i = 0; i < providerDescriptors.length; i++) {
@@ -290,10 +251,8 @@ public final class NavigatorActionService extends ActionGroup implements
 	 */
 	public void dispose() {
 		synchronized (actionProviderInstances) {
-			for (Iterator iter = actionProviderInstances.values().iterator(); iter
-					.hasNext();) {
-				CommonActionProvider element = (CommonActionProvider) iter
-						.next();
+			for (Iterator iter = actionProviderInstances.values().iterator(); iter.hasNext();) {
+				CommonActionProvider element = (CommonActionProvider) iter.next();
 				element.dispose();
 			}
 			actionProviderInstances.clear();
@@ -303,8 +262,7 @@ public final class NavigatorActionService extends ActionGroup implements
 	}
 
 	/**
-	 * Use the given memento to restore the state of each Action Provider as it
-	 * is initialized.
+	 * Use the given memento to restore the state of each Action Provider as it is initialized.
 	 * 
 	 * @param aMemento
 	 *            The memento retrieved from the dialog settings
@@ -314,20 +272,15 @@ public final class NavigatorActionService extends ActionGroup implements
 		memento = aMemento;
 
 		synchronized (actionProviderInstances) {
-			for (Iterator actionProviderIterator = actionProviderInstances
-					.values().iterator(); actionProviderIterator.hasNext();) {
-				final CommonActionProvider provider = (CommonActionProvider) actionProviderIterator
-						.next();
+			for (Iterator actionProviderIterator = actionProviderInstances.values().iterator(); actionProviderIterator.hasNext();) {
+				final CommonActionProvider provider = (CommonActionProvider) actionProviderIterator.next();
 				ISafeRunnable runnable = new ISafeRunnable() {
 					public void run() throws Exception {
 						provider.restoreState(memento);
 					}
 
 					public void handleException(Throwable exception) {
-						NavigatorPlugin
-								.logError(
-										0,
-										"Could not restore state for action provider " + provider.getClass(), exception); //$NON-NLS-1$
+						NavigatorPlugin.logError(0, "Could not restore state for action provider " + provider.getClass(), exception); //$NON-NLS-1$
 
 					}
 				};
@@ -349,8 +302,7 @@ public final class NavigatorActionService extends ActionGroup implements
 		memento = aMemento;
 		CommonActionProvider provider = null;
 		synchronized (actionProviderInstances) {
-			for (Iterator actionProviderIterator = actionProviderInstances
-					.values().iterator(); actionProviderIterator.hasNext();) {
+			for (Iterator actionProviderIterator = actionProviderInstances.values().iterator(); actionProviderIterator.hasNext();) {
 				provider = (CommonActionProvider) actionProviderIterator.next();
 				provider.saveState(memento);
 			}
@@ -359,41 +311,41 @@ public final class NavigatorActionService extends ActionGroup implements
 
 	private CommonActionProvider getActionProviderInstance(
 			CommonActionProviderDescriptor aProviderDescriptor) {
-		CommonActionProvider provider = (CommonActionProvider) actionProviderInstances
-				.get(aProviderDescriptor);
-		if (provider != null) {
-			return provider;
-		}
-		synchronized (actionProviderInstances) {
+		CommonActionProvider provider = null;
+		try {
 			provider = (CommonActionProvider) actionProviderInstances
 					.get(aProviderDescriptor);
-			if (provider == null) {
-				provider = aProviderDescriptor.createActionProvider();
-				if (provider != null) {
-					initialize(aProviderDescriptor.getId(), provider);
-					actionProviderInstances.put(aProviderDescriptor, provider);
-				} else {
-					actionProviderInstances.put(aProviderDescriptor,
-							(provider = SkeletonActionProvider.INSTANCE));
+			if (provider != null) {
+				return provider;
 			}
-		}
+			synchronized (actionProviderInstances) {
+				provider = (CommonActionProvider) actionProviderInstances
+						.get(aProviderDescriptor);
+				if (provider == null) {
+					provider = aProviderDescriptor.createActionProvider();
+					if (provider != null) {
+						initialize(aProviderDescriptor.getId(), provider);
+						actionProviderInstances.put(aProviderDescriptor, provider);
+					} else {
+						actionProviderInstances.put(aProviderDescriptor,
+								(provider = SkeletonActionProvider.INSTANCE));
+					}
+				}
+			}
+		} catch(Throwable t) {
+			NavigatorPlugin.logError(0, t.getMessage(), t);
 		}
 		return provider;
 	}
 
 	private void initialize(String id, CommonActionProvider anActionProvider) {
-		if (anActionProvider != null
-				&& anActionProvider != SkeletonActionProvider.INSTANCE) {
-			ICommonActionExtensionSite configuration = new CommonActionExtensionSite(
-					id, commonViewerSite, contentService, structuredViewer);
+		if (anActionProvider != null && anActionProvider != SkeletonActionProvider.INSTANCE) {
+			ICommonActionExtensionSite configuration = new CommonActionExtensionSite(id, commonViewerSite, contentService, structuredViewer);
 			anActionProvider.init(configuration);
 			anActionProvider.restoreState(memento);
-			anActionProvider.setContext(new ActionContext(
-					StructuredSelection.EMPTY));
+			anActionProvider.setContext(new ActionContext(StructuredSelection.EMPTY));
 			if (commonViewerSite instanceof ICommonViewerWorkbenchSite) {
-				anActionProvider
-						.fillActionBars(((ICommonViewerWorkbenchSite) commonViewerSite)
-								.getActionBars());
+				anActionProvider.fillActionBars(((ICommonViewerWorkbenchSite) commonViewerSite).getActionBars());
 			}
 		}
 	}
