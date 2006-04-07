@@ -214,8 +214,7 @@ public class CommonActionProviderDescriptor implements
 			context = new EvaluationContext(null, elements.next());
 			context.setAllowPluginActivation(true);
 			try { 
-				if (enablement.evaluate(context) == EvaluationResult.FALSE
-						|| enablement.evaluate(context) == EvaluationResult.NOT_LOADED) {
+				if (enablement.evaluate(context) != EvaluationResult.TRUE) {
 					return false;
 				}
 			} catch (CoreException e) {

@@ -111,7 +111,7 @@ public class CommonWizardDescriptor {
 	 */
 	public boolean isEnabledFor(Object anElement) {
 
-		if (enablement == null || anElement == null) {
+		if (enablement == null) {
 			return false;
 		}
 
@@ -170,6 +170,14 @@ public class CommonWizardDescriptor {
 	 */
 	public String getType() {
 		return type;
+	}
+	
+	/**
+	 * @return the declaring namespace.
+	 */
+	public String getNamespace() {
+		return configElement.getDeclaringExtension().getNamespaceIdentifier();
+
 	}
 
 }

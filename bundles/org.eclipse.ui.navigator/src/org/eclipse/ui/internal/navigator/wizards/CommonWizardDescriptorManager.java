@@ -72,15 +72,16 @@ public class CommonWizardDescriptorManager {
 	private void addCommonWizardDescriptor(CommonWizardDescriptor aDesc) {
 		if (aDesc == null) {
 			return;
+		} else if(aDesc.getWizardId() == null) {
+			NavigatorPlugin.logError(0, "A null wizardId was supplied for a commonWizard in " + aDesc.getNamespace(), null); //$NON-NLS-1$
 		}
 		synchronized (commonWizardDescriptors) {
-			Set descriptors = (HashSet) commonWizardDescriptors.get(aDesc
+			Set descriptors = (Set) commonWizardDescriptors.get(aDesc
 					.getType());
-			if (descriptors == null) {
-				descriptors = new HashSet();
-				commonWizardDescriptors.put(aDesc.getType(), descriptors);
+			if (descriptors == null) { 
+				commonWizardDescriptors.put(aDesc.getType(), descriptors = new HashSet());
 			}
-			if (descriptors.contains(aDesc) == false) {
+			if (!descriptors.contains(aDesc)) {
 				descriptors.add(aDesc);
 			}
 		}
@@ -111,7 +112,7 @@ public class CommonWizardDescriptorManager {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
 					.next();
 
-			if (descriptor.getWizardId() != null && descriptor.isEnabledFor(anElement)) {
+			if (descriptor.isEnabledFor(anElement)) {
 				descriptorIds.add(descriptor.getWizardId());
 			}
 		}
@@ -169,4 +170,5 @@ public class CommonWizardDescriptorManager {
 			return super.readElement(anElement);
 		}
 	}
+	 
 }
