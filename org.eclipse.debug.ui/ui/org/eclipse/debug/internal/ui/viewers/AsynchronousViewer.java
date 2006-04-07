@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.ClearDefaultBreakpointGroupAction;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
@@ -45,6 +46,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -916,12 +918,16 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
                     int index = indicies[i];
                     Widget item = getChildWidget(widget, index);
                     if (item != null) {
-                        if (index < children.length) {
-                        	ModelNode childNode = children[index];
-							mapElement(childNode, item);
-							item.setData(childNode.getElement());
-                            internalRefresh(childNode);
-                        }
+                    	if (isVisible(widget)) {
+							if (index < children.length) {
+								ModelNode childNode = children[index];
+								mapElement(childNode, item);
+								item.setData(childNode.getElement());
+								internalRefresh(childNode);
+							}
+                    	} else {
+                    		clear(item);
+                    	}
                     }
                 }
                 setItemCount(widget, children.length);
@@ -932,6 +938,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
         attemptPendingUpdates();
     }
         
+    protected abstract void clear(Widget item);
+
+	protected boolean isVisible(Widget widget) {
+    	return true;
+    }
+    
+    
     /**
      * Returns the child widet at the given index for the given parent or <code>null</code>
      * 

@@ -857,19 +857,31 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected void clear(Widget widget) {
     	if (widget instanceof TreeItem) {
     		TreeItem item = (TreeItem) widget;
+    		TreeItem parentItem = item.getParentItem();
+    		if (parentItem == null) {
+    			fTree.clear(fTree.indexOf(item), true);
+    		} else {
+    			parentItem.clear(parentItem.indexOf(item), true);
+    		}
     		item.clearAll(true);
     	} else {
     		fTree.clearAll(true);
     	}
     }
 
-    protected boolean isVisible(Widget widget) {
+    protected boolean isVisible(Widget widget) {    	
         if (widget instanceof Tree) {
             return true;
         } else {
-            TreeItem item = (TreeItem) widget;
-            Rectangle itemBounds = item.getBounds();
-            return !NOT_VISIBLE.equals(itemBounds);
+        	Rectangle treeBounds = getTree().getBounds();
+        	TreeItem item = (TreeItem) widget;
+        	Rectangle itemBounds = item.getBounds();
+
+        	if (itemBounds.y < 0 || itemBounds.y+itemBounds.height > treeBounds.height) {
+        		return false;
+        	} else {
+        		return true;
+        	}
         }
     }
 
