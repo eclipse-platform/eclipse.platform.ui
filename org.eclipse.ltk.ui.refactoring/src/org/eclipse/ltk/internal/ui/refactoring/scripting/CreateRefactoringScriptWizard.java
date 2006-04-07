@@ -51,6 +51,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
@@ -292,7 +293,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	public void setRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies) {
 		Assert.isNotNull(proxies);
 		fRefactoringDescriptors= proxies;
-		getContainer().updateButtons();
+		final IWizardContainer wizard= getContainer();
+		if (wizard.getCurrentPage() != null)
+			wizard.updateButtons();
 	}
 
 	/**
@@ -303,7 +306,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	 */
 	public void setRefactoringScript(final URI location) {
 		fScriptLocation= location;
-		getContainer().updateButtons();
+		final IWizardContainer wizard= getContainer();
+		if (wizard.getCurrentPage() != null)
+			wizard.updateButtons();
 	}
 
 	/**
@@ -316,6 +321,8 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	 */
 	public void setUseClipboard(final boolean clipboard) {
 		fUseClipboard= clipboard;
-		getContainer().updateButtons();
+		final IWizardContainer wizard= getContainer();
+		if (wizard.getCurrentPage() != null)
+			wizard.updateButtons();
 	}
 }

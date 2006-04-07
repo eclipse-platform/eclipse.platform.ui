@@ -22,6 +22,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardContainer;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -177,7 +178,9 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 */
 	public void setRefactoringHistory(final RefactoringHistory history) {
 		fRefactoringHistory= history;
-		getContainer().updateButtons();
+		final IWizardContainer wizard= getContainer();
+		if (wizard.getCurrentPage() != null)
+			wizard.updateButtons();
 	}
 
 	/**
@@ -188,6 +191,8 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	 */
 	public void setRefactoringScript(final URI uri) {
 		fScriptLocation= uri;
-		getContainer().updateButtons();
+		final IWizardContainer wizard= getContainer();
+		if (wizard.getCurrentPage() != null)
+			wizard.updateButtons();
 	}
 }
