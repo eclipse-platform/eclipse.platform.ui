@@ -100,8 +100,7 @@ public interface INavigatorActivationService {
 	public void persistExtensionActivations();
 
 	/**
-	 * Request notification when the activation state changes for the given
-	 * viewer id.
+	 * Request notification when the activation state changes.
 	 * 
 	 * @param aListener
 	 *            An implementation of {@link IExtensionActivationListener}
