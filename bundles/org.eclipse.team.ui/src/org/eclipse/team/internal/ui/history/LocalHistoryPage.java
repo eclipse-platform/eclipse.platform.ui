@@ -73,7 +73,7 @@ public class LocalHistoryPage extends HistoryPage {
 	
 	public boolean inputSet() {
 		currentFileRevision = null;
-		IFile tempFile = (IFile) getInput();
+		IFile tempFile = getFile();
 		this.file = tempFile;
 		if (tempFile == null)
 			return false;
@@ -90,6 +90,14 @@ public class LocalHistoryPage extends HistoryPage {
 		//always refresh the history if the input gets set
 		refreshHistory(true);
 		return true;
+	}
+
+	private IFile getFile() {
+		Object obj = getInput();
+		if (obj instanceof IFile)
+			return (IFile) obj;
+		
+		return null;
 	}
 
 	private void refreshHistory(boolean refetch) {
