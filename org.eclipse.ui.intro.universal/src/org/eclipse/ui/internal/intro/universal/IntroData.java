@@ -93,6 +93,9 @@ public class IntroData {
 	                bundle);
 	    IntroContentParser parser = new IntroContentParser(content);
 	    Document dom = parser.getDocument();
+	    // dom can be null if the content file cannot be found
+	    if (dom==null)
+	    	return;
 	    Element root = dom.getDocumentElement();
 	    Element extension = null;
 	    NodeList children = root.getChildNodes();
