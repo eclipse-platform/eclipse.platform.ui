@@ -47,6 +47,7 @@ public class EclipseTest extends ResourceTest {
     protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
 	protected static final int RANDOM_CONTENT_SIZE = 3876;
 	protected static String eol = System.getProperty("line.separator");
+	private static boolean modelSync = true;
     private static final long LOCK_EXPIRATION_THRESHOLD = 1000 * 60 * 10; // 10 minutes
     private static final int MAX_LOCK_ATTEMPTS = 60 * 30; // 30 minutes
     private String lockId;
@@ -65,6 +66,14 @@ public class EclipseTest extends ResourceTest {
 				return null;
 			}
 		}
+	}
+	
+	public static boolean isModelSyncEnabled() {
+		return modelSync;
+	}
+	
+	public static void setModelSync(boolean modelSync) {
+		EclipseTest.modelSync = modelSync;
 	}
 	
 	public EclipseTest() {
@@ -246,7 +255,7 @@ public class EclipseTest extends ResourceTest {
     protected void update(ResourceMapping[] mappings, LocalOption[] options) throws CVSException {
         if (options == null)
             options = Command.NO_LOCAL_OPTIONS;
-        if (options == Command.NO_LOCAL_OPTIONS) {
+        if (isModelSyncEnabled() && options == Command.NO_LOCAL_OPTIONS) {
 	        executeHeadless(new ModelUpdateOperation(null, mappings, false) {
 	        	protected boolean isAttemptHeadlessMerge() {
 	        		return true;
@@ -269,7 +278,7 @@ public class EclipseTest extends ResourceTest {
         }
     }
 
-    protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
+	protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
 		IResource[] resources = getResources(container, hierarchy);
 		replace(resources, tag, recurse);
 	}
@@ -280,20 +289,24 @@ public class EclipseTest extends ResourceTest {
 	}
 	
     protected void replace(ResourceMapping[] mappings) throws CVSException {
-        executeHeadless(new ModelReplaceOperation(null, mappings, false) {
-        	protected boolean promptForOverwrite() {
-        		return true;
-        	}
-        	protected void handlePreviewRequest() {
-        		// Don't prompt
-        	}
-        	protected void handleMergeFailure(IStatus status) {
-        		// Don't prompt
-        	}
-        	protected void handleValidationFailure(IStatus status) {
-        		// Don't prompt
-        	}
-        });
+    	if (isModelSyncEnabled()) {
+	        executeHeadless(new ModelReplaceOperation(null, mappings, false) {
+	        	protected boolean promptForOverwrite() {
+	        		return true;
+	        	}
+	        	protected void handlePreviewRequest() {
+	        		// Don't prompt
+	        	}
+	        	protected void handleMergeFailure(IStatus status) {
+	        		// Don't prompt
+	        	}
+	        	protected void handleValidationFailure(IStatus status) {
+	        		// Don't prompt
+	        	}
+	        });
+    	} else {
+    		executeHeadless(new ReplaceOperation(null, mappings, null));
+    	}
     }
     
 	public void updateProject(IProject project, CVSTag tag, boolean ignoreLocalChanges) throws TeamException {

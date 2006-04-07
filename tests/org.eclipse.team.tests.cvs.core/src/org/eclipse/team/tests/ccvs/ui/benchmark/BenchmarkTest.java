@@ -24,10 +24,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
-import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
-import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.test.performance.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
@@ -39,7 +36,6 @@ public abstract class BenchmarkTest extends EclipseTest {
 
 	private HashMap groups;
     private PerformanceMeter currentMeter;
-    private static SyncInfoSource source = new SynchronizeViewTestAdapter();
 
     protected BenchmarkTest() {
 	}
@@ -76,7 +72,7 @@ public abstract class BenchmarkTest extends EclipseTest {
     }
 	
     /**
-     * Create a set of perforance meters that can be started with the
+     * Create a set of performance meters that can be started with the
      * startGroup method.
      * @param performance_groups
      */
@@ -112,7 +108,7 @@ public abstract class BenchmarkTest extends EclipseTest {
     
     /**
 	 * Commit the performance meters that were created by setupGroups and
-	 * started and stoped using startGroup/endGroup
+	 * started and stopped using startGroup/endGroup
 	 */
     protected void commitGroups(boolean global) {
         for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
@@ -121,6 +117,11 @@ public abstract class BenchmarkTest extends EclipseTest {
             if(global)
             	break;
         }
+    }
+    
+    protected void setUp() throws Exception {
+    	super.setUp();
+    	setModelSync(false);
     }
     
     /* (non-Javadoc)
