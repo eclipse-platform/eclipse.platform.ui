@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * FieldAssistColors defines protocol for retrieving colors that can be used to
@@ -33,6 +40,21 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  */
 public class FieldAssistColors {
+
+	private static boolean DEBUG = false;
+
+	/*
+	 * Keys are background colors, values are the color with the alpha value
+	 * applied
+	 */
+	private static Map requiredFieldColorMap = new HashMap();
+
+	/*
+	 * Keys are colors we have created, values are the displays on which they
+	 * were created.
+	 */
+	private static Map displays = new HashMap();
+
 	/**
 	 * Compute the RGB of the color that should be used for the background of a
 	 * control to indicate that the control has an error. Because the color
@@ -52,58 +74,23 @@ public class FieldAssistColors {
 	 */
 	public static RGB computeErrorFieldBackgroundRGB(Control control) {
 		/*
-		 * There is probably a much more elegant way to do this. Suggestions
-		 * welcome. The current computation uses the JFace error text color to
-		 * affect the color of the control background. The error color is
-		 * examined and the computation takes into account both the magnitude of
-		 * each color component in the error color and significant variation of
-		 * any particular R,G,B value from the average magnitude. The result is
-		 * that a color skewed heavily toward a R,G,B affects the control
-		 * background much more obviously than a color where the RGB values are
-		 * similar.
+		 * Use a 10% alpha of the error color applied on top of the widget
+		 * background color.
 		 */
-		Color background = control.getBackground();
-		Color error = JFaceColors.getErrorText(control.getDisplay());
+		Color dest = control.getBackground();
+		Color src = JFaceColors.getErrorText(control.getDisplay());
+		int destRed = dest.getRed();
+		int destGreen = dest.getGreen();
+		int destBlue = dest.getBlue();
 
-		// Compute the average magnitude.
-		int average = (error.getRed() + error.getBlue() + error.getGreen()) / 3;
-		// RGB values are increased by a combination of the magnitude of each
-		// color component and its difference from the average.
-		int rMore = (int) (0.08 * error.getRed())
-				+ (int) (0.05 * (error.getRed() - average));
-		int gMore = (int) (0.08 * error.getGreen())
-				+ (int) (0.05 * (error.getGreen() - average));
-		int bMore = (int) (0.08 * error.getBlue())
-				+ (int) (0.05 * (error.getBlue() - average));
+		// 10% alpha
+		int alpha = (int) (0xFF * 0.10f);
+		// Alpha blending math
+		destRed += (src.getRed() - destRed) * alpha / 0xFF;
+		destGreen += (src.getGreen() - destGreen) * alpha / 0xFF;
+		destBlue += (src.getBlue() - destBlue) * alpha / 0xFF;
 
-		// Now compute the RGB components by either increasing each
-		// component, or if they are at full magnitude, decreasing the
-		// other components.
-		int r = background.getRed();
-		int g = background.getGreen();
-		int b = background.getBlue();
-		if (r <= 255 - rMore) {
-			r += rMore;
-		} else {
-			g -= rMore;
-			b -= rMore;
-		}
-		if (g <= 255 - gMore) {
-			g += gMore;
-		} else {
-			r -= gMore;
-			b -= gMore;
-		}
-		if (b <= 255 - bMore) {
-			b += bMore;
-		} else {
-			r -= bMore;
-			g -= bMore;
-		}
-		r = Math.max(0, Math.min(255, r));
-		g = Math.max(0, Math.min(255, g));
-		b = Math.max(0, Math.min(255, b));
-		return new RGB(r, g, b);
+		return new RGB(destRed, destGreen, destBlue);
 	}
 
 	/**
@@ -118,8 +105,108 @@ public class FieldAssistColors {
 	 * @return the color used to indicate that a field is required.
 	 */
 	public static Color getRequiredFieldBackgroundColor(Control control) {
-		return control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		final Display display = control.getDisplay();
 
+		// If we are in high contrast mode, then don't apply an alpha
+		if (display.getHighContrast()) {
+			return control.getBackground();
+		}
+
+		// See if a color has already been computed
+		Object storedColor = requiredFieldColorMap.get(control.getBackground());
+		if (storedColor != null) {
+			return (Color) storedColor;
+		}
+
+		// There is no color already created, so we must create one.
+		// Use a 15% alpha of yellow on top of the widget background.
+		Color dest = control.getBackground();
+		Color src = display.getSystemColor(SWT.COLOR_YELLOW);
+		int destRed = dest.getRed();
+		int destGreen = dest.getGreen();
+		int destBlue = dest.getBlue();
+
+		// 15% alpha
+		int alpha = (int) (0xFF * 0.15f);
+		// Alpha blending math
+		destRed += (src.getRed() - destRed) * alpha / 0xFF;
+		destGreen += (src.getGreen() - destGreen) * alpha / 0xFF;
+		destBlue += (src.getBlue() - destBlue) * alpha / 0xFF;
+
+		// create the color
+		Color color = new Color(display, destRed, destGreen, destBlue);
+		// record the color in a map using the original color as the key
+		requiredFieldColorMap.put(dest, color);
+		// If we have never created a color on this display before, install
+		// a dispose exec on the display.
+		if (!displays.containsValue(display)) {
+			display.disposeExec(new Runnable() {
+				public void run() {
+					disposeColors(display);
+				}
+			});
+		}
+		// Record the color and its display in a map for later disposal.
+		displays.put(color, display);
+		return color;
+	}
+
+	/*
+	 * Dispose any colors that were allocated for the given display.
+	 */
+	private static void disposeColors(Display display) {
+		List toBeRemoved = new ArrayList(1);
+
+		if (DEBUG) {
+			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
+			System.out.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+		}
+
+		// Look for any stored colors that were created on this display
+		for (Iterator i = displays.keySet().iterator(); i.hasNext();) {
+			Color color = (Color) i.next();
+			if (((Display) displays.get(color)).equals(display)) {
+				// The color is on this display. Mark it for removal.
+				toBeRemoved.add(color);
+
+				// Now look for any references to it in the required field color
+				// map
+				List toBeRemovedFromRequiredMap = new ArrayList(1);
+				for (Iterator iter = requiredFieldColorMap.keySet().iterator(); iter
+						.hasNext();) {
+					Color bgColor = (Color) iter.next();
+					if (((Color) requiredFieldColorMap.get(bgColor))
+							.equals(color)) {
+						// mark it for removal from the required field color map
+						toBeRemovedFromRequiredMap.add(bgColor);
+					}
+				}
+				// Remove references in the required field map now that
+				// we are done iterating.
+				for (int j = 0; j < toBeRemovedFromRequiredMap.size(); j++) {
+					requiredFieldColorMap.remove(toBeRemovedFromRequiredMap
+							.get(j));
+				}
+			}
+		}
+		// Remove references in the display map now that we are
+		// done iterating
+		for (int i = 0; i < toBeRemoved.size(); i++) {
+			Color color = (Color) toBeRemoved.get(i);
+			// Removing from the display map must be done before disposing the
+			// color or else the comparison between this color and the one
+			// in the map will fail.
+			displays.remove(color);
+			// Dispose it
+			if (DEBUG) {
+				System.out.println("Disposing color " + color.toString()); //$NON-NLS-1$
+			}
+			color.dispose();
+		}
+		if (DEBUG) {
+			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
+			System.out.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+		}
 	}
 
 }
