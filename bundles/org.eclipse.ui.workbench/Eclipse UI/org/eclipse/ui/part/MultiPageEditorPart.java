@@ -794,4 +794,19 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	protected void setPageText(int pageIndex, String text) {
 		getItem(pageIndex).setText(text);
 	}
+
+	/**
+	 * If there is an adapter registered against the subclass of
+	 * MultiPageEditorPart return that. Otherwise, delegate to the internal
+	 * editor.
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		Object result = super.getAdapter(adapter);
+		if (result == null && getActiveEditor() != null) {
+			result = getActiveEditor().getAdapter(adapter);
+		}
+		return result;
+	}
 }
