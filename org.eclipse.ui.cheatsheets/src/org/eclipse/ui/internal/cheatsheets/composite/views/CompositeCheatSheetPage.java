@@ -179,6 +179,19 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		mform.getForm().setText(model.getName());
 		String explorerId = model.getTaskExplorerId();
 		setCurrentExplorerFromId(explorerId);
+		String selectedTaskId = (String) layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
+		ICompositeCheatSheetTask selectedTask= null; 
+		if (selectedTaskId != null) {
+			selectedTask = model.getDependencies().getTask(selectedTaskId);
+			if (selectedTask != null)  {
+				currentExplorer.setSelection(new StructuredSelection(selectedTask), true);
+			}
+		}
+		if (selectedTask != null) {
+			updateSelectedTask(selectedTask); 
+		} else {
+			updateSelectedTask(model.getRootTask());
+		}
 		model.addObserver(new Observer() {
 			public void update(Observable o, Object arg) {
 				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)arg;
@@ -187,14 +200,6 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				updateTask(task);
 			}
 		});
-		String selectedTaskId = (String) layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
-		if (selectedTaskId != null) {
-			AbstractTask selectedTask =
-			    model.getDependencies().getTask(selectedTaskId);
-			if (selectedTask != null)  {
-				currentExplorer.setSelection(new StructuredSelection(selectedTask), true);
-			}
-		}
 	}
 
 	private void setCurrentExplorerFromId(String explorerId) {
@@ -260,7 +265,14 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 
 	private void updateForSelection(ISelection selection) {
-		selectedTask = (ICompositeCheatSheetTask)((IStructuredSelection)selection).getFirstElement();
+		Object selectedElement = ((IStructuredSelection)selection).getFirstElement();
+		if (selectedElement instanceof ICompositeCheatSheetTask) {
+			updateSelectedTask((ICompositeCheatSheetTask)selectedElement);
+		}
+	}
+	
+	private void updateSelectedTask(ICompositeCheatSheetTask task) {
+		selectedTask = task;
 		updateTask(selectedTask);
 	}
 
