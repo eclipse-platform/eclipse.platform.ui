@@ -30,6 +30,9 @@
              <insertionPoint name="group.reorganize" />         
              <insertionPoint
                    name="group.port"
+                   separator="true"/>     
+             <insertionPoint
+                   name="group.build"
                    separator="true"/> 
              <insertionPoint
                    name="group.generate"
@@ -160,6 +163,14 @@
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.WorkManagementActionProvider"
               id="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
+           <enablement>
+              <adapt type="org.eclipse.core.resources.IResource"/>
+           </enablement>
+        </actionProvider>
+        
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.ResourceMgmtActionProvider"
+              id="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
            <enablement>
               <adapt type="org.eclipse.core.resources.IResource"/>
            </enablement>
