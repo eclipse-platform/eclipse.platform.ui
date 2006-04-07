@@ -24,10 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.DecoratedField;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.TextContentAdapter;
-import org.eclipse.jface.fieldassist.TextControlCreator;
+import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -54,7 +51,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-import org.eclipse.ui.internal.fieldassist.RequiredFieldColorer;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -149,14 +145,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
         label.setLayoutData(data);
         label.setFont(font);
 
-        DecoratedField field = new DecoratedField(composite, 
-        		SWT.SINGLE | SWT.BORDER, new TextControlCreator());
-		field.addFieldDecoration(FieldDecorationRegistry.getDefault().getFieldDecoration(
-				FieldDecorationRegistry.DEC_REQUIRED), SWT.BOTTOM
-				| SWT.LEFT, false);
-
-        text = (Text)field.getControl();
-        field.getLayoutControl().setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+        text = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         text.setFont(font);
         text.addModifyListener(new ModifyListener() {
@@ -164,8 +154,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
                 validateInput();
             }
         });
-        text.addFocusListener(new RequiredFieldColorer(text, new TextContentAdapter()));
         text.setFocus();
+        text.setBackground(FieldAssistColors.getRequiredFieldBackgroundColor(text));
 
         label = new Label(composite, SWT.WRAP);
         label.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_label_tree);
@@ -189,7 +179,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
         data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
         data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-        data.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
         tree.getControl().setLayoutData(data);
         tree.getControl().setFont(font);
 
@@ -516,7 +505,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
         String errorMessage = null;
         String infoMessage= null;
         String newText = text.getText();
-        boolean showErrorMessage = true;
 
         if (newText.equals(newText.trim()) == false) {
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace; 
@@ -526,16 +514,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         }
         if (newText.equals("")) { //$NON-NLS-1$
             errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
-            /*
-             * Required field emphasis is already showing, so no need to
-             * actually show an error.  This is a temporary hack.  We need
-             * cleaner code for these cases where the button should still
-             * be disabled but we don't want to show an error.
-             * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=120238
-             */
-            showErrorMessage = false;
         }
-
         if (errorMessage == null
                 && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
             IWorkingSet[] workingSets = PlatformUI.getWorkbench()
@@ -550,9 +529,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
         	infoMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_resourceMustBeChecked;
         }
         setMessage(infoMessage, INFORMATION);
-        if (showErrorMessage) {
-        	setErrorMessage(errorMessage);
-        }
+        setErrorMessage(errorMessage);
         setPageComplete(errorMessage == null);
     }
 }
