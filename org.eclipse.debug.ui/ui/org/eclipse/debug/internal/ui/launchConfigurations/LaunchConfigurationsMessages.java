@@ -38,7 +38,9 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CommonTab_8;
 	public static String CommonTab_9;
 
-    public static String CompileErrorProjectPromptStatusHandler_0;
+	public static String CompileErrorProjectPromptStatusHandler_0;
+
+	public static String CompileErrorProjectPromptStatusHandler_1;
 
 	public static String CompileErrorPromptStatusHandler_0;
 	public static String CompileErrorPromptStatusHandler_1;

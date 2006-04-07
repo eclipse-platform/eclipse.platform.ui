@@ -53,10 +53,9 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 					projects.add(arg);
 				}
 			}
-		}
-				
+		}	
 		Shell shell = DebugUIPlugin.getShell();
-		String title = LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
+		
 		StringBuffer projectMessage = new StringBuffer();
 		for (int i = 0; i < projects.size(); i++) {
 			if (i > 0) {
@@ -64,7 +63,12 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 			projectMessage.append(((IProject)projects.get(i)).getName());
 		}
-		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage.toString()}); 
+		String plural = ""; //$NON-NLS-1$
+		if(projects.size() > 1) {
+			plural = "s"; //$NON-NLS-1$
+		}
+		String title =  MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0, new String[] {plural}); 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{plural, projectMessage.toString()}); 
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
@@ -73,15 +77,23 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 				return Boolean.TRUE;
 			}
 		}
-
-		MessageDialog dialog = new MessageDialog(shell, title, null, message, MessageDialog.QUESTION,new String[] {LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
-        int returnValue = dialog.open();
-        if (returnValue == 0) {
-            store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+		MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, 
+				title, 
+				null, 
+				message, 
+				MessageDialog.QUESTION,
+				new String[] {LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0, IDialogConstants.CANCEL_LABEL}, 
+				0,
+				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
+				false);
+        if (dialog.open() == IDialogConstants.INTERNAL_ID) {
+        	if(dialog.getToggleState()) {
+        		store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+        	}
             return Boolean.TRUE;
-        } else if (returnValue == 1)
-            return Boolean.TRUE;
-        else
+        } 
+        else {
             return Boolean.FALSE;
+        }
 	}
 }
