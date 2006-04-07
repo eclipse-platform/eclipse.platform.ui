@@ -11,16 +11,38 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
-import java.io.File;
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
@@ -105,7 +127,7 @@ public class FormToolkit {
 						continue;
 					}
 					if (c instanceof Text || c instanceof Table
-							|| c instanceof Tree || c instanceof TableTree)
+							|| c instanceof Tree)
 						continue;
 				}
 				if (!inactiveBorder
@@ -125,7 +147,7 @@ public class FormToolkit {
 						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1,
 								b.height + 3);
 				} else if (inactiveBorder || c instanceof Table
-						|| c instanceof Tree || c instanceof TableTree) {
+						|| c instanceof Tree) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(colors.getBorderColor());
@@ -793,23 +815,11 @@ public class FormToolkit {
 	private void initializeBorderStyle() {
 		String osname = System.getProperty("os.name"); //$NON-NLS-1$
 		if (osname.equals("Windows XP")) { //$NON-NLS-1$
-			/*
-			String javaHome = System.getProperty("java.home"); //$NON-NLS-1$
-			File homeDir = new File(javaHome);
-			File binDir = new File(homeDir, "bin"); //$NON-NLS-1$
-			File manifest = new File(binDir, "javaw.exe.manifest"); //$NON-NLS-1$
-			if (manifest.exists()) {
-				// Skinned widgets used - check for Windows Classic
-				// If not used, set the style to BORDER
-				RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
-					borderStyle = SWT.BORDER;
-			}
-			*/
-			// Since 3.2, SWT can use skinned widgets
-			// without a manifest file. We don't need 
-			// any computation to turn the native border on.
-			borderStyle = SWT.BORDER;
+			// Skinned widgets used on XP - check for Windows Classic
+			// If not used, set the style to BORDER
+			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
+				borderStyle = SWT.BORDER;
 		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
 	}
