@@ -123,6 +123,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private Button fShareHistoryButton= null;
 
 	/**
+	 * Creates a new refactoring property page.
+	 */
+	public RefactoringPropertyPage() {
+		noDefaultAndApplyButton();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected Control createContents(final Composite parent) {
@@ -142,7 +149,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final Label label= new Label(composite, SWT.WRAP);
 		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
 
-		final ManageRefactoringHistoryControl control= new ManageRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, true));
+		final ManageRefactoringHistoryControl control= new ManageRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false));
 		control.createControl();
 		control.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
 

@@ -30,14 +30,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -241,9 +237,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		}
 	}
 
-	/** The caption image */
-	private Image fCaptionImage= null;
-
 	/**
 	 * The checked refactoring descriptors (element type:
 	 * <code>RefactoringDescriptorProxy</code>)
@@ -311,7 +304,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * @param parent
 	 *            the parent composite
 	 */
-	protected void createButtonBar(final Composite parent) {
+	protected void createRightButtonBar(final Composite parent) {
 		// Do nothing
 	}
 
@@ -320,29 +313,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void createControl() {
 		RefactoringCore.getHistoryService().connect();
-		fCaptionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
 		GridLayout layout= new GridLayout(2, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.horizontalSpacing= 0;
 		layout.verticalSpacing= 0;
 		setLayout(layout);
-		final GridData data= new GridData();
-		data.grabExcessHorizontalSpace= true;
-		data.grabExcessVerticalSpace= true;
-		data.horizontalAlignment= SWT.FILL;
-		data.verticalAlignment= SWT.FILL;
-		setLayoutData(data);
+		setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fSplitterControl= new Splitter(this, SWT.VERTICAL);
-		fSplitterControl.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
-		fSplitterControl.addDisposeListener(new DisposeListener() {
-
-			public final void widgetDisposed(final DisposeEvent event) {
-				if (fCaptionImage != null)
-					fCaptionImage.dispose();
-			}
-		});
-		createButtonBar(this);
+		fSplitterControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+		createRightButtonBar(this);
 		final Composite leftPane= new Composite(fSplitterControl, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -350,13 +330,12 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
-		if (fControlConfiguration.isTimeDisplayed())
-			fHistoryPane.setImage(fCaptionImage);
 		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
 		if (!fControlConfiguration.isTimeDisplayed())
 			fHistoryViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		fHistoryViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer.setUseHashlookup(true);
 		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
 		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());

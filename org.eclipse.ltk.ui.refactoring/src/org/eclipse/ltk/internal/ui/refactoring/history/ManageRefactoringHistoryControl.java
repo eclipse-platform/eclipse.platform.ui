@@ -62,7 +62,28 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void createButtonBar(final Composite parent) {
+	public void createControl() {
+		super.createControl();
+		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
+		setLayoutData(data);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected TreeViewer createHistoryViewer(final Composite parent) {
+		Assert.isNotNull(parent);
+		if (fControlConfiguration.isCheckableViewer())
+			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		else
+			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void createRightButtonBar(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
 		final GridLayout layout= new GridLayout(1, false);
@@ -110,30 +131,6 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	public void createControl() {
-		super.createControl();
-		final GridData data= new GridData();
-		data.grabExcessHorizontalSpace= true;
-		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
-		data.horizontalAlignment= SWT.FILL;
-		data.verticalAlignment= SWT.FILL;
-		setLayoutData(data);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected TreeViewer createHistoryViewer(final Composite parent) {
-		Assert.isNotNull(parent);
-		if (fControlConfiguration.isCheckableViewer())
-			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-		else
-			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-	}
-
-	/**
 	 * Returns the delete all button.
 	 * 
 	 * @return the delete all button
@@ -174,6 +171,7 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 	protected void handleSelectionChanged(final IStructuredSelection selection) {
 		super.handleSelectionChanged(selection);
 		fEditButton.setEnabled(getSelectedDescriptors().length == 1);
+		fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
 	/**
