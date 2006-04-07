@@ -146,8 +146,14 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	 * @see org.eclipse.team.ui.mapping.ModelProviderOperation#shouldRun()
 	 */
 	public boolean shouldRun() {
-		// TODO: may be too long for enablement
-		return getTargetDiffs().length > 0;
+		Object[] elements = getElements();
+		for (int i = 0; i < elements.length; i++) {
+			Object object = elements[i];
+			if (Utils.getResourceMapping(internalGetElement(object)) != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected IDiff[] getTargetDiffs() {
@@ -171,6 +177,14 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
 		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
 	}
 
 }

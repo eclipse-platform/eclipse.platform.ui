@@ -15,18 +15,23 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.ide.IDE;
 
-public abstract class ResourceMergeActionHandler extends MergeActionHandler {
+public abstract class ResourceMergeActionHandler extends MergeActionHandler implements IDiffChangeListener {
 
 	public ResourceMergeActionHandler(ISynchronizePageConfiguration configuration) {
 		super(configuration);
+		getSynchronizationContext().getDiffTree().addDiffChangeListener(this);
 	}
 
 	/**
@@ -101,6 +106,23 @@ public abstract class ResourceMergeActionHandler extends MergeActionHandler {
 	 */
 	protected boolean confirmSaveOfDirtyEditor() {
 		return true;
+	}
+	
+	protected ISynchronizationContext getSynchronizationContext() {
+		return (ISynchronizationContext)getConfiguration().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+	}
+	
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
+		// Nothing to do
+	}
+	
+	public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				updateEnablement(getStructuredSelection());
+			}
+		}, (StructuredViewer)getConfiguration().getPage().getViewer());
+		
 	}
 
 }

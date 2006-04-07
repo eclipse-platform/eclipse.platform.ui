@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -51,6 +52,13 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 					try {
 						IMergeContext context = (IMergeContext)getContext();
 						IDiff[] diffs = getTargetDiffs();
+						if (diffs.length == 0) {
+							Utils.syncExec(new Runnable() {
+								public void run() {
+									MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_6, TeamUIMessages.ResourceMergeHandler_7);
+								}
+							}, (StructuredViewer)getConfiguration().getPage().getViewer());
+						}
 						IStatus status = context.merge(diffs, overwrite, monitor);
 						if (!status.isOK())
 							throw new CoreException(status);
@@ -99,6 +107,11 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 	public void updateEnablement(IStructuredSelection selection) {
 		synchronized (this) {
 			operation = null;
+		}
+		int mode = getConfiguration().getMode();
+		if (mode == ISynchronizePageConfiguration.OUTGOING_MODE && !overwrite) {
+			setEnabled(false);
+			return;
 		}
 		super.updateEnablement(selection);
 	}

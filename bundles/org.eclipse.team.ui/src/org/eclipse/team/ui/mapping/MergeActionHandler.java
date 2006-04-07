@@ -91,7 +91,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 * By default, this method uses the <code>shouldRun</code>
 	 * method of the handler's operation to determine the enablement
 	 * of this handler. Subclasses may override but should
-	 * either still invoke this method or {@link #setEnabled(boolean)}
+	 * either still invoke this method or call {@link #setEnabled(boolean)}
 	 * to set the enablement.
 	 * @param selection the selection
 	 */

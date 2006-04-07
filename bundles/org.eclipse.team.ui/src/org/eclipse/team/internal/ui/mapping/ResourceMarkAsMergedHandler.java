@@ -123,6 +123,14 @@ public class ResourceMarkAsMergedHandler extends ResourceMergeActionHandler {
 		synchronized (this) {
 			operation = null;
 		}
+		int mode = getConfiguration().getMode();
+		if ((mode == ISynchronizePageConfiguration.OUTGOING_MODE 
+				&& getSynchronizationContext().getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK) == 0)
+				|| (getSynchronizationContext().getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK) == 0
+						&& getSynchronizationContext().getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) == 0)) {
+			setEnabled(false);
+			return;
+		}
 		super.updateEnablement(selection);
 	}
 	

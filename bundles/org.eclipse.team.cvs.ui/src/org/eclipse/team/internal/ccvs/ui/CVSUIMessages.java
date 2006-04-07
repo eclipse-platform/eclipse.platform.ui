@@ -35,6 +35,8 @@ public class CVSUIMessages extends NLS {
 	public static String CommitAction_0;
 	public static String CommitAction_1;
 	public static String CommitAction_2;
+	public static String CreatePatchAction_0;
+	public static String CreatePatchAction_1;
 	public static String CVSHistoryPage_CollapseAllAction;
 	public static String CVSHistoryPage_CollapseAllTooltip;
 	public static String CVSHistoryPage_CompareModeTooltip;
