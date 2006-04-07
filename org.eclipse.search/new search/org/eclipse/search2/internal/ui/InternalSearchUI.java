@@ -81,13 +81,21 @@ public class InternalSearchUI {
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
-			ThrottlingProgressMonitor realMonitor= new ThrottlingProgressMonitor(monitor, 0.5f);
 			fSearchJobRecord.job= this;
 			searchJobStarted(fSearchJobRecord);
 			IStatus status= null;
+			int origPriority= Thread.currentThread().getPriority();
+			try {
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+			}
+			catch (SecurityException e) {}
 			try{
-				status= fSearchJobRecord.query.run(realMonitor); 
+				status= fSearchJobRecord.query.run(monitor); 
 			} finally {
+				try {
+					Thread.currentThread().setPriority(origPriority);
+				}
+				catch (SecurityException e) {}
 				searchJobFinished(fSearchJobRecord);
 			}
 			fSearchJobRecord.job= null;
