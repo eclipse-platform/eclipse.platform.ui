@@ -71,6 +71,16 @@ public class XHTMLTest extends TestCase {
 		
 		// only exists in paragraph in test6.xhtml that's replaced by another one
 		{ "bheufnjefa", /* no hits */ },
+
+		// sanity test to make sure it finds things in XHTML content in .html file
+		{ "kejehrgaqm", "/org.eclipse.ua.tests/data/help/search/test7.html" },
+
+		// same as above, but in a section that should never be filtered
+		{ "opqmenhfjs", "/org.eclipse.ua.tests/data/help/search/test7.html" },
+
+		// only exists in a paragraph in test7.html that should be filtered out
+		// make sure this works for XHTML content inside .html file
+		{ "hugftnhdtg", /* no hits */ },
 	};
 	
 	/*

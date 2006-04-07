@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
@@ -84,7 +85,31 @@ public class SearchManager implements ITocsChangedListener {
 			return element.getAttribute("id"); //$NON-NLS-1$
 		}
 
-		public boolean matches(String extension) {
+		public boolean matchesContentType(String fileName) {
+			return matchesContentType(fileName, null);
+		}
+		
+		public boolean matchesContentType(String fileName, URL url) {
+			String contentType = element.getAttribute("content-type"); //$NON-NLS-1$
+			IContentType type = null;
+			if (url == null) {
+				type = Platform.getContentTypeManager().findContentTypeFor(fileName);
+			}
+			else {
+				try {
+					type = Platform.getContentTypeManager().findContentTypeFor(url.openStream(), fileName);
+				}
+				catch (IOException e) {
+					return false;
+				}
+			}
+			if (type != null) {
+				return type.getId().equals(contentType);
+			}
+			return false;
+		}
+		
+		public boolean matchesExtension(String extension) {
 			String ext = element.getAttribute("extensions"); //$NON-NLS-1$
 			if (ext == null)
 				return false;
@@ -97,6 +122,10 @@ public class SearchManager implements ITocsChangedListener {
 			return false;
 		}
 
+		public boolean hasContentType() {
+			return element.getAttribute("content-type") != null; //$NON-NLS-1$
+		}
+		
 		public boolean hasExtensions() {
 			return element.getAttribute("extensions") != null; //$NON-NLS-1$
 		}
@@ -271,10 +300,20 @@ public class SearchManager implements ITocsChangedListener {
 			return false;
 		int dotLoc = url.lastIndexOf('.');
 		String ext = url.substring(dotLoc + 1);
+		String fileName = url.substring(url.lastIndexOf('/') + 1);
 		for (int i = 0; i < list.size(); i++) {
 			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
-			if (desc.matches(ext))
-				return true;
+			if (desc.hasContentType()) {
+				if (desc.matchesContentType(fileName)) {
+					return true;
+				}
+			}
+			// extensions attribute deprecated
+			else if (desc.hasExtensions()) {
+				if (desc.matchesExtension(ext)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -343,20 +382,37 @@ public class SearchManager implements ITocsChangedListener {
 	 * Returns a TOC file participant for the provided plug-in and file name.
 	 * 
 	 * @param pluginId
-	 * @param fileName
+	 * @param path
 	 * @return
 	 */
 
-	public LuceneSearchParticipant getParticipant(String pluginId, String fileName) {
+	public LuceneSearchParticipant getParticipant(String pluginId, String path, URL url) {
 		ArrayList list = getParticipantDescriptors(pluginId);
 		if (list == null)
 			return null;
-		int dotLoc = fileName.lastIndexOf('.');
-		String ext = fileName.substring(dotLoc + 1);
+		int dotLoc = path.lastIndexOf('.');
+		int lastSlash = path.lastIndexOf('/');
+		String ext = path.substring(dotLoc + 1);
+		String fileName;
+		if (lastSlash == -1) {
+			fileName = path;
+		}
+		else {
+			fileName = path.substring(lastSlash + 1);
+		}
 		for (int i = 0; i < list.size(); i++) {
 			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
-			if (desc.matches(ext))
-				return desc.getParticipant();
+			if (desc.hasContentType()) {
+				if (desc.matchesContentType(fileName, url)) {
+					return desc.getParticipant();
+				}
+			}
+			// extensions attribute deprecated
+			else if (desc.hasExtensions()) {
+				if (desc.matchesExtension(ext)) {
+					return desc.getParticipant();
+				}
+			}
 		}
 		return null;
 	}
@@ -434,7 +490,7 @@ public class SearchManager implements ITocsChangedListener {
 					if (!rel.getName().equals("searchParticipant")) //$NON-NLS-1$
 						continue;
 					// don't allow binding the global participants
-					if (rel.getAttribute("extensions") == null) //$NON-NLS-1$
+					if (rel.getAttribute("content-type") == null && rel.getAttribute("extensions") == null) //$NON-NLS-1$ //$NON-NLS-2$
 						continue;
 					String id = rel.getAttribute("id"); //$NON-NLS-1$
 					if (id != null && id.equals(refId)) {

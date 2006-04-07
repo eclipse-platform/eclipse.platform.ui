@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.internal.xhtml.UAContentParser;
@@ -32,28 +33,73 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	public InputStream getInputStream(String pluginID, String href, Locale locale) {
 		String file = href;
 		int qloc = href.indexOf('?');
-		if (qloc != -1)
+		if (qloc != -1) {
 			file = href.substring(0, qloc);
-		int loc = file.lastIndexOf('.');
-		if (loc != -1) {
-			String extension = file.substring(loc + 1).toLowerCase();
-			if ("xhtml".equals(extension)) {//$NON-NLS-1$
-				/*
-				 * Filtering can be turned off when, for example,
-				 * indexing documents.
-				 */
-				boolean filter = true;
-				if (qloc != -1 && qloc < href.length() - 1) {
-					String query = href.substring(qloc + 1);
-					filter = (query.indexOf("filter=false") == -1); //$NON-NLS-1$
-				}
-				return openXHTMLFromPlugin(pluginID, file, locale.toString(), filter);
+		}
+		if (isXHTML(pluginID, href, locale)) {
+			/*
+			 * Filtering can be turned off when, for example,
+			 * indexing documents.
+			 */
+			boolean filter = true;
+			if (qloc != -1 && qloc < href.length() - 1) {
+				String query = href.substring(qloc + 1);
+				filter = (query.indexOf("filter=false") == -1); //$NON-NLS-1$
 			}
-			// place support for other formats here
+			return openXHTMLFromPlugin(pluginID, file, locale.toString(), filter);
 		}
 		return null;
 	}
 
+	/**
+	 * Returns whether or not the given href is pointing to an XHTML
+	 * document (it can be within a .html file).
+	 * 
+	 * @param pluginID the id of the plugin containing the document
+	 * @param href the href to the document
+	 * @param locale the document's locale
+	 * @return whether or not the document is XHTML
+	 */
+	private static boolean isXHTML(String pluginID, String href, Locale locale) {
+		String file = href;
+		int qloc = href.indexOf('?');
+		if (qloc != -1) {
+			file = href.substring(0, qloc);
+		}
+		int lastSlash = file.lastIndexOf('/');
+		String fileName;
+		if (lastSlash != -1) {
+			fileName = file.substring(lastSlash + 1);
+		}
+		else {
+			fileName = file;
+		}
+		// first open it to peek inside to see whether it's really XHTML
+		InputStream contents = openXHTMLFromPluginRaw(pluginID, file, locale.toString());
+		IContentType type = null;
+		try {
+			type = Platform.getContentTypeManager().findContentTypeFor(contents, fileName);
+		}
+		catch (IOException e) {
+			HelpPlugin.logError("An error occured in DynamicContentProducer while trying to determine the content type", e); //$NON-NLS-1$
+		}
+		finally {
+			if (contents != null) {
+				try {
+					contents.close();
+				}
+				catch (IOException e) {
+					// nothing we can do
+				}
+			}
+		}
+		// if it has the right content type it's XHTML
+		if (type != null) {
+			return "org.eclipse.help.xhtml".equals(type.getId()); //$NON-NLS-1$
+		}
+		return false;
+	}
+	
 	/**
 	 * Opens an input stream to an xhtml file contained in a plugin or in a doc.zip
 	 * in the plugin. This includes includes OS, WS and NL lookup.
@@ -69,7 +115,27 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	 * 
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
-	private InputStream openXHTMLFromPlugin(String pluginID, String file, String locale, boolean filter) {
+	private static InputStream openXHTMLFromPlugin(String pluginID, String file, String locale, boolean filter) {
+		InputStream inputStream = openXHTMLFromPluginRaw(pluginID, file, locale);
+		if (inputStream != null) {
+			UAContentParser parser = new UAContentParser(inputStream);
+			Document dom = parser.getDocument();
+			XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
+			dom = support.processDOM(filter);
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+			}
+			return UATransformManager.getAsInputStream(dom);
+		}
+		return null;
+	}
+
+	/**
+	 * Same as openXHTMLFromPlugin() but does not do any processing of the document
+	 * (it is opened raw).
+	 */
+	private static InputStream openXHTMLFromPluginRaw(String pluginID, String file, String locale) {
 		Bundle bundle = Platform.getBundle(pluginID);
 		if (bundle != null) {
 			// look in the doc.zip and in the plugin to find the xhtml file.
@@ -78,17 +144,7 @@ public class DynamicContentProducer implements IHelpContentProducer {
 			if (inputStream == null) {
 				inputStream = ResourceLocator.openFromPlugin(bundle, file, locale);
 			}
-			if (inputStream != null) {
-				UAContentParser parser = new UAContentParser(inputStream);
-				Document dom = parser.getDocument();
-				XHTMLSupport support = new XHTMLSupport(pluginID, file, dom, locale);
-				dom = support.processDOM(filter);
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-				}
-				return UATransformManager.getAsInputStream(dom);
-			}
+			return inputStream;
 		}
 		return null;
 	}

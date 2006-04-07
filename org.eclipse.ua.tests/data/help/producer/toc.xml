@@ -8,6 +8,7 @@
 
 <toc label="toc.xml">
 	<topic label="dynamic.xhtml" href="data/help/producer/dynamic.xhtml"/>
+	<topic label="dynamic2.html" href="data/help/producer/dynamic2.html"/>
 	
 	<!-- This file is in doc.zip in the root of the test plugin -->
 	<topic label="dynamicInZip.xhtml" href="data/help/producer/dynamicInZip.xhtml"/>

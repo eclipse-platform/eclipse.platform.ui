@@ -4,58 +4,58 @@
       href="/org.eclipse.ua.tests/data/help/toc/extraContent/toc2.xml">
    <topic
          label="Bats FOR product: Happy Bats, WAS; version: 9.0,8.0 ; platform: z/OS;AIX"
-         href="/org.eclipse.ua.tests/bats.htm">
+         href="/org.eclipse.ua.tests/simple_page.html">
       <topic
             label="Caring for your fruit bat FOR Version: 9.0; platform: z/OS; product: WAS"
-            href="/org.eclipse.ua.tests/batcaring.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Cleaning your fruit bat FOR Version: 8.0; platform: AIX; product: Happy Bats"
-            href="/org.eclipse.ua.tests/batcleaning.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Feeding your bat"
-            href="/org.eclipse.ua.tests/batfeeding.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat sonar"
-            href="/org.eclipse.ua.tests/batsonar.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat guano"
-            href="/org.eclipse.ua.tests/batguano.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat history"
-            href="/org.eclipse.ua.tests/bathistory.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat recycling"
-            href="/org.eclipse.ua.tests/batreuse.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
    </topic>
    <topic
          label="Bats FOR product: Happy Bats"
-         href="/org.eclipse.ua.tests/bats.htm#none">
+         href="/org.eclipse.ua.tests/simple_page.html">
       <topic
             label="Feeding your bat"
-            href="/org.eclipse.ua.tests/batfeeding.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat sonar"
-            href="/org.eclipse.ua.tests/batsonar.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat guano"
-            href="/org.eclipse.ua.tests/batguano.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat history"
-            href="/org.eclipse.ua.tests/bathistory.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
       <topic
             label="Bat recycling"
-            href="/org.eclipse.ua.tests/batreuse.htm">
+            href="/org.eclipse.ua.tests/simple_page.html">
       </topic>
    </topic>
 </toc>

@@ -30,5 +30,6 @@ public class AllProducerTests extends TestSuite {
 	 */
 	public AllProducerTests() {
 		addTest(DynamicContentTest.suite());
+		addTest(XHTMLContentDescriberTest.suite());
 	}
 }
