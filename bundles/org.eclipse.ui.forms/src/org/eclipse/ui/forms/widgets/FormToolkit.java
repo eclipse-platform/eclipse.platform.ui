@@ -793,6 +793,7 @@ public class FormToolkit {
 	private void initializeBorderStyle() {
 		String osname = System.getProperty("os.name"); //$NON-NLS-1$
 		if (osname.equals("Windows XP")) { //$NON-NLS-1$
+			/*
 			String javaHome = System.getProperty("java.home"); //$NON-NLS-1$
 			File homeDir = new File(javaHome);
 			File binDir = new File(homeDir, "bin"); //$NON-NLS-1$
@@ -804,6 +805,11 @@ public class FormToolkit {
 				if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 					borderStyle = SWT.BORDER;
 			}
+			*/
+			// Since 3.2, SWT can use skinned widgets
+			// without a manifest file. We don't need 
+			// any computation to turn the native border on.
+			borderStyle = SWT.BORDER;
 		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
 	}
