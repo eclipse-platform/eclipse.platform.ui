@@ -387,7 +387,7 @@ public class LocalHistoryTableProvider {
 	public long getCurrentRevision() {
 
 		if (currentFile != null) {
-			return currentFile.getModificationStamp();
+			return currentFile.getLocalTimeStamp();
 		}
 
 		return 0;

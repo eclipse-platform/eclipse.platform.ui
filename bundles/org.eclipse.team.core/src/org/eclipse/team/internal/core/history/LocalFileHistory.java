@@ -95,10 +95,13 @@ public class LocalFileHistory extends FileHistory {
 			try {
 				IFileState[] fileStates = file.getHistory(monitor);
 				if (fileStates.length > 0) {
-					revisions = new LocalFileRevision[fileStates.length];
+					revisions = new LocalFileRevision[fileStates.length + 1];
 					for (int i = 0; i < fileStates.length; i++) {
 						revisions[i] = new LocalFileRevision(fileStates[i]);
 					}
+					revisions[fileStates.length] = new LocalFileRevision(file);
+				} else {
+					revisions = new LocalFileRevision[]{new LocalFileRevision(file)};
 				}
 
 			} catch (CoreException e) {
