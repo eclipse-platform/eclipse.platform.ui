@@ -11,17 +11,10 @@
 package org.eclipse.core.expressions;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
-import org.eclipse.core.internal.expressions.ExpressionMessages;
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
-import org.eclipse.core.internal.expressions.Messages;
 import org.eclipse.core.internal.expressions.PropertyTesterDescriptor;
 
 /**
@@ -61,6 +54,11 @@ import org.eclipse.core.internal.expressions.PropertyTesterDescriptor;
  *   &lt;test property="org.eclipse.jdt.core.isDefaultPackage"/&gt;
  * </pre>
  * </p>
+ * <p>
+ * There is no guarantee that the same instance of a property tester is used
+ * to handle &lt;test property="..."/&gt; requests. So property testers 
+ * should always be implemented in a stateless fashion.
+ * </p>
  * @since 3.0 
  */
 public abstract class PropertyTester implements IPropertyTester {
@@ -93,25 +91,6 @@ public abstract class PropertyTester implements IPropertyTester {
 		return new PropertyTesterDescriptor(fConfigElement, fNamespace, fProperties);
 	}
 	
-	/**
-	 * Note: this method is for internal use only. Clients must not call 
-	 * this method.
-	 * 
-	 * @throws CoreException if the plugin can't be activated
-	 * @since 3.2
-	 */
-	public final void internalActivateDeclaringPlugin() throws CoreException {
-		String pluginName= fConfigElement.getContributor().getName();
-		Bundle bundle= Platform.getBundle(pluginName);
-		try {
-			bundle.start();
-		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(), IStatus.ERROR,
-				Messages.format(ExpressionMessages.PropertyTester_error_activating_plugin, pluginName), 
-				e));
-		}
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

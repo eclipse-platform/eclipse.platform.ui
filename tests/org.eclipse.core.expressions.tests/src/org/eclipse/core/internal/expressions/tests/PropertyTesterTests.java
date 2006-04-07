@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationContext;
@@ -127,8 +128,19 @@ public class PropertyTesterTests extends TestCase {
 		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue(p.isInstantiated());
 		bundle.stop();
-		p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue(!p.isInstantiated());
+		bundle.uninstall();
+		boolean exception= false;
+		try {
+			p= fgManager.getProperty(receiver, "org.eclipse.core.expressions.tests.dynamic", "testing"); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (CoreException e) {
+			exception= true;
+		} catch (InvalidRegistryObjectException e) {
+			// The uninstall events are sent out in a separate thread.
+			// So the type extension registry might not be flushed even
+			// though the bundle has already been uninstalled.
+			exception= true;
+		}
+		assertTrue("Core exception not thrown", exception);
 	}
 	
 	public void testPluginActivation() throws Exception {

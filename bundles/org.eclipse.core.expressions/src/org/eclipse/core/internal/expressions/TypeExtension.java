@@ -77,15 +77,13 @@ public class TypeExtension {
 			if (extender == null || !extender.handles(namespace, method))
 				continue;
 			if (extender.isInstantiated()) {
-				if (extender.isDeclaringPluginActive()) {
-					return extender;
-				} else if (forcePluginActivation) {
-					
-				} else {
-					PropertyTester tester= (PropertyTester)extender;
-					fExtenders[i]= extender= tester.internalCreateDescriptor();
-					return extender;
-				}
+				// There is no need to check for an active plug-in here. If a plug-in
+				// gets uninstalled we receive an registry event which will flush the whole
+				// type extender cache and will reinstantiate the testers. However Bundle#stop
+				// isn't handled by this. According to bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=130338
+				// we don't have to support stop in 3.2. If we have to in the future we have to
+				// reactivate the stopped plug-in if we are in forcePluginActivation mode.
+				return extender;
 			} else {
 				if (extender.isDeclaringPluginActive() || forcePluginActivation) {
 					try {
