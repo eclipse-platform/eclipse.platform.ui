@@ -8,14 +8,14 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ui.history;
 
 import org.eclipse.team.core.history.IFileRevision;
 
-public class MessageCVSHistoryCategory extends AbstractCVSHistoryCategory {
+public class MessageHistoryCategory extends AbstractHistoryCategory {
 	private String message;
 	
-	public MessageCVSHistoryCategory(String message){
+	public MessageHistoryCategory(String message){
 		this.message = message;
 	}
 	public String getName() {
@@ -27,7 +27,7 @@ public class MessageCVSHistoryCategory extends AbstractCVSHistoryCategory {
 	}
 
 	public IFileRevision[] getRevisions() {
-		return null;
+		return new IFileRevision[0];
 	}
 
 	public boolean hasRevisions() {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.internal.ccvs.ui.actions;
+package org.eclipse.team.internal.ui.actions;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +22,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
+import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 import org.eclipse.ui.progress.IProgressService;
@@ -32,7 +33,7 @@ import org.eclipse.ui.progress.IProgressService;
 public class OpenRevisionAction extends BaseSelectionListenerAction {
 
 	private IStructuredSelection selection;
-	private CVSHistoryPage page;
+	private HistoryPage page;
 	
 	public OpenRevisionAction(String text) {
 		super(text);
@@ -46,12 +47,12 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 			for (int i = 0; i < objArray.length; i++) {
 				Object tempRevision = objArray[i];
 				//If not a revision, don't try opening
-				if (tempRevision instanceof AbstractCVSHistoryCategory)
+				if (tempRevision instanceof AbstractHistoryCategory)
 					continue;
 				
 				final IFileRevision revision = (IFileRevision) tempRevision;
 				if (revision == null || !revision.exists()) {
-					MessageDialog.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_DeletedRevTitle, CVSUIMessages.OpenRevisionAction_DeletedRevMessage);
+					MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevTitle, TeamUIMessages.OpenRevisionAction_DeletedRevMessage);
 				} else {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -73,7 +74,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 					try {
 						progressService.run(false, false, runnable);
 					} catch (InvocationTargetException e) {
-						CVSUIPlugin.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_ErrorTitle, CVSUIMessages.OpenRevisionAction_ErrorMessage, e);
+						Utils.handleError(page.getSite().getShell(), e, TeamUIMessages.OpenRevisionAction_ErrorTitle, TeamUIMessages.OpenRevisionAction_ErrorMessage);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -111,7 +112,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		return shouldShow();
 	}
 	
-	public void setPage(CVSHistoryPage page) {
+	public void setPage(HistoryPage page) {
 		this.page = page;
 	}
 	
@@ -124,7 +125,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		
 		for (int i = 0; i < objArray.length; i++) {
 			//Don't bother showing if this a category
-			if (objArray[i] instanceof AbstractCVSHistoryCategory)
+			if (objArray[i] instanceof AbstractHistoryCategory)
 				return false;
 			
 			IFileRevision revision = (IFileRevision) objArray[i];

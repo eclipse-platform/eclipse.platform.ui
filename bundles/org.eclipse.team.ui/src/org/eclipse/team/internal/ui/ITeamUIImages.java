@@ -183,6 +183,13 @@ public interface ITeamUIImages {
 	public final String IMG_FLAT = "elcl16/flatLayout.gif"; //$NON-NLS-1$
 	public final String IMG_SYNC_VIEW = "eview16/synch_synch.gif"; //$NON-NLS-1$
 	public final String IMG_CHANGE_SET = "obj/changeset_obj.gif"; //$NON-NLS-1$
+	
+	/**
+	 * Images used by the Local History Page
+	 */
+	public final String IMG_COMPARE_VIEW = "eview16/compare_view.gif"; //$NON-NLS-1$
+	public final String IMG_DATES_CATEGORY = "obj/dates.gif"; //$NON-NLS-1$
+	public final String IMG_LOCALREVISION_TABLE = "obj/local_entry_tbl.gif"; //$NON-NLS-1$
 
 
 }

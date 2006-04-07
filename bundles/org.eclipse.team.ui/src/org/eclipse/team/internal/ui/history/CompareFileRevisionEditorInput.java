@@ -18,7 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.internal.core.LocalFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.ISaveableWorkbenchPart;
@@ -40,6 +40,8 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 	
 	/**
 	 * Creates a new CompareFileRevisionEditorInput.
+	 * @param left 
+	 * @param right 
 	 */
 	public CompareFileRevisionEditorInput(FileRevisionTypedElement left, FileRevisionTypedElement right) {
 		super(new CompareConfiguration());

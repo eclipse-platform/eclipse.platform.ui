@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core;
+package org.eclipse.team.internal.core.history;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.core.history.provider.FileRevision;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * A LocalFileRevision is used for wrapping local files in order to display
@@ -137,5 +138,15 @@ public class LocalFileRevision extends FileRevision {
 	
 	public IFileRevision withAllProperties(IProgressMonitor monitor) {
 		return this;
+	}
+
+	public boolean isPredecessorOf(IFileRevision revision) {
+		long compareRevisionTime = revision.getTimestamp();
+		return (this.getTimestamp() < compareRevisionTime);
+	}
+
+	public boolean isDescendentOf(IFileRevision revision) {
+		long compareRevisionTime = revision.getTimestamp();
+		return (this.getTimestamp() > compareRevisionTime);
 	}
 }

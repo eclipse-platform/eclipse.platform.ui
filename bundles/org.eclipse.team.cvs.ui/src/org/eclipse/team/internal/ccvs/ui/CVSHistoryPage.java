@@ -53,9 +53,11 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.internal.core.LocalFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
+import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
@@ -328,6 +330,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
 		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
+				//update the current
+				compareAction.setCurrentFileRevision(getCurrentFileRevision());
 				compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
@@ -658,11 +662,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					return entries;
 				
 				if (!(inputElement instanceof IFileHistory) &&
-					!(inputElement instanceof AbstractCVSHistoryCategory[]))
+					!(inputElement instanceof AbstractHistoryCategory[]))
 					return new Object[0];
 
-				if (inputElement instanceof AbstractCVSHistoryCategory[]){
-					return (AbstractCVSHistoryCategory[]) inputElement;
+				if (inputElement instanceof AbstractHistoryCategory[]){
+					return (AbstractHistoryCategory[]) inputElement;
 				}
 				
 				final IFileHistory fileHistory = (IFileHistory) inputElement;
@@ -679,8 +683,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 
 			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof AbstractCVSHistoryCategory){
-					return ((AbstractCVSHistoryCategory) parentElement).getRevisions();
+				if (parentElement instanceof AbstractHistoryCategory){
+					return ((AbstractHistoryCategory) parentElement).getRevisions();
 				}
 				
 				return null;
@@ -691,8 +695,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 
 			public boolean hasChildren(Object element) {
-				if (element instanceof AbstractCVSHistoryCategory){
-					IFileRevision[] revs = ((AbstractCVSHistoryCategory) element).getRevisions();
+				if (element instanceof AbstractHistoryCategory){
+					IFileRevision[] revs = ((AbstractHistoryCategory) element).getRevisions();
 					if (revs != null)
 						return revs.length > 0;
 				}
@@ -715,7 +719,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					return;
 				}
 				Object o = ss.getFirstElement();
-				if (o instanceof AbstractCVSHistoryCategory){
+				if (o instanceof AbstractHistoryCategory){
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
 					return;
@@ -739,7 +743,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					IStructuredSelection ss = (IStructuredSelection)selection;
 					Object o = ss.getFirstElement();
 					
-					if (o instanceof AbstractCVSHistoryCategory)
+					if (o instanceof AbstractHistoryCategory)
 						return;
 					
 					currentSelection = (IFileRevision)o;
@@ -963,7 +967,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		private final static int NUMBER_OF_CATEGORIES = 4;
 		
 		private CVSFileHistory fileHistory;
-		private AbstractCVSHistoryCategory[] categories;
+		private AbstractHistoryCategory[] categories;
 		private boolean grouping;
 		private Object[] elementsToExpand;
 		private boolean revisionsFound;
@@ -1040,7 +1044,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 								treeViewer.getTree().setLinesVisible(true);
 								treeViewer.setInput(fileHistory);
 							} else {
-								categories = new AbstractCVSHistoryCategory[] {getErrorMessage()};
+								categories = new AbstractHistoryCategory[] {getErrorMessage()};
 								treeViewer.getTree().setLinesVisible(false);
 								treeViewer.setInput(categories);
 							}
@@ -1061,7 +1065,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			//store the names of the currently expanded categories in a map
 			HashMap elementMap = new HashMap();
 			for (int i=0; i<expandedElements.length; i++){
-				elementMap.put(((DateCVSHistoryCategory)expandedElements[i]).getName(), null);
+				elementMap.put(((DateHistoryCategory)expandedElements[i]).getName(), null);
 			}
 			
 			//Go through the new categories and keep track of the previously expanded ones
@@ -1081,20 +1085,20 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
 			
 			//Create the 4 categories
-			DateCVSHistoryCategory[] tempCategories = new DateCVSHistoryCategory[NUMBER_OF_CATEGORIES];
+			DateHistoryCategory[] tempCategories = new DateHistoryCategory[NUMBER_OF_CATEGORIES];
 			//Get a calendar instance initialized to the current time
 			Calendar currentCal = Calendar.getInstance();
-			tempCategories[0] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
+			tempCategories[0] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
 			//Get yesterday 
 			Calendar yesterdayCal = Calendar.getInstance();
 			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
-			tempCategories[1] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
+			tempCategories[1] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
 			//Get last week
 			Calendar lastWeekCal = Calendar.getInstance();
 			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
-			tempCategories[2] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
+			tempCategories[2] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
 			//Everything before after week is previous
-			tempCategories[3] = new DateCVSHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
+			tempCategories[3] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
 		
 			ArrayList finalCategories = new ArrayList();
 			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
@@ -1112,11 +1116,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				revisionsFound = false;
 			}
 			
-			categories = (AbstractCVSHistoryCategory[])finalCategories.toArray(new AbstractCVSHistoryCategory[finalCategories.size()]);
+			categories = (AbstractHistoryCategory[])finalCategories.toArray(new AbstractHistoryCategory[finalCategories.size()]);
 			return revisionsFound;
 		}
 		
-		private MessageCVSHistoryCategory getErrorMessage(){
+		private MessageHistoryCategory getErrorMessage(){
 			String message = ""; //$NON-NLS-1$
 			switch(currentFilerMode){
 				case LOCAL_MODE:
@@ -1132,7 +1136,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				break;
 			}
 		 
-			MessageCVSHistoryCategory messageCategory = new MessageCVSHistoryCategory(NLS.bind(CVSUIMessages.CVSHistoryPage_NoRevisionsForMode, new String[] { message }));
+			MessageHistoryCategory messageCategory = new MessageHistoryCategory(NLS.bind(CVSUIMessages.CVSHistoryPage_NoRevisionsForMode, new String[] { message }));
 			return messageCategory;
 		}
 	}

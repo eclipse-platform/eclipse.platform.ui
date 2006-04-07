@@ -444,17 +444,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			//check to see if resource is managed
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
 			//couldn't find a repo provider; try showing it in a local page
-			if (teamProvider == null){
-				return localItemDropped(resource);
-			}
-			IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 			Object tempPageSource = null;
-			if (fileHistory != null) {
-				tempPageSource = Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
+			if (teamProvider == null){
+				tempPageSource = new LocalHistoryPageSource();
+			} else {
+				IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
+				
+				if (fileHistory != null) {
+					tempPageSource = Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
+				}
+				if (tempPageSource == null) {
+					tempPageSource = Utils.getAdapter(teamProvider, IHistoryPageSource.class,true);
+				}
 			}
-			if (tempPageSource == null) {
-				tempPageSource = Utils.getAdapter(teamProvider, IHistoryPageSource.class,true);
-			}
+			
 			if (tempPageSource instanceof IHistoryPageSource) {
 				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
 
@@ -619,16 +622,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		container.setSubBars((SubActionBars) site.getActionBars());
 		return container;
 	}
-	
-	protected PageContainer createLocalPage(PageBook book){
-		LocalHistoryPage page = new LocalHistoryPage();
-		PageSite site = initPage(page);
-		((IHistoryPage) page).setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
-		page.createControl(book);
-		PageContainer container = new PageContainer(page);
-		container.setSubBars((SubActionBars) site.getActionBars());
-		return container;
-	}
 
 	/**
 	 * An editor has been activated.  Fetch the history if the file is shared and the history view
@@ -682,18 +675,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		getSite().getPage().removeSelectionListener(selectionListener);
 		/*//Remove this history view instance from the multiple instance manager
 		HistoryManagerInstanceManager.getManager().deregister(this);*/
-	}
-
-	public IHistoryPage localItemDropped(IResource resource) {
-		PageContainer container = createLocalPage(this.book);
-		IHistoryPage localPage = (IHistoryPage) container.getPage();
-		if (localPage.setInput(resource)){
-			setContentDescription(resource.getName());
-			showPageRec(container);
-			return localPage;
-		}
-		
-		return null;
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {

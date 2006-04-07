@@ -72,6 +72,26 @@ public class TeamUIMessages extends NLS {
 	public static String IgnorePreferencePage_patternExistsShort;
 	public static String IgnorePreferencePage_remove;
 
+	public static String LocalHistoryPage_CollapseAllAction;
+
+	public static String LocalHistoryPage_CollapseAllTip;
+
+	public static String LocalHistoryPage_CompareAction;
+
+	public static String LocalHistoryPage_CompareModeAction;
+
+	public static String LocalHistoryPage_CompareModeTip;
+
+	public static String LocalHistoryPage_FetchLocalHistoryMessage;
+
+	public static String LocalHistoryPage_GroupRevisionsByDateAction;
+
+	public static String LocalHistoryPage_GroupRevisionsByDateTip;
+
+	public static String LocalHistoryPage_NoRevisionsFound;
+
+	public static String LocalHistoryPage_OpenAction;
+
 	public static String MergeAllActionHandler_0;
 
 	public static String MergeAllActionHandler_1;
@@ -501,4 +521,20 @@ public class TeamUIMessages extends NLS {
 	public static String CompareFileRevisionEditorInput_2;
 
 	public static String SynchronizationCompareAdapter_0;
+	
+	public static String HistoryPage_Today;
+	public static String HistoryPage_Yesterday;
+	public static String HistoryPage_LastWeek;
+	public static String HistoryPage_Previous;
+	
+	public static String OpenRevisionAction_DeletedRevTitle;
+	public static String OpenRevisionAction_ErrorTitle;
+	public static String OpenRevisionAction_ErrorMessage;
+	public static String OpenRevisionAction_DeletedRevMessage;
+	
+	public static String CompareRevisionAction_DeleteCompareMessage;
+	public static String CompareRevisionAction_CompareWithCurrent;
+	public static String CompareRevisionAction_CompareWithOther;
+	public static String CompareRevisionAction_Revision;
+	public static String CompareRevisionAction_Local;
 }

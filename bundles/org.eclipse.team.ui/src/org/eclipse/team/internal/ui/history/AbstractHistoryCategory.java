@@ -8,20 +8,16 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ui.history;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.history.IFileRevision;
 
-/**
- * Provides an abstract representation of a category that can be used in the
- * CVS History Page to provide grouping for IFileRevisions.
- */
-public abstract class AbstractCVSHistoryCategory {
+
+public abstract class AbstractHistoryCategory {
 	
 	/**
-	 * Returns the name of this category. This is used to display the category 
-	 * in the CVS History Page.
+	 * Returns the name of this category. 
 	 * @return a string 
 	 */
 	abstract public String getName();
@@ -34,13 +30,19 @@ public abstract class AbstractCVSHistoryCategory {
 	public Image getImage() {
 		return null;
 	}
+	
+	/**
+	 * Returns whether this category currently has any revisions associated with it.
+	 * @return <code>true</code> if there are any revisions, <code>false</code> otherwise.
+	 */
+	abstract public boolean hasRevisions();
 
 	/**
 	 * Takes in an array of IFileRevision and collects the revisions that belong to this category.
 	 * The shouldRemove flag indicates whether match file revisions need to be removed from the
 	 * passed in file revision array (in order to increase efficency).
 	 * @param fileRevisions	an array of IFileRevisions
-	 * @param canRemove	<code>true</code> if the method should remove the matching revisions from fileRevisions, <code>false</code> otherwise
+	 * @param shouldRemove	<code>true</code> if the method should remove the matching revisions from fileRevisions, <code>false</code> otherwise
 	 * @return	<code>true</code> if any revisions match this category, <code>false</code> otherwise
 	 */
 	abstract public boolean collectFileRevisions(IFileRevision[] fileRevisions, boolean shouldRemove);
@@ -51,11 +53,4 @@ public abstract class AbstractCVSHistoryCategory {
 	 * @return an array of IFileRevision or <code>null</code>
 	 */
 	abstract public IFileRevision[] getRevisions();
-	
-	/**
-	 * Returns whether this category currently has any revisions associated with it.
-	 * @return <code>true</code> if there are any revisions, <code>false</code> otherwise.
-	 */
-	abstract public boolean hasRevisions();
-
 }

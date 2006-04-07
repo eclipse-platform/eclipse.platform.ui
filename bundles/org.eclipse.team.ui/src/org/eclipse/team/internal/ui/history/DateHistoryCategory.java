@@ -8,13 +8,13 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ccvs.ui;
+package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
 
 import org.eclipse.team.core.history.IFileRevision;
 
-public class DateCVSHistoryCategory extends AbstractCVSHistoryCategory {
+public class DateHistoryCategory extends AbstractHistoryCategory {
 	
 	private String name;
 	private Calendar fromDate;
@@ -29,9 +29,8 @@ public class DateCVSHistoryCategory extends AbstractCVSHistoryCategory {
 	 * @param fromDate	the start date for this category or <code>null</code> if you want everything up to the end date
 	 * @param toDate	the end point for this category or <code>null</code> if you want just all entries in the
 	 * start date
-	 * @param mode	the comparison constant which indicated wheth
 	 */
-	public DateCVSHistoryCategory(String name, Calendar fromDate, Calendar toDate){
+	public DateHistoryCategory(String name, Calendar fromDate, Calendar toDate){
 		this.name = name;
 		this.fromDate = fromDate;
 		this.toDate = toDate;

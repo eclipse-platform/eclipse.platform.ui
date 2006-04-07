@@ -15,6 +15,7 @@ import java.util.Date;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
+import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 
 public class CVSHistoryFilter extends ViewerFilter {
 	public String author;
@@ -35,7 +36,7 @@ public class CVSHistoryFilter extends ViewerFilter {
 	 * @see ViewerFilter#select(Viewer, Object, Object)
 	 */
 	public boolean select(Viewer aviewer, Object parentElement, Object element) {
-		if (element instanceof AbstractCVSHistoryCategory)
+		if (element instanceof AbstractHistoryCategory)
 			return true;
 		
 		if (element instanceof CVSFileRevision) {

@@ -13,37 +13,96 @@ package org.eclipse.team.internal.ui.history;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 public class LocalHistoryTableProvider {
 	/**
 	 * The Local history label provider.
 	 */
 	class LocalHistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
+		
+		Image dateImage = null;
+		ImageDescriptor dateDesc = null;
+		
+		Image localRevImage = null;
+		ImageDescriptor localRevDesc = null;
+		
+		ThemeListener themeListener;
+		
+		public LocalHistoryLabelProvider(LocalHistoryTableProvider provider){
+				PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener= new ThemeListener(provider));
+		}
+		
+		public void dispose() {
+			if (dateImage != null){
+				JFaceResources.getResources().destroyImage(dateDesc);
+				dateImage = null;
+			}
+			
+			if (localRevImage != null) {
+				JFaceResources.getResources().destroyImage(localRevDesc);
+				localRevImage = null;
+			}
+					
+			if (themeListener != null){
+				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(themeListener);
+			}
+		}
+		
 		public Image getColumnImage(Object element, int columnIndex) {
+			if (element instanceof DateHistoryCategory && columnIndex == COL_DATE) {
+				if (dateImage == null) {
+					dateDesc = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY);
+					dateImage = dateDesc.createImage();
+					return dateImage;
+				}
+				return dateImage;
+			}
+
+			if (element instanceof LocalFileRevision && columnIndex == COL_DATE) {
+				if (localRevImage == null) {
+					localRevDesc = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LOCALREVISION_TABLE);
+					localRevImage = localRevDesc.createImage();
+					return localRevDesc.createImage();
+				}
+				return localRevImage;
+			}
+			
 			return null;
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			IFileState entry = adaptToFileState(element);
+			if (element instanceof AbstractHistoryCategory){
+				if (columnIndex != COL_DATE)
+					return ""; //$NON-NLS-1$
+				
+				return ((AbstractHistoryCategory) element).getName();
+			}
+			
+			IFileRevision entry = adaptToFileRevision(element);
 			if (entry == null)
 				return ""; //$NON-NLS-1$
 			switch (columnIndex) {
 				case COL_DATE :
-					String revision = DateFormat.getDateTimeInstance().format(new Date(entry.getModificationTime()));
-					return revision;
-				case COL_AUTHOR:
-					return ""; //$NON-NLS-1$
-					
-				case COL_COMMENT:
-					return TeamUIMessages.LocalHistoryTableProvider_localRevision;
+					long date = entry.getTimestamp();
+					Date dateFromLong = new Date(date);
+					return DateFormat.getInstance().format(dateFromLong);
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -52,10 +111,15 @@ public class LocalHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
-			/*IFileState = adaptToFileState(element);
-			 if (!entry.exists()) {
-			 return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-			 }*/
+			if (element instanceof AbstractHistoryCategory){
+				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+				return current.getColorRegistry().get("org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories");  //$NON-NLS-1$
+			}
+			
+			IFileRevision entry = adaptToFileRevision(element);
+			if (!entry.exists()) {
+				return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+			}
 
 			return null;
 		}
@@ -72,106 +136,272 @@ public class LocalHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
 		public Font getFont(Object element) {
-			IFileState entry = adaptToFileState(element);
-			 if (entry == null)
-			 return null;
-			 /*String revision = entry.getContentIdentifier();
-			 String tempCurrentRevision = getCurrentRevision();
-			 if (tempCurrentRevision != null && tempCurrentRevision.equals(revision)) {
-			 if (currentRevisionFont == null) {
-				 Font defaultFont = JFaceResources.getDefaultFont();
-				 FontData[] data = defaultFont.getFontData();
-				 for (int i = 0; i < data.length; i++) {
-				 data[i].setStyle(SWT.ITALIC);
-				 }
-				 currentRevisionFont = new Font(viewer.getTable().getDisplay(), data);
-			 }
-			 return currentRevisionFont;
-			 }*/
+			if (element instanceof AbstractHistoryCategory) {
+				return getCurrentRevisionFont();
+			}
+			
+			IFileRevision entry = adaptToFileRevision(element);
+			if (entry == null)
+				return null;
+			long timestamp = entry.getTimestamp();
+			long tempCurrentTimeStamp = getCurrentRevision();
+			if (tempCurrentTimeStamp != 0 && tempCurrentTimeStamp==timestamp) {
+				return getCurrentRevisionFont();
+			}
 			return null;
+		}
+
+		private Font getCurrentRevisionFont() {
+			if (currentRevisionFont == null) {
+				Font defaultFont = JFaceResources.getDefaultFont();
+				FontData[] data = defaultFont.getFontData();
+				for (int i = 0; i < data.length; i++) {
+					data[i].setStyle(SWT.BOLD);
+				}
+				currentRevisionFont = new Font(viewer.getTree().getDisplay(), data);
+			}
+			return currentRevisionFont;
 		}
 	}
 
+	/**
+	 * The history sorter
+	 */
+	class HistorySorter extends ViewerSorter {
+		private boolean reversed = false;
+		private int columnNumber;
+		
+		// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
+		private int[][] SORT_ORDERS_BY_COLUMN = { 
+				{COL_DATE}, /* date */
+		};
+
+		/**
+		 * The constructor.
+		 * @param columnNumber 
+		 */
+		public HistorySorter(int columnNumber) {
+			this.columnNumber = columnNumber;
+		}
+
+		/**
+		 * Compares two log entries, sorting first by the main column of this sorter,
+		 * then by subsequent columns, depending on the column sort order.
+		 */
+		public int compare(Viewer compareViewer, Object o1, Object o2) {
+			/*if (o1 instanceof AbstractCVSHistoryCategory || o2 instanceof AbstractCVSHistoryCategory)
+				return 0;*/
+			
+			IFileRevision e1 = adaptToFileRevision(o1);
+			IFileRevision e2 = adaptToFileRevision(o2);
+			int result = 0;
+			if (e1 == null || e2 == null) {
+				result = super.compare(compareViewer, o1, o2);
+			} else {
+				int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
+				for (int i = 0; i < columnSortOrder.length; ++i) {
+					result = compareColumnValue(columnSortOrder[i], e1, e2);
+					if (result != 0)
+						break;
+				}
+			}
+			if (reversed)
+				result = -result;
+			return result;
+		}
+
+		/**
+		 * Compares two markers, based only on the value of the specified column.
+		 */
+		int compareColumnValue(int columnNumber, IFileRevision e1, IFileRevision e2) {
+			switch (columnNumber) {
+				case 0 : /* date */
+					long date1 = e1.getTimestamp();
+					long date2 = e2.getTimestamp();
+					if (date1 == date2)
+						return 0;
+
+					return date1 > date2 ? -1 : 1;
+					
+				default :
+					return 0;
+			}
+		}
+
+		/**
+		 * Returns the number of the column by which this is sorting.
+		 * @return the column number
+		 */
+		public int getColumnNumber() {
+			return columnNumber;
+		}
+
+		/**
+		 * Returns true for descending, or false
+		 * for ascending sorting order.
+		 * @return returns true if reversed
+		 */
+		public boolean isReversed() {
+			return reversed;
+		}
+
+		/**
+		 * Sets the sorting order.
+		 * @param newReversed 
+		 */
+		public void setReversed(boolean newReversed) {
+			reversed = newReversed;
+		}
+	}
+	
+	/* private */ TreeViewer viewer;
+	/* private */Font currentRevisionFont;
+	
+	private IFile currentFile;
+	
 	//column constants
 	private static final int COL_DATE = 0;
-	private static final int COL_AUTHOR = 1;
-	private static final int COL_COMMENT = 2;
-
-	protected IFileState adaptToFileState(Object element) {
+	
+	protected IFileRevision adaptToFileRevision(Object element) {
 		// Get the log entry for the provided object
-		IFileState entry = null;
-		if (element instanceof IFileState) {
-			entry = (IFileState) element;
+		IFileRevision entry = null;
+		if (element instanceof IFileRevision) {
+			entry = (IFileRevision) element;
 		} else if (element instanceof IAdaptable) {
-			entry = (IFileState) ((IAdaptable) element).getAdapter(IFileState.class);
+			entry = (IFileRevision) ((IAdaptable) element).getAdapter(IFileRevision.class);
+		} else if (element instanceof AbstractHistoryCategory){
+			IFileRevision[] revisions = ((AbstractHistoryCategory) element).getRevisions();
+			if (revisions.length > 0)
+				entry = revisions[0]; 
 		}
 		return entry;
 	}
 
 	/**
-	 * Create a TableViewer that can be used to display a list of IFileRevision instances.
+	 * Creates the columns for the history table.
+	 */
+	private void createColumns(Tree tree, TableLayout layout) {
+		SelectionListener headerListener = getColumnListener(viewer);
+		// creation date
+		TreeColumn col = new TreeColumn(tree, SWT.NONE);
+		col.setResizable(true);
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
+		col.addSelectionListener(headerListener);
+		layout.addColumnData(new ColumnWeightData(20, true));
+
+		/*// author
+		col = new TreeColumn(tree, SWT.NONE);
+		col.setResizable(true);
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
+		col.addSelectionListener(headerListener);
+		layout.addColumnData(new ColumnWeightData(20, true));
+
+		//comment
+		col = new TreeColumn(tree, SWT.NONE);
+		col.setResizable(true);
+		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
+		col.addSelectionListener(headerListener);
+		layout.addColumnData(new ColumnWeightData(50, true));*/
+	}
+	
+	/**
+	 * Adds the listener that sets the sorter.
+	 */
+	private SelectionListener getColumnListener(final TreeViewer treeViewer) {
+		/**
+		 * This class handles selections of the column headers.
+		 * Selection of the column header will cause resorting
+		 * of the shown tasks using that column's sorter.
+		 * Repeated selection of the header will toggle
+		 * sorting order (ascending versus descending).
+		 */
+		return new SelectionAdapter() {
+			/**
+			 * Handles the case of user selecting the
+			 * header area.
+			 * <p>If the column has not been selected previously,
+			 * it will set the sorter of that column to be
+			 * the current tasklist sorter. Repeated
+			 * presses on the same column header will
+			 * toggle sorting order (ascending/descending).
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				// column selected - need to sort
+				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
+				HistorySorter oldSorter = (HistorySorter) treeViewer.getSorter();
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					treeViewer.refresh();
+				} else {
+					treeViewer.setSorter(new HistorySorter(column));
+				}
+			}
+		};
+	}
+
+	/**
+	 * Create a TreeViewer that can be used to display a list of IFile instances.
 	 * Ths method provides the labels and sorter but does not provide a content provider
 	 * 
 	 * @param parent
 	 * @return TableViewer
 	 */
-	public TableViewer createTable(Composite parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+	public TreeViewer createTree(Composite parent) {
+		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(false);
+		
 		GridData data = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
+		tree.setLayoutData(data);
 
 		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
+		tree.setLayout(layout);
 
-		TableViewer viewer = new TableViewer(table);
+		this.viewer = new TreeViewer(tree);
+		
+		createColumns(tree, layout);
 
-		createColumns(table, layout, viewer);
+		viewer.setLabelProvider(new LocalHistoryLabelProvider(this));
 
-		viewer.setLabelProvider(new LocalHistoryLabelProvider());
+		// By default, reverse sort by revision. 
+		// If local filter is on sort by date
+		HistorySorter sorter = new HistorySorter(COL_DATE);
+		sorter.setReversed(false);
+		viewer.setSorter(sorter);
 
-		// By default, reverse sort by revision.
-		//HistorySorter sorter = new HistorySorter(COL_REVISIONID);
-		//sorter.setReversed(true);
-		//viewer.setSorter(sorter);
-
-		/*	table.addDisposeListener(new DisposeListener() {
-		 public void widgetDisposed(DisposeEvent e) {
-		 if (currentRevisionFont != null) {
-		 currentRevisionFont.dispose();
-		 }
-		 }
-		 });*/
-
+		tree.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (currentRevisionFont != null) {
+					currentRevisionFont.dispose();
+				}
+			}
+		});
+		
 		return viewer;
 	}
 
-	/**
-	 * Creates the columns for the history table.
-	 */
-	private void createColumns(Table table, TableLayout layout, TableViewer viewer) {
-		//SelectionListener headerListener = getColumnListener(viewer);
+	public void setFile(IFile file) {
+		this.currentFile = file;
+	}
+	
+	public long getCurrentRevision() {
 
-		// creation date
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
-		//col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		if (currentFile != null) {
+			return currentFile.getModificationStamp();
+		}
 
-		// author
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
-		//col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(20, true));
+		return 0;
+	}
 
-		//comment
-		col = new TableColumn(table, SWT.NONE);
-		col.setResizable(true);
-		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
-		//col.addSelectionListener(headerListener);
-		layout.addColumnData(new ColumnWeightData(50, true));
+	private static class ThemeListener implements IPropertyChangeListener {
+
+		private final LocalHistoryTableProvider provider;
+		
+		ThemeListener(LocalHistoryTableProvider provider) {
+			this.provider= provider;
+		}
+		public void propertyChange(PropertyChangeEvent event) {
+			provider.viewer.refresh();
+		}
 	}
 }

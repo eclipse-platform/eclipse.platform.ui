@@ -10,195 +10,361 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IOpenEventListener;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.history.IFileHistory;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileHistory;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
+import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.progress.IProgressConstants;
 
 public class LocalHistoryPage extends HistoryPage {
-
-	Composite pgComp;
-	TableViewer tableViewer;
-	LocalHistoryTableProvider historyTableProvider;
+	
+	/* private */ IFile file;
+	/* private */ IFileRevision currentFileRevision;
+	
+	// cached for efficiency
+	/* private */ LocalFileHistory localFileHistory;
+	/* private */IFileRevision[] entries;
+	
+	/* private */ TreeViewer treeViewer;
 	
 	/* private */boolean shutdown = false;
-	// cached for efficiency
-	/* private */IFileState[] entries;
 	
-	protected FetchLocalHistoryJob fetchLocalHistoryJob;
-	
-	private OpenLocalFileAction openAction;
-	private IFile file;
-	
+	//grouping on
+	private boolean groupingOn;
 
-	public boolean isValidInput(Object object) {
-		//don't volunteer to use this page unless forced to do so
-		return false;
+	//toggle constants for default click action
+	private boolean compareMode = false;
+	
+	protected LocalHistoryTableProvider historyTableProvider;
+	private RefreshFileHistory refreshFileHistoryJob;
+	private Composite localComposite;
+	private Action groupByDateMode;
+	private Action collapseAll;
+	private Action compareModeAction;
+	private CompareRevisionAction compareAction;
+	private OpenRevisionAction openAction;
+	
+	private HistoryResourceListener resourceListener;
+	
+	public boolean inputSet() {
+		currentFileRevision = null;
+		IFile tempFile = (IFile) getInput();
+		this.file = tempFile;
+		if (tempFile == null)
+			return false;
+		
+		//blank current input only after we're sure that we have a file
+		//to fetch history for
+		this.treeViewer.setInput(null);
+		
+		localFileHistory = new LocalFileHistory(file);
+		
+		if (refreshFileHistoryJob == null)
+			refreshFileHistoryJob = new RefreshFileHistory();
+		
+		//always refresh the history if the input gets set
+		refreshHistory(true);
+		return true;
 	}
 
-	public void refresh() {
-		// TODO Auto-generated method stub
-
+	private void refreshHistory(boolean refetch) {
+		if (refreshFileHistoryJob.getState() != Job.NONE){
+			refreshFileHistoryJob.cancel();
+		}
+		refreshFileHistoryJob.setFileHistory(localFileHistory);
+		refreshFileHistoryJob.setGrouping(groupingOn);
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		Utils.schedule(refreshFileHistoryJob, getWorkbenchSite(parentSite));
 	}
 
-	public String getName() {
-		// TODO Auto-generated method stub
+	private IWorkbenchPartSite getWorkbenchSite(IHistoryPageSite parentSite) {
+		IWorkbenchPart part = parentSite.getPart();
+		if (part != null)
+			return part.getSite();
 		return null;
 	}
-
+	
 	public void createControl(Composite parent) {
-		pgComp = new Composite(parent, SWT.NULL);
-		pgComp.setLayout(new FillLayout());
+
+		localComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		localComposite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		localComposite.setLayoutData(data);
 		
-		tableViewer = createTable(pgComp);
+		treeViewer = createTree(localComposite);
 		
 		contributeActions();
 		
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		if (parentSite != null && parentSite instanceof DialogHistoryPageSite && treeViewer != null)
+			parentSite.setSelectionProvider(treeViewer);
+		
+		resourceListener = new HistoryResourceListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private void contributeActions() {
-		// Double click open action
-		openAction = new OpenLocalFileAction(TeamUIMessages.LocalHistoryPage_openRevision);
-		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
-			public void handleEvent(Event e) {
-				openAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
-				openAction.run();
+		final IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		//Group by Date
+		groupByDateMode = new Action(TeamUIMessages.LocalHistoryPage_GroupRevisionsByDateAction, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY)){
+			public void run() {
+				groupingOn = !groupingOn;
+				compareModeAction.setChecked(groupingOn);
+				store.setValue(IPreferenceIds.PREF_GROUPBYDATE_MODE, groupingOn);
+				refreshHistory(false);
+			}
+		};
+		groupingOn = store.getBoolean(IPreferenceIds.PREF_GROUPBYDATE_MODE);
+		groupByDateMode.setChecked(groupingOn);
+		groupByDateMode.setToolTipText(TeamUIMessages.LocalHistoryPage_GroupRevisionsByDateTip);
+		groupByDateMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY));
+		groupByDateMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY));
+		
+		//Collapse All
+		collapseAll =  new Action(TeamUIMessages.LocalHistoryPage_CollapseAllAction, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COLLAPSE_ALL)) {
+			public void run() {
+				treeViewer.collapseAll();
+			}
+		};
+		collapseAll.setToolTipText(TeamUIMessages.LocalHistoryPage_CollapseAllTip); 
+		collapseAll.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COLLAPSE_ALL));
+		collapseAll.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COLLAPSE_ALL));
+		
+		//Compare Mode Action
+		compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
+			public void run() {
+				compareMode = !compareMode;
+				compareModeAction.setChecked(compareMode);
+			}
+		};
+		compareModeAction.setToolTipText(TeamUIMessages.LocalHistoryPage_CompareModeTip); 
+		compareModeAction.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+		compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+		compareModeAction.setChecked(false);
+		
+		// Click Compare action
+		compareAction = new CompareRevisionAction(TeamUIMessages.LocalHistoryPage_CompareAction);
+		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				compareAction.setCurrentFileRevision(getCurrentFileRevision());
+				compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+			}
+		});
+		compareAction.setPage(this);
+		
+		openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
+		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+			}
+		});
+		openAction.setPage(this);
+		
+		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
+		handler.addOpenListener(new IOpenEventListener() {
+		public void handleOpen(SelectionEvent e) {
+				StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+				if (compareMode){
+					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+					compareAction.selectionChanged(sel);
+					compareAction.run();
+				} else {
+					//Pass in the entire structured selection to allow for multiple editor openings
+					StructuredSelection sel = tableStructuredSelection;
+					openAction.selectionChanged(sel);
+					openAction.run();
+				}
 			}
 		});
 		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
-		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
+		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuMgr) {
 				fillTableMenu(menuMgr);
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
-		tableViewer.getTable().setMenu(menu);
-		IWorkbenchPart part = getHistoryPageSite().getPart();
-		if (part != null) {
-			IWorkbenchPartSite workbenchPartSite = part.getSite();
-			workbenchPartSite.registerContextMenu(menuMgr, tableViewer);
+		treeViewer.getTree().setMenu(menu);
+		
+		//Don't add the object contribution menu items if this page is hosted in a dialog
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		/*if (!parentSite.isModal()) {
+			IWorkbenchPart part = parentSite.getPart();
+			if (part != null) {
+				IWorkbenchPartSite workbenchPartSite = part.getSite();
+				workbenchPartSite.registerContextMenu(menuMgr, treeViewer);
+			}
+			IPageSite pageSite = parentSite.getWorkbenchPageSite();
+			if (pageSite != null) {
+				IActionBars actionBars = pageSite.getActionBars();
+				// Contribute toggle text visible to the toolbar drop-down
+				IMenuManager actionBarsMenu = actionBars.getMenuManager();
+				if (actionBarsMenu != null){
+					actionBarsMenu.add(toggleTextWrapAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(toggleTextAction);
+					actionBarsMenu.add(toggleListAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(cvsHistoryFilter);
+					actionBarsMenu.add(toggleFilterAction);
+				}
+				actionBars.updateActionBars();
+			}
+		}*/
+
+		//Create the local tool bar
+		IToolBarManager tbm = parentSite.getToolBarManager();
+		if (tbm != null) {
+			//Add groups
+			tbm.add(new Separator("grouping"));	//$NON-NLS-1$
+			tbm.appendToGroup("grouping", groupByDateMode); //$NON-NLS-1$
+			tbm.add(new Separator("modes"));	//$NON-NLS-1$
+			tbm.add(new Separator("collapse")); //$NON-NLS-1$
+			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
+			tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
+			tbm.update(false);
+		}
+		
+	}
+
+	protected void fillTableMenu(IMenuManager manager) {
+		// file actions go first (view file)
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
+		
+		if (file != null && !parentSite.isModal()){
+			manager.add(openAction);
+			manager.add(compareAction);
 		}
 	}
 
-	/* private */void fillTableMenu(IMenuManager menuMgr) {
-			IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-		    openAction.selectionChanged(selection);
-		    menuMgr.add(openAction);
-		    /*compareAction.setEnabled(selection.size() == 2);
-		    compareAction.selectionChanged(selection);
-		    menuMgr.add(compareAction);*/
-		    menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-	
-	private TableViewer createTable(Composite parent) {
-		historyTableProvider = new LocalHistoryTableProvider();
-		TableViewer viewer = historyTableProvider.createTable(parent);
-		
-		viewer.setContentProvider(new IStructuredContentProvider(){
+	/**
+	 * Creates the tree that displays the local file revisions
+	 * 
+	 * @param the parent composite to contain the group
+	 * @return the group control
+	 */
+	protected TreeViewer createTree(Composite parent) {
 
+		historyTableProvider = new LocalHistoryTableProvider();
+		TreeViewer viewer = historyTableProvider.createTree(parent);
+
+		viewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				//The entries of already been fetch so return them
+
+				// The entries of already been fetch so return them
 				if (entries != null)
 					return entries;
+				
+				if (!(inputElement instanceof IFileHistory) &&
+					!(inputElement instanceof AbstractHistoryCategory[]))
+					return new Object[0];
 
-				// The entries need to be fetch (or are being fetched)
-				if (!(inputElement instanceof IResource))
-					return null;
-
-				final IFile inputFile = (IFile) inputElement;
-				if (fetchLocalHistoryJob == null) {
-					fetchLocalHistoryJob = new FetchLocalHistoryJob();
+				if (inputElement instanceof AbstractHistoryCategory[]){
+					return (AbstractHistoryCategory[]) inputElement;
 				}
-
-				IFile file = fetchLocalHistoryJob.getFile();
-
-				if (file == null || !file.equals(inputFile)) { // The resource
-					// has changed
-					// so stop the
-					// currently
-					// running job
-					if (fetchLocalHistoryJob.getState() != Job.NONE) {
-						fetchLocalHistoryJob.cancel();
-						try {
-							fetchLocalHistoryJob.join();
-						} catch (InterruptedException e) {
-							TeamUIPlugin.log(new TeamException(NLS.bind(TeamUIMessages.GenericHistoryView_ErrorFetchingEntries, new String[] {""}), e)); //$NON-NLS-1$
-						}
-					}
-					fetchLocalHistoryJob.setFile(inputFile);
-				} // Schedule the job even if it is already running
-				Utils.schedule(fetchLocalHistoryJob, getHistoryPageSite().getWorkbenchPageSite());
-
-				return new Object[0];
+				
+				final IFileHistory fileHistory = (IFileHistory) inputElement;
+				entries = fileHistory.getFileRevisions();
+			
+				return entries;
 			}
 
 			public void dispose() {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				// TODO Auto-generated method stub
+				entries = null;
 			}
-			
+
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement instanceof AbstractHistoryCategory){
+					return ((AbstractHistoryCategory) parentElement).getRevisions();
+				}
+				
+				return null;
+			}
+
+			public Object getParent(Object element) {
+				return null;
+			}
+
+			public boolean hasChildren(Object element) {
+				if (element instanceof AbstractHistoryCategory){
+					return ((AbstractHistoryCategory) element).hasRevisions();
+				}
+				return false;
+			}
 		});
-		
+
 		return viewer;
 	}
 
 	public Control getControl() {
-		return pgComp;
+		return localComposite;
 	}
 
 	public void setFocus() {
-		pgComp.setFocus();
+		localComposite.setFocus();
 	}
-	
-	private class FetchLocalHistoryJob extends Job {
-		public IFile localFile;
 
-		public FetchLocalHistoryJob() {
-			super(TeamUIMessages.LocalHistoryPage_fetchingLocalHistory);
+	public String getDescription() {
+		if (file != null)
+			return file.getFullPath().toString();
+		
+		return null;
+	}
+
+	public String getName() {
+		if (file != null)
+			return file.getName();
+		
+		return ""; //$NON-NLS-1$
+	}
+
+	public boolean isValidInput(Object object) {
+		//true if object is an unshared file
+		if (object instanceof IFile) {
+			if (!RepositoryProvider.isShared(((IFile) object).getProject()))
+				return true;
 		}
+		
+		return false;
+	}
 
-		public IFile getFile() {
-			return localFile;
-		}
-
-		public void setFile(IFile file) {
-			localFile = file;
-		}
-
-		public IStatus run(IProgressMonitor monitor) {
-			try {
-				if (localFile != null && !shutdown) {
-					entries = localFile.getHistory(monitor);
-					getSite().getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (entries != null && tableViewer != null && !tableViewer.getTable().isDisposed()) {
-								tableViewer.refresh();
-							}
-						}
-					});
-				}
-				return Status.OK_STATUS;
-			} catch (CoreException e) {
-				return e.getStatus();
-			}
-		}
-
+	public void refresh() {
+		refreshHistory(true);
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -206,28 +372,195 @@ public class LocalHistoryPage extends HistoryPage {
 		return null;
 	}
 
-	public String getDescription() {
-		if (file != null)
-			return file.getFullPath().toString();
-		return null;
-	}
+    public void dispose() {
+    	shutdown = true;
 
-	public Object getInput() {
-		return file;
-	}
-
-	public boolean inputSet() {
-		Object object = getInput();
-		if (object instanceof IFile) {
-			file = (IFile) object;
-			if ( object == null)
-				return false;
-		
-			//historyTableProvider.setFile(fileHistory, newfile);
-			tableViewer.setInput(file);
-			return true;
+    	if (resourceListener != null){
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+			resourceListener = null;
 		}
-		return false;
-	}
+    	
+		//Cancel any incoming 
+		if (refreshFileHistoryJob != null) {
+			if (refreshFileHistoryJob.getState() != Job.NONE) {
+				refreshFileHistoryJob.cancel();
+			}
+		}
+		
+		
+    }
+    
+	public IFileRevision getCurrentFileRevision() {
+		if (currentFileRevision != null)
+			return currentFileRevision;
 
+		if (file != null) 
+			currentFileRevision = new LocalFileRevision(file);
+				
+		return currentFileRevision;
+	}
+	
+	private class RefreshFileHistory extends Job {
+		private final static int NUMBER_OF_CATEGORIES = 4;
+		
+		private LocalFileHistory fileHistory;
+		private AbstractHistoryCategory[] categories;
+		private boolean grouping;
+		private Object[] elementsToExpand;
+	
+		public RefreshFileHistory() {
+			super(TeamUIMessages.LocalHistoryPage_FetchLocalHistoryMessage);
+		}
+		
+		public void setFileHistory(LocalFileHistory fileHistory) {
+			this.fileHistory = fileHistory;
+		}
+	
+		public void setGrouping (boolean value){
+			this.grouping = value;
+		}
+
+		public IStatus run(IProgressMonitor monitor)  {
+		
+			IStatus status = Status.OK_STATUS;
+			
+			if (fileHistory != null && !shutdown) {
+				//If fileHistory termintates in a bad way, try to fetch the local
+				//revisions only
+				try {
+					fileHistory.refresh(monitor);
+				} catch (CoreException ex) {
+					status = new TeamStatus(ex.getStatus().getSeverity(), TeamUIPlugin.ID, ex.getStatus().getCode(), ex.getMessage(), ex, file);
+				}
+
+				if (grouping)
+					sortRevisions();
+
+				Utils.asyncExec(new Runnable() {
+					public void run() {
+						historyTableProvider.setFile(file);
+						if (grouping) {
+							mapExpandedElements(treeViewer.getExpandedElements());
+							treeViewer.getTree().setRedraw(false);
+							treeViewer.setInput(categories);
+							//if user is switching modes and already has expanded elements
+							//selected try to expand those, else expand all
+							if (elementsToExpand.length > 0)
+								treeViewer.setExpandedElements(elementsToExpand);
+							else {
+								treeViewer.expandAll();
+								Object[] el = treeViewer.getExpandedElements();
+								if (el != null && el.length > 0) {
+									treeViewer.setSelection(new StructuredSelection(el[0]));
+									treeViewer.getTree().deselectAll();
+								}
+							}
+							treeViewer.getTree().setRedraw(true);
+						} else {
+							if (fileHistory.getFileRevisions().length > 0) {
+								treeViewer.setInput(fileHistory);
+							} else {
+								categories = new AbstractHistoryCategory[] {getErrorMessage()};
+								treeViewer.setInput(categories);
+							}
+						}
+					}
+				}, treeViewer);
+			}
+
+			if (status != Status.OK_STATUS ) {
+				this.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+				this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+			}
+			
+			return status;
+		}
+
+		private void mapExpandedElements(Object[] expandedElements) {
+			//store the names of the currently expanded categories in a map
+			HashMap elementMap = new HashMap();
+			for (int i=0; i<expandedElements.length; i++){
+				elementMap.put(((DateHistoryCategory)expandedElements[i]).getName(), null);
+			}
+			
+			//Go through the new categories and keep track of the previously expanded ones
+			ArrayList expandable = new ArrayList();
+			for (int i = 0; i<categories.length; i++){
+				//check to see if this category is currently expanded
+				if (elementMap.containsKey(categories[i].getName())){
+					expandable.add(categories[i]);
+				}
+			}
+			
+			elementsToExpand = new Object[expandable.size()];
+			elementsToExpand = (Object[]) expandable.toArray(new Object[expandable.size()]);
+		}
+
+		private boolean sortRevisions() {
+			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
+			
+			//Create the 4 categories
+			DateHistoryCategory[] tempCategories = new DateHistoryCategory[NUMBER_OF_CATEGORIES];
+			//Get a calendar instance initialized to the current time
+			Calendar currentCal = Calendar.getInstance();
+			tempCategories[0] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Today, currentCal, null);
+			//Get yesterday 
+			Calendar yesterdayCal = Calendar.getInstance();
+			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
+			tempCategories[1] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Yesterday, yesterdayCal, null);
+			//Get last week
+			Calendar lastWeekCal = Calendar.getInstance();
+			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
+			tempCategories[2] = new DateHistoryCategory(TeamUIMessages.HistoryPage_LastWeek, lastWeekCal, yesterdayCal);
+			//Everything before after week is previous
+			tempCategories[3] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Previous, null, lastWeekCal);
+		
+			ArrayList finalCategories = new ArrayList();
+			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
+				tempCategories[i].collectFileRevisions(fileRevision, false);
+				if (tempCategories[i].hasRevisions())
+					finalCategories.add(tempCategories[i]);
+			}
+			
+			//Assume that some revisions have been found
+			boolean revisionsFound = true;
+			
+			if (finalCategories.size() == 0){
+				//no revisions found for the current mode, so add a message category
+				finalCategories.add(getErrorMessage());
+				revisionsFound = false;
+			}
+			
+			categories = (AbstractHistoryCategory[])finalCategories.toArray(new AbstractHistoryCategory[finalCategories.size()]);
+			return revisionsFound;
+		}
+		
+		private MessageHistoryCategory getErrorMessage(){
+			MessageHistoryCategory messageCategory = new MessageHistoryCategory(TeamUIMessages.LocalHistoryPage_NoRevisionsFound);
+			return messageCategory;
+		}
+	}
+	
+	private class HistoryResourceListener implements IResourceChangeListener {
+		/**
+		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+		 */
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta root = event.getDelta();
+		
+			if (file == null)
+				 return;
+			
+			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
+			if (resourceDelta != null){
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						refresh();
+					}
+				});
+			}
+		}
+	}
+	
+	
 }

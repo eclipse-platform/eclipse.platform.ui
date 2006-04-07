@@ -360,6 +360,11 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(plugin, ITeamUIImages.IMG_COMPRESSED_FOLDER);
 		createImageDescriptor(plugin, ITeamUIImages.IMG_SYNC_VIEW);
 		createImageDescriptor(plugin, ITeamUIImages.IMG_HIERARCHICAL);		
+		
+		// Local History Page
+		createImageDescriptor(plugin, ITeamUIImages.IMG_DATES_CATEGORY);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_COMPARE_VIEW);
+		createImageDescriptor(plugin, ITeamUIImages.IMG_LOCALREVISION_TABLE);
 	}
 
     private URL getImageUrl(String relative) {

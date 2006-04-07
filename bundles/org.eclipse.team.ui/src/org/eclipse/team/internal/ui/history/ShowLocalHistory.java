@@ -43,7 +43,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 							IViewPart view = targetPart.getSite().getPage().showView("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
 							if (view instanceof GenericHistoryView){
 								GenericHistoryView historyView =(GenericHistoryView) view;
-								historyView.localItemDropped(resource);
+								historyView.itemDropped(resource,true);
 							}
 						} catch (PartInitException e) {}}};
 						

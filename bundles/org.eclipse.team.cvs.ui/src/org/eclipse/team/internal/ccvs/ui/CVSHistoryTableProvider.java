@@ -30,8 +30,10 @@ import org.eclipse.team.core.history.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
-import org.eclipse.team.internal.core.LocalFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
+import org.eclipse.team.internal.ui.history.DateHistoryCategory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 
@@ -95,7 +97,7 @@ public class CVSHistoryTableProvider {
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof DateCVSHistoryCategory &&
+			if (element instanceof DateHistoryCategory &&
 				columnIndex == COL_REVISIONID){
 				if (dateImage == null){
 					dateDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
@@ -128,11 +130,11 @@ public class CVSHistoryTableProvider {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof AbstractCVSHistoryCategory){
+			if (element instanceof AbstractHistoryCategory){
 				if (columnIndex != COL_REVISIONID)
 					return ""; //$NON-NLS-1$
 				
-				return ((AbstractCVSHistoryCategory) element).getName();
+				return ((AbstractHistoryCategory) element).getName();
 			}
 			
 			IFileRevision entry = adaptToFileRevision(element);
@@ -186,7 +188,7 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
 		public Color getForeground(Object element) {
-			if (element instanceof AbstractCVSHistoryCategory){
+			if (element instanceof AbstractHistoryCategory){
 				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 				return current.getColorRegistry().get(CVSHistoryTableProvider.CATEGORIES_COLOR);
 			}
@@ -211,7 +213,7 @@ public class CVSHistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
 		public Font getFont(Object element) {
-			if (element instanceof AbstractCVSHistoryCategory) {
+			if (element instanceof AbstractHistoryCategory) {
 				return getCurrentRevisionFont();
 			}
 			
@@ -270,7 +272,7 @@ public class CVSHistoryTableProvider {
 		 * then by subsequent columns, depending on the column sort order.
 		 */
 		public int compare(Viewer compareViewer, Object o1, Object o2) {
-			if (o1 instanceof AbstractCVSHistoryCategory || o2 instanceof AbstractCVSHistoryCategory)
+			if (o1 instanceof AbstractHistoryCategory || o2 instanceof AbstractHistoryCategory)
 				return 0;
 			
 			IFileRevision e1 = adaptToFileRevision(o1);
@@ -381,8 +383,8 @@ public class CVSHistoryTableProvider {
 			entry = (IFileRevision) element;
 		} else if (element instanceof IAdaptable) {
 			entry = (IFileRevision) ((IAdaptable) element).getAdapter(IFileRevision.class);
-		} else if (element instanceof AbstractCVSHistoryCategory){
-			entry = ((AbstractCVSHistoryCategory) element).getRevisions()[0];
+		} else if (element instanceof AbstractHistoryCategory){
+			entry = ((AbstractHistoryCategory) element).getRevisions()[0];
 		}
 		return entry;
 	}

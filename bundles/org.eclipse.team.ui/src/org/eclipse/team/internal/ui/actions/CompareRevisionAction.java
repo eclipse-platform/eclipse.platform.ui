@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.internal.ccvs.ui.actions;
+package org.eclipse.team.internal.ui.actions;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
@@ -17,11 +17,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
-import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.core.LocalFileRevision;
-import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
-import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
+import org.eclipse.team.core.history.provider.FileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.history.*;
+import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
@@ -31,8 +31,9 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		super(text);
 	}
 
-	CVSHistoryPage page;
+	HistoryPage page;
 	IStructuredSelection selection;
+	IFileRevision currentFileRevision;
 	
 	public void run() {
 		try {
@@ -44,7 +45,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 			
 			switch (structSel.size()){
 				case 1:
-					file1 = page.getCurrentFileRevision();
+					file1 = getCurrentFileRevision();
 					Object tempRevision = objArray[0];
 					if (tempRevision instanceof IFileRevision)
 						file2 = (IFileRevision) tempRevision;
@@ -67,7 +68,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 
 			if (file1 == null || file2 == null ||
 			   !file1.exists() || !file2.exists()){
-				MessageDialog.openError(page.getSite().getShell(), CVSUIMessages.OpenRevisionAction_DeletedRevTitle, CVSUIMessages.CompareRevisionAction_DeleteCompareMessage);
+				MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevTitle, TeamUIMessages.CompareRevisionAction_DeleteCompareMessage);
 				return;
 			}
 			
@@ -94,9 +95,19 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		}
 	}
 
+	private IFileRevision getCurrentFileRevision() {
+		return currentFileRevision;
+	}
+	
+	public void setCurrentFileRevision(IFileRevision fileRevision){
+		this.currentFileRevision = fileRevision;
+	}
+
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.
+	 * @param page 
+	 * @return an EditorPart or <code>null</code> if none can be found
 	 */
 	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
 		IEditorReference[] editorRefs = page.getEditorReferences();	
@@ -117,23 +128,24 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		this.selection = selection;
 		if (selection.size() == 1){
 			Object el = selection.getFirstElement();
-			if (el instanceof CVSFileRevision){
-				CVSFileRevision tempFileRevision = (CVSFileRevision) el;
-				this.setText(NLS.bind(CVSUIMessages.CompareRevisionAction_Revision, new String[]{tempFileRevision.getContentIdentifier()}));
-			} else if (el instanceof LocalFileRevision)
-				this.setText(CVSUIMessages.CompareRevisionAction_Local);
+			if (el instanceof LocalFileRevision)
+				this.setText(TeamUIMessages.CompareRevisionAction_Local);
+			else if (el instanceof FileRevision){
+				FileRevision tempFileRevision = (FileRevision) el;
+				this.setText(NLS.bind(TeamUIMessages.CompareRevisionAction_Revision, new String[]{tempFileRevision.getContentIdentifier()}));
+			} 
 			else
-				this.setText(CVSUIMessages.CompareRevisionAction_CompareWithCurrent);
+				this.setText(TeamUIMessages.CompareRevisionAction_CompareWithCurrent);
 			return shouldShow();
 		}
 		else if (selection.size() == 2){
-			this.setText(CVSUIMessages.CompareRevisionAction_CompareWithOther);	
+			this.setText(TeamUIMessages.CompareRevisionAction_CompareWithOther);	
 			return shouldShow();
 		}
 
 		return false;
 	}
-	public void setPage(CVSHistoryPage page) {
+	public void setPage(HistoryPage page) {
 		this.page = page;
 	}
 
@@ -147,7 +159,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		for (int i = 0; i < objArray.length; i++) {
 			
 			//Don't bother showing if this a category
-			if (objArray[i] instanceof AbstractCVSHistoryCategory)
+			if (objArray[i] instanceof AbstractHistoryCategory)
 				return false;
 			
 			IFileRevision revision = (IFileRevision) objArray[i];

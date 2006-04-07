@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.core.LocalFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {
 
@@ -79,7 +79,6 @@ public class CVSFileHistory extends FileHistory {
 	 * Refreshes the revisions for this CVS file. It may or may not contact the server to get new revisions.
 	 * 
 	 * @param monitor	a progress monitor
-	 * @return boolean	true if operation terminated normally,false otherwise
 	 */
 	public void refresh(IProgressMonitor monitor) throws TeamException {
 		if (refetchRevisions) {
