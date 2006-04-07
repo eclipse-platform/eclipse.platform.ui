@@ -300,6 +300,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Creates the button bar at the bottom of the component.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createBottomButtonBar(final Composite parent) {
+		// Do nothing
+	}
+
+	/**
 	 * Creates the comment viewer of the control.
 	 * 
 	 * @param parent
@@ -330,7 +340,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void createControl() {
 		RefactoringCore.getHistoryService().connect();
-		GridLayout layout= new GridLayout(2, false);
+		GridLayout layout= new GridLayout(getColumnCount(), false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.horizontalSpacing= 0;
@@ -367,7 +377,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setContent(fHistoryViewer.getControl());
 		createCommentViewer(fSplitterControl);
 		fSplitterControl.setWeights(new int[] { 80, 20});
-
+		createBottomButtonBar(this);
 		Dialog.applyDialogFont(this);
 	}
 
@@ -411,6 +421,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer)
 			return (RefactoringDescriptorProxy[]) fCheckedDescriptors.toArray(new RefactoringDescriptorProxy[fCheckedDescriptors.size()]);
 		return getSelectedDescriptors();
+	}
+
+	/**
+	 * Returns the number of columns to use for the control layout.
+	 * 
+	 * @return the number of columns
+	 */
+	protected int getColumnCount() {
+		return 2;
 	}
 
 	/**

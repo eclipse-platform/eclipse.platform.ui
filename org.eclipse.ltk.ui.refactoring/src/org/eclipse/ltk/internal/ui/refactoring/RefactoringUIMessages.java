@@ -58,12 +58,6 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String FileStatusContextViewer_error_reading_file;
 
-	public static String ManageRefactoringHistorycontrol_delete_all_label;
-
-	public static String ManageRefactoringHistorycontrol_delete_label;
-
-	public static String ManageRefactoringHistoryControl_edit_label;
-
 	public static String PreviewWizardPage_changeElementLabelProvider_textFormat;
 
 	public static String PreviewWizardPage_changes;
@@ -89,6 +83,12 @@ public final class RefactoringUIMessages extends NLS {
 	public static String PreviewWizardPage_showAll_description;
 
 	public static String PreviewWizardPage_showAll_text;
+
+	public static String PropertyPageRefactoringHistoryControl_delete_all_label;
+
+	public static String PropertyPageRefactoringHistoryControl_delete_label;
+
+	public static String PropertyPageRefactoringHistoryControl_edit_label;
 
 	public static String RedoRefactoringAction_error_message;
 

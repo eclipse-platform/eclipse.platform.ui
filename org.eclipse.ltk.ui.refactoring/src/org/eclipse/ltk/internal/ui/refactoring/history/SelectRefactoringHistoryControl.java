@@ -66,15 +66,18 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void createRightButtonBar(final Composite parent) {
+	protected void createBottomButtonBar(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
-		final GridLayout layout= new GridLayout(1, false);
+		final GridLayout layout= new GridLayout(2, false);
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		layout.marginTop= 5;
 		composite.setLayout(layout);
 
 		GridData data= new GridData();
-		data.grabExcessHorizontalSpace= false;
-		data.grabExcessVerticalSpace= true;
+		data.grabExcessHorizontalSpace= true;
+		data.grabExcessVerticalSpace= false;
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.TOP;
 		composite.setLayoutData(data);
@@ -83,7 +86,7 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 		fSelectAllButton.setEnabled(false);
 		fSelectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_select_all_label);
 		data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
+		data.horizontalAlignment= GridData.END;
 		data.grabExcessHorizontalSpace= true;
 		data.verticalAlignment= GridData.BEGINNING;
 		data.widthHint= SWTUtil.getButtonWidthHint(fSelectAllButton);
@@ -100,8 +103,7 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 		fDeselectAllButton.setEnabled(false);
 		fDeselectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_deselect_all_label);
 		data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
+		data.horizontalAlignment= GridData.END;
 		data.verticalAlignment= GridData.BEGINNING;
 		data.widthHint= SWTUtil.getButtonWidthHint(fDeselectAllButton);
 		fDeselectAllButton.setLayoutData(data);
@@ -138,6 +140,13 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		else
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getColumnCount() {
+		return 1;
 	}
 
 	/**

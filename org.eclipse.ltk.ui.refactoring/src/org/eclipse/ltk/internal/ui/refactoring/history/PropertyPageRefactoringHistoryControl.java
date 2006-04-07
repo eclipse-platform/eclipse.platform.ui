@@ -32,11 +32,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
- * Control which is capable of managing refactoring histories.
+ * Refactoring history control to be used in the refactoring property page.
  * 
  * @since 3.2
  */
-public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
+public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryControl {
 
 	/** The delete all button, or <code>null</code> */
 	private Button fDeleteAllButton= null;
@@ -48,14 +48,14 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 	private Button fEditButton= null;
 
 	/**
-	 * Creates a new manage refactoring history control.
+	 * Creates a new property page refactoring history control.
 	 * 
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
-	public ManageRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
+	public PropertyPageRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
 	}
 
@@ -98,7 +98,7 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 
 		fDeleteButton= new Button(composite, SWT.NONE);
 		fDeleteButton.setEnabled(false);
-		fDeleteButton.setText(RefactoringUIMessages.ManageRefactoringHistorycontrol_delete_label);
+		fDeleteButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_delete_label);
 		data= new GridData();
 		data.horizontalAlignment= GridData.FILL;
 		data.grabExcessHorizontalSpace= true;
@@ -108,7 +108,7 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 
 		fDeleteAllButton= new Button(composite, SWT.NONE);
 		fDeleteAllButton.setEnabled(false);
-		fDeleteAllButton.setText(RefactoringUIMessages.ManageRefactoringHistorycontrol_delete_all_label);
+		fDeleteAllButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_delete_all_label);
 		data= new GridData();
 		data.horizontalAlignment= GridData.FILL;
 		data.grabExcessHorizontalSpace= true;
@@ -118,7 +118,7 @@ public class ManageRefactoringHistoryControl extends RefactoringHistoryControl {
 
 		fEditButton= new Button(composite, SWT.NONE);
 		fEditButton.setEnabled(false);
-		fEditButton.setText(RefactoringUIMessages.ManageRefactoringHistoryControl_edit_label);
+		fEditButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_edit_label);
 		data= new GridData();
 		data.verticalIndent= new PixelConverter(parent).convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		data.horizontalAlignment= GridData.FILL;

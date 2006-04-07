@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
@@ -106,9 +105,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		final Label label= new Label(composite, SWT.NONE);
 		label.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
 		data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
-		data.horizontalIndent= 0;
 		data.horizontalSpan= 1;
-		data.verticalIndent= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		label.setLayoutData(data);
 		fLocationControl= new RefactoringScriptLocationControl(fWizard, composite) {
 
