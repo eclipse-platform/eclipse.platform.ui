@@ -21,7 +21,9 @@
                 allowsPlatformContributions="true"
                 id="org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">  
              <insertionPoint name="group.new"/>
-             <insertionPoint name="group.open" />
+             <insertionPoint
+                   name="group.open"
+                   separator="true"/>
              <insertionPoint name="group.openWith"/>   
              <insertionPoint name="group.edit"
                    separator="true"/>   
