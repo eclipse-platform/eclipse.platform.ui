@@ -804,8 +804,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		Locale locale = Locale.getDefault();
 		String lang = locale.getLanguage();
 
-		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			|| "ur".equals(lang)) { //$NON-NLS-1$
+		if ("iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) ||  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"fa".equals(lang) || "ur".equals(lang)) { //$NON-NLS-1$ //$NON-NLS-2$ 
 			return SWT.RIGHT_TO_LEFT;
 		}
 			
