@@ -12,7 +12,7 @@ package org.eclipse.team.core.diff.provider;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.diff.*;
-import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 
 /**
  * Abstract implementation of {@link IDiff} that can be subclassed by
@@ -83,16 +83,7 @@ public abstract class Diff implements IDiff {
 	 */
 	public String toDiffString() {
 		int kind = getKind();
-		String label = ""; //$NON-NLS-1$
-		if(kind==IDiff.NO_CHANGE) {
-			label = Messages.RemoteSyncElement_insync; 
-		} else {
-			switch(kind) {
-				case IDiff.CHANGE: label = Messages.RemoteSyncElement_change ; break;
-				case IDiff.ADD: label = Messages.RemoteSyncElement_addition; break;
-				case IDiff.REMOVE: label = Messages.RemoteSyncElement_deletion; break; 
-			}
-		}
+		String label = SyncInfoToDiffConverter.diffKindToString(kind);
 		return label; 
 	}
 }

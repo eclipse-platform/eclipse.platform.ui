@@ -20,7 +20,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -59,13 +58,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	
 	private void mergeResources(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths, boolean allowOverwrite) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
-		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		mergeResources(subscriber, infos, allowOverwrite);
-	}
-	
-	private void mergeResources(Subscriber subscriber, SyncInfo[] infos, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
-		TestMergeUpdateOperation action = new TestMergeUpdateOperation(getElements(infos), allowOverwrite);
-		action.run(DEFAULT_MONITOR);
+		getSyncInfoSource().mergeResources(subscriber, resources, allowOverwrite);
 	}
 	
 	/**

@@ -15,20 +15,13 @@ import java.util.*;
 
 import junit.framework.AssertionFailedError;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
-import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
-import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
+import org.eclipse.team.tests.ccvs.ui.SubscriberParticipantSyncInfoSource;
 
 /**
  * Provides test methods common to CVS sync subscribers
@@ -37,7 +30,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 
 	private ISubscriberChangeListener listener;
 	private List accumulatedTeamDeltas = new ArrayList();
-	private static SyncInfoSource source = new SynchronizeViewTestAdapter();
+	private static SyncInfoSource source = new SubscriberParticipantSyncInfoSource();
 
 	public CVSSyncSubscriberTest() {
 		super();
@@ -79,35 +72,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws CoreException {
-		int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
-		SyncInfo info = getSyncInfo(subscriber, resource);
-		int kind;
-		int kindOther = syncKind & conflictTypeMask;
-		if (info == null) {
-			kind = SyncInfo.IN_SYNC;
-		} else {
-			kind = info.getKind() & conflictTypeMask;
-		}
-		// Special handling for folders
-		if (kind != kindOther && resource.getType() == IResource.FOLDER) {
-			// The only two states for folders are outgoing addition and in-sync.
-			// Other additions will appear as in-sync
-			if (info.getKind() == SyncInfo.IN_SYNC 
-					&& (syncKind & SyncInfo.ADDITION) != 0) {
-				return;
-			}
-		} else {
-			// Only test if kinds are equal
-			assertDiffKindEquals(message, subscriber, resource, SyncInfoToDiffConverter.asDiffFlags(syncKind));
-		}
-		assertTrue(message + ": improper sync state for " + resource + " expected " + 
-				   SyncInfo.kindToString(kindOther) + " but was " +
-				   SyncInfo.kindToString(kind), kind == kindOther);
-		
-	}
-	
-	protected SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
-		return getSyncInfoSource().getSyncInfo(subscriber, resource);
+		getSyncInfoSource().assertSyncEquals(message, subscriber, resource, syncKind);
 	}
 	
 	protected void assertDiffKindEquals(String message, Subscriber subscriber, IContainer root, String[] resourcePaths, boolean refresh, int[] diffKinds) throws CoreException, TeamException {
@@ -115,35 +80,8 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		if (refresh) refresh(subscriber, root);
 		IResource[] resources = getResources(root, resourcePaths);
 		for (int i=0;i<resources.length;i++) {
-			assertDiffKindEquals(message, subscriber, resources[i], diffKinds[i]);
+			getSyncInfoSource().assertDiffKindEquals(message, subscriber, resources[i], diffKinds[i]);
 		}
-	}
-	
-	protected void assertDiffKindEquals(String message, Subscriber subscriber, IResource resource, int expectedFlags) throws CoreException {
-		IDiff node = getDiff(subscriber, resource);
-		int actualFlags;
-		if (node == null) {
-			actualFlags = IDiff.NO_CHANGE;
-		} else {
-			actualFlags = ((Diff)node).getStatus();
-		}
-		// Special handling for folders
-		if (actualFlags != expectedFlags && resource.getType() == IResource.FOLDER) {
-			// The only two states for folders are outgoing addition and in-sync.
-			// Other additions will appear as in-sync
-			int expectedKind = expectedFlags & Diff.KIND_MASK;
-			int actualKind = actualFlags & Diff.KIND_MASK;
-			if (actualKind == IDiff.NO_CHANGE 
-					&& expectedKind == IDiff.ADD) {
-				return;
-			}
-		}
-		assertTrue(message + ": improper diff for " + resource + " expected " + 
-				expectedFlags + " but was " + actualFlags, actualFlags == expectedFlags);
-	}
-	
-	protected IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
-		return getSyncInfoSource().getDiff(subscriber, resource);
 	}
 
 	protected void assertSyncChangesMatch(ISubscriberChangeEvent[] changes, IResource[] resources) {
@@ -250,15 +188,6 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		subscriber.addListener(listener);
 		return listener;
 	}
-	
-	protected SyncInfo[] createSyncInfos(Subscriber subscriber, IResource[] resources) throws TeamException {
-		SyncInfo[] result = new SyncInfo[resources.length];
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			result[i] = getSyncInfo(subscriber, resource);
-		}
-		return result;
-	}
 
 	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {
 		getSyncInfoSource().assertProjectRemoved(subscriber, project);
@@ -266,15 +195,6 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	
 	protected void markAsMerged(CVSSyncTreeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
-		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		new ConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
-	}
-
-	protected IDiffElement[] getElements(SyncInfo[] infos) {
-		SyncInfoModelElement[] elements = new SyncInfoModelElement[infos.length];
-		for (int i = 0; i < elements.length; i++) {
-			elements[i] = new SyncInfoModelElement(null, infos[i]);
-		}
-		return elements;
+		getSyncInfoSource().markAsMerged(subscriber, resources);
 	}
 }

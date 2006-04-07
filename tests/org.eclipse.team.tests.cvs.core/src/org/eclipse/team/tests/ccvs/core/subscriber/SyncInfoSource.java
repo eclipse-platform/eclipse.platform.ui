@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation;
+import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 
 /**
  * This class acts as the source for the sync info used by the subscriber tests.
@@ -53,14 +61,14 @@ public class SyncInfoSource {
 	/**
 	 * Return the sync info for the given subscriber for the given resource.
 	 */
-	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
+	protected SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
 		return subscriber.getSyncInfo(resource);
 	}
 	
 	/**
 	 * Return the diff for the given subscriber for the given resource.
 	 */
-	public IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+	protected IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
 		return subscriber.getDiff(resource);
 	}
 	
@@ -100,7 +108,6 @@ public class SyncInfoSource {
 	 */
 	public void reset(Subscriber subscriber) throws TeamException {
 		// Do nothing
-		
 	}
 	
 	/**
@@ -111,4 +118,119 @@ public class SyncInfoSource {
 	public void assertViewMatchesModel(Subscriber subscriber) {
 	    // Default is to do nothing. Subclasses may override
 	}
+	
+	public void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws CoreException {
+		int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
+		SyncInfo info = getSyncInfo(subscriber, resource);
+		int kind;
+		int kindOther = syncKind & conflictTypeMask;
+		if (info == null) {
+			kind = SyncInfo.IN_SYNC;
+		} else {
+			kind = info.getKind() & conflictTypeMask;
+		}
+		// Special handling for folders
+		if (kind != kindOther && resource.getType() == IResource.FOLDER) {
+			// The only two states for folders are outgoing addition and in-sync.
+			// Other additions will appear as in-sync
+			if (info.getKind() == SyncInfo.IN_SYNC 
+					&& (syncKind & SyncInfo.ADDITION) != 0) {
+				return;
+			}
+		} else {
+			// Only test if kinds are equal
+			assertDiffKindEquals(message, subscriber, resource, SyncInfoToDiffConverter.asDiffFlags(syncKind));
+		}
+		junit.framework.Assert.assertTrue(message + ": improper sync state for " + resource + " expected " + 
+				   SyncInfo.kindToString(kindOther) + " but was " +
+				   SyncInfo.kindToString(kind), kind == kindOther);
+		
+	}
+	
+	protected void assertDiffKindEquals(String message, Subscriber subscriber, IResource resource, int expectedFlags) throws CoreException {
+		IDiff node = getDiff(subscriber, resource);
+		int actualFlags;
+		if (node == null) {
+			actualFlags = IDiff.NO_CHANGE;
+		} else {
+			actualFlags = ((Diff)node).getStatus();
+		}
+		// Special handling for folders
+		if (actualFlags != expectedFlags && resource.getType() == IResource.FOLDER) {
+			// The only two states for folders are outgoing addition and in-sync.
+			// Other additions will appear as in-sync
+			int expectedKind = expectedFlags & Diff.KIND_MASK;
+			int actualKind = actualFlags & Diff.KIND_MASK;
+			if (actualKind == IDiff.NO_CHANGE 
+					&& expectedKind == IDiff.ADD) {
+				return;
+			}
+		}
+		junit.framework.Assert.assertTrue(message + ": improper diff for " + resource + " expected " + 
+				SyncInfoToDiffConverter.diffStatusToString(expectedFlags) 
+				+ " but was " + SyncInfoToDiffConverter.diffStatusToString(actualFlags), actualFlags == expectedFlags);
+	}
+	
+	public void mergeResources(CVSMergeSubscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
+		SyncInfo[] infos = createSyncInfos(subscriber, resources);
+		mergeResources(subscriber, infos, allowOverwrite);
+	}
+	
+	private void mergeResources(Subscriber subscriber, SyncInfo[] infos, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
+		TestMergeUpdateOperation action = new TestMergeUpdateOperation(getElements(infos), allowOverwrite);
+		action.run(DEFAULT_MONITOR);
+	}
+	
+	protected SyncInfo[] createSyncInfos(Subscriber subscriber, IResource[] resources) throws TeamException {
+		SyncInfo[] result = new SyncInfo[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			result[i] = getSyncInfo(subscriber, resource);
+		}
+		return result;
+	}
+	
+	public void markAsMerged(CVSSyncTreeSubscriber subscriber, IResource[] resources) throws InvocationTargetException, InterruptedException, TeamException {
+		SyncInfo[] infos = createSyncInfos(subscriber, resources);
+		new ConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
+	}
+	
+
+	protected IDiffElement[] getElements(SyncInfo[] infos) {
+		SyncInfoModelElement[] elements = new SyncInfoModelElement[infos.length];
+		for (int i = 0; i < elements.length; i++) {
+			elements[i] = new SyncInfoModelElement(null, infos[i]);
+		}
+		return elements;
+	}
+	
+	public void updateResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		runSubscriberOperation(new TestUpdateOperation(getElements(createSyncInfos(subscriber, resources))));
+	}
+	
+	public void commitResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		runSubscriberOperation(new TestCommitOperation(getElements(createSyncInfos(subscriber, resources)), false /* override */));
+	}
+	
+	public void overrideAndUpdateResources(Subscriber subscriber, boolean shouldPrompt, IResource[] resources) throws CoreException {
+		TestOverrideAndUpdateOperation action = new TestOverrideAndUpdateOperation(getElements(createSyncInfos(subscriber, resources)));
+		runSubscriberOperation(action);
+		Assert.assertTrue(shouldPrompt == action.isPrompted());
+	}
+	
+	public void overrideAndCommitResources(CVSSyncTreeSubscriber subscriber, IResource[] resources) throws CoreException {
+		TestCommitOperation action = new TestCommitOperation(getElements(createSyncInfos(subscriber, resources)), true /* override */);
+		runSubscriberOperation(action);
+	}
+	
+	private void runSubscriberOperation(CVSSubscriberOperation op) throws CoreException {
+		try {
+			op.run();
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			junit.framework.Assert.fail("Operation was interrupted");
+		}
+	}
+
 }

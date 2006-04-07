@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
@@ -22,6 +23,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
+import org.eclipse.team.internal.core.Messages;
 
 /**
  * Covert a SyncInfo into a IDiff
@@ -41,6 +43,39 @@ public class SyncInfoToDiffConverter {
 	}
 
 	private static SyncInfoToDiffConverter instance;
+	
+	
+	public static String diffKindToString(int kind) {
+		String label = ""; //$NON-NLS-1$
+		if(kind==IDiff.NO_CHANGE) {
+			label = Messages.RemoteSyncElement_insync; 
+		} else {
+			switch(kind) {
+				case IDiff.CHANGE: label = Messages.RemoteSyncElement_change ; break;
+				case IDiff.ADD: label = Messages.RemoteSyncElement_addition; break;
+				case IDiff.REMOVE: label = Messages.RemoteSyncElement_deletion; break; 
+			}
+		}
+		return label;
+	}
+	
+	public static String diffDirectionToString(int direction) {
+		switch(direction) {
+			case IThreeWayDiff.CONFLICTING: return Messages.RemoteSyncElement_conflicting; 
+			case IThreeWayDiff.OUTGOING: return Messages.RemoteSyncElement_outgoing; 
+			case IThreeWayDiff.INCOMING: return Messages.RemoteSyncElement_incoming; 
+		}	
+		return ""; //$NON-NLS-1$
+	}
+	
+	public static String diffStatusToString(int status) {
+		int kind = status & Diff.KIND_MASK;
+		String label = diffKindToString(kind);
+		int direction = status & ThreeWayDiff.DIRECTION_MASK;
+		if (direction != 0)
+			label = diffDirectionToString(direction) + label;
+		return label;
+	}
 	
 	public static int asDiffFlags(int syncInfoFlags) {
 		if (syncInfoFlags == SyncInfo.IN_SYNC)

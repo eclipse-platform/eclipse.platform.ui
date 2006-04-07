@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
+import org.eclipse.team.tests.ccvs.ui.SubscriberParticipantSyncInfoSource;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.PartInitException;
 
@@ -73,8 +73,8 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
     }
 
     private void assertNodesInViewer(Subscriber workspaceSubscriber, ChangeSetDiffNode[] nodes) throws PartInitException {
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        ISynchronizeParticipant participant = SubscriberParticipantSyncInfoSource.getParticipant(workspaceSubscriber);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SubscriberParticipantSyncInfoSource.getSyncViewPage(participant);
         TreeViewer viewer = (TreeViewer)page.getViewer();
         Tree tree = viewer.getTree();
         List nodeList = new ArrayList();
@@ -158,8 +158,8 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
     }
 
     private void enableChangeSets(Subscriber workspaceSubscriber) throws PartInitException {
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        ISynchronizeParticipant participant = SubscriberParticipantSyncInfoSource.getParticipant(workspaceSubscriber);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SubscriberParticipantSyncInfoSource.getSyncViewPage(participant);
         ChangeSetModelManager manager = (ChangeSetModelManager)page.getConfiguration().getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
         manager.setCommitSetsEnabled(true);
         page.getConfiguration().setMode(ISynchronizePageConfiguration.BOTH_MODE);
@@ -167,15 +167,15 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
 
     private void enableCheckedInChangeSets(Subscriber workspaceSubscriber) throws PartInitException {
         enableChangeSets(workspaceSubscriber);
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        ISynchronizeParticipant participant = SubscriberParticipantSyncInfoSource.getParticipant(workspaceSubscriber);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SubscriberParticipantSyncInfoSource.getSyncViewPage(participant);
         page.getConfiguration().setMode(ISynchronizePageConfiguration.INCOMING_MODE);
     }
     
     private void enableActiveChangeSets(Subscriber workspaceSubscriber) throws PartInitException {
         enableChangeSets(workspaceSubscriber);
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        ISynchronizeParticipant participant = SubscriberParticipantSyncInfoSource.getParticipant(workspaceSubscriber);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SubscriberParticipantSyncInfoSource.getSyncViewPage(participant);
         page.getConfiguration().setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
     }
     
@@ -203,12 +203,12 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
 				while (Display.getCurrent().readAndDispatch()) {}
 			}
 		};
-        SynchronizeViewTestAdapter.getCollector(workspaceSubscriber);
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
+        SubscriberParticipantSyncInfoSource.getCollector(workspaceSubscriber);
+        ISynchronizeParticipant participant = SubscriberParticipantSyncInfoSource.getParticipant(workspaceSubscriber);
         ChangeSetCapability capability = ((IChangeSetProvider)participant).getChangeSetCapability();
         SubscriberChangeSetManager activeManager = (SubscriberChangeSetManager)capability.getActiveChangeSetManager();
         activeManager.waitUntilDone(eventLoopProgressMonitor);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SubscriberParticipantSyncInfoSource.getSyncViewPage(participant);
         ChangeSetModelManager manager = (ChangeSetModelManager)page.getConfiguration().getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
         AbstractSynchronizeModelProvider provider = (AbstractSynchronizeModelProvider)manager.getActiveModelProvider();
         provider.waitUntilDone(eventLoopProgressMonitor);
