@@ -151,6 +151,8 @@ public class WorkspaceModelParticipant extends
 		protected void configureMergeAction(String mergeActionId, Action action) {
 			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
 				Utils.initAction(action, "WorkspaceUpdateAction.", Policy.getActionBundle()); //$NON-NLS-1$
+				action.setId(ICVSUIConstants.CMD_UPDATE);
+				action.setActionDefinitionId(ICVSUIConstants.CMD_UPDATE);
 			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
 				Utils.initAction(action, "OverrideAndUpdateAction.", Policy.getActionBundle()); //$NON-NLS-1$
 			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {

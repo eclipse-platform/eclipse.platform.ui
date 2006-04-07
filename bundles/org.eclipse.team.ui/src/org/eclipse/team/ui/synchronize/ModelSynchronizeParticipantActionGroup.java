@@ -152,6 +152,8 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 				if (merge == null) {
 					merge = new MergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, cmm, getConfiguration());
 					configureMergeAction(SynchronizationActionProvider.MERGE_ACTION_ID, merge);
+					registerActionWithWorkbench(merge);
+					
 				}
 				merge.update();
 				addToContextMenu(SynchronizationActionProvider.MERGE_ACTION_ID, merge, cmm);
@@ -159,6 +161,7 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 			if (overwrite == null) {
 				overwrite = new MergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, cmm, getConfiguration());
 				configureMergeAction(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite);
+				registerActionWithWorkbench(overwrite);
 			}
 			overwrite.update();
 			addToContextMenu(SynchronizationActionProvider.OVERWRITE_ACTION_ID, overwrite, cmm);
@@ -169,7 +172,25 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 				}
 				markAsMerged.update();
 				addToContextMenu(SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID, markAsMerged, cmm);
+				registerActionWithWorkbench(markAsMerged);
 			}
+		}
+	}
+	
+	/**
+	 * Register this action with the workbench so that it can participate in keybindings and
+	 * retargetable actions.
+	 * 
+	 * @param action the action to register
+	 */
+	private void registerActionWithWorkbench(IAction action) {
+		ISynchronizePageSite site = getConfiguration().getSite();
+		String id = action.getId();
+		if (id != null) {
+			site.getActionBars().setGlobalActionHandler(id, action);
+			IKeyBindingService keyBindingService = site.getKeyBindingService();
+			if(keyBindingService != null)
+				keyBindingService.registerAction(action);
 		}
 	}
 	

@@ -22,10 +22,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.PlatformUI;
 
 public class CommitAction extends CVSModelProviderAction implements IPropertyChangeListener {
@@ -33,12 +33,8 @@ public class CommitAction extends CVSModelProviderAction implements IPropertyCha
 	public CommitAction(final ISynchronizePageConfiguration configuration) {
 		super(configuration);
 		configuration.addPropertyChangeListener(this);
-		configuration.addActionContribution(new SynchronizePageActionGroup() {
-			public void dispose() {
-				configuration.removePropertyChangeListener(CommitAction.this);
-				super.dispose();
-			}
-		});
+		setId(ICVSUIConstants.CMD_COMMIT);
+		setActionDefinitionId(ICVSUIConstants.CMD_COMMIT);
 	}
 	
 	protected String getBundleKeyPrefix() {
