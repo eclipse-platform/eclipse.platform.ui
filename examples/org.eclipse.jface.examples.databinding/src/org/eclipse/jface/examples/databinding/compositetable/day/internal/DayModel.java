@@ -11,6 +11,10 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
@@ -34,6 +38,46 @@ public class DayModel {
 		numberOfDivisionsInHour = parent.getNumberOfDivisionsInHour();
 	}
 	
+	private int computeBaseSlot(GregorianCalendar gc) {
+		return gc.get(Calendar.HOUR_OF_DAY) * numberOfDivisionsInHour;
+	}
+	
+	private float computeAdditionalSlots(GregorianCalendar gc) {
+		return ((float)gc.get(Calendar.MINUTE)) / 60 * numberOfDivisionsInHour;
+	}
+	
+	private int getSlotForStartTime(Date time) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(time);
+		return computeBaseSlot(gc) + ((int) computeAdditionalSlots(gc));
+	}
+
+	private int getSlotForEndTime(Date time) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(time);
+		
+		int baseSlot = computeBaseSlot(gc);
+		float additionalSlots = computeAdditionalSlots(gc);
+		
+		return keepExtraTimeIfEndTimePushesIntoNextTimeSlot(baseSlot, additionalSlots);
+	}
+
+	private int keepExtraTimeIfEndTimePushesIntoNextTimeSlot(int baseSlot, float additionalSlots) {
+		if(additionalSlots % (int)additionalSlots > 0) {
+			return baseSlot + (int)additionalSlots;
+		}
+		return baseSlot + (int)additionalSlots-1;
+	}
+
+	private int[] getSlotsForEvent(Calendarable event) {
+		int startTime = getSlotForStartTime(event.getStartTime());
+		int endTime = getSlotForEndTime(event.getEndTime());
+		if (endTime >= startTime) {
+			return new int[] {startTime, endTime};
+		}
+		return new int[] {startTime, startTime};
+	}
+
 	/**
 	 * Given an unsorted list of Calendarables, each of which has a start and an
 	 * end time, this method will return a two dimensional array containing
@@ -49,13 +93,22 @@ public class DayModel {
 	 *         events in that column for the corresponding time slice in the
 	 *         day.
 	 */
-	public Calendarable[][] getColumnsForEvents(List events) {
-		Calendarable[][] columns = new Calendarable[1][IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour];
-		for (int i = 0; i < columns.length; i++) {
-			for (int j = 0; j < columns[i].length; j++) {
-				columns[i][j] = null;
+	public Calendarable[][] getEventLayout(List events) {
+		Calendarable[][] eventLayout = new Calendarable[1][IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour];
+		for (int i = 0; i < eventLayout.length; i++) {
+			for (int j = 0; j < eventLayout[i].length; j++) {
+				eventLayout[i][j] = null;
 			}
-		}                                                                              
-		return columns;
+		}
+		
+		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+			Calendarable event = (Calendarable) eventsIter.next();
+			int[] slotsForEvent = getSlotsForEvent(event);
+			
+			for (int slot = slotsForEvent[0]; slot <= slotsForEvent[1]; ++slot) {
+				eventLayout[0][slot] = event;
+			}
+		}
+		return eventLayout;
 	}
 }

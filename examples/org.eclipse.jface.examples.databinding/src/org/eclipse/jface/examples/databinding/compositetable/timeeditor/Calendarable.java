@@ -25,11 +25,31 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  */
 public class Calendarable {
-
+	
+	private boolean allDayEvent = false;
+	
+	/**
+	 * Returns if this Calenderable represents an all-day event.
+	 * 
+	 * @return true if this is an all-day event; false otherwise.
+	 */
+	public boolean isAllDayEvent() {
+		return allDayEvent;
+	}
+	
+	/**
+	 * Sets if this Calenderable represents an all-day event.
+	 * 
+	 * @param allDayEvent true if this is an all-day event; false otherwise.
+	 */
+	public void setAllDayEvent(boolean allDayEvent) {
+		this.allDayEvent = allDayEvent;
+	}
+	
 	private Date startTime = null;
 	
 	/**
-	 * Gets the event's start time.
+	 * Gets the event's start time.  This value is ignored if this is an all-day event.
 	 * 
 	 * @return the start time for the event.
 	 */
@@ -38,7 +58,7 @@ public class Calendarable {
 	}
 
 	/**
-	 * Sets the event's start time.
+	 * Sets the event's start time.  This value is ignored if this is an all-day event.
 	 * 
 	 * @param startTime the event's start time.
 	 */
@@ -50,18 +70,18 @@ public class Calendarable {
 
 
 	/**
-	 * Returns the event's end time.
+	 * Returns the event's end time.  This value is ignored if this is an all-day event.
 	 * 
-	 * @return the event's end time.
+	 * @return the event's end time.  This value is ignored if this is an all-day event.
 	 */
 	public Date getEndTime() {
 		return endTime;
 	}
 
 	/**
-	 * Sets the event's end time.
+	 * Sets the event's end time.  This value is ignored if this is an all-day event.
 	 * 
-	 * @param endTime the event's end time.
+	 * @param endTime the event's end time.  This value is ignored if this is an all-day event.
 	 */
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;

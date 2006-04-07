@@ -12,7 +12,9 @@
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor.test;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -28,6 +30,7 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEd
  *
  */
 public class DayModel_testGetColumnsForEvents extends TestCase {
+	// Fixtures ---------------------------------------------------------------
 
 	private final class EventEditorFixture implements IEventEditor {
 		private final int divisions_in_hour;
@@ -58,22 +61,66 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		}
 	}
 
-	/**
-	 * 
-	 */
+	private Date time(int hour, int minutes) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(new Date());
+		gc.set(Calendar.HOUR_OF_DAY, hour);
+		gc.set(Calendar.MINUTE, minutes);
+		return gc.getTime();
+	}
+	
+	private void addCalendarable(Date startTime, Date endTime, String description) {
+		Calendarable c = new Calendarable();
+		c.setStartTime(startTime);
+		c.setEndTime(endTime);
+		c.setText(description);
+		expectedEvents.add(c);
+	}
+	
+	// Tests ------------------------------------------------------------------
+	
 	private static final int DIVISIONS_IN_HOUR = 2;
 	
 	private IEventEditor eventEditor = new EventEditorFixture(DIVISIONS_IN_HOUR);
+	private DayModel dayModel;
+	private List expectedEvents;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		dayModel = new DayModel(eventEditor);
+		expectedEvents = new ArrayList();
+	}
 
 	public void test_getColumnsForEvents_NoEventsInDay() throws Exception {
-		DayModel dayModel = new DayModel(eventEditor);
-		List events = new ArrayList();
-		Calendarable[][] models = dayModel.getColumnsForEvents(events);
+		Calendarable[][] eventLayout = dayModel.getEventLayout(expectedEvents);
+		assertEquals("One column", 1, eventLayout.length);
+		assertEquals(IEventEditor.DISPLAYED_HOURS * DIVISIONS_IN_HOUR
+				+ " time slots", IEventEditor.DISPLAYED_HOURS
+				* DIVISIONS_IN_HOUR, eventLayout[0].length);
 		
-		for (int i = 0; i < models.length; i++) {
-			for (int j = 0; j < models[i].length; j++) {
-				assertNull(models[i][j]);
+		for (int column = 0; column < eventLayout.length; column++) {
+			for (int timeSlot = 0; timeSlot < eventLayout[column].length; timeSlot++) {
+				assertNull(eventLayout[column][timeSlot]);
 			}
 		}
 	}
+	
+	public void test_getColumnsForEvents_OneEventNoSpan() throws Exception {
+		addCalendarable(time(8, 00), time(8, 30), "One event");
+		Calendarable[][] eventLayout = dayModel.getEventLayout(expectedEvents);
+		
+		assertEquals("One column", 1, eventLayout.length);
+		int slotForEvent = 16;
+		
+		for (int slot=0; slot < slotForEvent; ++slot) {
+			assertNull("slots before event null", eventLayout[0][slot]);
+		}
+		assertEquals("should find event here", expectedEvents.get(0), eventLayout[0][slotForEvent]);
+		for (int slot=slotForEvent+1; slot < eventLayout[0].length; ++slot) {
+			assertNull("slots before event null", eventLayout[0][slot]);
+		}
+	}
 }
+
+
+
