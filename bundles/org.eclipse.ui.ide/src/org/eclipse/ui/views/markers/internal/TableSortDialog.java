@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de>: 
+ *         Fix for Bug 77336 [Markers] [Dialogs] TableSortDialog does not use dialog font
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.window.IShellProvider;
@@ -95,9 +98,13 @@ public class TableSortDialog extends TrayDialog {
 			return composite;
 		}
 
+        initializeDialogUnits(composite);
+        
         createPrioritiesArea(composite);
         createRestoreDefaultsButton(composite);
         createSeparatorLine(composite);
+        
+        Dialog.applyDialogFont(composite);
 
         return composite;
     }
@@ -375,6 +382,7 @@ public class TableSortDialog extends TrayDialog {
      * @param button
      */
     private void setButtonSize(Button button, GridData buttonData) {
+    	button.setFont(button.getParent().getFont());
         int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
         buttonData.widthHint = Math.max(widthHint, button.computeSize(
                 SWT.DEFAULT, SWT.DEFAULT, true).x);
