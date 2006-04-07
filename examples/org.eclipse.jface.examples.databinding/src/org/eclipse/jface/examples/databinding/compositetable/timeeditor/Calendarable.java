@@ -12,6 +12,7 @@
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,17 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  */
 public class Calendarable {
+	
+	/**
+	 * A comparator for Calenarable objects
+	 */
+	public static final Comparator comparator = new Comparator() {
+		public int compare(Object c1, Object c2) {
+			Calendarable cal1 = (Calendarable) c1;
+			Calendarable cal2 = (Calendarable) c2;
+			return cal1.getStartTime().compareTo(cal2.getStartTime());
+		}
+	};
 	
 	private boolean allDayEvent = false;
 	

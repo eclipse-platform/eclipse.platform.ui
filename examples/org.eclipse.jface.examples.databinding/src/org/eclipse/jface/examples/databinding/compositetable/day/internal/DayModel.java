@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -27,6 +27,8 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEd
  */
 public class DayModel {
 	
+	private static final int START = 0;
+	private static final int END = 1;
 	private final int numberOfDivisionsInHour;
 	
 	/**
@@ -77,6 +79,41 @@ public class DayModel {
 		}
 		return new int[] {startTime, startTime};
 	}
+	
+	private class EventLayout {
+		private Calendarable[][] eventLayout;
+		private final int timeSlotsInDay;
+
+		public EventLayout(int timeSlotsInDay) {
+			this.timeSlotsInDay = timeSlotsInDay;
+			eventLayout = new Calendarable[1][timeSlotsInDay];
+			initializeColumn(0, timeSlotsInDay);
+		}
+		
+		private void initializeColumn(int column, final int timeSlotsInDay) {
+			eventLayout[column] = new Calendarable[timeSlotsInDay];
+			for (int slot = 0; slot < eventLayout[column].length; slot++) {
+				eventLayout[column][slot] = null;
+			}
+		}
+		
+		public void addColumn() {
+			Calendarable[][] old = eventLayout;
+			eventLayout = new Calendarable[old.length+1][timeSlotsInDay];
+			for (int i = 0; i < old.length; i++) {
+				eventLayout[i] = old[i];
+			}
+			initializeColumn(eventLayout.length-1, timeSlotsInDay);
+		}
+		
+		public Calendarable[][] getLayout() {
+			return eventLayout;
+		}
+
+		public int getNumberOfColumns() {
+			return eventLayout.length;
+		}
+	}
 
 	/**
 	 * Given an unsorted list of Calendarables, each of which has a start and an
@@ -91,24 +128,96 @@ public class DayModel {
 	 *            A list of events
 	 * @return An array of columns, where each column contains references to the
 	 *         events in that column for the corresponding time slice in the
-	 *         day.
+	 *         day. An event where start time is > end time will be "corrected" to
+	 *         fill a single time slot. 
 	 */
 	public Calendarable[][] getEventLayout(List events) {
-		Calendarable[][] eventLayout = new Calendarable[1][IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour];
-		for (int i = 0; i < eventLayout.length; i++) {
-			for (int j = 0; j < eventLayout[i].length; j++) {
-				eventLayout[i][j] = null;
+		Collections.sort(events, Calendarable.comparator);
+		
+		final int timeSlotsInDay = IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour;
+		
+		EventLayout eventLayout = new EventLayout(timeSlotsInDay);
+		
+		// Lay out events
+		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+			Calendarable event = (Calendarable) eventsIter.next();
+			int[] slotsEventSpans = getSlotsForEvent(event);
+			
+			int eventColumn = findColumnForEvent(eventLayout, slotsEventSpans);
+			placeEvent(event, eventLayout.getLayout(), eventColumn, slotsEventSpans);
+		}
+		
+		// Expand them horizontally if possible
+		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+			Calendarable event = (Calendarable) eventsIter.next();
+			int[] slotsEventSpans = getSlotsForEvent(event);
+			int eventColumn = findEventColumn(event, eventLayout.getLayout(), slotsEventSpans);
+			
+			if (eventColumn < eventLayout.getNumberOfColumns()) {
+				for (int nextColumn = eventColumn+1; nextColumn < eventLayout.getNumberOfColumns(); ++nextColumn) {
+					if (columnIsAvailable(nextColumn, eventLayout.getLayout(), slotsEventSpans)) {
+						placeEvent(event, eventLayout.getLayout(), nextColumn, slotsEventSpans);
+					} else {
+						break;
+					}
+				}
 			}
 		}
 		
-		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
-			Calendarable event = (Calendarable) eventsIter.next();
-			int[] slotsForEvent = getSlotsForEvent(event);
-			
-			for (int slot = slotsForEvent[0]; slot <= slotsForEvent[1]; ++slot) {
-				eventLayout[0][slot] = event;
+		return eventLayout.getLayout();
+	}
+
+	private int findEventColumn(Calendarable event, Calendarable[][] layout, int[] slotsEventSpans) {
+		for (int column = 0; column < layout.length; column++) {
+			if (layout[column][slotsEventSpans[START]] == event) {
+				return column;
 			}
 		}
-		return eventLayout;
+		throw new IndexOutOfBoundsException("Could not find event");
+	}
+
+	private int findColumnForEvent(EventLayout eventLayout, int[] slotsEventSpans) {
+		int currentColumn = 0;
+		while (true) {
+			Calendarable[][] layout = eventLayout.getLayout();
+			if (columnIsAvailable(currentColumn, layout, slotsEventSpans)) {
+				return currentColumn;
+			}
+			if (isNewColumnNeeded(currentColumn, layout)) {
+				eventLayout.addColumn();
+			}
+			++currentColumn;
+		}
+	}
+
+	private boolean columnIsAvailable(int column, Calendarable[][] layout, int[] slotsEventSpans) {
+		int currentSlot = slotsEventSpans[START];
+		while (moreSlotsToProcess(currentSlot, slotsEventSpans)) {
+			if (isSlotAlreadyOccupiedInColumn(currentSlot, layout, column)) {
+				return false;
+			}
+			++currentSlot;
+		}
+		return true;
+	}
+	
+	private void placeEvent(Calendarable event, Calendarable[][] eventLayout, int currentColumn, int[] slotsEventSpans) {
+		for (int slot = slotsEventSpans[START]; moreSlotsToProcess(slot, slotsEventSpans); ++slot) {
+			eventLayout[currentColumn][slot] = event;
+		}
+	}
+	
+	private boolean moreSlotsToProcess(int slot, int[] slotsEventSpans) {
+		return slot <= slotsEventSpans[END];
+	}
+
+	private boolean isSlotAlreadyOccupiedInColumn(int slot, Calendarable[][] layout, int currentColumn) {
+		return layout[currentColumn][slot] != null;
+	}
+
+	private boolean isNewColumnNeeded(int currentColumn, Calendarable[][] layout) {
+		return currentColumn >= layout.length-1;
 	}
 }
+
+
