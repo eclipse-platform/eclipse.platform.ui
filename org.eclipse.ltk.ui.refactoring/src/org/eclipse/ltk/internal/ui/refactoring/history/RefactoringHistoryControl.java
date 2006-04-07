@@ -38,6 +38,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -299,13 +300,29 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
-	 * Creates the button bar at the right of the component.
+	 * Creates the comment viewer of the control.
 	 * 
 	 * @param parent
 	 *            the parent composite
+	 * @return the comment viewer
 	 */
-	protected void createRightButtonBar(final Composite parent) {
-		// Do nothing
+	protected Composite createCommentViewer(final Composite parent) {
+		Assert.isNotNull(parent);
+		final Composite composite= new Composite(parent, SWT.NONE);
+		final GridLayout layout= new GridLayout(1, true);
+		layout.horizontalSpacing= 0;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		composite.setLayout(layout);
+		final Label label= new Label(composite, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
+		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(data);
+		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		fCommentField.setText(fControlConfiguration.getCommentCaption());
+		data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		fCommentField.setLayoutData(data);
+		return composite;
 	}
 
 	/**
@@ -348,15 +365,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		fHistoryPane.setContent(fHistoryViewer.getControl());
-		fCommentField= new Text(fSplitterControl, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-		fCommentField.setText(fControlConfiguration.getCommentCaption());
+		createCommentViewer(fSplitterControl);
 		fSplitterControl.setWeights(new int[] { 80, 20});
 
 		Dialog.applyDialogFont(this);
 	}
 
 	/**
-	 * Creates the history viewer of the dialog.
+	 * Creates the history viewer of the control.
 	 * 
 	 * @param parent
 	 *            the parent composite
@@ -368,6 +384,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		else
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+
+	/**
+	 * Creates the button bar at the right of the component.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createRightButtonBar(final Composite parent) {
+		// Do nothing
 	}
 
 	/**
