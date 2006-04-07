@@ -469,6 +469,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		goToAddress(baseAddress);
 		fTableViewer.setSelection(baseAddress);
 		fTableViewer.setTopIndex(baseAddress);
+
+		updateSyncTopAddress(baseAddress);		
+		updateSyncSelectedAddress(baseAddress);
 	}
 
 	public Control createControl(Composite parent) {
@@ -1015,8 +1018,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			fTableViewer.setTopIndex(address);
 			fTableViewer.topIndexChanged();
-			Object selection = fTableViewer.getSelectionKey();
-			fTableViewer.setSelection(selection);
 			return;
 		}
 		
