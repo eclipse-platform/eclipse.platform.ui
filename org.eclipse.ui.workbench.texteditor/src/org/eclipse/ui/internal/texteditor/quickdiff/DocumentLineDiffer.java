@@ -621,7 +621,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						else
 							Assert.isTrue(false);
 						
-						event.fDocument= copy;
+						// copy the event to inject it into our diff copies
+						// don't modify the original event! See https://bugs.eclipse.org/bugs/show_bug.cgi?id=134227
+						event= new DocumentEvent(copy, event.fOffset, event.fLength, event.fText);
 						handleAboutToBeChanged(event);
 						
 						// inject the event into our private copy
