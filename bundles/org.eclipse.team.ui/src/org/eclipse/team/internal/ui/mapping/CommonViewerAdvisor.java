@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -108,7 +108,67 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		}
 	}
 
+	/**
+	 * Subclass of SubActionBars that manages the contributions from the common action service
+	 */
+	private class CommonSubActionBars extends SubActionBars {
+
+		public CommonSubActionBars(IActionBars parent) {
+			super(parent);
+		}
+		
+		public void setGlobalActionHandler(String actionID, IAction handler) {
+			if (handler == null) {
+				// Only remove the handler if it was set
+				if (getGlobalActionHandler(actionID) != null) {
+					getParent().setGlobalActionHandler(actionID, null);
+					super.setGlobalActionHandler(actionID, null);
+				}
+			} else {
+				// Only set the action handler if the parent doesn't
+				if (getParent().getGlobalActionHandler(actionID) != null) {
+					TeamUIPlugin.log(new TeamException(NLS.bind("Conflicting attempt to set action id {0} detected", actionID))); //$NON-NLS-1$
+					return;
+				}
+				super.setGlobalActionHandler(actionID, handler);
+			}
+		}
+		
+		public void clearGlobalActionHandlers() {
+			// When cleared, also remove the ids from the parent
+			Map handlers = getGlobalActionHandlers();
+			if (handlers != null) {
+				Set keys = handlers.keySet();
+				Iterator iter = keys.iterator();
+				while (iter.hasNext()) {
+					String actionId = (String) iter.next();
+					getParent().setGlobalActionHandler(actionId,
+							null);
+				}
+			}
+			super.clearGlobalActionHandlers();
+		}
+		
+		public void updateActionBars() {
+			// On update, push all or action handlers into our parent
+			Map newActionHandlers = getGlobalActionHandlers();
+			if (newActionHandlers != null) {
+				Set keys = newActionHandlers.entrySet();
+				Iterator iter = keys.iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					getParent().setGlobalActionHandler((String) entry.getKey(),
+							(IAction) entry.getValue());
+				}
+			}
+			super.updateActionBars();
+		}
+		
+	}
+	
 	public static final String TEAM_NAVIGATOR_CONTENT = "org.eclipse.team.ui.navigatorViewer"; //$NON-NLS-1$
+
+	private static final String PROP_ACTION_SERVICE_ACTION_BARS = "org.eclipse.team.ui.actionServiceActionBars"; //$NON-NLS-1$
 	
 	private Set extensions = new HashSet();
 	
@@ -305,7 +365,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			cmm.clearHandlers();
 		}
 		
-		// Add the actions from the service (which willalso add the groups)
+		// Add the actions from the service (which willal so add the groups)
 		ISelection selection = getViewer().getSelection();
 		actionService.setContext(new ActionContext(selection));
 		actionService.fillContextMenu(manager);
@@ -331,8 +391,13 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		super.updateActionBars(selection);
 		if (!getConfiguration().getSite().isModal()) {
 			actionService.setContext(new ActionContext(selection));
-			// TODO: This is non-standard behavior that is required by the common navigator framework (see bug 122808)
-			actionService.fillActionBars(getConfiguration().getSite().getActionBars());
+			// This is non-standard behavior that is required by the common navigator framework (see bug 122808)
+			SubActionBars subActionBars = (SubActionBars)getConfiguration().getProperty(PROP_ACTION_SERVICE_ACTION_BARS);
+			if (subActionBars == null) {
+				subActionBars = new CommonSubActionBars(getConfiguration().getSite().getActionBars());
+				getConfiguration().setProperty(PROP_ACTION_SERVICE_ACTION_BARS, subActionBars);
+			}
+			actionService.fillActionBars(subActionBars);
 		}
 	}
 	
