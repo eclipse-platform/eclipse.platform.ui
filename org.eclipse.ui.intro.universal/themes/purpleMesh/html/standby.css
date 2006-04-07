@@ -144,6 +144,11 @@ a#webresources:hover img,
 a#webresources:focus img,
 a#webresources:active img { background-image : url(../graphics/icons/ctool/webrsrc48.gif); }
 
+a#migrate img { background-image : url(../graphics/icons/etool/migrate48.gif); }
+a#migrate:hover img,
+a#migrate:focus img,
+a#migrate:active img { background-image : url(../graphics/icons/ctool/migrate48.gif); }
+
 a#workbench img { background-image : url(../graphics/icons/etool/wb48.gif); }
 a#workbench:hover img,
 a#workbench:focus img,
