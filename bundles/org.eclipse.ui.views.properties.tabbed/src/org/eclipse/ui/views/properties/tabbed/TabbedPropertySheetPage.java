@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -427,8 +427,7 @@ public class TabbedPropertySheetPage
 	 * @param contributorId
 	 *            the contributor id.
 	 */
-	private void disposeContributor(String contributorId) {
-        Assert.isTrue(contributor.getContributorId().equals(contributorId));
+	private void disposeContributor() {
 		/**
 		 * If the current tab is about to be disposed we have to call
 		 * aboutToBeHidden
@@ -463,7 +462,7 @@ public class TabbedPropertySheetPage
 	 */
 	public void dispose() {
 
-		disposeContributor(currentContributorId);
+		disposeContributor();
 
 		if (widgetFactory != null) {
 			widgetFactory.dispose();
@@ -774,6 +773,22 @@ public class TabbedPropertySheetPage
 		refreshTitleBar();
 	}
 
+    /**
+     * Retrieve the contributor from the selection.
+     * 
+     * @param object -
+     *            the selected element
+     * @return the TabbedPropertySheetPageContributor or null if not applicable
+     */
+    private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(
+            Object object) {
+        Object element = object instanceof IAdaptable ? ((IAdaptable) object)
+            .getAdapter(ITabbedPropertySheetPageContributor.class)
+            : object;
+        return element instanceof ITabbedPropertySheetPageContributor ? (ITabbedPropertySheetPageContributor) element
+            : null;
+    }
+
 	/**
 	 * The workbench part creates this instance of the TabbedPropertySheetPage
 	 * and implements ITabbedPropertySheetPageContributor which is unique
@@ -801,15 +816,17 @@ public class TabbedPropertySheetPage
 			return;
 		}
 
-		if (!(structuredSelection.getFirstElement() instanceof ITabbedPropertySheetPageContributor)) {
+        ITabbedPropertySheetPageContributor newContributor = getTabbedPropertySheetPageContributor(structuredSelection.getFirstElement());
+        
+		if (newContributor == null) {
 			/**
-			 * selection does not implement ITabbedPropertySheetPageContributor.
+			 * selection does not implement or adapt ITabbedPropertySheetPageContributor.
 			 */
 			return;
 		}
-
-		if (((ITabbedPropertySheetPageContributor) structuredSelection
-			.getFirstElement()).getContributorId().equals(currentContributorId)) {
+		
+        String selectionContributorId = newContributor.getContributorId();
+		if (selectionContributorId.equals(currentContributorId)) {
 			/**
 			 * selection has the same contributor id as current, so leave
 			 * existing registry.
@@ -824,20 +841,16 @@ public class TabbedPropertySheetPage
 		 * contributor from the workbench part.
 		 */
 		Iterator i = structuredSelection.iterator();
-		Object o = i.next();
-		String selectionContributorId = ((ITabbedPropertySheetPageContributor) o)
-			.getContributorId();
+        i.next();
 		while (i.hasNext()) {
-			o = i.next();
-			if (!(o instanceof ITabbedPropertySheetPageContributor)
-				|| !((ITabbedPropertySheetPageContributor) o)
-					.getContributorId().equals(selectionContributorId)) {
+            newContributor = getTabbedPropertySheetPageContributor(i.next());
+			if (newContributor == null || !newContributor.getContributorId().equals(selectionContributorId)) {
 				/**
 				 * fall back to use the default contributor id from the
 				 * workbench part.
 				 */
 				if (selectionContributor != null) {
-					disposeContributor(currentContributorId);
+					disposeContributor();
 					currentContributorId = contributor.getContributorId();
 					initContributor(currentContributorId);
 				}
@@ -849,7 +862,7 @@ public class TabbedPropertySheetPage
 		 * All the elements in the selection implement a new contributor id, so
 		 * use that id.
 		 */
-		disposeContributor(currentContributorId);
+		disposeContributor();
 		currentContributorId = selectionContributorId;
 		initContributor(currentContributorId);
 	}
