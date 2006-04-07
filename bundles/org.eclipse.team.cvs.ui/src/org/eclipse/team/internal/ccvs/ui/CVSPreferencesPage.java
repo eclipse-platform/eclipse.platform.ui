@@ -314,7 +314,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		for (Iterator iter = KSUBST_MODES.iterator(); iter.hasNext();) {
 			KSubstOption mod = (KSubstOption) iter.next();
 			KSUBST_LABELS[index]= mod.getLongDisplayText();
-			final String mode= mod.toEntryLineMode().trim();
+			final String mode= mod.toMode().trim();
 			KSUBST_VALUES[index]= mode.length() != 0 ? mode : "-kkv";    //$NON-NLS-1$
 			++index;
 		}	

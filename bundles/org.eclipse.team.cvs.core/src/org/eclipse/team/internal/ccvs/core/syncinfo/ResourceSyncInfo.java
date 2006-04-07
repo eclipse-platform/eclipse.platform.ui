@@ -493,7 +493,7 @@ public class ResourceSyncInfo {
 				result.append(entryLineTimestamp);
 			}
 			result.append(SEPARATOR);
-			if (keywordMode != null) result.append(keywordMode.toMode());
+			if (keywordMode != null) result.append(keywordMode.toEntryLineMode());
 			result.append(SEPARATOR);
 			if (tag != null) {
 				result.append(tag.toEntryLineFormat(true));
@@ -542,7 +542,7 @@ public class ResourceSyncInfo {
 	 * @return String
 	 */
 	public static byte[] setKeywordMode(byte[] syncBytes, KSubstOption mode) throws CVSException {
-		return setKeywordMode(syncBytes, mode.toMode().getBytes());
+		return setKeywordMode(syncBytes, mode.toEntryLineMode().getBytes());
 	}
 	
 	/**

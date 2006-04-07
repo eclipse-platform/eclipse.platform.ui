@@ -617,10 +617,10 @@ public abstract class Command extends Request {
 		}
 		/**
 		 * Returns the entry line mode string for this instance. Note that it might return blank strings
-		 * for certain options. For UI, use {@link #toEntryLineMode()} which will always return the a string
+		 * for certain options. For UI, use {@link #toMode()} which will always return the a string
 		 * containing the keyword substitution.
 		 */
-		public String toMode() {
+		public String toEntryLineMode() {
 			if (KSUBST_TEXT_EXPAND.equals(this)) return ""; //$NON-NLS-1$
 			return getOption();
 		}
@@ -628,7 +628,7 @@ public abstract class Command extends Request {
 		/**
 		 * Returns the entry line mode string for this instance.
 		 */
-		public String toEntryLineMode(){
+		public String toMode(){
 			return getOption();
 		}
 		
