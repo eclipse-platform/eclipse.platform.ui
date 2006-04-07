@@ -858,7 +858,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		if (page != null) {
 			try {
 				fIgnoreChanges = true;
-				page.showView(viewId, null, IWorkbenchPage.VIEW_ACTIVATE);
+				page.showView(viewId, null, IWorkbenchPage.VIEW_VISIBLE);
 			} catch (PartInitException e) {
 				DebugUIPlugin.log(e);
 			} finally {
