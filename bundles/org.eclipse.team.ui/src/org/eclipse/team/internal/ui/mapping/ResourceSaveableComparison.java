@@ -14,6 +14,8 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -27,16 +29,12 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 
 /**
  * A saveable compare model that wraps an {@link IFile} based compare input.
- * 
- * TODO Need to avoid overwriting changes made in other editors!
- * TODO Need to cache file contents in prepare
- * @see SyncInfoCompareInput
  */
 public class ResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
 
@@ -48,6 +46,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable {
 
 		private final IDiff node;
+		private long timestamp;
 
 		public ResourceDiffCompareInput(IDiff node) {
 			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
@@ -180,6 +179,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 				FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
 				fste.cacheContents(monitor);
 			}
+			updateTimestamp();
 		}
 
 		/* (non-Javadoc)
@@ -228,6 +228,36 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			return false;
 		}
 		
+		public boolean checkUpdateConflict() {
+			long newTimestamp = ResourceDiffTree.getResourceFor(node).getLocalTimeStamp();
+			if(newTimestamp != timestamp) {
+				final MessageDialog dialog = 
+					new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
+							TeamUIMessages.SyncInfoCompareInput_0,  
+							null, 
+							TeamUIMessages.SyncInfoCompareInput_1,  
+							MessageDialog.QUESTION,
+						new String[] {
+							TeamUIMessages.SyncInfoCompareInput_2, 
+							IDialogConstants.CANCEL_LABEL}, 
+						0);
+				
+				int retval = dialog.open();
+				switch(retval) {
+					// save
+					case 0: 
+						return false;
+					// cancel
+					case 1:
+						return true;
+				}
+			}
+			return false;
+		}
+
+		public void updateTimestamp() {
+			timestamp = ResourceDiffTree.getResourceFor(node).getLocalTimeStamp();
+		}
 	}
 	
 	public ResourceSaveableComparison(ICompareInput input, ISynchronizeParticipant participant, ModelCompareEditorInput editorInput) {
@@ -260,6 +290,11 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	 * @see org.eclipse.team.ui.mapping.SaveableCompareModel#performSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void performSave(IProgressMonitor monitor) throws CoreException {
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			if (rdci.checkUpdateConflict())
+				return;
+		}
 		try {
 			isSaving = true;
 			monitor.beginTask(null, 100);
@@ -275,6 +310,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			// Make sure we fire a change for the compare input to update the viewers
 			if (input instanceof ResourceDiffCompareInput) {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				rdci.updateTimestamp();
 				rdci.fireChange();
 			}
 			setDirty(false);
@@ -305,7 +341,6 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	 * @see org.eclipse.team.ui.mapping.SaveableCompareModel#performRevert(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void performRevert(IProgressMonitor monitor) {
-		// TODO: I'm sure this wont work
 		// Only the left is ever editable
 		ITypedElement left = input.getLeft();
 		if (left instanceof LocalResourceTypedElement)
@@ -368,5 +403,4 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	public int hashCode() {
 		return input.hashCode();
 	}
-
 }

@@ -56,7 +56,6 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			if (compareModel != null)
 				return compareModel;
 		}
-		// TODO: Should fail if the input is the wrong type
 		return new ResourceSaveableComparison(input, participant, this);
 	}
 	

@@ -78,13 +78,13 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
 	public String getCharset() throws CoreException {
+		if (localEncoding != null)
+			return localEncoding;
 		if (bufferedContents == null) {
 			cacheContents(new NullProgressMonitor());
 		}
 		if (bufferedContents instanceof IEncodedStorage) {
 			String charset = ((IEncodedStorage)bufferedContents).getCharset();
-			if (charset == null)
-				return localEncoding;
 			return charset;
 		}
 		return null;
