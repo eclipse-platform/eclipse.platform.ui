@@ -165,9 +165,14 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 			queueDispatchEvent(
 				new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
 		} else {
-			queueDispatchEvent(
-				new SubscriberDiffChangedEvent(resource, SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, node));
+			if (isInScope(resource))
+				queueDispatchEvent(
+					new SubscriberDiffChangedEvent(resource, SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, node));
 		}
+	}
+
+	private boolean isInScope(IResource resource) {
+		return manager.getScope().contains(resource);
 	}
 
 	/* (non-Javadoc)
