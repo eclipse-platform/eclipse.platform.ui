@@ -108,6 +108,7 @@ public class ModelSelectionDropDownAction extends Action implements ISynchroniza
 	private ModelProvider[] getEnabledModelProviders() {
 		Set result = new HashSet();
 		ModelProvider[] providers = ((ModelSynchronizeParticipant)configuration.getParticipant()).getEnabledModelProviders();
+		providers = ModelMergeOperation.sortByExtension(providers);
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
 			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());

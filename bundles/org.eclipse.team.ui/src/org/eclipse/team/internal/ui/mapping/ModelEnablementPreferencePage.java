@@ -118,6 +118,19 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 				super.dispose();
 			}
 		});
+		tableViewer.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (e1 instanceof ITeamContentProviderDescriptor && e2 instanceof ITeamContentProviderDescriptor) {
+					ITeamContentProviderDescriptor d1 = (ITeamContentProviderDescriptor) e1;
+					ITeamContentProviderDescriptor d2 = (ITeamContentProviderDescriptor) e2;
+				    IModelProviderDescriptor md1 = ModelProvider.getModelProviderDescriptor(d1.getModelProviderId());
+				    IModelProviderDescriptor md2 = ModelProvider.getModelProviderDescriptor(d2.getModelProviderId());
+				    if (md1 != null && md2 != null)
+				    	return md1.getLabel().compareTo(md2.getLabel());
+				}
+				return super.compare(viewer, e1, e2);
+			}
+		});
 		tableViewer.setInput(TeamUI.getTeamContentProviderManager());
 		updateChecks();
 		applyDialogFont(composite);
