@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 class DiffStructureVisitor extends FileStructureVisitor {
 	
 	public DiffStructureVisitor(Session session, LocalOption[] localOptions) {
-		super(session, localOptions, false, true);
+		super(session, localOptions, true, true);
 	}
 	
 	/**
