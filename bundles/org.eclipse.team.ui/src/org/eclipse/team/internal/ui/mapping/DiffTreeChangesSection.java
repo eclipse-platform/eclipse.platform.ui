@@ -232,8 +232,12 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 						ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
 						if (adapter != null) {
 							boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
-							if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
-								return getPointerToModel(parent, provider, id);
+							if (hasChanges) {
+								if (provider.getDescriptor().getId().equals(id)) {
+									return super.getEmptyChangesComposite(parent);
+								} else {
+									return getPointerToModel(parent, provider, id);
+								}
 							}
 						}
 					}
