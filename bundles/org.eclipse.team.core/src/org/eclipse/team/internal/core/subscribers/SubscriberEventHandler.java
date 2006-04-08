@@ -165,10 +165,14 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 				job.setSystem(false);
 				job.setProgressGroup(progressGroup, ticks);
 			} else {
-				job.setSystem(!initializing);
+				job.setSystem(isSystemJob());
 			}
 		}
 		getEventHandlerJob().schedule();
+	}
+
+	protected boolean isSystemJob() {
+		return !initializing;
 	}
 	
 	

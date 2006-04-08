@@ -336,4 +336,10 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	public int getState() {
 		return state;
 	}
+	
+	protected boolean isSystemJob() {
+		if (manager != null && !manager.isInitialized())
+			return false;
+		return super.isSystemJob();
+	}
 }
