@@ -121,8 +121,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			}
 		}
 		if (info == null) {
-			// There should be sync info but it was missing. Report the error
-			throw new CVSException(NLS.bind(CVSMessages.EclipseSynchronizer_folderSyncInfoMissing, new String[] { container.getFullPath().toString() })); 
+			// There should be sync info but it was missing. Report the error.
+			// Only report the error is the folder is not derived (see bug 97023)
+			if (container.exists() && !container.isDerived())
+				throw new CVSException(NLS.bind(CVSMessages.EclipseSynchronizer_folderSyncInfoMissing, new String[] { container.getFullPath().toString() })); 
 		}
 		if (info == NULL_FOLDER_SYNC_INFO) return null;
 		return info;
