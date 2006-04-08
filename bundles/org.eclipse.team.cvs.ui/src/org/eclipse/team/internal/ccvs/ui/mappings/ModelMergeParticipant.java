@@ -35,7 +35,7 @@ import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
-public class ModelMergeParticipant extends ModelSynchronizeParticipant {
+public class ModelMergeParticipant extends CVSModelSynchronizeParticipant {
 
 	public static final String VIEWER_ID = "org.eclipse.team.cvs.ui.mergeSynchronization"; //$NON-NLS-1$
 	
