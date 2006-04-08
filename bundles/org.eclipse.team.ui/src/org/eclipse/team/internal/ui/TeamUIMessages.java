@@ -21,7 +21,15 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
-    public static String DiffTreeChangesSection_3;
+    public static String DiffTreeChangesSection_10;
+
+	public static String DiffTreeChangesSection_11;
+
+	public static String DiffTreeChangesSection_12;
+
+	public static String DiffTreeChangesSection_13;
+
+	public static String DiffTreeChangesSection_3;
 
 	public static String DiffTreeChangesSection_4;
 
@@ -30,6 +38,10 @@ public class TeamUIMessages extends NLS {
 	public static String DiffTreeChangesSection_6;
 
 	public static String DiffTreeChangesSection_7;
+
+	public static String DiffTreeChangesSection_8;
+
+	public static String DiffTreeChangesSection_9;
 
 	public static String ExportProjectSetMainPage_Browse;
 

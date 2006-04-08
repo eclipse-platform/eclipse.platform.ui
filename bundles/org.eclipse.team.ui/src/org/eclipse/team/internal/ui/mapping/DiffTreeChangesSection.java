@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import java.util.*;
+
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -29,10 +31,12 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.registry.TeamContentProviderDescriptor;
+import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
-import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -224,18 +228,88 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 				providers = ModelOperation.sortByExtension(providers);
 				for (int i = 0; i < providers.length; i++) {
 					ModelProvider provider = providers[i];
-					ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
-					if (adapter != null) {
-						boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
-						if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
-							return getPointerToModel(parent, provider, id);
+					if (isEnabled(provider)) {
+						ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
+						if (adapter != null) {
+							boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
+							if (hasChanges && !provider.getDescriptor().getId().equals(id)) {
+								return getPointerToModel(parent, provider, id);
+							}
 						}
 					}
 				}
-				// TODO: More to do but we'll do it later
 			}
+			return createEnableParticipantModelProvidersPane(parent);
 		}
 		return super.getEmptyChangesComposite(parent);
+	}
+
+	private boolean isEnabled(ModelProvider provider) {
+		ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+		return (desc != null && desc.isEnabled());
+	}
+
+	private Composite createEnableParticipantModelProvidersPane(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(getBackgroundColor());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		composite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		composite.setLayoutData(data);
+
+		String message;
+		int changesCount = getChangesCount();
+		if (changesCount == 1) {
+			message = TeamUIMessages.DiffTreeChangesSection_8;
+		} else {
+			message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_9, new Integer(changesCount));
+		}
+		final ITeamContentProviderDescriptor[] descriptors = getEnabledContentDescriptors();
+		if (descriptors.length == 0)
+			message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_10, message);
+		else
+			message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_11, message);
+		
+		createDescriptionLabel(composite, message);
+		
+		Label warning = new Label(composite, SWT.NONE);
+		warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
+		
+		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_12, SWT.WRAP); 
+		link.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)getConfiguration().getParticipant();
+				ModelProvider[] providers = participant.getEnabledModelProviders();
+				for (int i = 0; i < providers.length; i++) {
+					ModelProvider provider = providers[i];
+					ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+					if (desc != null && !desc.isEnabled())
+						((TeamContentProviderDescriptor)desc).setEnabled(true);
+				}
+				((TeamContentProviderManager)TeamUI.getTeamContentProviderManager()).enablementChanged(
+						descriptors,
+						getEnabledContentDescriptors());
+
+			}
+		});
+		getForms().getHyperlinkGroup().add(link);
+		
+		return composite;
+	}
+
+	private ITeamContentProviderDescriptor[] getEnabledContentDescriptors() {
+		ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)getConfiguration().getParticipant();
+		ModelProvider[] providers = participant.getEnabledModelProviders();
+		Set result = new HashSet();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+			if (desc != null && desc.isEnabled())
+				result.add(desc);
+		}
+		return (ITeamContentProviderDescriptor[]) result.toArray(new ITeamContentProviderDescriptor[result.size()]);
 	}
 
 	private Composite getInitializationPane(Composite parent) {
@@ -250,25 +324,21 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_3, new String[] { getConfiguration().getParticipant().getName() })); 
 
-		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.DiffTreeChangesSection_4); 
+		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_4, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				getHandler().initializeIfNeeded();
 			}
 		});
-		link.setBackground(getBackgroundColor());
-		link.setUnderlined(true);
+		getForms().getHyperlinkGroup().add(link);
 		
-		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.DiffTreeChangesSection_5); 
+		link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_5, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
 			}
 		});
-		link.setBackground(getBackgroundColor());
-		link.setUnderlined(true);
+		getForms().getHyperlinkGroup().add(link);
 		
 		return composite;
 	}
@@ -316,18 +386,28 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
             		modeToString });
 		message = NLS.bind(TeamUIMessages.DiffTreeChangesSection_1, new String[] { modeToString, oldDesc.getLabel(), message });
 		
+		createDescriptionLabel(composite, message);
+		
 		Label warning = new Label(composite, SWT.NONE);
 		warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
 		
 		Hyperlink link = getForms().createHyperlink(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_2, new String[] { provider.getDescriptor().getLabel() }), SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				//getConfiguration().setProperty(ISynchronizationConstants.P_ACTIVE_MODEL_PROVIDER, provider.getDescriptor().getId() );
-				new ShowModelProviderAction(getConfiguration(), provider).run();
+				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, provider.getDescriptor().getId() );
 			}
 		});
 		getForms().getHyperlinkGroup().add(link);
-		createDescriptionLabel(composite, message);
+		
+		new Label(composite, SWT.NONE);
+		Hyperlink link2 = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_13, SWT.WRAP); 
+		link2.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE );
+			}
+		});
+		getForms().getHyperlinkGroup().add(link2);
+		
 		return composite;
 	}
 
@@ -388,18 +468,17 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);	
 
-		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.ChangesSection_8); 
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { getConfiguration().getParticipant().getName() })); 
+
+		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.ChangesSection_8, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				showErrors();
 			}
 		});
-		link.setBackground(getBackgroundColor());
-		link.setUnderlined(true);
+		getForms().getHyperlinkGroup().add(link);
 		
-		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(TeamUIMessages.ChangesSection_9); 
+		link = getForms().createHyperlink(composite, TeamUIMessages.ChangesSection_9, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				errors = null;
@@ -411,11 +490,8 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 					getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
 			}
 		});
-		link.setBackground(getBackgroundColor());
-		link.setUnderlined(true);
+		getForms().getHyperlinkGroup().add(link);
 		
-		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { getConfiguration().getParticipant().getName() })); 
-
 		return composite;
 	}
 
