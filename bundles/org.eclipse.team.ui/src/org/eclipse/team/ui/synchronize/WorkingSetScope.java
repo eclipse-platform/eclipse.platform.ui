@@ -151,7 +151,8 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 */
 	public void dispose() {
 		super.dispose();
-		PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
+		if (PlatformUI.isWorkbenchRunning())
+			PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
 	}
 	
 	/* (non-Javadoc)

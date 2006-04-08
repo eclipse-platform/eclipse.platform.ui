@@ -128,7 +128,8 @@ public class ResourceModelScopeParticipant implements
 
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
+		if (PlatformUI.isWorkbenchRunning())
+			PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
 	}
 
 	/* (non-Javadoc)
