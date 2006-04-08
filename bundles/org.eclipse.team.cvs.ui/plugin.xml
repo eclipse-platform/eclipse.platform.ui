@@ -7,15 +7,8 @@
    <extension
          point="org.eclipse.team.ui.synchronizeWizards">
       <wizard
-            name="%WorkspaceSynchronizeWizard.name"
-            description="%WorkspaceSynchronizeWizard.description"
-            icon="$nl$/icons/full/eview16/cvs_persp.gif"
-            class="org.eclipse.team.internal.ccvs.ui.subscriber.CVSSynchronizeWizard"
-            id="org.eclipse.team.ccvs.ui.SynchronizeWizard">
-      </wizard>
-      <wizard
             class="org.eclipse.team.internal.ccvs.ui.mappings.ModelSynchronizeWizard"
-            name="%NewWorkspaceSynchronizeWizard.name"
+            name="%WorkspaceSynchronizeWizard.name"
             description="%WorkspaceSynchronizeWizard.description"
             icon="$nl$/icons/full/eview16/cvs_persp.gif"
             id="org.eclipse.team.cvs.ui.ModelSynchronizeWizard"/>
