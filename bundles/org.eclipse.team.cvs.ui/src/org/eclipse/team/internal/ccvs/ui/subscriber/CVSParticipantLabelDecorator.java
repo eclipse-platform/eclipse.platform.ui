@@ -11,11 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
@@ -28,11 +31,18 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.SynchronizationStateTester;
 import org.eclipse.team.ui.synchronize.*;
 
 
 public class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyChangeListener, ILabelDecorator {
 	private ISynchronizePageConfiguration configuration;
+	private SynchronizationStateTester tester = new SynchronizationStateTester() {
+		public int getState(Object element, int stateMask, IProgressMonitor monitor) throws CoreException {
+			// Disable state decoration
+			return IDiff.NO_CHANGE;
+		}
+	};
 	
 	public CVSParticipantLabelDecorator(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
@@ -62,7 +72,7 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 				return output.toString();
 			}
 			return text;
-		} catch (CVSException e) {
+		} catch (CoreException e) {
 			return input;
 		}
 	}
@@ -73,8 +83,8 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 		return Utils.getResource(element);
 	}
 
-    protected CVSDecoration getDecoration(IResource resource) throws CVSException {
-        return CVSLightweightDecorator.decorate(resource, false /* do not include dirty check */);
+    protected CVSDecoration getDecoration(IResource resource) throws CoreException {
+        return CVSLightweightDecorator.decorate(resource, tester);
     }
 
     public Image decorateImage(Image base, Object element) {

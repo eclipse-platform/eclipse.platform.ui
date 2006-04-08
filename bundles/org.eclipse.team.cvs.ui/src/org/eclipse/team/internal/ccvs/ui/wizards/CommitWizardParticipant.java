@@ -14,21 +14,16 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.internal.ccvs.ui.subscriber.*;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * A participant that uses our decorator instead of the standard one.
@@ -73,7 +68,7 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
             fWizard= wizard;
         }
         
-        protected CVSDecoration getDecoration(IResource resource) throws CVSException {
+        protected CVSDecoration getDecoration(IResource resource) throws CoreException {
             final CVSDecoration decoration= super.getDecoration(resource);
             final CommitWizardFileTypePage page= fWizard.getFileTypePage();
             
