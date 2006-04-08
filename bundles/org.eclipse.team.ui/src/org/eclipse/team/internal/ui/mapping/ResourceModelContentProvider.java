@@ -136,12 +136,34 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			if (resource.getType() == IResource.PROJECT && !resource.getProject().isAccessible())
 				return new Object[0];
 			IResourceDiffTree diffTree = context.getDiffTree();
-			Object[] allChildren = getTraversalCalculator().filterChildren(diffTree, resource, parentOrPath, children);
-			return super.getChildrenInContext(context, parentOrPath, allChildren);
+			// TODO: Could optimize this to a single pass over the children instead of 3
+			children = getTraversalCalculator().filterChildren(diffTree, resource, parentOrPath, children);
+			if (children.length != 0)
+				children = getChildrenInScope(context.getScope(), parentOrPath, children);
+			if (children.length != 0)
+				children = internalGetChildren(context, parentOrPath, children);
+			return children;
 		}
 		return super.getChildrenInContext(context, parentOrPath, children);
 	}
 
+	private Object[] internalGetChildren(ISynchronizationContext context, Object parent, Object[] children) {
+		List result = new ArrayList(children.length);
+		for (int i = 0; i < children.length; i++) {
+			Object object = children[i];
+			// If the parent is a TreePath then the subclass is
+			// TreePath aware and we can send a TrePath to the
+			// isVisible method
+			if (parent instanceof TreePath) {
+				TreePath tp = (TreePath) parent;
+				object = tp.createChildPath(object);
+			}
+			if (isVisible(context, object))
+				result.add(internalGetElement(object));
+		}
+		return result.toArray(new Object[result.size()]);
+	}
+	
 	protected ResourceTraversal[] getTraversals(ISynchronizationContext context, Object elementOrPath) {
 		Object object = internalGetElement(elementOrPath);
 		ISynchronizationScope scope = context.getScope();
@@ -220,18 +242,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#hasChildrenInContext(org.eclipse.team.core.mapping.ISynchronizationContext, java.lang.Object)
 	 */
 	protected boolean hasChildrenInContext(ISynchronizationContext context, Object elementOrPath) {
-		Object element = internalGetElement(elementOrPath);
-		if (element instanceof IContainer) {
-			IContainer container = (IContainer) element;
-			// For containers check to see if the delta contains any children
-			if (context != null) {
-				IDiffTree tree = context.getDiffTree();
-				if (tree.getChildren(container.getFullPath()).length > 0) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return getTraversalCalculator().hasChildren(context, elementOrPath);
 	}
 	
 	/* (non-Javadoc)

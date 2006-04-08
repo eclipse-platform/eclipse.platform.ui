@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.*;
@@ -245,6 +246,13 @@ public class ResourceModelTraversalCalculator {
 		return false;
 	}
 	
+	private TreePath internalGetPath(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			return (TreePath) elementOrPath;
+		}
+		return null;
+	}
+	
 	private Object internalGetElement(Object elementOrPath) {
 		if (elementOrPath instanceof TreePath) {
 			TreePath tp = (TreePath) elementOrPath;
@@ -262,5 +270,30 @@ public class ResourceModelTraversalCalculator {
 			
 		}
 		return null;
+	}
+
+	public boolean hasChildren(ISynchronizationContext context, Object elementOrPath) {
+		Object element = internalGetElement(elementOrPath);
+		if (element instanceof IContainer) {
+			IContainer container = (IContainer) element;
+			// For containers check to see if the delta contains any children
+			if (context != null) {
+				int depth = getLayoutDepth(container, internalGetPath(elementOrPath));
+				if (depth == IResource.DEPTH_ZERO)
+					return false;
+				IResourceDiffTree tree = context.getDiffTree();
+				IResource[] members = tree.members(container);
+				if (members.length > 0) {
+					if (depth == IResource.DEPTH_INFINITE)
+						return true;
+					for (int i = 0; i < members.length; i++) {
+						IResource resource = members[i];
+						if (resource.getType() == IResource.FILE)
+							return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }
