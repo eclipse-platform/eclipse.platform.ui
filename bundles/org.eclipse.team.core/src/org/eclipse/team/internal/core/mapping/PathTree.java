@@ -151,7 +151,7 @@ public class PathTree {
 					if(descendantPath.segmentCount() == (path.segmentCount() +  1)) {
 						childPath = descendantPath;
 					} else if (descendantPath.segmentCount() > path.segmentCount()) {
-						childPath = path.append(descendantPath.segment(path.segmentCount()));
+						childPath = descendantPath.removeLastSegments(descendantPath.segmentCount() - path.segmentCount() - 1);
 					}
 					if (childPath != null) {
 						children.add(childPath);

@@ -90,19 +90,19 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IResourceDiffTree#getDiffs(org.eclipse.core.resources.mapping.ResourceTraversal[])
+	 */
 	public IDiff[] getDiffs(final ResourceTraversal[] traversals) {
 		final Set result = new HashSet();
-		accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-			public boolean visit(IDiff delta) {
-				for (int i = 0; i < traversals.length; i++) {
-					ResourceTraversal traversal = traversals[i];
-					if (traversal.contains(getResource(delta))) {
-						result.add(delta);
-					}
-				}
-				return true;
+		for (int i = 0; i < traversals.length; i++) {
+			ResourceTraversal traversal = traversals[i];
+			IResource[] resources = traversal.getResources();
+			for (int j = 0; j < resources.length; j++) {
+				IResource resource = resources[j];
+				internalGetDiffs(resource, traversal.getDepth(), result);
 			}
-		}, IResource.DEPTH_INFINITE);
+		}
 		return (IDiff[]) result.toArray(new IDiff[result.size()]);
 	}
 	
@@ -110,7 +110,17 @@ public class ResourceDiffTree extends DiffTree implements IResourceDiffTree {
 	 * @see org.eclipse.team.core.mapping.IResourceDiffTree#getDiffs(org.eclipse.core.resources.IResource, int)
 	 */
 	public IDiff[] getDiffs(IResource resource, int depth) {
-		return getDiffs(new ResourceTraversal[] { new ResourceTraversal(new IResource[] { resource }, depth, IResource.NONE) } );
+		final Set result = new HashSet();
+		internalGetDiffs(resource, depth, result);
+		return (IDiff[]) result.toArray(new IDiff[result.size()]);
+	}
+
+	private void internalGetDiffs(IResource resource, int depth, final Set result) {
+		accept(resource.getFullPath(), new IDiffVisitor() {
+			public boolean visit(IDiff diff) {
+				return result.add(diff);
+			}
+		}, depth);
 	}
 
 	private IResource internalGetResource(IPath fullPath, boolean container) {
