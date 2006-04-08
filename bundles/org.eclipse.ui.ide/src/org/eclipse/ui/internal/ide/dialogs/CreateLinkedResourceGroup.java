@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -168,6 +169,13 @@ public class CreateLinkedResourceGroup {
 				createLink = createLinkButton.getSelection();
 				browseButton.setEnabled(createLink);
 				variablesButton.setEnabled(createLink);
+				// Set the required field color if the field is enabled
+				if (createLink) {
+					linkTargetField.setBackground(
+							FieldAssistColors.getRequiredFieldBackgroundColor(linkTargetField));
+				} else {
+					linkTargetField.setBackground(null);
+				}
 				linkTargetField.setEnabled(createLink);
 				if (fileSystemSelectionArea != null)
 					fileSystemSelectionArea.setEnabled(createLink);
@@ -217,6 +225,10 @@ public class CreateLinkedResourceGroup {
 		data.horizontalSpan = 2;
 		linkTargetField.setLayoutData(data);
 		linkTargetField.setEnabled(enabled);
+		if (enabled) {
+			linkTargetField.setBackground(
+					FieldAssistColors.getRequiredFieldBackgroundColor(linkTargetField));
+		}
 		linkTargetField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				linkTarget = linkTargetField.getText();
