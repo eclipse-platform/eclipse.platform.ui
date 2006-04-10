@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-
-import java.util.*;
+import java.util.Vector;
 
 /**
  * A string pattern matcher, suppporting * and ? wildcards.

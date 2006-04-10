@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

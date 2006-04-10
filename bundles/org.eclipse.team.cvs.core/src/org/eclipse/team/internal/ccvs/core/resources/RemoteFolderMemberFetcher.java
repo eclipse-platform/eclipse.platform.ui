@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

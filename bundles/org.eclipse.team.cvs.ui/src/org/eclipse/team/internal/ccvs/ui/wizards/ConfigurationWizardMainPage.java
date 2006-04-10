@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

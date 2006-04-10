@@ -12,8 +12,12 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.text.Collator;
-import java.util.*;
+import com.ibm.icu.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.*;

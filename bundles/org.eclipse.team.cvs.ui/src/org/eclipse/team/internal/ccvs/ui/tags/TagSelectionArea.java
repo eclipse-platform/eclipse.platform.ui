@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.*;

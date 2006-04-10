@@ -13,7 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.compare.*;
 import org.eclipse.core.resources.*;

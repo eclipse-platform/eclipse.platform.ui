@@ -12,8 +12,13 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

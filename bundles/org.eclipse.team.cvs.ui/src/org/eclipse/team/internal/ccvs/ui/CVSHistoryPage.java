@@ -13,8 +13,12 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import java.util.ArrayList;
+import com.ibm.icu.util.Calendar; // ok to use in APIs, internal package
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;

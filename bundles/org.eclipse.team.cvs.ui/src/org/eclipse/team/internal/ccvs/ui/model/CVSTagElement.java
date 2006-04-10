@@ -11,8 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import com.ibm.icu.util.TimeZone;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;

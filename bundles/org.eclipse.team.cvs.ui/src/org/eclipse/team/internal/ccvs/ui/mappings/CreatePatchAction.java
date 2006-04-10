@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;

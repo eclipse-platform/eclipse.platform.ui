@@ -12,7 +12,14 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 

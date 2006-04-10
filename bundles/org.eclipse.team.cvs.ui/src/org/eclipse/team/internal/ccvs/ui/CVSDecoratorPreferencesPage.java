@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;

@@ -14,7 +14,12 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;

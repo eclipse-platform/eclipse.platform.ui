@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+
 /**
  * A simple XML writer.
  */

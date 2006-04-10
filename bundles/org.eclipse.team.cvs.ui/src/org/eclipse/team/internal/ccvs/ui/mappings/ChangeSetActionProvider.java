@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;

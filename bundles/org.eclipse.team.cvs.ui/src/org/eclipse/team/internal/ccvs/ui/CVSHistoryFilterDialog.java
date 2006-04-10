@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.ibm.icu.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.jface.dialogs.*;

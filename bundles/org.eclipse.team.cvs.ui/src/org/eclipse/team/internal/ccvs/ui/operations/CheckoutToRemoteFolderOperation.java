@@ -11,7 +11,9 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

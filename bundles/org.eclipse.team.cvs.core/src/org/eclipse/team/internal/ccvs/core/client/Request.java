@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

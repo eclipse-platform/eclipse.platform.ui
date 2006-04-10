@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
-import java.text.Collator;
+import java.text.Collator;  // don't use ICU, pending resolution of issue 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -165,7 +165,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		
 		
 		public TableSorter(TableViewer viewer, TableColumn fileColumn, TableColumn modeColumn, TableColumn pathColumn) {
-			
+//			TODO: possible issue, TableSorter's Collator not shared with base class.  Might cause problem switching to ICU collation.
 			fCollator= Collator.getInstance();
 			fViewer= viewer;
 			

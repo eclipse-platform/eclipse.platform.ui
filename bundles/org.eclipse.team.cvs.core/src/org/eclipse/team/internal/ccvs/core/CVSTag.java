@@ -12,8 +12,10 @@ package org.eclipse.team.internal.ccvs.core;
 
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import com.ibm.icu.util.TimeZone;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.history.ITag;

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;

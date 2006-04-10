@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

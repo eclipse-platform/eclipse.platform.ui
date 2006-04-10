@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.mapping;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.team.internal.ccvs.core.ILogEntry;

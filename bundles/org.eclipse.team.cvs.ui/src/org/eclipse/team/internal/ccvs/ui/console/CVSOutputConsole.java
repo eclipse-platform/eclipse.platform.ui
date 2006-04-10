@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.console;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.*;

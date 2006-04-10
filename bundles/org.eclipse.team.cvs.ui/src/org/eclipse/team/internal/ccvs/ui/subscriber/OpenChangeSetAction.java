@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;

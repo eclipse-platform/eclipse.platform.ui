@@ -11,8 +11,13 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
