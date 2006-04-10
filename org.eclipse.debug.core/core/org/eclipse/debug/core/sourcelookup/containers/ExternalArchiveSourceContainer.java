@@ -11,7 +11,7 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;

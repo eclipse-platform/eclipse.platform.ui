@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;

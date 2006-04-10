@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.sourcelookup;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;

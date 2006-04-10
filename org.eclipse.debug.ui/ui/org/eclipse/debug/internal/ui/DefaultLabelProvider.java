@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;

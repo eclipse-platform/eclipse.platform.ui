@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

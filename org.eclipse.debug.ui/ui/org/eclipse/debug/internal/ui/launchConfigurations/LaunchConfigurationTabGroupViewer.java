@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;

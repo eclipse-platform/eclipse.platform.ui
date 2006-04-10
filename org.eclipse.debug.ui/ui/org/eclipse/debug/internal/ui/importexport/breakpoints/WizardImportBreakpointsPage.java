@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;

@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.core;
 
  
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;

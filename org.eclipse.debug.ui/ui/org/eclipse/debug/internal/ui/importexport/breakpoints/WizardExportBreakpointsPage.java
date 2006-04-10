@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 

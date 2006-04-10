@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;

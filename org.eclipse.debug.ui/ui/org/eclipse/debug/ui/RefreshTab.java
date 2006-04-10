@@ -14,7 +14,7 @@ package org.eclipse.debug.ui;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;

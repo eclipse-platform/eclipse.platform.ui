@@ -11,7 +11,7 @@
 package org.eclipse.debug.ui.actions;
 
  
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
