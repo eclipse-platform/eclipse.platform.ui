@@ -60,7 +60,9 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			fireOpen(new OpenEvent(this, getSelection()));
 		}
 		protected void internalRefresh(Object element, boolean updateLabels) {
+			Object[] expanded = getVisibleExpandedElements();
 			super.internalRefresh(element, updateLabels);
+			setExpandedElements(expanded);
 			checkForEmptyViewer();
 		}
 		protected void internalRemove(Object parent, Object[] elements) {
