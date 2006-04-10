@@ -52,8 +52,8 @@ public class PresentationPerformanceTest extends BasicPerformanceTest {
 		theShell.setBounds(0, 0, 1024, 768);
 		theShell.setVisible(true);
 		img = TestPlugin.getDefault().getImageDescriptor(
-				"icons/anything.gif").createImage();
-		img2 = TestPlugin.getDefault().getImageDescriptor("icons/view.gif")
+				"anything.gif").createImage();
+		img2 = TestPlugin.getDefault().getImageDescriptor("view.gif")
 				.createImage();
 	}
 
