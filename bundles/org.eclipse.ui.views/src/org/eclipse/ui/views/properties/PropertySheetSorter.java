@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import java.text.Collator;
+import java.text.Collator; // can't use ICU, in public API
 import java.util.Arrays;
 import java.util.Comparator;
 
