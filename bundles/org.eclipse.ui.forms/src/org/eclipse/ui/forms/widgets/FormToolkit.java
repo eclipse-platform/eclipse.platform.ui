@@ -109,8 +109,10 @@ public class FormToolkit {
 				boolean textBorder = false;
 				if (!c.isVisible())
 					continue;
+				/*
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
+					*/
 				if (c instanceof Hyperlink)
 					continue;
 				Object flag = c.getData(KEY_DRAW_BORDER);
