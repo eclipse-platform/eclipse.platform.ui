@@ -169,7 +169,11 @@ public final class TriggeredOperations extends AbstractOperation implements
 			} catch (ExecutionException e) {
 				history.closeOperation(false, false, IOperationHistory.EXECUTE);
 				throw e;
+			} catch (RuntimeException e) {
+				history.closeOperation(false, false, IOperationHistory.EXECUTE);
+				throw e;	
 			}
+
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
@@ -198,6 +202,10 @@ public final class TriggeredOperations extends AbstractOperation implements
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.REDO);
 				throw e;
+			} catch (RuntimeException e) {
+				children = childrenToRestore;
+				history.closeOperation(false, false, IOperationHistory.REDO);
+				throw e;	
 			}
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;
@@ -227,6 +235,10 @@ public final class TriggeredOperations extends AbstractOperation implements
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.UNDO);
 				throw e;
+			} catch (RuntimeException e) {
+				children = childrenToRestore;
+				history.closeOperation(false, false, IOperationHistory.UNDO);
+				throw e;	
 			}
 		}
 		return IOperationHistory.OPERATION_INVALID_STATUS;

@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.operations;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationApprover2;
@@ -29,8 +30,10 @@ import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.commands.operations.TriggeredOperations;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
  * Tests the Operations Framework API.
@@ -224,6 +227,48 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Operation should be batching", op == batch);
 		op.removeContext(contextB);
 		assertFalse("Operation should not have context", op.hasContext(contextB));
+	}
+	
+	public void testExceptionDuringOpenOperation() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
+		IUndoableOperation op = new AbstractOperation("Operation with Exception") {
+			public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
+				return Status.OK_STATUS;
+			}
+			public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
+				throw new ForcedException("Forced during undo");
+			}
+			public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
+				throw new ForcedException("Forced during redo");
+			}
+		};
+
+		ICompositeOperation batch = new TriggeredOperations(op, history);
+		history.openOperation(batch, IOperationHistory.EXECUTE);
+		op.execute(null, null);
+		op1.execute(null, null);
+		history.add(op1);
+		history.execute(op2, null, null);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		// when we undo the batch operation, the triggering op will throw the 
+		// ForcedException.  This is expected. 
+		try {
+			batch.undo(null, null);
+		} catch (ForcedException e) {
+			// expected, no cause for panic.
+		}
+		
+		// See bug #134238.  Before this bug was fixed, we would get an 
+		// IllegalStateException upon trying to open a composite.  If cleanup
+		// after the above exception is done, then we shouldn't get an
+		// IllegalStateException.
+		try {
+			history.openOperation(new TriggeredOperations(op3, history), IOperationHistory.EXECUTE);
+			history.closeOperation(true, true, IOperationHistory.EXECUTE);
+		} catch (IllegalStateException e) {
+			assertTrue("IllegalStateException - trying to open an operation before a close", false);
+		}
 	}
 	
 	public void test94459() throws ExecutionException {
