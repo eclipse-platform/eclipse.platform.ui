@@ -1451,11 +1451,11 @@ public class EclipseSynchronizer implements IFlushOperation {
 	public void run(ISchedulingRule resourceRule, ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
 		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
-		ISchedulingRule rule = beginBatching(resourceRule, Policy.subMonitorFor(monitor, 10));
+		ISchedulingRule rule = beginBatching(resourceRule, Policy.subMonitorFor(monitor, 1));
 		try {
-			runnable.run(Policy.subMonitorFor(monitor, 80));
+			runnable.run(Policy.subMonitorFor(monitor, 98));
 		} finally {
-			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 10));
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 1));
 			monitor.done();
 		}
 	}
