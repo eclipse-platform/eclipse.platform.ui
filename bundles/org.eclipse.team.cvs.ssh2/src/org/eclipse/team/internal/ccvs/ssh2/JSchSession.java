@@ -473,6 +473,7 @@ class JSchSession {
         if (proxy != null) {
             session.setProxy(proxy);
         }
+        session.setTimeout(getCVSTimeoutInMillis());
         session.setPassword(password);
         session.setUserInfo(wrapperUI);
         session.setSocketFactory(socketFactory);
