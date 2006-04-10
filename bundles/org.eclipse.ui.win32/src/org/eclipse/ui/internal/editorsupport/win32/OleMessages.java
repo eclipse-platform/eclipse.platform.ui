@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editorsupport.win32;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 

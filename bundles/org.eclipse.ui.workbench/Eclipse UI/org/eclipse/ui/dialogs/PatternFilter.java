@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.text.BreakIterator;
+import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

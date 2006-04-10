@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.io.OutputStream;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;

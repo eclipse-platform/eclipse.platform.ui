@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceNode;

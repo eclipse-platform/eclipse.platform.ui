@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import java.text.Collator;
+import java.text.Collator; // can't use ICU, public API
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ViewerSorter;

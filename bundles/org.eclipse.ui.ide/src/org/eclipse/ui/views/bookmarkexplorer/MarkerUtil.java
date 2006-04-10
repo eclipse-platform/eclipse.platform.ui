@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IMarker;

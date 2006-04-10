@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator; 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +80,7 @@ public class ShowViewMenu extends ContributionItem {
 		}
 	};
 
-	protected static Collator collator;
+	private static Collator collator;
     private boolean makeFast;
 
     /**

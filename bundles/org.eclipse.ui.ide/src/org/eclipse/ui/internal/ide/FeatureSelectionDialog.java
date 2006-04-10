@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.ide;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;

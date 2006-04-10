@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;

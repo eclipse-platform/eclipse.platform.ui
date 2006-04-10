@@ -13,7 +13,7 @@ package org.eclipse.ui.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;

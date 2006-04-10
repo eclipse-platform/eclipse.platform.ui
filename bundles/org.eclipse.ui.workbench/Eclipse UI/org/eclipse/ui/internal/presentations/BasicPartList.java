@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.presentations;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -128,10 +127,6 @@ public class BasicPartList extends AbstractTableInformationControl {
 
         public BasicStackListViewerSorter() {
             //no-op
-        }
-
-        public BasicStackListViewerSorter(Collator collator) {
-            super(collator);
         }
 
         /* (non-Javadoc)

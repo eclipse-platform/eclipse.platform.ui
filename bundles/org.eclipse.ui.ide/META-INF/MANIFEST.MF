@@ -51,3 +51,4 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.update.core,
  org.eclipse.update.ui
 Eclipse-LazyStart: true
+Import-Package: com.ibm.icu.text

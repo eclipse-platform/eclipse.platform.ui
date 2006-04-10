@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
-import java.text.CollationKey;
-import java.text.Collator;
+import com.ibm.icu.text.CollationKey; 
+import com.ibm.icu.text.Collator; 
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;

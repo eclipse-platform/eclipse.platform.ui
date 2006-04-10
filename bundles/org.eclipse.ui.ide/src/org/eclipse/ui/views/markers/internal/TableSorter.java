@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -29,8 +28,6 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	public static final int DESCENDING = -1;
 
 	protected IField[] fields;
-
-	protected Collator collator = Collator.getInstance();
 
 	protected int[] priorities;
 

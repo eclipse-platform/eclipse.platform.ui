@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;

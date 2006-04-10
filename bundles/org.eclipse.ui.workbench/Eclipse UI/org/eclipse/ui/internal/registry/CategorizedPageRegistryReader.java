@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

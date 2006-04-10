@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

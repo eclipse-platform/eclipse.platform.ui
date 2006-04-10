@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;

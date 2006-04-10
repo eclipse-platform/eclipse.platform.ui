@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.views.tasklist;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator; 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -569,7 +569,7 @@ class FiltersDialog extends TrayDialog {
         typesViewer.getControl().setLayoutData(gridData);
         typesViewer.setContentProvider(getContentProvider());
         typesViewer.setLabelProvider(getLabelProvider());
-        typesViewer.setSorter(getSorter());
+        typesViewer.setComparator(getViewerComparator());
         typesViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         typesViewer.addCheckStateListener(checkStateListener);
         typesViewer.setInput(getMarkerTypes());
@@ -709,12 +709,12 @@ class FiltersDialog extends TrayDialog {
         return types;
     }
 
-    ViewerSorter getSorter() {
-        return new ViewerSorter() {
+    private ViewerComparator getViewerComparator() {
+        return new ViewerComparator() {
             public int compare(Viewer viewer, Object e1, Object e2) {
                 MarkerType t1 = (MarkerType) e1;
                 MarkerType t2 = (MarkerType) e2;
-                return collator.compare(t1.getLabel(), t2.getLabel());
+                return getComparator().compare(t1.getLabel(), t2.getLabel());
             }
         };
     }

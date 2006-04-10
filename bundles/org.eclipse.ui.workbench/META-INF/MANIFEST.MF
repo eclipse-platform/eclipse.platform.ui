@@ -78,3 +78,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.swt,
  org.eclipse.core.expressions
 Eclipse-LazyStart: true
+Import-Package: com.ibm.icu.text

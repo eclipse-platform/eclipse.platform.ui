@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;

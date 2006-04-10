@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator; 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
     int typeMask;
 
-    static Collator collator = Collator.getInstance();
+    private static Collator collator = Collator.getInstance();
 
     boolean gatherResourcesDynamically = true;
 

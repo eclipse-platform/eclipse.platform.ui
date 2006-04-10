@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.ide;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 

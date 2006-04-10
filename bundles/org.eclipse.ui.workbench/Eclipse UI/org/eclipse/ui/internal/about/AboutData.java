@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
