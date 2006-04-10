@@ -11,7 +11,7 @@
 package org.eclipse.ui.externaltools.internal.model;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;

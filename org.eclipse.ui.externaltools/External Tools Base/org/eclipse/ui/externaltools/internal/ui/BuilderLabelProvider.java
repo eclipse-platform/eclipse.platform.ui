@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ui;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.ResourcesPlugin;

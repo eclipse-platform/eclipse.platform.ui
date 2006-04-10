@@ -13,7 +13,7 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
 import java.io.File;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
