@@ -90,30 +90,30 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 			if(fCodePage == null)
 				return ""; //$NON-NLS-1$
 			
-			boolean invalid = false;
+			boolean[] invalid = new boolean[data.length];
+			boolean hasInvalid = false;
+			byte byteArray[] = new byte[data.length];
 			for (int i=0; i<data.length; i++)
 			{
 				if (!data[i].isReadable())
 				{
-					invalid = true;
-					break;
+					invalid[i] = true;
+					hasInvalid = true;
 				}
+				byteArray[i] = data[i].getValue();
 			}
 			
-			if (invalid)
+			if (hasInvalid)
 			{
 				StringBuffer strBuf = new StringBuffer();
 				for (int i=0; i<data.length; i++)
 				{
-					strBuf.append(paddedStr);
+					if (invalid[i])
+						strBuf.append(paddedStr);
+					else
+						strBuf.append(new String(new byte[]{byteArray[i]}, fCodePage));
 				}
 				return strBuf.toString();
-			}
-			
-			byte byteArray[] = new byte[data.length];
-			for (int i=0; i<byteArray.length; i++)
-			{
-				byteArray[i] = data[i].getValue(); 
 			}
 
 			return new String(byteArray, fCodePage);
