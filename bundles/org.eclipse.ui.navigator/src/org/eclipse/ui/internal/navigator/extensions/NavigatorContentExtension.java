@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -315,7 +315,7 @@ public class NavigatorContentExtension implements IMementoAware,
 		}
 
 		NavigatorContentDescriptor overriddingDescriptor;
-		Set overridingExtensions = new HashSet();
+		Set overridingExtensions = new LinkedHashSet();
 		for (Iterator contentDescriptorsItr = descriptor
 				.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
@@ -350,7 +350,7 @@ public class NavigatorContentExtension implements IMementoAware,
 		}
 
 		NavigatorContentDescriptor overriddingDescriptor;
-		Set overridingExtensions = new HashSet();
+		Set overridingExtensions = new LinkedHashSet();
 		for (Iterator contentDescriptorsItr = descriptor
 				.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
