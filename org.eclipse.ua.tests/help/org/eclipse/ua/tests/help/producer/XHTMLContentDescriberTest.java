@@ -34,7 +34,7 @@ public class XHTMLContentDescriberTest extends TestCase {
 	}
 	
 	public void testValidXHTML() throws IOException {
-		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/help/producer/xhtml/valid", "", true);
+		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/help/producer/xhtml/valid", "html", true);
 		for (int i=0;i<urls.length;++i) {
 			InputStream in = urls[i].openStream();
 			String url = urls[i].toExternalForm();
@@ -46,7 +46,7 @@ public class XHTMLContentDescriberTest extends TestCase {
 	}
 
 	public void testInvalidXHTML() throws IOException {
-		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/help/producer/xhtml/invalid", "", true);
+		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/help/producer/xhtml/invalid", "html", true);
 		for (int i=0;i<urls.length;++i) {
 			InputStream in = urls[i].openStream();
 			String url = urls[i].toExternalForm();

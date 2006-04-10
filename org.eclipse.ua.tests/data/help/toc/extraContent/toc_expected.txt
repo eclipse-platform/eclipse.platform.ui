@@ -36,7 +36,7 @@
    </topic>
    <topic
          label="What's new"
-         href="/org.eclipse.ua.tests/data/help/toc/extraContent/simple_page.html_page.html">
+         href="/org.eclipse.ua.tests/data/help/toc/extraContent/simple_page.html">
    </topic>
    <topic
          label="Documentation Images"
