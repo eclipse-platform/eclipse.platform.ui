@@ -36,11 +36,11 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class InternalSearchUI {
-	private static final int HISTORY_COUNT= 10;
 	
 	//The shared instance.
 	private static InternalSearchUI fgInstance;
@@ -283,7 +283,7 @@ public class InternalSearchUI {
 	public PositionTracker getPositionTracker() {
 		return fPositionTracker;
 	}
-	
+		
 	public void addQueryListener(IQueryListener l) {
 		getSearchManager().addQueryListener(l);
 	}
@@ -301,12 +301,15 @@ public class InternalSearchUI {
 	}
 
 	public void addQuery(ISearchQuery query) {
-		while (getSearchManager().getQueries().length >= HISTORY_COUNT) {
-			removeQuery(getSearchManager().getOldestQuery());
+		int historyLimit= SearchPreferencePage.getHistoryLimit();
+		
+		QueryManager searchManager= getSearchManager();
+		while (searchManager.getQueries().length >= historyLimit) {
+			removeQuery(searchManager.getOldestQuery());
 		}
-		getSearchManager().addQuery(query);
-	}
-
+		searchManager.addQuery(query);
+	}	
+	
 	public void removeAllQueries() {
 		for (Iterator queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
 			ISearchQuery query= (ISearchQuery) queries.next();

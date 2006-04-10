@@ -14,7 +14,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,12 +31,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -39,13 +49,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
 /**
@@ -59,9 +70,116 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	private List fInput;
 	private TableViewer fViewer;
 	private Button fRemoveButton;
-	private Button fOpenInNewButton;
 	
 	private boolean fIsOpenInNewView;
+	
+	private static class HistoryConfigurationDialog extends StatusDialog {
+		
+		private static final int DEFAULT_ID= 100;
+		
+		private int fHistorySize;
+		private Text fHistorySizeTextField;
+		private final List fCurrentList;
+		
+		
+		public HistoryConfigurationDialog(Shell parent, List currentList) {
+			super(parent);
+			fCurrentList= currentList;
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+			setTitle(SearchMessages.SearchHistorySelectionDialog_history_size_title);  
+			fHistorySize= SearchPreferencePage.getHistoryLimit();
+			setHelpAvailable(false);
+		}
+		
+		/*
+		 * Overrides method from Dialog
+		 */
+		protected Control createDialogArea(Composite container) {
+			Composite ancestor= (Composite) super.createDialogArea(container);
+			GridLayout layout= (GridLayout) ancestor.getLayout();
+			layout.numColumns= 2;
+			ancestor.setLayout(layout);
+						
+			Label limitText= new Label(ancestor, SWT.NONE);
+			limitText.setText(SearchMessages.SearchHistorySelectionDialog_history_size_description);
+			limitText.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			
+			fHistorySizeTextField= new Text(ancestor, SWT.BORDER | SWT.RIGHT);
+			fHistorySizeTextField.setTextLimit(2);
+			fHistorySizeTextField.setText(String.valueOf(fHistorySize));
+			fHistorySizeTextField.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validateDialogState();
+				}
+			});
+					
+			GridData gridData= new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+			gridData.widthHint= convertWidthInCharsToPixels(6);
+			fHistorySizeTextField.setLayoutData(gridData);
+			
+			applyDialogFont(ancestor);
+
+			return ancestor;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.StatusDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void createButtonsForButtonBar(Composite parent) {
+			createButton(parent, DEFAULT_ID, SearchMessages.SearchHistorySelectionDialog_restore_default_button, false);
+			super.createButtonsForButtonBar(parent);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+		 */
+		protected void buttonPressed(int buttonId) {
+			if (buttonId == DEFAULT_ID) {
+				IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+				fHistorySizeTextField.setText(store.getDefaultString(SearchPreferencePage.LIMIT_HISTORY));
+				validateDialogState();
+			}
+			super.buttonPressed(buttonId);
+		}
+		
+
+		protected final boolean validateDialogState() {
+			IStatus status= null;
+			try {
+				String historySize= fHistorySizeTextField.getText();
+				int size= Integer.parseInt(historySize);
+				if (size < 1) {
+					status= new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, SearchMessages.SearchHistorySelectionDialog_history_size_error, null);
+				} else {
+					fHistorySize= size;
+				}
+			} catch (NumberFormatException e) {
+				status= new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, SearchMessages.SearchHistorySelectionDialog_history_size_error, null);
+			}
+			if (status == null) {
+				status= new Status(IStatus.OK, SearchPlugin.getID(), IStatus.OK, new String(), null);
+			}
+			updateStatus(status);
+			return !status.matches(IStatus.ERROR);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+		 */
+		protected void okPressed() {
+			IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+			store.setValue(SearchPreferencePage.LIMIT_HISTORY, fHistorySize);
+			
+			// establish history size
+			for (int i= fCurrentList.size() - 1; i >= fHistorySize; i--) {
+				ISearchResult result= (ISearchResult) fCurrentList.get(i);
+				InternalSearchUI.getInstance().removeQuery(result.getQuery());
+				fCurrentList.remove(i);
+			}
+			super.okPressed();
+		}
+		
+	}
 	
 	private static final class SearchesLabelProvider extends LabelProvider {
 		
@@ -126,11 +244,21 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	 * Overrides method from Dialog
 	 */
 	protected Label createMessageArea(Composite composite) {
-		Label label = new Label(composite,SWT.WRAP);
+		Composite parent= new Composite(composite, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		parent.setLayout(layout);
+		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label label = new Label(parent,SWT.WRAP);
 		label.setText(getMessage()); 
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
+		//gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		label.setLayoutData(gd);
+		
+
 		applyDialogFont(label);
 		return label;
 	}
@@ -168,7 +296,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fViewer= new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		fViewer.setContentProvider(new ListContentProvider());
+		fViewer.setContentProvider(new ArrayContentProvider());
 		
 		final Table table= fViewer.getTable();
 		table.addMouseListener(new MouseAdapter() {
@@ -197,18 +325,27 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			public void selectionChanged(SelectionChangedEvent event) {
 				validateDialogState();
 			}
-		});
+		});		
 		
-		fOpenInNewButton= new Button(parent, SWT.CHECK);
-		fOpenInNewButton.setText(SearchMessages.SearchHistorySelectionDialog_open_in_new);
-		fOpenInNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		Link link= new Link(parent, SWT.NONE);
+		link.setText(SearchMessages.SearchHistorySelectionDialog_configure_link_label);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				HistoryConfigurationDialog dialog= new HistoryConfigurationDialog(getShell(), fInput);
+				if (dialog.open() == Window.OK) {
+					fViewer.refresh();
+				}
+			}
+		});
+		link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		
 		
 		applyDialogFont(ancestor);
 
 		// set input & selections last, so all the widgets are created.
 		fViewer.setInput(fInput);
-		return table;
+		fViewer.getTable().setFocus();
+		return ancestor;
 	}
 	
 	protected final void validateDialogState() {
@@ -220,23 +357,26 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		if (okButton != null) {
 			okButton.setEnabled(elementsSelected == 1);
 		}
+		Button openInNewButton= getButton(IDialogConstants.OPEN_ID);
+		if (openInNewButton != null) {
+			openInNewButton.setEnabled(elementsSelected == 1);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OPEN_LABEL, true);
+		createButton(parent, IDialogConstants.OPEN_ID, SearchMessages.SearchHistorySelectionDialog_open_in_new_button, 	false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == REMOVE_ID) {
-			IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
-			Iterator searchResults= selection.iterator();
-			while (searchResults.hasNext()) {
-				ISearchResult result= (ISearchResult)searchResults.next();
-				InternalSearchUI.getInstance().removeQuery(result.getQuery());
-				fInput.remove(result);
-				fViewer.remove(result);
-			}
-			if (fViewer.getSelection().isEmpty() && !fInput.isEmpty()) {
-				fViewer.setSelection(new StructuredSelection(fInput.get(0)));
-			}
-			return;
+		if (buttonId == IDialogConstants.OPEN_ID) {
+			fIsOpenInNewView= true;
+			buttonId= IDialogConstants.OK_ID;
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -249,7 +389,6 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		ISelection selection= fViewer.getSelection();
 		if (selection instanceof IStructuredSelection)
 			setResult(((IStructuredSelection)fViewer.getSelection()).toList());
-		fIsOpenInNewView= fOpenInNewButton.getSelection();
 		
 		super.okPressed();
 	}

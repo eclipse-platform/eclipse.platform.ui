@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
 
 /**
  * Dialog telling the user that files are out of sync or matches
@@ -100,7 +100,7 @@ public class SearchAgainConfirmationDialog extends Dialog {
 	
 	private TableViewer createTableViewer(List input, Composite result) {
 		TableViewer viewer= new TableViewer(result);
-		viewer.setContentProvider(new ListContentProvider());
+		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new ProxyLabelProvider());
 		viewer.setInput(input);
 		GridData gd= new GridData(GridData.FILL_BOTH);

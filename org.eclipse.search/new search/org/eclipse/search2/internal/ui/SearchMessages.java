@@ -39,6 +39,12 @@ public final class SearchMessages extends NLS {
 	public static String SearchDropDownAction_running_message;
 	public static String Search_Error_openResultView_message;
 	public static String Search_Error_openResultView_title;
+	public static String SearchHistorySelectionDialog_configure_link_label;
+	public static String SearchHistorySelectionDialog_history_size_description;
+	public static String SearchHistorySelectionDialog_history_size_error;
+	public static String SearchHistorySelectionDialog_history_size_title;
+	public static String SearchHistorySelectionDialog_open_in_new_button;
+	public static String SearchHistorySelectionDialog_restore_default_button;
 	public static String ShowSearchesAction_label;
 	public static String ShowSearchesAction_tooltip;
 	public static String SearchView_showIn_menu;

@@ -58,6 +58,7 @@ import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -82,7 +83,6 @@ import org.eclipse.search.ui.ISearchPageScoreComputer;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
 
 public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
 
@@ -292,7 +292,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		String message= SearchMessages.SearchPageSelectionDialog_message; 
 		
-		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ListContentProvider(), labelProvider, message) {
+		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ArrayContentProvider(), labelProvider, message) {
 			public void create() {
 				super.create();
 				final CheckboxTableViewer viewer= getViewer();

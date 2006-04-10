@@ -62,6 +62,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String LIMIT_TABLE= "org.eclipse.search.limitTable"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_QUERY_PROVIDER = "org.eclipse.search.textSearchQueryProvider"; //$NON-NLS-1$
+	public static final String LIMIT_HISTORY= "org.eclipse.search.limitHistory"; //$NON-NLS-1$
     
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
@@ -103,6 +104,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(LIMIT_TABLE, false);
 		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
 		store.setDefault(TEXT_SEARCH_QUERY_PROVIDER, ""); // default query provider is empty string  //$NON-NLS-1$
+		store.setDefault(LIMIT_HISTORY, 10);
 	}
 
 
@@ -354,6 +356,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static RGB getPotentialMatchForegroundColor() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return PreferenceConverter.getColor(store, POTENTIAL_MATCH_FG_COLOR);
+	}
+	
+	public static int getHistoryLimit() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getInt(LIMIT_HISTORY);
 	}
 	
 }
