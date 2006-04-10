@@ -1734,7 +1734,7 @@ class FindReplaceDialog extends Dialog {
 			}
 		}
 		
-		while (itemCount > 8)
+		while (history.size() > 8)
 			history.remove(8);
 		
 		String[] names= new String[history.size()];
