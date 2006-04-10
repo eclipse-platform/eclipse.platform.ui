@@ -72,14 +72,17 @@ public class TimeSlice extends Composite {
 				preferredWidth = new Integer(children[0].computeSize(
 						SWT.DEFAULT, SWT.DEFAULT).x);
 			}
-			children[0]
-					.setBounds(0, 0, preferredWidth.intValue(), parentSize.y);
+			children[0].setBounds(0, 0, preferredWidth.intValue(), parentSize.y);
 
 			// layout the rest of the controls
-			int controlWidth = (parentSize.x - preferredWidth.intValue())
-					/ (children.length - 1);
-			int extraWidth = (parentSize.x - preferredWidth.intValue())
-					% (children.length - 1);
+			int controlWidth = 0;
+			int extraWidth = 0;
+			if (children.length >= 2) {
+				controlWidth = (parentSize.x - preferredWidth.intValue())
+						/ (children.length - 1);
+				extraWidth = (parentSize.x - preferredWidth.intValue())
+						% (children.length - 1);
+			}
 			int leftPosition = preferredWidth.intValue();
 
 			for (int i = 1; i < children.length; i++) {
@@ -100,11 +103,16 @@ public class TimeSlice extends Composite {
 	private CLabel timeLabel = null;
 
 	/**
+	 * Constructor TimeSlice. Construct a TimeSlice control, passing the parent
+	 * and style bits.
+	 * 
 	 * @param parent
+	 *            The SWT parent object.
 	 * @param style
+	 *            The set of style bits this control accepts. Currently SWT.NONE.
 	 */
 	public TimeSlice(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NULL);
 		initialize();
 	}
 
@@ -117,11 +125,27 @@ public class TimeSlice extends Composite {
 		Integer preferredWidth = new Integer(timeLabel.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT, false).x + 5);
 		timeLabel.setLayoutData(preferredWidth);
+		timeLabel.setText("");
 		setBackground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		days.addLast(new TimeSlot(this, SWT.NONE));
 		setSize(new Point(537, 16));
 		setLayout(new TimeSliceAcrossTimeLayout());
+	}
+
+	private boolean headerControl = false;
+
+	/**
+	 * @return Returns the headerControl.
+	 */
+	public boolean isHeaderControl() {
+		return headerControl;
+	}
+
+	/**
+	 * @param headerControl The headerControl to set.
+	 */
+	public void setHeaderControl(boolean headerControl) {
+		this.headerControl = headerControl;
 	}
 
 	private int numberOfColumns = 1;
@@ -151,7 +175,11 @@ public class TimeSlice extends Composite {
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
 		for (int i = numberOfColumns - 1; i > 0; --i) {
-			days.add(new TimeSlot(this, SWT.NONE));
+			if (headerControl) {
+				days.add(new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER));
+			} else {
+				days.add(new TimeSlot(this, SWT.NONE));
+			}
 		}
 	}
 
@@ -194,8 +222,11 @@ public class TimeSlice extends Composite {
 
 	private void setHourStartOnDays(boolean isHourStart) {
 		for (Iterator daysIter = days.iterator(); daysIter.hasNext();) {
-			TimeSlot day = (TimeSlot) daysIter.next();
-			day.setHourStart(isHourStart);
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.setHourStart(isHourStart);
+			}
 		}
 	}
 

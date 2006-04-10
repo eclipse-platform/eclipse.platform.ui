@@ -254,7 +254,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		assertEventNotInColumn(event(1), 0); 
 		assertEventInColumnInPositions(event(1), 1, new int[] {3, 5});
 		assertEventNotInColumn(event(1), 2);
-		assertEventNotInColumn(event(1), 3); 
+		assertEventNotInColumn(event(1), 3);
 		
 		assertEventNotInColumn(event(2), 0);
 		assertEventNotInColumn(event(2), 1);

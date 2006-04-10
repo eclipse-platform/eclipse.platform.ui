@@ -981,7 +981,7 @@ public class CompositeTable extends Canvas {
 	 *            the rowConstructionListener to add.
 	 */
 	public void addRowConstructionListener(
-			IRowConstructionListener rowConstructionListener) {
+			RowConstructionListener rowConstructionListener) {
 		rowConstructionListeners.add(rowConstructionListener);
 	}
 
@@ -994,7 +994,7 @@ public class CompositeTable extends Canvas {
 	 *            the rowConstructionListener to remove.
 	 */
 	public void removeRowConstructionListener(
-			IRowConstructionListener rowConstructionListener) {
+			RowConstructionListener rowConstructionListener) {
 		rowConstructionListeners.remove(rowConstructionListener);
 	}
 

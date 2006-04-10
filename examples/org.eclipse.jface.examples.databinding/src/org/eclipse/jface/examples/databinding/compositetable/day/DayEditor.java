@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
-import org.eclipse.jface.examples.databinding.compositetable.IRowConstructionListener;
+import org.eclipse.jface.examples.databinding.compositetable.RowConstructionListener;
 import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
@@ -23,10 +23,12 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCon
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 
 /**
  * A DayEditor is an SWT control that can display events on a time line that can
@@ -40,6 +42,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	private static final int DEFAULT_START_HOUR = 8;
 	private CompositeTable compositeTable = null;
+	private CalendarableModel model = new CalendarableModel();
 
 	/**
 	 * Constructor DayEditor.  Constructs a calendar control that can display
@@ -50,13 +53,23 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public DayEditor(Composite parent, int style) {
 		super(parent, style);
-		this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		this.setLayout(new FillLayout());
+		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		setLayout(new FillLayout());
 	}
-
 	
-	private CalendarableModel model = new CalendarableModel();
-
+	private static class DayEditorLayout extends Layout {
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+			return new Point(wHint, hHint);
+		}
+		protected void layout(Composite composite, boolean flushCache) {
+			/*
+			 * Find the CompositeTable
+			 * Size it to fill the client area
+			 * Rearrange Calendarables on top of the CompositeTable
+			 */
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
 	 */
@@ -79,17 +92,24 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void createCompositeTable(final int numberOfDays,
 			final int numberOfDivisionsInHour) {
 		compositeTable = new CompositeTable(this, SWT.NONE);
-		new TimeSlice(compositeTable, SWT.NONE);		// The prototype row
+		new TimeSlice(compositeTable, SWT.BORDER);		// The prototype header
+		new TimeSlice(compositeTable, SWT.NONE); // The prototype row
 		
 		compositeTable.setNumRowsInCollection( (DISPLAYED_HOURS-startHour+1) * numberOfDivisionsInHour+1);
 		compositeTable.setRunTime(true);
 		
-		compositeTable.addRowConstructionListener(new IRowConstructionListener() {
-					public void rowConstructed(Control newRow) {
-						TimeSlice days = (TimeSlice) newRow;
-						days.setNumberOfColumns(numberOfDays);
-					}
-				});
+		compositeTable.addRowConstructionListener(new RowConstructionListener() {
+			public void headerConstructed(Control newHeader) {
+				TimeSlice daysHeader = (TimeSlice) newHeader;
+				daysHeader.setHeaderControl(true);
+				daysHeader.setNumberOfColumns(numberOfDays);
+			}
+			
+			public void rowConstructed(Control newRow) {
+				TimeSlice timeSlice = (TimeSlice) newRow;
+				timeSlice.setNumberOfColumns(numberOfDays);
+			}
+		});
 		compositeTable.addRowContentProvider(new IRowContentProvider() {
 			Calendar calendar = new GregorianCalendar();
 
