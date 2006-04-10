@@ -12,7 +12,7 @@
 package org.eclipse.ui.texteditor;
 
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Composite;

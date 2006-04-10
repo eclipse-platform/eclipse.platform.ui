@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;

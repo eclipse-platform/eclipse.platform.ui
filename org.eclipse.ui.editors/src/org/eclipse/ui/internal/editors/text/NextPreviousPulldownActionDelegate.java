@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.editors.text;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;

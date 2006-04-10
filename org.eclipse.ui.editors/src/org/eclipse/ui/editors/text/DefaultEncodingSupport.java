@@ -12,7 +12,7 @@ package org.eclipse.ui.editors.text;
 
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;

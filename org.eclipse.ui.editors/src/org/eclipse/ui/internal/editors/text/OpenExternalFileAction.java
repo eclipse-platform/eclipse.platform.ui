@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.editors.text;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
