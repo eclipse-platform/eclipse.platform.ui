@@ -151,6 +151,5 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 			fMarkerCreator.finished(process);
 			fgPatternMatchers.remove(this);
 		}
-		
 	}
 }
