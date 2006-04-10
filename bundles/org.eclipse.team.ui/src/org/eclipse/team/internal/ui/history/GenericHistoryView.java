@@ -690,4 +690,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		
 		return (IHistoryPage) defaultPageContainer.getPage();
 	}
+	
+	/**
+	 * Updates the content description of the view with the passed
+	 * in string.
+	 * @param description
+	 */
+	public void updateContentDescription(String description){
+		setContentDescription(description);
+	}
 }

@@ -41,6 +41,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_CollapseAllTooltip;
 	public static String CVSHistoryPage_CompareModeTooltip;
 	public static String CVSHistoryPage_FilterOn;
+	public static String CVSHistoryPage_FilterOnMessage;
+	public static String CVSHistoryPage_FilterDescription;
 	public static String CVSPreferencesPage_46;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String PasswordManagementPreferencePage_2;

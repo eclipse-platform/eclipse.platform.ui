@@ -509,6 +509,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (historyFilter != null)
 					treeViewer.removeFilter(historyFilter);
 					historyFilter = null;
+					IHistoryPageSite historyPageSite = getHistoryPageSite();
+					if (historyPageSite instanceof WorkbenchHistoryPageSite){
+						IWorkbenchPart part = ((WorkbenchHistoryPageSite) historyPageSite).getPart();
+						if (part instanceof GenericHistoryView){
+							((GenericHistoryView) part).updateContentDescription(file.getName());
+						}
+					}
 					toggleFilterAction.setEnabled(false);
 			}
 		};
@@ -1059,6 +1066,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 								treeViewer.setInput(categories);
 							}
 						}
+						
+						//Update the history (if it exists) to reflect the new
+						//counts
+						if (historyFilter != null){
+							CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
+							showFilter(tempFilter);
+						}
 					}
 				}, treeViewer);
 			}
@@ -1402,7 +1416,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			treeViewer.removeFilter(historyFilter);
 		
 		historyFilter = filter;
-		treeViewer.addFilter(filter);
+		int before = cvsFileHistory.getFileRevisions().length;
+		treeViewer.addFilter(historyFilter);
+		IHistoryPageSite historyPageSite =getHistoryPageSite();
+		if (historyPageSite instanceof WorkbenchHistoryPageSite){
+			IWorkbenchPart part = ((WorkbenchHistoryPageSite) historyPageSite).getPart();
+			if (part instanceof GenericHistoryView){
+				String revisions = NLS.bind(CVSUIMessages.CVSHistoryPage_FilterOnMessage, new Object[]{new Integer(historyFilter.getMatchCount()),new Integer(before)});
+				((GenericHistoryView) part).updateContentDescription(NLS.bind(CVSUIMessages.CVSHistoryPage_FilterDescription, new Object[]{file.getName(), revisions}));
+			}
+		}
 		toggleFilterAction.setEnabled(true);
 	}
 	

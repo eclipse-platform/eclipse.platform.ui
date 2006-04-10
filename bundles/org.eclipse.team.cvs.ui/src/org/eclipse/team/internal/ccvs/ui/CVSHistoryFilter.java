@@ -23,13 +23,15 @@ public class CVSHistoryFilter extends ViewerFilter {
 	public Date toDate;
 	public String comment;
 	public boolean isOr;
-
+	private int matchCounter;
+	
 	public CVSHistoryFilter(String author, String comment, Date fromDate, Date toDate, boolean isOr) {
 		this.author = author;
 		this.comment = comment;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 		this.isOr = isOr;
+		this.matchCounter = 0;
 	}
 
 	/**
@@ -43,11 +45,19 @@ public class CVSHistoryFilter extends ViewerFilter {
 			CVSFileRevision entry = (CVSFileRevision) element;
 			if (isOr) {
 				//empty fields should be considered a non-match
-				return (hasAuthor() && authorMatch(entry)) || (hasDate() && dateMatch(entry)) || (hasComment() && commentMatch(entry));
+				boolean orSearch = (hasAuthor() && authorMatch(entry)) || (hasDate() && dateMatch(entry)) || (hasComment() && commentMatch(entry));
+				if (orSearch)
+					matchCounter++;
+				
+				return orSearch;
 			} else {
 				//"and" search
 				//empty fields should be considered a match
-				return (!hasAuthor() || authorMatch(entry)) && (!hasDate() || dateMatch(entry)) && (!hasComment() || commentMatch(entry));
+				boolean andSearch = (!hasAuthor() || authorMatch(entry)) && (!hasDate() || dateMatch(entry)) && (!hasComment() || commentMatch(entry));
+				if (andSearch)
+					matchCounter++;
+				
+				return andSearch;
 			}
 		}
 		return false;
@@ -75,5 +85,9 @@ public class CVSHistoryFilter extends ViewerFilter {
 
 	protected boolean hasDate() {
 		return fromDate != null && toDate != null;
+	}
+	
+	public int getMatchCount(){
+		return matchCounter;
 	}
 }
