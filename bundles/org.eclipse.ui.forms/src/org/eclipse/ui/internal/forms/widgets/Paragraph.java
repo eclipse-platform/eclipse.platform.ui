@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.forms.widgets;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;

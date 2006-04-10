@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
-import java.text.BreakIterator;
+import com.ibm.icu.text.BreakIterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
