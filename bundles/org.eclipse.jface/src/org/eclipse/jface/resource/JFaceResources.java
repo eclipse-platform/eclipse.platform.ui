@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;

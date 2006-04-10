@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.viewers;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
