@@ -76,7 +76,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  * @since 3.2
  */
-public class AsynchronousTreeViewer extends AsynchronousViewer implements Listener {
+public class AsynchronousTreeViewer extends AsynchronousViewer {
 
 	/**
      * The tree
@@ -872,8 +872,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer implements Listen
     protected boolean isVisible(Widget widget) {        
         if (widget instanceof Tree) {
             return true;
+        } else if (widget.getData() == null) { 
+        	//not mapped yet
+        	return false;
         } else {
-            Rectangle treeBounds = getTree().getBounds();
+        	Rectangle treeBounds = getTree().getBounds();
             TreeItem item = (TreeItem) widget;
             Rectangle itemBounds = item.getBounds();
             
