@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -66,37 +63,12 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 	}
 
 	public Object[] getChildren(Object o) {
-		return getChildren(o, true);
-	}
-	
-	/**
-	 * Gets the children of the receiver by invoking the <code>internalGetChildren</code>.
-	 * A appropriate progress indicator will be used if requested.
-	 */
-	protected Object[] getChildren(final Object o, boolean needsProgress) {
 		try {
-			if (needsProgress) {
-				final Object[][] result = new Object[1][];
-				IRunnableWithProgress runnable = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							result[0] = CVSModelElement.this.fetchChildren(o, monitor);
-						} catch (TeamException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				getRunnableContext().run(true /*fork*/, true /*cancelable*/, runnable);
-				return result[0];
-			} else {
-				return fetchChildren(o, null);
-			}
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
-			handle(e);
+			return fetchChildren(o, null);
 		} catch (TeamException e) {
 			handle(e);
 		}
+		
 		return new Object[0];
 	}
 	
