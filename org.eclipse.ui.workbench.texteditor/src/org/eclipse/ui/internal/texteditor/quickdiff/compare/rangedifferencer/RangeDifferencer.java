@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LinkedRangeFactory.LowMemoryException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A <code>RangeDifferencer</code> finds the differences between two or three <code>IRangeComparator</code>s.
