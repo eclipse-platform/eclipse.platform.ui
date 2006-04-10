@@ -98,7 +98,8 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		}
 		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName, type);
 		String id;
-		if (descriptor == null) {
+		if (descriptor == null ||
+			descriptor.isOpenExternal()) {
 			id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		} else {
 			id = descriptor.getId();
