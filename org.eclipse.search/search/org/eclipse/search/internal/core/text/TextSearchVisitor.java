@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.jface.text.IDocument;
 
