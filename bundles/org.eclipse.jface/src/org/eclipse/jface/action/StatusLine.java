@@ -233,6 +233,9 @@ import org.eclipse.swt.widgets.ToolItem;
 
     /**
      * Create a new StatusLine as a child of the given parent.
+     * 
+     * @param parent the parent for this Composite
+     * @param style the style used to create this widget
      */
     public StatusLine(Composite parent, int style) {
         super(parent, style);
@@ -354,6 +357,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
     /**
      * Returns the status line's progress monitor
+     * @return {@link IProgressMonitor} the progress monitor
      */
     public IProgressMonitor getProgressMonitor() {
         return this;
@@ -421,6 +425,7 @@ import org.eclipse.swt.widgets.ToolItem;
     /**
      * Returns <code>true</true> if the ProgressIndication provides UI for canceling
      * a long running operation.
+     * @return <code>true</true> if the ProgressIndication provides UI for canceling
      */
     public boolean isCancelEnabled() {
         return fCancelEnabled;
@@ -441,7 +446,9 @@ import org.eclipse.swt.widgets.ToolItem;
      * Controls whether the ProgressIndication provides UI for canceling
      * a long running operation.
      * If the ProgressIndication is currently visible calling this method may have
-     * a direct effect on the layout because it will make a cancel button visible. 
+     * a direct effect on the layout because it will make a cancel button visible.
+     *  
+     * @param enabled <code>true</true> if cancel should be enabled
      */
     public void setCancelEnabled(boolean enabled) {
         fCancelEnabled = enabled;
