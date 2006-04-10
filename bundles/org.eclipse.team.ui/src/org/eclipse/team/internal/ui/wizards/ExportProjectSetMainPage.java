@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.*;

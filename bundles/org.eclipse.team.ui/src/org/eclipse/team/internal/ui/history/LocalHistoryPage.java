@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import com.ibm.icu.util.Calendar;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

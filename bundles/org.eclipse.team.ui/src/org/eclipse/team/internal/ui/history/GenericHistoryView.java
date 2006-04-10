@@ -11,7 +11,9 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;

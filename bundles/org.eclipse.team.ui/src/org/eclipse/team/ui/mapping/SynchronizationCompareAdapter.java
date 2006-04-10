@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;

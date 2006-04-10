@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;

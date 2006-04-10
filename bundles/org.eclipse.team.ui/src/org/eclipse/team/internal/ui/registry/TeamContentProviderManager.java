@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.registry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;

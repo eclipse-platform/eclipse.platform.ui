@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.IContributionItem;
