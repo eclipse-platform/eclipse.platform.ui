@@ -12,7 +12,8 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.filesystem.*;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;

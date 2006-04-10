@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources.mapping;
 
 import java.util.*;
-
 import org.eclipse.core.expressions.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Messages;

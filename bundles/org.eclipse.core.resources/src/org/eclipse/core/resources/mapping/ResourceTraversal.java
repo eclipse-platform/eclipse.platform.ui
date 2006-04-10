@@ -11,7 +11,8 @@
 package org.eclipse.core.resources.mapping;
 
 import java.util.ArrayList;
-import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.MarkerManager;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
