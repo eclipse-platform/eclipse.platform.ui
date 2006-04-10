@@ -681,7 +681,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			Rectangle r= styledText.getClientArea();
 			if (r != null) {
 				constraints.x= r.width;
-//				constraints.y= r.height;
+				constraints.y= r.height;
 			}
 		}
 
