@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.r21;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 

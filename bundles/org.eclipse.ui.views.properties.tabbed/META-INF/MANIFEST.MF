@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui.forms;visibility:=reexport,
  org.eclipse.ui;visibility:=reexport,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true
+Import-Package: com.ibm.icu.text
