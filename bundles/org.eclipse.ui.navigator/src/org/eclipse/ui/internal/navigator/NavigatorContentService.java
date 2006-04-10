@@ -676,6 +676,28 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void onExtensionActivation(String aViewerId,
 			String[] aNavigatorExtensionId, boolean toEnable) {
+		synchronized (this) {
+			try {
+				NavigatorContentDescriptor key;
+				NavigatorContentExtension extension;
+				for (Iterator iter = contentExtensions.keySet().iterator(); iter.hasNext();) {
+					key = (NavigatorContentDescriptor) iter.next();
+					INavigatorActivationService activation = getActivationService();
+					if(!activation.isNavigatorExtensionActive(key.getId())) {
+						extension = (NavigatorContentExtension) contentExtensions.get(key);
+						iter.remove();
+						/* There really shouldn't be any way that this 
+							can be null, but just to be safe */					
+						if(extension != null) {
+							extension.dispose();
+						}
+					}
+				}
+			} catch (RuntimeException e) { 
+				String msg = e.getMessage() != null ? e.getMessage() : e.toString();
+				NavigatorPlugin.logError(0, msg, e);
+			}
+		} 
 		update();
 	}
 
