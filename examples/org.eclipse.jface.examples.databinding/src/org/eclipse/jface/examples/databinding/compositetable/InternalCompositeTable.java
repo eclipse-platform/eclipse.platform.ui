@@ -335,7 +335,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	// Table control layout -- main refresh algorithm ---------------------------------------------
 
 	private static final int FORWARD = 1;
-	public static final int NONE = 0;
+	private static final int NONE = 0;
 	private static final int BACKWARD = -1;
 	
 	/**
