@@ -304,6 +304,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			
+			if (fPageBook.isDisposed())
+				return Status.OK_STATUS;
+			
 			String msgToShow = null;
 			boolean showMsgPage = false;
 			synchronized (fLock) {
@@ -556,6 +560,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				// batch update on UI thread
 				UIJob uiJob = new UIJob("Create Table Viewer UI Job"){ //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor progressMonitor) {
+						
+						if (fPageBook.isDisposed())
+							return Status.OK_STATUS;
 						
 						fSashForm = new SashForm(parent, SWT.VERTICAL);
 						fTableViewer = new AsyncTableRenderingViewer(AbstractAsyncTableRendering.this, fSashForm, SWT.VIRTUAL | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HIDE_SELECTION | SWT.BORDER);
@@ -1002,6 +1009,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	{
 		final Runnable runnable = new Runnable() {
 			public void run() {
+				if (fTableViewer.getTable().isDisposed())
+					return;
+				
 				doTopVisibleAddressChanged(address);
 			}};
 		runOnUIThread(runnable);
@@ -1081,6 +1091,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		Runnable runnable = new Runnable() {
 
 			public void run() {			
+				
+				if (fTableViewer.getTable().isDisposed())
+					return;
+				
 				// call this to make the table viewer to reload when needed
 				int i = fTableViewer.indexOf(address);
 				if (i < 0)
@@ -2147,6 +2161,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		final BigInteger finaladdress = address;
 		Runnable runnable = new Runnable() {
 			public void run() {
+				if (fTableViewer.getTable().isDisposed())
+					return;
+				
 				fTableViewer.setTopIndex(finaladdress);
 				refresh();
 			}};
@@ -2179,29 +2196,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
 	 */
 	public void becomesHidden() {
-		 
 		// creates new object for storing potential changes in sync properties
 		fPendingSyncProperties = new PendingPropertyChanges();
-		
-		if (!fIsCreated)
-		{
-			super.becomesHidden();
-			return;
-		}
-		
-		if (isVisible() == false)
-		{
-			// super should always be called
-			super.becomesHidden();
-			return;
-		}
-
 		super.becomesHidden();
-		
-		if (getMemoryBlock() instanceof IMemoryBlockExtension)
-		{	
-			updateRenderingLabel(false);
-		}		
+		updateRenderingLabel(false);	
 	}
 
 	/* (non-Javadoc)
