@@ -152,6 +152,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 						return new RefactoringChangeDescriptor(new UnknownRefactoringDescriptor(fChange.getName()));
 					}
 				};
+				composite.markAsSynthetic();
 				composite.add(fChange);
 				fChange= composite;
 			}

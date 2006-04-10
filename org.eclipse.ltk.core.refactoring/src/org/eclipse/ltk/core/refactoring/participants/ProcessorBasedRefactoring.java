@@ -64,6 +64,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		private Map fParticipantMap;
 		public ProcessorChange(String name) {
 			super(name);
+			markAsSynthetic();
 		}
 		public void setParticipantMap(Map map) {
 			fParticipantMap= map;
