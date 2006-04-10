@@ -11,9 +11,9 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.conversion;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

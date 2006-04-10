@@ -28,3 +28,4 @@ Export-Package: org.eclipse.jface.internal.databinding.internal;x-internal:=true
 Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime;resolution:=optional,
  org.eclipse.equinox.common;resolution:=optional
+Import-Package: com.ibm.icu.text
