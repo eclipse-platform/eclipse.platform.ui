@@ -230,6 +230,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private int fPts[]= new int[8];	// scratch area for polygon drawing
 	
+	private int fInheritedDirection;	// inherited direction
+	private int fTextDirection;			// requested direction for embedded SourceViewer
+	
 	private boolean fIgnoreAncestor= false;
 	private ActionContributionItem fIgnoreAncestorItem;
 	private boolean fHighlightRanges;
@@ -651,6 +654,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
+		
+		int inheritedStyle= parent.getStyle();
+		if ((inheritedStyle & SWT.LEFT_TO_RIGHT) != 0)
+			fInheritedDirection= SWT.LEFT_TO_RIGHT;
+		else if ((inheritedStyle & SWT.RIGHT_TO_LEFT) != 0)
+			fInheritedDirection= SWT.RIGHT_TO_LEFT;
+		else
+			fInheritedDirection= SWT.NONE;
+		
+		if ((style & SWT.LEFT_TO_RIGHT) != 0)
+			fTextDirection= SWT.LEFT_TO_RIGHT;
+		else if ((style & SWT.RIGHT_TO_LEFT) != 0)
+			fTextDirection= SWT.RIGHT_TO_LEFT;
+		else
+			fTextDirection= SWT.NONE;
 		
 		fSymbolicFontName= getClass().getName();
 		
@@ -1431,12 +1449,23 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return super.getCenterWidth();
 	}
 
+	private int getDirection() {
+		switch (fTextDirection) {
+		case SWT.LEFT_TO_RIGHT:
+		case SWT.RIGHT_TO_LEFT:
+			if (fInheritedDirection == fTextDirection)
+				return SWT.NONE;
+			return fTextDirection;
+		}
+		return fInheritedDirection;
+	}
+	
 	/*
 	 * Creates and initializes a text part.
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
 		
-		final MergeSourceViewer part= new MergeSourceViewer(parent, getResourceBundle());
+		final MergeSourceViewer part= new MergeSourceViewer(parent, getDirection(), getResourceBundle());
 		final StyledText te= part.getTextWidget();
 		
 		if (!fConfirmSave)

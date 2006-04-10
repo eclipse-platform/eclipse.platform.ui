@@ -289,7 +289,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param cc the configuration object
 	 */
 	protected ContentMergeViewer(int style, ResourceBundle bundle, CompareConfiguration cc) {
-		fStyles= style;
+		
+		fStyles= style & ~(SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);	// remove BIDI direction bits
 		fBundle= bundle;
 		
 		fAncestorEnabled= Utilities.getBoolean(cc, ANCESTOR_ENABLED, fAncestorEnabled);
@@ -684,7 +685,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected final Control buildControl(Composite parent) {
 											
-		fComposite= new Composite(parent, fStyles) {
+		fComposite= new Composite(parent, fStyles | SWT.LEFT_TO_RIGHT) { // we force a specific direction
 			public boolean setFocus() {
 				return internalSetFocus();
 			}
