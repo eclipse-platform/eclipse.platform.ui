@@ -14,7 +14,7 @@ package org.eclipse.ui.views.markers.internal;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -325,8 +325,10 @@ public abstract class MarkerView extends TableView {
 			}
 
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
@@ -411,8 +413,7 @@ public abstract class MarkerView extends TableView {
 		public IContext getContext(Object target) {
 			String contextId = null;
 			// See if there is a context registered for the current selection
-			ConcreteMarker marker = (ConcreteMarker) ((IStructuredSelection) getViewer()
-					.getSelection()).getFirstElement();
+			ConcreteMarker marker = getSelectedConcreteMarker();
 			if (marker != null) {
 				contextId = IDE.getMarkerHelpRegistry().getHelp(
 						marker.getMarker());
@@ -424,6 +425,28 @@ public abstract class MarkerView extends TableView {
 			return HelpSystem.getContext(contextId);
 		}
 
+		/**
+		 * Return the currently selected concrete marker or
+		 * <code>null</code> if there isn't one.
+		 * @return ConcreteMarker
+		 */
+		private ConcreteMarker getSelectedConcreteMarker() {
+
+			IStructuredSelection selection = (IStructuredSelection) getViewer()
+					.getSelection();
+			if (selection.isEmpty())
+				return null;
+
+			if (selection.getFirstElement() instanceof ConcreteMarker)
+				return (ConcreteMarker) selection.getFirstElement();
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
+		 */
 		public String getSearchExpression(Object target) {
 			return null;
 		}
@@ -1697,6 +1720,5 @@ public abstract class MarkerView extends TableView {
 		updateJob.saveSelection(getViewer().getSelection());
 
 	}
-
 
 }
