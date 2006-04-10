@@ -198,7 +198,8 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 				}
 			});
 		} catch (CoreException e) {
-			handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+			if (resource.getProject().isAccessible())
+				handleException(e, resource, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
 		} finally {
 			monitor.done();
 		}
