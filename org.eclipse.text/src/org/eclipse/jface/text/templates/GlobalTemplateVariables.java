@@ -11,9 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.util.Calendar;
 
 /**
  * Global variables which are available in any context.
