@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Helper class to format message strings.

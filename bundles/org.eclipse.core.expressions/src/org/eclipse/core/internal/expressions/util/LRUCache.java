@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.expressions.util;
 
 
-import java.text.NumberFormat;
+import com.ibm.icu.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
