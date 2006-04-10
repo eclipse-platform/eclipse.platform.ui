@@ -65,7 +65,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		toolkit.createCompositeSeparator(s1);
 		Composite client = toolkit.createComposite(s1);
 		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
+		glayout.marginWidth = glayout.marginHeight = toolkit.getBorderStyle()==SWT.BORDER?0:2;
 		glayout.numColumns = 2;
 		client.setLayout(glayout);
 		//client.setBackground(client.getDisplay().getSystemColor(SWT.COLOR_CYAN));
@@ -121,7 +121,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		td.grabHorizontal = true;
 		rtext.setLayoutData(td);
 		
-		toolkit.paintBordersFor(s1);
+		toolkit.paintBordersFor(client);
 		s1.setClient(client);
 	}
 	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {

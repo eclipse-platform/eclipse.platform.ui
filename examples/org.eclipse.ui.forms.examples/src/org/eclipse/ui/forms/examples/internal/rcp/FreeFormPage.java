@@ -176,5 +176,6 @@ public class FreeFormPage extends FormPage {
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		toolkit.createButton(comp, "Browse...", SWT.PUSH);
 		ftext.setControl("control1", comp);
+		toolkit.paintBordersFor(comp);
 	}
 }

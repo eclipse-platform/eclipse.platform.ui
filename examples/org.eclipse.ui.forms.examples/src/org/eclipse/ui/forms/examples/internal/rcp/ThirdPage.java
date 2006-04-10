@@ -109,10 +109,12 @@ public class ThirdPage extends FormPage {
 		link.setLayoutData(gd);
 		toolkit.createLabel(client, "A text label:");
 		Text text = toolkit.createText(client, "", SWT.SINGLE);
+		text.setText("Sample text");
+		text.setEnabled(false);
 		gd = new GridData();
 		gd.widthHint = 150;
 		text.setLayoutData(gd);
-		//toolkit.paintBordersFor(client);
+		toolkit.paintBordersFor(client);
 	}
 	private Composite createSection(IManagedForm mform, String title,
 			String desc, int numColumns) {
@@ -122,7 +124,6 @@ public class ThirdPage extends FormPage {
 				| Section.SHORT_TITLE_BAR | Section.DESCRIPTION | Section.EXPANDED);
 		section.setText(title);
 		section.setDescription(desc);
-		//toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
