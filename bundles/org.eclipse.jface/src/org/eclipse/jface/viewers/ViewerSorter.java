@@ -29,10 +29,13 @@ import java.util.Comparator;
  * categorization; and they may override the <code>compare</code> methods
  * to provide a totally different way of sorting elements.
  * </p>
+ * <p>
+ * It is recommended to use <code>ViewerComparator</code> instead.
+ * </p>
  * @see IStructuredContentProvider
  * @see StructuredViewer
  */
-public class ViewerSorter extends ViewerComparator{
+public class ViewerSorter extends ViewerComparator {
     /**
      * The collator used to sort strings.
      */

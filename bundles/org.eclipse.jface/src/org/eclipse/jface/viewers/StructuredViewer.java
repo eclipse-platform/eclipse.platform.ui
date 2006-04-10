@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @see ViewerFilter
  * @see ViewerSorter
+ * @see ViewerComparator
  */
 public abstract class StructuredViewer extends ContentViewer implements IPostSelectionProvider {
 
@@ -66,9 +67,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	private IElementComparer comparer;
 
 	/**
-	 * This viewer's sorter. <code>null</code> means there is no sorter.
+	 * This viewer's comparator used for sorting. <code>null</code> means there is no comparator.
 	 */
-	private ViewerSorter sorter;
+	private ViewerComparator sorter;
 
 	/**
 	 * This viewer's filters (element type: <code>ViewerFilter</code>).
@@ -985,14 +986,34 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Returns this viewer's sorter, or <code>null</code> if it does not have
-	 * one.
+	 * one.  If this viewer has a comparator that was set via 
+	 * <code>setComparator(ViewerComparator)</code> then this method will return 
+	 * <code>null</code> if the comparator is not an instance of ViewerSorter.
+     * <p>
+     * It is recommended to use <code>getComparator()</code> instead.
+     * </p>
 	 * 
-	 * @return a viewer sorter, or <code>null</code> if none
+	 * @return a viewer sorter, or <code>null</code> if none or if the comparator is 
+	 * 				not an instance of ViewerSorter
 	 */
 	public ViewerSorter getSorter() {
-		return sorter;
+		if (sorter instanceof ViewerSorter)
+			return (ViewerSorter)sorter;
+		return null;
 	}
 
+	/**
+	 * Return this viewer's comparator used to sort elements.
+	 * This method should be used instead of <code>getSorter()</code>.
+	 * 
+	 * @return a viewer comparator, or <code>null</code> if none
+     *
+	 * @since 3.2
+	 */
+	public ViewerComparator getComparator(){
+		return sorter;
+	}
+	
 	/**
 	 * Handles a double-click select event from the widget.
 	 * <p>
@@ -1597,7 +1618,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Sets this viewer's sorter and triggers refiltering and resorting of this
-	 * viewer's element. Passing <code>null</code> turns sorting off.
+	 * viewer's element. Passing <code>null</code> turns sorting off.  
+     * <p>
+     * It is recommended to use <code>setComparator()</code> instead.
+     * </p>
 	 * 
 	 * @param sorter
 	 *            a viewer sorter, or <code>null</code> if none
@@ -1609,6 +1633,28 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	/**
+	 * Sets this viewer's comparator to be used for sorting elements, and triggers refiltering and 
+	 * resorting of this viewer's element.  <code>null</code> turns sorting off.
+	 * To get the viewer's comparator, call <code>getComparator()</code>.
+     * <p>
+     * IMPORTANT: This method was introduced in 3.2. If a reference to this viewer object 
+     * is passed to clients who call <code>getSorter()<code>, null may be returned from
+     * from that method even though the viewer is sorting its elements using the
+     * viewer's comparator.
+     * </p>
+	 * 
+	 * @param comparator a viewer comparator, or <code>null</code> if none
+     *
+     * @since 3.2
+	 */
+	public void setComparator(ViewerComparator comparator){
+		if (this.sorter != sorter){
+			this.sorter = comparator;
+			refresh();
+		}
+	}
+	
 	/**
 	 * Configures whether this structured viewer uses an internal hash table to
 	 * speeds up the mapping between elements and SWT items. This must be called
