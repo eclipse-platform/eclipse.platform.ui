@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.text.Collator;
-import java.text.MessageFormat;
+import java.text.Collator; // can't use ICU, public API
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;

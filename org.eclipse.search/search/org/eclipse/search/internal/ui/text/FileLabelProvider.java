@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.IPath;
 

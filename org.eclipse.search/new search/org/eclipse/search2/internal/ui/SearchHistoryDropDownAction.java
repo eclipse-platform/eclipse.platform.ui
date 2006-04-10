@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
