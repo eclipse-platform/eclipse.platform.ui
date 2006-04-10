@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
+
 
 /**
  * A number of routines used for string externalization.
