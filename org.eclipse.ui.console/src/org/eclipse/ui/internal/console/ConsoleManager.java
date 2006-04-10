@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -216,10 +217,7 @@ public class ConsoleManager implements IConsoleManager {
 		    IConsole console = consoles[i];
 		    if(console instanceof TextConsole) {
 		        TextConsole ioconsole = (TextConsole)console;
-		        IPatternMatchListener[] matchListeners = createPatternMatchListeners(ioconsole);
-		        for (int j = 0; j < matchListeners.length; j++) {
-		            ioconsole.addPatternMatchListener(matchListeners[j]);
-		        }
+		        createPatternMatchListeners(ioconsole);
 		    }
 			if (!fConsoles.contains(console)) {
 				fConsoles.add(console);
@@ -391,8 +389,16 @@ public class ConsoleManager implements IConsoleManager {
                         continue;
                     }
     		    
-    		        if (extension.isEnabledFor(console)) {
-    		            list.add(new PatternMatchListener(extension));
+    		        if (console instanceof TextConsole && extension.isEnabledFor(console)) {
+                        TextConsole textConsole = (TextConsole) console;
+    		            PatternMatchListener patternMatchListener = new PatternMatchListener(extension);
+                        try {
+                            textConsole.addPatternMatchListener(patternMatchListener);
+                            list.add(patternMatchListener);
+                        } catch (PatternSyntaxException e) {
+                            ConsolePlugin.log(e);
+                            i.remove();
+                        }
     		        }
     		    } catch (CoreException e) {
     		        ConsolePlugin.log(e);
