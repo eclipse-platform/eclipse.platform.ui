@@ -2197,9 +2197,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void becomesHidden() {
 		// creates new object for storing potential changes in sync properties
-		fPendingSyncProperties = new PendingPropertyChanges();
+		fPendingSyncProperties = new PendingPropertyChanges();		
 		super.becomesHidden();
-		updateRenderingLabel(false);	
+		
+		if (getMemoryBlock() instanceof IMemoryBlockExtension)
+			updateRenderingLabel(false);	
 	}
 
 	/* (non-Javadoc)
