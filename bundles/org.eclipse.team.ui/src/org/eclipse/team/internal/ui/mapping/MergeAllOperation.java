@@ -42,7 +42,8 @@ public final class MergeAllOperation extends SynchronizationOperation {
 				return false;
 			}
 			protected void initializeContext(IProgressMonitor monitor) throws CoreException {
-				// Context is already initialized
+				monitor.beginTask(null, 10);
+				monitor.done();
 			}
 			protected ISynchronizationContext getContext() {
 				return context;

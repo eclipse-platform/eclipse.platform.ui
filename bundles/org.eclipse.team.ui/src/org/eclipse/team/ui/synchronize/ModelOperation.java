@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.dialogs.AdditionalMappingsDialog;
@@ -100,10 +101,12 @@ public abstract class ModelOperation extends TeamOperation {
 	public final void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		try {
-			beginOperation(monitor);
-			execute(monitor);
+			monitor.beginTask(null, 100);
+			beginOperation(Policy.subMonitorFor(monitor, 5));
+			execute(Policy.subMonitorFor(monitor, 90));
 		} finally {
-			endOperation(monitor);
+			endOperation(Policy.subMonitorFor(monitor, 5));
+			monitor.done();
 		}
 	}
 	

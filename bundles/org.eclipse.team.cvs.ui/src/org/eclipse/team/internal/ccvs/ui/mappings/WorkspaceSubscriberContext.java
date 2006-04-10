@@ -319,8 +319,8 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			String taskName = getMergeTaskName(deltas, force);
 			monitor.beginTask(taskName, 100);
 			monitor.setTaskName(taskName);
-			cacheContents(getTraversals(deltas), getDiffTree(deltas), Policy.subMonitorFor(monitor, 20));
-			return super.merge(deltas, force, Policy.subMonitorFor(monitor, 80));
+			cacheContents(getTraversals(deltas), getDiffTree(deltas), Policy.subMonitorFor(monitor, 30));
+			return super.merge(deltas, force, Policy.subMonitorFor(monitor, 70));
 		} finally {
 			monitor.done();
 		}

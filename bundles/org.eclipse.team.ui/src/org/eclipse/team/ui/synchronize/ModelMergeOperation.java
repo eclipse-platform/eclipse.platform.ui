@@ -120,8 +120,8 @@ public abstract class ModelMergeOperation extends ModelOperation {
 			throws InvocationTargetException, InterruptedException {
 		try {
 			monitor.beginTask(null, 100);
-			initializeContext(Policy.subMonitorFor(monitor, 75));
-			executeMerge(Policy.subMonitorFor(monitor, 25));
+			initializeContext(Policy.subMonitorFor(monitor, 50));
+			executeMerge(Policy.subMonitorFor(monitor, 50));
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
@@ -272,10 +272,12 @@ public abstract class ModelMergeOperation extends ModelOperation {
 			context.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+						int ticks = 100;
+						monitor.beginTask(null, ticks + ((providers.length - 1) * 10));
 						for (int i = 0; i < providers.length; i++) {
 							ModelProvider provider = providers[i];
-							IStatus status = performMerge(provider, Policy.subMonitorFor(monitor, IProgressMonitor.UNKNOWN));
+							IStatus status = performMerge(provider, Policy.subMonitorFor(monitor, ticks));
+							ticks = 10;
 							if (!status.isOK()) {
 								// Stop at the first failure
 								result[0] = status;
