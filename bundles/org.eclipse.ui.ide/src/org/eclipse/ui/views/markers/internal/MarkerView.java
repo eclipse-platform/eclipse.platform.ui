@@ -176,8 +176,11 @@ public abstract class MarkerView extends TableView {
 
 		private class MarkerDescriptor {
 			String description;
+
 			String folder;
+
 			String resource;
+
 			int line;
 
 			MarkerDescriptor(ConcreteMarker marker) {
@@ -321,6 +324,13 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
+		 */
+		public boolean shouldRun() {
+			return !getMarkerAdapter().isBuilding();
 		}
 
 	}
@@ -1687,5 +1697,6 @@ public abstract class MarkerView extends TableView {
 		updateJob.saveSelection(getViewer().getSelection());
 
 	}
+
 
 }

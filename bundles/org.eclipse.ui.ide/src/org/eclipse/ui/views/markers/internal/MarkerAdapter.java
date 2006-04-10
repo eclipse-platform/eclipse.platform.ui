@@ -49,13 +49,12 @@ public class MarkerAdapter {
 		 * @param startIndex
 		 * @param endIndex
 		 */
-		MarkerCategory(MarkerAdapter adapter, int startIndex, int endIndex) {
+		MarkerCategory(MarkerAdapter adapter, int startIndex, int endIndex,
+				String categoryName) {
 			markerAdapter = adapter;
 			start = startIndex;
 			end = endIndex;
-
-			name = adapter.getCategorySorter().getCategoryField().getValue(
-					markerAdapter.lastMarkers.toArray()[startIndex]);
+			name = categoryName;
 		}
 
 		/*
@@ -209,6 +208,7 @@ public class MarkerAdapter {
 	 */
 	public void buildAllMarkers(IProgressMonitor monitor) {
 		building = true;
+		MarkerList newMarkers;
 		try {
 			int markerLimit = view.getMarkerLimit();
 			monitor.beginTask(MarkerMessages.MarkerView_19,
@@ -216,51 +216,48 @@ public class MarkerAdapter {
 			try {
 				monitor.subTask(MarkerMessages.MarkerView_waiting_on_changes);
 
-				if (monitor.isCanceled()) {
+				if (monitor.isCanceled())
 					return;
-				}
 
 				monitor
 						.subTask(MarkerMessages.MarkerView_searching_for_markers);
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,
 						10);
-				lastMarkers = MarkerList.compute(view.getEnabledFilters(),
+				newMarkers = MarkerList.compute(view.getEnabledFilters(),
 						subMonitor, true);
 
-				if (monitor.isCanceled()) {
+				if (monitor.isCanceled())
 					return;
-				}
 
 				view.refreshMarkerCounts(monitor);
 
 			} catch (CoreException e) {
 				Util.log(e);
-				lastMarkers = new MarkerList();
+				newMarkers = new MarkerList();
 				return;
 			}
 
-			if (monitor.isCanceled()) {
+			if (monitor.isCanceled())
 				return;
-			}
 
 			ViewerSorter sorter = view.getViewer().getSorter();
 
 			if (markerLimit == -1 || isShowingHierarchy()) {
-				sorter.sort(view.getViewer(), lastMarkers.toArray());
+				sorter.sort(view.getViewer(), newMarkers.toArray());
 			} else {
 
 				monitor.subTask(MarkerMessages.MarkerView_18);
 				SubProgressMonitor mon = new SubProgressMonitor(monitor, 40);
 
-				lastMarkers = SortUtil.getFirst(lastMarkers,
-						(Comparator) sorter, markerLimit, mon);
+				newMarkers = SortUtil.getFirst(newMarkers, (Comparator) sorter,
+						markerLimit, mon);
 				if (monitor.isCanceled()) {
 					return;
 				}
-				sorter.sort(view.getViewer(), lastMarkers.toArray());
+				sorter.sort(view.getViewer(), newMarkers.toArray());
 			}
 
-			if (lastMarkers.getSize() == 0) {
+			if (newMarkers.getSize() == 0) {
 				categories = new MarkerCategory[0];
 				monitor.done();
 				return;
@@ -268,15 +265,18 @@ public class MarkerAdapter {
 
 			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
 
-			if (isShowingHierarchy()) {
-				categories = buildHierarchy(lastMarkers, 0, lastMarkers
-						.getSize() - 1, 0);
-			}
-
-			if (monitor.isCanceled()) {
+			if (monitor.isCanceled())
 				return;
+
+			if (isShowingHierarchy()) {
+				MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
+						newMarkers.getSize() - 1, 0);
+				if (monitor.isCanceled())
+					return;
+				categories = newCategories;
 			}
 
+			lastMarkers = newMarkers;
 			monitor.done();
 		} finally {
 			building = false;
@@ -333,7 +333,7 @@ public class MarkerAdapter {
 				// Are we at a category boundary?
 				if (sorter.compare(previous, elements[i], sortIndex, false) != 0) {
 					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1));
+							i - 1, getNameForIndex(markers, categoryStart)));
 					categoryStart = i;
 				}
 			}
@@ -342,7 +342,8 @@ public class MarkerAdapter {
 		}
 
 		if (end >= categoryStart) {
-			categories.add(new MarkerCategory(this, categoryStart, end));
+			categories.add(new MarkerCategory(this, categoryStart, end,
+					getNameForIndex(markers, categoryStart)));
 		}
 
 		// Flatten single categories
@@ -353,6 +354,19 @@ public class MarkerAdapter {
 		categories.toArray(nodes);
 		return nodes;
 
+	}
+
+	/**
+	 * Get the name for the category from the marker at categoryStart in
+	 * markers.
+	 * 
+	 * @param markers
+	 * @param categoryStart
+	 * @return String
+	 */
+	private String getNameForIndex(MarkerList markers, int categoryStart) {
+		return getCategorySorter().getCategoryField().getValue(
+				markers.toArray()[categoryStart]);
 	}
 
 	/**
@@ -414,6 +428,14 @@ public class MarkerAdapter {
 			return null;
 		}
 		return categories;
+	}
+
+	/**
+	 * Return whether or not the receiver is building.
+	 * @return boolean
+	 */
+	boolean isBuilding() {
+		return building;
 	}
 
 }
