@@ -404,4 +404,12 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.2
 	 */
 	public static final String PERSPECTIVE_BAR_EXTRAS = "PERSPECTIVE_BAR_EXTRAS"; //$NON-NLS-1$
+
+	/**
+	 * Allows locking the trim to prevent user dragging on startup.
+	 * The default is <code>false</code>.
+	 * 
+	 * @since 3.2
+	 */
+	public static final String LOCK_TRIM = "LOCK_TRIM"; //$NON-NLS-1$
 }

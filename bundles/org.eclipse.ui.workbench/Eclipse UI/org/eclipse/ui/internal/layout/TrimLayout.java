@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -26,6 +27,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.TrimDragPreferences;
 
 /**
@@ -114,11 +117,17 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	private int rightSpacing;
 
 	private int spacing = 3;
+	
+	private boolean trimLocked;
 
 	/**
 	 * Creates a new (initially empty) trim layout.
 	 */
 	public TrimLayout() {
+		// Determine whether or not the trim is 'locked'
+		final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        trimLocked = store.getBoolean(IWorkbenchPreferenceConstants.LOCK_TRIM);
+		
 		createTrimArea(TOP_ID, TOP_ID.toString(), SWT.DEFAULT, SWT.TOP);
 		createTrimArea(BOTTOM_ID, BOTTOM_ID.toString(), SWT.DEFAULT, SWT.BOTTOM);
 		createTrimArea(LEFT_ID, LEFT_ID.toString(), SWT.DEFAULT, SWT.LEFT);
@@ -261,7 +270,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		TrimDescriptor desc = new TrimDescriptor(trim, areaId);
 
 		// If the trim can be relocated then add a docking handle
-		if (trim.getValidSides() != SWT.NONE) {
+		if (!trimLocked && trim.getValidSides() != SWT.NONE) {
 			// Create a 'docking' handle to allow dragging the trim
 			Composite dockingHandle = new TrimCommonUIHandle(this, trim, areaId);
 			desc.setDockingCache(new SizeCache(dockingHandle));
