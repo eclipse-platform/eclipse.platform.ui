@@ -403,7 +403,7 @@ public final class NavigatorContentDescriptor implements
 	 */
 	public Set getOverriddingExtensions() {
 		if (overridingExtensions == null) {
-			overridingExtensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
+			overridingExtensions = new TreeSet(ExtensionPriorityComparator.DESCENDING);
 		}
 		return overridingExtensions;
 	}

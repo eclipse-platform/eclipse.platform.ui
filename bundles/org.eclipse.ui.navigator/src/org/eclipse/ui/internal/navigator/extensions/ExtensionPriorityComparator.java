@@ -25,7 +25,18 @@ public class ExtensionPriorityComparator implements Comparator {
 	/**
 	 * The initialized singleton instance.
 	 */
-	public static final ExtensionPriorityComparator INSTANCE = new ExtensionPriorityComparator();
+	public static final ExtensionPriorityComparator INSTANCE = new ExtensionPriorityComparator(true);
+
+	/**
+	 * The initialized singleton instance.
+	 */
+	public static final ExtensionPriorityComparator DESCENDING = new ExtensionPriorityComparator(false);
+	
+	private final int sortAscending;
+	
+	public ExtensionPriorityComparator(boolean toSortAscending) {
+		sortAscending = toSortAscending ? 1 : -1; 
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -50,14 +61,14 @@ public class ExtensionPriorityComparator implements Comparator {
 		}
 
 		if (lvalue == null || rvalue == null) {
-			return -1;
+			return  -1 * sortAscending;
 		}
 
 		int c = lvalue.getPriority() - rvalue.getPriority();
 		if (c != 0) {
-			return c;
+			return c * sortAscending;
 		}
-		return lvalue.getId().compareTo(rvalue.getId());
+		return lvalue.getId().compareTo(rvalue.getId()) * sortAscending;
 
 	}
 
