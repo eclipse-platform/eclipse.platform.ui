@@ -45,7 +45,7 @@ is of type "org.eclipse.core.resources.IFile" and its file name matches
 the pattern "*.html". But who actually provides the code to do the name
 pattern test? Predefining a set of properties to test is too limiting.
 The set of tests must be open. Property testers are added to the system
-using a special extension point <span style="font-family: monospace">propertyTesters</span>.
+using a special extension point <code>propertyTesters</code>.
 The above matchesPattern property is added to the system in the
 following way:</p>
 <pre style="margin-left: 40px">&lt;extension point="org.eclipse.core.expressions.propertyTesters"&gt;
@@ -71,10 +71,9 @@ following way:</p>
 	a property is defined more than once for a name space then one of the
 	testers is randomly chosen to test the property. Inheritance only
 	works within the same name space. If, for example, there is a property
-	<span style="font-family: monospace">isPublic</span> defined in the
+	<code>isPublic</code> defined in the
 	namespace <code>org.myNamespace</code> for type <code>org.eclipse.core.IMethod</code>
-	then this property will not override the property <span
-		style="font-family: monospace">isPublic</span> in the namespace <code>org.yourNamespace</code>
+	then this property will not override the property <code>isPublic</code> in the namespace <code>org.yourNamespace</code>
 	for type <code>org.eclipse.core.IMember</code>.&nbsp;</li>
 	<li>testing for an unknown property results in a core exception. This
 	is a programming error.</li>
