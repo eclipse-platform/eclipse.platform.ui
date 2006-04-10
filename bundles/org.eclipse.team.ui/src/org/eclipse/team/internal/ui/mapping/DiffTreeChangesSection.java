@@ -222,22 +222,26 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		} else {
 			ISynchronizePageConfiguration configuration = getConfiguration();
 			String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
-			if (id != null && !id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
-				// A particular model is active so we need to look for a model that has changes in this
-				// same mode before offering to change modes.
-				ModelProvider[] providers =context.getScope().getModelProviders();
-				providers = ModelOperation.sortByExtension(providers);
-				for (int i = 0; i < providers.length; i++) {
-					ModelProvider provider = providers[i];
-					if (isEnabled(provider)) {
-						ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
-						if (adapter != null) {
-							boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
-							if (hasChanges) {
-								if (provider.getDescriptor().getId().equals(id)) {
-									return super.getEmptyChangesComposite(parent);
-								} else {
-									return getPointerToModel(parent, provider, id);
+			if (id != null) {
+				if (id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+					return super.getEmptyChangesComposite(parent);
+				} else {
+					// A particular model is active so we need to look for a model that has changes in this
+					// same mode before offering to change modes.
+					ModelProvider[] providers =context.getScope().getModelProviders();
+					providers = ModelOperation.sortByExtension(providers);
+					for (int i = 0; i < providers.length; i++) {
+						ModelProvider provider = providers[i];
+						if (isEnabled(provider)) {
+							ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
+							if (adapter != null) {
+								boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
+								if (hasChanges) {
+									if (provider.getDescriptor().getId().equals(id)) {
+										return super.getEmptyChangesComposite(parent);
+									} else {
+										return getPointerToModel(parent, provider, id);
+									}
 								}
 							}
 						}
