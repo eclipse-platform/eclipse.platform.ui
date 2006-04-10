@@ -12,7 +12,10 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.*;
 

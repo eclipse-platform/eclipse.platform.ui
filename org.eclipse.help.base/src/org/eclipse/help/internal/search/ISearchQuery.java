@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.util.*;
+import java.util.Collection;
 
 public interface ISearchQuery {
 	/**

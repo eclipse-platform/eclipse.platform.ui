@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.Collator;
+import java.util.Comparator;
 
 /**
  * Compares two working sets by name.

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.*;
+import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.help.IHelpResource;

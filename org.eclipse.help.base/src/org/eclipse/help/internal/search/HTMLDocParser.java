@@ -13,7 +13,8 @@ package org.eclipse.help.internal.search;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.apache.lucene.demo.html.*;
 import org.eclipse.help.internal.base.*;

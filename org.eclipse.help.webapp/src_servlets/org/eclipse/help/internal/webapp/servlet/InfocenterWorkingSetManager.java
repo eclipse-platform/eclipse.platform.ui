@@ -11,7 +11,9 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.servlet.http.*;
 

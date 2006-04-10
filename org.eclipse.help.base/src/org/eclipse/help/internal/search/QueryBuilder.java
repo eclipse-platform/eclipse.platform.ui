@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.*;

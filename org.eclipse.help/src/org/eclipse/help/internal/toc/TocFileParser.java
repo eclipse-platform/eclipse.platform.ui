@@ -11,8 +11,8 @@
 package org.eclipse.help.internal.toc;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.MessageFormat;
+import java.util.ArrayList;
 
 import javax.xml.parsers.*;
 

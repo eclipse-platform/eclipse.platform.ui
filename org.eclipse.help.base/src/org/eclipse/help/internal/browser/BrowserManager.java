@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;

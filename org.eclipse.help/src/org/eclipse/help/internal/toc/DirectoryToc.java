@@ -12,7 +12,11 @@ package org.eclipse.help.internal.toc;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;

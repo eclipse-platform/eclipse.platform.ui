@@ -10,7 +10,7 @@
  *     Phil Loats (IBM Corp.) - fix to use only foundation APIs
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.util.*;
+import java.util.List;
 
 import org.eclipse.help.*;
 import org.xml.sax.*;

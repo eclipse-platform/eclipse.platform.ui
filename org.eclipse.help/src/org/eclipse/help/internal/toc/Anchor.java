@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
-import java.util.*;
+
+import java.util.List;
 
 import org.eclipse.help.internal.model.*;
 import org.xml.sax.*;

@@ -11,7 +11,9 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Observable;
 
 import javax.xml.parsers.*;
 

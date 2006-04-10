@@ -9,8 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
+
 import java.io.*;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.util;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Fast Stack is similar to java.uiti.Stack, but simplified for speed. It uses

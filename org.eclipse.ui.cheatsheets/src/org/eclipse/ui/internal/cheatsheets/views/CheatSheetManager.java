@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;

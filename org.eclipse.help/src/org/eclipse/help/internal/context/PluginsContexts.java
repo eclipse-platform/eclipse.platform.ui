@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * Holds mapping of short plugin Id to PluginContext
  */

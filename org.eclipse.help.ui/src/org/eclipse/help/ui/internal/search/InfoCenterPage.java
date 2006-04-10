@@ -13,7 +13,8 @@ package org.eclipse.help.ui.internal.search;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.*;
 

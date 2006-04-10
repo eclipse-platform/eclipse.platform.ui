@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.*;

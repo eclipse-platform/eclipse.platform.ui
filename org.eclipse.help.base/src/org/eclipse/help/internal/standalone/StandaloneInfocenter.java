@@ -13,7 +13,7 @@ package org.eclipse.help.internal.standalone;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
-import java.util.*;
+import java.util.List;
 
 import org.eclipse.help.internal.base.*;
 

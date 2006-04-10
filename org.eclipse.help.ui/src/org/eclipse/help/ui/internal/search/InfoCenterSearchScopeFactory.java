@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.StringTokenizer;
 
 import org.eclipse.help.internal.search.InfoCenter;
 import org.eclipse.help.search.*;

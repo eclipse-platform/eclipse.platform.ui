@@ -11,7 +11,8 @@
 package org.eclipse.help.internal.base;
 import java.io.*;
 import java.nio.channels.*;
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;

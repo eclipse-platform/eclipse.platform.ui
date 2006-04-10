@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.search.*;

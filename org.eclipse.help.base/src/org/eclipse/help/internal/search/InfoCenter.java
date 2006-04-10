@@ -12,7 +12,7 @@ package org.eclipse.help.internal.search;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Hashtable;
 
 import javax.xml.parsers.*;
 

@@ -12,7 +12,7 @@ package org.eclipse.help.internal.standalone;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;

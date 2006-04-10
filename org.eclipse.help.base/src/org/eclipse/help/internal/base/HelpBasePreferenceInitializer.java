@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.util.*;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;

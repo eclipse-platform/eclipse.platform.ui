@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.util.*;

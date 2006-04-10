@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;

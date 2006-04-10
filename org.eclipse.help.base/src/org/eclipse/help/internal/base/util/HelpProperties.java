@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.base.util;
 
 import java.io.*;
-import java.util.*;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;

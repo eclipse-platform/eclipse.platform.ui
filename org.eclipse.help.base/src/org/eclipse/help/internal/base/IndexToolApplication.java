@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.base;
 
 import java.io.*;
-import java.util.*;
+import java.util.Locale;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;

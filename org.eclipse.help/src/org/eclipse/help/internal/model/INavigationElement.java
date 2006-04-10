@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.model;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Part of help navigation model corresponding to any of: TOC, TOPIC, ANCHOR, or

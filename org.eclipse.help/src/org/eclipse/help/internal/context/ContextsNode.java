@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.help.internal.FilterableUAElement;
 import org.xml.sax.*;

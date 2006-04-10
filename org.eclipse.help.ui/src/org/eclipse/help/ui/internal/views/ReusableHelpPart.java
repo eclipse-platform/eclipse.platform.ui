@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.text.Collator;
+import java.text.Collator; // can't use ICU, public instance
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

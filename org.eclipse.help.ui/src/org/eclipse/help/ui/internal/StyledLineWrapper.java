@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.help.internal.context.*;
 import org.eclipse.swt.*;

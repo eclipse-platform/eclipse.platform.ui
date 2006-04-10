@@ -12,7 +12,7 @@ package org.eclipse.help.internal.base;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.HelpSystem;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
-import java.util.*;
+import java.util.List;
 
 import org.eclipse.help.internal.base.*;
 

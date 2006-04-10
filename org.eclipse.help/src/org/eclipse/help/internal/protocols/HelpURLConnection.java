@@ -10,7 +10,11 @@ package org.eclipse.help.internal.protocols;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;

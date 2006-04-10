@@ -11,8 +11,9 @@
 package org.eclipse.help.internal.search;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.lucene.analysis.*;
 

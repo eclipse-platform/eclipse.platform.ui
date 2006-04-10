@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.standalone;
 
 import java.io.*;
-import java.util.*;
+import java.util.List;
 
 /**
  * Eclipse launcher. Spawns eclipse executable or

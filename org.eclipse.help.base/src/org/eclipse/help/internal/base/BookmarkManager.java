@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;

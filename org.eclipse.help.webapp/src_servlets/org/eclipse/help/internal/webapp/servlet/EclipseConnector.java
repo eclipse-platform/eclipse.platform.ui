@@ -12,7 +12,8 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Locale;
 
 import javax.servlet.*;
 import javax.servlet.http.*;

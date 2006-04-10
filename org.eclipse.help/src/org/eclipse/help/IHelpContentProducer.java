@@ -11,7 +11,7 @@
 package org.eclipse.help;
 
 import java.io.*;
-import java.util.*;
+import java.util.Locale;
 
 /**
  * Producer capable of generating or otherwise obtaining contents for help

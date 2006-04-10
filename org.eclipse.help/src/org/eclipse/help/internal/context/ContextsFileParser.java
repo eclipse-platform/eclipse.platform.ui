@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.context;
 
 import java.io.*;
-import java.text.*;
+import com.ibm.icu.text.MessageFormat;
 
 import javax.xml.parsers.*;
 

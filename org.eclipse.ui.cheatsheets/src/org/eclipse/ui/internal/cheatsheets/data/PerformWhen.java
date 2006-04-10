@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 public class PerformWhen implements IExecutableItem  {

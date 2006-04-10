@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.*;
 import javax.servlet.http.*;

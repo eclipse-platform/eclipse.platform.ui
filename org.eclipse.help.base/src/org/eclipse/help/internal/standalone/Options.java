@@ -11,7 +11,8 @@
 package org.eclipse.help.internal.standalone;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Options for starting stand alone help and infocenter.
