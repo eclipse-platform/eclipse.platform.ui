@@ -12,8 +12,7 @@
 Application programming interfaces for interaction
 with the Eclipse Java User Interface text support.
 <h2>Linked Position Infrastructure</h2>
-<h3>package <span style="font-family: monospace;">org.eclipse.jface.text.link
-</span><span style="font-family: monospace;"></span></h3>
+<h3>package <code>org.eclipse.jface.text.link</code></h3>
 <h3><code></code></h3>
 The Linked Position Infrastructure lets one set up a mode in an editor
 in which regions in a document (or several documents) are <em>linked</em>,
@@ -22,23 +21,14 @@ of one linked position will be reflected in the others.
 <h4>Classes</h4>
 <ul>
   <li><code>LinkedPositionGroup</code>: a set of linked positions. Add
-positions to a group using the <code>addPosition</code> method. See <span
- style="font-family: monospace;">LinkedPosition</span><code><span
- style="font-family: helvetica,arial,sans-serif;"> and</span></code> <span
- style="font-family: monospace;">ProposalPosition</span><code><span
- style="font-family: helvetica,arial,sans-serif;"> </span></code><span
- style="font-family: helvetica,arial,sans-serif;">for a position type
-that lets one attach </span><span style="font-family: monospace;">ICompletionProposals</span><span
- style="font-family: monospace;"></span><span
- style="font-family: helvetica,arial,sans-serif;"> </span><span
- style="font-family: helvetica,arial,sans-serif;">to</span>
+positions to a group using the <code>addPosition</code> method. See <code>LinkedPosition</code> and <code>ProposalPosition</code> 
+for a position type that lets one attach <code>ICompletionProposal</code>s to
 be shown when the position is hit.</li>
   <li><code>LinkedModeModel</code>: umbrellas several <code>LinkedPositionGroup</code>s,
 e.g. in a template that has several groups of linked positions. Handles
-the forwarding of updates received via an IDocumentListener. Add <code>LinkedPositionGroup</code>s
+the forwarding of updates received via an <code>IDocumentListener</code>. Add <code>LinkedPositionGroup</code>s
 to
-an model using the <code>addGroup</code> method. Existence of a <span
- style="font-family: monospace;">LinkedModeModel </span>can be
+an model using the <code>addGroup</code> method. Existence of a <code>LinkedModeModel </code>can be
 tested by one of the static methods.<br>
   </li>
   <li><code>LinkedModeUI</code>: The UI for linked mode (for one
@@ -56,16 +46,35 @@ should stop over when cycling.</li>
       <li><span style="font-weight: bold;">position listener</span>:
 extending classes may register a position listener which will get
 notified whenever
-the focus position changes. An example is <span
- style="font-family: monospace;">org.eclipse.ui.texteditor.link.EditorLinkedModeUI.EditorHistoryUpdater</span>
-which will store the edit location in the editor navigation history.<br>
-      </li>
+the focus position changes. An example is <code>org.eclipse.ui.texteditor.link.EditorLinkedModeUI.EditorHistoryUpdater</code>
+which will store the edit location in the editor navigation history.</li>
     </ul>
   </li>
-.
+
 </ul>
 <h4>Example</h4>
-<pre>	IDocument doc1, doc2;<br>	ITextViewer viewer1, viewer2;<br>	<br>	/* create groups - this step is independent of the linked mode */<br>	LinkedPositionGroup group1= new LinkedPositionGroup();<br>	group1.addPosition(new LinkedPosition(doc1, 3, 4));<br>	group1.addPosition(new LinkedPosition(doc1, 7, 8));<br>	<br>	LinkedPositionGroup group2= new LinkedPositionGroup();<br>	group2.addPosition(new LinkedPosition(doc1, 15, 25));<br>	group2.addPosition(new LinkedPosition(doc2, 0, 10));<br>	<br>	/* set up linked mode */<br>	LinkedModeModel model= new LinkedModeModel();<br>	model.addGroup(group1);<br>	model.addGroup(group2);<br>	model.forceInstall();<br>	<br>	/* create UI */<br>	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });<br>	ui.enter();<span
- style="font-family: sans-serif;"><br><br></span></pre>
+<pre>
+	IDocument doc1, doc2;
+	ITextViewer viewer1, viewer2;
+
+	/* create groups - this step is independent of the linked mode */
+	LinkedPositionGroup group1= new LinkedPositionGroup();
+	group1.addPosition(new LinkedPosition(doc1, 3, 4));
+	group1.addPosition(new LinkedPosition(doc1, 7, 8));
+
+	LinkedPositionGroup group2= new LinkedPositionGroup();
+	group2.addPosition(new LinkedPosition(doc1, 15, 25));
+	group2.addPosition(new LinkedPosition(doc2, 0, 10));
+
+	/* set up linked mode */
+	LinkedModeModel model= new LinkedModeModel();
+	model.addGroup(group1);
+	model.addGroup(group2);
+	model.forceInstall();
+
+	/* create UI */
+	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });
+	ui.enter();
+</pre>
 </body>
 </html>
