@@ -116,7 +116,12 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		update();
+		/*
+		 * This is a ruler action - don't update on selection.
+		 * The call was introduced to support annotation roll-overs
+		 * but this seems not to be needed.
+		 */ 
+//		update();
 	}
 
 	/**
