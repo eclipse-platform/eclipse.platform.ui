@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceStatus;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -271,22 +272,22 @@ public class TextSearchVisitor {
 		} catch (UnsupportedCharsetException e) {
 			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args); 
-			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			fStatus.add(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, message, e));
 		} catch (IllegalCharsetNameException e) {
 			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args);
-			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			fStatus.add(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, message, e));
 		} catch (IOException e) {
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
-			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			fStatus.add(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, message, e));
 		} catch (CoreException e) {
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args); 
-			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			fStatus.add(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, message, e));
 		} catch (StackOverflowError e) {
 			String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
-			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+			fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e));
 			return false;
 		} finally {
 			fNumberOfScannedFiles++;
