@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -92,30 +93,35 @@ public class BrowserDescriptorDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = (Composite) super.createDialogArea(parent);
 		((GridLayout)composite.getLayout()).numColumns = 3;
+		composite.setFont(font);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ContextIds.PREF_BROWSER_DIALOG);
 		
-		SWTUtil.createLabel(composite, Messages.name);
+		SWTUtil.createLabel(composite, Messages.name).setFont(font);
 		browserNameTextfield = createText(composite, browser.getName(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setName(s);
 				validateFields();
 			}
 		});
+		browserNameTextfield.setFont(font);
 		
 		new Label(composite, SWT.NONE);
 	
-		SWTUtil.createLabel(composite, Messages.location);
+		SWTUtil.createLabel(composite, Messages.location).setFont(font);
 		browserLocationTextfield = createText(composite, browser.getLocation(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setLocation(s);
 				validateFields();
 			}
-		});		
+		});
+		browserLocationTextfield.setFont(font);
 		
 		browseButton = SWTUtil.createButton(composite, Messages.browse);
+		browseButton.setFont(font);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
@@ -131,18 +137,20 @@ public class BrowserDescriptorDialog extends Dialog {
 			}
 		});
 		
-		SWTUtil.createLabel(composite, Messages.parameters);
+		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
 		browserParametersTextfield = createText(composite, browser.getParameters(), new StringModifyListener() {
 			public void valueChanged(String s) {
 				browser.setParameters(s);
 			}
 		});
+		browserParametersTextfield.setFont(font);
 
 		new Label(composite, SWT.NONE);
 		
 		new Label(composite, SWT.NONE);
 		Label urlLabel = new Label(composite, SWT.NONE);
 		urlLabel.setText(NLS.bind(Messages.parametersMessage, IBrowserDescriptor.URL_PARAMETER));
+		urlLabel.setFont(font);
 		
 		return composite;
 	}
