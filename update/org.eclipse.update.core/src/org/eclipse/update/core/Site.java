@@ -243,8 +243,15 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 		ISiteFeatureReference currentReference = null;
 		for (int i = 0; i < references.length; i++) {
 			currentReference = references[i];
-			if (UpdateManagerUtils.sameURL(feature.getURL(), currentReference.getURL()))
-				return currentReference;
+			//if (UpdateManagerUtils.sameURL(feature.getURL(), currentReference.getURL()))
+			//	return currentReference;
+			try {
+				if (feature.getVersionedIdentifier().equals(currentReference.getVersionedIdentifier()))
+					return currentReference;
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		UpdateCore.warn("Feature " + feature + " not found on site" + this.getURL()); //$NON-NLS-1$ //$NON-NLS-2$

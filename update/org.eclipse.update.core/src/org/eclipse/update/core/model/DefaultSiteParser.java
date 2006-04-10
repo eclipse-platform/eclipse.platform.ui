@@ -261,11 +261,12 @@ public class DefaultSiteParser extends DefaultHandler {
 				if (objectStack.peek() instanceof String) {
 					text = (String) objectStack.pop();
 					SiteModel site = (SiteModel) objectStack.peek();
-					site.getDescriptionModel().setAnnotation(text);
-					if ( (site instanceof ExtendedSite) && ((ExtendedSite)site).isDigestExist()) {
-						ExtendedSite extendedSite = (ExtendedSite)site;
-						extendedSite.setLiteFeatures(getLightFeatures(extendedSite));
-					}
+					site.getDescriptionModel().setAnnotation(text);					
+				}
+				SiteModel site = (SiteModel) objectStack.peek();
+				if ( (site instanceof ExtendedSite) && ((ExtendedSite)site).isDigestExist()) {
+					ExtendedSite extendedSite = (ExtendedSite)site;
+					extendedSite.setLiteFeatures(getLightFeatures(extendedSite));
 				}
 				//do not pop the object
 				break;
@@ -513,7 +514,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				site.setMirrorsURLString(mirrorsURL);
 		}
 		
-		if ( (site instanceof ExtendedSite) && (Boolean.getBoolean(attributes.getValue("digestURL")))) { //$NON-NLS-1$
+		if ( (site instanceof ExtendedSite) && (attributes.getValue("digestURL") != null)) { //$NON-NLS-1$
 			ExtendedSite extendedSite = (ExtendedSite) site;
 			extendedSite.setDigestExist(true);
 			extendedSite.setDigestURL(attributes.getValue("digestURL")); //$NON-NLS-1$
@@ -861,7 +862,11 @@ public class DefaultSiteParser extends DefaultHandler {
 		
 		Digest digest = new Digest( fullDigestURL);
 		try {
-			return (LiteFeature[])digest.parseDigest();
+			LiteFeature[] features =  (LiteFeature[])digest.parseDigest();
+			for(int i = 0; i < features.length; i++) {
+				features[i].setSite(site);
+			}
+			return features;
 		} catch(Exception e){ 
 			e.printStackTrace();
 			return null;
@@ -870,8 +875,8 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private URL getFullDigestURL(ExtendedSite site, String country, String language) throws MalformedURLException {
 		
-		String digestURL = site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/digest"; //$NON-NLS-1$ //$NON-NLS-2$
-		// TODO Auto-generated method stub
+		String digestURL = (site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/") + "digest"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		
 		if ( isLocalSupported(site, country, language)) {
 			return new URL(digestURL + "_" + language + "_" + country + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}

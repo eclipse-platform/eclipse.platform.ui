@@ -60,6 +60,7 @@ public class DigestParser extends DefaultHandler {
     	this.location = location;
     	factory = new LiteFeatureFactory();
     	featureModels = new ArrayList();
+    	featureParser.internalInit(factory, location);
     }
 
 	/**
@@ -72,9 +73,10 @@ public class DigestParser extends DefaultHandler {
 	 * @exception IOException
 	 * @since 2.0
 	 */
-	public FeatureModel[] parse(InputStream in) throws SAXException, IOException {
-		parser.parse(new InputSource(in), this);
-		return (FeatureModel[])featureModels.toArray( new FeatureModel[featureModels.size()]);
+	public LiteFeature[] parse(InputStream in) throws SAXException, IOException {
+		
+		parser.parse(new InputSource(in), this);	
+		return (LiteFeature[])featureModels.toArray( new LiteFeature[featureModels.size()]);
 	}
 
 
@@ -115,6 +117,7 @@ public class DigestParser extends DefaultHandler {
 			try {
 				featureModels.add(featureParser.getFeatureModel());
 			} catch (SAXException e) {
+				e.printStackTrace();
 			} 
 		}
 	}

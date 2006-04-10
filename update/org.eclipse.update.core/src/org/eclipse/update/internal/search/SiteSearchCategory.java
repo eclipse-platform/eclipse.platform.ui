@@ -11,13 +11,25 @@
 package org.eclipse.update.internal.search;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.LiteFeature;
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.IQueryUpdateSiteAdapter;
+import org.eclipse.update.search.IUpdateSearchFilter;
+import org.eclipse.update.search.IUpdateSearchQuery;
+import org.eclipse.update.search.IUpdateSearchResultCollector;
 
 /**
  * Searches an update site
@@ -40,6 +52,15 @@ public class SiteSearchCategory extends BaseSearchCategory {
 		public Query(boolean liteFeaturesAreOK) {
 			this.liteFeaturesAreOK = liteFeaturesAreOK;
 		}
+		
+		public boolean isLiteFeaturesAreOK() {
+			return liteFeaturesAreOK;
+		}
+
+		public void setLiteFeaturesAreOK(boolean liteFeaturesAreOK) {
+			this.liteFeaturesAreOK = liteFeaturesAreOK;
+		}
+		
 		public void run(
 			ISite site,
 			String[] categoriesToSkip,
@@ -57,16 +78,17 @@ public class SiteSearchCategory extends BaseSearchCategory {
 				}
 			}
 			List siteFeatureReferences = new ArrayList(Arrays.asList(refs));
-			//System.out.println(site.getClass().getCanonicalName());
+			
 			if (liteFeaturesAreOK && (site instanceof ExtendedSite) ) {
-				//System.out.println("YYYYYYYYYYYYYYYYY");
+				
 				ExtendedSite extendedSite = (ExtendedSite)site;
 				LiteFeature[] liteFeaturesArray =  extendedSite.getLiteFeatures();
 				if ( (liteFeaturesArray != null) && ( liteFeaturesArray.length != 0)) {
 					for(int i = 0; i < liteFeaturesArray.length; i++) {
 						liteFeatures.put(liteFeaturesArray[i].getVersionedIdentifier(), liteFeaturesArray[i]);					
 					}
-					new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor, true, liteFeatures);
+					(new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor, true, liteFeatures)).run();
+					return;
 				} else {
 					liteFeaturesAreOK = false;
 				}
@@ -102,9 +124,6 @@ public class SiteSearchCategory extends BaseSearchCategory {
 					}
 				}
 			}
-			//double nano = 1000000000;
-			//System.out.println("Time:" + FeatureContentProvider.timer/nano);
-			//System.out.println("Time:" + FeatureContentProvider.first/nano);
 			
 		}
 
@@ -124,6 +143,7 @@ public class SiteSearchCategory extends BaseSearchCategory {
 	public SiteSearchCategory(boolean liteFeaturesAreOK) {
 		this();
 		this.liteFeaturesAreOK = liteFeaturesAreOK;
+		queries = new IUpdateSearchQuery[] { new Query(liteFeaturesAreOK)};
 	}
 
 	public IUpdateSearchQuery[] getQueries() {
@@ -218,6 +238,17 @@ public class SiteSearchCategory extends BaseSearchCategory {
 				}
 			}
 			
+		}
+	}
+
+	public boolean isLiteFeaturesAreOK() {
+		return liteFeaturesAreOK;
+	}
+
+	public void setLiteFeaturesAreOK(boolean liteFeaturesAreOK) {
+		this.liteFeaturesAreOK = liteFeaturesAreOK;
+		for( int i = 0; i < queries.length; i++) {
+			((Query)queries[i]).setLiteFeaturesAreOK(liteFeaturesAreOK);
 		}
 	}
 }

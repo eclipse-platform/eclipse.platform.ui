@@ -66,6 +66,10 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 		}
 		return false;
 	}
+
+	public void setFeature(IFeature feature) {
+		this.feature = feature;
+	}
 	
 
 }

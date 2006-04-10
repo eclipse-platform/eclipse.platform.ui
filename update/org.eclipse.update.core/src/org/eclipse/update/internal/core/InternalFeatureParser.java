@@ -541,10 +541,11 @@ public class InternalFeatureParser extends DefaultHandler {
 			text = new String(ch, start, length);
 		}
 
-		//only push if not unknown state
+		//only push if not unknown state		
 		int state = ((Integer) stateStack.peek()).intValue();
 		if (state == STATE_DESCRIPTION || state == STATE_COPYRIGHT || state == STATE_LICENSE)
 			objectStack.push(text);
+
 	}
 
 	/**

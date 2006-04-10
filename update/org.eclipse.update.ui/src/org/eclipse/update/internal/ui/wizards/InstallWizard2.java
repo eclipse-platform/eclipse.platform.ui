@@ -34,12 +34,16 @@ import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IVerificationListener;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.FeatureDownloadException;
+import org.eclipse.update.internal.core.LiteFeature;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
+import org.eclipse.update.internal.operations.InstallOperation;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
@@ -402,6 +406,13 @@ public class InstallWizard2
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
 				try {
+					if (op.getFeature() instanceof LiteFeature) {
+						ISiteFeatureReference featureReference = getFeatureReference(op.getFeature());
+						IFeature feature = featureReference.getFeature(null);
+						if (op instanceof InstallOperation) {
+							((InstallOperation)op).setFeature(feature);
+						}
+					}
 					UpdateUtils.downloadFeatureContent(op.getTargetSite(), op.getFeature(), op.getOptionalFeatures(), subMonitor);
 				} catch (final CoreException e) {
 					if(e instanceof FeatureDownloadException){
@@ -458,6 +469,7 @@ public class InstallWizard2
                 
                 Job installJob = new Job(UpdateUIMessages.InstallWizard_jobName) { 
         			public IStatus run(IProgressMonitor monitor) {
+        				install(monitor);
         				if (install(monitor)) {
         					return Status.OK_STATUS;
         			} else {
@@ -505,5 +517,26 @@ public class InstallWizard2
             }
         }
     }
+    
+	
+	public ISiteFeatureReference getFeatureReference(IFeature feature) {
+
+		ISite site = feature.getSite();
+		ISiteFeatureReference[] references = site.getFeatureReferences();
+		ISiteFeatureReference currentReference = null;
+		for (int i = 0; i < references.length; i++) {
+			currentReference = references[i];
+			try {
+				if (feature.getVersionedIdentifier().equals(currentReference.getVersionedIdentifier()))
+					return currentReference;
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		UpdateCore.warn("Feature " + feature + " not found on site" + site.getURL()); //$NON-NLS-1$ //$NON-NLS-2$
+		return null;
+	}
 
 }
