@@ -1303,16 +1303,16 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 	public void contextActivated(final ISelection selection, IWorkbenchPart part) {
 		
-		if (MemoryViewUtil.isValidSelection(selection))
-		{	
-			UIJob job = new UIJob("contextActivated"){ //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) 
+		UIJob job = new UIJob("contextActivated"){ //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) 
+			{
+				if (isDisposed())
+					return Status.OK_STATUS;
+				
+				IMemoryViewTab lastViewTab = getTopMemoryTab();
+				
+				if (MemoryViewUtil.isValidSelection(selection))
 				{
-					if (isDisposed())
-						return Status.OK_STATUS;
-					
-					IMemoryViewTab lastViewTab = getTopMemoryTab();
-					
 					if (!(selection instanceof IStructuredSelection))
 						return Status.OK_STATUS;
 
@@ -1322,11 +1322,19 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					{	
 						handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
 					}
-					return Status.OK_STATUS;
-				}};
-			job.setSystem(true);
-			job.schedule();
-		}
+				}
+				else
+				{
+					if (lastViewTab != null)
+						lastViewTab.setEnabled(false);
+					
+					emptyFolder();
+					
+				}
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	public void contextChanged(ISelection selection, IWorkbenchPart part) {
