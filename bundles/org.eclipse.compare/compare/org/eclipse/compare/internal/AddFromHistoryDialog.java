@@ -11,8 +11,13 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+import java.util.ArrayList;
+import com.ibm.icu.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

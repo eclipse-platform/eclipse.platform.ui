@@ -18,7 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;

@@ -12,8 +12,15 @@
 package org.eclipse.compare.internal.patch;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;

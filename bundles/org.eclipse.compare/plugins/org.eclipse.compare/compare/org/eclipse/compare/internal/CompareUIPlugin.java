@@ -13,8 +13,16 @@ package org.eclipse.compare.internal;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -856,42 +864,35 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 		
 	private static IContentType getContentType(ITypedElement element) {
-	    if (element == null)
-	        return null;
-	    String name= element.getName();
-	    IContentType ct= null;
-    		if (element instanceof IStreamContentAccessor) {
-    			IStreamContentAccessor isa= (IStreamContentAccessor) element;
-    			try {
-    				InputStream is= isa.getContents();
-    				if (	is != null) {
-    					InputStream bis= new BufferedInputStream(is);
-    					try {
-    						ct= fgContentTypeManager.findContentTypeFor(is, name);
-    					} catch (IOException e) {
-                    		// silently ignored
-    					} finally {
-	    					try {
-		    		            	bis.close();
-	    					} catch (IOException e2) {
-	                			// silently ignored
-	    					}
-    					}
-    		    		}
-            } catch (CoreException e1) {
-            		// silently ignored
-            }
+		if (element == null)
+			return null;
+		String name= element.getName();
+		IContentType ct= null;
+		if (element instanceof IStreamContentAccessor) {
+			IStreamContentAccessor isa= (IStreamContentAccessor) element;
+			try {
+				InputStream is= isa.getContents();
+				if (is != null) {
+					InputStream bis= new BufferedInputStream(is);
+					try {
+						ct= fgContentTypeManager.findContentTypeFor(is, name);
+					} catch (IOException e) {
+						// silently ignored
+					} finally {
+						try {
+							bis.close();
+						} catch (IOException e2) {
+							// silently ignored
+						}
+					}
+				}
+			} catch (CoreException e1) {
+				// silently ignored
+			}
 		}
-    		if (ct == null)
-    			ct= fgContentTypeManager.findContentTypeFor(name);
-
-//    		if (ct == null) {
-//    			// try to guess type
-//    			String t= guessType(element);
-//    			if (ITypedElement.TEXT_TYPE.equals(t))
-//    				return Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-//    		}
-    		return ct;
+		if (ct == null)
+			ct= fgContentTypeManager.findContentTypeFor(name);
+		return ct;
 	}
 	
 	/*

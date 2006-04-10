@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;

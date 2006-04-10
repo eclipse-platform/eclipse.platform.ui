@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.jface.text.IDocument;
 

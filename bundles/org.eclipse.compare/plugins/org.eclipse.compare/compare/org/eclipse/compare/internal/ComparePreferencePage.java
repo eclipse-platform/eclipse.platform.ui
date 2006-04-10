@@ -11,7 +11,9 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;

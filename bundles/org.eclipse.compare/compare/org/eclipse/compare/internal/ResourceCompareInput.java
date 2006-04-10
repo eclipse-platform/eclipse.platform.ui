@@ -11,7 +11,7 @@
 package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;

@@ -11,7 +11,8 @@
 package org.eclipse.compare;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.zip.*;
 
 import org.eclipse.core.runtime.CoreException;

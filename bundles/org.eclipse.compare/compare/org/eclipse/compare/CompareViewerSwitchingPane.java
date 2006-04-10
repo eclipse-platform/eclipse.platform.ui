@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;

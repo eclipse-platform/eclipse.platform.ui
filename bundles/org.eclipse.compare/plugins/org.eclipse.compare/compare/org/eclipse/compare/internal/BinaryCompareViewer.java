@@ -12,7 +12,7 @@ package org.eclipse.compare.internal;
 
 import java.io.*;
 import java.util.ResourceBundle;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;

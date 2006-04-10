@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.*;

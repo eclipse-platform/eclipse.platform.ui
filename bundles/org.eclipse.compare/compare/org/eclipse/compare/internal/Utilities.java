@@ -11,9 +11,14 @@
 package org.eclipse.compare.internal;
 
 import java.io.*;
-import java.text.MessageFormat;
-import java.util.*;
+import com.ibm.icu.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.*;
 

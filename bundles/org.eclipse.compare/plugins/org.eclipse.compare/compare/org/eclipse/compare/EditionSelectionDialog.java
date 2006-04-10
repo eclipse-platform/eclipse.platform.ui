@@ -18,9 +18,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
-import java.util.Calendar;
+import com.ibm.icu.util.Calendar;
 import java.util.Comparator;
-import java.text.*;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

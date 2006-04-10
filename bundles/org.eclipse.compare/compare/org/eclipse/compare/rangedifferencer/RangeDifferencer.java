@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.rangedifferencer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.util.Assert;
 

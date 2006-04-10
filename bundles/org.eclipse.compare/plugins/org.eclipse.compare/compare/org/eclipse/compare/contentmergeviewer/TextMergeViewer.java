@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
