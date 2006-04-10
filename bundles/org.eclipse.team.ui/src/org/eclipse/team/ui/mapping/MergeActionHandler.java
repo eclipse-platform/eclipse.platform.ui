@@ -34,6 +34,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 
 	private final ISynchronizePageConfiguration configuration;
 	private boolean enabled = false;
+	private IStructuredSelection selection;
 	private ISelectionChangedListener listener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			updatedEnablement(event);
@@ -71,15 +72,16 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 */
 	public MergeActionHandler(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
-		getSelectionProvider().addSelectionChangedListener(listener);
-		updateEnablement((IStructuredSelection)getSelectionProvider().getSelection());
+		ISelectionProvider selectionProvider = getConfiguration().getSite().getSelectionProvider();
+		selectionProvider.addSelectionChangedListener(listener);
+		updateEnablement((IStructuredSelection)selectionProvider.getSelection());
 	}
 	
 	/**
 	 * Deregister this handler from selection change events. 
 	 */
 	public void dispose() {
-		getSelectionProvider().removeSelectionChangedListener(listener);
+		getConfiguration().getSite().getSelectionProvider().removeSelectionChangedListener(listener);
 	}
 
 	/* private */ void updatedEnablement(SelectionChangedEvent event) {
@@ -96,6 +98,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 * @param selection the selection
 	 */
 	protected void updateEnablement(IStructuredSelection selection) {
+		this.selection = selection;
 		boolean isEnabled = getOperation().shouldRun();
 		setEnabled(isEnabled);
 	}
@@ -114,11 +117,7 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 * @return the current selection.
 	 */
 	protected final IStructuredSelection getStructuredSelection() {
-		return (IStructuredSelection)getSelectionProvider().getSelection();
-	}
-
-	private ISelectionProvider getSelectionProvider() {
-		return getConfiguration().getSite().getSelectionProvider();
+		return selection;
 	}
 	
 	/* (non-Javadoc)

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.Diff;
@@ -259,12 +260,7 @@ public class SyncInfoToDiffConverter {
 			} else {
 				kind = SyncInfo.CHANGE;
 			}
-			PrecalculatedSyncInfo info = new PrecalculatedSyncInfo(kind, local, null, remote, comparator);
-			try {
-				info.init();
-			} catch (TeamException e) {
-				// Ignore
-			}
+			SyncInfo info = createSyncInfo(comparator, kind, local, null, remote);
 			return info;
 		} else if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
@@ -273,16 +269,21 @@ public class SyncInfoToDiffConverter {
 				IResourceVariant remote = getRemoteVariant(twd);
 				IResourceVariant base = getBaseVariant(twd);
 				int kind = asSyncInfoKind(twd);
-				PrecalculatedSyncInfo info = new PrecalculatedSyncInfo(kind, local, base, remote, comparator);
-				try {
-					info.init();
-				} catch (TeamException e) {
-					// Ignore
-				}
+				SyncInfo info = createSyncInfo(comparator, kind, local, base, remote);
 				return info;
 			}
 		}
 		return null;
+	}
+
+	protected SyncInfo createSyncInfo(IResourceVariantComparator comparator, int kind, IResource local, IResourceVariant base, IResourceVariant remote) {
+		PrecalculatedSyncInfo info = new PrecalculatedSyncInfo(kind, local, base, remote, comparator);
+		try {
+			info.init();
+		} catch (TeamException e) {
+			// Ignore
+		}
+		return info;
 	}
 
 	private static IResource getLocal(IThreeWayDiff twd) {

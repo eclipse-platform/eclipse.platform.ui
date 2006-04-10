@@ -108,12 +108,12 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 		synchronized (this) {
 			operation = null;
 		}
+		super.updateEnablement(selection);
 		int mode = getConfiguration().getMode();
 		if (mode == ISynchronizePageConfiguration.OUTGOING_MODE && !overwrite) {
 			setEnabled(false);
 			return;
 		}
-		super.updateEnablement(selection);
 	}
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -122,7 +122,7 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 		return null;
 	}
 
-	private boolean promptToConfirm() {
+	protected boolean promptToConfirm() {
 		if (Display.getCurrent() != null)
 			return internalPromptToConfirm();
 		final boolean[] confirmed = new boolean[] { false };
@@ -142,4 +142,5 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 		return MessageDialog.openQuestion(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_4, TeamUIMessages.ResourceMergeHandler_5);
 	}
 
+	
 }
