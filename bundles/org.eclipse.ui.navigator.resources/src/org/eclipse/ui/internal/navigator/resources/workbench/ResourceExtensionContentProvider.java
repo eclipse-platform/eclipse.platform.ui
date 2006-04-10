@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -32,8 +33,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * @since 3.2
  */
 public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
-
-	
+ 
+	private static final Object[] NO_CHILDREN = new Object[0];
 	private Viewer viewer;
 	
 	/**
@@ -58,7 +59,16 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object element) {
-		return super.getChildren(element);
+		if(element instanceof IResource)
+			return super.getChildren(element);
+		return NO_CHILDREN;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#hasChildren(java.lang.Object)
+	 */
+	public boolean hasChildren(Object element) {
+		return element instanceof IContainer && super.hasChildren(element);
 	}
 	
 	/* (non-Javadoc)
