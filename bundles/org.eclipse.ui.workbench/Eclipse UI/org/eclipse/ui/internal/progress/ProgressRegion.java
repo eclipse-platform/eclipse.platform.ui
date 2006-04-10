@@ -14,10 +14,12 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.layout.IWindowTrim;
@@ -60,7 +62,20 @@ public class ProgressRegion implements IWindowTrim {
     public Control createContents(Composite parent, WorkbenchWindow window) {
         workbenchWindow = window;
 
-        region = new Composite(parent, SWT.NONE);
+        region = new Composite(parent, SWT.NONE) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int,
+			 *      boolean)
+			 */
+			public Point computeSize(int wHint, int hHint, boolean changed) {
+				Point size = super.computeSize(wHint, hHint, changed);
+				size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
+				return size;
+			}
+		};
+		
         GridLayout gl = new GridLayout();
         gl.marginHeight = 0;
         gl.marginWidth = 0;

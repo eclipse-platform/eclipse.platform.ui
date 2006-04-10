@@ -235,8 +235,15 @@ public class HeapStatus extends Composite {
 	public Point computeSize(int wHint, int hHint, boolean changed) {
         GC gc = new GC(this);
         Point p = gc.textExtent(WorkbenchMessages.HeapStatus_widthStr);
+        int height = imgBounds.height;
+        // choose the largest of 
+        // 	- Text height + margins
+        //	- Image height + margins
+        //	- Default Trim heightin 
+        height = Math.max(height, p.y) + 4;
+        height = Math.max(TrimUtil.TRIM_DEFAULT_HEIGHT, height);
         gc.dispose();
-		return new Point(p.x + 15, 14);
+		return new Point(p.x + 15, height);
 	}
 	
     private void arm(boolean armed) {
