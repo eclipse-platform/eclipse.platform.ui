@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - 26823 [Markers] cannot reorder columns in task list
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -65,6 +66,10 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 public abstract class TableView extends ViewPart {
 
 	private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
+	
+	private static final String TAG_COLUMN_ORDER = "columnOrder"; //$NON-NLS-1$
+	
+	private static final String TAG_COLUMN_ORDER_INDEX = "columnOrderIndex"; //$NON-NLS-1$
 
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 
@@ -296,8 +301,14 @@ public abstract class TableView extends ViewPart {
 			tc.setText(fields[i].getColumnHeaderText());
 			tc.setImage(fields[i].getColumnHeaderImage());
 			tc.setResizable(columnWidths[i].resizable);
+			tc.setMoveable(true);
 			tc.addSelectionListener(getHeaderListener());
 			tc.setData(fields[i]);
+		}
+		
+		int[] order = restoreColumnOrder(memento);
+		if (order != null && order.length == fields.length) {
+			tree.setColumnOrder(order);
 		}
 	}
 
@@ -559,10 +570,15 @@ public abstract class TableView extends ViewPart {
 
 		for (int i = 0; i < data.length; i++) {
 			ColumnPixelData data2 = data[i];
-
 			memento.putInteger(TAG_COLUMN_WIDTH + i, data2.width);
 		}
-
+		//save column order
+		Tree tree = getTree();
+		int[] columnOrder = tree.getColumnOrder();
+        for (int i = 0; i < columnOrder.length; i++) {
+            IMemento child = memento.createChild(TAG_COLUMN_ORDER);
+            child.putInteger(TAG_COLUMN_ORDER_INDEX, columnOrder[i]);
+        }
 		// save vertical position
 		Scrollable scrollable = (Scrollable) viewer.getControl();
 		ScrollBar bar = scrollable.getVerticalBar();
@@ -574,6 +590,28 @@ public abstract class TableView extends ViewPart {
 		memento.putInteger(TAG_HORIZONTAL_POSITION, position);
 	}
 
+	private int[] restoreColumnOrder(IMemento memento) {
+		if (memento == null) {
+			return null;
+		}
+        IMemento children[] = memento.getChildren(TAG_COLUMN_ORDER);
+        if (children != null) {
+        	int n = children.length;
+        	int[] values = new int[n];
+            for (int i = 0; i < n; i++) {
+                Integer val = children[i].getInteger(TAG_COLUMN_ORDER_INDEX);
+                if (val != null) {
+                	values[i] = val.intValue();
+                } else {
+                	//invalid entry so use default column order
+                	return null;
+                }
+            }
+            return values;
+        }
+        return null;
+	}
+	
 	private int restoreVerticalScrollBarPosition(IMemento memento) {
 		if (memento == null) {
 			return 0;
