@@ -68,10 +68,13 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	private static final int WIDTH_IN_CHARACTERS= 55;
 	
 	private List fInput;
+	private final List fRemovedEntries;
+	
 	private TableViewer fViewer;
 	private Button fRemoveButton;
 	
 	private boolean fIsOpenInNewView;
+	private Link fLink;
 	
 	private static class HistoryConfigurationDialog extends StatusDialog {
 		
@@ -80,11 +83,12 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		private int fHistorySize;
 		private Text fHistorySizeTextField;
 		private final List fCurrentList;
+		private final List fCurrentRemoves;
 		
-		
-		public HistoryConfigurationDialog(Shell parent, List currentList) {
+		public HistoryConfigurationDialog(Shell parent, List currentList, List removedEntries) {
 			super(parent);
 			fCurrentList= currentList;
+			fCurrentRemoves= removedEntries;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setTitle(SearchMessages.SearchHistorySelectionDialog_history_size_title);  
 			fHistorySize= SearchPreferencePage.getHistoryLimit();
@@ -116,7 +120,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			GridData gridData= new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 			gridData.widthHint= convertWidthInCharsToPixels(6);
 			fHistorySizeTextField.setLayoutData(gridData);
-			
+			fHistorySizeTextField.setSelection(0, fHistorySizeTextField.getText().length());
 			applyDialogFont(ancestor);
 
 			return ancestor;
@@ -172,8 +176,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			
 			// establish history size
 			for (int i= fCurrentList.size() - 1; i >= fHistorySize; i--) {
-				ISearchResult result= (ISearchResult) fCurrentList.get(i);
-				InternalSearchUI.getInstance().removeQuery(result.getQuery());
+				fCurrentRemoves.add(fCurrentList.get(i));
 				fCurrentList.remove(i);
 			}
 			super.okPressed();
@@ -216,6 +219,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		setTitle(SearchMessages.SearchesDialog_title);  
 		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
+		fRemovedEntries= new ArrayList();
 	}
 	
 	/**
@@ -327,17 +331,18 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			}
 		});		
 		
-		Link link= new Link(parent, SWT.NONE);
-		link.setText(SearchMessages.SearchHistorySelectionDialog_configure_link_label);
-		link.addSelectionListener(new SelectionAdapter() {
+		fLink= new Link(parent, SWT.NONE);
+		configureHistoryLink();
+		fLink.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				HistoryConfigurationDialog dialog= new HistoryConfigurationDialog(getShell(), fInput);
+				HistoryConfigurationDialog dialog= new HistoryConfigurationDialog(getShell(), fInput, fRemovedEntries);
 				if (dialog.open() == Window.OK) {
 					fViewer.refresh();
+					configureHistoryLink();
 				}
 			}
 		});
-		link.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		fLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		
 		
 		applyDialogFont(ancestor);
@@ -346,6 +351,11 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		fViewer.setInput(fInput);
 		fViewer.getTable().setFocus();
 		return ancestor;
+	}
+
+	private void configureHistoryLink() {
+		int historyLimit= SearchPreferencePage.getHistoryLimit();
+		fLink.setText(Messages.format(SearchMessages.SearchHistorySelectionDialog_configure_link_label, new Integer(historyLimit)));
 	}
 	
 	protected final void validateDialogState() {
@@ -374,6 +384,20 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	
 	
 	protected void buttonPressed(int buttonId) {
+		if (buttonId == REMOVE_ID) {
+			IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
+			Iterator searchResults= selection.iterator();
+			while (searchResults.hasNext()) {
+				Object curr= searchResults.next();
+				fRemovedEntries.add(curr);
+				fInput.remove(curr);
+				fViewer.remove(curr);
+			}
+			if (fViewer.getSelection().isEmpty() && !fInput.isEmpty()) {
+				fViewer.setSelection(new StructuredSelection(fInput.get(0)));
+			}
+			return;
+		}
 		if (buttonId == IDialogConstants.OPEN_ID) {
 			fIsOpenInNewView= true;
 			buttonId= IDialogConstants.OK_ID;
@@ -390,6 +414,12 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		if (selection instanceof IStructuredSelection)
 			setResult(((IStructuredSelection)fViewer.getSelection()).toList());
 		
+		
+		// remove queries
+		for (Iterator iter= fRemovedEntries.iterator(); iter.hasNext();) {
+			ISearchResult result= (ISearchResult) iter.next();
+			InternalSearchUI.getInstance().removeQuery(result.getQuery());
+		}
 		super.okPressed();
 	}
 }
