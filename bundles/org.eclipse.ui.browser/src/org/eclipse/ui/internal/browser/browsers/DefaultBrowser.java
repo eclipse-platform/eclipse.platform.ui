@@ -11,7 +11,8 @@
 package org.eclipse.ui.internal.browser.browsers;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.Constants;

@@ -11,8 +11,9 @@
 package org.eclipse.ui.internal.browser.browsers;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 /**
