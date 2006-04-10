@@ -14,7 +14,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

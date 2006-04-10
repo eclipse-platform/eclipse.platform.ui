@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import java.text.MessageFormat; // can't use ICU, ant build script
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
-import java.text.MessageFormat;
+import java.text.MessageFormat; // don't use ICU in ant builder
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

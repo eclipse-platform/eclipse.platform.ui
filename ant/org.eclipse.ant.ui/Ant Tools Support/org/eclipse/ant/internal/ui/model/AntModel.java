@@ -15,7 +15,7 @@ package org.eclipse.ant.internal.ui.model;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

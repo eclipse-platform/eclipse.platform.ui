@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 

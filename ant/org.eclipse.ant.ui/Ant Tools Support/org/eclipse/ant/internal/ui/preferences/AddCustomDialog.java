@@ -13,7 +13,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;

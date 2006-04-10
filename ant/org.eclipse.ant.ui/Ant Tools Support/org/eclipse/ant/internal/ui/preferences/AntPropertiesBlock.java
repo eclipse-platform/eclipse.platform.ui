@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

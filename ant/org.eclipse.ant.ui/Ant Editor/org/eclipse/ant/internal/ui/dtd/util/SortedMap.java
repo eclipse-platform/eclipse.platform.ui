@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.util;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
 

@@ -16,7 +16,7 @@ package org.eclipse.ant.internal.ui.editor.tools;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.datatransfer;
 
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;

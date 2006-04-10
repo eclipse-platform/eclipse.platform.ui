@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.antsupport;
 
 
-import java.text.MessageFormat;
+import java.text.MessageFormat; // can't use ICU, used by ant
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

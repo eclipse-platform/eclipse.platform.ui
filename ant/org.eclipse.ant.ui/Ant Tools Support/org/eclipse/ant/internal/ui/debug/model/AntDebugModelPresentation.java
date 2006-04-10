@@ -12,7 +12,7 @@
 package org.eclipse.ant.internal.ui.debug.model;
 
 import java.io.File;
-import java.text.MessageFormat;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
