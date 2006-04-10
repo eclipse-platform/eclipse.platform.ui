@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.MergeStatus;
-import org.eclipse.team.internal.core.Policy;
 
 /**
  * Abstract implementation of {@link IResourceMappingMerger}. This merger
@@ -90,14 +89,9 @@ public abstract class ResourceMappingMerger implements IResourceMappingMerger {
 	 * @see org.eclipse.team.core.mapping.IResourceMappingMerger#merge(org.eclipse.team.core.mapping.IMergeContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(IMergeContext mergeContext, IProgressMonitor monitor) throws CoreException {
-		try {
-			IDiff[] deltas = getSetToMerge(mergeContext);
-			monitor.beginTask(null, 100);
-			IStatus status = mergeContext.merge(deltas, false /* don't force */, Policy.subMonitorFor(monitor, 75));
-			return covertFilesToMappings(status, mergeContext);
-		} finally {
-			monitor.done();
-		}
+		IDiff[] deltas = getSetToMerge(mergeContext);
+		IStatus status = mergeContext.merge(deltas, false /* don't force */, monitor);
+		return covertFilesToMappings(status, mergeContext);
 	}
 
 	private IDiff[] getSetToMerge(IMergeContext mergeContext) {
