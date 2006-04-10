@@ -214,7 +214,15 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 						for (int i=0; i<newBytes.length; i++)
 						{
 							newBytes[i].setHistoryKnown(true);
-							if (newBytes[i].getValue() != oldBytes[i].getValue())
+							
+							if (newBytes[i].isReadable() != oldBytes[i].isReadable())
+							{
+								newBytes[i].setChanged(true);
+								continue;
+							}			
+
+							if (newBytes[i].isReadable() && oldBytes[i].isReadable() && 
+								(newBytes[i].getValue() != oldBytes[i].getValue()))
 								newBytes[i].setChanged(true);
 						}
 					}
