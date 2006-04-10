@@ -14,6 +14,7 @@ package org.eclipse.jface.examples.databinding.compositetable;
 import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 import org.eclipse.jface.examples.databinding.compositetable.internal.EmptyTablePlaceholder;
 import org.eclipse.jface.examples.databinding.compositetable.internal.ISelectableRegionControl;
@@ -333,6 +334,10 @@ public class InternalCompositeTable extends Composite implements Listener {
 	
 	// Table control layout -- main refresh algorithm ---------------------------------------------
 
+	private static final int FORWARD = 1;
+	public static final int NONE = 0;
+	private static final int BACKWARD = -1;
+	
 	/**
 	 * Main refresh algorithm entry point.  This method refreshes everything in the table:
 	 * 
@@ -363,6 +368,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		numRowsInDisplay = clientAreaHeight / getRowHeight(clientAreaHeight);
 		
 		// Make sure we have something to lay out to begin with
+		int userScrollDirection = 0;
 		if (numRowsInCollection > 0) {
 			numRowsVisible = numRowsInDisplay;
 			
@@ -378,6 +384,13 @@ public class InternalCompositeTable extends Composite implements Listener {
 			if (numRowsVisible < 1) {
 				numRowsVisible = 1;
 			}
+			
+			// Keep track of if we're scrolling forwards or backwards
+			if (currentVisibleTopRow - topRow > 0) {
+				userScrollDirection = BACKWARD;
+			} else if (topRow - currentVisibleTopRow > 0) {
+				userScrollDirection = FORWARD;
+			}
 	
 			// Scroll the view so that the right number of row
 			// objects are showing and they have the right data
@@ -392,16 +405,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 				fixNumberOfRows();
 			} else {
 				currentVisibleTopRow = topRow;
-				
-				// The order of number fixing/refresh is important in order to
-				// minimize the number of screen redraw operations
-				if (rows.size() > numRowsVisible) {
-					fixNumberOfRows();
-					refreshAllRows();
-				} else {
-					refreshAllRows();
-					fixNumberOfRows();
-				}
+				fixNumberOfRows();
+				refreshAllRows();
 			}
 		} else {
 			numRowsVisible = 0;
@@ -455,12 +460,30 @@ public class InternalCompositeTable extends Composite implements Listener {
 		// Now the rows.
 		int rowHeight = getRowHeight(clientAreaHeight);
 		
-		for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
-			TableRow row = (TableRow) rowsIter.next();
-			Control rowControl = row.getRowControl();
-			rowControl.setBounds(0, topPosition, width, rowHeight);
-			layoutChild(rowControl, false);
-			topPosition += rowHeight;
+		// We have to move the controls front-to-back if we're scrolling forwards
+		// and back-to-front if we're scrolling backwards to avoid ugly 
+		// screen refresh artifacts.
+		if (userScrollDirection == FORWARD || userScrollDirection == NONE) {
+			for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
+				TableRow row = (TableRow) rowsIter.next();
+				Control rowControl = row.getRowControl();
+				rowControl.setBounds(0, topPosition, width, rowHeight);
+				layoutChild(rowControl, false);
+				topPosition += rowHeight;
+			}
+		} else {
+			ListIterator rowsIter = rows.listIterator();
+			while (rowsIter.hasNext()) {
+				rowsIter.next();
+			}
+			topPosition += rowHeight * (rows.size()-1);
+			while (rowsIter.hasPrevious()) {
+				TableRow row = (TableRow) rowsIter.previous();
+				Control rowControl = row.getRowControl();
+				rowControl.setBounds(0, topPosition, width, rowHeight);
+				layoutChild(rowControl, false);
+				topPosition -= rowHeight;
+			}
 		}
 	}
 
