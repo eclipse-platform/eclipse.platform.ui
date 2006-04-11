@@ -678,6 +678,8 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			return null;
 		}
+		if (ref == null)
+			return null;
 		// assumes the endInitializationHandler is available as a service
 		// see EclipseStarter.publishSplashScreen
 		for (int i = 0; i < ref.length; i++) {
