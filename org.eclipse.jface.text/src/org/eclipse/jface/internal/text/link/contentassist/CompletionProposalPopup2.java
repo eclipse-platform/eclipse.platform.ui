@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
  *******************************************************************************/
 
 package org.eclipse.jface.internal.text.link.contentassist;
@@ -614,8 +615,6 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (p.y < 0) p.y= 0;
 		p= new Point(p.x, p.y + text.getLineHeight(selection.x));
 		p= text.toDisplay(p);
-		if (p.x < 0) p.x= 0;
-		if (p.y < 0) p.y= 0;
 		return p;
 	}
 
