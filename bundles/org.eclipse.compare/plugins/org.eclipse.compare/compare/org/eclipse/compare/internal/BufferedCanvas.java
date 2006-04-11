@@ -27,7 +27,7 @@ public abstract class BufferedCanvas extends Canvas {
 	Image fBuffer;
 
 	public BufferedCanvas(Composite parent, int flags) {
-		super(parent, flags + SWT.NO_BACKGROUND);
+		super(parent, flags | SWT.NO_BACKGROUND);
 
 		addPaintListener(
 			new PaintListener() {

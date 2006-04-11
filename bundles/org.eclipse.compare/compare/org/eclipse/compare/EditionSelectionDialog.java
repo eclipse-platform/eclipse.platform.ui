@@ -722,7 +722,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
 			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle")); //$NON-NLS-1$
 			
-			int flags= SWT.H_SCROLL + SWT.V_SCROLL;
+			int flags= SWT.H_SCROLL | SWT.V_SCROLL;
 			if (fMultiSelect)
 				flags|= SWT.CHECK;
 			fMemberTable= new Table(fMemberPane, flags);
@@ -785,7 +785,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 				fEditionPane.setImage(fTitleImage);
 		}
 		
-		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
+		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL | SWT.V_SCROLL);
 		fEditionTree.addSelectionListener(
 			new SelectionAdapter() {
 //				public void widgetDefaultSelected(SelectionEvent e) {

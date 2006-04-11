@@ -29,7 +29,7 @@ public class SimpleTextViewer extends AbstractViewer {
 	
 	
 	SimpleTextViewer(Composite parent) {
-		fSourceViewer= new SourceViewer(parent, null, SWT.H_SCROLL + SWT.V_SCROLL);
+		fSourceViewer= new SourceViewer(parent, null, SWT.H_SCROLL | SWT.V_SCROLL);
 		fSourceViewer.setEditable(false);
 	}
 		

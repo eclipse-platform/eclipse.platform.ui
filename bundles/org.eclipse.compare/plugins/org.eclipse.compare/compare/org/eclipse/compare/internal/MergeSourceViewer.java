@@ -80,7 +80,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle) {
-		super(parent, null, style + SWT.H_SCROLL + SWT.V_SCROLL);
+		super(parent, null, style | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fResourceBundle= bundle;
 		
