@@ -260,13 +260,16 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			CompoundResourceTraversal ct = new CompoundResourceTraversal();
 			ct.addTraversals(traversals);
 			IResource[] roots = ct.getRoots();
-			ICVSResource[] cvsResources = new ICVSResource[roots.length];
-			for (int i = 0; i < cvsResources.length; i++) {
-				cvsResources[i] = CVSWorkspaceRoot.getCVSResourceFor(roots[i]);
+			List cvsResources = new ArrayList();
+			for (int i = 0; i < roots.length; i++) {
+				IResource resource = roots[i];
+				if (resource.getProject().isAccessible()) {
+					cvsResources.add(CVSWorkspaceRoot.getCVSResourceFor(roots[i]));
+				}
 			}
 			new PruneFolderVisitor().visit(
 				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
-				cvsResources);
+				(ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]));
 		}
 		runInBackground(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {

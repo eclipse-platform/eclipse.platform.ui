@@ -199,6 +199,9 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#getFolderInfo()
 	 */
 	public FolderSyncInfo getFolderSyncInfo() throws CVSException {
+		if (!resource.getProject().isAccessible()) {
+			return null;
+		}
 		return EclipseSynchronizer.getInstance().getFolderSync((IContainer)resource);
 	}
 

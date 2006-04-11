@@ -122,9 +122,11 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			monitor.beginTask(null, 1000 * resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 1000));
-				if (!status.isOK()) {
-					errors.add(status);
+				if (resource.getProject().isAccessible()) {
+					IStatus status = refresh(resource, depth, Policy.subMonitorFor(monitor, 1000));
+					if (!status.isOK()) {
+						errors.add(status);
+					}
 				}
 			}
 		} finally {
