@@ -19,12 +19,9 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.internal.resources.mapping.ShallowContainer;
-import org.eclipse.core.internal.resources.mapping.ShallowResourceMapping;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ModelProvider;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -54,6 +51,68 @@ import org.eclipse.ui.part.IPage;
 
 public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 
+	public class ZeroDepthContainer extends PlatformObject {
+		private IContainer container;
+		public ZeroDepthContainer(IContainer container) {
+			this.container = container;
+		}
+		public IContainer getResource() {
+			return container;
+		}
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj instanceof ShallowContainer) {
+				ZeroDepthContainer other = (ZeroDepthContainer) obj;
+				return other.getResource().equals(getResource());
+			}
+			return false;
+		}
+		public int hashCode() {
+			return getResource().hashCode();
+		}
+		public Object getAdapter(Class adapter) {
+			if (adapter == IResource.class || adapter == IContainer.class)
+				return container;
+			return super.getAdapter(adapter);
+		}
+	}
+	
+	public class ZeroDepthResourceMapping extends ResourceMapping {
+		private final ZeroDepthContainer container;
+		public ZeroDepthResourceMapping(ZeroDepthContainer container) {
+			this.container = container;
+		}
+		public Object getModelObject() {
+			return container;
+		}
+		public String getModelProviderId() {
+			return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
+		}
+		public IProject[] getProjects() {
+			return new IProject[] { container.getResource().getProject() };
+		}
+		public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
+			return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { container.getResource() }, IResource.DEPTH_ZERO, IResource.NONE)};
+		}
+		public boolean contains(ResourceMapping mapping) {
+			if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
+				Object object = mapping.getModelObject();
+				IResource resource = container.getResource();
+				// A shallow mapping only contains direct file children or equal shallow containers
+				if (object instanceof ShallowContainer) {
+					ZeroDepthContainer sc = (ZeroDepthContainer) object;
+					return sc.getResource().equals(resource);
+				}
+				if (object instanceof IResource) {
+					IResource other = (IResource) object;
+					return other.equals(resource);
+				}
+			}
+			return false;
+		}
+	}
+	
 	public static ModelSynchronizeParticipant getParticipant(Subscriber subscriber) {
 		// show the sync view
 		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
@@ -335,7 +394,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 			if (resource.getType() == IResource.FILE) {
 				result.add(Utils.getResourceMapping(resource));
 			} else {
-				result.add(new ShallowResourceMapping(new ShallowContainer((IContainer)resource)));
+				result.add(new ZeroDepthResourceMapping(new ZeroDepthContainer((IContainer)resource)));
 			}
 		}
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
