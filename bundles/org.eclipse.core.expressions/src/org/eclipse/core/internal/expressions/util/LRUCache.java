@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions.util;
 
-
-import com.ibm.icu.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -484,7 +482,7 @@ public class LRUCache implements Cloneable {
 		buffer.append('[');
 		buffer.append(getSpaceLimit());
 		buffer.append("]: "); //$NON-NLS-1$
-		buffer.append(NumberFormat.getInstance().format(fillingRatio()));
+		buffer.append(fillingRatio());
 		buffer.append("% full"); //$NON-NLS-1$
 		return buffer.toString();
 	}
