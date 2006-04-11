@@ -92,7 +92,7 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 		// The list of diffs that add or change the local file
 		List fileChanges = new ArrayList();
 		// The list of folders diffs
-		Set folderDiffs = new HashSet();
+		List folderDiffs = new ArrayList();
 		// The list of diffs that will result in the deletion of
 		// the local file
 		List fileDeletions = new ArrayList();
@@ -107,12 +107,11 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 					fileChanges.add(diff);
 				}
 			} else {
-				// We accumulate folders but we don't actually do anything with them
 				folderDiffs.add(diff);
 			}
 		}
 		
-		if (fileDeletions.isEmpty() && fileChanges.isEmpty())
+		if (fileDeletions.isEmpty() && fileChanges.isEmpty() && folderDiffs.isEmpty())
 			return Status.OK_STATUS;
 		
 		// We do deletions first so that case changes can occur on platforms that are no case sensitive
@@ -139,8 +138,25 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 						ignoreLocalChanges, 
 						Policy.subMonitorFor(monitor, 100 * fileChanges.size()));
 				if (!status.isOK()) {
-					if (result.isEmpty())
-						return status;
+					if (status.isMultiStatus()) {
+						result.addAll(Arrays.asList(status.getChildren()));
+					} else {
+						result.add(status);
+					}
+				}
+			}
+			if (!folderDiffs.isEmpty()) {
+				// Order the diffs so empty added children will get deleted before their parents are visited
+				Collections.sort(folderDiffs, new Comparator() {
+					public int compare(Object o1, Object o2) {
+						return ((IDiff)o2).getPath().toString().compareTo(((IDiff)o1).getPath().toString());
+					}
+				});
+				for (Iterator iter = folderDiffs.iterator(); iter.hasNext();) {
+					IDiff diff = (IDiff) iter.next();
+					IResource resource = ResourceDiffTree.getResourceFor(diff);
+					IDiff currentDiff = getSubscriber().getDiff(resource);
+					merge(currentDiff, ignoreLocalChanges, monitor);
 				}
 			}
 			if (result.isEmpty())

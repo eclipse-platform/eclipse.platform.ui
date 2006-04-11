@@ -39,7 +39,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
-import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
@@ -104,23 +103,38 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}
 	}
 
-	public void markAsMerged(final IDiff node, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
+	public void markAsMerged(final IDiff diff, final boolean inSyncHint, IProgressMonitor monitor) throws CoreException {
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Get the latest sync info for the file (i.e. not what is in the set).
 				// We do this because the client may have modified the file since the
 				// set was populated.
-				IResource resource = getDiffTree().getResource(node);
-				if (resource.getType() != IResource.FILE)
+				IResource resource = getDiffTree().getResource(diff);
+				if (resource.getType() != IResource.FILE) {
+					if (diff instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) diff;
+						if (resource.getType() == IResource.FOLDER
+								&& twd.getKind() == IDiff.ADD 
+								&& twd.getDirection() == IThreeWayDiff.INCOMING
+								&& resource.exists()) {
+							// The folder was created by merge
+							SyncInfo info = getSyncInfo(resource);
+							if (info instanceof CVSSyncInfo) {
+								CVSSyncInfo cvsInfo = (CVSSyncInfo) info;
+								cvsInfo.makeInSync();
+							}
+						}
+					}
 					return;
+				}
 				if (getType() == TWO_WAY) {
 					// For, TWO_WAY merges (i.e. replace) should not adjust sync info
 					// but should remove the node from the tree so that other models do 
 					// not modify the file
-					((DiffTree)getDiffTree()).remove(node.getPath());
+					((DiffTree)getDiffTree()).remove(diff.getPath());
 				} else {
 					SyncInfo info = getSyncInfo(resource);
-					ensureRemotesMatch(resource, node, info);
+					ensureRemotesMatch(resource, diff, info);
 					if (info instanceof CVSSyncInfo) {
 						CVSSyncInfo cvsInfo = (CVSSyncInfo) info;
 						monitor.beginTask(null, 50 + (inSyncHint ? 100 : 0));
@@ -140,7 +154,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 					}
 				}
 			}
-		}, getMergeRule(node), IResource.NONE, monitor);
+		}, getMergeRule(diff), IResource.NONE, monitor);
 	}
 
 	protected void makeInSync(final IDiff diff, IProgressMonitor monitor) throws CoreException {
@@ -255,22 +269,6 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	public void refresh(final ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 50);
 		super.refresh(traversals, flags, Policy.subMonitorFor(monitor, 50));
-		// Prune any empty folders within the traversals
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-			CompoundResourceTraversal ct = new CompoundResourceTraversal();
-			ct.addTraversals(traversals);
-			IResource[] roots = ct.getRoots();
-			List cvsResources = new ArrayList();
-			for (int i = 0; i < roots.length; i++) {
-				IResource resource = roots[i];
-				if (resource.getProject().isAccessible()) {
-					cvsResources.add(CVSWorkspaceRoot.getCVSResourceFor(roots[i]));
-				}
-			}
-			new PruneFolderVisitor().visit(
-				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
-				(ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]));
-		}
 		runInBackground(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				cacheContents(traversals, getDiffTree(), monitor);
