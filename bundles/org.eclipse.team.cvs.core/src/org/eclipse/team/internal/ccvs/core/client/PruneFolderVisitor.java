@@ -94,7 +94,7 @@ public class PruneFolderVisitor implements ICVSResourceVisitor {
 	}
 
 	/**
-	 * Attemp to prunt the given folder. If the folder is pruned, attempt to prune it's parent.
+	 * Attempt to prune the given folder. If the folder is pruned, attempt to prune it's parent.
 	 */
 	private void pruneFolderAndParentsIfAppropriate(ICVSFolder folder) throws CVSException {
 		pruneFolderIfAppropriate(folder);
