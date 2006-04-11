@@ -13,6 +13,7 @@ package org.eclipse.team.internal.core.mapping;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.Diff;
@@ -74,7 +75,7 @@ public class SyncInfoToDiffConverter {
 		String label = diffKindToString(kind);
 		int direction = status & ThreeWayDiff.DIRECTION_MASK;
 		if (direction != 0)
-			label = diffDirectionToString(direction) + label;
+			label = NLS.bind(Messages.concatStrings, new String[] { diffDirectionToString(direction), label });
 		return label;
 	}
 	

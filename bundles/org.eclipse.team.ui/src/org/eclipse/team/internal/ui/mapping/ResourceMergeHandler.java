@@ -53,11 +53,7 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 						IMergeContext context = (IMergeContext)getContext();
 						IDiff[] diffs = getTargetDiffs();
 						if (diffs.length == 0) {
-							Utils.syncExec(new Runnable() {
-								public void run() {
-									MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_6, TeamUIMessages.ResourceMergeHandler_7);
-								}
-							}, (StructuredViewer)getConfiguration().getPage().getViewer());
+							promptForNoChanges();
 						}
 						IStatus status = context.merge(diffs, overwrite, monitor);
 						if (!status.isOK())
@@ -140,6 +136,14 @@ public class ResourceMergeHandler extends ResourceMergeActionHandler {
 
 	private boolean internalPromptToConfirm() {
 		return MessageDialog.openQuestion(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_4, TeamUIMessages.ResourceMergeHandler_5);
+	}
+
+	protected void promptForNoChanges() {
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(getConfiguration().getSite().getShell(), TeamUIMessages.ResourceMergeHandler_6, TeamUIMessages.ResourceMergeHandler_7);
+			}
+		}, (StructuredViewer)getConfiguration().getPage().getViewer());
 	}
 
 	

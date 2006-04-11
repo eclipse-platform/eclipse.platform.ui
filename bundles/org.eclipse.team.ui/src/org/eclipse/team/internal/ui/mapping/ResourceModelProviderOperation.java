@@ -189,5 +189,12 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 		}
 		return elementOrPath;
 	}
+	
+	public boolean belongsTo(Object family) {
+		if (family == getContext()) {
+			return true;
+		}
+		return super.belongsTo(family);
+	}
 
 }
