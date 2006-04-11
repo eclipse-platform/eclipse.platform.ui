@@ -6,12 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.navigator" id="linkHelper" name="Navigator Link Helper"/>
       </appInfo>
       <documentation>
-         To be refined for M5.
-
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This class or interface has been added as
-part of a work in progress. There is a guarantee neither that this API will
-work nor that it will remain the same. Please do not use this API without
-consulting with the Platform/UI team.
+         Provides a hook for clients that wish to extend the &quot;Link with Editor&quot; capability of a Common Navigator.
       </documentation>
    </annotation>
 
@@ -55,7 +50,7 @@ consulting with the Platform/UI team.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Implements &lt;code&gt;org.eclipse.ui.navigator.ILinkHelper&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.ILinkHelper"/>
@@ -65,7 +60,7 @@ consulting with the Platform/UI team.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique id for this &lt;b&gt;linkHelper&lt;/b&gt; extension.
                </documentation>
             </annotation>
          </attribute>
@@ -73,6 +68,11 @@ consulting with the Platform/UI team.
    </element>
 
    <element name="editorInputEnablement">
+      <annotation>
+         <documentation>
+            An Eclipse Core Expression that describes when this helper can provide a selection from an editor input. 
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="not"/>
@@ -92,6 +92,11 @@ consulting with the Platform/UI team.
    </element>
 
    <element name="selectionEnablement">
+      <annotation>
+         <documentation>
+            An Eclipse Core Expression that describes when this extension can provide an IEditorInput for a given selection.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="not"/>
@@ -125,6 +130,21 @@ consulting with the Platform/UI team.
       </appInfo>
       <documentation>
          
+&lt;pre&gt;
+    &lt;extension
+          point=&quot;org.eclipse.ui.navigator.linkHelper&quot;&gt;
+       &lt;linkHelper
+             class=&quot;org.eclipse.ui.internal.navigator.resources.workbench.ResourceLinkHelper&quot;
+             id=&quot;org.eclipse.ui.navigator.resources.linkHelper&quot;&gt;
+          &lt;selectionEnablement&gt;
+             &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+          &lt;/selectionEnablement&gt;
+          &lt;editorInputEnablement&gt;
+             &lt;instanceof value=&quot;org.eclipse.ui.IFileEditorInput&quot;/&gt;
+          &lt;/editorInputEnablement&gt;
+       &lt;/linkHelper&gt;
+    &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
