@@ -82,7 +82,9 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			AbstractTextSearchResult result = (AbstractTextSearchResult) e.getSearchResult();
 			for (int i = 0; i < matches.length; i++) {
 				ITextFileBuffer fb= getTrackedFileBuffer(result, matches[i].getElement());
-				updateMatch(matches[i], fb, kind, result);				
+				if (fb != null) {
+					updateMatch(matches[i], fb, kind, result);
+				}
 			}
 		} else if (e instanceof RemoveAllEvent) {
 			RemoveAllEvent evt= (RemoveAllEvent)e;
@@ -92,12 +94,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	private void updateMatch(Match match, ITextFileBuffer fb, int kind, AbstractTextSearchResult result) {
-		if (fb != null) {
-			if (kind == MatchEvent.ADDED) {
-				trackPosition(result, fb, match);
-			} else if (kind == MatchEvent.REMOVED) {
-				untrackPosition(fb, match);
-			}
+		if (kind == MatchEvent.ADDED) {
+			trackPosition(result, fb, match);
+		} else if (kind == MatchEvent.REMOVED) {
+			untrackPosition(fb, match);
 		}
 	}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +24,7 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
+import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
@@ -40,6 +42,7 @@ public class FileSearchQuery implements ISearchQuery {
 		private final AbstractTextSearchResult fResult;
 		private final boolean fIsFileSearchOnly;
 		private final boolean fSearchInBinaries;
+		private ArrayList fCachedMatches;
 		
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
@@ -52,6 +55,7 @@ public class FileSearchQuery implements ISearchQuery {
 			if (fIsFileSearchOnly) {
 				fResult.addMatch(new FileMatch(file, 0, 0));
 			}
+			flushMatches();
 			return true;
 		}
 		
@@ -63,10 +67,25 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
-			fResult.addMatch(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength()));
+			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength()));
 			return true;
 		}
 
+		public void beginReporting() {
+			fCachedMatches= new ArrayList();
+		}
+		
+		public void endReporting() {
+			flushMatches();
+			fCachedMatches= null;
+		}
+
+		private void flushMatches() {
+			if (!fCachedMatches.isEmpty()) {
+				fResult.addMatches((Match[]) fCachedMatches.toArray(new Match[fCachedMatches.size()]));
+				fCachedMatches.clear();
+			}
+		}
 	}
 	
 	private final FileTextSearchScope fScope;
