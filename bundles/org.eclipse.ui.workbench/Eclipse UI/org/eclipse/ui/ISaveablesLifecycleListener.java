@@ -21,7 +21,7 @@ package org.eclipse.ui;
 public interface ISaveablesLifecycleListener {
 	
 	/**
-	 * Handle the given model lifecycle event. 
+	 * Handle the given model lifecycle event. This method must be called on the UI thread.
 	 * @param event
 	 */
 	public void handleLifecycleEvent(SaveablesLifecycleEvent event);

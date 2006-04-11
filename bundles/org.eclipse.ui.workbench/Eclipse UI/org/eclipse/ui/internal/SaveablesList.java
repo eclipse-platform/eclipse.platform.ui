@@ -474,11 +474,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		List removed = new ArrayList();
 		for (Iterator it = postCloseInfo.partsClosing.iterator(); it.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) it.next();
-			Saveable[] modelArray = getSaveables(part);
-			for (int i = 0; i < modelArray.length; i++) {
-				Saveable model = modelArray[i];
-				if (removeModel(part, model)) {
-					removed.add(model);
+			Set saveables = (Set) modelMap.get(part);
+			if (saveables != null) {
+				for (Iterator it2 = saveables.iterator(); it2.hasNext();) {
+					Saveable saveable = (Saveable) it2.next();
+					if (removeModel(part, saveable)) {
+						removed.add(saveable);
+					}
 				}
 			}
 		}

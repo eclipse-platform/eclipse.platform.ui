@@ -1256,6 +1256,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	        for (int i = 0; i < editorRefs.length; i++) {
 	            IEditorReference ref = editorRefs[i];
                 
+	            if(modelManager!=null) {
+	            	modelManager.postClose(postCloseInfo);
+	            }
+	            
 	            // Remove editor from the presentation
                 editorPresentation.closeEditor(ref);
 	            
@@ -1269,10 +1273,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         window.firePerspectiveChanged(this, getPerspective(),
                 CHANGE_EDITOR_CLOSE);
         
-        if(modelManager!=null) {
-        	modelManager.postClose(postCloseInfo);
-        }
-
         // Return true on success.
         return true;
     }
@@ -2142,15 +2142,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         updateActivePart();
         
+        if (saveablesList != null) {
+        	saveablesList.postClose(postCloseInfo);
+        }
+
         // Hide the part.
         persp.hideView(ref);
 
         // Notify interested listeners after the hide
         window.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
-        
-        if (saveablesList != null) {
-        	saveablesList.postClose(postCloseInfo);
-        }
     }
 
     /* package */void refreshActiveView() {
