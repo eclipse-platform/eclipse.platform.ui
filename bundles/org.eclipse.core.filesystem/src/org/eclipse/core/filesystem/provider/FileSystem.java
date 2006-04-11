@@ -12,14 +12,8 @@ package org.eclipse.core.filesystem.provider;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileSystem;
-import org.eclipse.core.filesystem.IFileTree;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.filesystem.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * The common superclass for all file system implementations.  Instances

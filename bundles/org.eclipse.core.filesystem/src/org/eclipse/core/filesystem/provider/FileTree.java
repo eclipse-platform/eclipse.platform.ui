@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.filesystem.provider;
 
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.IFileTree;
+import org.eclipse.core.filesystem.*;
 
 /**
  * The abstract superclass of all {@link IFileTree} implementations.  
