@@ -12,13 +12,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import com.ibm.icu.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -54,6 +48,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * An operation to fetch the annotations for a file from the repository and
@@ -95,11 +91,13 @@ public class ShowAnnotationOperation extends CVSOperation {
 		display.asyncExec(new Runnable() {
 			public void run() {
 				boolean useQuickDiffAnnotate = false;
-				//If the file being annotated is not binary, check to see if we can use the quick
+				
+				//If the file being annotated is not binary AND is not a RemoteFile, check to see if we can use the quick
 				//annotate. Until we are able to show quick diff annotate on read only text editors
 				//we can't make use of it for binary files/remote files.
-				if (!binary)
+				if (!binary && !(fCVSResource instanceof ICVSRemoteFile))
 					useQuickDiffAnnotate = promptForQuickDiffAnnotate();
+				
 				if (useQuickDiffAnnotate){
 					//is there an open editor for the given input? If yes, use live annotate
 					final AbstractDecoratedTextEditor editor= getEditor();
