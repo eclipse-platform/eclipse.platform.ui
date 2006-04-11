@@ -301,6 +301,11 @@ final class HandlerAuthority extends ExpressionAuthority {
 			}
 
 			// Check to see if we haven't found a potentially active handler yet
+			if ((DEBUG_VERBOSE)
+					&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
+							.equals(commandId)))) {
+				Tracing.printTrace(TRACING_COMPONENT, "resolveConflicts: eval: " + currentActivation); //$NON-NLS-1$
+			}
 			if (bestActivation == null) {
 				bestActivation = currentActivation;
 				conflict = false;
