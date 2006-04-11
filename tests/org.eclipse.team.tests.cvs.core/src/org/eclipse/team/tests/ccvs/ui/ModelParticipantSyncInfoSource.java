@@ -37,11 +37,9 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.mappings.*;
-import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
+import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -177,6 +175,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 	
 	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {
 		super.assertProjectRemoved(subscriber, project);
+		waitForCollectionToFinish(subscriber);
 		ModelSynchronizeParticipant participant = getParticipant(subscriber);
 		IResourceDiffTree tree = participant.getContext().getDiffTree();
 		if (tree.members(project).length > 0) {
@@ -231,12 +230,13 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 	public void mergeResources(Subscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException {
 		// Try a merge first
 		internalMergeResources(subscriber, resources, false);
-		if (allowOverwrite)
+		if (allowOverwrite) {
 			internalMergeResources(subscriber, resources, true);
-		try {
-			assertInSync(subscriber, resources);
-		} catch (CoreException e) {
-			throw TeamException.asTeamException(e);
+			try {
+				assertInSync(subscriber, resources);
+			} catch (CoreException e) {
+				throw TeamException.asTeamException(e);
+			}
 		}
 	}
 
@@ -288,22 +288,29 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 	
 	public void commitResources(Subscriber subscriber, IResource[] resources) throws CoreException {
 		try {
-			ResourceMapping[] newMappings = getNewMappings(subscriber, resources);
-			if (newMappings.length > 0)
-				new AddOperation(null, newMappings).run(DEFAULT_MONITOR);
-			new CommitOperation(null, asResourceMappings(resources), Command.NO_LOCAL_OPTIONS, "").run(DEFAULT_MONITOR);
+			new CommitWizard.AddAndCommitOperation(null, 
+					getChangedFiles(subscriber, resources),
+					getNewResources(subscriber, resources), "").run(DEFAULT_MONITOR);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
 			Assert.fail();
 		}
 	}
-	
-	private ResourceMapping[] getNewMappings(Subscriber subscriber, IResource[] resources) throws CoreException {
-		IResource[] newResources = getNewResources(subscriber, resources);
-		return asResourceMappings(newResources);
-	}
 
+	private IResource[] getChangedFiles(Subscriber subscriber, IResource[] resources) throws CoreException {
+		List result = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (resource.getType() == IResource.FILE) {
+				IDiff diff = subscriber.getDiff(resource);
+				if (diff != null)
+					result.add(resource);
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+	
 	private IResource[] getNewResources(Subscriber subscriber, IResource[] resources) throws CoreException {
 		List result = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {

@@ -568,7 +568,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.CONFLICTING | SyncInfo.CHANGE });
 				
 		// Release the folder1/a.txt conflict by merging and then committing
-		commit(project, new String[] {"file1.txt", "folder1/a.txt"});
+		overrideAndCommit(project, new String[] {"folder1/a.txt"}, true);
+		commit(project, new String[] {"file1.txt"});
 		
 		assertSyncEquals("testFileConflict", project, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
@@ -616,7 +617,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING | SyncInfo.ADDITION });
 		
 		// Commit conflicting add1b.txt and add2b.txt and outgoing add3.txt
-		commit(project, new String[]{"add1b.txt", "add2b.txt", "add3.txt"});
+		overrideAndCommit(project, new String[]{"add1b.txt", "add2b.txt"}, true);
+		commit(project, new String[]{"add3.txt"});
 
 		assertSyncEquals("testAdditionConflicts", project, 
 			new String[] { "file.txt", "add1b.txt", "add2b.txt", "add3.txt"}, 
@@ -739,7 +741,8 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC });
 
 		// Release the resources
-		commit(project, new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"});
+		overrideAndCommit(project, new String[] { "delete1.txt", "delete2.txt", "delete3.txt"}, true);
+		commit(project, new String[] {"delete4.txt", "delete5.txt"});
 		
 		assertSyncEquals("testDeletionConflictsB", project, 
 			new String[] { "delete3.txt"}, 
