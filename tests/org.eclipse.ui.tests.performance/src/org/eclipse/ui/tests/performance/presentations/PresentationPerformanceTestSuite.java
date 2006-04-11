@@ -59,10 +59,13 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
         addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
         
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
-        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
+        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5, false));
+        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5, false));
+        addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1, false));
+        if(presentationId.equals("org.eclipse.ui.presentations.default"))
+        	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, true));
+        else
+        	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, false));
 
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100, "large folder creation"));
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100, "large folder creation"));
