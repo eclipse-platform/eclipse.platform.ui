@@ -36,7 +36,7 @@ public interface ICommonMenuConstants {
 
 	/**
 	 * Pop-up menu: name of group for goto actions (value
-	 * <code>"group.open"</code>).
+	 * <code>"group.goto"</code>).
 	 * <p>
 	 * Examples for open actions are:
 	 * <ul>
@@ -141,8 +141,7 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for source actions. This is an alias for
 	 * <code>GROUP_GENERATE</code> to be more consistent with main menu bar
 	 * structure.
-	 * 
-	 * @since 2.0
+	 *  
 	 */
 	public static final String GROUP_SOURCE = GROUP_GENERATE;
 
