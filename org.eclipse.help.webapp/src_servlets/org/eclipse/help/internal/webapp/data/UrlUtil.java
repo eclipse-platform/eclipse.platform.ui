@@ -11,14 +11,7 @@
 package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.*;
 
 import javax.servlet.http.*;

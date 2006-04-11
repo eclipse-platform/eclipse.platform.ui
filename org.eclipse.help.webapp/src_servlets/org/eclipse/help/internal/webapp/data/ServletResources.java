@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import java.util.Locale;
+import java.util.*;
 
 import javax.servlet.http.*;
 

@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp;
 
-import com.ibm.icu.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.text.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 

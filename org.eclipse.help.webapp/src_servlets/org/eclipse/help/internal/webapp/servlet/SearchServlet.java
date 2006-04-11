@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
