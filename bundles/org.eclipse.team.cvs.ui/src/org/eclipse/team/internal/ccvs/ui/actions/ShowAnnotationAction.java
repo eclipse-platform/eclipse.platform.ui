@@ -14,15 +14,16 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.ShowAnnotationOperation;
 
 public class ShowAnnotationAction extends WorkspaceAction {
@@ -52,10 +53,19 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		    return;
 		boolean binary = isBinary(cvsResource);
         if (binary) {
-		    if (!MessageDialog.openQuestion(getShell(), CVSUIMessages.ShowAnnotationAction_2, NLS.bind(CVSUIMessages.ShowAnnotationAction_3, new String[] { cvsResource.getName() }))) { // 
-		        return;
-		    }
+			final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+			final String option = store.getString(ICVSUIConstants.PREF_ANNOTATE_PROMPTFORBINARY);
+			if (option.equals(MessageDialogWithToggle.PROMPT)) {
+				final MessageDialogWithToggle dialog = (MessageDialogWithToggle.openYesNoQuestion(getShell(), CVSUIMessages.ShowAnnotationAction_2, NLS.bind(CVSUIMessages.ShowAnnotationAction_3, new String[] {cvsResource.getName()}), CVSUIMessages.ShowAnnotationOperation_4, false, store, ICVSUIConstants.PREF_ANNOTATE_PROMPTFORBINARY));
+				final int result = dialog.getReturnCode();
+				switch (result) {
+					case IDialogConstants.NO_ID :
+						return;
+				}
+			} else if (option.equals(MessageDialogWithToggle.NEVER))
+				return;
 		}
+        
 		new ShowAnnotationOperation(getTargetPart(), cvsResource, revision, binary).run();
 	}
 

@@ -49,7 +49,7 @@ import org.eclipse.ui.*;
  */
 public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	private static class PerspectiveDescriptorComparator implements Comparator {
+	public static class PerspectiveDescriptorComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
 			if (o1 instanceof IPerspectiveDescriptor && o2 instanceof IPerspectiveDescriptor) {
 				String id1= ((IPerspectiveDescriptor)o1).getLabel();
@@ -511,25 +511,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 				IHelpContextIds.PREF_SAVE_DIRTY_EDITORS, 
 	    		YES_NO_PROMPT,
 	    		new Integer [] { new Integer(ICVSUIConstants.OPTION_AUTOMATIC),	new Integer(ICVSUIConstants.OPTION_NEVER), 	new Integer(ICVSUIConstants.OPTION_PROMPT)});
-				
-		new StringRadioButtons(
-	    		composite, 
-	    		ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE, 
-	    		CVSUIMessages.CVSPreferencesPage_QuickDiffAnnotate, 
-	    		IHelpContextIds.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS,
-	    		YES_NO_PROMPT,
-	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
-	    		);
 		
-	    new StringRadioButtons(
-	    		composite, 
-	    		ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS, 
-	    		CVSUIMessages.CVSPreferencesPage_42, 
-	    		IHelpContextIds.PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS,
-	    		YES_NO_PROMPT,
-	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
-	    		);
-	    
 	    new StringRadioButtons(
 	    		composite, 
 	    		ICVSUIConstants.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT, 
@@ -540,14 +522,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    		);
 	    
 	    SWTUtils.createPlaceholder(composite, 1);
-	    new StringComboBox(
-	    		composite, 
-	    		ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
-	    		CVSUIMessages.CVSPreferencesPage_43, 
-	    		IHelpContextIds.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS,
-	    		PERSPECTIVE_LABELS,
-	    		PERSPECTIVE_VALUES);
-
+	  
 		return composite;
 	}
 	

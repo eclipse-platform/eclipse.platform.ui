@@ -781,6 +781,9 @@
     <keyword
             label="%PreferenceKeywords.Console"
             id="org.eclipse.team.cvs.ui.cvs.console"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.annotate"
+          label="%PreferenceKeywords.Annotate"/>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -1580,6 +1583,16 @@
             contentExtensionId="org.eclipse.team.cvs.ui.changeSetContent"
             icon="$nl$/icons/full/obj16/changelog_obj.gif"
             modelProviderId="org.eclipse.team.cvs.core.changeSetModel"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.AnnotatePreferencePage"
+            id="org.eclipse.team.cvs.ui.AnnotatePreferences"
+            name="%AnnotatePreferencePage.name">
+         <keywordReference id="org.eclipse.team.cvs.ui.cvs.annotate"/>
+      </page>
    </extension>
    
 </plugin>

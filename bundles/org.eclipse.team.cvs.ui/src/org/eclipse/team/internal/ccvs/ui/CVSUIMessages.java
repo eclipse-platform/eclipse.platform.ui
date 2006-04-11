@@ -32,6 +32,9 @@ public class CVSUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, CVSUIMessages.class);
 	}
 	
+	public static String AnnotatePreferencePage_AnnotatePrefPageBinaryFileMessage;
+	public static String AnnotatePreferencePage_AnnotatePrefPageMessage;
+	public static String AnnotatePreferencePage_AnnotatePrefPageTitle;
 	public static String CommitAction_0;
 	public static String CommitAction_1;
 	public static String CommitAction_2;
