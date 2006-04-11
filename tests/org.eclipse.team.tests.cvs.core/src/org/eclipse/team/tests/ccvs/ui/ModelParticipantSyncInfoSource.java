@@ -1,0 +1,371 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.tests.ccvs.ui;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
+
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.internal.resources.mapping.ShallowContainer;
+import org.eclipse.core.internal.resources.mapping.ShallowResourceMapping;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ModelProvider;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.provider.Diff;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.mappings.*;
+import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.mapping.*;
+import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.part.IPage;
+
+public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
+
+	public static ModelSynchronizeParticipant getParticipant(Subscriber subscriber) {
+		// show the sync view
+		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < participants.length; i++) {
+			ISynchronizeParticipant participant;
+			try {
+				participant = participants[i].getParticipant();
+			} catch (TeamException e) {
+				return null;
+			}
+			if (participant instanceof ModelSynchronizeParticipant) {
+				ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+				ISynchronizationContext context = msp.getContext();
+				if (context instanceof SubscriberMergeContext) {
+					SubscriberMergeContext smc = (SubscriberMergeContext) context;
+					if (smc.getSubscriber().equals(subscriber))
+							return msp;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws CoreException {
+		assertDiffKindEquals(message, subscriber, resource, SyncInfoToDiffConverter.asDiffFlags(syncKind));	
+	}
+	
+	protected IDiff getDiff(Subscriber subscriber, IResource resource) throws CoreException {
+		waitForCollectionToFinish(subscriber);
+		IDiff subscriberDiff =  subscriber.getDiff(resource);
+		IDiff contextDiff = getContextDiff(subscriber, resource);
+		assertDiffsEqual(subscriberDiff, contextDiff);
+		return subscriberDiff;
+	}
+	
+	public void refresh(Subscriber subscriber, IResource[] resources) throws TeamException {
+		RefreshParticipantJob job = new RefreshModelParticipantJob(getParticipant(subscriber), "Refresh", "Refresh", Utils.getResourceMappings(resources), new IRefreshSubscriberListener() {
+			public void refreshStarted(IRefreshEvent event) {
+				// Do nothing
+			}
+		
+			public IWorkbenchAction refreshDone(IRefreshEvent event) {
+				// Do nothing
+				return null;
+			}
+		});
+		job.schedule();
+		waitForCollectionToFinish(subscriber);
+	}
+	
+	private void waitForCollectionToFinish(Subscriber subscriber) {
+		ModelSynchronizeParticipant family = getParticipant(subscriber);
+		while (waitUntilFamilyDone(subscriber) 
+				|| waitUntilFamilyDone(family)
+				|| waitUntilFamilyDone(family.getContext())) {
+			// just keep looping until we no longer wait for any jobs
+		}
+	}
+
+	private boolean waitUntilFamilyDone(Object family) {
+		Job[] jobs = Platform.getJobManager().find(family);
+		boolean waited = false;
+		for (int i = 0; i < jobs.length; i++) {
+			Job job = jobs[i];
+			while (job.getState() != Job.NONE) {
+				waited = true;
+				while (Display.getCurrent().readAndDispatch()) {}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+			}
+		}
+		return waited;
+	}
+
+	private void assertDiffsEqual(IDiff subscriberDiff, IDiff contextDiff) {
+		if (subscriberDiff == null && contextDiff == null)
+			return;
+		if (subscriberDiff == null && contextDiff != null) {
+			Assert.fail("Subscriber contains no change for "
+					+ ResourceDiffTree.getResourceFor(contextDiff).getFullPath().toString()
+					+ " but the context contains: "
+					+ contextDiff.toDiffString());
+		}
+		if (subscriberDiff != null && contextDiff == null) {
+			Assert.fail("Subscriber contains change: "
+					+ subscriberDiff.toDiffString()
+					+ " for "
+					+ ResourceDiffTree.getResourceFor(subscriberDiff).getFullPath().toString()
+					+ " but the context has no change");
+		}
+		int subscriberStatus = ((Diff)subscriberDiff).getStatus();
+		int contextStatus = ((Diff)subscriberDiff).getStatus();
+		if (subscriberStatus != contextStatus) {
+			Assert.fail("Subscriber contains change: "
+					+ subscriberDiff.toDiffString()
+					+ " for "
+					+ ResourceDiffTree.getResourceFor(contextDiff).getFullPath().toString()
+					+ " but the context contains: "
+					+ contextDiff.toDiffString());
+		}
+	}
+
+	private IDiff getContextDiff(Subscriber subscriber, IResource resource) {
+		ModelSynchronizeParticipant p = getParticipant(subscriber);
+		return p.getContext().getDiffTree().getDiff(resource);
+	}
+
+	protected SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
+		try {
+			IDiff diff = getDiff(subscriber, resource);
+			return getConverter(subscriber).asSyncInfo(diff, subscriber.getResourceComparator());
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+	}
+	
+	protected void assertProjectRemoved(Subscriber subscriber, IProject project) throws TeamException {
+		super.assertProjectRemoved(subscriber, project);
+		ModelSynchronizeParticipant participant = getParticipant(subscriber);
+		IResourceDiffTree tree = participant.getContext().getDiffTree();
+		if (tree.members(project).length > 0) {
+			throw new AssertionFailedError("The diff tree still contains resources from the deleted project " + project.getName());	
+		}
+	}
+	
+	private ISynchronizationScopeManager createScopeManager(IResource resource, Subscriber subscriber) {
+		return new SubscriberScopeManager(subscriber.getName(), 
+				new ResourceMapping[] { Utils.getResourceMapping(resource) }, subscriber, true);
+	}
+	
+	private ISynchronizationScopeManager createWorkspaceScopeManager() {
+		CVSWorkspaceSubscriber workspaceSubscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		try {
+			ModelProvider workspaceModel = ModelProvider.getModelProviderDescriptor(ModelProvider.RESOURCE_MODEL_PROVIDER_ID).getModelProvider();
+			return new SubscriberScopeManager(workspaceSubscriber.getName(), 
+					new ResourceMapping[] { Utils.getResourceMapping(workspaceModel) }, workspaceSubscriber, true);
+		} catch (CoreException e) {
+			Assert.fail(e.getMessage());
+		}
+		return null;
+	}
+	
+	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
+		CVSMergeSubscriber mergeSubscriber = super.createMergeSubscriber(project, root, branch);
+		ModelSynchronizeParticipant participant = new ModelMergeParticipant(MergeSubscriberContext.createContext(createScopeManager(project, mergeSubscriber), mergeSubscriber));
+		showParticipant(participant);
+		return mergeSubscriber;
+	}
+
+	public Subscriber createWorkspaceSubscriber() throws TeamException {
+		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
+		ISynchronizeParticipantReference[] participants = synchronizeManager.get(WorkspaceModelParticipant.ID);
+		if (participants.length > 0) {
+			return ((SubscriberMergeContext)((WorkspaceModelParticipant)participants[0].getParticipant()).getContext()).getSubscriber();
+		}
+		WorkspaceModelParticipant participant = new WorkspaceModelParticipant(WorkspaceSubscriberContext.createContext(createWorkspaceScopeManager(), ISynchronizationContext.THREE_WAY));
+		showParticipant(participant);
+		Subscriber subscriber = super.createWorkspaceSubscriber();
+		refresh(subscriber, subscriber.roots());
+		return subscriber;
+	}
+
+	public CVSCompareSubscriber createCompareSubscriber(IResource resource, CVSTag tag) {
+		CVSCompareSubscriber s = super.createCompareSubscriber(resource, tag);
+		ModelSynchronizeParticipant participant = new ModelCompareParticipant(CompareSubscriberContext.createContext(createScopeManager(resource, s), s));
+		showParticipant(participant);
+		return s;
+	}
+	
+	public void mergeResources(Subscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException {
+		// Try a merge first
+		internalMergeResources(subscriber, resources, false);
+		if (allowOverwrite)
+			internalMergeResources(subscriber, resources, true);
+		try {
+			assertInSync(subscriber, resources);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
+	}
+
+	private void assertInSync(Subscriber subscriber, IResource[] resources) throws CoreException {
+		waitForCollectionToFinish(subscriber);
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			assertSyncEquals("merge failed", subscriber, resource, SyncInfo.IN_SYNC);
+		}
+		
+	}
+
+	private void internalMergeResources(Subscriber subscriber, IResource[] resources, final boolean allowOverwrite) throws TeamException {
+		ResourceMergeHandler handler = new ResourceMergeHandler(getConfiguration(subscriber), allowOverwrite) {
+			protected boolean promptToConfirm() {
+				return true;
+			}
+			protected void promptForNoChanges() {
+				// Do nothing
+			}
+		};
+		handler.updateEnablement(new StructuredSelection(asResourceMappings(resources)));
+		try {
+			handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, null, null));
+		} catch (ExecutionException e) {
+			throw new TeamException("Error running merge", e);
+		}
+		waitForCollectionToFinish(subscriber);
+	}
+
+	public void markAsMerged(Subscriber subscriber, IResource[] resources) throws InvocationTargetException, InterruptedException, TeamException {
+		ResourceMarkAsMergedHandler handler = new ResourceMarkAsMergedHandler(getConfiguration(subscriber));
+		handler.updateEnablement(new StructuredSelection(resources));
+		try {
+			handler.execute(new ExecutionEvent(null, Collections.EMPTY_MAP, null, null));
+		} catch (ExecutionException e) {
+			throw new TeamException("Error running markAsMerged", e);
+		}
+		waitForCollectionToFinish(subscriber);
+	}
+	
+	public void updateResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		mergeResources(subscriber, resources, false);
+	}
+	
+	public void overrideAndUpdateResources(Subscriber subscriber, boolean shouldPrompt, IResource[] resources) throws CoreException {
+		mergeResources(subscriber, resources, true);
+	}
+	
+	public void commitResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		try {
+			ResourceMapping[] newMappings = getNewMappings(subscriber, resources);
+			if (newMappings.length > 0)
+				new AddOperation(null, newMappings).run(DEFAULT_MONITOR);
+			new CommitOperation(null, asResourceMappings(resources), Command.NO_LOCAL_OPTIONS, "").run(DEFAULT_MONITOR);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			Assert.fail();
+		}
+	}
+	
+	private ResourceMapping[] getNewMappings(Subscriber subscriber, IResource[] resources) throws CoreException {
+		IResource[] newResources = getNewResources(subscriber, resources);
+		return asResourceMappings(newResources);
+	}
+
+	private IResource[] getNewResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		List result = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			IDiff diff = subscriber.getDiff(resource);
+			if (diff instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) diff;
+				if (twd.getKind() == IDiff.ADD && twd.getDirection() == IThreeWayDiff.OUTGOING) {
+					if (!CVSWorkspaceRoot.getCVSResourceFor(resource).isManaged()) {
+						result.add(resource);
+					}
+				}
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
+	private ResourceMapping[] asResourceMappings(IResource[] resources) {
+		List result = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (resource.getType() == IResource.FILE) {
+				result.add(Utils.getResourceMapping(resource));
+			} else {
+				result.add(new ShallowResourceMapping(new ShallowContainer((IContainer)resource)));
+			}
+		}
+		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+	}
+
+	public void overrideAndCommitResources(Subscriber subscriber, IResource[] resources) throws CoreException {
+		try {
+			markAsMerged(subscriber, resources);
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+			Assert.fail("unexpected interrupt");
+		}
+		commitResources(subscriber, resources);
+	}
+	
+	private ISynchronizePageConfiguration getConfiguration(Subscriber subscriber) {
+		ISynchronizePage page = getPage(subscriber);
+		return ((ModelSynchronizePage)page).getConfiguration();
+	}
+
+	private ISynchronizePage getPage(Subscriber subscriber) {
+        try {
+            ModelSynchronizeParticipant participant = getParticipant(subscriber);
+            if (participant == null)
+            	throw new AssertionFailedError("The participant for " + subscriber.getName() + " could not be retrieved");
+            IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+            ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+            IPage page = ((SynchronizeView)view).getPage(participant);
+            if (page instanceof ModelSynchronizePage) {
+            	ModelSynchronizePage subscriberPage = (ModelSynchronizePage)page;
+            	return subscriberPage;
+            }
+        } catch (PartInitException e) {
+            throw new AssertionFailedError("Cannot show sync view in active page");
+        }
+        throw new AssertionFailedError("The page for " + subscriber.getName() + " could not be retrieved");
+	}
+	
+}

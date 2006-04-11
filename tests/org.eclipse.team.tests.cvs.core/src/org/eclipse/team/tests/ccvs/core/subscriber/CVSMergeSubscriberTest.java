@@ -88,7 +88,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		commitProject(copy);
 		
 		// modify file2 in both branch and head and ensure it's merged properly 
-		appendText(copy.getFile("file2.txt"), "appened text", false);
+		appendText(copy.getFile("file2.txt"), "appended text", false);
 		commitProject(copy);
 		appendText(project.getFile("file2.txt"), "prefixed text", true);
 		commitProject(project);		
@@ -127,7 +127,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	
 		assertEndsWith(project.getFile("file1.txt"), "Appended text 1" + eol + "Appended text 2");
 		assertStartsWith(project.getFile("file2.txt"), "prefixed text");
-		assertEndsWith(project.getFile("file2.txt"), "appened text");
+		assertEndsWith(project.getFile("file2.txt"), "appended text");
 	}
 	
 	/**

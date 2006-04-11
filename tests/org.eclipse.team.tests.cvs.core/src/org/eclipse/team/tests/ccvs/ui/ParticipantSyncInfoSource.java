@@ -12,6 +12,7 @@ package org.eclipse.team.tests.ccvs.ui;
 
 import junit.framework.AssertionFailedError;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -83,5 +84,23 @@ public class ParticipantSyncInfoSource extends SyncInfoSource {
 			throw new AssertionFailedError("Cannot show sync view in active page");
 		}
 	}
+	
+	/**
+	 * Assert that the model for the subscriber matches what is being displayed.
+	 * Default is to do nothing. Subclasses may override
+	 * @param subscriber the subscriber
+	 */
+	public void assertViewMatchesModel(Subscriber subscriber) {
+	    // Default is to do nothing. Subclasses may override
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.Subscriber, org.eclipse.core.resources.IResource[])
+     */
+    public void refresh(Subscriber subscriber, IResource[] resources)
+            throws TeamException {
+        super.refresh(subscriber, resources);
+		assertViewMatchesModel(subscriber);
+    }
 
 }

@@ -102,22 +102,6 @@ public class SyncInfoSource {
 			s.cancel();
 		}
 	}
-
-	/**
-	 * Recalculate a sync info from scratch
-	 */
-	public void reset(Subscriber subscriber) throws TeamException {
-		// Do nothing
-	}
-	
-	/**
-	 * Assert that the model for the subscriber matches what is being displayed.
-	 * Default is to do nothing. Subclasses may override
-	 * @param subscriber the subscriber
-	 */
-	public void assertViewMatchesModel(Subscriber subscriber) {
-	    // Default is to do nothing. Subclasses may override
-	}
 	
 	public void assertSyncEquals(String message, Subscriber subscriber, IResource resource, int syncKind) throws CoreException {
 		int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
@@ -171,7 +155,7 @@ public class SyncInfoSource {
 				+ " but was " + SyncInfoToDiffConverter.diffStatusToString(actualFlags), actualFlags == expectedFlags);
 	}
 	
-	public void mergeResources(CVSMergeSubscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
+	public void mergeResources(Subscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
 		mergeResources(subscriber, infos, allowOverwrite);
 	}
@@ -190,7 +174,7 @@ public class SyncInfoSource {
 		return result;
 	}
 	
-	public void markAsMerged(CVSSyncTreeSubscriber subscriber, IResource[] resources) throws InvocationTargetException, InterruptedException, TeamException {
+	public void markAsMerged(Subscriber subscriber, IResource[] resources) throws InvocationTargetException, InterruptedException, TeamException {
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
 		new ConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
 	}
@@ -218,7 +202,7 @@ public class SyncInfoSource {
 		Assert.assertTrue(shouldPrompt == action.isPrompted());
 	}
 	
-	public void overrideAndCommitResources(CVSSyncTreeSubscriber subscriber, IResource[] resources) throws CoreException {
+	public void overrideAndCommitResources(Subscriber subscriber, IResource[] resources) throws CoreException {
 		TestCommitOperation action = new TestCommitOperation(getElements(createSyncInfos(subscriber, resources)), true /* override */);
 		runSubscriberOperation(action);
 	}

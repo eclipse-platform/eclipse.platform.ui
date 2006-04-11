@@ -48,7 +48,7 @@ public class SubscriberParticipantSyncInfoSource extends ParticipantSyncInfoSour
 	
 	public SyncInfo getSyncInfo(Subscriber subscriber, IResource resource) throws TeamException {
 		// Wait for the collector
-		SyncInfoSet set = getCollector(subscriber).getSyncInfoSet();
+		getCollector(subscriber);
 		// Obtain the sync info from the viewer to ensure that the 
 		// entire chain has the proper state
 		SyncInfo info = internalGetSyncInfo(subscriber, resource);
@@ -182,25 +182,6 @@ public class SubscriberParticipantSyncInfoSource extends ParticipantSyncInfoSour
 		return s;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#refresh(org.eclipse.team.core.subscribers.Subscriber, org.eclipse.core.resources.IResource[])
-     */
-    public void refresh(Subscriber subscriber, IResource[] resources)
-            throws TeamException {
-        super.refresh(subscriber, resources);
-		// Getting the collector waits for the subscriber input handlers
-		getCollector(subscriber);
-		assertViewMatchesModel(subscriber);
-    }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#reset()
-	 */
-	public void reset(Subscriber subscriber) throws TeamException {
-		super.reset(subscriber);
-		getCollector(subscriber).reset();
-	}
-	
 	private SyncInfo internalGetSyncInfo(Subscriber subscriber, IResource resource) {
 		ISynchronizeModelElement root = getModelRoot(subscriber);
 		return findSyncInfo(root, resource);
@@ -224,6 +205,8 @@ public class SubscriberParticipantSyncInfoSource extends ParticipantSyncInfoSour
     }
     
     public void assertViewMatchesModel(Subscriber subscriber) {
+    	// Getting the collector waits for the subscriber input handlers
+    	getCollector(subscriber);
 		ISynchronizeModelElement root = getModelRoot(subscriber);
 		TreeItem[] rootItems = getTreeItems(subscriber);
 		assertMatchingTrees(root, rootItems, root.getChildren());

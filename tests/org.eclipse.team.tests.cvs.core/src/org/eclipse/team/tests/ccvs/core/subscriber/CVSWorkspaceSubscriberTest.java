@@ -240,13 +240,13 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	 * the CVS plugin.
 	 ******************************************************************/
 	
-	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException, TeamException {
+	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException {
 		IResource[] resources = getResources(container, hierarchy);
 		getSyncInfoSource().updateResources(getSubscriber(), resources);
 		return resources;
 	}
 	
-	public IResource[] commit(IContainer container, String[] hierarchy) throws CoreException, TeamException {
+	public IResource[] commit(IContainer container, String[] hierarchy) throws CoreException {
 		IResource[] resources = getResources(container, hierarchy);
 		getSyncInfoSource().commitResources(getSubscriber(), resources);
 		return resources;
