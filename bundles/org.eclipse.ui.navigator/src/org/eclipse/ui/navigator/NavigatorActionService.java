@@ -235,6 +235,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 					if(provider != null) {
 						provider.setContext(context);
 						provider.fillActionBars(theActionBars);
+						provider.updateActionBars();
 					}
 
 				} catch (RuntimeException e) {
