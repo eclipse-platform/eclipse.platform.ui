@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-//don't use ICU because this is used for debugging only
+//don't use ICU because this is used for debugging only (see bug 135785)
 import java.text.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
