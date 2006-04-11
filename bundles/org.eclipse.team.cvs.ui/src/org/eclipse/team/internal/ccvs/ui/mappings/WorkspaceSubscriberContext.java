@@ -215,7 +215,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		try {
 			monitor.beginTask(null, 100);
 			IStatus status = super.merge(delta, force, Policy.subMonitorFor(monitor, 99));
-			if (status.isOK() && delta.getKind() == IDiff.REMOVE) {
+			if (status.isOK()) {
 				IResource resource = getDiffTree().getResource(delta);
 				if (resource.getType() == IResource.FILE && !resource.exists()) {
 					ICVSResource localResource = CVSWorkspaceRoot.getCVSResourceFor(resource);

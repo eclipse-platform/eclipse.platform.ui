@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 
@@ -68,6 +74,115 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 	 */
 	public void reject(IDiff diff, IProgressMonitor monitor) throws CoreException {
 		markAsMerged(diff, false, monitor);
+	}
+	
+	public IStatus merge(final IDiff[] diffs, final boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+		final IStatus[] result = new IStatus[] { Status.OK_STATUS };
+		if (diffs.length > 0)
+			run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					result[0] = internalMerge(diffs, ignoreLocalChanges, monitor);
+				}
+			}, getMergeRule(diffs), IWorkspace.AVOID_UPDATE, monitor);
+		return result[0];
+	}
+
+	private IStatus internalMerge(final IDiff[] diffs, final boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+		
+		// The list of diffs that add or change the local file
+		List fileChanges = new ArrayList();
+		// The list of folders diffs
+		Set folderDiffs = new HashSet();
+		// The list of diffs that will result in the deletion of
+		// the local file
+		List fileDeletions = new ArrayList();
+		
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource.getType() == IResource.FILE) {
+				if (isIncomingDeletion(diff, ignoreLocalChanges)) {
+					fileDeletions.add(diff);
+				} else {
+					fileChanges.add(diff);
+				}
+			} else {
+				// We accumulate folders but we don't actually do anything with them
+				folderDiffs.add(diff);
+			}
+		}
+		
+		if (fileDeletions.isEmpty() && fileChanges.isEmpty())
+			return Status.OK_STATUS;
+		
+		// We do deletions first so that case changes can occur on platforms that are no case sensitive
+		int ticks = (fileDeletions.size() + fileChanges.size()) * 100;
+		try {
+			monitor.beginTask(null, ticks);
+			List result = new ArrayList();
+			if (!fileDeletions.isEmpty()) {
+				IStatus status = CVSSubscriberMergeContext.super.merge(
+						(IDiff[]) fileDeletions.toArray(new IDiff[fileDeletions.size()]), 
+						ignoreLocalChanges, 
+						Policy.subMonitorFor(monitor, 100 * fileDeletions.size()));
+				if (!status.isOK()) {
+					if (status.isMultiStatus()) {
+						result.addAll(Arrays.asList(status.getChildren()));
+					} else {
+						result.add(status);
+					}
+				}
+			}
+			if (!fileChanges.isEmpty()) {
+				IStatus status = CVSSubscriberMergeContext.super.merge(
+						(IDiff[]) fileChanges.toArray(new IDiff[fileChanges.size()]), 
+						ignoreLocalChanges, 
+						Policy.subMonitorFor(monitor, 100 * fileChanges.size()));
+				if (!status.isOK()) {
+					if (result.isEmpty())
+						return status;
+				}
+			}
+			if (result.isEmpty())
+				return Status.OK_STATUS;
+			if (result.size() == 1)
+				return (IStatus)result.get(0);
+			return new MergeStatus(CVSUIPlugin.ID, ((IStatus)result.get(0)).getMessage(), getFailedFiles(result));
+		} finally {
+			monitor.done();
+		}
+	}
+
+	private boolean isIncomingDeletion(IDiff diff, boolean ignoreLocalChanges) {
+		if (diff instanceof IThreeWayDiff) {
+			IThreeWayDiff twd = (IThreeWayDiff) diff;
+			if (twd.getKind() == IDiff.REMOVE && twd.getDirection() == IThreeWayDiff.INCOMING)
+				return true;
+			IDiff remoteChange = twd.getRemoteChange();
+			if (ignoreLocalChanges && remoteChange != null)
+				return isIncomingDeletion(remoteChange, ignoreLocalChanges);
+			IDiff localChange = twd.getLocalChange();
+			if (ignoreLocalChanges && localChange != null)
+				return isIncomingDeletion(localChange, ignoreLocalChanges);
+			return false;
+		}
+		if (diff instanceof IResourceDiff) {
+			IResourceDiff rd = (IResourceDiff) diff;
+			return (ignoreLocalChanges || getMergeType() == ISynchronizationContext.TWO_WAY) && rd.getAfterState() == null;
+		}
+		return false;
+	}
+
+	private IFile[] getFailedFiles(List result) {
+		List failures = new ArrayList();
+		for (Iterator iter = result.iterator(); iter.hasNext();) {
+			IStatus status = (IStatus) iter.next();
+			if (status instanceof MergeStatus) {
+				MergeStatus ms = (MergeStatus) status;
+				failures.addAll(Arrays.asList(ms.getConflictingFiles()));
+			}
+		}
+		return (IFile[]) failures.toArray(new IFile[failures.size()]);
 	}
 
 }
