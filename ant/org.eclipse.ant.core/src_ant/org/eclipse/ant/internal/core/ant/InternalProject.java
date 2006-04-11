@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * Portions Copyright  2000-2004 The Apache Software Foundation
  * All rights reserved.  This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
