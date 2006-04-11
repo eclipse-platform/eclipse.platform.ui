@@ -33,7 +33,7 @@ public class TrimDragPreferences {
 	/**
 	 * 'true' means that each trim element can have a different 'height'
 	 */
-	private static boolean raggedTrim = false;
+	private static boolean raggedTrim = true;
 
 	/*
 	 * Accessor Methods
