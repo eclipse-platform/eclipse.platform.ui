@@ -36,7 +36,7 @@ public class CustomizationTab extends Composite {
 
 	protected static final int TABLE_HEIGHT = 20;
 
-	protected static final int TABLE_WIDTH = 125;
+	protected static final int TABLE_WIDTH = 140;
 
 	protected static final int LABEL_HEIGHT = 15;
 
@@ -121,8 +121,8 @@ public class CustomizationTab extends Composite {
 		GridData tableGridData = new GridData(GridData.FILL_BOTH);
 		tableGridData.widthHint = Dialog.convertHorizontalDLUsToPixels(
 				getFontMetrics(), TABLE_WIDTH);
-//		tableGridData.heightHint = Dialog.convertVerticalDLUsToPixels(
-//				getFontMetrics(), TABLE_HEIGHT);
+		tableGridData.heightHint = Dialog.convertVerticalDLUsToPixels(
+				getFontMetrics(), TABLE_HEIGHT);
 		aTable.setLayout(tableLayout);
 		aTable.setLayoutData(tableGridData);
 	}
