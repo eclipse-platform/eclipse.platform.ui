@@ -90,7 +90,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private void init() {
 		CommonViewer commonViewer = commonNavigator.getCommonViewer();
-		commonViewer.addSelectionChangedListener(this);
+		commonViewer.addPostSelectionChangedListener(this);
 		updateStatusBar(commonViewer.getSelection());
 
 		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory
@@ -109,11 +109,15 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		commonNavigator.getCommonViewer().addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
+				actionService.setContext(new ActionContext(new StructuredSelection(commonNavigator.getCommonViewer().getInput())));		
+				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());							
 				openAction.run();
 			}
 		});
 		
-		actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));
+		// should be delayed until the view has focus 
+		
+		actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));		
 		actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
 	}
 
