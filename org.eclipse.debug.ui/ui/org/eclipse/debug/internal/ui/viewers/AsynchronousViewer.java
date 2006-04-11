@@ -871,16 +871,17 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     /**
      * A node in the model has been updated
      * 
-     * TODO: may want to consider 'clear' to avoid refreshing non-visible nodes.
-     *  - however that may create a flash.
-     * 
      * @param node
      */
     public void nodeChanged(ModelNode node) {
        Widget widget = findItem(node);
        if (widget != null) {
-    	   widget.setData(node.getElement());
-           internalRefresh(node);
+           if (isVisible(widget)) {
+               widget.setData(node.getElement());
+               internalRefresh(node);
+           } else {
+               clear(widget);
+           }
        }
     }
     
@@ -979,16 +980,13 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     	} else {
 	       Widget widget = findItem(parentNode);
 	       if (widget != null && !widget.isDisposed()) {
-	           int childCount = parentNode.getChildCount();
-	           setItemCount(widget, childCount);
-	// this fix for bug 126817 causes bug 127307 (inconsistency between hasChildren/getChildren)           
-	//           if (childCount == 0) { 
-	//               clear(widget);
-	//               if (isVisible(widget)) {
-	//                   internalRefresh(parentNode.getElement(), widget);
-	//               }
-	//           }
-	           attemptPendingUpdates();
+               if (isVisible(widget)) {
+                   int childCount = parentNode.getChildCount();
+                   setItemCount(widget, childCount);
+                   attemptPendingUpdates();
+               } else {
+                   clear(widget);
+               }
 	       }
     	}
     }

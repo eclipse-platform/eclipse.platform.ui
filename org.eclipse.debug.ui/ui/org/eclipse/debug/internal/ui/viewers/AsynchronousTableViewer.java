@@ -420,9 +420,24 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	protected int getVisibleItemCount(int top) {
         int itemCount = fTable.getItemCount();
         return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
-    }
+    }   
     
-	/* (non-Javadoc)
+	protected boolean isVisible(Widget widget) {
+        if (widget.isDisposed()) {
+            return false;
+        } if (widget instanceof Table) {
+            return true;
+        } else if (widget instanceof TableItem) {
+            TableItem item = (TableItem) widget;
+            int index = fTable.indexOf(item);
+            int topIndex = fTable.getTopIndex();
+            int bottomIndex = topIndex + getVisibleItemCount(topIndex);
+            return index >= topIndex && index <= bottomIndex;
+        }
+        return super.isVisible(widget);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
 	public AbstractUpdatePolicy createUpdatePolicy() {
