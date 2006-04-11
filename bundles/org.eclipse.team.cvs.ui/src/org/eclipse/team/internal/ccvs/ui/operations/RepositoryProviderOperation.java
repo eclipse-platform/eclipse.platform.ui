@@ -269,20 +269,24 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
         IResource[] deepResources = entry.getDeepResources();
         IResource[] shallowResources = entry.getShallowResources();
         IResource[] nontraversedFolders = entry.getNontraversedFolders();
-        final ISchedulingRule rule = getSchedulingRule(provider);
-        monitor.beginTask(getTaskName(provider), (deepResources.length > 0 ? 100 : 0) + (shallowResources.length > 0 ? 100 : 0) + (nontraversedFolders.length > 0 ? 10 : 0));
         try {
-        	Platform.getJobManager().beginRule(rule, monitor);
-            if (deepResources.length > 0)
-                execute(provider, deepResources, true /* recurse */, Policy.subMonitorFor(monitor, 100));
-            if (shallowResources.length > 0)
-                execute(provider, shallowResources, false /* recurse */, Policy.subMonitorFor(monitor, 100));
-            if (nontraversedFolders.length > 0) {
-                handleNontraversedFolders(provider, nontraversedFolders, Policy.subMonitorFor(monitor, 10));
-            }
-            
+	        monitor.beginTask(getTaskName(provider), (deepResources.length > 0 ? 100 : 0) + (shallowResources.length > 0 ? 100 : 0) + (nontraversedFolders.length > 0 ? 10 : 0));
+	        if (deepResources.length == 0 && shallowResources.length == 0 && nontraversedFolders.length == 0)
+	        	return;
+	        final ISchedulingRule rule = getSchedulingRule(provider);
+	        try {
+	        	Platform.getJobManager().beginRule(rule, monitor);
+	            if (deepResources.length > 0)
+	                execute(provider, deepResources, true /* recurse */, Policy.subMonitorFor(monitor, 100));
+	            if (shallowResources.length > 0)
+	                execute(provider, shallowResources, false /* recurse */, Policy.subMonitorFor(monitor, 100));
+	            if (nontraversedFolders.length > 0) {
+	                handleNontraversedFolders(provider, nontraversedFolders, Policy.subMonitorFor(monitor, 10));
+	            }
+	        } finally {
+	        	Platform.getJobManager().endRule(rule);
+	        }
         } finally {
-        	Platform.getJobManager().endRule(rule);
             monitor.done();
         }
     }
