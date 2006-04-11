@@ -52,10 +52,10 @@ public class NewActionProvider extends CommonActionProvider {
 	
 	private boolean contribute = false;
 
-	public void init(ICommonActionExtensionSite aConfig) {
+	public void init(ICommonActionExtensionSite anExtensionSite) {
 
-		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) aConfig
+		if (anExtensionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) anExtensionSite
 					.getViewSite()).getWorkbenchWindow();
 			showDlgAction = ActionFactory.NEW.create(window);
 			newProjectAction = new NewProjectAction(window);
@@ -63,7 +63,7 @@ public class NewActionProvider extends CommonActionProvider {
 
 			newWizardActionGroup = new WizardActionGroup(window, PlatformUI
 					.getWorkbench().getNewWizardRegistry(),
-					WizardActionGroup.TYPE_NEW);
+					WizardActionGroup.TYPE_NEW, anExtensionSite.getContentService());
 			
 			contribute = true;
 		}

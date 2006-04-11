@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 
 /**
  * <p>
@@ -36,14 +37,11 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  * 
  * @since 3.2
  */
-public class CommonWizardDescriptor {
+public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
 
-	private static final String ATT_WIZARD_ID = "wizardId"; //$NON-NLS-1$
 
-	private static final String ATT_TYPE = "type"; //$NON-NLS-1$	
-
-	private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$ 
-
+	private String id;
+	
 	private String wizardId;
 
 	private String type;
@@ -54,7 +52,7 @@ public class CommonWizardDescriptor {
 
 	/**
 	 * @param aConfigElement The configuration element from the extension point. 
-	 * * @throws WorkbenchException
+	 * @throws WorkbenchException
 	 *             if the configuration element could not be parsed. Reasons
 	 *             include:
 	 *             <ul>
@@ -67,6 +65,27 @@ public class CommonWizardDescriptor {
 		super();
 		configElement = aConfigElement;
 		init();
+	} 
+
+	/**
+	 * @param aConfigElement The configuration element from the extension point.
+	 * @param anId the identifier for visibility purposes.
+	 *  
+	 * @throws WorkbenchException
+	 *             if the configuration element could not be parsed. Reasons
+	 *             include:
+	 *             <ul>
+	 *             <li>A required attribute is missing.</li>
+	 *             <li>More elements are define than is allowed.</li>
+	 *             </ul>
+	 */
+	public CommonWizardDescriptor(IConfigurationElement aConfigElement, String anId)
+			throws WorkbenchException {
+		super();
+		configElement = aConfigElement;
+		id = anId;
+		init();
+		
 	}
 
 	/**
@@ -125,20 +144,20 @@ public class CommonWizardDescriptor {
 		return false;
 	}
 
-	void init() throws WorkbenchException {
+	void init() throws WorkbenchException { 
 		wizardId = configElement.getAttribute(ATT_WIZARD_ID);
 		type = configElement.getAttribute(ATT_TYPE);
 
 		if (wizardId == null || wizardId.length() == 0) {
 			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
 					ATT_WIZARD_ID + " in common wizard extension: " + //$NON-NLS-1$
-					configElement.getDeclaringExtension().getUniqueIdentifier());
+					configElement.getDeclaringExtension().getNamespaceIdentifier());
 		}
 
 		if (type == null || type.length() == 0) {
 			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
 					ATT_TYPE + " in common wizard extension: " + //$NON-NLS-1$
-					configElement.getDeclaringExtension().getUniqueIdentifier());
+					configElement.getDeclaringExtension().getNamespaceIdentifier());
 		}
 
 		IConfigurationElement[] children = configElement
@@ -176,8 +195,15 @@ public class CommonWizardDescriptor {
 	 * @return the declaring namespace.
 	 */
 	public String getNamespace() {
-		return configElement.getDeclaringExtension().getNamespaceIdentifier();
-
+		return configElement.getDeclaringExtension().getNamespaceIdentifier(); 
+	}
+	
+	/**
+	 * 
+	 * @return The identifier of the wizard descriptor for visiblity purposes (or null) if none.
+	 */
+	public String getId() {
+		return id;
 	}
 
 }

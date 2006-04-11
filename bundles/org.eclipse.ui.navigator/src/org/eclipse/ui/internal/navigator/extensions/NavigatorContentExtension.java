@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -206,12 +207,17 @@ public class NavigatorContentExtension implements IMementoAware,
 		try {
 			synchronized (this) {
 
-				if (contentProvider != null) {
-					contentProvider.dispose();
-				}
-				if (labelProvider != null) {
-					labelProvider.dispose();
-				}
+				try {
+					if (contentProvider != null) {
+						contentProvider.dispose();
+					}
+					if (labelProvider != null) {
+						labelProvider.dispose();
+					}
+				} catch (Throwable t) {
+					String msg = t.getMessage() != null ? t.getMessage() : t.toString() ;
+					NavigatorPlugin.logError(0, msg, t);
+				}				
 			}
 		} finally {
 			isDisposed = true;

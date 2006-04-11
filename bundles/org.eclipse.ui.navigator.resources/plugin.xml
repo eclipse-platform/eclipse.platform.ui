@@ -111,6 +111,33 @@
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider"
               id="org.eclipse.ui.navigator.resources.actions.RefactorActions"/>
+
+
+	      <!-- Menu Shortcut Actions for Wizards -->
+	      <commonWizard
+	        		type="new"
+					wizardId="org.eclipse.ui.wizards.new.folder">
+				<enablement>
+					<or>
+						<adapt type="org.eclipse.core.resources.IFile" />	
+						<adapt type="org.eclipse.core.resources.IFolder" />
+	         			<adapt type="org.eclipse.core.resources.IProject" /> 
+	               		<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
+					</or>
+		         </enablement>
+			</commonWizard>   
+	        <commonWizard
+	            type="new"
+	            wizardId="org.eclipse.ui.wizards.new.file">
+				<enablement>
+					<or>
+						<adapt type="org.eclipse.core.resources.IFile" />	
+						<adapt type="org.eclipse.core.resources.IFolder" />
+	         			<adapt type="org.eclipse.core.resources.IProject" /> 
+	               		<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
+					</or>
+		         </enablement>
+			</commonWizard>              
       </navigatorContent>
       
       <!-- Action Providers -->
@@ -200,31 +227,6 @@
          </filterExpression>
       </commonFilter>  
       
-      <!-- Menu Shortcut Actions for Wizards -->
-      <commonWizard
-        		type="new"
-				wizardId="org.eclipse.ui.wizards.new.folder">
-			<enablement>
-				<or>
-					<adapt type="org.eclipse.core.resources.IFile" />	
-					<adapt type="org.eclipse.core.resources.IFolder" />
-         			<adapt type="org.eclipse.core.resources.IProject" /> 
-               		<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
-				</or>
-	         </enablement>
-		</commonWizard>   
-        <commonWizard
-            type="new"
-            wizardId="org.eclipse.ui.wizards.new.file">
-			<enablement>
-				<or>
-					<adapt type="org.eclipse.core.resources.IFile" />	
-					<adapt type="org.eclipse.core.resources.IFolder" />
-         			<adapt type="org.eclipse.core.resources.IProject" /> 
-               		<adapt type="org.eclipse.core.resources.IWorkspaceRoot" />	
-				</or>
-	         </enablement>
-		</commonWizard>
    </extension>
     <extension
           point="org.eclipse.core.runtime.adapters">

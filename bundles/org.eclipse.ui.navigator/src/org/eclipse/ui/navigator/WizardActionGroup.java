@@ -113,6 +113,8 @@ public final class WizardActionGroup extends ActionGroup {
 
 	private String type;
 
+	private INavigatorContentService contentService;
+
 	/**
 	 * 
 	 * @param aWindow
@@ -144,6 +146,33 @@ public final class WizardActionGroup extends ActionGroup {
 		type = aType;
 
 	}
+	
+
+	/**
+	 * 
+	 * @param aWindow
+	 *            The window that will be used to acquire a Shell and a
+	 *            Selection Service
+	 * @param aWizardRegistry
+	 *            The wizard registry will be used to locate the correct wizard
+	 *            descriptions.
+	 * @param aType
+	 *            Indicates the value of the type attribute of the commonWizard
+	 *            extension point. Use any of the TYPE_XXX constants defined on
+	 *            this class.
+	 * @param aContentService 
+	 * 			 The content service to use when deciding visibility.         
+	 * @see PlatformUI#getWorkbench()
+	 * @see IWorkbench#getNewWizardRegistry()
+	 * @see IWorkbench#getImportWizardRegistry()
+	 * @see IWorkbench#getExportWizardRegistry()
+	 */
+	public WizardActionGroup(IWorkbenchWindow aWindow,
+			IWizardRegistry aWizardRegistry, String aType, INavigatorContentService aContentService) {
+		this(aWindow, aWizardRegistry, aType);
+		contentService = aContentService;
+
+	}
 
 	public void setContext(ActionContext aContext) {
 		Assert.isTrue(!disposed);
@@ -160,7 +189,7 @@ public final class WizardActionGroup extends ActionGroup {
 			}
 			// null should be okay here
 			setWizardActionIds(CommonWizardDescriptorManager.getInstance()
-					.getEnabledCommonWizardDescriptorIds(element, type));
+					.getEnabledCommonWizardDescriptorIds(element, type, contentService));
 		} else {
 			setWizardActionIds(NO_IDS);
 		}

@@ -46,7 +46,7 @@ public interface INavigatorContentExtPtConstants {
 	String TAG_FILTER_EXPRESSION = "filterExpression"; //$NON-NLS-1$
 
 	/** */
-	String TAG_PARENT_EXPRESSION = "parentExpression"; //$NON-NLS-1$
+	String TAG_PARENT_EXPRESSION = "parentExpression"; //$NON-NLS-1$ 
 
 	/** */
 	String ATT_ID = "id"; //$NON-NLS-1$
@@ -65,6 +65,12 @@ public interface INavigatorContentExtPtConstants {
 
 	/** */
 	String ATT_ICON = "icon"; //$NON-NLS-1$
+
+	/** */
+	String ATT_WIZARD_ID = "wizardId"; //$NON-NLS-1$
+
+	/** */
+	String ATT_TYPE = "type"; //$NON-NLS-1$		
 
 	/** */
 	String ATT_ACTIVE_BY_DEFAULT = "activeByDefault"; //$NON-NLS-1$

@@ -19,10 +19,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * <p>
@@ -96,10 +96,12 @@ public class CommonWizardDescriptorManager {
 	 * @param aType
 	 *            The type of wizards to locate (e.g. 'new', 'import', or
 	 *            'export' etc).
+	 * @param aContentService 
+	 * 			 The content service to use when deciding visibility.   
 	 * @return the best content descriptor for the given element.
 	 */
 	public String[] getEnabledCommonWizardDescriptorIds(Object anElement,
-			String aType) {
+			String aType, INavigatorContentService aContentService) {
 
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null) {
@@ -112,7 +114,8 @@ public class CommonWizardDescriptorManager {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
 					.next();
 
-			if (descriptor.isEnabledFor(anElement)) {
+			if (isVisible(aContentService, descriptor)
+						&& descriptor.isEnabledFor(anElement)) {
 				descriptorIds.add(descriptor.getWizardId());
 			}
 		}
@@ -121,37 +124,20 @@ public class CommonWizardDescriptorManager {
 	}
 
 	/**
-	 * 
-	 * Returns all content descriptor(s) which enable for the given element.
-	 * 
-	 * @param aStructuredSelection
-	 *            the element to return the best content descriptor for
-	 * @param aType
-	 *            The type of wizards to locate (e.g. 'new', 'import', or
-	 *            'export' etc).
-	 * @return the best content descriptor for the given element.
+	 * @param aContentService
+	 * @param descriptor
+	 * @return
 	 */
-	public String[] getEnabledCommonWizardDescriptorIds(
-			IStructuredSelection aStructuredSelection, String aType) {
-		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
-		if (commonDescriptors == null) {
-			return NO_DESCRIPTORS;
-		}
-		/* Find other Common Wizard providers which enable for this object */
-		List descriptorIds = new ArrayList();
-		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
-				.hasNext();) {
-			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
-					.next();
-
-			if (descriptor.isEnabledFor(aStructuredSelection)) {
-				descriptorIds.add(descriptor.getWizardId());
-			}
-		}
-		String[] wizardIds = new String[descriptorIds.size()];
-		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
+	private boolean isVisible(INavigatorContentService aContentService, CommonWizardDescriptor descriptor) {
+		return (aContentService == null || 
+					(descriptor.getId() == null || 
+						(aContentService.isVisible(descriptor.getId()) && 
+							aContentService.isActive(descriptor.getId())
+						)
+					)
+				);
 	}
-
+  
 	private class CommonWizardRegistry extends NavigatorContentRegistryReader {
  
 
@@ -160,12 +146,30 @@ public class CommonWizardDescriptorManager {
 				try {
 					addCommonWizardDescriptor(new CommonWizardDescriptor(
 							anElement));
-					return true;
 				} catch (WorkbenchException e) {
 					// log an error since its not safe to open a dialog here
 					NavigatorPlugin
 							.logError(0, e.getMessage(), e);
+					return false;
 				}
+				return true;
+			} if(TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
+				
+				IConfigurationElement[] commonWizards = anElement.getChildren(TAG_COMMON_WIZARD);
+				
+				String contentExtensionId = anElement.getAttribute(ATT_ID);
+				for (int i = 0; i < commonWizards.length; i++) {
+					try {
+						addCommonWizardDescriptor(new CommonWizardDescriptor(
+									commonWizards[i], contentExtensionId));
+					} catch (WorkbenchException e) {
+						// log an error since its not safe to open a dialog here
+						NavigatorPlugin
+								.logError(0, e.getMessage(), e);
+						return false;
+					}					
+				}
+				return true;
 			}
 			return super.readElement(anElement);
 		}

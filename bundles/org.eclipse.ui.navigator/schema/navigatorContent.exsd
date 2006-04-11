@@ -83,6 +83,7 @@ Optionally, clients may also provide an action provider which can provide menu c
             <element ref="commonSorter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="override" minOccurs="0" maxOccurs="1"/>
             <element ref="dropAssistant" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="commonWizard" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -485,7 +486,6 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
          <documentation>
             When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element must also provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
 &lt;br&gt;&lt;br&gt;
-
          </documentation>
       </annotation>
       <complexType>

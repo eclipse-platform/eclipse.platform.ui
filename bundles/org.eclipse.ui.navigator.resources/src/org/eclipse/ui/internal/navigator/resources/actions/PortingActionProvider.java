@@ -72,22 +72,22 @@ public class PortingActionProvider extends CommonActionProvider {
 
 	private boolean contribute= false;
 
-	public void init(ICommonActionExtensionSite aConfig) {
+	public void init(ICommonActionExtensionSite anExtensionSite) {
 
 		Assert.isTrue(!disposed);
 
-		if (aConfig.getViewSite() instanceof ICommonViewerWorkbenchSite) {
+		if (anExtensionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
 
-			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) aConfig
+			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) anExtensionSite
 					.getViewSite()).getWorkbenchWindow();
 			importAction = new ImportResourcesAction(window);
 			exportAction = new ExportResourcesAction(window);
 			importWizardActionGroup = new WizardActionGroup(window, PlatformUI
 					.getWorkbench().getImportWizardRegistry(),
-					WizardActionGroup.TYPE_IMPORT);
+					WizardActionGroup.TYPE_IMPORT, anExtensionSite.getContentService());
 			exportWizardActionGroup = new WizardActionGroup(window, PlatformUI
 					.getWorkbench().getExportWizardRegistry(),
-					WizardActionGroup.TYPE_EXPORT);
+					WizardActionGroup.TYPE_EXPORT, anExtensionSite.getContentService());
 			contribute = true;
 		}
 	}
