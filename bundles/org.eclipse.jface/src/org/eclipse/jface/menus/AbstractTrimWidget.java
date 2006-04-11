@@ -63,8 +63,7 @@ public abstract class AbstractTrimWidget implements IWidget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#dispose()
 	 */
-	public void dispose() {
-	}
+	public abstract void dispose();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Composite)

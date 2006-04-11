@@ -15,13 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.menus.AbstractTrimWidget;
-import org.eclipse.jface.menus.IWidget;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
+import org.eclipse.ui.menus.IWorkbenchWidget;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.2
  */
-final class WidgetProxy implements IWidget {
+final class WidgetProxy implements IWorkbenchWidget {
 
 	/**
 	 * The configuration element from which the widget can be created. This
@@ -46,7 +47,7 @@ final class WidgetProxy implements IWidget {
 	 * forced to load the real widget. At this point, the configuration element
 	 * is converted, nulled out, and this widget gains a reference.
 	 */
-	private IWidget widget = null;
+	private IWorkbenchWidget widget = null;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -111,6 +112,15 @@ final class WidgetProxy implements IWidget {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow workbenchWindow) {
+		if (loadWidget()) {
+			widget.init(workbenchWindow);
+		}
+	}
+
 	/**
 	 * Convenience method that allows the trim layout manager to
 	 * inform widgets if they have changed locations. If the IWidget
@@ -124,7 +134,7 @@ final class WidgetProxy implements IWidget {
 	public final void fill(Composite parent, int oldSide, int newSide) {
 		// NOTE: isMoveableTrimWidget calls loadWidget...
 		if (isMoveableTrimWidget()) {
-			((AbstractTrimWidget) widget).fill(parent, oldSide, newSide);
+			((AbstractWorkbenchTrimWidget) widget).fill(parent, oldSide, newSide);
 		} else {
 			widget.fill(parent);
 		}
@@ -141,7 +151,7 @@ final class WidgetProxy implements IWidget {
 		if (widget == null) {
 			// Load the handler.
 			try {
-				widget = (IWidget) configurationElement
+				widget = (IWorkbenchWidget) configurationElement
 						.createExecutableExtension(widgetAttributeName);
 				configurationElement = null;
 				return true;
@@ -175,7 +185,7 @@ final class WidgetProxy implements IWidget {
 	 */
 	private final boolean isMoveableTrimWidget() {
 		if (loadWidget()) {
-			return widget instanceof AbstractTrimWidget;
+			return widget instanceof AbstractWorkbenchTrimWidget;
 		}
 		
 		return false;
