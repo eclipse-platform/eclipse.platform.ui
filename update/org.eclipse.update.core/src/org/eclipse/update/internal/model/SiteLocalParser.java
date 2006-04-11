@@ -9,16 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.io.*;
-import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.Assert;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.internal.configurator.PlatformConfiguration;
+import org.eclipse.update.internal.core.BaseSiteLocalFactory;
+import org.eclipse.update.internal.core.InstallConfiguration;
+import org.eclipse.update.internal.core.LocalSite;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * parse the default site.xml

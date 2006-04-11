@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import org.eclipse.core.runtime.Assert;
 
 /**
  * This class is used to maintain a list of listeners, and

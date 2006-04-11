@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -24,7 +25,6 @@ import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.configurator.FeatureEntry;
 import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.configurator.SiteEntry;
-import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.BaseSiteLocalFactory;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;

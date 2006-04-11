@@ -11,10 +11,13 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.Assert;
 /**
  * Encodes a <code>URL</code> into an <code>ASCII</code> readable
  * <code>URL</code> that is safe for transport. Encoded
