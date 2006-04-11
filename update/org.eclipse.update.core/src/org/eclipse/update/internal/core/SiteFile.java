@@ -10,15 +10,33 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.update.core.IFeatureFactory;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IInstallHandler;
+import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.IVerifier;
+import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.model.ContentEntryModel;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.core.model.InstallAbortedException;
 
 
 /**
@@ -247,14 +265,34 @@ public class SiteFile extends Site {
 	 */
 	public long getDownloadSizeFor(IFeature feature) {
 		long result = 0;
-		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
-		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+		//[132029]
+		//IPluginEntry[] entriesToInstall = feature.getPluginEntries();
+		//IPluginEntry[] siteEntries = this.getPluginEntries();
+		//entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 		//[18355]
-		INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
+		//INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
 
 		try {
-			result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, nonPluginEntriesToInstall);
+			//[132029]
+			//result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, nonPluginEntriesToInstall);
+			IFeatureReference[] children = feature.getIncludedFeatureReferences();
+			IFeature currentFeature = null;
+			for (int i = 0; i < children.length; i++) {
+				currentFeature = children[i].getFeature(null);
+				if (currentFeature != null) {
+					result += getDownloadSizeFor(currentFeature);
+					if(result == ContentEntryModel.UNKNOWN_SIZE)
+						return result;
+				}
+			}
+
+			IPluginEntry[] entriesToInstall = feature.getPluginEntries();
+			IPluginEntry[] siteEntries = this.getPluginEntries();
+			entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+			//[18355]
+			   INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
+
+			 result += feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, nonPluginEntriesToInstall);
 		} catch (CoreException e) {
 			UpdateCore.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
@@ -286,7 +324,11 @@ public class SiteFile extends Site {
 			for (int i = 0; i < children.length; i++) {
 				currentFeature = children[i].getFeature(null);
 				if (currentFeature != null) {
-					pluginsToInstall.addAll(Arrays.asList(currentFeature.getPluginEntries()));
+					//[132029]
+					//pluginsToInstall.addAll(Arrays.asList(currentFeature.getPluginEntries()));
+					result += getInstallSizeFor(currentFeature);
+					if (result == ContentEntryModel.UNKNOWN_SIZE)
+						return result;
 				}
 			}
 
@@ -301,8 +343,10 @@ public class SiteFile extends Site {
 
 			//[18355]
 			INonPluginEntry[] nonPluginEntriesToInstall = feature.getNonPluginEntries();
-
-			result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, nonPluginEntriesToInstall);
+			
+			//[132029]
+			//result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, nonPluginEntriesToInstall);
+			result += feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, nonPluginEntriesToInstall);
 		} catch (CoreException e) {
 			UpdateCore.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;

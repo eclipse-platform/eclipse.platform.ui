@@ -10,26 +10,45 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.io.*;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
+import org.eclipse.update.configuration.LocalSystemInfo;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.UpdateLabelProvider;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
 	private TableViewer jobViewer;
@@ -251,6 +270,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		File file = new File(site.getSite().getURL().getFile());
 		long available = LocalSystemInfo.getFreeSpace(file);
 		long required = computeRequiredSizeFor(site);
+		//add the download size to space required to do operation since all plugins and nonplugin data will be downloaded first
+		required += computeDownloadSizeFor(site); 
 		if (required <= 0)
 			requiredSpaceLabel.setText(UpdateUIMessages.InstallWizard_TargetPage_unknownSize); 
 		else
@@ -262,6 +283,11 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		else
 			availableSpaceLabel.setText(
 				NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size, "" + available)); //$NON-NLS-1$
+		if(required > available){
+			this.setPageComplete(false);
+			//TODO: set error message: "...not enough space..."
+		}else
+			this.setPageComplete(true);
 	}
 
 	private long computeRequiredSizeFor(IConfiguredSite site) {
@@ -269,6 +295,19 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		for (int i = 0; i < jobs.length; i++) {
 			if (site.equals(jobs[i].getTargetSite())) {
 				long jobSize = site.getSite().getInstallSizeFor(jobs[i].getFeature());
+				if (jobSize == -1)
+					return -1;
+				totalSize += jobSize;
+			}
+		}
+		return totalSize;
+	}
+	
+	private long computeDownloadSizeFor(IConfiguredSite site) {
+		long totalSize = 0;
+		for (int i = 0; i < jobs.length; i++) {
+			if (site.equals(jobs[i].getTargetSite())) {
+				long jobSize = site.getSite().getDownloadSizeFor(jobs[i].getFeature());
 				if (jobSize == -1)
 					return -1;
 				totalSize += jobSize;
