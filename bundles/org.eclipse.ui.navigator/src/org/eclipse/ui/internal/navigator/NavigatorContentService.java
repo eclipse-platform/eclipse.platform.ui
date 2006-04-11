@@ -191,6 +191,25 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	}
 
+	/* package */INavigatorContentDescriptor[] getActiveDescriptorsWithSaveables() {
+		List result = new ArrayList();
+
+		NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
+				.getContentDescriptorsWithSaveables();
+		for (int i = 0; i < descriptors.length; i++) {
+			if (assistant.isVisible(descriptors[i].getId())
+					&& assistant.isActive(descriptors[i])) {
+				result.add(descriptors[i]);
+			}
+		}
+		if (result.isEmpty()) {
+			return NO_DESCRIPTORS;
+		}
+		return (INavigatorContentDescriptor[]) result
+				.toArray(new INavigatorContentDescriptor[result.size()]);
+
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -286,6 +305,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.internal.navigator.INavigatorContentService#dispose()
 	 */
 	public void dispose() {
+		if (navigatorSaveablesService != null) {
+			assistant.removeListener(navigatorSaveablesService);
+		}
 		for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
 				.hasNext();) {
 			((NavigatorContentExtension) contentItr.next()).dispose();
@@ -1017,10 +1039,13 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see org.eclipse.ui.navigator.INavigatorContentService#getSaveableService()
 	 */
 	public INavigatorSaveablesService getSaveablesService() {
-		if (navigatorSaveablesService == null) {
-			navigatorSaveablesService = new NavigatorSaveablesService(this);
+		synchronized (this) {
+			if (navigatorSaveablesService == null) {
+				navigatorSaveablesService = new NavigatorSaveablesService(this);
+				assistant.addListener(navigatorSaveablesService);
+			}
+			return navigatorSaveablesService;
 		}
-		return navigatorSaveablesService;
 	}
 
 }

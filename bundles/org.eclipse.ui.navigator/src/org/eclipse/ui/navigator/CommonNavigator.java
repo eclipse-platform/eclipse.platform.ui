@@ -122,8 +122,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$ 
 
-	private ISaveablesSourceHelper saveablesSourceHelper;
-
 	/**
 	 * 
 	 */
@@ -189,8 +187,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				siteSaveablesLifecycleListener.handleLifecycleEvent(event);
 			}
 		};
-		saveablesSourceHelper = commonViewer.getNavigatorContentService()
-				.getSaveablesService().createHelper(this, getCommonViewer(),
+		commonViewer.getNavigatorContentService()
+				.getSaveablesService().init(this, getCommonViewer(),
 						saveablesLifecycleListener);
 		
 		getCommonViewer().addSelectionChangedListener(new ISelectionChangedListener() {
@@ -218,10 +216,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		}
 		if(commonActionGroup != null) {
 			commonActionGroup.dispose();
-		}
-		if (saveablesSourceHelper != null) {
-			saveablesSourceHelper.dispose();
-			saveablesSourceHelper = null;
 		}
 		super.dispose();
 	}
@@ -549,21 +543,23 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 */
 	public Saveable[] getSaveables() {
-		return saveablesSourceHelper.getSaveables();
+		return getNavigatorContentService().getSaveablesService().getSaveables();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 */
 	public Saveable[] getActiveSaveables() {
-		return saveablesSourceHelper.getActiveSaveables();
+		return getNavigatorContentService().getSaveablesService().getActiveSaveables();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		// ignore, save should target the Saveable objects
+		// Ignore. This method is not called because CommonNavigator implements
+		// ISaveablesSource. All saves will go through the ISaveablesSource /
+		// Saveable protocol.
 	}
 
 	/* (non-Javadoc)

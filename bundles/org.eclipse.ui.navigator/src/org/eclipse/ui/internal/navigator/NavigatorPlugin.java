@@ -126,14 +126,17 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 			Throwable exception) {
 		return createStatus(IStatus.ERROR, aCode, aMessage, exception);
 	}
-	
+
 	public void start(BundleContext context) throws Exception {
+		// System.out.println("Navigator plugin starting"); //$NON-NLS-1$
 		super.start(context);
 		context.addBundleListener(bundleListener);
 	}
-	
+
 	public void stop(BundleContext context) throws Exception {
 		context.removeBundleListener(bundleListener);
 		super.stop(context);
+		// System.out.println("Navigator plugin stopped"); //$NON-NLS-1$
 	}
+	
 }

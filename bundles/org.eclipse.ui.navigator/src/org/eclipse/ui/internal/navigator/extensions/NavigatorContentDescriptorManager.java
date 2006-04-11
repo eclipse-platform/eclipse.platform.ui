@@ -84,6 +84,8 @@ public class NavigatorContentDescriptorManager {
 
 	private final Set overridingDescriptors = new HashSet();
 
+	private final Set saveablesProviderDescriptors = new HashSet();
+	
 	private final Set firstClassDescriptorsSet = new HashSet();
 
 	/**
@@ -109,6 +111,18 @@ public class NavigatorContentDescriptorManager {
 		return finalDescriptors;
 	}
 
+	/**
+	 * 
+	 * @return Returns all content descriptors that provide saveables.
+	 */
+	public NavigatorContentDescriptor[] getContentDescriptorsWithSaveables() {
+		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[saveablesProviderDescriptors
+		                                                                               .size()];
+		saveablesProviderDescriptors.toArray(finalDescriptors);
+		Arrays.sort(finalDescriptors, ExtensionPriorityComparator.INSTANCE);
+		return finalDescriptors;
+	}
+	
 	/**
 	 * 
 	 * Returns all content descriptor(s) which enable for the given element.
@@ -307,6 +321,9 @@ public class NavigatorContentDescriptorManager {
 					overridingDescriptors.add(desc);
 				}
 				allDescriptors.put(desc.getId(), desc);
+				if (desc.hasSaveablesProvider()) {
+					saveablesProviderDescriptors.add(desc);
+				}
 			}
 		}
 	}

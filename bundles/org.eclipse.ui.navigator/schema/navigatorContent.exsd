@@ -155,6 +155,13 @@ Elements contributed from the content provider are not guaranteed to appear in t
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="providesSaveables" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicates whether this extension provides saveables. The default is false. If set to true, the content provider must adapt to SaveablesProvider.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="labelProvider" type="string" use="required">
             <annotation>
                <documentation>

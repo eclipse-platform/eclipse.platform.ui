@@ -16,6 +16,7 @@ import org.eclipse.ui.Saveable;
 /**
  * @since 3.2
  * 
+ * @deprecated use the methods on INavigatorSaveablesService directly.
  */
 public interface ISaveablesSourceHelper {
 

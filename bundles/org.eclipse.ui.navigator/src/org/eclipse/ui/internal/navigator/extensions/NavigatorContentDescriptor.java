@@ -79,6 +79,8 @@ public final class NavigatorContentDescriptor implements
 
 	private int hashCode;
 
+	private boolean providesSaveables;
+
 	/**
 	 * Creates a new content descriptor from a configuration element.
 	 * 
@@ -150,6 +152,12 @@ public final class NavigatorContentDescriptor implements
 				.length() > 0) ? Boolean.valueOf(
 				configElement.getAttribute(ATT_ACTIVE_BY_DEFAULT))
 				.booleanValue() : true;
+
+		String providesSaveablesString = configElement
+			.getAttribute(ATT_PROVIDES_SAVEABLES);
+		providesSaveables = (providesSaveablesString != null && providesSaveablesString
+				.length() > 0) ? Boolean.valueOf(providesSaveablesString)
+						.booleanValue() : false;
 
 		if (priorityString != null) {
 			try {
@@ -443,6 +451,13 @@ public final class NavigatorContentDescriptor implements
 	/* package */void setOverriddenDescriptor(
 			INavigatorContentDescriptor theOverriddenDescriptor) {
 		overriddenDescriptor = theOverriddenDescriptor;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorContentDescriptor#hasSaveablesProvider()
+	 */
+	public boolean hasSaveablesProvider() {
+		return providesSaveables;
 	}
 
 }

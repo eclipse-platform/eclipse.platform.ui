@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.navigator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
@@ -22,8 +23,8 @@ import org.eclipse.ui.services.IDisposable;
  * <p>
  * This class is intended to be subclassed by clients.
  * </p>
- * Instances of this class will be created using the factory method
- * {@link SaveablesProviderFactory#createSaveablesProvider(org.eclipse.jface.viewers.IContentProvider, org.eclipse.ui.ISaveablesLifecycleListener)}
+ * Instances of subclasses will be returned from content extensions that
+ * implement {@link IAdaptable}.
  * 
  * @since 3.2
  * 
@@ -35,14 +36,40 @@ public abstract class SaveablesProvider implements IDisposable {
 	/**
 	 * Creates a new saveable model provider using the given listener. May only
 	 * be called by subclasses.
+	 * 
+	 * @deprecated use the no-arg constructor instead. This constructor will be
+	 *             removed after 3.2RC1.
 	 */
 	protected SaveablesProvider(ISaveablesLifecycleListener listener) {
 		this.listener = listener;
 	}
 
 	/**
+	 * Creates a new saveable model provider. May only be called by subclasses.
+	 * 
+	 */
+	protected SaveablesProvider() {
+	}
+
+	/**
+	 * Initializes this SaveablesProvider with the given listener, and calls the hook method doInit().
+	 * 
+	 * @param listener
+	 */
+	final public void init(ISaveablesLifecycleListener listener) {
+		this.listener = listener;
+		doInit();
+	}
+
+	/**
+	 * May be overridden by clients. The default implementation does nothing.
+	 */
+	protected void doInit() {
+	}
+
+	/**
 	 * Notifies the listener that the given models were opened in this model
-	 * provider.
+	 * provider. This method must be called on the UI thread.
 	 * 
 	 * @param models
 	 */
@@ -53,7 +80,7 @@ public abstract class SaveablesProvider implements IDisposable {
 
 	/**
 	 * Notifies the listener that the given models are about to be closed in
-	 * this model provider.
+	 * this model provider. This method must be called on the UI thread.
 	 * 
 	 * @param models
 	 * @param force
@@ -71,7 +98,7 @@ public abstract class SaveablesProvider implements IDisposable {
 
 	/**
 	 * Notifies the listener that the given models were closed in this model
-	 * provider.
+	 * provider. This method must be called on the UI thread.
 	 * 
 	 * @param models
 	 */
@@ -82,6 +109,7 @@ public abstract class SaveablesProvider implements IDisposable {
 
 	/**
 	 * Notifies the listener that the given models' dirty state has changed.
+	 * This method must be called on the UI thread.
 	 * 
 	 * @param models
 	 */

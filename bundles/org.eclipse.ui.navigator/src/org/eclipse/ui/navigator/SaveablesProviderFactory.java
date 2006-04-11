@@ -33,6 +33,8 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
  * 
  * @since 3.2
  * 
+ * @deprecated
+ * 
  */
 public abstract class SaveablesProviderFactory {
 

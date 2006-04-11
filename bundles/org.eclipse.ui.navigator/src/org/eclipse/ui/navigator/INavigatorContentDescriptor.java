@@ -133,4 +133,9 @@ public interface INavigatorContentDescriptor {
 	 */
 	Set getOverriddingExtensions();
 
+	/**
+	 * @return true if the extension's content provider may adapt to a {@link SaveablesProvider}.
+	 */
+	boolean hasSaveablesProvider();
+
 }
