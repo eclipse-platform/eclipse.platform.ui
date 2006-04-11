@@ -81,7 +81,13 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		fHistoryControl= new BrowseRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(null, true, true)) {
+		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, true) {
+		
+			public final String getWorkspaceCaption() {
+				return ScriptingMessages.CreateRefactoringScriptWizardPage_select_caption;
+			}
+		};
+		fHistoryControl= new BrowseRefactoringHistoryControl(composite, configuration) {
 
 			protected final void handleDeselectAll() {
 				super.handleDeselectAll();

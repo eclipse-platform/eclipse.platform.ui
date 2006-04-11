@@ -62,6 +62,8 @@ public final class ScriptingMessages extends NLS {
 
 	public static String CreateRefactoringScriptWizardPage_script_extension;
 
+	public static String CreateRefactoringScriptWizardPage_select_caption;
+
 	public static String ScriptLocationControl_browse_caption;
 
 	public static String ScriptLocationControl_browse_label;
