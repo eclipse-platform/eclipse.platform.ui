@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
@@ -99,7 +98,7 @@ public class RefactoringCore {
 	 * @return the condition checking failed severity
 	 */
 	public static int getConditionCheckingFailedSeverity() {
-		return RefactoringCorePreferences.getStopSeverity();
+		return RefactoringStatus.WARNING;
 	}
 	
 	/**
