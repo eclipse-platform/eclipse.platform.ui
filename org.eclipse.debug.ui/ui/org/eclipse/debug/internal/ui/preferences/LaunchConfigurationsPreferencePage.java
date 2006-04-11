@@ -73,7 +73,6 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * Need to make the dialog resizable, and persist sizing
 	 * @since 3.2
 	 */
 	class LaunchConfigurationMigrationSelectionDialog extends ListSelectionDialog {
