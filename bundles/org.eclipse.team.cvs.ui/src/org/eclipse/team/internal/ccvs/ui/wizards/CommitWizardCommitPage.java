@@ -269,11 +269,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             if (elements[i] instanceof SyncInfoModelElement) {
                 SyncInfo syncInfo = ((SyncInfoModelElement)elements[i]).getSyncInfo();
                 int direction = syncInfo.getKind() & SyncInfo.DIRECTION_MASK;
-				if (syncInfo.getLocal().getType() == IResource.FILE && (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING))
+				if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING)
                 	infos.add(syncInfo);
             }
         }  
-        return infos;//(IResource [])result.toArray(new IResource[result.size()]);
+        return infos;
     }
     
     /* (non-Javadoc)

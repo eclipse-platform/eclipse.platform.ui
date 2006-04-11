@@ -55,7 +55,7 @@ public class CommitWizard extends ResizableWizard {
     /**
      * An operation to add and commit resources to a CVS repository.
      */
-    private static class AddAndCommitOperation extends CVSOperation {
+    public static class AddAndCommitOperation extends CVSOperation {
         
         private final IResource[] fAllResources;
         private final String fComment;
@@ -66,41 +66,43 @@ public class CommitWizard extends ResizableWizard {
         private IResource[] fNewResources;
 		private IJobChangeListener jobListener;
         
-        private AddAndCommitOperation(IWorkbenchPart part, IResource[] allResources, String comment) {
+        public AddAndCommitOperation(IWorkbenchPart part, IResource[] allResources, IResource[] newResources, String comment) {
             super(part);
-            fNewResources = new IResource [0];
+            fAllResources = allResources;
+            fNewResources = newResources;
             fModesForExtensionsForOneTime = Collections.EMPTY_MAP;
             fModesForNamesForOneTime= Collections.EMPTY_MAP;
-            fAllResources = allResources;
             fComment = comment;
         }
         
         public void setModesForExtensionsForOneTime(Map modes) {
-            fModesForExtensionsForOneTime= modes;
+        	if (modes != null)
+        		fModesForExtensionsForOneTime= modes;
         }
         
         public void setModesForNamesForOneTime(Map modes) {
-            fModesForNamesForOneTime= modes;
-        }
-        
-        public void setNewResources(IResource [] newResources) {
-            this.fNewResources= newResources;
+        	if (modes != null)
+        		fModesForNamesForOneTime= modes;
         }
         
         protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
             try {
-            	monitor.beginTask(null, 100);
-                final AddOperation op= new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fNewResources));
-                op.addModesForExtensions(fModesForExtensionsForOneTime);
-                op.addModesForNames(fModesForNamesForOneTime);
-                op.run(Policy.subMonitorFor(monitor, 20));
-                CommitOperation commitOperation = new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment) {
-                	public boolean consultModelsForMappings() {
-                		// Do not consult models from the commit wizard
-                		return false;
-                	}
-                };
-				commitOperation.run(Policy.subMonitorFor(monitor, 80));
+            	monitor.beginTask(null, (fNewResources.length + fAllResources.length) * 100);
+            	if (fNewResources.length > 0) {
+	                final AddOperation op= new AddOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fNewResources));
+	                op.addModesForExtensions(fModesForExtensionsForOneTime);
+	                op.addModesForNames(fModesForNamesForOneTime);
+	                op.run(Policy.subMonitorFor(monitor, fNewResources.length * 100));
+            	}
+                if (fAllResources.length > 0) {
+	                CommitOperation commitOperation = new CommitOperation(getPart(), RepositoryProviderOperation.asResourceMappers(fAllResources), new Command.LocalOption[0], fComment) {
+	                	public boolean consultModelsForMappings() {
+	                		// Do not consult models from the commit wizard
+	                		return false;
+	                	}
+	                };
+					commitOperation.run(Policy.subMonitorFor(monitor, fAllResources.length * 100));
+                }
             } catch (InvocationTargetException e) {
                 throw CVSException.wrapException(e);
             } finally {
@@ -228,7 +230,7 @@ public class CommitWizard extends ResizableWizard {
         
         final SyncInfoSet infos= fCommitPage.getInfosToCommit();
         if (infos.size() == 0)
-            return true;
+        	return true;
         
         final SyncInfoSet unadded;
         try {
@@ -237,7 +239,14 @@ public class CommitWizard extends ResizableWizard {
             return false;
         }
         
-        final AddAndCommitOperation operation= new AddAndCommitOperation(getPart(), infos.getResources(), comment);
+        final SyncInfoSet files;
+        try {
+            files = getFiles(infos);
+        } catch (CVSException e1) {
+            return false;
+        }
+        
+        final AddAndCommitOperation operation= new AddAndCommitOperation(getPart(), files.getResources(), unadded.getResources(), comment);
         if (jobListener != null)
         	operation.setJobChangeListener(jobListener);
         
@@ -255,10 +264,6 @@ public class CommitWizard extends ResizableWizard {
             fFileTypePage.getModesForNames(namesToSave, namesNotToSave);
             CommitWizardFileTypePage.saveNameMappings(namesToSave);
             operation.setModesForNamesForOneTime(namesNotToSave);
-        }
-        
-        if (unadded.size() > 0) {
-            operation.setNewResources(unadded.getResources());
         }
         
         try {
@@ -372,11 +377,22 @@ public class CommitWizard extends ResizableWizard {
         final SyncInfoSet unadded= new SyncInfoSet();        
         for (final Iterator iter = infos.iterator(); iter.hasNext();) {
             final SyncInfo info = (SyncInfo) iter.next();
-            final IResource file= info.getLocal();
-            if (!isAdded(file))
+            final IResource resource= info.getLocal();
+            if (!isAdded(resource))
                 unadded.add(info);
         }
         return unadded;
+    }
+    
+    private static SyncInfoSet getFiles(SyncInfoSet infos) throws CVSException {
+        final SyncInfoSet files= new SyncInfoSet();        
+        for (final Iterator iter = infos.iterator(); iter.hasNext();) {
+            final SyncInfo info = (SyncInfo) iter.next();
+            final IResource resource= info.getLocal();
+            if (resource.getType() == IResource.FILE)
+            	files.add(info);
+        }
+        return files;
     }
     
     private static boolean isAdded(IResource resource) throws CVSException {
