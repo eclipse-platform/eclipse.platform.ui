@@ -11,8 +11,9 @@
 package org.eclipse.ltk.ui.refactoring.history;
 
 import com.ibm.icu.text.DateFormat;
-import java.text.Format;
 import com.ibm.icu.text.SimpleDateFormat;
+
+import java.text.Format;
 import java.util.Date;
 import java.util.Locale;
 
@@ -232,15 +233,15 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 							case RefactoringHistoryNode.THIS_MONTH:
 								pattern= fControlConfiguration.getThisMonthPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, locale);
 								break;
 							case RefactoringHistoryNode.LAST_MONTH:
 								pattern= fControlConfiguration.getLastMonthPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format, locale);
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, locale);
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
