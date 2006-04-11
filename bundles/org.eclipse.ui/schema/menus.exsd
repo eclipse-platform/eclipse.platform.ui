@@ -178,13 +178,14 @@ A group can contain menus, items and other groups.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWidget&lt;/code&gt;.  It is possible to use the &lt;code&gt;class&lt;/code&gt; element instead.
+                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt;. Clients may choose to use the default implementation; &lt;code&gt;AbstractWorkbencTrimWidget&lt;/code&gt; if they choose. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
+
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.IWorkbenchWidget"/>
                </appInfo>
             </annotation>
          </attribute>
