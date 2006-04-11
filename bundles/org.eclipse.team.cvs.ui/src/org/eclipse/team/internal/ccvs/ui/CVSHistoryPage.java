@@ -25,6 +25,8 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
@@ -65,6 +67,7 @@ import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -370,7 +373,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(null, 100);
 				try {
-					if(confirmOverwrite()) {
+					if(confirmOverwrite() && validateChange()) {
 						IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
 						InputStream in = currentStorage.getContents();
 						((IFile)file.getIResource()).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
@@ -388,7 +391,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(((CVSFileRevision) currentSelection).getCVSRemoteFile());
 				try {
-					if(confirmOverwrite()) {
+					if(confirmOverwrite() && validateChange()) {
 						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
 						
 						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file.getIResource()}, revisionTag)) {
@@ -820,6 +823,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 		return true;
+	}
+	
+	private boolean validateChange(){
+		if (file!=null && file.getIResource().exists()) {
+			IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
+			factory.change((IFile) file.getIResource());
+			return IDE.promptToConfirm(getHistoryPageSite().getShell(), CVSUIMessages.CVSHistoryPage_ValidateChangeTitle, NLS.bind(CVSUIMessages.CVSHistoryPage_ValidateChangeMessage, new String[]{file.getName()}), factory.getDelta(), new String[0], true /* syncExec */);
+		}
+		
+		return false;
 	}
 
 	/*
