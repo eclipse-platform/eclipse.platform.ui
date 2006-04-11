@@ -874,13 +874,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	private ICVSFile getCVSFile(Object object) {
-		if (object instanceof IFile){
+		if (object instanceof IFile)
 			return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
-		} else if (object instanceof ICVSRemoteFile){
-			return (ICVSRemoteFile) object;
-		} else if (object instanceof CVSFileRevision){
-			return ((CVSFileRevision) object).getCVSRemoteFile();
-		}
+		
+		//Adapt object to ICVSFile
+		Object cvsFileAdapter = Utils.getAdapter(object, ICVSFile.class);
+		if (cvsFileAdapter != null)
+			return (ICVSFile) cvsFileAdapter;
 		
 		return null;
 	}

@@ -655,6 +655,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			if (file != null) {
 				itemDropped(file, false); /* don't fetch if already cached */
 			}
+			
+			//see if it adapts to an IHistoryPageSource
+			Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
+			if (pageSource != null)
+				itemDropped(input, false);
 		}
 	}
 

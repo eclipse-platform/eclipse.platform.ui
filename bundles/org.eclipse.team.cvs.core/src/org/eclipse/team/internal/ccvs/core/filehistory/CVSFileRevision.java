@@ -14,17 +14,15 @@ package org.eclipse.team.internal.ccvs.core.filehistory;
 import java.net.URI;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.core.history.provider.FileRevision;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
-public class CVSFileRevision extends FileRevision {
+public class CVSFileRevision extends FileRevision implements IAdaptable {
 
 	protected ILogEntry entry;
 
@@ -105,5 +103,13 @@ public class CVSFileRevision extends FileRevision {
 	
 	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
 		return new CVSFileRevision(getCVSRemoteFile().getLogEntry(monitor));
+	}
+
+	public Object getAdapter(Class adapter) {
+		
+		if (adapter == ICVSFile.class)
+			return getCVSRemoteFile();
+		
+		return null;
 	}
 }
