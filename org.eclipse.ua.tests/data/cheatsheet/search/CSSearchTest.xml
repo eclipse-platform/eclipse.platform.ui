@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="CSTitle_AhB4U8 Search test">
+
+<intro> 
+	<description>CSIntro_AhB4U8 This cheat sheet is used to test search.</description>
+</intro>
+	<item
+		title="Step 1 CSItem_AhB4U8">
+		<action
+			pluginId="org.eclipse.ua.tests"
+			class="org.eclipse.ui.examples.cheatsheets.pattern.actions.LaunchPatternSelectionDialogAction"/>
+		<description>
+            CSItemDesc_AhB4U8
+		</description>
+		<onCompletion>
+            CSItemCompletion_AhB4U8
+		</onCompletion>
+		<subitem
+			label="SubItem1_AhB4U8"
+			skip="true"/>
+		<subitem
+			label="SubItem2_AhB4U8"
+			skip="false"/>
+    </item>
+
+	<item
+		title="Conditional subitems">
+		<description>
+              Test for conditional subitem search. This step will not execute.
+		</description>
+	<conditional-subitem condition="${pattern}">
+		<subitem
+			when="Factory"
+			label="First ConditionalSubItem_AhB4U8"
+			skip="true"
+		/>
+		<subitem
+			when="Singleton"
+			label="Second ConditionalSubItem_AhB4U8"
+			skip="false"/>
+	</conditional-subitem>
+	</item>
+
+</cheatsheet>

@@ -3,23 +3,22 @@ package org.eclipse.ui.internal.cheatsheets;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IConfigurationElement; 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.search.XMLSearchParticipant;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.xml.sax.Attributes;
 
 public class CheatsheetSearchParticipant extends XMLSearchParticipant {
-	private static final String EL_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
-
-	private static final String EL_ITEM = "item"; //$NON-NLS-1$
-
 	private static final String INTRO_DESC = "cheatsheet/intro/description"; //$NON-NLS-1$
 
 	private static final String ITEM_DESC = "cheatsheet/item/description"; //$NON-NLS-1$
-
-	private static final String ATT_TITLE = "title"; //$NON-NLS-1$
+	
+	private static final String CCS_DESC = "compositeCheatsheet/taskGroup/intro"; //$NON-NLS-1$
 
 	/**
 	 * Returns all the documents that this participant knows about. This method
@@ -32,12 +31,13 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 		HashSet set = new HashSet();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
-						"org.eclipse.ui.cheatsheets.cheatSheetContent"); //$NON-NLS-1$
+						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.' 
+						+ CheatSheetRegistryReader.CHEAT_SHEET_CONTENT); 
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("cheatsheet")) //$NON-NLS-1$
+			if (!element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET))
 				continue;
-			String fileName = element.getAttribute("contentFile"); //$NON-NLS-1$
+			String fileName = element.getAttribute(CheatSheetRegistryReader.ATT_CONTENTFILE);
 			String id = element.getAttribute("id"); //$NON-NLS-1$
 			String pluginId = element.getContributor().getName();
 			fileName = resolveVariables(pluginId, fileName, locale);
@@ -49,23 +49,34 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 	public Set getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
-						"org.eclipse.ui.cheatsheets.cheatSheetContent"); //$NON-NLS-1$
+						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.' 
+						+ CheatSheetRegistryReader.CHEAT_SHEET_CONTENT);
 		HashSet set = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
-			if (!element.getName().equals("cheatsheet")) //$NON-NLS-1$
-				continue;
-			set.add(element.getContributor().getName());
+			if (element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET)) { 
+			    set.add(element.getContributor().getName());
+			}
 		}
 		return set;
 	}
 
 	protected void handleStartElement(String name, Attributes attributes,
 			IParsedXMLContent data) {
-		if (name.equals(EL_CHEATSHEET))
-			data.setTitle(attributes.getValue(ATT_TITLE));
-		else if (name.equals(EL_ITEM))
-			data.addText(attributes.getValue(ATT_TITLE));
+		if (name.equals(IParserTags.CHEATSHEET)) {
+			data.setTitle(attributes.getValue(IParserTags.TITLE));
+			data.addText(attributes.getValue(IParserTags.TITLE));
+		} else if (name.equals(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET)) {
+			data.addText(attributes.getValue(ICompositeCheatsheetTags.NAME));
+			data.setTitle(attributes.getValue(ICompositeCheatsheetTags.NAME));
+		} else if (name.equals(IParserTags.ITEM)) {
+			data.addText(attributes.getValue(IParserTags.TITLE));
+	    } else if (name.equals(IParserTags.SUBITEM)) {
+		    data.addText(attributes.getValue(IParserTags.LABEL));
+	    } else if (name.equals(ICompositeCheatsheetTags.TASK ) 
+	    		|| name.equals(ICompositeCheatsheetTags.TASK_GROUP)) {
+		    data.addText(attributes.getValue(ICompositeCheatsheetTags.NAME));	
+	    }
 	}
 
 	protected void handleEndElement(String name, IParsedXMLContent data) {
@@ -73,12 +84,19 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 
 	protected void handleText(String text, IParsedXMLContent data) {
 		String stackPath = getElementStackPath();
-		if (stackPath.equalsIgnoreCase(INTRO_DESC)) {
+		String top = getTopElement();
+		if (IParserTags.INTRO.equals(top)) {
+			data.addText(text);
+			if (stackPath.equalsIgnoreCase(CCS_DESC)) {
+				data.addToSummary(text);
+			}
+		} else if (IParserTags.ON_COMPLETION.equals(top)) {
+			data.addText(text);
+		} else if (stackPath.equalsIgnoreCase(INTRO_DESC)) {
 			data.addText(text);
 			data.addToSummary(text);
 			return;
-		}
-		if (stackPath.equalsIgnoreCase(ITEM_DESC)) {
+		} else if (stackPath.equalsIgnoreCase(ITEM_DESC)) {
 			data.addText(text);
 			return;
 		}

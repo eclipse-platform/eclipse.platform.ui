@@ -114,6 +114,16 @@
             class="org.eclipse.ua.tests.cheatsheet.util.TestTaskEditor"
             icon="icons/sample.gif"
             id="ua.junit"/>
+      <cheatsheet
+            composite="false"
+            contentFile="data/cheatsheet/search/CSSearchTest.xml"
+            id="org.eclipse.ua.tests.cheatsheet.searchTest"
+            name="Test cheat sheet search"/>
+      <cheatsheet
+            composite="true"
+            contentFile="data/cheatsheet/search/CompositeSearchTest.xml"
+            id="org.eclipse.ua.tests.composite.searchTest"
+            name="Composite cheat sheet search test"/>
    </extension>
 
    <!-- 

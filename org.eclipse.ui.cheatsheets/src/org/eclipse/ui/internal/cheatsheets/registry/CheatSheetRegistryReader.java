@@ -138,15 +138,16 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	private final static String ATT_ITEM_ATTRIBUTE = "itemAttribute"; //$NON-NLS-1$
 	private static CheatSheetRegistryReader instance;
 	private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
-	protected final static String TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
+	public final static String TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	protected final static String TAG_ITEM_EXTENSION = "itemExtension"; //$NON-NLS-1$
 	protected final static String TAG_TASK_EDITOR = "taskEditor"; //$NON-NLS-1$
 	protected final static String TAG_TASK_EXPLORER = "taskExplorer"; //$NON-NLS-1$
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = Messages.CHEAT_SHEET_OTHER_CATEGORY;
-
-	/**
+    public final static String CHEAT_SHEET_CONTENT = "cheatSheetContent"; //$NON-NLS-1$
+	
+    /**
 	 * Returns a list of cheatsheets, project and not.
 	 *
 	 * The return value for this method is cached since computing its value
@@ -166,7 +167,6 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	protected AdaptableList cheatsheets;
 	private ArrayList deferCategories = null;
 	private ArrayList deferCheatSheets = null;
-	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
 	protected Map taskExplorers = new HashMap();
 	protected Map taskEditors = new HashMap();
@@ -542,7 +542,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 
 		if (cheatsheets == null) {
 			cheatsheets = createEmptyCheatSheetCollection();
-			readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginPoint);
+			readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, CHEAT_SHEET_CONTENT);
 		}
 
 		finishCategories();
@@ -663,7 +663,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] cheatSheetDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginPoint);
+		IExtensionDelta[] cheatSheetDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, CHEAT_SHEET_CONTENT);
 		if (cheatSheetDeltas.length > 0) {
 			// reset the list of cheat sheets, it will be build on demand
 			cheatsheets = null;

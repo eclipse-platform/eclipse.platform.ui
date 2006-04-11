@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet name="CompositeName_AhB4U8 Search test">
+    <taskGroup kind="set" name= "TaskGroup_AhB4U8">
+            <intro>Intro text TaskGroupIntro_AhB4U8</intro>
+            <onCompletion>
+            Completion text text TaskGroupCompletion_AhB4U8
+            </onCompletion>
+        <task kind = "ua.junit" name="TaskName_AhB4U8" id = "TaskId_AhB4U8" skip = "true"> 
+            <intro>Intro text TaskIntro_AhB4U8</intro>
+            <onCompletion>
+            Completion text text TaskCompletion_AhB4U8
+            </onCompletion>
+        </task>
+    </taskGroup>
+</compositeCheatsheet>

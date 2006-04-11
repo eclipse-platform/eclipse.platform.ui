@@ -194,6 +194,10 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	public String getId() {
 		return participantId + "/" + id; //$NON-NLS-1$
 	}
+	
+	public String getRawId() {
+		return id; 
+	}
 
 	public String getParticipantId() {
 		return participantId;
