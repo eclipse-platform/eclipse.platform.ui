@@ -110,8 +110,28 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 */
 	public IStatus merge(IDiff diff, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
 		Policy.checkCanceled(monitor);
-		if (getDiffTree().getResource(diff).getType() != IResource.FILE)
+		IResource resource = getDiffTree().getResource(diff);
+		if (resource.getType() != IResource.FILE) {
+			if (diff instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) diff;
+				if ((ignoreLocalChanges || getMergeType() == TWO_WAY)
+						&& resource.getType() == IResource.FOLDER
+						&& twd.getKind() == IDiff.ADD 
+						&& twd.getDirection() == IThreeWayDiff.OUTGOING
+						&& ((IFolder)resource).members().length == 0) {
+					// Delete the local folder addition
+					((IFolder)resource).delete(false, monitor);
+				} else if (resource.getType() == IResource.FOLDER
+						&& !resource.exists()
+						&& twd.getKind() == IDiff.ADD 
+						&& twd.getDirection() == IThreeWayDiff.INCOMING) {
+					ensureParentsExist(resource, monitor);
+					((IFolder)resource).create(false, true, monitor);
+					makeInSync(diff, monitor);
+				}
+			}
 			return Status.OK_STATUS;
+		}
     	if (diff instanceof IThreeWayDiff && !ignoreLocalChanges && getMergeType() == THREE_WAY) {
 			IThreeWayDiff twDelta = (IThreeWayDiff) diff;
         	int direction = twDelta.getDirection();
@@ -307,9 +327,10 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * {@link #performReplace(IDiff, IProgressMonitor)} after the local has been
 	 * changed to match the remote. Subclasses may override
 	 * {@link #performReplace(IDiff, IProgressMonitor)} or this method in order
-	 * to properly reconcile the synchronization state. This meythod is also
+	 * to properly reconcile the synchronization state. This method is also
 	 * invoked from {@link #merge(IDiff, boolean, IProgressMonitor)} if deletion
-	 * conflicts are encountered.
+	 * conflicts are encountered. It can also be invoked from that same method if
+	 * a folder is created due to an incoming folder addition.
 	 * 
 	 * @param diff
 	 *            the diff whose local is now in-sync

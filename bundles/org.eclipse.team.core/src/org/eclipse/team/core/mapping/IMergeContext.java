@@ -147,20 +147,27 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * that have incoming folder deletions to be removed once all the folder's
 	 * children have been removed using merge.
 	 * <p>
+	 * There are two special cases where merge is meaningful for folders. First,
+	 * a merge on a local added empty folder with force set should delete the
+	 * folder. However, the folder should not be deleted if it has any local
+	 * children unless merge is called for those resources first and they end up
+	 * being deleted as a result. Second, a merge on an incoming folder addition
+	 * should create the empty folder locally.
+	 * <p>
 	 * It is not expected that clients of this API will be capable of dealing
 	 * with namespace conflicts. Implementors should ensure that any namespace
 	 * conflicts are dealt with before the merger is invoked.
 	 * <p>
-	 * The deltas provided to this method should be those obtained from the tree 
-	 * ({@link ISynchronizationContext#getDiffTree()})
+	 * The deltas provided to this method should be those obtained from the tree ({@link ISynchronizationContext#getDiffTree()})
 	 * of this context. Any resource changes triggered by this merge will be
 	 * reported through the resource delta mechanism and the change notification
 	 * mechanisms of the delta tree associated with this context.
 	 * <p>
-	 * For two-way merging, as indicated by either the {@link ISynchronizationContext#getType()}
-	 * or {@link #getMergeType()} methods, clients can either accept changes using the
-	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method or reject
-	 * them using {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
+	 * For two-way merging, as indicated by either the
+	 * {@link ISynchronizationContext#getType()} or {@link #getMergeType()}
+	 * methods, clients can either accept changes using the
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method or reject them
+	 * using {@link #markAsMerged(IDiff, boolean, IProgressMonitor) }.
 	 * Three-way changes are a bit more complicated. The following list
 	 * summarizes how particular remote file changes can be handled. The delta
 	 * kind and flags mentioned in the descriptions are obtained the remote
@@ -168,41 +175,41 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * are indicated by the three-way delta itself.
 	 * <ul>
 	 * 
-	 * <li> When the delta kind is {@link IDiff#ADD} and the delta is also
-	 * a move (i.e. the {@link ITwoWayDiff#MOVE_FROM} is set). The merge can
-	 * either use the {@link #merge(IDiff[], boolean, IProgressMonitor) }
-	 * method to accept the rename or perform an
+	 * <li> When the delta kind is {@link IDiff#ADD} and the delta is also a
+	 * move (i.e. the {@link ITwoWayDiff#MOVE_FROM} is set). The merge can
+	 * either use the {@link #merge(IDiff[], boolean, IProgressMonitor) } method
+	 * to accept the rename or perform an
 	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link ITwoWayDiff#getFromPath()} and
-	 * the destination is the path of the delta ({@link IDiff#getPath()}).
-	 * This later approach is helpful in the case where the local file and
-	 * remote file both contain content changes (i.e. the file can be moved by
-	 * the model and then the contents can be merged by the model). </li>
-	 * 
-	 * <li> When the delta kind is {@link IDiff#REMOVE} and the delta is
-	 * also a move (i.e. the {@link ITwoWayDiff#MOVE_TO} is set). The merge can
-	 * either use the {@link #merge(IDiff[], boolean, IProgressMonitor) }
-	 * method to accept the rename or perform an
-	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
-	 * source file is obtained using {@link IDiff#getPath()} and the
-	 * destination is obtained from {@link ITwoWayDiff#getToPath()}. This
+	 * source file is obtained using {@link ITwoWayDiff#getFromPath()} and the
+	 * destination is the path of the delta ({@link IDiff#getPath()}). This
 	 * later approach is helpful in the case where the local file and remote
 	 * file both contain content changes (i.e. the file can be moved by the
 	 * model and then the contents can be merged by the model). </li>
 	 * 
-	 * <li> When the delta kind is {@link IDiff#ADD} and it is not part of
-	 * a move, the merger must use the
-	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to accept
-	 * this change. If there is a conflicting addition, the force flag can be
-	 * set to override the local change. If the model wishes to keep the local
-	 * changes, they can overwrite the file after merging it. Models should
-	 * consult the flags to see if the remote change is a rename ({@link ITwoWayDiff#MOVE_FROM}).
+	 * <li> When the delta kind is {@link IDiff#REMOVE} and the delta is also a
+	 * move (i.e. the {@link ITwoWayDiff#MOVE_TO} is set). The merge can either
+	 * use the {@link #merge(IDiff[], boolean, IProgressMonitor) } method to
+	 * accept the rename or perform an
+	 * {@link IFile#move(IPath, boolean, boolean, IProgressMonitor) } where the
+	 * source file is obtained using {@link IDiff#getPath()} and the destination
+	 * is obtained from {@link ITwoWayDiff#getToPath()}. This later approach is
+	 * helpful in the case where the local file and remote file both contain
+	 * content changes (i.e. the file can be moved by the model and then the
+	 * contents can be merged by the model). </li>
+	 * 
+	 * <li> When the delta kind is {@link IDiff#ADD} and it is not part of a
+	 * move, the merger must use the
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to accept this
+	 * change. If there is a conflicting addition, the force flag can be set to
+	 * override the local change. If the model wishes to keep the local changes,
+	 * they can overwrite the file after merging it. Models should consult the
+	 * flags to see if the remote change is a rename ({@link ITwoWayDiff#MOVE_FROM}).
 	 * </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiff#REMOVE} and it is not part
-	 * of a move, the merger can use the
-	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method but could
-	 * also perform the delete manually using any of the {@link IFile} delete
+	 * <li>When the delta kind is {@link IDiff#REMOVE} and it is not part of a
+	 * move, the merger can use the
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method but could also
+	 * perform the delete manually using any of the {@link IFile} delete
 	 * methods. In the case where there are local changes to the file being
 	 * deleted, the model may either choose to merge using the force flag (thus
 	 * removing the file and the local changes) or call
@@ -211,20 +218,19 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * 
 	 * <li>When the delta kind is {@link IDiff#CHANGE} and there is no
 	 * conflict, the model is advised to use the
-	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to merge
-	 * these changes as this is the most efficient means to do so. However, the
-	 * model can choose to perform the merge themselves and then invoke
+	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to merge these
+	 * changes as this is the most efficient means to do so. However, the model
+	 * can choose to perform the merge themselves and then invoke
 	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>true</code> but this will be
 	 * less efficient. </li>
 	 * 
-	 * <li>When the delta kind is {@link IDiff#CHANGE} and there is a
-	 * conflict, the model can use the
-	 * {@link #merge(IDiff[], boolean, IProgressMonitor) } method to merge
-	 * these changes. If the force flag is not set, an auto-merge is attempted
-	 * using an appropriate {@link IStorageMerger}. If the force flag is set,
-	 * the local changes are discarded. The model can choose to attempt the
-	 * merge themselves and, if it is successful, invoke
+	 * <li>When the delta kind is {@link IDiff#CHANGE} and there is a conflict,
+	 * the model can use the {@link #merge(IDiff[], boolean, IProgressMonitor) }
+	 * method to merge these changes. If the force flag is not set, an
+	 * auto-merge is attempted using an appropriate {@link IStorageMerger}. If
+	 * the force flag is set, the local changes are discarded. The model can
+	 * choose to attempt the merge themselves and, if it is successful, invoke
 	 * {@link #markAsMerged(IDiff, boolean, IProgressMonitor) } with the
 	 * <code>inSyncHint</code> set to <code>false</code> which will make the
 	 * file an outgoing change. </li>
@@ -235,13 +241,17 @@ public interface IMergeContext extends ISynchronizationContext {
 	 * @see IDiffTree#addDiffChangeListener(IDiffChangeListener)
 	 * @see org.eclipse.core.resources.IWorkspace#addResourceChangeListener(IResourceChangeListener)
 	 * 
-	 * @param diff the difference to be merged
-	 * @param ignoreLocalChanges ignore any local changes when performing the merge.
-	 * @param monitor a progress monitor
+	 * @param diff
+	 *            the difference to be merged
+	 * @param ignoreLocalChanges
+	 *            ignore any local changes when performing the merge.
+	 * @param monitor
+	 *            a progress monitor
 	 * @return a status indicating success or failure. A code of
 	 *         <code>MergeStatus.CONFLICTS</code> indicates that the file
 	 *         contain non-mergable conflicts and must be merged manually.
-	 * @throws CoreException if an error occurs
+	 * @throws CoreException
+	 *             if an error occurs
 	 */
 	public IStatus merge(IDiff diff, boolean ignoreLocalChanges, IProgressMonitor monitor)
 			throws CoreException;
