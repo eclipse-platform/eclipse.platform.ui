@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 132427 - [Markers] TaskPropertiesDialog problems
  *******************************************************************************/
 
 package org.eclipse.ui.views.tasklist;
@@ -26,12 +27,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +52,8 @@ import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
  */
 public class TaskPropertiesDialog extends Dialog {
 
+	private static final String DIALOG_SETTINGS_SECTION = "TaskPropertiesDialogSettings"; //$NON-NLS-1$
+	
     /**
      * The task or problem being shown, or <code>null</code> for a new task.
      */
@@ -121,6 +124,7 @@ public class TaskPropertiesDialog extends Dialog {
      */
     public TaskPropertiesDialog(Shell parentShell) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**
@@ -206,40 +210,56 @@ public class TaskPropertiesDialog extends Dialog {
      * Method declared on Dialog.
      */
     protected Control createDialogArea(Composite parent) {
-        Composite composite = (Composite) super.createDialogArea(parent);
+        Composite comp = (Composite) super.createDialogArea(parent);
+        Composite composite = new Composite(comp, SWT.NULL);
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+		composite.setLayout(layout);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        composite.setLayoutData(gridData);
+        
         initializeDialogUnits(composite);
         createDescriptionArea(composite);
         if (marker != null) {
+            createSeperator(composite);
 			createCreationTimeArea(composite);
 		}
+        createSeperator(composite);
         if (isTask()) {
             createPriorityAndStatusArea(composite);
         } else {
             createSeverityArea(composite);
         }
+        createSeperator(composite);
         createResourceArea(composite);
         updateDialogFromMarker();
+        
+        Dialog.applyDialogFont(composite);
+        
         return composite;
     }
 
+    /**
+     * Creates a seperator.
+     */
+    private void createSeperator(Composite parent) {
+		Label seperator = new Label(parent, SWT.NULL);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalSpan = 2;
+		seperator.setLayoutData(gridData);
+	}
+    
     /**
      * Method createCreationTimeArea.
      * 
      * @param parent the parent
      */
     private void createCreationTimeArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        Label label = new Label(composite, SWT.NONE);
+        Label label = new Label(parent, SWT.NONE);
         label.setText(TaskListMessages.TaskProp_creationTime);
-        label.setFont(font);
 
-        creationTime = new Label(composite, SWT.NONE);
-        creationTime.setFont(font);
+        creationTime = new Label(parent, SWT.NONE);
     }
 
     /**
@@ -259,43 +279,32 @@ public class TaskPropertiesDialog extends Dialog {
      * Creates the area for the Description field.
      */
     private void createDescriptionArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-        
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        composite.setLayoutData(gridData);
-        
-        
-        Label label = new Label(composite, SWT.NONE);
+        Label label = new Label(parent, SWT.NONE);
         label.setText(TaskListMessages.TaskProp_description);
-        label.setFont(font);
         int style = SWT.SINGLE | SWT.BORDER;
         if (!isEditable()) {
             style |= SWT.READ_ONLY;
         }
-        descriptionText = new Text(composite, style);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        descriptionText = new Text(parent, style);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.widthHint = convertHorizontalDLUsToPixels(400);
         descriptionText.setLayoutData(gridData);
-        descriptionText.setFont(font);
     }
 
     /**
      * Creates the area for the Priority and Status fields.
      */
     private void createPriorityAndStatusArea(Composite parent) {
-        Font font = parent.getFont();
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(TaskListMessages.TaskProp_priority); 
+        
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
+        layout.numColumns = 2;
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
         composite.setLayout(layout);
-
-        Label label = new Label(composite, SWT.NONE);
-        label.setText(TaskListMessages.TaskProp_priority); 
-        label.setFont(font);
+        
         priorityCombo = new Combo(composite, SWT.READ_ONLY);
         priorityCombo.setItems(new String[] {
                 TaskListMessages.TaskList_high,
@@ -311,14 +320,12 @@ public class TaskPropertiesDialog extends Dialog {
                 }
             }
         });
-        priorityCombo.setFont(font);
 
         completedCheckbox = new Button(composite, SWT.CHECK);
         completedCheckbox.setText(TaskListMessages.TaskProp_completed); 
         GridData gridData = new GridData();
         gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
         completedCheckbox.setLayoutData(gridData);
-        completedCheckbox.setFont(font);
 
         if (!isEditable()) {
             priorityCombo.setEnabled(false);
@@ -330,18 +337,11 @@ public class TaskPropertiesDialog extends Dialog {
      * Creates the area for the Severity field.
      */
     private void createSeverityArea(Composite parent) {
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        Label label = new Label(composite, SWT.NONE);
+        Label label = new Label(parent, SWT.NONE);
         label.setText(TaskListMessages.TaskProp_severity);
-        label.setFont(font);
+
         // workaround for bug 11078: Can't get a read-only combo box
-        severityLabel = new Label(composite, SWT.NONE);
-        severityLabel.setFont(font);
+        severityLabel = new Label(parent, SWT.NONE);
         /*
          severityCombo = new Combo(composite, SWT.READ_ONLY);
          severityCombo.setItems(new String[] {
@@ -366,41 +366,28 @@ public class TaskPropertiesDialog extends Dialog {
 			}
         }
 
-        Font font = parent.getFont();
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        composite.setLayoutData(gridData);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
-
-        Label resourceLabel = new Label(composite, SWT.NONE);
+        Label resourceLabel = new Label(parent, SWT.NONE);
         resourceLabel
                 .setText(TaskListMessages.TaskProp_onResource);
-        resourceLabel.setFont(font);
-        resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP
+        resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         resourceText.setLayoutData(gridData);
-        resourceText.setFont(font);
 
-        Label folderLabel = new Label(composite, SWT.NONE);
+        Label folderLabel = new Label(parent, SWT.NONE);
         folderLabel.setText(TaskListMessages.TaskProp_inFolder); 
-        folderLabel.setFont(font);
-        folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
+        
+        folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
                 | SWT.BORDER);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         folderText.setLayoutData(gridData);
-        folderText.setFont(font);
 
-        Label locationLabel = new Label(composite, SWT.NONE);
+        Label locationLabel = new Label(parent, SWT.NONE);
         locationLabel.setText(TaskListMessages.TaskProp_location);
-        locationLabel.setFont(font);
-        locationText = new Text(composite, SWT.SINGLE | SWT.WRAP
+        locationText = new Text(parent, SWT.SINGLE | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         locationText.setLayoutData(gridData);
-        locationText.setFont(font);
     }
 
     /**
@@ -562,9 +549,7 @@ public class TaskPropertiesDialog extends Dialog {
                         /* (non-Javadoc)
                          * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
                          */
-                        public void run(IProgressMonitor monitor)
-                                throws InvocationTargetException,
-                                InterruptedException {
+                        public void run(IProgressMonitor monitor) {
                             try {
                                 IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
                                     /* (non-Javadoc)
@@ -663,4 +648,18 @@ public class TaskPropertiesDialog extends Dialog {
         }
         return attribs;
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.2
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+        IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+        if (section == null) {
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+        } 
+        return section;
+	}
 }
