@@ -10,11 +10,22 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -70,5 +81,25 @@ public class ModelUpdateOperation extends AbstractModelMergeOperation {
 	 */
 	protected SynchronizationContext createMergeContext() {
 		return WorkspaceSubscriberContext.createContext(getScopeManager(), getMergeType());
+	}
+	
+	protected void executeMerge(IProgressMonitor monitor) throws CoreException {
+		super.executeMerge(monitor);
+		// Prune any empty folders within the traversals
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+			CompoundResourceTraversal ct = new CompoundResourceTraversal();
+			ct.addTraversals(getContext().getScope().getTraversals());
+			IResource[] roots = ct.getRoots();
+			List cvsResources = new ArrayList();
+			for (int i = 0; i < roots.length; i++) {
+				IResource resource = roots[i];
+				if (resource.getProject().isAccessible()) {
+					cvsResources.add(CVSWorkspaceRoot.getCVSResourceFor(roots[i]));
+				}
+			}
+			new PruneFolderVisitor().visit(
+				CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()),
+				(ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]));
+		}
 	}
 }
