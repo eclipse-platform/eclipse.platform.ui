@@ -223,8 +223,13 @@ public class MarkerAdapter {
 						.subTask(MarkerMessages.MarkerView_searching_for_markers);
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor,
 						10);
-				newMarkers = MarkerList.compute(view.getEnabledFilters(),
-						subMonitor, true);
+				MarkerFilter[] filters = view.getEnabledFilters();
+				if (filters.length > 0)
+					newMarkers = MarkerList.compute(filters, subMonitor, true);
+				else
+					// Grab any filter as a disabled filter gives all of them
+					newMarkers = MarkerList.compute(new MarkerFilter[] { view
+							.getAllFilters()[0] }, subMonitor, true);
 
 				if (monitor.isCanceled())
 					return;
