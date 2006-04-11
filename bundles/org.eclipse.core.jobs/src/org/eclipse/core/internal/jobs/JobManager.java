@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.text.*;
+//don't use ICU because this is for debugging only
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import java.text.FieldPosition;
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
