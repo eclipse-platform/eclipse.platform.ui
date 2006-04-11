@@ -12,20 +12,24 @@ package org.eclipse.update.internal.ui.servlets;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.search.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.search.SiteSearchCategory;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.servlets.ServletsUtil;
+import org.eclipse.update.internal.ui.wizards.InstallWizard;
+import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.search.BackLevelFilter;
+import org.eclipse.update.search.EnvironmentFilter;
+import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.UpdateSearchScope;
+import org.eclipse.update.search.VersionedIdentifiersFilter;
 
 /**
  *
