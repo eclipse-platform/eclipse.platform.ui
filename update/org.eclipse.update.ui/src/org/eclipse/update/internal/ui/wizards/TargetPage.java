@@ -11,7 +11,8 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.*;

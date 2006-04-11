@@ -14,7 +14,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

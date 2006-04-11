@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.standalone;
+
 import java.net.*;
-import java.util.*;
+import java.util.HashMap;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;

@@ -13,8 +13,11 @@ package org.eclipse.update.internal.security;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;

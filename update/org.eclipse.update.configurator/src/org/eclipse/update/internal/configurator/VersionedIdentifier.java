@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class VersionedIdentifier {
 	private String identifier = ""; //$NON-NLS-1$

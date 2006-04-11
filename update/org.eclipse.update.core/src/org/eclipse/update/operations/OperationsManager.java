@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.operations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.configurator.*;

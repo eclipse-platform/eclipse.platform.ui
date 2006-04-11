@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;

@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.*;
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.*;

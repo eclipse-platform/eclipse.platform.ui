@@ -11,7 +11,7 @@
 package org.eclipse.update.search;
 
 import java.net.*;
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.update.internal.search.*;
 

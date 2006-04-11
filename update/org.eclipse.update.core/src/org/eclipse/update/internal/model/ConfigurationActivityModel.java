@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.model;
  
-import java.util.*;
+import java.util.Date;
 
 import org.eclipse.update.core.model.*;
 

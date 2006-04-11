@@ -12,7 +12,14 @@ package org.eclipse.update.core;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

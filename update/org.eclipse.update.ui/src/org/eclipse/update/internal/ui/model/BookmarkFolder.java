@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class BookmarkFolder extends NamedModelObject {
 

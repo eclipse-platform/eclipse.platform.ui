@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.ui.model;
 
 import java.net.*;
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

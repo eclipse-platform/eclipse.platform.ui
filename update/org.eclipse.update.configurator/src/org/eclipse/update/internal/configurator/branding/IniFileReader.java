@@ -12,8 +12,14 @@ package org.eclipse.update.internal.configurator.branding;
 
 import java.io.*;
 import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.text.MessageFormat; // Can't use ICU, possible launch problem?
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

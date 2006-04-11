@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.search;
 
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;

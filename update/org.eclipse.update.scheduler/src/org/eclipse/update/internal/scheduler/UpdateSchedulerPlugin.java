@@ -11,7 +11,8 @@
 package org.eclipse.update.internal.scheduler;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

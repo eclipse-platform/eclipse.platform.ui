@@ -12,7 +12,10 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.*;

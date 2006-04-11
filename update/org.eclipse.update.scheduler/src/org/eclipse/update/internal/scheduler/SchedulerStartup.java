@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.scheduler;
 
 import java.lang.reflect.Constructor;
-import java.util.Calendar;
+import com.ibm.icu.util.Calendar;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;

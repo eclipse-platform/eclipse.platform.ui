@@ -11,7 +11,7 @@
 package org.eclipse.update.configuration;
  
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.update.internal.core.*;
  

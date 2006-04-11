@@ -12,7 +12,9 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.StringTokenizer;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;

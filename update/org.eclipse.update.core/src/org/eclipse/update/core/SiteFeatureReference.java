@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.update.internal.core.*;
 

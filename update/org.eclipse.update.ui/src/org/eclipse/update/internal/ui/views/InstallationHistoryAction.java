@@ -11,9 +11,9 @@
 package org.eclipse.update.internal.ui.views;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
-
+import java.util.Date;
+import com.ibm.icu.text.DateFormat;
+import java.util.StringTokenizer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;

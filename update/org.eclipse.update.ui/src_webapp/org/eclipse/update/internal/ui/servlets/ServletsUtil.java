@@ -11,7 +11,6 @@
 package org.eclipse.update.internal.ui.servlets;
 
 import java.io.*;
-import java.util.*;
 
 import javax.servlet.http.*;
 

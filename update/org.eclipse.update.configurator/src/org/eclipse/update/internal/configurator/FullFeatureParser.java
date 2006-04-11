@@ -13,7 +13,7 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ResourceBundle;
 
 import javax.xml.parsers.*;
 

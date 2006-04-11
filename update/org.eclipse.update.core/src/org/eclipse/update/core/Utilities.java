@@ -11,8 +11,11 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.text.*;
-import java.util.*;
+import com.ibm.icu.text.DateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;

@@ -12,7 +12,9 @@ package org.eclipse.update.internal.ui.views;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;

@@ -12,7 +12,9 @@ package org.eclipse.update.core;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.*;
 
 import org.eclipse.update.core.model.*;

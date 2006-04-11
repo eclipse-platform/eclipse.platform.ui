@@ -13,7 +13,10 @@ package org.eclipse.update.core.model;
 
 
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;

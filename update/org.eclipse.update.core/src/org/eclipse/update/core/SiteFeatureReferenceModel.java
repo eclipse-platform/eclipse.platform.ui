@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Site Feature reference model object.

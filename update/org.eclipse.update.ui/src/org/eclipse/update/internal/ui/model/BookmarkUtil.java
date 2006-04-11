@@ -12,7 +12,10 @@ package org.eclipse.update.internal.ui.model;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;

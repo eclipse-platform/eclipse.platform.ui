@@ -12,9 +12,12 @@ package org.eclipse.update.internal.verifier;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.internal.provisional.verifier.*;

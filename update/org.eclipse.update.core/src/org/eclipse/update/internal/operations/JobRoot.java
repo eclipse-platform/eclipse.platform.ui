@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;

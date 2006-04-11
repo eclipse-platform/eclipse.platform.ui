@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;

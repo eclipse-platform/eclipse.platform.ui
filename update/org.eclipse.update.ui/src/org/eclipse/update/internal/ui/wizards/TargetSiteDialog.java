@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

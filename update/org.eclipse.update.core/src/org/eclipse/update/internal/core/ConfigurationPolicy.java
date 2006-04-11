@@ -11,7 +11,13 @@
 package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

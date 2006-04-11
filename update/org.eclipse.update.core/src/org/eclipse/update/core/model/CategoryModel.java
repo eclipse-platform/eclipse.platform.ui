@@ -11,7 +11,7 @@
 package org.eclipse.update.core.model;
 
 import java.net.*;
-import java.util.*;
+import java.util.Comparator;
 
 import org.eclipse.update.core.*;
 

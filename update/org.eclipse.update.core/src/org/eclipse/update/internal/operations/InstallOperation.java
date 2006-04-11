@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import java.util.*;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;

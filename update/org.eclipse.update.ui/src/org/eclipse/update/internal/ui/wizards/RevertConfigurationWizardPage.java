@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

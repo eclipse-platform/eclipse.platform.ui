@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import java.util.*;
+import java.util.Date;
 
 import org.eclipse.core.runtime.*;
 

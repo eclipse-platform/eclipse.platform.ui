@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.configurator.branding;
 
 import java.net.*;
-import java.util.*;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 

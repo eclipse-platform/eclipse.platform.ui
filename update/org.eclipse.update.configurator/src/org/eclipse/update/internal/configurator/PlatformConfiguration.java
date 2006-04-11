@@ -15,7 +15,12 @@ import java.lang.reflect.*;
 import java.net.*;
 //PAL nio optional
 //import java.nio.channels.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.xml.parsers.*;
 //PAL cdcFoundation

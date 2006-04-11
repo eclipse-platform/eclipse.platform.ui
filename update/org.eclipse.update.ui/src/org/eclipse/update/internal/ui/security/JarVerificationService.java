@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.security;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;

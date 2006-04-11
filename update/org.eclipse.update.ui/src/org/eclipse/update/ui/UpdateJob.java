@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.ui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -11,7 +11,9 @@
 package org.eclipse.update.internal.configurator;
 
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;

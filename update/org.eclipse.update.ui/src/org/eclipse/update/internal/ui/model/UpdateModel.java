@@ -12,7 +12,8 @@ package org.eclipse.update.internal.ui.model;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;

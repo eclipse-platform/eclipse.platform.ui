@@ -11,7 +11,9 @@
 package org.eclipse.update.internal.ui.parts;
 
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.text.*;
+import com.ibm.icu.text.DateFormat;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;

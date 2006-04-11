@@ -11,7 +11,8 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Properties;
 
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;

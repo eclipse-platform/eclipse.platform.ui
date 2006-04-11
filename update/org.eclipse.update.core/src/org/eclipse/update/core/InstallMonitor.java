@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.util.*;
+import java.util.Stack;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
