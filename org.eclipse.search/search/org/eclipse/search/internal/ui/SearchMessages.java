@@ -95,7 +95,6 @@ public final class SearchMessages extends NLS {
 	public static String SearchPage_fileNamePatterns_hint;
 	public static String SearchPage_caseSensitive;
 	public static String SearchPage_regularExpression;
-	public static String TextSearchEngine_scanning;
 	public static String TextSearchEngine_statusMessage;
 	public static String TextSearchPage_replace_querycreationproblem_message;
 	public static String TextSearchPage_replace_runproblem_message;

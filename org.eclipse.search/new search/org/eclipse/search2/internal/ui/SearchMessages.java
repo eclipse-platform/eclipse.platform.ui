@@ -87,7 +87,6 @@ public final class SearchMessages extends NLS {
     public static String FindInProjectActionDelegate_text;
     public static String FindInWorkingSetActionDelegate_text;
     public static String FindInFileActionDelegate_text;
-	public static String SearchHistorySelectionDialog_open_in_new;
 	public static String TextSearchQueryProviderRegistry_defaultProviderLabel;
 	public static String RetrieverAction_empty_selection;
 	public static String RetrieverAction_error_title;
