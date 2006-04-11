@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.plugins;
 
-import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 public class Policy {
 	private static String bundleName = "org.eclipse.core.internal.plugins.messages"; //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class Policy {
 		}
 		if (bindings == null)
 			return message;
-		return MessageFormat.format(message, bindings);
+		return NLS.bind(message, bindings);
 	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
