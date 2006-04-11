@@ -259,6 +259,7 @@ public class MarkerAdapter {
 
 			if (newMarkers.getSize() == 0) {
 				categories = new MarkerCategory[0];
+				lastMarkers = newMarkers;
 				monitor.done();
 				return;
 			}
