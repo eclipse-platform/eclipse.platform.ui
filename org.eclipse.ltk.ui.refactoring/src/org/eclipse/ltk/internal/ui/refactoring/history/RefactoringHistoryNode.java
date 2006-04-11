@@ -35,6 +35,9 @@ public abstract class RefactoringHistoryNode {
 	/** The month kind */
 	public static final int MONTH= 7;
 
+	/** The project kind */
+	public static final int PROJECT= 12;
+
 	/** The this month kind */
 	public static final int THIS_MONTH= 4;
 

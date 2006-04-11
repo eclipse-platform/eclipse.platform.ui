@@ -20,6 +20,14 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String AbstractRefactoringModelMerger_wizard_title;
 
+	public static String BrowseRefactoringHistoryControl_sort_date;
+
+	public static String BrowseRefactoringHistoryControl_sort_date_description;
+
+	public static String BrowseRefactoringHistoryControl_sort_project;
+
+	public static String BrowseRefactoringHistoryControl_sort_project_description;
+
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages";//$NON-NLS-1$
 
 	public static String ChangeExceptionHandler_abort;
@@ -103,6 +111,8 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryControl_comment_viewer_label;
 
 	public static String RefactoringHistoryControl_no_comment;
+
+	public static String RefactoringHistoryControl_no_selection;
 
 	public static String RefactoringHistoryControl_resolving_information;
 

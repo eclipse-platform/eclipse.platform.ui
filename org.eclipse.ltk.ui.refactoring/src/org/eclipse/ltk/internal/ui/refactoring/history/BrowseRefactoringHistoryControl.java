@@ -15,35 +15,50 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
- * Control which is capable of selecting elements of a refactoring history.
+ * Control which is capable of selecting elements of a refactoring history. The
+ * refactoring history can be sorted by project or by timestamps.
  * <p>
  * This control expects a control configuration with a checkable tree viewer.
  * </p>
  * 
  * @since 3.2
  */
-public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
+public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 
 	/** The empty descriptors constant */
-	protected static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
+	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
+
+	/** The toolbar sort group */
+	private static final String TOOLBAR_SORT_GROUP= "group.sort"; //$NON-NLS-1$
 
 	/** The deselect all button, or <code>null</code> */
 	private Button fDeselectAllButton= null;
@@ -51,16 +66,61 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	/** The select all button, or <code>null</code> */
 	private Button fSelectAllButton= null;
 
+	/** The sort projects action */
+	private final IAction fSortProjects= new Action(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project, IAction.AS_RADIO_BUTTON) {
+
+		public final void run() {
+			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
+			provider.setSortProjects(true);
+			fHistoryViewer.setSorter(fViewerSorter);
+			fHistoryViewer.refresh(false);
+			reconcileCheckState();
+			fSortProjects.setChecked(true);
+			fSortTimestamps.setChecked(false);
+		}
+	};
+
+	/** The sort time stamps action */
+	private final IAction fSortTimestamps= new Action(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date, IAction.AS_RADIO_BUTTON) {
+
+		public final void run() {
+			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
+			provider.setSortProjects(false);
+			fHistoryViewer.setSorter(null);
+			fHistoryViewer.refresh(false);
+			reconcileCheckState();
+			fSortTimestamps.setChecked(true);
+			fSortProjects.setChecked(false);
+		}
+	};
+
+	/** The toolbar manager, or <code>null</code> */
+	private ToolBarManager fToolBarManager= null;
+
+	/** The viewer sorter */
+	private final BrowseRefactoringHistoryViewerSorter fViewerSorter= new BrowseRefactoringHistoryViewerSorter();
+
 	/**
-	 * Creates a new select refactoring history control.
+	 * Creates a new browse refactoring history control.
 	 * 
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
-	public SelectRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
+	public BrowseRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
+
+		addDisposeListener(new DisposeListener() {
+
+			public final void widgetDisposed(final DisposeEvent event) {
+				if (fToolBarManager != null) {
+					fToolBarManager.removeAll();
+					fToolBarManager.dispose();
+					fToolBarManager= null;
+				}
+			}
+		});
 	}
 
 	/**
@@ -129,6 +189,7 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.FILL;
 		setLayoutData(data);
+		fSortProjects.run();
 	}
 
 	/**
@@ -136,10 +197,36 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
+		TreeViewer viewer= null;
 		if (fControlConfiguration.isCheckableViewer())
-			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+			viewer= new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		else
-			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+			viewer= new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		return viewer;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void createToolBar(final ViewForm parent) {
+		final ToolBarManager manager= getToolBarManager();
+		if (manager != null) {
+			manager.removeAll();
+			manager.add(new Separator(TOOLBAR_SORT_GROUP));
+			fSortProjects.setText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project);
+			fSortProjects.setToolTipText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project);
+			fSortProjects.setDescription(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project_description);
+			fSortProjects.setImageDescriptor(RefactoringPluginImages.DESC_ELCL_SORT_PROJECT);
+			fSortProjects.setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_SORT_PROJECT);
+			fSortTimestamps.setText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date);
+			fSortTimestamps.setToolTipText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date);
+			fSortTimestamps.setDescription(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date_description);
+			fSortTimestamps.setImageDescriptor(RefactoringPluginImages.DESC_ELCL_SORT_DATE);
+			fSortTimestamps.setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_SORT_DATE);
+			manager.appendToGroup(TOOLBAR_SORT_GROUP, fSortProjects);
+			manager.appendToGroup(TOOLBAR_SORT_GROUP, fSortTimestamps);
+			manager.update(true);
+		}
 	}
 
 	/**
@@ -147,6 +234,13 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	 */
 	protected int getColumnCount() {
 		return 1;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected RefactoringHistoryContentProvider getContentProvider() {
+		return new BrowseRefactoringHistoryContentProvider(fControlConfiguration);
 	}
 
 	/**
@@ -159,12 +253,33 @@ public class SelectRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	protected RefactoringHistoryLabelProvider getLabelProvider() {
+		return new BrowseRefactoringHistoryLabelProvider(fControlConfiguration);
+	}
+
+	/**
 	 * Returns the select all button.
 	 * 
 	 * @return the select all button
 	 */
 	public Button getSelectAllButton() {
 		return fSelectAllButton;
+	}
+
+	/**
+	 * Returns the toolbar manager of this control
+	 * 
+	 * @return the toolbar manager
+	 */
+	protected ToolBarManager getToolBarManager() {
+		if (fToolBarManager == null) {
+			final ToolBar toolbar= new ToolBar(fHistoryPane, SWT.FLAT);
+			fHistoryPane.setTopCenter(toolbar);
+			fToolBarManager= new ToolBarManager(toolbar);
+		}
+		return fToolBarManager;
 	}
 
 	/**

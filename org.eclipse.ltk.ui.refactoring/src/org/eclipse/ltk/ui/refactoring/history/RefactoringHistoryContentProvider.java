@@ -494,7 +494,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * 
 	 * @return the refactoring history root elements
 	 */
-	public final Object[] getRootElements() {
+	public Object[] getRootElements() {
 		final List list= new ArrayList(8);
 		if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
@@ -530,11 +530,13 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * {@inheritDoc}
 	 */
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
-		if (predecessor == successor)
+		if (predecessor == successor || fRefactoringHistory == successor)
 			return;
-		if (successor instanceof RefactoringHistory)
+		if (successor instanceof RefactoringHistory) {
+			if (successor.equals(fRefactoringHistory))
+				return;
 			fRefactoringHistory= (RefactoringHistory) successor;
-		else
+		} else
 			fRefactoringHistory= null;
 		fRefactoringRoots= null;
 		fRefactoringStamps= null;

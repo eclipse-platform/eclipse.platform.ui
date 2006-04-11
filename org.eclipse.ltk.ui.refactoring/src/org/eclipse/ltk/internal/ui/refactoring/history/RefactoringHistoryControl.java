@@ -34,6 +34,11 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,6 +70,7 @@ import org.eclipse.compare.Splitter;
 import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
  * Control which is capable of displaying refactoring histories.
@@ -180,9 +186,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				else
 					fCheckedDescriptors.removeAll(collection);
 			}
-			final RefactoringHistory history= RefactoringHistoryControl.this.getInput();
-			if (history != null)
-				reconcileCheckState(history);
+			RefactoringHistoryControl.this.reconcileCheckState();
 		}
 
 		/**
@@ -251,7 +255,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The history pane */
-	private CompareViewerPane fHistoryPane= null;
+	protected CompareViewerPane fHistoryPane= null;
 
 	/** The history viewer */
 	protected TreeViewer fHistoryViewer= null;
@@ -261,6 +265,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * <code>RefactoringDescriptorProxy</code>)
 	 */
 	private final Set fSelectedDescriptors= new HashSet();
+
+	/** The label which displays the selected refactoring descriptors */
+	private Label fSelectedLabel= null;
 
 	/** The splitter control */
 	private Splitter fSplitterControl= null;
@@ -310,32 +317,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
-	 * Creates the comment viewer of the control.
-	 * 
-	 * @param parent
-	 *            the parent composite
-	 * @return the comment viewer
-	 */
-	protected Composite createCommentViewer(final Composite parent) {
-		Assert.isNotNull(parent);
-		final Composite composite= new Composite(parent, SWT.NONE);
-		final GridLayout layout= new GridLayout(1, true);
-		layout.horizontalSpacing= 0;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		composite.setLayout(layout);
-		final Label label= new Label(composite, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
-		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
-		GridData data= new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
-		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-		fCommentField.setText(fControlConfiguration.getCommentCaption());
-		data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
-		fCommentField.setLayoutData(data);
-		return composite;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public void createControl() {
@@ -357,6 +338,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
+		final CLabel label= new CLabel(fHistoryPane, SWT.NONE) {
+
+			public final Point computeSize(final int wHint, final int hHint, final boolean changed) {
+				return super.computeSize(wHint, Math.max(24, hHint), changed);
+			}
+		};
+		fHistoryPane.setTopLeft(label);
+
 		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
@@ -364,8 +353,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			fHistoryViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fHistoryViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer.setUseHashlookup(true);
-		fHistoryViewer.setContentProvider(fControlConfiguration.getContentProvider());
-		fHistoryViewer.setLabelProvider(fControlConfiguration.getLabelProvider());
+		fHistoryViewer.setContentProvider(getContentProvider());
+		fHistoryViewer.setLabelProvider(getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public final void selectionChanged(final SelectionChangedEvent event) {
@@ -375,10 +364,56 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 		});
 		fHistoryPane.setContent(fHistoryViewer.getControl());
-		createCommentViewer(fSplitterControl);
-		fSplitterControl.setWeights(new int[] { 80, 20});
+		createToolBar(fHistoryPane);
+		createDetailPane(fSplitterControl);
+		final MouseAdapter listener= new MouseAdapter() {
+
+			public void mouseDoubleClick(final MouseEvent event) {
+				final Control content= fHistoryPane.getContent();
+				if (content != null && content.getBounds().contains(event.x, event.y))
+					return;
+				final Control control= fHistoryPane.getParent().getParent();
+				if (control instanceof Splitter)
+					((Splitter) control).setMaximizedControl(fHistoryPane.getParent());
+			}
+		};
+		addMouseListener(listener);
+		fHistoryPane.getTopLeft().addMouseListener(listener);
+		fSplitterControl.setWeights(new int[] { 75, 25});
 		createBottomButtonBar(this);
 		Dialog.applyDialogFont(this);
+	}
+
+	/**
+	 * Creates the detail pane of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @return the detail pane
+	 */
+	protected Composite createDetailPane(final Composite parent) {
+		Assert.isNotNull(parent);
+		final Composite composite= new Composite(parent, SWT.NONE);
+		final GridLayout layout= new GridLayout(2, true);
+		layout.horizontalSpacing= 0;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		composite.setLayout(layout);
+		final Label label= new Label(composite, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
+		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
+		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data.horizontalSpan= 1;
+		label.setLayoutData(data);
+		fSelectedLabel= new Label(composite, SWT.HORIZONTAL | SWT.RIGHT | SWT.WRAP);
+		data= new GridData(GridData.HORIZONTAL_ALIGN_END);
+		data.horizontalSpan= 1;
+		fSelectedLabel.setLayoutData(data);
+		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		fCommentField.setText(fControlConfiguration.getCommentCaption());
+		data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		data.horizontalSpan= 2;
+		fCommentField.setLayoutData(data);
+		return composite;
 	}
 
 	/**
@@ -407,6 +442,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Creates the toolbar of the control.
+	 * 
+	 * @param parent
+	 *            the parent control
+	 */
+	protected void createToolBar(final ViewForm parent) {
+		// Do nothing
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public final void dispose() {
@@ -430,6 +475,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected int getColumnCount() {
 		return 2;
+	}
+
+	/**
+	 * Returns the content provider to use.
+	 * 
+	 * @return the content provider
+	 */
+	protected RefactoringHistoryContentProvider getContentProvider() {
+		return fControlConfiguration.getContentProvider();
 	}
 
 	/**
@@ -506,6 +560,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Returns the label provider to use.
+	 * 
+	 * @return the label provider
+	 */
+	protected RefactoringHistoryLabelProvider getLabelProvider() {
+		return fControlConfiguration.getLabelProvider();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public final RefactoringDescriptorProxy[] getSelectedDescriptors() {
@@ -519,10 +582,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		final RefactoringHistory history= getInput();
 		if (history != null) {
 			final int total= history.getDescriptors().length;
-			if (total > 0 && fControlConfiguration.isCheckableViewer())
-				fHistoryPane.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { getHistoryPaneText(), String.valueOf(fCheckedDescriptors.size()), String.valueOf(total)}));
+			final int checked= fCheckedDescriptors.size();
+			if (total > 0 && checked > 0 && fControlConfiguration.isCheckableViewer())
+				fSelectedLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
 			else
-				fHistoryPane.setText(getHistoryPaneText());
+				fSelectedLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
 		}
 	}
 
@@ -567,6 +631,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			job.schedule();
 		}
 		fCommentField.setText(fControlConfiguration.getCommentCaption());
+	}
+
+	/**
+	 * Reconciles the check state of the control.
+	 */
+	public void reconcileCheckState() {
+		final RefactoringHistory history= getInput();
+		if (history != null && fHistoryViewer instanceof RefactoringHistoryTreeViewer)
+			((RefactoringHistoryTreeViewer) fHistoryViewer).reconcileCheckState(history);
 	}
 
 	/**

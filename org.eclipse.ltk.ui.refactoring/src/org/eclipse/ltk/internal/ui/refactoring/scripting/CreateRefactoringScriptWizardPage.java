@@ -14,10 +14,11 @@ import java.net.URI;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.history.SelectRefactoringHistoryControl;
+import org.eclipse.ltk.internal.ui.refactoring.history.BrowseRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 
 import org.eclipse.swt.SWT;
@@ -25,7 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -43,11 +44,14 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  */
 public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
+	/** The empty descriptors constant */
+	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
+
 	/** The create refactoring script wizard page name */
 	private static final String PAGE_NAME= "CreateRefactoringScriptWizardPage"; //$NON-NLS-1$
 
 	/** The refactoring history control */
-	private SelectRefactoringHistoryControl fHistoryControl= null;
+	private BrowseRefactoringHistoryControl fHistoryControl= null;
 
 	/** The refactoring script location control */
 	private RefactoringScriptLocationControl fLocationControl= null;
@@ -77,7 +81,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		fHistoryControl= new SelectRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(null, true, true)) {
+		fHistoryControl= new BrowseRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(null, true, true)) {
 
 			protected final void handleDeselectAll() {
 				super.handleDeselectAll();
@@ -102,12 +106,13 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors());
 			}
 		});
-		final Label label= new Label(composite, SWT.NONE);
-		label.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
-		data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_END);
-		data.horizontalSpan= 1;
-		label.setLayoutData(data);
-		fLocationControl= new RefactoringScriptLocationControl(fWizard, composite) {
+		final Group group= new Group(composite, SWT.NONE);
+		group.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
+		final GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+		fLocationControl= new RefactoringScriptLocationControl(fWizard, group) {
 
 			protected void handleBrowseExternalLocation() {
 				final FileDialog file= new FileDialog(getShell(), SWT.OPEN);
@@ -142,7 +147,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fLocationControl.loadHistory();
 		setPageComplete(false);
 		setControl(composite);
-		Dialog.applyDialogFont(composite);
+		Dialog.applyDialogFont(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_CREATE_SCRIPT_PAGE);
 	}
 

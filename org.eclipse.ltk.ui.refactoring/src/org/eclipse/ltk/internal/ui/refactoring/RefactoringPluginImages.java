@@ -59,6 +59,15 @@ public class RefactoringPluginImages {
 	public static final ImageDescriptor DESC_ELCL_FILTER= createUnManaged(T_ELCL, "filter_ps.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_FILTER= createUnManaged(T_DLCL, "filter_ps.gif"); //$NON-NLS-1$
 	
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_ELCL_SORT_PROJECT= createUnManaged(T_ELCL, "prj_mode.gif"); //$NON-NLS-1$
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_DLCL_SORT_PROJECT= createUnManaged(T_DLCL, "prj_mode.gif"); //$NON-NLS-1$
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_ELCL_SORT_DATE= createUnManaged(T_ELCL, "date_mode.gif"); //$NON-NLS-1$
+	/** @since 3.2 */
+	public static final ImageDescriptor DESC_DLCL_SORT_DATE= createUnManaged(T_DLCL, "date_mode.gif"); //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_FATAL= createManaged(T_OBJ, IMG_OBJS_REFACTORING_FATAL);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_ERROR= createManaged(T_OBJ, IMG_OBJS_REFACTORING_ERROR);
 	public static final ImageDescriptor DESC_OBJS_REFACTORING_WARNING= createManaged(T_OBJ, IMG_OBJS_REFACTORING_WARNING);
