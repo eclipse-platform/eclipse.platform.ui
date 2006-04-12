@@ -56,6 +56,7 @@ public class SystemMenuCloseOthers extends Action implements
      */
     public void setTarget(IPresentablePart current) {
         this.current = current;
-        setEnabled(current != null);
+        setEnabled(current != null && 
+        		stackPresentation.getPartList().length > 1);
     }
 }
