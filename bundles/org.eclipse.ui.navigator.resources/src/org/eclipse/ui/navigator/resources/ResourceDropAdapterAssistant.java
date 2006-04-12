@@ -37,14 +37,26 @@ import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
+import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
+import org.eclipse.ui.navigator.INavigatorDnDService;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
+ *  
+ * Clients may reference this class in the <b>dragAssistant</b> element of a
+ * <b>org.eclipse.ui.navigator.viewer</b> extension point.
+ * 
+ * <p>
+ * Clients may not extend or instantiate this class for any purpose other than
+ * {@link INavigatorDnDService#bindDragAssistant(CommonDragAdapterAssistant)}.
+ * Clients may have no direct dependencies on the contract of this class.
+ * </p>
+ * 
  * @since 3.2
  * 
- */
+ */ 
 public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	private static final boolean DEBUG = false;
