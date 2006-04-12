@@ -248,9 +248,7 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringPropertyPage_confirm_delete_caption;
 
-	public static String RefactoringPropertyPage_confirm_delete_project_pattern;
-
-	public static String RefactoringPropertyPage_confirm_delete_workspace_pattern;
+	public static String RefactoringPropertyPage_confirm_delete_pattern;
 
 	public static String RefactoringPropertyPage_edit_caption;
 

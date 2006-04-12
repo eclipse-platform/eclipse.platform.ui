@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -72,11 +73,25 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	/** The refactoring descriptor delete query */
 	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
 
-		/** The last choice */
-		private int fLastChoice= -1;
+		/** The number of descriptors to delete */
+		private final int fCount;
+
+		/** The return code */
+		private int fReturnCode= -1;
 
 		/** Has the user already been warned once? */
 		private boolean fWarned= false;
+
+		/**
+		 * Creates a new refactoring descriptor delete query.
+		 * 
+		 * @param count
+		 *            the number of descriptors to delete
+		 */
+		public RefactoringDescriptorDeleteQuery(final int count) {
+			Assert.isTrue(count >= 0);
+			fCount= count;
+		}
 
 		/**
 		 * Returns whether any deletions have been performed successfully.
@@ -85,7 +100,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		 *         <code>false</code> otherwise
 		 */
 		public boolean hasDeletions() {
-			return fLastChoice == IDialogConstants.YES_ID;
+			return fReturnCode == IDialogConstants.YES_ID;
 		}
 
 		/**
@@ -93,15 +108,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		 */
 		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-			MessageDialogWithToggle dialog= null;
-			if (!fWarned || !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
-				final String project= proxy.getProject();
-				dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, (project == null || "".equals(project)) ? Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_workspace_pattern, proxy.getDescription()) : Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_project_pattern, proxy.getDescription()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null); //$NON-NLS-1$
+			if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
+				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { new Integer(fCount).toString(), getCurrentProject().getName()}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
 				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-				fLastChoice= dialog.getReturnCode();
+				fReturnCode= dialog.getReturnCode();
 			}
 			fWarned= true;
-			if (fLastChoice == IDialogConstants.YES_ID)
+			if (fReturnCode == IDialogConstants.YES_ID)
 				return new RefactoringStatus();
 			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 		}
@@ -199,10 +212,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							return 0;
 						}
 					});
-					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
+					final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
-						final RefactoringDescriptorDeleteQuery query= new RefactoringDescriptorDeleteQuery();
+						final RefactoringDescriptorDeleteQuery query= new RefactoringDescriptorDeleteQuery(selection.length);
 						try {
 							service.deleteRefactoringDescriptors(selection, query, null);
 						} catch (CoreException exception) {
