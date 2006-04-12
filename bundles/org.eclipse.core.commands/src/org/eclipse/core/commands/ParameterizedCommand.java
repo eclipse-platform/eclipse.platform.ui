@@ -523,7 +523,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Returns a {@link String} containing the command id, parameter ids and
 	 * parameter values for this {@link ParameterizedCommand}. The returned
-	 * {@link String} can be stored by a client and later used to recontruct an
+	 * {@link String} can be stored by a client and later used to reconstruct an
 	 * equivalent {@link ParameterizedCommand} using the
 	 * {@link CommandManager#deserialize(String)} method.
 	 * <p>
