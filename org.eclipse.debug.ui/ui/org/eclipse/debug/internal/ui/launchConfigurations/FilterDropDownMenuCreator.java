@@ -132,7 +132,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
 			public void run() {
-				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferenecPage",  //$NON-NLS-1$
+				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferencePage",  //$NON-NLS-1$
 						new LaunchConfigurationsPreferencePage());
 				PreferenceManager manager = new PreferenceManager();
 				manager.addToRoot(targetNode);

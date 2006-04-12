@@ -1448,7 +1448,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				if(!sel.isEmpty()) {
 					path = sel.getPaths()[0];
 					pidx = findIndexOfParent(path.getFirstSegment());
-					cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+					if(path.getSegmentCount() == 2) {
+						cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+					}
 				}
 				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
 				if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
@@ -1550,6 +1552,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				}
 			}
 			viewer.setSelection(new StructuredSelection(sel));
+			updateButtons();
+			updateMessage();
 		}
 		else {
 			setErrorMessage(null);
