@@ -501,6 +501,7 @@ public class WorkbenchMessages extends NLS {
 	// Editor Framework
 	// ==============================================================================
 	public static String EditorManager_saveResourcesMessage;
+	public static String EditorManager_saveResourcesOptionallyMessage;
 	public static String EditorManager_saveResourcesTitle;
 	public static String EditorManager_exceptionRestoringEditor;
 	public static String EditorManager_unableToCreateEditor;
@@ -515,6 +516,7 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_unableToOpenEditors;
 	public static String EditorManager_operationFailed;
 	public static String EditorManager_saveChangesQuestion;
+	public static String EditorManager_saveChangesOptionallyQuestion;
     public static String EditorManager_missing_editor_descriptor;
     public static String EditorManager_no_in_place_support;
     public static String EditorManager_invalid_editor_descriptor;

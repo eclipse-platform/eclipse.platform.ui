@@ -181,7 +181,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 			fillModelsClosing(modelsClosing, modelsDecrementing);
 			boolean canceled = promptForSavingIfNecessary(PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow(), modelsClosing,
+					.getWorkbench().getActiveWorkbenchWindow(), modelsClosing, modelsDecrementing,
 					!event.isForce());
 			if (canceled) {
 				event.setVeto(true);
@@ -316,7 +316,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				postCloseInfo.modelsDecrementing);
 		if (save) {
 			boolean canceled = promptForSavingIfNecessary(window,
-					postCloseInfo.modelsClosing, true);
+					postCloseInfo.modelsClosing, postCloseInfo.modelsDecrementing, true);
 			if (canceled) {
 				return null;
 			}
@@ -331,10 +331,24 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return true if the user canceled
 	 */
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window,
-			Set modelsClosing, boolean canCancel) {
+			Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
 		// TODO prompt for saving of dirty modelsDecrementing but not closing
 		// (changes
 		// won't be lost)
+		List modelsToOptionallySave = new ArrayList();
+		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
+			Saveable modelDecrementing = (Saveable) it.next();
+			if (modelDecrementing.isDirty() && !modelsClosing.contains(modelDecrementing)) {
+				modelsToOptionallySave.add(modelDecrementing);
+			}
+		}
+		
+		boolean shouldCancel = modelsToOptionallySave.isEmpty() ? false : promptForSaving(modelsToOptionallySave,
+				window, canCancel, true);
+		
+		if (shouldCancel) {
+			return true;
+		}
 
 		List modelsToSave = new ArrayList();
 		for (Iterator it = modelsClosing.iterator(); it.hasNext();) {
@@ -344,7 +358,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		return modelsToSave.isEmpty() ? false : promptForSaving(modelsToSave,
-				window, canCancel);
+				window, canCancel, false);
 	}
 
 	/**
@@ -364,17 +378,20 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param modelsToSave
 	 * @param window
 	 * @param canCancel
+	 * @param b 
 	 * @return true if the user canceled
 	 */
 	private boolean promptForSaving(List modelsToSave,
-			final IWorkbenchWindow window, boolean canCancel) {
+			final IWorkbenchWindow window, boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
 			if (modelsToSave.size() == 1) {
 				Saveable model = (Saveable) modelsToSave.get(0);
-				String message = NLS.bind(
-						WorkbenchMessages.EditorManager_saveChangesQuestion,
-						model.getName());
+				String message = NLS
+						.bind(
+								stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveChangesOptionallyQuestion
+										: WorkbenchMessages.EditorManager_saveChangesQuestion,
+								model.getName());
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
@@ -402,10 +419,14 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					return true;
 				}
 			} else {
-				ListSelectionDialog dlg = new MyListSelectionDialog(window
-						.getShell(), modelsToSave, new ArrayContentProvider(),
+				ListSelectionDialog dlg = new MyListSelectionDialog(
+						window.getShell(),
+						modelsToSave,
+						new ArrayContentProvider(),
 						new WorkbenchPartLabelProvider(),
-						EditorManager.RESOURCES_TO_SAVE_MESSAGE, canCancel);
+						stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
+								: WorkbenchMessages.EditorManager_saveResourcesMessage,
+						canCancel);
 				dlg.setInitialSelections(modelsToSave.toArray());
 				dlg.setTitle(EditorManager.SAVE_RESOURCES_TITLE);
 
