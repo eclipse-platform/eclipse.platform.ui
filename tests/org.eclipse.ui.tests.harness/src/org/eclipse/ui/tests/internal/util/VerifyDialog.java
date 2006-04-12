@@ -56,8 +56,6 @@ public class VerifyDialog extends TitleAreaDialog {
 
     private Button _yesButton;
 
-    private Button _noButton;
-
     private Button _checkList[];
 
     private String _failureText;
@@ -91,7 +89,7 @@ public class VerifyDialog extends TitleAreaDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         _yesButton = createButton(parent, IDialogConstants.YES_ID,
                 IDialogConstants.YES_LABEL, true);
-        _noButton = createButton(parent, IDialogConstants.NO_ID,
+        createButton(parent, IDialogConstants.NO_ID,
                 IDialogConstants.NO_LABEL, false);
     }
 
