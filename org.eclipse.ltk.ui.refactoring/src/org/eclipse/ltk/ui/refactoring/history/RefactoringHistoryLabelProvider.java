@@ -121,9 +121,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 					final Rectangle bounds= image.getBounds();
 					result= new RefactoringDescriptorImageDescriptor(new RefactoringImageDescriptor(image), RefactoringDescriptorImageDescriptor.WORKSPACE, new Point(bounds.width, bounds.height)).createImage();
 					if (image == fElementImage)
-						fDecoratedElementImage= image;
+						fDecoratedElementImage= result;
 					else if (image == fItemImage)
-						fDecoratedItemImage= image;
+						fDecoratedItemImage= result;
 				}
 			}
 		}
