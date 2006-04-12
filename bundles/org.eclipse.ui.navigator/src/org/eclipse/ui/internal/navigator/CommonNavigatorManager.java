@@ -109,7 +109,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		commonNavigator.getCommonViewer().addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-				actionService.setContext(new ActionContext(new StructuredSelection(commonNavigator.getCommonViewer().getInput())));		
+				actionService.setContext(new ActionContext(commonNavigator.getCommonViewer().getSelection()));		
 				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());							
 				openAction.run();
 			}
