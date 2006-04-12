@@ -18,7 +18,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.part.PluginTransfer;
 
 /**
  * <p>
@@ -147,7 +146,7 @@ public abstract class CommonDropAdapterAssistant {
 	/**
 	 * Clients may extend the supported transfer types beyond the default
 	 * {@link LocalSelectionTransfer#getTransfer()} and
-	 * {@link PluginTransfer#getInstance()} transfer types. When a transfer type
+	 * {@link org.eclipse.ui.part.PluginTransfer#getInstance()} transfer types. When a transfer type
 	 * other than one of these is encountered, the DND Service will query the
 	 * <b>visible</b> and <b>active</b> descriptors that are <b>enabled</b>
 	 * for the drop target of the current operation.

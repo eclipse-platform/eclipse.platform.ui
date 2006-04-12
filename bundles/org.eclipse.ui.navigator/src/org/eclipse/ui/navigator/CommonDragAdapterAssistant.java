@@ -74,7 +74,7 @@ public abstract class CommonDragAdapterAssistant {
 	public abstract Transfer[] getSupportedTransferTypes();
 
 	/**
-	 * Set the value of the {@link Event#data} field using the given selection.
+	 * Set the value of the {@link org.eclipse.swt.widgets.Event#data} field using the given selection.
 	 * Clients will only have an opportunity to set the drag data if they have
 	 * returned a matching Transfer Type from
 	 * {@link #getSupportedTransferTypes()} for the
