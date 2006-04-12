@@ -107,10 +107,14 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     protected void updateEnableStateForContext(IStructuredSelection selection) {
         int size = selection.size();
         BooleanRequestMonitor monitor = new BooleanRequestMonitor(this, size);
-        Iterator itr = selection.iterator();
-        while (itr.hasNext()) {
-            Object element = itr.next();
-            isEnabledFor(element, monitor);
+        if (size > 0) {
+	        Iterator itr = selection.iterator();
+	        while (itr.hasNext()) {
+	            Object element = itr.next();
+	            isEnabledFor(element, monitor);
+	        }
+        } else {
+        	notSupported(monitor);
         }
     }
 
