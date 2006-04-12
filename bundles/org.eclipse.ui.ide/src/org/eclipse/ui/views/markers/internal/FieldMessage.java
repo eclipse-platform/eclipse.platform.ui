@@ -11,11 +11,8 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.resource.DeviceResourceException;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 
 /**
  * The message field is the field for the description of the marker.
@@ -89,27 +86,7 @@ public class FieldMessage extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		if (obj == null || !(obj instanceof MarkerNode)) {
-			return null;
-		}
-
-		MarkerNode node = (MarkerNode) obj;
-		if (node.isConcrete()) {
-			if (node instanceof ProblemMarker) {
-				return Util.getImage(((ProblemMarker) obj).getSeverity());
-			}
-			return null;
-		}
-
-		try {
-			return JFaceResources
-					.getResources()
-					.createImage(
-							IDEInternalWorkbenchImages
-									.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY));
-		} catch (DeviceResourceException e) {
-			return null;
-		}
+		return null;
 	}
 
 	/*

@@ -66,9 +66,9 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 public abstract class TableView extends ViewPart {
 
 	private static final String TAG_COLUMN_WIDTH = "columnWidth"; //$NON-NLS-1$
-	
+
 	private static final String TAG_COLUMN_ORDER = "columnOrder"; //$NON-NLS-1$
-	
+
 	private static final String TAG_COLUMN_ORDER_INDEX = "columnOrderIndex"; //$NON-NLS-1$
 
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
@@ -136,6 +136,7 @@ public abstract class TableView extends ViewPart {
 		});
 
 		viewer.setSorter(buildSorter());
+		setSortIndicators();
 
 		// create the actions before the input is set on the viewer but after
 		// the
@@ -187,13 +188,22 @@ public abstract class TableView extends ViewPart {
 	abstract Object createViewerInput();
 
 	/**
+	 * Set the sorter to be the new sorter.
 	 * @param sorter2
 	 */
 	void setSorter(TableSorter sorter2) {
-		TableSorter newSorter = new TableSorter(sorter2);
-		viewer.setSorter(newSorter);
-		newSorter.saveState(getDialogSettings());
+		viewer.setSorter(sorter2);
+		updateForNewSorter(sorter2);
+	}
+
+	/**
+	 * Update the viewer for sorter updates
+	 * @param sorter2
+	 */
+	void updateForNewSorter(TableSorter sorter2) {
+		sorter2.saveState(getDialogSettings());
 		viewer.refresh();
+		setSortIndicators();
 	}
 
 	/**
@@ -305,7 +315,7 @@ public abstract class TableView extends ViewPart {
 			tc.addSelectionListener(getHeaderListener());
 			tc.setData(fields[i]);
 		}
-		
+
 		int[] order = restoreColumnOrder(memento);
 		if (order != null && order.length == fields.length) {
 			tree.setColumnOrder(order);
@@ -434,7 +444,9 @@ public abstract class TableView extends ViewPart {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 
-				final IField field = (IField) e.widget.getData();
+				final TreeColumn column = (TreeColumn) e.widget;
+				final IField field = (IField) column.getData();
+
 				try {
 					IWorkbenchSiteProgressService progressService = getProgressService();
 					if (progressService == null)
@@ -446,18 +458,21 @@ public abstract class TableView extends ViewPart {
 							 * @see java.lang.Runnable#run()
 							 */
 							public void run() {
-								resortTable(field, new NullProgressMonitor());
+								resortTable(column, field,
+										new NullProgressMonitor());
 
 							}
 						});
 					else
 						getProgressService().busyCursorWhile(
 								new IRunnableWithProgress() {
-									/* (non-Javadoc)
+									/*
+									 * (non-Javadoc)
+									 * 
 									 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 									 */
 									public void run(IProgressMonitor monitor) {
-										resortTable(field, monitor);
+										resortTable(column, field, monitor);
 									}
 								});
 				} catch (InvocationTargetException e1) {
@@ -472,20 +487,22 @@ public abstract class TableView extends ViewPart {
 			/**
 			 * Resort the table based on field.
 			 * 
+			 * @param column
+			 *            the column being updated
 			 * @param field
 			 * @param monitor
 			 */
-			private void resortTable(final IField field,
-					IProgressMonitor monitor) {
+			private void resortTable(final TreeColumn column,
+					final IField field, IProgressMonitor monitor) {
 				TableSorter sorter = getTableSorter();
 
 				monitor.beginTask(MarkerMessages.sortDialog_title, 100);
 				monitor.worked(10);
-				if (field.equals(sorter.getTopField())) {
+				if (field.equals(sorter.getTopField()))
 					sorter.reverseTopPriority();
-				} else {
+				else
 					sorter.setTopPriority(field);
-				}
+
 				monitor.worked(15);
 				PlatformUI.getWorkbench().getDisplay().asyncExec(
 						new Runnable() {
@@ -496,6 +513,7 @@ public abstract class TableView extends ViewPart {
 							 */
 							public void run() {
 								viewer.refresh();
+								updateDirectionIndicator(column);
 							}
 						});
 
@@ -572,13 +590,13 @@ public abstract class TableView extends ViewPart {
 			ColumnPixelData data2 = data[i];
 			memento.putInteger(TAG_COLUMN_WIDTH + i, data2.width);
 		}
-		//save column order
+		// save column order
 		Tree tree = getTree();
 		int[] columnOrder = tree.getColumnOrder();
-        for (int i = 0; i < columnOrder.length; i++) {
-            IMemento child = memento.createChild(TAG_COLUMN_ORDER);
-            child.putInteger(TAG_COLUMN_ORDER_INDEX, columnOrder[i]);
-        }
+		for (int i = 0; i < columnOrder.length; i++) {
+			IMemento child = memento.createChild(TAG_COLUMN_ORDER);
+			child.putInteger(TAG_COLUMN_ORDER_INDEX, columnOrder[i]);
+		}
 		// save vertical position
 		Scrollable scrollable = (Scrollable) viewer.getControl();
 		ScrollBar bar = scrollable.getVerticalBar();
@@ -594,24 +612,24 @@ public abstract class TableView extends ViewPart {
 		if (memento == null) {
 			return null;
 		}
-        IMemento children[] = memento.getChildren(TAG_COLUMN_ORDER);
-        if (children != null) {
-        	int n = children.length;
-        	int[] values = new int[n];
-            for (int i = 0; i < n; i++) {
-                Integer val = children[i].getInteger(TAG_COLUMN_ORDER_INDEX);
-                if (val != null) {
-                	values[i] = val.intValue();
-                } else {
-                	//invalid entry so use default column order
-                	return null;
-                }
-            }
-            return values;
-        }
-        return null;
+		IMemento children[] = memento.getChildren(TAG_COLUMN_ORDER);
+		if (children != null) {
+			int n = children.length;
+			int[] values = new int[n];
+			for (int i = 0; i < n; i++) {
+				Integer val = children[i].getInteger(TAG_COLUMN_ORDER_INDEX);
+				if (val != null) {
+					values[i] = val.intValue();
+				} else {
+					// invalid entry so use default column order
+					return null;
+				}
+			}
+			return values;
+		}
+		return null;
 	}
-	
+
 	private int restoreVerticalScrollBarPosition(IMemento memento) {
 		if (memento == null) {
 			return 0;
@@ -696,6 +714,36 @@ public abstract class TableView extends ViewPart {
 	 */
 	public Object getViewerInput() {
 		return getViewer().getInput();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.TableView#setSortIndicators()
+	 */
+	void setSortIndicators() {
+		IField top = getTableSorter().getTopField();
+		TreeColumn[] columns = getViewer().getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			TreeColumn column = columns[i];
+			if (column.getData().equals(top)) {
+				updateDirectionIndicator(column);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Update the direction indicator as column is
+	 * now the primary column.
+	 * @param column
+	 */
+	void updateDirectionIndicator(TreeColumn column) {
+		getViewer().getTree().setSortColumn(column);
+		if (getTableSorter().getTopPriorityDirection() == TableSorter.ASCENDING)
+			getViewer().getTree().setSortDirection(SWT.UP);
+		else
+			getViewer().getTree().setSortDirection(SWT.DOWN);
 	}
 
 }

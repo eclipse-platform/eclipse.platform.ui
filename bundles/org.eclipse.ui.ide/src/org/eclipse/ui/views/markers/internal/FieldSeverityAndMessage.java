@@ -11,20 +11,24 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 
 /**
- * The FieldSeverity is the field for setting severities.
+ * The FieldSeverityAndMessage is the field that
+ * displays severities and messages.
  * 
  */
-public class FieldSeverity extends AbstractField {
+public class FieldSeverityAndMessage extends FieldMessage {
 
 	private String description;
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public FieldSeverity() {
+	public FieldSeverityAndMessage() {
 		description = MarkerMessages.problemSeverity_description;
 	}
 
@@ -40,50 +44,30 @@ public class FieldSeverity extends AbstractField {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
-	 */
-	public Image getDescriptionImage() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return ""; //$NON-NLS-1$
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
-	 */
-	public Image getColumnHeaderImage() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
-	 */
-	public String getValue(Object obj) {
-		return Util.getSeverityText(((ProblemMarker) obj).getSeverity());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
-		if (obj == null || !(obj instanceof ProblemMarker)) {
+		if (obj == null || !(obj instanceof MarkerNode)) {
 			return null;
 		}
 
-		return Util.getImage(((ProblemMarker) obj).getSeverity());
+		MarkerNode node = (MarkerNode) obj;
+		if (node.isConcrete()) {
+			if (node instanceof ProblemMarker) {
+				return Util.getImage(((ProblemMarker) obj).getSeverity());
+			}
+			return null;
+		}
+
+		try {
+			return JFaceResources
+					.getResources()
+					.createImage(
+							IDEInternalWorkbenchImages
+									.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY));
+		} catch (DeviceResourceException e) {
+			return null;
+		}
 	}
 
 	/*
@@ -97,25 +81,26 @@ public class FieldSeverity extends AbstractField {
 				|| !(obj2 instanceof ProblemMarker)) {
 			return 0;
 		}
+		
+		ProblemMarker marker1 = (ProblemMarker) obj1;
+		ProblemMarker marker2 = (ProblemMarker) obj2;
 
-		int severity1 = ((ProblemMarker) obj1).getSeverity();
-		int severity2 = ((ProblemMarker) obj2).getSeverity();
-		return severity1 - severity2;
+		int severity1 = marker1.getSeverity();
+		int severity2 = marker2.getSeverity();
+		if(severity1 == severity2)
+			return marker1.getDescriptionKey().compareTo(
+					marker2.getDescriptionKey());
+		return severity2 - severity1;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
-	public int getDefaultDirection() {
-		return TableSorter.DESCENDING;
+	public Image getColumnHeaderImage() {
+		return getImage(FieldDone.DESCRIPTION_IMAGE_PATH);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
-	 */
-	public int getPreferredWidth() {
-		return 16;
-	}
+
 }

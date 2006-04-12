@@ -59,13 +59,11 @@ public class ProblemView extends MarkerView {
 
 	private IActivityManagerListener activityManagerListener;
 
-	private IField severity = new FieldSeverity();
+	private IField severityAndMessage = new FieldSeverityAndMessage();
 
 	private IField folder = new FieldFolder();
 
 	private IField resource = new FieldResource();
-
-	private IField message = new FieldMessage();
 
 	private IField lineNumber = new FieldLineNumber();
 
@@ -172,7 +170,7 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#getSortingFields()
 	 */
 	protected IField[] getSortingFields() {
-		return new IField[] { severity, folder, resource, message, lineNumber,
+		return new IField[] { severityAndMessage, folder, resource, lineNumber,
 				creationTime,
 				// Add the marker ID so the table sorter won't reduce
 				// errors on the same line bug 82502
@@ -231,7 +229,7 @@ public class ProblemView extends MarkerView {
 
 		// Add the marker ID so the table sorter won't reduce
 		// errors on the same line bug 82502
-		return new IField[] { message, resource, folder, lineNumber,
+		return new IField[] { severityAndMessage, resource, folder, lineNumber,
 				creationTime };
 	}
 
@@ -437,8 +435,8 @@ public class ProblemView extends MarkerView {
 	void setSorter(TableSorter sorter2) {
 		getMarkerAdapter().getCategorySorter().setTableSorter(sorter2);
 		getMarkerAdapter().getCategorySorter().saveState(getDialogSettings());
-		refreshViewer();
-
+		updateForNewSorter(sorter2);
+		
 	}
 
 	/*

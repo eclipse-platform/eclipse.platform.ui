@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -313,5 +314,12 @@ public class TaskView extends MarkerView {
 	 */
 	String getFiltersPreferenceName() {
 		return IDEInternalPreferences.TASKS_FILTERS;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#updateDirectionIndicator(org.eclipse.swt.widgets.TreeColumn)
+	 */
+	void updateDirectionIndicator(TreeColumn column) {
+		// Do nothing due to images being obscured
 	}
 }

@@ -1610,14 +1610,6 @@ public abstract class MarkerView extends TableView {
 		return adapter;
 	}
 
-	/**
-	 * Return the TableSorter
-	 * 
-	 * @return TableSorter
-	 */
-	public TableSorter getTableSorter() {
-		return (TableSorter) getViewer().getSorter();
-	}
 
 	/**
 	 * Add a listener for the end of the update.
@@ -1720,5 +1712,7 @@ public abstract class MarkerView extends TableView {
 		updateJob.saveSelection(getViewer().getSelection());
 
 	}
+	
+	
 
 }
