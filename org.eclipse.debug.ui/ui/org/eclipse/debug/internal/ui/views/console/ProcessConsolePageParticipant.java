@@ -21,13 +21,14 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -52,7 +53,7 @@ import org.eclipse.ui.part.ShowInContext;
  * 
  * @since 3.1
  */
-public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener {
+public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, IDebugContextListener {
 	
 	// actions
 	private ConsoleTerminateAction fTerminate;
@@ -103,7 +104,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
         
         DebugPlugin.getDefault().addDebugEventListener(this);
-        fPage.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+        DebugContextManager.getDefault().addDebugContextListener(this, fPage.getSite().getWorkbenchWindow());
         
         // contribute to toolbar
         IActionBars actionBars = fPage.getSite().getActionBars();
@@ -120,7 +121,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void dispose() {
         deactivated();
-        fPage.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+        DebugContextManager.getDefault().removeDebugContextListener(this, fPage.getSite().getWorkbenchWindow());
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         if (fRemoveTerminated != null) {
             fRemoveTerminated.dispose();
@@ -209,15 +210,21 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+     * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        if (fView != null && getProcess().equals(DebugUITools.getCurrentProcess())) {
+    public void contextActivated(ISelection selection, IWorkbenchPart part) {
+    	if (fView != null && getProcess().equals(DebugUITools.getCurrentProcess())) {
             fView.display(fConsole);
         }
 	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
      */
     public void activated() {

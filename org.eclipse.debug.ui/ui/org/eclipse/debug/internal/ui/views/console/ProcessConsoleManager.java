@@ -209,14 +209,7 @@ public class ProcessConsoleManager implements ILaunchListener {
             fProcesses.clear();
         }
     }
-      
-    /**
-     * Opens the console view. If the view is already open, it is brought to the front.
-     */
-    protected void showConsole(final IProcess process) {
-        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(getConsole(process));
-    }
-    
+          
     /**
      * Returns a new console document color provider extension for the given
      * process type, or <code>null</code> if none.
