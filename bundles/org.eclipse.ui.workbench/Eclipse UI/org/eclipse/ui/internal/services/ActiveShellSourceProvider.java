@@ -68,7 +68,15 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		 */
 		public final void handleEvent(final Event event) {
 			if (!(event.widget instanceof Shell)) {
+				if (DEBUG) {
+					logDebuggingInfo("ASSP: passOnEvent: " + event.widget); //$NON-NLS-1$
+				}
 				return;
+			}
+			
+			if (DEBUG) {
+				logDebuggingInfo("\tASSP:lastActiveShell: " + lastActiveShell); //$NON-NLS-1$
+				logDebuggingInfo("\tASSP:lastActiveWorkbenchWindowShell" + lastActiveWorkbenchWindowShell); //$NON-NLS-1$
 			}
 
 			final Map currentState = getCurrentState();
