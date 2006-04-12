@@ -96,10 +96,12 @@ public class GenerateDiffFileWizard extends Wizard {
         private Button fsRadio;
         protected Text fsPathText;
         private Button fsBrowseButton;
+        private boolean fsBrowsed = false;
         
         private Button wsRadio;
     	protected Text wsPathText;
         private Button wsBrowseButton;
+        private boolean wsBrowsed = false;
        
         protected CreatePatchWizardParticipant fParticipant;
         private Button chgSelectAll;
@@ -354,7 +356,8 @@ public class GenerateDiffFileWizard extends Wizard {
         private boolean validateFilesystemLocation() {
             final String pathString= fsPathText.getText().trim();
             if (pathString.length() == 0 || !new Path("").isValidPath(pathString)) { //$NON-NLS-1$
-                setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); 
+            	if (fsBrowsed)
+            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); 
                 return false;
             }
             
@@ -388,9 +391,10 @@ public class GenerateDiffFileWizard extends Wizard {
          * - the resource name must be valid 
          */
         private boolean validateWorkspaceLocation() {
-            //make sure that the field actually has a filename in it
+            //make sure that the field actually has a filename in it - making
+        	//sure that the user has had a chance to browse the workspace first
             if (wsPathText.getText().equals("")){ //$NON-NLS-1$
-            	if (selectedLocation ==WORKSPACE)
+            	if (selectedLocation ==WORKSPACE && wsBrowsed)
             		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5);
             	return false;
             }
@@ -770,9 +774,11 @@ public class GenerateDiffFileWizard extends Wizard {
                     dialog.setText(CVSUIMessages.Save_Patch_As_5); 
                     dialog.setFileName(CVSUIMessages.patch_txt_6); 
                     final String path = dialog.open();
+                    fsBrowsed = true;
                     if (path != null) {
                         fsPathText.setText(new Path(path).toOSString());
                     }			
+                    validatePage();
                 }
             });		
             
@@ -781,9 +787,9 @@ public class GenerateDiffFileWizard extends Wizard {
             wsBrowseButton.addListener(SWT.Selection, new Listener() {
                 public void handleEvent(Event event) {
                 	final WorkspaceDialog dialog = new WorkspaceDialog(getShell());
+                	wsBrowsed = true;
                 	dialog.open();
-                	
-                
+                	validatePage();
                 }
             });		
             
@@ -865,10 +871,16 @@ public class GenerateDiffFileWizard extends Wizard {
          * Enable and disable controls based on the selected radio button.
          */
         public void updateEnablements() {
+        	//clear any error message
+    		setErrorMessage(null);
             fsBrowseButton.setEnabled(selectedLocation == FILESYSTEM);
             fsPathText.setEnabled(selectedLocation == FILESYSTEM);
+            if (selectedLocation == FILESYSTEM)
+            	fsBrowsed=false;
             wsPathText.setEnabled(selectedLocation == WORKSPACE);
             wsBrowseButton.setEnabled(selectedLocation == WORKSPACE);
+            if (selectedLocation == WORKSPACE)
+            	wsBrowsed=false;
         }
         
         public int getSelectedLocation() {
