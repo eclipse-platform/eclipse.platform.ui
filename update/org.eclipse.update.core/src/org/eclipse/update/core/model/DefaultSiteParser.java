@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -512,6 +512,11 @@ public class DefaultSiteParser extends DefaultHandler {
 				site.setMirrorSiteEntryModels(mirrors);
 			else 
 				site.setMirrorsURLString(mirrorsURL);
+		}
+		
+		String pack200 = attributes.getValue("pack200"); //$NON-NLS-1$
+		if(site instanceof ExtendedSite && pack200 != null && new Boolean(pack200).booleanValue()){
+			((ExtendedSite) site).setSupportsPack200(true);
 		}
 		
 		if ( (site instanceof ExtendedSite) && (attributes.getValue("digestURL") != null)) { //$NON-NLS-1$

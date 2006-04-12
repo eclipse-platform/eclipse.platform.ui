@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.core;
 
 import java.util.ArrayList;
@@ -12,7 +22,7 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	private String[] availableLocals;
 	private String digestURL;
 	private LiteFeature[] liteFeatures;
-	
+	private boolean pack200 = false;
 	
 	public String getDigestURL() {
 		return digestURL;
@@ -53,6 +63,25 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	}
 	public void setNonFilteredLiteFeatures(LiteFeature[] liteFeatures) {
 		this.liteFeatures = liteFeatures;
+	}
+	
+	
+	/**
+	 * Get whether or not this site may contain jars packed with pack200.
+	 * The packed version of foo.jar, is expected to be foo.jar.pack.gz
+	 * @return
+	 */
+	public boolean supportsPack200() {
+		return pack200;
+	}
+	
+	/**
+	 * Set whether or not this site may contain jars packed with pack200
+	 * The packed version of foo.jar is expected to be foo.jar.pack.gz
+	 * @param pack
+	 */
+	public void setSupportsPack200(boolean pack){
+		pack200 = pack;
 	}
 	
 	/*

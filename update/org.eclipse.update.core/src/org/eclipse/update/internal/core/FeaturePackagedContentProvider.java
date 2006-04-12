@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.eclipse.core.runtime.*;
+import java.net.URL;
+import java.util.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.jarprocessor.JarProcessor;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.verifier.CertVerifier;
 
@@ -30,7 +28,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	private ContentReference localManifest = null;
 	private ContentReference[] localFeatureFiles = new ContentReference[0];
 	private IVerifier jarVerifier = null;
-
+	private ExtendedSite siteModel = null;
 	/*
 	 * filter for file with .jar
 	 */
@@ -66,6 +64,13 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		return jarVerifier;
 	}
 
+	public void setFeature(IFeature feature) {
+		super.setFeature(feature);
+		ISite featureSite = feature.getSite();
+		if(featureSite instanceof ExtendedSite){
+			siteModel = (ExtendedSite) featureSite;
+		}
+	}
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */
@@ -170,13 +175,73 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		URL url = (siteContentProvider == null) ? null : siteContentProvider.getArchiveReference(archiveID);
 
 		try {
-			references[0] = asLocalReference(new JarContentReference(archiveID, url), monitor);
+			references[0] = retrieveLocalJar(new JarContentReference(archiveID, url), monitor);
 		} catch (IOException e) {
 			throw errorRetrieving(archiveID, references[0], e);
 		}
 		return references;
 	}
 
+	private ContentReference retrieveLocalJar(JarContentReference reference, InstallMonitor monitor) throws IOException, CoreException {
+		//If the site does not support pack200, just get the jar as normal
+		if(siteModel == null || !siteModel.supportsPack200() || !JarProcessor.canPerformUnpack()) {
+			return asLocalReference(reference, monitor);
+		}
+		
+		ContentReference packedRef = null;
+		String key = reference.toString();
+		Object jarLock = LockManager.getLock(key);
+		synchronized (jarLock) {
+			//do we have this jar already?
+			File localFile = Utilities.lookupLocalFile(key);
+			if (localFile != null) {
+				// check if the cached file is still valid (no newer version on server)
+				if (UpdateManagerUtils.isSameTimestamp(reference.asURL(), localFile.lastModified())) {
+					LockManager.returnLock(key);
+					return reference.createContentReference(reference.getIdentifier(), localFile);
+				}
+			}
+
+			try {
+				//don't have jar, check for pack.gz
+				URL packGZURL = new URL(reference.asURL().toExternalForm() + ".pack.gz"); //$NON-NLS-1$
+				packedRef = asLocalReference(new JarContentReference(reference.getIdentifier(), packGZURL), monitor);
+			} catch (IOException e) {
+				//no pack.gz
+			}
+		}
+		
+		if (packedRef == null) {
+			//no pack.gz on server, get normal jar
+			return asLocalReference(reference, monitor);
+		}
+
+		synchronized (jarLock) {
+			String packed = packedRef.toString();
+			Object packedLock = LockManager.getLock(packed);
+			synchronized (packedLock) {
+				try {
+					File tempFile = packedRef.asFile();
+					long timeStamp = tempFile.lastModified();
+	
+					JarProcessor processor = JarProcessor.getUnpackProcessor(null);
+					processor.setWorkingDirectory(tempFile.getParent());
+	
+					File packedFile = new File(tempFile.toString() + ".pack.gz"); //$NON-NLS-1$
+					tempFile.renameTo(packedFile);
+					//unpacking the jar will strip the ".pack.gz" and leave us back with the original filename
+					processor.processJar(packedFile);
+	
+					tempFile.setLastModified(timeStamp);
+					Utilities.mapLocalFile(key, tempFile);
+				} finally {
+					LockManager.returnLock(packed);
+					LockManager.returnLock(key);
+				}
+			}
+		}
+		return packedRef;
+	}
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */

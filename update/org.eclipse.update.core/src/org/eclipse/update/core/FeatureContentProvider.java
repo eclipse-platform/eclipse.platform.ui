@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,8 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.net.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-
+import java.net.URL;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.model.*;
@@ -111,12 +103,6 @@ public abstract class FeatureContentProvider
 	private static final String DOT_PERMISSIONS = "permissions.properties"; //$NON-NLS-1$
 	private static final String EXECUTABLES = "permissions.executable"; //$NON-NLS-1$
 
-	// lock
-	private final static Object lock = new Object();
-
-	// hashtable of locks
-	private static Hashtable locks = new Hashtable();
-
 	/**
 	 * Feature content provider constructor
 	 * 
@@ -186,13 +172,7 @@ public abstract class FeatureContentProvider
 		// is still copying into it
 		File localFile = null;
 		FileFragment localFileFragment = null;
-		Object keyLock = null;
-		synchronized (lock) {
-			if (locks.get(key) == null)
-				locks.put(key, key);
-			keyLock = locks.get(key);
-		}
-
+		Object keyLock = LockManager.getLock(key);
 		synchronized (keyLock) {
 			localFile = Utilities.lookupLocalFile(key);
 			if (localFile != null) {
@@ -351,7 +331,7 @@ public abstract class FeatureContentProvider
 				if (monitor != null)
 					monitor.restoreState();
 			}
-			locks.remove(key);
+			LockManager.returnLock(key);
 		} // end lock
 		ContentReference reference =
 			ref.createContentReference(ref.getIdentifier(), localFile);
