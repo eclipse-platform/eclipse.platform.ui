@@ -28,7 +28,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	private static IConsole console;
 	private static List lines= new ArrayList(); 
 	
-	private static boolean consoleClosed= false;
+	private static boolean consoleClosed= true;
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
