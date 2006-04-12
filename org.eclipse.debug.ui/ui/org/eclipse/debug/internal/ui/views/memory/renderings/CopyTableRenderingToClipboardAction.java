@@ -38,8 +38,8 @@ public class CopyTableRenderingToClipboardAction extends Action
 {
 	private final String COLUMN_SEPERATOR = "  "; //$NON-NLS-1$
 	
-	private AbstractBaseTableRendering fRendering;
-	private StructuredViewer fViewer;
+	protected AbstractBaseTableRendering fRendering;
+	protected StructuredViewer fViewer;
 	
 	public CopyTableRenderingToClipboardAction(AbstractBaseTableRendering rendering, StructuredViewer viewer)
 	{
@@ -53,7 +53,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
 	}
 
-	private String concatenateTableAsString(TableItem[] itemList) {
+	protected String concatenateTableAsString(TableItem[] itemList) {
 		if (itemList.length == 0) return null;
 
 		StringBuffer tableContents = new StringBuffer();
@@ -91,11 +91,17 @@ public class CopyTableRenderingToClipboardAction extends Action
 				IMemoryBlock memBlock = fRendering.getMemoryBlock();
 				if (memBlock instanceof IMemoryBlockExtension)
 				{
-					try {
-						numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
-					} catch (DebugException e) {
-						numBytes = 0;
+					TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)fRendering.getAdapter(TableRenderingContentDescriptor.class);
+					if (descriptor == null)
+						{
+						try {
+							numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
+						} catch (DebugException e) {
+							numBytes = 0;
+						}
 					}
+					else
+						numBytes = descriptor.getAddressSize();
 					
 					// check address size
 					if (numBytes <= 0)

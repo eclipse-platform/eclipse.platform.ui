@@ -39,6 +39,8 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractVirtualContentTableModel;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncCopyTableRenderingAction;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncPrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingCellModifier;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncTableRenderingViewer;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AsyncVirtualContentTableViewer;
@@ -1802,11 +1804,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	protected void createActions() {
 		
-		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this, fTableViewer);
+		fCopyToClipboardAction = new AsyncCopyTableRenderingAction(this, fTableViewer);
 		fGoToAddressAction = new RenderingGoToAddressAction(this);
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
 		
-		fPrintViewTabAction = new PrintTableRenderingAction(this, fTableViewer);
+		fPrintViewTabAction = new AsyncPrintTableRenderingAction(this, fTableViewer);
 		
 		fFormatRenderingAction = new FormatTableRenderingAction(this);		
 		fReformatAction = new ReformatAction(this);

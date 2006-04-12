@@ -57,9 +57,9 @@ public class PrintTableRenderingAction extends Action
 	 * startJob() and startPage() must be called before printTable(...),
 	 * and endPage() and endJob() must be called after printTable(...).
 	 */
-	private void printTable(TableItem[] itemList, GC printGC, Printer printer) {
+	protected void printTable(TableItem[] itemList, GC printGC, Printer printer) {
 		
-		String tableContents = new String();
+		
 		int numColumns = ((Table)fViewer.getControl()).getColumnCount();
 		ITableLabelProvider labelProvider = (ITableLabelProvider)fViewer.getLabelProvider();		
 		int lineNum = 1;
@@ -73,7 +73,7 @@ public class PrintTableRenderingAction extends Action
 
 		//for all items in the table
 		for (int i=0; i < itemList.length; i++) {
-			tableContents = ""; //$NON-NLS-1$
+			StringBuffer tableContents = new StringBuffer();
 			//print all columns for this row
 			for (int j=0; j < numColumns; j++) {
 				String columnText = labelProvider.getColumnText(itemList[i].getData(), j);
@@ -82,9 +82,10 @@ public class PrintTableRenderingAction extends Action
 				{
 					 columnText += " "; //$NON-NLS-1$
 				}
-				tableContents += COLUMN_SEPERATOR + columnText;							 
+				tableContents.append(COLUMN_SEPERATOR);
+				tableContents.append(columnText);							 
 			}
-			printGC.drawString(tableContents, 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
+			printGC.drawString(tableContents.toString(), 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
 			lineNum++;
 
 			// if we've run over the end of a page, start a new one
@@ -99,13 +100,40 @@ public class PrintTableRenderingAction extends Action
 	
 	private int printColumnLabels(GC printGC, int lineNum)
 	{	
-		String tableContents = ""; //$NON-NLS-1$
+		StringBuffer tableContents = new StringBuffer();
 		int numColumns = ((Table)fViewer.getControl()).getColumnCount();		
 		TableColumn columns[] = ((Table)fViewer.getControl()).getColumns();
 		
 		int charsPerByte = fRendering.getNumCharsPerByte();
 		if (charsPerByte < 0)
 			charsPerByte = 4;
+		
+		int addressSizeInBytes = 0;
+		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)fRendering.getAdapter(TableRenderingContentDescriptor.class);
+		if (descriptor == null)
+		{
+			// special for address column
+			IMemoryBlock memBlock = fRendering.getMemoryBlock();
+			if (memBlock instanceof IMemoryBlockExtension)
+			{
+				try {
+					addressSizeInBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
+				} catch (DebugException e) {
+					addressSizeInBytes = 0;
+				}
+				
+				if (addressSizeInBytes <= 0)
+					addressSizeInBytes = 4;
+			}
+			else
+			{
+				addressSizeInBytes = 4;
+			}
+		}
+		else
+		{
+			addressSizeInBytes = descriptor.getAddressSize();
+		}
 	
 		//get the column headers
 		for (int k=0; k < numColumns; k++) {
@@ -119,24 +147,7 @@ public class PrintTableRenderingAction extends Action
 			}
 			else
 			{
-				// special for address column
-				IMemoryBlock memBlock = fRendering.getMemoryBlock();
-				if (memBlock instanceof IMemoryBlockExtension)
-				{
-					try {
-						numBytes = ((IMemoryBlockExtension)memBlock).getAddressSize();
-					} catch (DebugException e) {
-						numBytes = 0;
-					}
-					
-					if (numBytes <= 0)
-						numBytes = 4;
-				}
-				else
-				{
-					numBytes = 4;
-				}
-		
+				numBytes = addressSizeInBytes;
 			}
 	
 			 while (columnLabel.length() < numBytes * charsPerByte)
@@ -144,9 +155,10 @@ public class PrintTableRenderingAction extends Action
 				 columnLabel.append(" "); //$NON-NLS-1$
 			 }
 	 
-			tableContents += COLUMN_SEPERATOR + columnLabel;
+			tableContents.append(COLUMN_SEPERATOR);
+			tableContents.append(columnLabel);
 		}
-		printGC.drawString(tableContents, 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
+		printGC.drawString(tableContents.toString(), 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
 		lineNum++;		
 		
 		return lineNum;
