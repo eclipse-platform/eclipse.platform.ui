@@ -257,6 +257,27 @@ public class ContentProposalAdapter {
 					case SWT.END:
 						newSelection = proposalTable.getItemCount() - 1;
 						break;
+						
+					// If received as a Traverse, these should propagate 
+				    // to the control as keydown.  If received as a keydown,
+				    // proposals should be recomputed since the cursor
+				    // position has changed.
+					case SWT.ARROW_LEFT:
+					case SWT.ARROW_RIGHT:
+						if (e.type == SWT.Traverse) {
+							e.doit = false;
+						} else {
+							e.doit = true;
+							String contents = getControlContentAdapter().getControlContents(
+									getControl());
+							// If there are no contents, changes in cursor position 
+							// have no effect.  Note also that we do not affect the filter
+							// text on ARROW_LEFT as we would with BS.
+							if (contents.length() > 0) {
+								asyncRecomputeProposals(filterText);
+							}
+						}
+						break;
 
 					// Any unknown keycodes will cause the popup to close.
 					// Modifier keys are explicitly checked and ignored because
