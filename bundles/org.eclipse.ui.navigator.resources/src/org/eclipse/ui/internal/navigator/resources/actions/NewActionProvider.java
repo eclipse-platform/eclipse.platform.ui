@@ -71,9 +71,8 @@ public class NewActionProvider extends CommonActionProvider {
 
 	/**
 	 * Adds a submenu to the given menu with the name
-	 * {@value ICommonMenuConstants#GROUP_NEW } (see
-	 * {@link ICommonMenuConstants#GROUP_NEW}). The submenu contains the
-	 * following structure:
+	 * "group.new" see {@link ICommonMenuConstants#GROUP_NEW}). 
+	 * The submenu contains the following structure:
 	 * 
 	 * <ul>
 	 * <li>a new generic project wizard shortcut action, </li>

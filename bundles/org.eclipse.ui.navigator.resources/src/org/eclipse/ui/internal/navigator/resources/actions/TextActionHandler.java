@@ -337,7 +337,7 @@ public class TextActionHandler extends org.eclipse.ui.actions.TextActionHandler 
      * for the global Cut, Copy, Paste, Delete, and Select All 
      * of the action bar.
      *
-     * @param actionBar the action bar to register global
+     * @param theActionBars the action bar to register global
      *    action handlers for Cut, Copy, Paste, Delete, 
      * 	  and Select All
      */
