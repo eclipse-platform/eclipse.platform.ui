@@ -172,8 +172,10 @@ public class GenerateDiffFileWizard extends Wizard {
 				
 				GridLayout layout = new GridLayout();
 				layout.numColumns = 1;	
+				layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+				layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);	
 				composite.setLayout(layout);
-				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 				composite.setLayoutData(data);
 	            
 				getShell().setText(CVSUIMessages.GenerateDiffFileWizard_9); 
