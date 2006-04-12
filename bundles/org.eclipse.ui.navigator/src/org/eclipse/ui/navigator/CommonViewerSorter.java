@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 
 package org.eclipse.ui.navigator;
 
@@ -22,15 +20,14 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 
 /**
  * 
- * Provides an implementation of TreeViewerSorter that uses the given parent to
- * determine the correct sort order based on the defined
- * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent/commonSorter</b>
- * elements available in the set of <i>visible</i> content extensions.
+ * Provides an implementation of TreeViewerSorter that uses the given parent to determine the
+ * correct sort order based on the defined
+ * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent/commonSorter</b> elements
+ * available in the set of <i>visible</i> content extensions.
  * 
  * <p>
- * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to
- * drive its sorting algorithm. Without a vaild content service, the sorter will
- * return the default ordering.
+ * The CommonViewerSorter must be assigned a {@link INavigatorContentService} to drive its sorting
+ * algorithm. Without a vaild content service, the sorter will return the default ordering.
  * </p>
  * <p>
  * A CommonViewerSorter may not be attached to more than one CommonViewer.
@@ -55,8 +52,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 * Create a sorter service attached to the given content service.
 	 * 
 	 * @param aContentService
-	 *            The content service used by the viewer that will use this
-	 *            sorter service.
+	 *            The content service used by the viewer that will use this sorter service.
 	 */
 	protected void setContentService(NavigatorContentService aContentService) {
 		contentService = aContentService;
@@ -69,20 +65,23 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
 	public int category(Object element) {
-		if(contentService == null) 
+		if (contentService == null)
 			return 0;
 
-		NavigatorContentDescriptor source = contentService
-				.getSourceOfContribution(element);
-		return source != null ? source.getPriority()
-				: Priority.NORMAL_PRIORITY_VALUE;
+		NavigatorContentDescriptor source = contentService.getSourceOfContribution(element);
+		return source != null ? source.getPriority() : Priority.NORMAL_PRIORITY_VALUE;
 	}
 
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
-		if(contentService == null)
+		if (contentService == null)
 			return -1;
-		INavigatorContentDescriptor sourceOfLvalue = getSource(e1);
-		INavigatorContentDescriptor sourceOfRvalue = getSource(e2);
+		INavigatorContentDescriptor sourceOfLvalue = contentService.getSourceOfContribution(e1);
+		INavigatorContentDescriptor sourceOfRvalue = contentService.getSourceOfContribution(e2);
+
+		if (sourceOfLvalue == null)
+			sourceOfLvalue = getSource(e1);
+		if (sourceOfRvalue == null)
+			sourceOfRvalue = getSource(e2);
 
 		// identity comparison
 		if (sourceOfLvalue != null && sourceOfLvalue == sourceOfRvalue) {
@@ -92,8 +91,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			} else {
 				parent = parentPath.getLastSegment();
 			}
-			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue,
-					parent, e1, e2);
+			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
 			if (sorter != null) {
 				return sorter.compare(viewer, e1, e2);
 			}

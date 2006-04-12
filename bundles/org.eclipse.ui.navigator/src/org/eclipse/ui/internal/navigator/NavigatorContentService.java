@@ -658,7 +658,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Set findDescriptorsByTriggerPoint(Object anElement) {
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
-		Set result = new HashSet();
+		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		if (descriptor != null) {
 			result.add(descriptor);
 		}
@@ -681,7 +681,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public Set findDescriptorsWithPossibleChild(Object anElement) {
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
-		Set result = new HashSet();
+		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		if (descriptor != null) {
 			result.add(descriptor);
 		}

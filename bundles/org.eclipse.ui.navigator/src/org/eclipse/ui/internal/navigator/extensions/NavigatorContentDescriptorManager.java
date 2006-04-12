@@ -14,9 +14,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -143,7 +143,7 @@ public class NavigatorContentDescriptorManager {
 			return cache.getDescriptors(anElement);
 		}
 
-		Set descriptors = new LinkedHashSet();
+		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 
 	 	/* Find other ContentProviders which enable for this object */
 		for (Iterator contentDescriptorsItr = firstClassDescriptors.values()
@@ -196,7 +196,7 @@ public class NavigatorContentDescriptorManager {
 			return cache.getDescriptors(anElement);
 		}
 
-		Set descriptors = new HashSet();
+		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 		addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
 				aVisibilityAssistant, descriptors);
 
