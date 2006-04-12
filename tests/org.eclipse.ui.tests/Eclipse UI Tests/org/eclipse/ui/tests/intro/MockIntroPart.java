@@ -59,4 +59,11 @@ public class MockIntroPart extends MockPart implements IIntroPart {
     public void standbyStateChanged(boolean standby) {
         callTrace.add("standbyStateChanged");
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.intro.IIntroPart#getTitle()
+	 */
+	public String getTitle() {
+		return "Mock intro title";
+	}
 }
