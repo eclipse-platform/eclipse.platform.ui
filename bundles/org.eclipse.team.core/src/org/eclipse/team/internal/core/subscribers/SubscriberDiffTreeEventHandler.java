@@ -348,4 +348,18 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 			return false;
 		return super.isSystemJob();
 	}
+	
+	public synchronized void remove(IResource resource) {
+		// Don't queue changes if we haven't been initialized
+		if (state == STATE_STARTED)
+			return;
+		super.remove(resource);
+	}
+	
+	public void change(IResource resource, int depth) {
+		// Don't queue changes if we haven't been initialized
+		if (state == STATE_STARTED)
+			return;
+		super.change(resource, depth);
+	}
 }
