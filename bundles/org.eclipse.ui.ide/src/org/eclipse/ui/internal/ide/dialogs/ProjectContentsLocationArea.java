@@ -312,7 +312,8 @@ public class ProjectContentsLocationArea {
 				dirName = IDEResourceInfoUtils.EMPTY_STRING;
 		}
 
-		if (getSelectedConfiguration().equals(
+		FileSystemConfiguration config = getSelectedConfiguration();
+		if (config== null || config.equals(
 				FileSystemSupportRegistry.getInstance()
 						.getDefaultConfiguration())) {
 			DirectoryDialog dialog = new DirectoryDialog(locationPathField

@@ -171,8 +171,8 @@ public class CreateLinkedResourceGroup {
 				variablesButton.setEnabled(createLink);
 				// Set the required field color if the field is enabled
 				if (createLink) {
-					linkTargetField.setBackground(
-							FieldAssistColors.getRequiredFieldBackgroundColor(linkTargetField));
+					linkTargetField.setBackground(FieldAssistColors
+							.getRequiredFieldBackgroundColor(linkTargetField));
 				} else {
 					linkTargetField.setBackground(null);
 				}
@@ -226,8 +226,8 @@ public class CreateLinkedResourceGroup {
 		linkTargetField.setLayoutData(data);
 		linkTargetField.setEnabled(enabled);
 		if (enabled) {
-			linkTargetField.setBackground(
-					FieldAssistColors.getRequiredFieldBackgroundColor(linkTargetField));
+			linkTargetField.setBackground(FieldAssistColors
+					.getRequiredFieldBackgroundColor(linkTargetField));
 		}
 		linkTargetField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -372,10 +372,10 @@ public class CreateLinkedResourceGroup {
 	private void handleLinkTargetBrowseButtonPressed() {
 		IFileStore store = null;
 		String selection = null;
-		FileSystemConfiguration config = fileSystemSelectionArea
-				.getSelectedConfiguration();
-		boolean isDefault = config.equals(FileSystemSupportRegistry
-				.getInstance().getDefaultConfiguration());
+		FileSystemConfiguration config = getSelectedConfiguration();
+		boolean isDefault = config == null
+				|| (FileSystemSupportRegistry.getInstance()
+						.getDefaultConfiguration()).equals(config);
 
 		if (linkTarget.length() > 0) {
 			store = IDEResourceInfoUtils.getFileStore(linkTarget);
@@ -433,6 +433,17 @@ public class CreateLinkedResourceGroup {
 		if (selection != null) {
 			linkTargetField.setText(selection);
 		}
+	}
+
+	/**
+	 * Return the selected configuration or <code>null</code>
+	 * if there is not one selected.
+	 * @return FileSystemConfiguration or <code>null</code>
+	 */
+	private FileSystemConfiguration getSelectedConfiguration() {
+		if(fileSystemSelectionArea == null)
+			return null;
+		return fileSystemSelectionArea.getSelectedConfiguration();
 	}
 
 	/**
