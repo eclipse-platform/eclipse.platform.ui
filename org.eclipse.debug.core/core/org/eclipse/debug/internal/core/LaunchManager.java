@@ -337,18 +337,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if (delta == null) {
 				return false;
 			}
-			if((delta.getKind() == IResourceDelta.REMOVED) & (delta.getFlags() != IResourceDelta.MOVED_TO)) {
-				 //bug 113772 & 125005
-	            try {
-	            	if (delta.getResource() instanceof IProject) {
-						IProject project = (IProject)delta.getResource();
-						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-						handler.handleStatus(deleteAssociatedLaunchConfigs, project);
-	            	}
-	            } catch (CoreException e){
-	            	DebugPlugin.log(e);
-	            }
-			}
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				if (delta.getResource() instanceof IProject) {
 					IProject project = (IProject)delta.getResource();
@@ -589,7 +577,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Collection of listeners
 	 */
 	private ListenerList fListeners= new ListenerList();
-		
+	
+	/**
+	 * lets us store that last resource delta we processed, that way if the same one comes in we can cut down the work
+	 * @since 3.2
+	 */
+	private IResourceDelta fLastDelta = null;
 	
 	/**
 	 * Collection of "plural" listeners.
@@ -1911,7 +1904,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
+		IResourceDelta delta = event.getDelta();
 		if (delta == null) {
 		    // pre-delete
 		    LaunchManagerVisitor visitor = getDeltaVisitor();
@@ -1922,13 +1915,35 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
             }
 		} else {
 			try {
+				IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED);
+				if(children.length > 0) {
+					//collect child resources that are projects and have been deleted, but not moved
+					//don't process the same delta for deleting multiple projects
+					if(fLastDelta != delta) {
+						fLastDelta = delta;
+						ArrayList projs = new ArrayList();
+						IResource res = null;
+						for (int i = 0; i < children.length; i++) {
+							if(children[i].getFlags() != IResourceDelta.MOVED_TO) {
+								res = children[i].getResource();
+								if(res != null && res instanceof IProject) {
+									projs.add(res);
+								}
+							}
+						}
+						if(projs.size() > 0) {
+							IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+							handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
+							projs.clear();
+						}
+					}
+				}
 			    LaunchManagerVisitor visitor = getDeltaVisitor();
 				delta.accept(visitor);
 				visitor.reset();
-			} catch (CoreException e) {
-				DebugPlugin.log(e);
 			}
-		}		
+			catch (CoreException e) {DebugPlugin.log(e);}	
+		}
 	}
 	/**
 	 * Indicates the given launch configuration is being moved from the given

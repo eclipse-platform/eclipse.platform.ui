@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -21,12 +22,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  * Provides a status handler to prompt the user to delete any launch configurations
@@ -37,30 +35,38 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  *
  */
 public class DeleteLaunchConfigurations implements IStatusHandler {
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		String pref = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE);
-		if(source instanceof IProject) {
-			IProject project = (IProject)source;
-			ILaunchConfiguration[] configs = collectAssociatedLaunches(project);
-			if(configs.length > 0) {
+		if(source instanceof IProject[]) {
+			IProject[] projects = (IProject[])source;
+			ArrayList configs =  new ArrayList();
+			ArrayList elements = null;
+			HashMap map = new HashMap();
+			for (int i = 0; i < projects.length; i++) {
+				elements = collectAssociatedLaunches(projects[i]);
+				if(!elements.isEmpty()) {
+					map.put(projects[i], elements);
+					configs.addAll(elements);
+				}
+			}
+			if(configs.size() > 0) {
 				if(pref.equals(MessageDialogWithToggle.PROMPT)) {
-					ListSelectionDialog lsd = new ListSelectionDialog(DebugUIPlugin.getShell(),
+					DeleteAssociatedLaunchConfigurationsDialog lsd = new DeleteAssociatedLaunchConfigurationsDialog(DebugUIPlugin.getShell(),
 							new AdaptableList(configs),
-							new WorkbenchContentProvider(),
-							DebugUITools.newDebugModelPresentation(),
-							LaunchConfigurationsMessages.DeleteLaunchConfigurations_0);
-					lsd.setInitialSelections(configs);
+							LaunchConfigurationsMessages.DeleteLaunchConfigurations_0, 
+							map);
+					lsd.setInitialSelections(configs.toArray());
 					lsd.setTitle(LaunchConfigurationsMessages.DeleteLaunchConfigurations_1);
 					if(lsd.open() == IDialogConstants.OK_ID) {
 						doDelete(lsd.getResult());
 					}
 				}
 				else if(pref.equals(MessageDialogWithToggle.ALWAYS)){
-					doDelete(collectAssociatedLaunches(project));
+					doDelete(configs.toArray());
 				}
 			}
 		}
@@ -75,7 +81,7 @@ public class DeleteLaunchConfigurations implements IStatusHandler {
 	 * @param project the project to collect launch configurations for
 	 * @return the list of associated launch configurations
 	 */
-	private ILaunchConfiguration[] collectAssociatedLaunches(IProject project) {
+	private ArrayList collectAssociatedLaunches(IProject project) {
 		ArrayList list = new ArrayList();
 		try { 
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
@@ -94,7 +100,7 @@ public class DeleteLaunchConfigurations implements IStatusHandler {
 		catch (CoreException e) {
 		    DebugUIPlugin.log(e);
         }
-		return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
+		return list;
 	}
 	
 	/**
