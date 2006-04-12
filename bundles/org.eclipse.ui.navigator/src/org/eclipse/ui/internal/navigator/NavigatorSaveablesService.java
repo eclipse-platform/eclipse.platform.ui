@@ -157,20 +157,22 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private DisposeListener disposeListener = new DisposeListener() {
 
 		public void widgetDisposed(DisposeEvent e) {
-			if (saveablesProviders != null) {
-				for (int i = 0; i < saveablesProviders.length; i++) {
-					saveablesProviders[i].dispose();
+			synchronized (this) {
+				if (saveablesProviders != null) {
+					for (int i = 0; i < saveablesProviders.length; i++) {
+						saveablesProviders[i].dispose();
+					}
 				}
+				removeInstance(NavigatorSaveablesService.this);
+				contentService = null;
+				currentSaveables = null;
+				outsideListener = null;
+				saveablesLifecycleListener = null;
+				saveablesSource = null;
+				viewer = null;
+				saveablesProviders = null;
+				disposeListener = null;
 			}
-			removeInstance(NavigatorSaveablesService.this);
-			contentService = null;
-			currentSaveables = null;
-			outsideListener = null;
-			saveablesLifecycleListener = null;
-			saveablesSource = null;
-			viewer = null;
-			saveablesProviders = null;
-			disposeListener = null;
 		}
 	};
 
@@ -183,19 +185,35 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private Map saveablesProviderMap;
 
 	/**
+	 * Implementation note: This is not synchronized at the method level because it needs to
+	 * synchronize on "instances" first, then on "this", to avoid potential deadlock.
+	 * 
 	 * @param saveablesSource
 	 * @param viewer
 	 * @param outsideListener
+	 * 
 	 */
-	public synchronized void init(final ISaveablesSource saveablesSource,
+	public void init(final ISaveablesSource saveablesSource,
 			final StructuredViewer viewer,
 			ISaveablesLifecycleListener outsideListener) {
-		this.saveablesSource = saveablesSource;
-		this.viewer = viewer;
-		this.outsideListener = outsideListener;
-		currentSaveables = computeSaveables();
+		// Synchronize on instances to make sure that we don't miss bundle started events. 
+		synchronized (instances) {
+			// Synchronize on this because we are calling computeSaveables.
+			// Synchronization must remain in this order to avoid deadlock.
+			// This might not be necessary because at this time, no other
+			// concurrent calls should be possible, but it doesn't hurt either.
+			// For example, the initialization sequence might change in the
+			// future.
+			synchronized (this) {
+				this.saveablesSource = saveablesSource;
+				this.viewer = viewer;
+				this.outsideListener = outsideListener;
+				currentSaveables = computeSaveables();
+				// add this instance after we are fully inialized.
+				addInstance(this);
+			}
+		}
 		viewer.getControl().addDisposeListener(disposeListener);
-		addInstance(this);
 	}
 
 	/** helper to compute the saveables for which elements are part of the tree.
@@ -285,7 +303,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	/**
 	 * @return the saveables
 	 */
-	public Saveable[] getSaveables() {
+	public synchronized Saveable[] getSaveables() {
 		return currentSaveables;
 	}
 
@@ -350,64 +368,62 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		return (Saveable[]) result.toArray(new Saveable[result.size()]);
 	}
 
-	/* package */synchronized void recomputeSaveablesAndNotify(boolean recomputeProviders,
+	private void recomputeSaveablesAndNotify(boolean recomputeProviders,
 			String startedBundleIdOrNull) {
-		synchronized (this) {
-			if (recomputeProviders && startedBundleIdOrNull == null
-					&& saveablesProviders != null) {
-				// a bundle was stopped, dispose of all saveablesProviders and
-				// recompute
-				// TODO optimize this
-				for (int i = 0; i < saveablesProviders.length; i++) {
-					saveablesProviders[i].dispose();
+		if (recomputeProviders && startedBundleIdOrNull == null
+				&& saveablesProviders != null) {
+			// a bundle was stopped, dispose of all saveablesProviders and
+			// recompute
+			// TODO optimize this
+			for (int i = 0; i < saveablesProviders.length; i++) {
+				saveablesProviders[i].dispose();
+			}
+			saveablesProviders = null;
+		} else if (startedBundleIdOrNull != null){
+			if(inactivePluginsWithSaveablesProviders.containsKey(startedBundleIdOrNull)) {
+				updateSaveablesProviders(startedBundleIdOrNull);
+			}
+		}
+		Set oldSaveables = new HashSet(Arrays.asList(currentSaveables));
+		currentSaveables = computeSaveables();
+		Set newSaveables = new HashSet(Arrays.asList(currentSaveables));
+		final Set removedSaveables = new HashSet(oldSaveables);
+		removedSaveables.removeAll(newSaveables);
+		final Set addedSaveables = new HashSet(newSaveables);
+		addedSaveables.removeAll(oldSaveables);
+		if (addedSaveables.size() > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
+							saveablesSource, SaveablesLifecycleEvent.POST_OPEN,
+							(Saveable[]) addedSaveables
+							.toArray(new Saveable[addedSaveables.size()]),
+							false));
 				}
-				saveablesProviders = null;
-			} else if (startedBundleIdOrNull != null){
-				if(inactivePluginsWithSaveablesProviders.containsKey(startedBundleIdOrNull)) {
-					updateSaveablesProviders(startedBundleIdOrNull);
+			});
+		}
+		// TODO this will make the closing of saveables non-cancelable.
+		// Ideally, we should react to PRE_CLOSE events and fire
+		// an appropriate PRE_CLOSE
+		if (removedSaveables.size() > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					outsideListener
+							.handleLifecycleEvent(new SaveablesLifecycleEvent(
+									saveablesSource,
+									SaveablesLifecycleEvent.PRE_CLOSE,
+									(Saveable[]) removedSaveables
+											.toArray(new Saveable[removedSaveables
+													.size()]), true));
+					outsideListener
+							.handleLifecycleEvent(new SaveablesLifecycleEvent(
+									saveablesSource,
+									SaveablesLifecycleEvent.POST_CLOSE,
+									(Saveable[]) removedSaveables
+											.toArray(new Saveable[removedSaveables
+													.size()]), false));
 				}
-			}
-			Set oldSaveables = new HashSet(Arrays.asList(currentSaveables));
-			currentSaveables = computeSaveables();
-			Set newSaveables = new HashSet(Arrays.asList(currentSaveables));
-			final Set removedSaveables = new HashSet(oldSaveables);
-			removedSaveables.removeAll(newSaveables);
-			final Set addedSaveables = new HashSet(newSaveables);
-			addedSaveables.removeAll(oldSaveables);
-			if (addedSaveables.size() > 0) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
-								saveablesSource, SaveablesLifecycleEvent.POST_OPEN,
-								(Saveable[]) addedSaveables
-								.toArray(new Saveable[addedSaveables.size()]),
-								false));
-					}
-				});
-			}
-			// TODO this will make the closing of saveables non-cancelable.
-			// Ideally, we should react to PRE_CLOSE events and fire
-			// an appropriate PRE_CLOSE
-			if (removedSaveables.size() > 0) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						outsideListener
-								.handleLifecycleEvent(new SaveablesLifecycleEvent(
-										saveablesSource,
-										SaveablesLifecycleEvent.PRE_CLOSE,
-										(Saveable[]) removedSaveables
-												.toArray(new Saveable[removedSaveables
-														.size()]), true));
-						outsideListener
-								.handleLifecycleEvent(new SaveablesLifecycleEvent(
-										saveablesSource,
-										SaveablesLifecycleEvent.POST_CLOSE,
-										(Saveable[]) removedSaveables
-												.toArray(new Saveable[removedSaveables
-														.size()]), false));
-					}
-				});
-			}
+			});
 		}
 	}
 
@@ -436,8 +452,12 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @param symbolicName
 	 */
 	private synchronized void handleBundleStarted(String symbolicName) {
-		if (inactivePluginsWithSaveablesProviders.containsKey(symbolicName)) {
-			recomputeSaveablesAndNotify(true, symbolicName);
+		// Guard against the case that this instance is not yet initialized,
+		// or already disposed.
+		if (saveablesSource != null) {
+			if (inactivePluginsWithSaveablesProviders.containsKey(symbolicName)) {
+				recomputeSaveablesAndNotify(true, symbolicName);
+			}
 		}
 	}
 
@@ -445,14 +465,22 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 * @param symbolicName
 	 */
 	private synchronized void handleBundleStopped(String symbolicName) {
-		recomputeSaveablesAndNotify(true, null);
+		// Guard against the case that this instance is not yet initialized,
+		// or already disposed.
+		if (saveablesSource != null) {
+			recomputeSaveablesAndNotify(true, null);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener#onVisibilityOrActivationChange()
 	 */
-	public void onVisibilityOrActivationChange() {
-		recomputeSaveablesAndNotify(true, null);
+	public synchronized void onVisibilityOrActivationChange() {
+		// Guard against the case that this instance is not yet initialized,
+		// or already disposed.
+		if (saveablesSource != null) {
+			recomputeSaveablesAndNotify(true, null);
+		}
 	}
 
 }
