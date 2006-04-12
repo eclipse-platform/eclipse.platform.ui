@@ -215,7 +215,7 @@ public class ContentProposalAdapter {
 					e.doit = propagateKeys;
 				}
 
-				// No character. Check for navigation keys.
+				// No character. Check for navigation keys. 
 
 				if (key == 0) {
 					int newSelection = proposalTable.getSelectionIndex();
@@ -227,6 +227,13 @@ public class ContentProposalAdapter {
 						if (newSelection < 0) {
 							newSelection = proposalTable.getItemCount() - 1;
 						}
+						// Not typical - usually we get this as a Traverse and
+						// therefore it never propagates.  Added for consistency.
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
+						}
+
 						break;
 
 					case SWT.ARROW_DOWN:
@@ -234,12 +241,23 @@ public class ContentProposalAdapter {
 						if (newSelection > proposalTable.getItemCount() - 1) {
 							newSelection = 0;
 						}
+						// Not typical - usually we get this as a Traverse and
+						// therefore it never propagates.  Added for consistency.
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
+						}
+
 						break;
 
 					case SWT.PAGE_DOWN:
 						newSelection += visibleRows;
 						if (newSelection >= proposalTable.getItemCount()) {
 							newSelection = proposalTable.getItemCount() - 1;
+						}
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
 						}
 						break;
 
@@ -248,14 +266,26 @@ public class ContentProposalAdapter {
 						if (newSelection < 0) {
 							newSelection = 0;
 						}
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
+						}
 						break;
 
 					case SWT.HOME:
 						newSelection = 0;
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
+						}
 						break;
 
 					case SWT.END:
 						newSelection = proposalTable.getItemCount() - 1;
+						if (e.type == SWT.KeyDown) {
+							// don't propagate to control
+							e.doit = false;		
+						}
 						break;
 						
 					// If received as a Traverse, these should propagate 
