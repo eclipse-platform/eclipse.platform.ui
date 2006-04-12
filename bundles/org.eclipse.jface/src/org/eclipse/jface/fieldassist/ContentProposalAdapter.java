@@ -205,9 +205,8 @@ public class ContentProposalAdapter {
 					}
 					// Traversal does not contain a character. Set doit true
 					// to indicate TRAVERSE_NONE will occur and that no key
-					// event
-					// will be triggered. We will check for navigation keys
-					// below.
+					// event will be triggered. We will check for navigation 
+					// keys below.
 					e.detail = SWT.TRAVERSE_NONE;
 					e.doit = true;
 				} else {
@@ -319,13 +318,13 @@ public class ContentProposalAdapter {
 					}
 					// There is no filtering provided by us, but some 
 					// clients provide their own filtering based on content.
-					// Recompute the proposals if the control has content.  
-					String contents = getControlContentAdapter().getControlContents(
-							getControl());
-					// We rely on the fact that the contents do not reflect this BS.
-					// If the contents were already empty, then BS should not cause
+					// Recompute the proposals if the cursor position
+					// will change (is not at 0).  
+					int pos = getControlContentAdapter().getCursorPosition(getControl());
+					// We rely on the fact that the contents and pos do not yet
+					// reflect the result of the BS.  If the contents were already empty, then BS should not cause
 					// a recompute.
-					if (contents.length() != 0) {
+					if (pos > 0) {
 						asyncRecomputeProposals(filterText);
 					}
 					break;
