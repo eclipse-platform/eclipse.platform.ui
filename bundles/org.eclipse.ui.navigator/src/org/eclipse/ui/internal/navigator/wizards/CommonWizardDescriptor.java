@@ -205,5 +205,9 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
 	public String getId() {
 		return id;
 	}
+	
+	public String toString() {
+		return "CommonWizardDescriptor["+getId()+", wizardId="+getWizardId()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 }
