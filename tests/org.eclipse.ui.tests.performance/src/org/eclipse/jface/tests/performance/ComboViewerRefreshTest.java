@@ -41,7 +41,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 
 	protected StructuredViewer createViewer(Shell shell) {
 		
-		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=135147>See Bug 135147</a> ");
+		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
 		viewer = new ComboViewer(shell);
 		contentProvider = new RefreshTestContentProvider(ELEMENT_COUNT);
 		viewer.setContentProvider(contentProvider);
