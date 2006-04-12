@@ -33,7 +33,8 @@
         </group>
         <group id="action-links" computed="true">
         </group>        
-        <group id="branding" style-id="branding" bgImage="$introBrandingImage$">
+        <group id="branding">
+        	<img src="$introBrandingImage$" alt="$introBrandingImageText$"/>
         </group>
 		<!-- General-purpose groups for additional content -->
 		<group id="extra-group1" filteredFrom="swt"><anchor id="anchor"/></group>

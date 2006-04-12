@@ -40,16 +40,23 @@ body {
 	background-color : #7169D1;
 }
 
-.page { 
+.page {
+/*
 	background-image : url(../graphics/root/brandmark.gif);
 	background-repeat : no-repeat;
 	background-position : bottom left;
+*/
+	background-image: none;
 	min-width : 230px;
 	/* since IE doesn't support min-width, use expression */
 	width:expression(document.body.clientWidth < 230? "230px": "auto" );
  	min-height : 610px;
 	height : 100%;
 	height : expression(document.body.clientHeight < 450? "450px": "100%" );
+}
+
+#extra-group1 {
+	display: none;
 }
 
 /* 
