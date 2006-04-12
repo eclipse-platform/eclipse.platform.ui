@@ -257,6 +257,8 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (currentShell == null) {
 					display = Display.getDefault();
 				} else {
+					if(currentShell.isDisposed())//Don't bother if it has been closed
+						return;
 					display = currentShell.getDisplay();
 				}
 
@@ -269,9 +271,8 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 							return;//Check again as the async  may come too late
 						}
 						Shell shell = getShell();
-						if(shell != null && shell.isDisposed()) {
-							return;
-						}
+						if(shell != null && shell.isDisposed()) 
+							return;						
 						
 						runnable.run();
 					}
