@@ -28,6 +28,7 @@ public class IntroGroup extends AbstractIntroContainer {
     private static final String ATT_LABEL = "label"; //$NON-NLS-1$
     private static final String ATT_COMPUTED = "computed"; //$NON-NLS-1$
     private static final String ATT_EXPANDABLE = "expandable"; //$NON-NLS-1$
+    private static final String ATT_EXPANDED = "expanded"; //$NON-NLS-1$
     private static final String P_UPPERCASE = "capitalizeTitles"; //$NON-NLS-1$
     private String label;
     /**
@@ -75,6 +76,11 @@ public class IntroGroup extends AbstractIntroContainer {
     
     public boolean isExpandable() {
     	String value=getAttribute(element, ATT_EXPANDABLE);
+    	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
+    }
+    
+    public boolean isExpanded() {
+    	String value=getAttribute(element, ATT_EXPANDED);
     	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
     

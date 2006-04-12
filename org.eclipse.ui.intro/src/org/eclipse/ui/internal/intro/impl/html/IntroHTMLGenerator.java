@@ -334,6 +334,8 @@ public class IntroHTMLGenerator {
 						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
 								IIntroConstants.PLUGIN_ID));
 				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image-closed"); //$NON-NLS-1$
+				if (element.isExpanded())
+					toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: none"); //$NON-NLS-1$
 				link.addContent(toggleImageClosed);
 				HTMLElement toggleImageOpen = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
 						indentLevel + 2, false);
@@ -342,9 +344,13 @@ public class IntroHTMLGenerator {
 						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
 								IIntroConstants.PLUGIN_ID));
 				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, "section-toggle-image-open"); //$NON-NLS-1$
+				if (element.isExpanded())
+					toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: inline"); //$NON-NLS-1$				
 				link.addContent(toggleImageOpen);
 				childContainer = generateDivElement(clientId, indentLevel + 1);
 				childContainer.addAttribute("class", "section-body"); //$NON-NLS-1$//$NON-NLS-2$
+				if (element.isExpanded())
+					childContainer.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: block"); //$NON-NLS-1$
 				divElement.addContent(childContainer);
 			} else {
 				HTMLElement divLabel = generateTextElement(IIntroHTMLConstants.ELEMENT_H4, null,
