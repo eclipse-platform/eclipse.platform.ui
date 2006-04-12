@@ -89,20 +89,22 @@ public class LinkEditorAction extends Action implements
 			try { 
 				IEditorPart editor = commonNavigator.getSite().getPage()
 						.getActiveEditor();
-				IEditorInput input = editor.getEditorInput();
-				ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
-
-				IStructuredSelection selection = StructuredSelection.EMPTY;
-				IStructuredSelection newSelection = StructuredSelection.EMPTY;
-
-				for (int i = 0; i < helpers.length; i++) {
-					selection = helpers[i].findSelection(input);
-					if (selection != null && !selection.isEmpty()) {
-						newSelection = mergeSelection(newSelection, selection);
+				if(editor != null) {
+					IEditorInput input = editor.getEditorInput();
+					ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
+	
+					IStructuredSelection selection = StructuredSelection.EMPTY;
+					IStructuredSelection newSelection = StructuredSelection.EMPTY;
+	
+					for (int i = 0; i < helpers.length; i++) {
+						selection = helpers[i].findSelection(input);
+						if (selection != null && !selection.isEmpty()) {
+							newSelection = mergeSelection(newSelection, selection);
+						}
 					}
-				}
-				if(!newSelection.isEmpty()) {
-					commonNavigator.selectReveal(newSelection);
+					if(!newSelection.isEmpty()) {
+						commonNavigator.selectReveal(newSelection);
+					}
 				}
 			} catch (Throwable e) { 
 				String msg = e.getMessage() != null ? e.getMessage() : e.toString();
