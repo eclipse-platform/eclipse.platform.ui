@@ -196,38 +196,35 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		return fileStore.openInputStream(EFS.NONE, null);
 	}
 
-	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) {
+	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) throws CoreException {
+		OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 		try {
-			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
-			try {
-				byte[] buffer= new byte[8192];
-				while (true) {
-					int bytesRead= -1;
-					try {
-						bytesRead= stream.read(buffer);
-					} catch (IOException e) {
-					}
-					if (bytesRead == -1)
-						break;
-					try {
-						out.write(buffer, 0, bytesRead);
-					} catch (IOException e) {
-					}
-					if (monitor != null)
-						monitor.worked(1);
+			byte[] buffer= new byte[8192];
+			while (true) {
+				int bytesRead= -1;
+				try {
+					bytesRead= stream.read(buffer);
+				} catch (IOException e) {
 				}
+				if (bytesRead == -1)
+					break;
+				try {
+					out.write(buffer, 0, bytesRead);
+				} catch (IOException e) {
+				}
+				if (monitor != null)
+					monitor.worked(1);
+			}
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
 			} finally {
 				try {
-					stream.close();
+					out.close();
 				} catch (IOException e) {
-				} finally {
-					try {
-						out.close();
-					} catch (IOException e) {
-					}
 				}
 			}
-		} catch (CoreException e) {
 		}
 	}
 
