@@ -813,6 +813,11 @@
                name="%command.displayHelp.hrefParameter"
                optional="true"/>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.file"
+            description="%command.closeOthers.description"
+            id="org.eclipse.ui.file.closeOthers"
+            name="%command.closeOthers.name"/>
    </extension>
    
    <extension

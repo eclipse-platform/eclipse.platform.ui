@@ -66,6 +66,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction closeAction;
 
     private IWorkbenchAction closeAllAction;
+    
+    private IWorkbenchAction closeOthersAction;
 
     private IWorkbenchAction closeAllSavedAction;
 
@@ -1051,6 +1053,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         closeAction = null;
         closeAllAction = null;
         closeAllSavedAction = null;
+        closeOthersAction = null;
         saveAction = null;
         saveAllAction = null;
         newWindowAction = null;
@@ -1250,6 +1253,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         closeAllAction = ActionFactory.CLOSE_ALL.create(window);
         register(closeAllAction);
+
+        closeOthersAction = ActionFactory.CLOSE_OTHERS.create(window);
+        register(closeOthersAction);
 
         closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(window);
         register(closeAllSavedAction);

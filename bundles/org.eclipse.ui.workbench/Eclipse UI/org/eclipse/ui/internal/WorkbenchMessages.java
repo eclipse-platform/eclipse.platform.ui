@@ -39,6 +39,8 @@ public class WorkbenchMessages extends NLS {
 	public static String CloseAllSavedAction_toolTip;
 	public static String CloseEditorAction_text;
 	public static String CloseEditorAction_toolTip;
+	public static String CloseOthersAction_text;
+	public static String CloseOthersAction_toolTip;
 	public static String NewEditorAction_text;
 	public static String NewEditorAction_tooltip;
 	public static String SaveAction_text;

@@ -60,6 +60,9 @@ public interface IWorkbenchHelpContextIds {
 
     public static final String CLOSE_ALL_ACTION = PREFIX
             + "close_all_action_context"; //$NON-NLS-1$
+    
+    public static final String CLOSE_OTHERS_ACTION = PREFIX
+    		+ "close_others_action_context"; //$NON-NLS-1$
 
     public static final String LOCK_TOOLBAR_ACTION = PREFIX
             + "lock_toolbar_action_context"; //$NON-NLS-1$

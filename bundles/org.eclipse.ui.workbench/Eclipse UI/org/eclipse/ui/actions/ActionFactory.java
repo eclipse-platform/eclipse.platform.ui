@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.CloseAllAction;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.CloseEditorAction;
+import org.eclipse.ui.internal.CloseOthersAction;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.CycleEditorAction;
 import org.eclipse.ui.internal.CyclePartAction;
@@ -210,6 +211,24 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             IWorkbenchAction action = new CloseAllAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+    
+    /**
+     * Workbench action (id "closeOthers"): Close all editors except the one that 
+	 * is active. This action maintains its enablement state.
+     */
+    public static final ActionFactory CLOSE_OTHERS = new ActionFactory("closeOthers") {//$NON-NLS-1$
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+         */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new CloseOthersAction(window);
             action.setId(getId());
             return action;
         }
