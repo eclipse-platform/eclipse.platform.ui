@@ -314,11 +314,20 @@ public class ContentProposalAdapter {
 						// There is filter to back out of
 						filterText = filterText.substring(0, filterText
 								.length() - 1);
+						asyncRecomputeProposals(filterText);
+						return;
 					}
-					// Recompute the proposals even if the filter text
-					// did not change. Some clients provide their own
-					// filtering based on content.
-					asyncRecomputeProposals(filterText);
+					// There is no filtering provided by us, but some 
+					// clients provide their own filtering based on content.
+					// Recompute the proposals if the control has content.  
+					String contents = getControlContentAdapter().getControlContents(
+							getControl());
+					// We rely on the fact that the contents do not reflect this BS.
+					// If the contents were already empty, then BS should not cause
+					// a recompute.
+					if (contents.length() != 0) {
+						asyncRecomputeProposals(filterText);
+					}
 					break;
 
 				default:
@@ -514,6 +523,27 @@ public class ContentProposalAdapter {
 			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP, false, false,
 					false, false, null, infoText);
 			this.proposals = getProposals(filterText);
+		}
+		/*
+		 * Overridden to force change of colors.
+		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=136244
+		 * (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Control createContents(Composite parent) {
+			Control contents = super.createContents(parent);
+			changeDefaultColors(parent);
+			return contents;
+		}
+		
+		/*
+		 * Set the colors of the popup.  The contents have already been created.
+		 */
+		private void changeDefaultColors(Control control) {
+			applyForegroundColor(getShell().getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_FOREGROUND), control);
+			applyBackgroundColor(getShell().getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND), control);
 		}
 
 		/*
@@ -1102,6 +1132,13 @@ public class ContentProposalAdapter {
 	 * The delay in milliseconds used when autoactivating the popup.
 	 */
 	private int autoActivationDelay = 0;
+	
+	/*
+	 * A boolean indicating whether a keystroke has been received.  
+	 * Used to see if an autoactivation delay was interrupted by 
+	 * a keystroke.
+	 */
+	private boolean receivedKeyDown;
 
 	/*
 	 * The desired size in pixels of the proposal popup.
@@ -1563,11 +1600,12 @@ public class ContentProposalAdapter {
 							if (autoActivationDelay > 0) {
 								Runnable runnable = new Runnable() {
 									public void run() {
+										receivedKeyDown = false;
 										try {
 											Thread.sleep(autoActivationDelay);
 										} catch (InterruptedException e) {
 										}
-										if (!isValid()) {
+										if (!isValid() || receivedKeyDown) {
 											return;
 										}
 										getControl().getDisplay().syncExec(
@@ -1595,6 +1633,11 @@ public class ContentProposalAdapter {
 										});
 							}
 
+						} else {
+							// No autoactivation occurred, so record the key down
+							// as a means to interrupt any autoactivation that is
+							// pending.
+							receivedKeyDown = true;
 						}
 					}
 					break;
