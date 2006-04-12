@@ -14,6 +14,17 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.GroupCategory;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
+import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -21,28 +32,21 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ltk.core.refactoring.GroupCategory;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
-import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.CompareViewerSwitchingPane;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
@@ -113,14 +117,16 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		}
 	}
 	
-	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor {
+	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor, IResourceProvider {
 		// we use an encoding that preserves Unicode across the stream
 		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$ 
 		private String fContent;
 		private String fType;
-		public CompareElement(String content, String type) {
+		private IResource fResource;
+		public CompareElement(String content, String type, IResource resource) {
 			fContent= content;
 			fType= type;
+			fResource= resource;
 		}
 		public String getName() {
 			return RefactoringUIMessages.ComparePreviewer_element_name; 
@@ -140,6 +146,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		}
 		public String getCharset() {
 			return ENCODING;
+		}
+		public IResource getResource() {
+			return fResource;
 		}
 	}
 	
@@ -211,21 +220,25 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	
 	private void setInput(TextEditBasedChange change, String left, String right, String type) {
 		Object element= change.getModifiedElement();
+		IResource resource= null;
 		if (element instanceof IAdaptable) {
-			IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
-			if (adapter != null) {
-				fViewer.setLabel(adapter.getLabel(element));
-				fViewer.setImageDescriptor(adapter.getImageDescriptor(element));
+			IAdaptable adaptable= (IAdaptable)element;
+			IWorkbenchAdapter workbenchAdapter= (IWorkbenchAdapter)adaptable.getAdapter(IWorkbenchAdapter.class);
+			if (workbenchAdapter != null) {
+				fViewer.setLabel(workbenchAdapter.getLabel(element));
+				fViewer.setImageDescriptor(workbenchAdapter.getImageDescriptor(element));
 			} else {
 				fViewer.setLabel(null);
 				fViewer.setImageDescriptor(null);
 			}
+			resource= (IResource)adaptable.getAdapter(IResource.class);
 		} else {
 			fViewer.setLabel(null);
 			fViewer.setImageDescriptor(null);
 		}
+		
 		fViewer.setInput(new DiffNode( 
-			new CompareElement(left, type), 
-			new CompareElement(right, type)));
+			new CompareElement(left, type, resource), 
+			new CompareElement(right, type, resource)));
 	}	
 }
