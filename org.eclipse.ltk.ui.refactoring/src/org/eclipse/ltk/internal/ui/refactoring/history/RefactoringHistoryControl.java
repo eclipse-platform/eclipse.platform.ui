@@ -119,7 +119,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 						public final void run() {
 							final Object element= event.getElement();
-							if (getChecked(element)) {
+							if (getGrayed(element)) {
+								final RefactoringHistory history= RefactoringHistoryControl.this.getInput();
+								if (history != null)
+									reconcileCheckState(history);
+							} else if (getChecked(element)) {
 								setSubTreeGrayed(element, false);
 								setSubtreeChecked(element, true);
 							}
