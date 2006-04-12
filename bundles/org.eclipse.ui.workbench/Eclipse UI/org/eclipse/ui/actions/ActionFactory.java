@@ -219,6 +219,8 @@ public abstract class ActionFactory {
     /**
      * Workbench action (id "closeOthers"): Close all editors except the one that 
 	 * is active. This action maintains its enablement state.
+	 * 
+	 * @since 3.2
      */
     public static final ActionFactory CLOSE_OTHERS = new ActionFactory("closeOthers") {//$NON-NLS-1$
         /* (non-Javadoc)
