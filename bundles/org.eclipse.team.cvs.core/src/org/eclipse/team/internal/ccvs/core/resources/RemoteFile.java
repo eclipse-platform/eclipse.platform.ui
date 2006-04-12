@@ -13,9 +13,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -127,7 +125,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			revision = ResourceSyncInfo.ADDED_REVISION;
 		}
 		if (keywordMode == null) {
-			keywordMode = KSubstOption.getDefaultTextMode();
+			// Always use a blank mode for remote files so that 
+			// the proper mode will be obtained when the contents
+			// are fetched
+			keywordMode = KSubstOption.fromMode(""); //$NON-NLS-1$
 		}
 		MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(name, revision);		
 		newInfo.setKeywordMode(keywordMode);

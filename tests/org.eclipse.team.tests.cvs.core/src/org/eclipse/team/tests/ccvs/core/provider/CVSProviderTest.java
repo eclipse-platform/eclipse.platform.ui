@@ -566,10 +566,28 @@ public class CVSProviderTest extends EclipseTest {
         Date modDate = CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp();
         // set the contents to the same value but ensure the local timestamp is different
         setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
-        // Update and ensure file tiemstamp is what is was before out edit
+        // Update and ensure file timestamp is what is was before out edit
         updateProject(project, null, false);
         assertEquals("Timestamp was not properly reset", modDate, CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp());
         
+    }
+    
+    public void testBinaryAddition() throws CoreException {
+    	// See bug 132255
+    	KSubstOption option = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
+    	try {
+	    	CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(Command.KSUBST_TEXT_KEYWORDS_ONLY);
+	    	IProject project = createProject(new String[] { "a.txt"});
+	    	IProject copy = checkoutCopy(project, "-copy");
+	    	create(copy.getFile("binaryFile"), true);
+	    	setContentsAndEnsureModified(copy.getFile("binaryFile"), "/n/n\n\n");
+	    	addResources(new IResource[] { copy.getFile("binaryFile") });
+	    	commitProject(copy);
+	    	updateProject(project, null, false);
+	    	assertContentsEqual(copy.getFile("binaryFile"), project.getFile("binaryFile"));
+    	} finally {
+    		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
+    	}
     }
 }
 
