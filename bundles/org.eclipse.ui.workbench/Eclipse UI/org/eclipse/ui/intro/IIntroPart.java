@@ -45,15 +45,19 @@ import org.eclipse.ui.PartInitException;
 public interface IIntroPart extends IAdaptable {
 
     /**
-     * The property id for <code>getTitleImage</code>.
-     */
-    public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
+	 * The property id for <code>getTitleImage</code> and
+	 * <code>getTitle</code>.
+	 * 
+	 * @since 3.2 this property now covers changes to <code>getTitle</code> in
+	 *        addition to <code>getTitleImage</code>
+	 */
+	public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
 
     /**
-     * Returns the site for this intro part.
-     * 
-     * @return the intro site
-     */
+	 * Returns the site for this intro part.
+	 * 
+	 * @return the intro site
+	 */
     IIntroSite getIntroSite();
 
     /**
@@ -173,6 +177,20 @@ public interface IIntroPart extends IAdaptable {
      * @return the title image
      */
     public Image getTitleImage();
+    
+    /**
+     * Returns the title of this intro part. If this value changes 
+     * the part must fire a property listener event with 
+     * {@link IIntroPart#PROP_TITLE}.
+     * <p>
+     * The title is used to populate the title bar of this part's visual
+     * container.  
+     * </p>
+     *
+     * @return the intro part title (not <code>null</code>)
+     * @since 3.2
+     */
+    public String getTitle();
 
     /**
      * Removes the given property listener from this intro part.

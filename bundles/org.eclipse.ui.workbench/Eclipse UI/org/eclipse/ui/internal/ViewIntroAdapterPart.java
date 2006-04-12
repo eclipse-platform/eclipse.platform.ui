@@ -122,6 +122,17 @@ public final class ViewIntroAdapterPart extends ViewPart {
     public Image getTitleImage() {
         return introPart.getTitleImage();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.WorkbenchPart#getTitle()
+     */
+    public String getTitle() {
+    	// this method is called eagerly before our init method is called (and
+    	// therefore before our intropart is created).  By default return 
+    	// the view title from the view declaration.  We will fire a property
+    	// change to set the title to the proper value in the init method.
+    	return introPart == null ? super.getTitle() : introPart.getTitle();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
@@ -133,6 +144,8 @@ public final class ViewIntroAdapterPart extends ViewPart {
         try {
             introPart = workbench.getWorkbenchIntroManager()
                     .createNewIntroPart();
+            // reset the part name of this view to be that of the intro title
+            setPartName(introPart.getTitle());
             introPart.addPropertyListener(new IPropertyListener() {
                 public void propertyChanged(Object source, int propId) {
                     firePropertyChange(propId);
@@ -141,6 +154,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
             introSite = new ViewIntroAdapterSite(site, workbench
                     .getIntroDescriptor());
             introPart.init(introSite, memento);
+            
         } catch (CoreException e) {
             WorkbenchPlugin
                     .log(
@@ -148,9 +162,11 @@ public final class ViewIntroAdapterPart extends ViewPart {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
     public void setFocus() {
         introPart.setFocus();
     }

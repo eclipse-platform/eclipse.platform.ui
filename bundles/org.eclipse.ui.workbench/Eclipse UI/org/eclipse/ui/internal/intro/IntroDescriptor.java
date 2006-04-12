@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -26,11 +27,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
-    private static final String ATT_ID = "id"; //$NON-NLS-1$
-
-    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
-    private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
 
     private IConfigurationElement element;
 
@@ -43,7 +39,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
             throws CoreException {
     	element = configElement;  
 
-    	if (configElement.getAttribute(ATT_CLASS) == null) {
+    	if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) == null) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
                     .getNamespace(), 0,
                     "Invalid extension (Missing class name): " + getId(), //$NON-NLS-1$
@@ -55,14 +51,14 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.intro.IIntroDescriptor#createIntro()
      */
     public IIntroPart createIntro() throws CoreException {
-    	return (IIntroPart) element.createExecutableExtension(ATT_CLASS);
+    	return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IIntroDescriptor#getId()
      */
     public String getId() {    	
-        return element.getAttribute(ATT_ID);
+        return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
     /* (non-Javadoc)
@@ -72,7 +68,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
         if (imageDescriptor != null) {
 			return imageDescriptor;
 		}        
-		String iconName = element.getAttribute(ATT_ICON);
+		String iconName = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (iconName == null) {
 			return null;
 		}
@@ -86,7 +82,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return element.getAttribute(ATT_ID);
+        return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
     /* (non-Javadoc)
@@ -105,4 +101,11 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
     public IConfigurationElement getConfigurationElement() {
     	return element;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.intro.IIntroDescriptor#getLabelOverride()
+	 */
+	public String getLabelOverride() {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
+	}
 }

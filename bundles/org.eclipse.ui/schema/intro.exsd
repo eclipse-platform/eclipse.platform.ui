@@ -95,6 +95,15 @@ in order to inherit the default functionality.  This class implements the introd
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  an string label for this introduction that will be used in the construction of the open action as well as the part label
+
+Since 3.2
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

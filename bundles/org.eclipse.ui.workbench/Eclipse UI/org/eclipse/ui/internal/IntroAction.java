@@ -55,6 +55,12 @@ public class IntroAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
+        IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
+                .getWorkbench()).getIntroDescriptor();
+        String labelOverride = introDescriptor.getLabelOverride();
+        if (labelOverride != null)
+        	setText(labelOverride);
+        
         setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
         
         window.addPageListener(pageListener);

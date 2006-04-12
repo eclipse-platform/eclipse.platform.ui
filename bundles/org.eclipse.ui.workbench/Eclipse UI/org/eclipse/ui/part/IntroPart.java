@@ -25,6 +25,9 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.intro.IntroMessages;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -64,6 +67,8 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
     private IIntroSite partSite;
 
     private Image titleImage;
+
+	private String titleLabel;
 
     /**
      * Creates a new intro part.
@@ -177,8 +182,27 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         }
         return getDefaultImage();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroPart#getTitle()
+     */
+    public String getTitle() {
+    	if (titleLabel != null) {
+    		return titleLabel;
+    	}
+    	return getDefaultTitle();
+    }
 
     /**
+     * Return the default title string.
+     * 
+	 * @return the default title string
+	 */
+	private String getDefaultTitle() {
+		return IntroMessages.Intro_default_title;
+	}
+
+	/**
      * The base implementation of this {@link org.eclipse.ui.intro.IIntroPart}method ignores the
      * memento and initializes the part in a fresh state. Subclasses may extend
      * to perform any state restoration, but must call the super method.
@@ -253,8 +277,10 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
         // Save config element.
         configElement = cfig;
 
+        titleLabel = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
+        
         // Icon.
-        String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
+        String strIcon = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         if (strIcon == null) {
 			return;
 		}
@@ -284,5 +310,19 @@ public abstract class IntroPart extends EventManager implements IIntroPart,
 		}
         this.titleImage = titleImage;
         firePropertyChange(IIntroPart.PROP_TITLE);
+    }
+    
+    /**
+     * Set the title string for this part.
+     * 
+     * @param titleLabel the title string.  Must not be <code>null</code>.
+     * @since 3.2
+     */
+    protected void setTitle(String titleLabel) {
+    	Assert.isNotNull(titleLabel);
+    	if (Util.equals(this.titleLabel, titleLabel))
+    		return;
+    	this.titleLabel = titleLabel;
+    	firePropertyChange(IIntroPart.PROP_TITLE);
     }
 }
