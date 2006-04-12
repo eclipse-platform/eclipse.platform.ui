@@ -1,8 +1,0 @@
-<!ELEMENT index (entry)* >
-
-<!ELEMENT entry (entry | topic)* >
-<!ATTLIST entry keyword CDATA #REQUIRED >
-
-<!ELEMENT topic EMPTY >
-<!ATTLIST topic href CDATA #REQUIRED >
-<!ATTLIST topic title CDATA #IMPLIED >
