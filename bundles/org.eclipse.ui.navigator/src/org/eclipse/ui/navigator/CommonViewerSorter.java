@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 
 /**
  * 
@@ -68,7 +67,9 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		if (contentService == null)
 			return 0;
 
-		NavigatorContentDescriptor source = contentService.getSourceOfContribution(element);
+		INavigatorContentDescriptor source = contentService.getSourceOfContribution(element);
+		if (source == null)
+			source = getSource(element);
 		return source != null ? source.getPriority() : Priority.NORMAL_PRIORITY_VALUE;
 	}
 
