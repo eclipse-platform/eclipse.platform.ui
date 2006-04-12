@@ -583,7 +583,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		assertContentsEqual(project, branchedProject);
 		
 		// Modify the file on the branch
-		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"));
+		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"), "Unmergable contents");
 		commitProject(branchedProject);
 		
 		// Merge with HEAD again and commit afterwards
@@ -599,7 +599,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		assertContentsEqual(project, branchedProject);
 		
 		// Modify the file on the branch again
-		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"));
+		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"), "More unmergable");
 		commitProject(branchedProject);
 		
 		// Merge with HEAD one last time
