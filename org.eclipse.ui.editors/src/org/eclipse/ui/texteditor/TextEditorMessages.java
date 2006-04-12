@@ -52,6 +52,11 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
 	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
+	public static String AbstractDecoratedTextEditor_warning_saveAs_deleted;
+	public static String AbstractDecoratedTextEditor_error_saveAs_title;
+	public static String AbstractDecoratedTextEditor_error_saveAs_message;
+	public static String AbstractDecoratedTextEditor_saveAs_overwrite_title;
+	public static String AbstractDecoratedTextEditor_saveAs_overwrite_message;
 	
 	public static String AbstractDecoratedTextEditor_showIn_menu;
 	
