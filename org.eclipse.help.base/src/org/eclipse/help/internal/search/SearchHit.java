@@ -169,10 +169,20 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	}
 
 	/**
+	 * Returns the unprocessed summary.
+	 */
+	public String getRawSummary() {
+		return summary;
+	}
+	
+	/**
 	 * @return Returns the summary.
 	 */
 	public String getSummary() {
-		return summary != null ? (summary + "...") : null; //$NON-NLS-1$
+		if (summary != null && summary.length() > 0) {
+			return summary + "..."; //$NON-NLS-1$
+		}
+		return summary;
 	}
 
 	/**

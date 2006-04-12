@@ -117,7 +117,15 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 		}
 
 		public String getSummary() {
-			return summary.toString();
+			// if the summary starts with the title, trim that part off.
+			String summaryStr = summary.toString();
+			if (title != null && summaryStr.length() >= title.length()) {
+				String header = summaryStr.substring(0, title.length());
+				if (header.equalsIgnoreCase(title)) {
+					return summaryStr.substring(title.length()).trim();
+				}
+			}
+			return summaryStr;
 		}
 
 		public String getTitle() {

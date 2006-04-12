@@ -115,16 +115,25 @@ public class HTMLDocParser {
 			return ""; //$NON-NLS-1$
 		}
 	}
-	public String getSummary() throws IOException {
+	public String getSummary(String title) throws IOException {
 		if (htmlParser == null) {
 			throw new NullPointerException();
 		}
 		try {
-			return htmlParser.getSummary();
+			// if the summary starts with the title, trim that part off
+			String summary = htmlParser.getSummary();
+			if (summary != null && title != null && summary.length() >= title.length()) {
+				String header = summary.substring(0, title.length());
+				if (header.equalsIgnoreCase(title)) {
+					summary = summary.substring(title.length()).trim();
+				}
+			}
+			return summary;
 		} catch (InterruptedException ie) {
 			return ""; //$NON-NLS-1$
 		}
 	}
+	
 	public Reader getContentReader() throws IOException {
 		if (htmlParser == null) {
 			throw new NullPointerException();

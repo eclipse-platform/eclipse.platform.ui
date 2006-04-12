@@ -42,7 +42,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
 				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
 				doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
-				doc.add(Field.UnIndexed("summary", parser.getSummary())); //$NON-NLS-1$
+				doc.add(Field.UnIndexed("summary", parser.getSummary(title))); //$NON-NLS-1$
 			} finally {
 				parser.closeDocument();
 			}

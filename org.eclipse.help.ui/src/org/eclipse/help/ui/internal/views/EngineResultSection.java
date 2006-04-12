@@ -423,12 +423,10 @@ public class EngineResultSection {
 			buff.append("</a>"); //$NON-NLS-1$
 			if (part.getShowDescription()) {
 				String edesc = hit.getDescription();
-				if (edesc != null)
+				if (edesc != null) {
 					edesc = part.parent.escapeSpecialChars(edesc);
-				String summary = getSummary(elabel, edesc);
-				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
-					buff.append(summary);
+					buff.append(edesc);
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$
@@ -551,20 +549,6 @@ public class EngineResultSection {
 				nextLink = null;
 			}
 		}
-	}
-
-	private String getSummary(String elabel, String edesc) {
-		if (edesc != null) {
-			if (!edesc.equals(elabel)) {
-				if (edesc.length() > elabel.length()) {
-					String ldesc = edesc.substring(0, elabel.length());
-					if (ldesc.equalsIgnoreCase(elabel))
-						edesc = edesc.substring(elabel.length() + 1);
-				}
-				return edesc;
-			}
-		}
-		return null;
 	}
 
 	private void updateSectionTitle(int size) {
