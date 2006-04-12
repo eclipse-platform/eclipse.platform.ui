@@ -19,6 +19,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.core.history.provider.FileRevision;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
@@ -100,16 +101,15 @@ public class CVSFileRevision extends FileRevision implements IAdaptable {
 		return false;
 	}
 	
-	
 	public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
 		return new CVSFileRevision(getCVSRemoteFile().getLogEntry(monitor));
 	}
 
 	public Object getAdapter(Class adapter) {
-		
 		if (adapter == ICVSFile.class)
 			return getCVSRemoteFile();
-		
-		return null;
+		if (adapter == IResourceVariant.class)
+			return getCVSRemoteFile();
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }

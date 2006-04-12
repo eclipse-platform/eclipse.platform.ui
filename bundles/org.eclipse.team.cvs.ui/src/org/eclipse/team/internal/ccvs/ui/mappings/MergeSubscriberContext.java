@@ -13,14 +13,21 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ui.Utils;
 
 public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 
@@ -68,6 +75,31 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 
 	public void setCancelSubscriber(boolean b) {
 		cancel  = b;
+	}
+	
+	public IStatus merge(final IDiff diff, final boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+		final IStatus[] status = new IStatus[] { Status.OK_STATUS };
+		run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				status[0] = MergeSubscriberContext.super.merge(diff, ignoreLocalChanges, monitor);
+				if (status[0].isOK()) {
+					IResource resource = ResourceDiffTree.getResourceFor(diff);
+					if (resource.getType() == IResource.FILE && resource.exists() && diff instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) diff;
+						if (twd.getKind() == IDiff.ADD && twd.getDirection() == IThreeWayDiff.INCOMING) {
+							IFileRevision remote = Utils.getRemote(diff);
+							IResourceVariant variant = (IResourceVariant)Utils.getAdapter(remote, IResourceVariant.class);
+							byte[] syncBytes = variant.asBytes();
+							MutableResourceSyncInfo info = new MutableResourceSyncInfo(resource.getName(), ResourceSyncInfo.ADDED_REVISION);
+							info.setKeywordMode(ResourceSyncInfo.getKeywordMode(syncBytes));
+							CVSWorkspaceRoot.getCVSFileFor((IFile)resource).setSyncInfo(info, ICVSFile.DIRTY);
+						}
+					}
+				}
+			}
+		
+		}, getMergeRule(diff), IWorkspace.AVOID_UPDATE, monitor);
+		return status[0];
 	}
 
 }
