@@ -35,12 +35,6 @@ import org.eclipse.ui.part.PluginTransfer;
  * Clients should not need to create an instance of this class unless they are
  * creating their own custom viewer. Otherwise, {@link CommonViewer} configures
  * its drag adapter automatically.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
  * </p> 
  * 
  * @see INavigatorDnDService
