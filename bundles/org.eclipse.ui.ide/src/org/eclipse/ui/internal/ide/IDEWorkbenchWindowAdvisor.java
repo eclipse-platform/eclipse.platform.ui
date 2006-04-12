@@ -481,6 +481,13 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                                 catch(BundleException exception){
                                     IDEWorkbenchPlugin.log("Failed to load feature", exception);//$NON-NLS-1$
                                 }
+                                finally {
+                                	try {
+										bundle.stop();
+									} catch (BundleException ex) {
+	                                    IDEWorkbenchPlugin.log("Failed to stop feature", ex);//$NON-NLS-1$
+									}
+                                }
 							}
                         }
                     }
