@@ -44,8 +44,11 @@ public class ResumeAction extends AbstractDebugContextAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
-            if (suspendResumer != null) 
-                suspendResumer.canResume(element, monitor);
+            if (suspendResumer != null) {
+                suspendResumer.canResume(element, monitor); 
+            } else {
+            	notSupported(monitor);
+            }
         }        
     }
 

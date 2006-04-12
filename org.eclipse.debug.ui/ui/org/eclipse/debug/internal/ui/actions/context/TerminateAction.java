@@ -35,6 +35,8 @@ public class TerminateAction extends AbstractDebugContextAction {
             IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
             if (adapter != null) {
                 adapter.canTerminate(element, monitor);
+            } else {
+            	notSupported(monitor);
             }
         }
     }

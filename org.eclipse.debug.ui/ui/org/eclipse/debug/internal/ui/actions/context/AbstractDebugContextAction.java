@@ -115,6 +115,17 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     }
 
     protected abstract void isEnabledFor(Object element, IBooleanRequestMonitor monitor);
+    
+    /**
+     * Updates the monitor with a false result. Action should call this method when
+     * updating enablement and the function is not supported.
+     * 
+     * @param monitor
+     */
+    protected void notSupported(IBooleanRequestMonitor monitor) {
+    	monitor.setResult(false);
+    	monitor.done();
+    }
 
     public void init(IWorkbenchWindow window) {
         setWindow(window);

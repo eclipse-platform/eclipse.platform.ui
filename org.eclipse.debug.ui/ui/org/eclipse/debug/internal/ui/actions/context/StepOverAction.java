@@ -85,8 +85,11 @@ public class StepOverAction extends StepIntoAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
-            if (steppy != null) 
+            if (steppy != null) {
                 steppy.canStepOver(element, monitor);
+            } else {
+            	notSupported(monitor);
+            }
         }
     }
 

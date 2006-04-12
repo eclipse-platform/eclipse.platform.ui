@@ -59,7 +59,9 @@ public class TerminateAllAction extends AbstractDebugContextAction {
             ILaunch launch = (ILaunch) element;
             if (!launch.isTerminated() && DebugPlugin.getDefault().getLaunchManager().isRegistered(launch)) {
                 monitor.setResult(true);
-            } 
+            } else {
+            	monitor.setResult(false);
+            }
         }
         monitor.done();
     }

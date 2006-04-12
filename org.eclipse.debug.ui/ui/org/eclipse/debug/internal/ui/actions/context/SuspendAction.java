@@ -41,8 +41,11 @@ public class SuspendAction extends AbstractDebugContextAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousSuspendResumeAdapter suspendResumer = (IAsynchronousSuspendResumeAdapter) adaptable.getAdapter(IAsynchronousSuspendResumeAdapter.class);
-            if (suspendResumer != null) 
+            if (suspendResumer != null) {
                 suspendResumer.canSuspend(element, monitor);
+            } else {
+            	notSupported(monitor);
+            }
         }
         
     }

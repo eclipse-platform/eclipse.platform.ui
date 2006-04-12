@@ -42,8 +42,11 @@ public class DisconnectAction extends AbstractDebugContextAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousDisconnectAdapter disconnect = (IAsynchronousDisconnectAdapter) adaptable.getAdapter(IAsynchronousDisconnectAdapter.class);
-            if (disconnect != null) 
-                disconnect.canDisconnect(element, monitor);
+            if (disconnect != null) {
+            	disconnect.canDisconnect(element, monitor);
+            } else { 
+            	notSupported(monitor);
+            }
         }
     }
 

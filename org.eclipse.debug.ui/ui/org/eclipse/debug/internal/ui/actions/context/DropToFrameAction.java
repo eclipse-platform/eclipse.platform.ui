@@ -43,8 +43,11 @@ public class DropToFrameAction extends AbstractDebugContextAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousDropToFrameAdapter dropper = (IAsynchronousDropToFrameAdapter) adaptable.getAdapter(IAsynchronousDropToFrameAdapter.class);
-            if (dropper != null) 
+            if (dropper != null) {
                 dropper.canDropToFrame(element, monitor);
+            } else {
+            	notSupported(monitor);
+            }
         }
     }
 

@@ -56,8 +56,11 @@ public class TerminateAndRelaunchAction extends AbstractDebugContextAction {
     protected void isEnabledFor(Object element, IBooleanRequestMonitor monitor) {
         if (element instanceof IAdaptable) {
             IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
-            if (adapter != null)
+            if (adapter != null) {
                 adapter.canTerminate(element, monitor);
+            } else {
+            	notSupported(monitor);
+            }
         }
         
     }

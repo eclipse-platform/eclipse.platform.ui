@@ -29,8 +29,11 @@ public class StepIntoAction extends StepAction {
         if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             IAsynchronousStepAdapter steppy = (IAsynchronousStepAdapter) adaptable.getAdapter(IAsynchronousStepAdapter.class);
-            if (steppy != null) 
+            if (steppy != null) {
                 steppy.canStepInto(element, monitor);
+            } else {
+            	notSupported(monitor);
+            }
         }
     }
 
