@@ -80,7 +80,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 */
 	public void testRefreshSmall() throws Throwable {
 
-		tagIfNecessary("JFace - Refresh 5o item combo 1000 times",
+		tagIfNecessary("JFace - Refresh 50 item combo 1000 times",
 				Dimension.ELAPSED_PROCESS);
 
 		ELEMENT_COUNT = 50;
