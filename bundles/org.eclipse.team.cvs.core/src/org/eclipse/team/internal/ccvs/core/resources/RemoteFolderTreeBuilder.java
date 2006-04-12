@@ -439,7 +439,7 @@ public class RemoteFolderTreeBuilder {
 		if (deltas == null)
 			deltas = EMPTY_MAP;
 		
-		// If there is a local, use the local children to start buidling the remote children
+		// If there is a local, use the local children to start building the remote children
 		if (local != null) {
 			// Build the child folders corresponding to local folders
 			ICVSResource[] folders = local.members(ICVSFolder.FOLDER_MEMBERS);
@@ -467,7 +467,7 @@ public class RemoteFolderTreeBuilder {
 				// There is no remote if the file was added and we didn't get a conflict (C) indicator from the server
 				if (ResourceSyncInfo.isAddition(syncBytes) && d==null)
 					continue;
-				// There is no remote if the file was deleted and we didn;t get a remove (R) indicator from the server
+				// There is no remote if the file was deleted and we didn't get a remove (R) indicator from the server
 				if (ResourceSyncInfo.isDeletion(syncBytes) && d==null)
 					continue;
 					
@@ -721,7 +721,7 @@ public class RemoteFolderTreeBuilder {
 			throw new CVSServerException(status);
 		}
 		
-		// Report any exceptions that occured fecthing the revisions
+		// Report any exceptions that occurred fetching the revisions
 		if ( ! exceptions.isEmpty()) {
 			if (exceptions.size() == 1) {
 				throw (CVSException)exceptions.get(0);
@@ -743,7 +743,7 @@ public class RemoteFolderTreeBuilder {
 	 * and the inner key is the file name. The value is the revision of the file or
 	 * DELETED (file or folder). New folders have a revision of FOLDER.
 	 * 
-	 * A revison of UNKNOWN indicates that the revision has not been fetched
+	 * A revision of UNKNOWN indicates that the revision has not been fetched
 	 * from the repository yet.
 	 */
 	private void recordDelta(String path, String revision, int syncState) {
@@ -772,7 +772,7 @@ public class RemoteFolderTreeBuilder {
 	 * Return the tag that should be associated with a remote folder.
 	 * 
 	 * This method is used to ensure that new directories contain the tag
-	 * derived from the parant local folder when appropriate. For instance,
+	 * derived from the parent local folder when appropriate. For instance,
 	 * 
 	 * The tag should be the provided tag. However, if tag is null, the 
 	 * tag for the folder should be derived from the provided reference folder
