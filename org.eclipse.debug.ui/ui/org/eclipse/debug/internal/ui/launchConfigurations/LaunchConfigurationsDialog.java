@@ -1589,8 +1589,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if(pidx != -1) {
 			TreeItem root = tree.getItem(pidx);
 			TreeItem[] children = root.getItems();
+			Object data = null;
 			for(int j = 0; j < children.length; j++) {
-				if(children[j].getData().equals(child)) {
+				data = children[j].getData();
+				if(data != null && data.equals(child)) {
 					return j;
 				}
 			}
