@@ -14,20 +14,17 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.dialogs.ControlAnimator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.ImageAndMessageArea;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * The PreferenceMessageArea is a subclass of DialogMessageArea that provides a
@@ -45,8 +42,6 @@ class PreferenceMessageArea extends DialogMessageArea {
     private CLabel titleLabel;
 
 	private ImageAndMessageArea messageArea;
-	
-	private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 	
 	private PreferenceDialog preferenceDialog;
 	
@@ -74,7 +69,7 @@ class PreferenceMessageArea extends DialogMessageArea {
         titleLabel = new CLabel(parent, SWT.NONE);
         titleLabel.setFont(JFaceResources.getBannerFont());
         
-        messageArea = new ImageAndMessageArea(preferenceDialog.formTitleComposite, SWT.NONE);
+        messageArea = new ImageAndMessageArea(preferenceDialog.formTitleComposite, SWT.WRAP);
         messageArea.setFont(JFaceResources.getDialogFont());
    		messageArea.setVisible(false);
 	}
@@ -138,8 +133,7 @@ class PreferenceMessageArea extends DialogMessageArea {
         messageArea.moveAbove(null);
         messageArea.setImage(newImage);
         
-        messageArea.setText(shortenText(newMessage,messageArea, 
-        		newImage.getBounds().width + IDialogConstants.HORIZONTAL_SPACING));
+        messageArea.setText(newMessage);
         messageArea.setToolTipText(newMessage);
         lastMessageText = newMessage;
         
@@ -176,55 +170,6 @@ class PreferenceMessageArea extends DialogMessageArea {
       lastMessageType = IMessageProvider.NONE;
 	}
 
-
-	/**
-	 * Shortens the given text <code>textValue</code> so that its width in
-	 * pixels does not exceed the width of the given control plus an extra 
-	 * offset in pixels. Overrides characters in the center of the original 
-	 * string with an ellipsis ("...") if necessary. If a <code>null</code> 
-	 * value is given, <code>null</code> is returned.
-	 * 
-	 * @param textValue
-	 *            the original string or <code>null</code>
-	 * @param control
-	 *            the control the string will be displayed on
-	 * @param offset
-	 * 			  additional pixel offset by which to shorten the text
-	 * @return the string to display, or <code>null</code> if null was passed
-	 *         in
-	 * 
-	 * @since 3.2
-	 */
-	private static String shortenText(String textValue, Control control, int offset) {
-		if (textValue == null) {
-			return null;
-		}
-		GC gc = new GC(control);
-		int maxWidth = control.getBounds().width - 5 - offset;
-		if (gc.textExtent(textValue).x < maxWidth) {
-			gc.dispose();
-			return textValue;
-		}
-		int length = textValue.length();
-		int pivot = length / 2;
-		int start = pivot;
-		int end = pivot + 1;
-		while (start >= 0 && end < length) {
-			String s1 = textValue.substring(0, start);
-			String s2 = textValue.substring(end, length);
-			String s = s1 + ELLIPSIS + s2;
-			int l = gc.textExtent(s).x;
-			if (l < maxWidth) {
-				gc.dispose();
-				return s;
-			}
-			start--;
-			end++;
-		}
-		gc.dispose();
-		return textValue;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogMessageArea#clearErrorMessage()
 	 */
@@ -247,9 +192,9 @@ class PreferenceMessageArea extends DialogMessageArea {
 	 * @see org.eclipse.jface.dialogs.DialogMessageArea#showTitle(java.lang.String, org.eclipse.swt.graphics.Image)
 	 */
 	public void showTitle(String titleMessage, Image titleImage) {
-	       titleLabel.setImage(titleImage);
-	        titleLabel.setText(titleMessage);
-	        restoreTitle();
-	        return;
+	    titleLabel.setImage(titleImage);
+		titleLabel.setText(titleMessage);
+		restoreTitle();
+		return;
 	}
 }

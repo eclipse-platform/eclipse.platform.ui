@@ -52,7 +52,7 @@ public class ImageAndMessageArea extends Composite {
 	 * Calls to <code>setText(String text)</code> and <code>setImage(Image image)</code> 
 	 * are required in order to fill the message area. 
 	 * <p>
-	 * The style bit <code>SWT.WRAP</code> should be used if a larger message area is desired.
+	 * The style bit <code>SWT.WRAP</code> should be used if a larger message area is desired.</p>
 	 * 
 	 * @param parent the parent composite
 	 * @param style the SWT style bits. Using SWT.WRAP will create a larger message area.
@@ -64,13 +64,15 @@ public class ImageAndMessageArea extends Composite {
 		glayout.numColumns = 2;
 		glayout.marginWidth = 0;
 		glayout.marginHeight = 0;
+		glayout.marginTop = BORDER_MARGIN;
+		glayout.marginBottom = BORDER_MARGIN;
 		container.setLayout(glayout);
 
 		messageField = new DecoratedField(container,SWT.READ_ONLY | style,new TextControlCreator());
     	setFont(JFaceResources.getDialogFont());
 		
 		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
-		int lineHeight = ((Text) messageField.getControl()).getLineHeight() + 2 * BORDER_MARGIN;
+		int lineHeight = ((Text) messageField.getControl()).getLineHeight();
 		if((style & SWT.WRAP) > 0)
 			gd.heightHint = 2 * lineHeight;
 		else
@@ -147,8 +149,8 @@ public class ImageAndMessageArea extends Composite {
 	 */
 	public void setImage(Image image) {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
-		registry.registerFieldDecoration("errorImage", "Error", image);  //$NON-NLS-1$//$NON-NLS-2$
-		messageField.addFieldDecoration(registry.getFieldDecoration("errorImage"), //$NON-NLS-1$
+		registry.registerFieldDecoration("messageImage", "", image);  //$NON-NLS-1$//$NON-NLS-2$
+		messageField.addFieldDecoration(registry.getFieldDecoration("messageImage"), //$NON-NLS-1$
 										SWT.LEFT | SWT.TOP, false);
 	}
 
