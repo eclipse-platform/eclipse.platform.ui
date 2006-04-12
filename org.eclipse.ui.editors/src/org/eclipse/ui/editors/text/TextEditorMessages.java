@@ -56,9 +56,6 @@ final class TextEditorMessages extends NLS {
 	public static String TextFileDocumentProvider_beginTask_saving;
 	public static String TextFileDocumentProvider_error_doesNotExist;
 	public static String TextFileDocumentProvider_saveAsTargetOpenInEditor;
-	public static String Editor_error_save_message;
-	public static String Editor_error_save_title;
-	public static String Editor_warning_save_delete;
 	public static String Editor_error_unreadable_encoding_header;
 	public static String Editor_error_unreadable_encoding_banner;
 	public static String Editor_error_unreadable_encoding_message_arg;

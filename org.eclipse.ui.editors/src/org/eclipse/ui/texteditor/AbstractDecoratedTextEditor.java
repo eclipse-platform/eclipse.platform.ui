@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.io.File;
 import java.util.Iterator;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -22,23 +25,36 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -83,11 +99,13 @@ import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
@@ -96,9 +114,11 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
@@ -1473,6 +1493,153 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
+	}
+	
+	/**
+	 * This implementation asks the user for the workspace path of a file resource and saves the document there.
+	 *
+	 * @param progressMonitor the progress monitor to be used
+	 * @since 3.2
+	 */
+	protected void performSaveAs(IProgressMonitor progressMonitor) {
+		 // XXX: To be removed in 3.3: we will always execute this code 
+		if (!handleSaveAs())
+			return;
+		
+		Shell shell= getSite().getShell();
+		final IEditorInput input= getEditorInput();
+
+		IDocumentProvider provider= getDocumentProvider();
+		final IEditorInput newInput;
+		
+		if (input instanceof JavaFileEditorInput) {
+			FileDialog dialog= new FileDialog(shell, SWT.SAVE);
+			dialog.setFileName(((JavaFileEditorInput)input).getName());
+			dialog.setFilterPath(((JavaFileEditorInput)input).getPath().toOSString());
+			
+			String path= dialog.open();
+			if (path == null) {
+				if (progressMonitor != null)
+					progressMonitor.setCanceled(true);
+				return;
+			}
+
+			// Check whether file exists and if so, confirm overwrite
+			final File externalFile= new File(path);
+			if (externalFile.exists()) {
+		        MessageDialog overwriteDialog= new MessageDialog(
+		        		shell,
+		        		TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_title,
+		        		null,
+		        		MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_message, new String[] { path }),
+		        		MessageDialog.WARNING,
+		        		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
+		        		1); // 'No' is the default
+				if (overwriteDialog.open() != Window.OK) {
+					if (progressMonitor != null) {
+						progressMonitor.setCanceled(true);
+						return;
+					}
+				}
+			}
+
+			IFileStore fileStore= EFS.getLocalFileSystem().getStore(externalFile.toURI());
+			IFile file= getWorkspaceFile(fileStore);
+			if (file != null)
+				newInput= new FileEditorInput(file);
+			else
+				newInput= new JavaFileEditorInput(fileStore);
+			
+		} else {
+			SaveAsDialog dialog= new SaveAsDialog(shell);
+
+			IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
+			if (original != null)
+				dialog.setOriginalFile(original);
+
+			dialog.create();
+
+			if (provider.isDeleted(input) && original != null) {
+				String message= MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_warning_saveAs_deleted, new Object[] { original.getName() });
+				dialog.setErrorMessage(null);
+				dialog.setMessage(message, IMessageProvider.WARNING);
+			}
+
+			if (dialog.open() == Window.CANCEL) {
+				if (progressMonitor != null)
+					progressMonitor.setCanceled(true);
+				return;
+			}
+			
+			IPath filePath= dialog.getResult();
+			if (filePath == null) {
+				if (progressMonitor != null)
+					progressMonitor.setCanceled(true);
+				return;
+			}
+			
+			IWorkspace workspace= ResourcesPlugin.getWorkspace();
+			IFile file= workspace.getRoot().getFile(filePath);
+			newInput= new FileEditorInput(file);
+
+		}
+		
+		if (provider == null) {
+			// editor has programmatically been  closed while the dialog was open
+			return;
+		}
+
+		boolean success= false;
+		try {
+
+			provider.aboutToChange(newInput);
+			provider.saveDocument(progressMonitor, newInput, provider.getDocument(input), true);
+			success= true;
+
+		} catch (CoreException x) {
+			final IStatus status= x.getStatus();
+			if (status == null || status.getSeverity() != IStatus.CANCEL) {
+				String title= TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_title;
+				String msg= MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_message, new String[] { x.getMessage() });
+				MessageDialog.openError(shell, title, msg);
+			}
+		} finally {
+			provider.changed(newInput);
+			if (success)
+				setInput(newInput);
+		}
+
+		if (progressMonitor != null)
+			progressMonitor.setCanceled(!success);
+	}
+
+	/**
+	 * Checks whether there given file store points
+	 * to a file in the workspace. Only returns a
+	 * workspace file if there's a single match.
+	 * 
+	 * @param fileStore the file store
+	 * @return the <code>IFile</code> that matches the given file store
+	 * @since 3.2
+	 */
+	private IFile getWorkspaceFile(IFileStore fileStore) {
+		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+		IFile[] files= workspaceRoot.findFilesForLocation(new Path(fileStore.toURI().getPath()));
+		if (files != null && files.length == 1)
+			return files[0];
+		return null;
+	}
+
+	/**
+	 * Tells whether this class should handle {@link #performSaveAs(IProgressMonitor)}.
+	 * 
+	 * @return <code>true</code> if handled by this class
+	 * @since 3.2
+	 */
+	private boolean handleSaveAs() {
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		String key= getEditorSite().getId() + ".internal.delegateSaveAs"; //$NON-NLS-1$
+		return store.getBoolean(key);
 	}
 
 	/*

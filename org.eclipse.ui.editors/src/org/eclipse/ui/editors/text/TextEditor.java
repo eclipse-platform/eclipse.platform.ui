@@ -10,32 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.dialogs.SaveAsDialog;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 
 /**
@@ -117,86 +102,17 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	/**
 	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code>
 	 * method asks the user for the workspace path of a file resource and saves the document there.
+	 * <p>
+	 * XXX: This method will be removed in 3.3: for now tell the subclass to handle it.
+	 * </p>
 	 *
 	 * @param progressMonitor the progress monitor to be used
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
-		Shell shell= getSite().getShell();
-		IEditorInput input= getEditorInput();
-
-		SaveAsDialog dialog= new SaveAsDialog(shell);
-
-		IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
-		if (original != null)
-			dialog.setOriginalFile(original);
-
-		dialog.create();
-
-		IDocumentProvider provider= getDocumentProvider();
-		if (provider == null) {
-			// editor has programmatically been  closed while the dialog was open
-			return;
-		}
-
-		if (provider.isDeleted(input) && original != null) {
-			String message= MessageFormat.format(TextEditorMessages.Editor_warning_save_delete, new Object[] { original.getName() });
-			dialog.setErrorMessage(null);
-			dialog.setMessage(message, IMessageProvider.WARNING);
-		}
-
-		if (dialog.open() == Window.CANCEL) {
-			if (progressMonitor != null)
-				progressMonitor.setCanceled(true);
-			return;
-		}
-
-		IPath filePath= dialog.getResult();
-		if (filePath == null) {
-			if (progressMonitor != null)
-				progressMonitor.setCanceled(true);
-			return;
-		}
-
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IFile file= workspace.getRoot().getFile(filePath);
-		final IEditorInput newInput= new FileEditorInput(file);
-
-		boolean success= false;
-		try {
-
-			provider.aboutToChange(newInput);
-			provider.saveDocument(progressMonitor, newInput, provider.getDocument(input), true);
-			success= true;
-
-		} catch (CoreException x) {
-			IStatus status= x.getStatus();
-			if (status == null || status.getSeverity() != IStatus.CANCEL) {
-				String title= TextEditorMessages.Editor_error_save_title;
-				String msg= MessageFormat.format(TextEditorMessages.Editor_error_save_message, new Object[] { x.getMessage() });
-
-				if (status != null) {
-					switch (status.getSeverity()) {
-						case IStatus.INFO:
-							MessageDialog.openInformation(shell, title, msg);
-						break;
-						case IStatus.WARNING:
-							MessageDialog.openWarning(shell, title, msg);
-						break;
-						default:
-							MessageDialog.openError(shell, title, msg);
-					}
-				} else {
-					MessageDialog.openError(shell, title, msg);
-				}
-			}
-		} finally {
-			provider.changed(newInput);
-			if (success)
-				setInput(newInput);
-		}
-
-		if (progressMonitor != null)
-			progressMonitor.setCanceled(!success);
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		String key= getEditorSite().getId() + ".internal.delegateSaveAs"; //$NON-NLS-1$
+		store.setValue(key, true);
+		super.performSaveAs(progressMonitor);
 	}
 
 	/*

@@ -81,6 +81,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
@@ -794,6 +795,23 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					return computeSchedulingRule(file);
 				}
 			};
+		} else if (element instanceof JavaFileEditorInput) {
+
+			final IPath fileLocation= ((JavaFileEditorInput)element).getPath();
+			return new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public void execute(IProgressMonitor monitor) throws CoreException {
+					createJavaFileFromDocument(monitor, fileLocation, document);
+				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					return null;
+				}
+			};
 		}
 
 		return null;
@@ -884,6 +902,28 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
 			} else
 				file.setContents(stream, false, false, new SubProgressMonitor(monitor, 1000));
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Creates the given file with the given document content.
+	 *
+	 * @param monitor the progress monitor
+	 * @param location the location where the external file should be created
+	 * @param document the document to be written to the file
+	 * @throws CoreException if the creation of the file fails
+	 * @since 3.2
+	 */
+	private void createJavaFileFromDocument(IProgressMonitor monitor, IPath location, IDocument document) throws CoreException {
+		try {
+			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
+			FileBuffers.getTextFileBufferManager().connect(location, monitor);
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(location);
+			buffer.getDocument().set(document.get());
+			buffer.commit(monitor, true);
+			FileBuffers.getTextFileBufferManager().disconnect(location, monitor);
 		} finally {
 			monitor.done();
 		}
