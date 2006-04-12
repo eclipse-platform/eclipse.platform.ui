@@ -13,8 +13,8 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.runtime.CipherInputStream;
-import org.eclipse.core.internal.runtime.CipherOutputStream;
+import org.eclipse.core.internal.runtime.auth.CipherInputStream;
+import org.eclipse.core.internal.runtime.auth.CipherOutputStream;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class CipherStreamsTest extends RuntimeTest {

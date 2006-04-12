@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.runtime;
+package org.eclipse.core.internal.runtime.auth;
 
 import java.io.*;
 import java.net.URL;
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * A database that remembers information, such as usernames and
+ * A database that remembers information, such as user-names and
  * passwords.  The information is stored in memory and can be saved
  * to disk in an encrypted format.  While the API is phrased in terms of
  * URLs, realms and authentication schemes, not all of these must have
@@ -26,10 +26,25 @@ import org.eclipse.osgi.util.NLS;
  * <code>null</code>).
  */
 public class AuthorizationDatabase {
+	public static final String PI_RUNTIME_AUTH = "org.eclipse.core.runtime.auth.compatibility"; //$NON-NLS-1$
+
 	/**
-	 * Version number for the format of the keyring file.
+	 * Status code constant (value 4) indicating the platform could not read
+	 * some of its metadata.
+	 */
+	public static final int FAILED_READ_METADATA = 4;
+
+	/**
+	 * Status code constant (value 5) indicating the platform could not write
+	 * some of its metadata.
+	 */
+	public static final int FAILED_WRITE_METADATA = 5;
+
+	/**
+	 * Version number for the format of the key-ring file.
 	 */
 	private static final int KEYRING_FILE_VERSION = 1;
+
 	/**
 	 * A nested hashtable that stores authorization information. The
 	 * table maps server URLs to realms to authentication schemes to
@@ -262,9 +277,9 @@ public class AuthorizationDatabase {
 				input.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME_AUTH, FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME_AUTH, FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
 		}
 	}
 
@@ -283,7 +298,7 @@ public class AuthorizationDatabase {
 			}
 		} else {
 			//the format has changed, just log a warning
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.meta_authFormatChanged, null));
+			Activator.log(new Status(IStatus.WARNING, PI_RUNTIME_AUTH, FAILED_READ_METADATA, Messages.meta_authFormatChanged, null));
 			//close the stream and save a new file in the correct format
 			try {
 				is.close();
@@ -304,7 +319,7 @@ public class AuthorizationDatabase {
 		try {
 			file.delete();
 			if ((!file.getParentFile().exists() && !file.getParentFile().mkdirs()) || !canWrite(file.getParentFile()))
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), null));
+				throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME_AUTH, FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), null));
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file);
 			try {
@@ -313,7 +328,7 @@ public class AuthorizationDatabase {
 				out.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, PI_RUNTIME_AUTH, FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), e));
 		}
 		needsSaving = false;
 	}
@@ -329,7 +344,7 @@ public class AuthorizationDatabase {
 		try {
 			fileTest = File.createTempFile("writtableArea", null, installDir); //$NON-NLS-1$
 		} catch (IOException e) {
-			//If an exception occured while trying to create the file, it means that it is not writtable
+			// If an exception occurred while trying to create the file, it means that it is not writable
 			return false;
 		} finally {
 			if (fileTest != null)

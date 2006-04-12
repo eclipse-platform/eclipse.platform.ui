@@ -36,6 +36,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		// -- end of new
 		"org.eclipse.core.runtime@2:start", 
 		"org.eclipse.core.runtime.compatibility", 
+		"org.eclipse.core.runtime.compatibility.auth", 
 		"org.eclipse.update.configurator", 
 		"org.eclipse.core.tests.harness", 
 		"org.eclipse.jdt.junit.runtime", 

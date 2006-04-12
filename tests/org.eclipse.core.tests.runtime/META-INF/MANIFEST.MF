@@ -20,6 +20,7 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
 Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.core.tests.harness,
  org.junit,
- org.eclipse.test.performance;resolution:=optional
+ org.eclipse.test.performance;resolution:=optional,
+ org.eclipse.core.runtime.compatibility.auth
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.core.tests.runtime.RuntimeTestsPlugin

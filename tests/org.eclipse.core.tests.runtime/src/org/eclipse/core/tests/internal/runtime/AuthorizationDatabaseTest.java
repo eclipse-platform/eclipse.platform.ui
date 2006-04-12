@@ -17,7 +17,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.runtime.AuthorizationDatabase;
+import org.eclipse.core.internal.runtime.auth.AuthorizationDatabase;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 

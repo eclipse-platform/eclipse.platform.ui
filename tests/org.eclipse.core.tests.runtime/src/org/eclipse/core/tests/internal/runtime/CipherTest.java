@@ -12,7 +12,7 @@ package org.eclipse.core.tests.internal.runtime;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.runtime.Cipher;
+import org.eclipse.core.internal.runtime.auth.Cipher;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class CipherTest extends RuntimeTest {

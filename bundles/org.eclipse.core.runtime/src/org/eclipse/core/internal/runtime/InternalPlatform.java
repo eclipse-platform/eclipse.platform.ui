@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.preferences.*;
+import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -154,10 +155,10 @@ public final class InternalPlatform {
 		super();
 	}
 
-	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
-	}
-
+//	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+//		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+//	}
+//
 	/**
 	 * @see Platform#addLogListener(ILogListener)
 	 */
@@ -166,10 +167,10 @@ public final class InternalPlatform {
 		RuntimeLog.addLogListener(listener);
 	}
 
-	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
-	}
-
+//	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
+//		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
+//	}
+//
 	private void assertInitialized() {
 		//avoid the Policy.bind if assertion is true
 		if (!initialized)
@@ -197,10 +198,10 @@ public final class InternalPlatform {
 		});
 	}
 
-	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
-	}
-
+//	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+//		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+//	}
+//
 	/**
 	 * @see Platform#getAdapterManager()
 	 */
@@ -235,10 +236,10 @@ public final class InternalPlatform {
 		return applicationId;
 	}
 
-	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
-	}
-
+//	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+//		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
+//	}
+//
 	public boolean getBooleanOption(String option, boolean defaultValue) {
 		String value = getOption(option);
 		if (value == null)
@@ -647,10 +648,10 @@ public final class InternalPlatform {
 		return null;
 	}
 
-	public String getProtectionSpace(URL resourceUrl) {
-		return AuthorizationHandler.getProtectionSpace(resourceUrl);
-	}
-
+//	public String getProtectionSpace(URL resourceUrl) {
+//		return AuthorizationHandler.getProtectionSpace(resourceUrl);
+//	}
+//
 	public IExtensionRegistry getRegistry() {
 		return RegistryFactory.getRegistry(); 
 	}
@@ -727,8 +728,12 @@ public final class InternalPlatform {
 	}
 
 	private void initializeAuthorizationHandler() {
-		AuthorizationHandler.setKeyringFile(keyringFile);
-		AuthorizationHandler.setPassword(password);
+		try {
+			AuthorizationHandler.setKeyringFile(keyringFile);
+			AuthorizationHandler.setPassword(password);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so do nothing
+		}
 	}
 
 	/*

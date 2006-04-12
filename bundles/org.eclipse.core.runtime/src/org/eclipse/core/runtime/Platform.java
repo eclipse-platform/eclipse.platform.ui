@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -446,10 +447,9 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
-	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		InternalPlatform.getDefault().addAuthorizationInfo(serverUrl, realm, authScheme, info);
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
 
 	/** 
@@ -485,10 +485,9 @@ public final class Platform {
 	 * <ul>
 	 * <li>The key ring could not be saved.</li>
 	 * </ul>
-	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		InternalPlatform.getDefault().addProtectionSpace(resourceUrl, realm);
+		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
 	}
 
 	/**
@@ -543,10 +542,9 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
-	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		InternalPlatform.getDefault().flushAuthorizationInfo(serverUrl, realm, authScheme);
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	/**
@@ -578,10 +576,9 @@ public final class Platform {
 	 * @return the authorization information for the specified protection
 	 *		space and given authorization scheme, or <code>null</code> if no
 	 *		such information exists
-	 *XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		return InternalPlatform.getDefault().getAuthorizationInfo(serverUrl, realm, authScheme);
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
 
 	/**
@@ -758,10 +755,9 @@ public final class Platform {
 	 *		returned. For example, "http://www.example.com/folder/".
 	 * @return the protection space (realm) for the specified resource, or
 	 *		<code>null</code> if the realm is unknown
-	 *	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
-		return InternalPlatform.getDefault().getProtectionSpace(resourceUrl);
+		return AuthorizationHandler.getProtectionSpace(resourceUrl);
 	}
 
 	/** 

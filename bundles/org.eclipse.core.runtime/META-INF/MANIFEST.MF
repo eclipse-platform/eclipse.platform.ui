@@ -14,5 +14,6 @@ Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,
  org.eclipse.equinox.preferences;visibility:=reexport,
  org.eclipse.core.contenttype;visibility:=reexport,
  org.eclipse.equinox.common;visibility:=reexport,
- org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport
+ org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
+ org.eclipse.core.runtime.compatibility.auth
 Eclipse-LazyStart: true
