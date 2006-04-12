@@ -66,7 +66,18 @@ public class CMClientFixture {
 			}
 			int dateOffset = getOffset(day);
 			for (int i = 0; i < controls.length; i++) {
-				controls[i].setText(data[dateOffset][i]);
+				String text = data[dateOffset][i];
+				if("1".equals(text)) {
+					controls[i].setText(text);
+					controls[i].setAllDayEvent(true);
+				} else {
+					controls[i].setText(text);
+					controls[i].setAllDayEvent(false);
+					GregorianCalendar gc = new GregorianCalendar();
+					gc.setTime(new Date());
+					gc.set(Calendar.HOUR_OF_DAY, Integer.parseInt(text));
+					controls[i].setStartTime(gc.getTime());
+				}
 			}
 		}
 	}

@@ -33,11 +33,12 @@ public class DayModel {
 	
 	/**
 	 * Construct a DayModel for an IEventEditor.
+	 * TODO: We could make numberOfDivisionsInHour a parameter to getEventLayout()
 	 * 
-	 * @param parent The IEventEditor containing event data to model.
+	 * @param numberOfDivisionsInHour 
 	 */
-	public DayModel(IEventEditor parent) {
-		numberOfDivisionsInHour = parent.getNumberOfDivisionsInHour();
+	public DayModel(int numberOfDivisionsInHour) {
+		this.numberOfDivisionsInHour = numberOfDivisionsInHour;
 	}
 	
 	private int computeBaseSlot(GregorianCalendar gc) {

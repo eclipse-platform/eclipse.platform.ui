@@ -309,6 +309,7 @@ public class CompositeTable extends Canvas {
 				rowConstructor = finalChildren[0].getClass().getConstructor(
 						new Class[] { Composite.class, Integer.TYPE });
 			} catch (Exception e) {
+				throw new RuntimeException("Unable to get constructor object for header or row", e);
 			}
 		} else {
 			try {
@@ -319,6 +320,7 @@ public class CompositeTable extends Canvas {
 						new Class[] { Composite.class, Integer.TYPE });
 				rowControl = finalChildren[1];
 			} catch (Exception e) {
+				throw new RuntimeException("Unable to get constructor object for header or row", e);
 			}
 		}
 
@@ -781,6 +783,21 @@ public class CompositeTable extends Canvas {
 	public Control getCurrentRowControl() {
 		return contentPane.getCurrentRowControl();
 	}
+	
+	/**
+	 * Method getRowControls. Returns an array of SWT controls where each
+	 * control represents a row control in the CompositeTable's current scrolled
+	 * position. If CompositeTable is resized, scrolled, such that the rows that
+	 * the CompositeTable control is displaying change in any way, the array
+	 * that is returned by this method will become out of date and need to be
+	 * retrieved again.
+	 * 
+	 * @return Control[] An array of SWT Control objects, each representing an
+	 *         SWT row object.
+	 */
+	public Control[] getRowControls() {
+		return contentPane.getRowControls();
+	}
 
 	/**
 	 * Method getSelection. Returns the currently-selected (column, row) pair
@@ -1027,6 +1044,31 @@ public class CompositeTable extends Canvas {
 	 */
 	public void setDeleteEnabled(boolean deleteEnabled) {
 		this.deleteEnabled = deleteEnabled;
+	}
+	
+	LinkedList scrollListeners = new LinkedList();
+	
+	/**
+	 * Method addScrollListener.  Adds the specified scroll listener to the
+	 * list of listeners that will be notified when this CompositeTable control
+	 * scrolls the top-visible row.  This event is not fired when the 
+	 * CompositeTable is resized.
+	 * 
+	 * @param scrollListener the ScrollListener to add.
+	 */
+	public void addScrollListener(ScrollListener scrollListener) {
+		scrollListeners.add(scrollListener);
+	}
+	
+	/**
+	 * Method removeScrollListener.  Removes the specified scroll listener from the
+	 * list of listeners that will be notified when this CompositeTable control
+	 * scrolls the top-visible row.
+	 * 
+	 * @param scrollListener the ScrollListener to remove.
+	 */
+	public void removeScrollListener(ScrollListener scrollListener) {
+		scrollListeners.remove(scrollListener);
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

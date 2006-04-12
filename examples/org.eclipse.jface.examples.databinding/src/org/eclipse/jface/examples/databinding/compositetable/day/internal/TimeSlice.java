@@ -98,9 +98,16 @@ public class TimeSlice extends Composite {
 		}
 	}
 
-	private LinkedList days = new LinkedList();
-
 	private CLabel timeLabel = null;
+
+	private LinkedList columns = new LinkedList();
+
+	/**
+	 * @return Returns the columns.
+	 */
+	public LinkedList getColumns() {
+		return columns;
+	}
 
 	/**
 	 * Constructor TimeSlice. Construct a TimeSlice control, passing the parent
@@ -174,11 +181,11 @@ public class TimeSlice extends Composite {
 	 */
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
-		for (int i = numberOfColumns - 1; i > 0; --i) {
+		for (int i = numberOfColumns; i > 0; --i) {
 			if (headerControl) {
-				days.add(new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER));
+				columns.add(new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER | SWT.CENTER));
 			} else {
-				days.add(new TimeSlot(this, SWT.NONE));
+				columns.add(new TimeSlot(this, SWT.NONE));
 			}
 		}
 	}
@@ -200,6 +207,7 @@ public class TimeSlice extends Composite {
 		if (currentTime == null) {
 			timeLabel.setImage(allDayImage);
 			timeLabel.setText("");
+			setHourStartOnDays(false);
 			return;
 		}
 		timeLabel.setImage(null);
@@ -221,7 +229,7 @@ public class TimeSlice extends Composite {
 	}
 
 	private void setHourStartOnDays(boolean isHourStart) {
-		for (Iterator daysIter = days.iterator(); daysIter.hasNext();) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
 			Object dayCandidate = daysIter.next();
 			if (dayCandidate instanceof TimeSlot) {
 				TimeSlot day = (TimeSlot) dayCandidate;

@@ -46,6 +46,14 @@ public interface IEventEditor {
 	void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour);
 	
 	/**
+	 * Method getNumberOfDays.  Returns the number of days being displayed
+	 * in this IEventEditor.
+	 * 
+	 * @return The number of days being displayed.
+	 */
+	int getNumberOfDays();
+	
+	/**
 	 * Returns the numberOfDivisionsInHour.  For example, to have a new
 	 * time slice every 1/4 hour, this value would be 4.
 	 * 
@@ -61,9 +69,18 @@ public interface IEventEditor {
 	 * of the date.  A multi-day editor would make the date passed be the first
 	 * date edited in the set of days being visualized.
 	 *  
-	 * @param startDate The date representing what slice of time to visualize in the editor.
+	 * @param startDate The date representing what slice of time to visualize in the editor.  
+	 * null is not permitted.  Passing null will result in undefined behavior.
 	 */
 	void setStartDate(Date startDate);
+	
+	/**
+	 * Return the current start date for this event editor.  This is the date
+	 * that was set in setStartDate.
+	 * 
+	 * @return The start date, or <code>null</code> if no start date has been specified yet.
+	 */
+	Date getStartDate();
 	
 	/**
 	 * Set the strategy pattern object that can return how many events to display

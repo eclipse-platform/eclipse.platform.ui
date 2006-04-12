@@ -25,10 +25,14 @@ import java.util.List;
  */
 public class CalendarableModel {
 
+	private static final int DEFAULT_START_HOUR = 8;
+	
 	private int numberOfDays = -1;
 	private int numberOfDivisionsInHour = -1;
 	private ArrayList[] dateColumns = null;
 
+	private int defaultStartHour = DEFAULT_START_HOUR;
+	
 	/**
 	 * @param numberOfDays
 	 * @param numberOfDivisionsInHour
@@ -217,6 +221,77 @@ public class CalendarableModel {
 	 */
 	public List getCalendarableEvents(int dayOffset) {
 		return dateColumns[dayOffset];
+	}
+
+	/**
+	 * Method computeNumberOfAllDayEventRows. 
+	 * 
+	 * @return int representing the max number of events in all visible days. 
+	 */
+	public int computeNumberOfAllDayEventRows() {
+		int maxAllDayEvents = 0;
+		for (int day = 0; day < dateColumns.length; day++) {
+			ArrayList calendarables = dateColumns[day];
+			int allDayEventsInCurrentDay = 0;
+			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
+				Calendarable event = (Calendarable) iter.next();
+				if (event.isAllDayEvent()) {
+					allDayEventsInCurrentDay++;
+				}
+			}
+			if (allDayEventsInCurrentDay > maxAllDayEvents) {
+				maxAllDayEvents = allDayEventsInCurrentDay;
+			}
+		}
+		return maxAllDayEvents;
+	}
+
+	/**
+	 * Method computeStartHour.  Computes the start hour of the day for all
+	 * days that are displayed.  If no events are before the defaultStartHour,
+	 * the defaultStartHour is returned.  If any day in the model has an event
+	 * beginning before defaultStartHour, the hour of the earliest event is
+	 * used instead.
+	 * 
+	 * @return int The start hour.
+	 */
+	public int computeStartHour() {
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		int startHour = getDefaultStartHour();
+		for (int day = 0; day < dateColumns.length; day++) {
+			ArrayList calendarables = dateColumns[day];
+			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
+				Calendarable event = (Calendarable) iter.next();
+				if (event.isAllDayEvent()) {
+					continue;
+				}
+				gc.setTime(event.getStartTime());
+				int eventStartHour = gc.get(Calendar.HOUR_OF_DAY);
+				if (eventStartHour < startHour) {
+					startHour = eventStartHour;
+				}
+			}
+		}
+		return startHour;
+	}
+
+	/**
+	 * Method setDefaultStartHour.
+	 * 
+	 * @param defaultStartHour The first hour to be displayed by default.
+	 */
+	public void setDefaultStartHour(int defaultStartHour) {
+		this.defaultStartHour = defaultStartHour;
+	}
+
+	/**
+	 * Method getDefaultStartHour
+	 * 
+	 * @return int representing the first hour to be displayed by default.
+	 */
+	public int getDefaultStartHour() {
+		return defaultStartHour;
 	}
 
 }

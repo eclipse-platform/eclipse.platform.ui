@@ -54,11 +54,8 @@ import org.eclipse.swt.widgets.Widget;
 public class InternalCompositeTable extends Composite implements Listener {
 	// The internal UI controls that make up this control.
 	private Composite sliderHolder = null;
-
 	private Composite controlHolder = null;
-
 	private Slider slider = null;
-
 	private EmptyTablePlaceholder emptyTablePlaceholder = null;
 
 	// My parent CompositeTable
@@ -66,40 +63,26 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 	// Property fields
 	private int maxRowsVisible;
-
 	private boolean fittingVertically;
-
 	private int numRowsInDisplay;
-
 	private int numRowsInCollection;
-
 	private int topRow;
-
 	private int currentRow;
-
 	private int currentColumn;
 
 	// The visible/invisible row objects and bookeeping info about them
 	private int currentVisibleTopRow = 0;
-
 	private int numRowsVisible = 0;
-
 	private LinkedList rows = new LinkedList();
-
 	private LinkedList spareRows = new LinkedList();
-
 	int clientAreaHeight;
 
 	// The prototype header/row objects and Constructors so we can duplicate
 	// them
 	private Constructor headerConstructor;
-
 	private Constructor rowConstructor;
-
 	private Control headerControl;
-
 	private Control myHeader = null;
-
 	private Control rowControl;
 
 	/**
@@ -373,12 +356,6 @@ public class InternalCompositeTable extends Composite implements Listener {
 	// Table control layout -- main refresh algorithm
 	// ---------------------------------------------
 
-	private static final int FORWARD = 1;
-
-	private static final int NONE = 0;
-
-	private static final int BACKWARD = -1;
-
 	/**
 	 * Main refresh algorithm entry point. This method refreshes everything in
 	 * the table:
@@ -430,15 +407,15 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 			// Keep track of if we're scrolling forwards or backwards
 			if (currentVisibleTopRow - topRow > 0) {
-				userScrollDirection = BACKWARD;
+				userScrollDirection = ScrollEvent.BACKWARD;
 			} else if (topRow - currentVisibleTopRow > 0) {
-				userScrollDirection = FORWARD;
+				userScrollDirection = ScrollEvent.FORWARD;
 			}
 
 			// Scroll the view so that the right number of row
 			// objects are showing and they have the right data
 			if (rows.size() - Math.abs(currentVisibleTopRow - topRow) > 0) {
-				if (currentRow >= numRowsVisible) {
+				if (currentRow >= numRowsVisible) {	// was "if"
 					deleteRowAt(0);
 					++currentVisibleTopRow;
 					++topRow;
@@ -463,6 +440,12 @@ public class InternalCompositeTable extends Composite implements Listener {
 				fixNumberOfRows();
 				createEmptyTablePlaceholer();
 			}
+		}
+		
+		// Make sure that the currentRow is within the visible range
+		// (after PgDn, it could wind up outside the visible range)
+		if (currentRow >= numRowsVisible) {
+			currentRow = numRowsVisible-1;
 		}
 
 		// Show, hide, reset the scroll bar
@@ -505,10 +488,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 		int rowHeight = getRowHeight(clientAreaHeight);
 
 		// We have to move the controls front-to-back if we're scrolling
-		// forwards
-		// and back-to-front if we're scrolling backwards to avoid ugly
+		// forwards and back-to-front if we're scrolling backwards to avoid ugly
 		// screen refresh artifacts.
-		if (userScrollDirection == FORWARD || userScrollDirection == NONE) {
+		if (userScrollDirection == ScrollEvent.FORWARD || userScrollDirection == ScrollEvent.NONE) {
 			for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
 				TableRow row = (TableRow) rowsIter.next();
 				Control rowControl = row.getRowControl();
@@ -529,6 +511,11 @@ public class InternalCompositeTable extends Composite implements Listener {
 				layoutChild(rowControl, false);
 				topPosition -= rowHeight;
 			}
+		}
+		
+		// If we scrolled, tell clients about it
+		if (userScrollDirection != ScrollEvent.NONE) {
+			fireScrollEvent(new ScrollEvent(userScrollDirection, parent));
 		}
 	}
 
@@ -1132,12 +1119,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 					newTopRow = numRowsInCollection - 1;
 				}
 				setTopRow(newTopRow);
-				if (currentRow < numRowsVisible) {
-					internalSetSelection(currentColumn, currentRow, true);
-				} else {
-					internalSetSelection(currentColumn, numRowsVisible - 1,
-							true);
-				}
+				internalSetSelection(currentColumn, currentRow, true);
 			}
 			return;
 		}
@@ -1245,7 +1227,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	public void focusGained(TableRow sender, FocusEvent e) {
 		boolean rowChanged = false;
-		if (getRowNumber(sender) != currentRow) {
+		int senderRowNumber = getRowNumber(sender);
+		if (senderRowNumber != currentRow) {
 			if (needToRequestRC) {
 				if (!fireRequestRowChangeEvent()) {
 					// Go back if we're not allowed to be here
@@ -1258,7 +1241,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 			rowChanged = true;
 		}
 
-		currentRow = getRowNumber(sender);
+		currentRow = senderRowNumber;
 		currentColumn = sender.getColumnNumber((Control) e.widget);
 
 		if (rowChanged)
@@ -1482,6 +1465,21 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 		return -1;
 	}
+	
+	/**
+	 * Tell listeners that we just scrolled.
+	 * @param scrollEvent TODO
+	 */
+	private void fireScrollEvent(ScrollEvent scrollEvent) {
+		if (parent.scrollListeners.size() < 1) {
+			return;
+		}
+		
+		for (Iterator scrollListenersIter = parent.scrollListeners.iterator(); scrollListenersIter.hasNext();) {
+			ScrollListener scrollListener = (ScrollListener) scrollListenersIter.next();
+			scrollListener.tableScrolled(scrollEvent);
+		}
+	}
 
 	// Event Handling, utility methods
 	// ------------------------------------------------------------
@@ -1589,6 +1587,25 @@ public class InternalCompositeTable extends Composite implements Listener {
 			return null;
 		}
 		return currentRow().getRowControl();
+	}
+	
+	/**
+	 * Method getRowControls. Returns an array of SWT controls where each
+	 * control represents a row control in the CompositeTable's current scrolled
+	 * position. If CompositeTable is resized, scrolled, such that the rows that
+	 * the CompositeTable control is displaying change in any way, the array
+	 * that is returned by this method will become out of date and need to be
+	 * retrieved again.
+	 * 
+	 * @return Control[] An array of SWT Control objects, each representing an
+	 *         SWT row object.
+	 */
+	public Control[] getRowControls() {
+		Control[] rowControls = new Control[rows.size()];
+		for (int i = 0; i < rowControls.length; i++) {
+			rowControls[i] = getRowByNumber(i).getRowControl();
+		}
+		return rowControls;
 	}
 
 	/**

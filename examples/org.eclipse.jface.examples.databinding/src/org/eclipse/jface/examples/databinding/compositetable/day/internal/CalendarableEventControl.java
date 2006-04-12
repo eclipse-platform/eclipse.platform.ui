@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 3.2
  */
-public class CalendarableTimedEvent extends Canvas  {
+public class CalendarableEventControl extends Canvas  {
 
 	private Label label = null;
 
@@ -56,7 +56,7 @@ public class CalendarableTimedEvent extends Canvas  {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public CalendarableTimedEvent(Composite parent, int style) {
+	public CalendarableEventControl(Composite parent, int style) {
 		super(parent, style);
 		initialize();
 	}

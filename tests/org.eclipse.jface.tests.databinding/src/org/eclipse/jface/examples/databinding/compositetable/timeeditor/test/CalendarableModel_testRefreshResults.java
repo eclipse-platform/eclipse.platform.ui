@@ -26,7 +26,7 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendar
  * @since 3.2
  *
  */
-public class CalendarableModel_testRefresh extends TestCase {
+public class CalendarableModel_testRefreshResults extends TestCase {
 	
 	// Test fixtures ----------------------------------------------------------
 	
@@ -81,7 +81,7 @@ public class CalendarableModel_testRefresh extends TestCase {
 	
 	public void testOneDayOneEvent() throws Exception {
 		testModelLoading(new String[][] {
-				{"One event"}
+				{"1"}
 		});
 	}
 
@@ -156,4 +156,106 @@ public class CalendarableModel_testRefresh extends TestCase {
 		cm.refresh(getNextDate(cmf.startDate));  // This refresh should
 		verifyModel(cm, data);
 	}
+
+	// Number of all day event row tests --------------------------------------
+	
+	public void testComputeNumberOfAllDayEventRows_OneAllDayEvent() throws Exception {
+		String[][] data = new String[][] {
+				{"1", "3", "3"},
+				{"0", "3", "6", "9"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("max one event", 1, cm.computeNumberOfAllDayEventRows());
+	}
+
+	public void testComputeNumberOfAllDayEventRows_TwoAllDayEvent() throws Exception {
+		String[][] data = new String[][] {
+				{"4", "1", "1"},
+				{"0", "3", "6", "9"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("max two event", 2, cm.computeNumberOfAllDayEventRows());
+	}
+
+	public void testComputeNumberOfAllDayEventRows_ThreeAllDayEvent() throws Exception {
+		String[][] data = new String[][] {
+				{"4", "1", "1"},
+				{"1", "1", "1", "9"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("max three event", 3, cm.computeNumberOfAllDayEventRows());
+	}
+
+	public void testComputeNumberOfAllDayEventRows_ZeroAllDayEvent() throws Exception {
+		String[][] data = new String[][] {
+				{"0", "2", "4"},
+				{"0", "3", "5", "9"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("no all day events", 0, cm.computeNumberOfAllDayEventRows());
+	}
+	
+	// Start time -------------------------------------------------------------
+	
+	public void testComputeStartHour_UsingDefault() throws Exception {
+		String[][] data = new String[][] {
+				{"9", "22", "8"},
+				{"21", "11", "14", "16"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("8 am start", 8, cm.computeStartHour());
+	}
+	
+	public void testComputeStartHour_Midnight() throws Exception {
+		String[][] data = new String[][] {
+				{"9", "22", "8"},
+				{"21", "11", "0", "16"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("midnight start", 0, cm.computeStartHour());
+	}
+	
+	public void testComputeStartHour_7am() throws Exception {
+		String[][] data = new String[][] {
+				{"9", "22", "8"},
+				{"21", "11", "7", "16"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("midnight start", 7, cm.computeStartHour());
+	}
+	
+	public void testComputeStartHour_7amWithAllDayEvents() throws Exception {
+		String[][] data = new String[][] {
+				{"9", "1", "8"},
+				{"21", "11", "7", "16"}
+		};
+		CMClientFixture cmf = new CMClientFixture(data);
+		CalendarableModel cm = new CalendarableModel();
+		setupModelwithFixtureAndData(cm, cmf, data);
+		
+		assertEquals("midnight start", 7, cm.computeStartHour());
+	}
+	
+	
 }

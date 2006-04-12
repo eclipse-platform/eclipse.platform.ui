@@ -21,8 +21,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 
 /**
@@ -32,35 +30,6 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEd
 public class DayModel_testGetColumnsForEvents extends TestCase {
 	// Fixtures ---------------------------------------------------------------
 
-	private final class EventEditorFixture implements IEventEditor {
-		private final int divisions_in_hour;
-
-		private EventEditorFixture(int divisions_in_hour) {
-			super();
-			this.divisions_in_hour = divisions_in_hour;
-		}
-
-		public void refresh(Date date) {
-		}
-
-		public void setEventContentProvider(
-				EventContentProvider eventContentProvider) {
-		}
-
-		public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
-		}
-
-		public void setStartDate(Date startDate) {
-		}
-
-		public int getNumberOfDivisionsInHour() {
-			return divisions_in_hour;
-		}
-
-		public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
-		}
-	}
-	
 	private Calendarable event(int number) {
 		return (Calendarable) expectedEvents.get(number);
 	}
@@ -123,8 +92,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		
 	protected void setUp() throws Exception {
 		super.setUp();
-		eventEditor = new EventEditorFixture(DIVISIONS_IN_HOUR);
-		dayModel = new DayModel(eventEditor);
+		dayModel = new DayModel(DIVISIONS_IN_HOUR);
 		expectedEvents = new ArrayList();
 	}
 
