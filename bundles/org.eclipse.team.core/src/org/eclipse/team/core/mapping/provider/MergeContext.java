@@ -172,8 +172,8 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	}
 
 	/**
-	 * Perform a three-way merge on the given thee-way diff that contains a content conflict.
-	 * By default, ths method makes use of {@link IStorageMerger} instances registered
+	 * Perform a three-way merge on the given three-way diff that contains a content conflict.
+	 * By default, this method makes use of {@link IStorageMerger} instances registered
 	 * with the <code>storageMergers</code> extension point. Note that the ancestor
 	 * of the given diff may be missing. Some {@link IStorageMerger} instances
 	 * can still merge without an ancestor so we need to consult the
@@ -189,7 +189,9 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 				monitor.beginTask(null, 100);
 				IResourceDiff localDiff = (IResourceDiff)diff.getLocalChange();
 				IResourceDiff remoteDiff = (IResourceDiff)diff.getRemoteChange();
-				IStorageMerger merger = DelegatingStorageMerger.getInstance();
+				IStorageMerger merger = (IStorageMerger)getAdapter(IStorageMerger.class);
+				if (merger == null)
+					merger = DelegatingStorageMerger.getInstance();
 				IFile file = (IFile)localDiff.getResource();
 				monitor.subTask(NLS.bind(Messages.MergeContext_5, file.getFullPath().toString()));
 				String osEncoding = file.getCharset();
@@ -438,5 +440,12 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 */
 	public int getMergeType() {
 		return getType();
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IStorageMerger.class) {
+			return DelegatingStorageMerger.getInstance();
+		}
+		return super.getAdapter(adapter);
 	}
 }

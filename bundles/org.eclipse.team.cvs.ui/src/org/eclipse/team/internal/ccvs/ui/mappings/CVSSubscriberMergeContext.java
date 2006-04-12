@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.*;
@@ -22,14 +23,52 @@ import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
 
 public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 
+	private static final IStorageMerger MERGER = new DelegatingStorageMerger() {
+		protected IStorageMerger findMerger(IStorage target) throws CoreException {
+			IStorageMerger storageMerger = super.findMerger(target);
+			if (storageMerger == null) {
+				if (target instanceof IFile) {
+					IFile file = (IFile) target;
+					if (isText(file))
+						storageMerger = getTextMerger();
+				}
+			}
+			return storageMerger;
+		}
+
+		protected int getType(IStorage target) {
+			if (target instanceof IFile) {
+				IFile file = (IFile) target;
+				if (isText(file))
+					return Team.TEXT;
+				return Team.BINARY;
+			}
+			return super.getType(target);
+		}
+		
+		private boolean isText(IFile file) {
+			try {
+				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+				byte[] syncBytes = cvsFile.getSyncBytes();
+				if (syncBytes != null)
+					return !ResourceSyncInfo.isBinary(syncBytes);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+			return false;
+		}
+	};
+	
 	protected CVSSubscriberMergeContext(Subscriber subscriber, ISynchronizationScopeManager manager) {
 		super(subscriber, manager);
 	}
@@ -199,6 +238,12 @@ public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 			}
 		}
 		return (IFile[]) failures.toArray(new IFile[failures.size()]);
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IStorageMerger.class)
+			return MERGER;
+		return super.getAdapter(adapter);
 	}
 
 }

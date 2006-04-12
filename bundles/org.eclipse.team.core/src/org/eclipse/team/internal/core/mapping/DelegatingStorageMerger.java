@@ -40,7 +40,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 	private static DelegatingStorageMerger instance;
 	private final IContentType contentType;
 	
-	private DelegatingStorageMerger() {
+	public DelegatingStorageMerger() {
 		contentType = null;
 	}
 	
@@ -87,7 +87,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return merger.merge(output, outputEncoding, ancestor, target, other, monitor);
 	}
 
-	private IStorageMerger findMerger(IStorage target) throws CoreException {
+	protected IStorageMerger findMerger(IStorage target) throws CoreException {
 		IStorageMerger merger = null;
 		if (contentType != null) {
 			// A particular merger has been requested
@@ -95,7 +95,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 			if (merger != null) {
 				return merger;
 			} else {
-				// The requested merger is not available but still tryand find another
+				// The requested merger is not available but still try and find another
 				TeamPlugin.log(IStatus.ERROR, NLS.bind("Storage merger for {0} not available", contentType.getId()), null); //$NON-NLS-1$
 			}
 		}
@@ -113,7 +113,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 			merger = getMerger(target.getName());
 			if (merger == null) {
 				// If team thinks the file is text, try to get a text merger for the file
-				int type = Team.getFileContentManager().getType(target);
+				int type = getType(target);
 				if (type == Team.TEXT) 
 					merger = getTextMerger();
 				if (merger == null) {
@@ -134,6 +134,10 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return merger;
 	}
 
+	protected int getType(IStorage target) {
+		return Team.getFileContentManager().getType(target);
+	}
+
 	private IStorageMerger findAndWrapStreamMerger(IStorage target) {
 		if (mergerDelegate != null) {
 			IStorageMerger merger = mergerDelegate.findMerger(target);
@@ -142,7 +146,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return null;
 	}
 
-	private IStorageMerger getTextMerger() {
+	protected IStorageMerger getTextMerger() {
 		return new DelegatingStorageMerger(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT));
 	}
 
