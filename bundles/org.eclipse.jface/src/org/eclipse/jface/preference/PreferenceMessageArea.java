@@ -141,7 +141,7 @@ class PreferenceMessageArea extends DialogMessageArea {
         lastMessageText = newMessage;
         
 		int bottom = messageArea.getParent().getBounds().height;
-		if (messageArea.isVisible() == false && messageArea.getBounds().y != bottom) {
+		if (!messageArea.isVisible() && messageArea.getBounds().y != bottom) {
 			messageArea.setBounds(messageArea.getBounds().x, 
 								  bottom, 
 								  titleLabel.getBounds().width, 

@@ -62,6 +62,8 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	
 	private boolean inTransition = false;
 	
+	private boolean animated = false;
+	
 	private int state = CLOSED;
 	
 	private int LONG_DELAY = 300;
@@ -83,6 +85,27 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 	 * @see org.eclipse.jface.dialogs.ControlAnimator#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
+//		// return immediately if already OPENING/OPEN and
+//		// visible is true or if CLOSING/CLOSED and visible
+//		// is false. 
+//		switch (getAnimationState()) {
+//		case OPENING:
+//		case OPEN:
+//			if (visible)
+//				return;
+//			break;
+//		case CLOSING:
+//		case CLOSED:
+//			if (!visible)
+//				return;
+//			break;
+//		}
+		
+		if(animated) {		
+			super.setVisible(visible);
+			return;
+		}
+		
 		setAnimationState(visible ? OPENING: CLOSING);
 		finished = false;
 
@@ -135,6 +158,7 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 					Point loc = control.getLocation();
 					switch (getAnimationState()) {
 					case OPENING:
+						animated = true;
 						loc.y--;
 						if (loc.y >= endY) {
 							control.setLocation(loc);

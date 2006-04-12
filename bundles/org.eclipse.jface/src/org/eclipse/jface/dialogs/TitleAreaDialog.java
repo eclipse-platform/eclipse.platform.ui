@@ -447,7 +447,7 @@ public class TitleAreaDialog extends TrayDialog {
 		// and out of place. The bounds are dependent on whether a message 
 		// image is being shown.
 		Rectangle msgLabelBounds = messageLabel.getBounds();
-		if(messageArea.isVisible() == false && messageArea.getBounds().y != bottom) {
+		if(!messageArea.isVisible() && messageArea.getBounds().y != bottom) {
 			messageArea.setBounds(
 					(messageImageLabel == null) ? msgLabelBounds.x: 
 						messageImageLabel.getBounds().x,
