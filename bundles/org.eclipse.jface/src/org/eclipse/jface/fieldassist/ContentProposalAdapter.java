@@ -541,9 +541,9 @@ public class ContentProposalAdapter {
 		 */
 		private void changeDefaultColors(Control control) {
 			applyForegroundColor(getShell().getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_FOREGROUND), control);
+					SWT.COLOR_LIST_FOREGROUND), control);
 			applyBackgroundColor(getShell().getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_BACKGROUND), control);
+					SWT.COLOR_LIST_BACKGROUND), control);
 		}
 
 		/*
