@@ -155,7 +155,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	 */
 	private DateFormat getDateFormat() {
 		if (fDateFormat == null)
-			fDateFormat= DateFormat.getTimeInstance();
+			fDateFormat= DateFormat.getTimeInstance(DateFormat.SHORT);
 		return fDateFormat;
 	}
 
