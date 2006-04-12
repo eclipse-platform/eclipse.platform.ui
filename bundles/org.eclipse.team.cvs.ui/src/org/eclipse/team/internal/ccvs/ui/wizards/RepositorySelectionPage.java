@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -28,6 +29,15 @@ import org.eclipse.ui.model.*;
  * If the user selected an existing repo, then getLocation() will return it.
  */
 public class RepositorySelectionPage extends CVSWizardPage {
+	
+	private class DecoratingRepoLabelProvider extends WorkbenchLabelProvider {
+		protected String decorateText(String input, Object element) {
+			//Used to process RTL locales only
+			return TextProcessor.process(input, ":@/"); //$NON-NLS-1$
+		}
+	}
+	
+	
 	private TableViewer table;
 	private Button useExistingRepo;
 	private Button useNewRepo;
@@ -79,7 +89,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		useExistingRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useExisting, 1); 
 		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
-		table.setLabelProvider(new WorkbenchLabelProvider());
+		table.setLabelProvider(new DecoratingRepoLabelProvider()/*WorkbenchLabelProvider()*/);
         table.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 getContainer().showPage(getNextPage());
