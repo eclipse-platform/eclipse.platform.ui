@@ -1,0 +1,4 @@
+# Debugging options for the org.eclipse.ui.workbench plugin.
+
+# Turn on debugging for the org.eclipse.ui.workbench plugin.
+org.eclipse.ui.workbench/debug=false
