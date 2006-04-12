@@ -333,7 +333,7 @@ class JSchSession {
          */
         public void connectionMade() {
             attemptCount = 0;
-            if (passwordChanged && password != null) {
+            if (passwordChanged && password != null && location != null) {
                 // We were prompted for and returned a password so record it with the location
                 location.setPassword(password);
             }
