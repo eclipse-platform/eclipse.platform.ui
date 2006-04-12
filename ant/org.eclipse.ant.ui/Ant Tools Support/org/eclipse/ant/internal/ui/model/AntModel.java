@@ -234,7 +234,7 @@ public class AntModel implements IAntModel {
         AntProjectNode projectNode= getProjectNode();
         if (projectNode != null) {
             //cleanup the introspection helpers that may have been generated
-            IntrospectionHelper.getHelper(projectNode.getProject(), AntModel.class);
+            IntrospectionHelper.getHelper(projectNode.getProject(), Small.class);
             projectNode.getProject().fireBuildFinished(null);
         }
     }
@@ -1793,5 +1793,11 @@ public class AntModel implements IAntModel {
             }
         }
         return null;
+    }
+    
+    /**
+     * @see AntModel#cleanup()
+     */
+    class Small {
     }
 }
