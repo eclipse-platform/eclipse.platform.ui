@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -67,6 +68,13 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		}
 	}
 	
+	private class DecoratingRepoLabelProvider extends WorkbenchLabelProvider {
+		protected String decorateText(String input, Object element) {
+			//Used to process RTL locales only
+			return TextProcessor.process(input, ":@/"); //$NON-NLS-1$
+		}
+	}
+	
 	protected RemoteViewPart(String partName) {
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
 		settings = workbenchSettings.getSection(partName);
@@ -86,7 +94,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(getContentProvider());
-		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.setLabelProvider(new DecoratingRepoLabelProvider()/*WorkbenchLabelProvider()*/);
 		getSite().setSelectionProvider(viewer);
 		viewer.setInput(getTreeInput());
 		viewer.setSorter(new RepositorySorter());

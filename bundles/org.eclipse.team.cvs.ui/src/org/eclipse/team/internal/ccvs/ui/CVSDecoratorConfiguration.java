@@ -13,6 +13,8 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Map;
 
+import org.eclipse.osgi.util.TextProcessor;
+
 public class CVSDecoratorConfiguration {
 
 	// bindings for 
@@ -98,10 +100,10 @@ public class CVSDecoratorConfiguration {
 		}
 		
 		if (prefix.length() != 0) {
-			decoration.addPrefix(prefix.toString());
+			decoration.addPrefix(TextProcessor.process(prefix.toString(),"()[].")); //$NON-NLS-1$
 		}
 		if (suffix.length() != 0) {
-			decoration.addSuffix(suffix.toString());
+			decoration.addSuffix(TextProcessor.process(suffix.toString(),"()[].")); //$NON-NLS-1$
 		}
 	}
 }
