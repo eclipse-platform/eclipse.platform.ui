@@ -16,14 +16,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * ControlAnimator provides a simple implementation to display or hide a control 
- * at the bottom of the parent composite. Other animations will be written as 
- * subclasses of this class.  By setting the animator in the method 
- * {@link org.eclipse.jface.util.Policy#setAnimator(ControlAnimator)} a new type 
- * of animator can be plugged into JFace.
- * </p>
- * 
- * This class is not intended to be extended by clients.
+ * ControlAnimator provides a simple implementation to display or hide a control
+ * at the bottom of the parent composite. Other animations will be written as
+ * subclasses of this class. <p>
+ * Instances of this class can be created using an AnimatorFactory.
  * 
  * @since 3.2
  */
@@ -31,40 +27,32 @@ import org.eclipse.swt.widgets.Control;
 
 public class ControlAnimator {
 	
-	/**
-	 * A constant denoting the CLOSED animation state of 
-	 * a control (value is 0)
-	 */
-	public static final int CLOSED = 0;
-
-	/**
-	 * A constant denoting the OPENING animation state of 
-	 * a control (value is 1)
-	 */
-	public static final int OPENING = 1;
-
-	/**
-	 * A constant denoting the OPEN animation state of 
-	 * a control (value is 2)
-	 */
-	public static final int OPEN = 2;
-
-	/**
-	 * A constant denoting the CLOSING animation state of 
-	 * a control (value is 3)
-	 */
-	public static final int CLOSING = 3;
-	
-	private int state = CLOSED;
+	protected Control control;	
 	
 	/**
-	 * Displays or hides the given control at the bottom of the parent composite.
+	 * Constructs a new ControlAnimator instance and passes along the
+	 * control that will be displayed or hidden.
+	 * 
+	 * @param control the control that will be displayed or hidden.
+	 */
+	public ControlAnimator(Control control) {
+		this.control = control;
+	}
+
+	/**
+	 * Displays or hides a control at the bottom of the parent composite
+	 * and makes use of the control's SWT visible flag.<p>
+	 * Subclasses should override this method.</p>
 	 * 
 	 * @param visible <code>true</code> if the control should be shown, 
 	 * 		  and <code>false</code> otherwise.
-	 * @param control the control to be displayed or hidden.
 	 */
-	public void setVisible(boolean visible, Control control){
+	public void setVisible(boolean visible){
+		// Using the SWT visible flag to determine if the control has
+		// already been displayed or hidden. Return if already displayed
+		// and visible is true, or if already hidden and visible is false.
+		if (!(control.isVisible() ^ visible))
+			return;
 		control.setVisible(visible);
 		Rectangle parentBounds = control.getParent().getBounds();
 		int bottom = parentBounds.height;		
@@ -72,28 +60,6 @@ public class ControlAnimator {
 				: bottom;
 		Point loc = control.getLocation();
 		control.setLocation(loc.x,endY);
-		setAnimationState(visible ? OPEN: CLOSED);
 	}
 	
-	/**
-	 * Sets the state of the control and whether or not
-	 * it should be visible. The value should be one of 
-	 * the following: {@link #OPENING}, {@link #OPEN}, 
-	 * {@link #CLOSING}, or {@link #CLOSED}
-	 * 
-	 * @param state	the desired state of the control
-	 */
-	public void setAnimationState(int state) {
-		this.state = state;
-	}
-
-	/**
-	 * Returns the current state of the control.
-	 * 
-	 * @return the current state of the control: {@link #OPENING}, 
-	 * 		   {@link #OPEN}, {@link #CLOSING}, or {@link #CLOSED}
-	 */
-	public int getAnimationState() {
-		return state;
-	}	
 }

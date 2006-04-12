@@ -120,6 +120,8 @@ public class TitleAreaDialog extends TrayDialog {
     private ImageAndMessageArea messageArea;
 
 	private String warningMessage;
+	
+	private ControlAnimator animator;
 
     /**
      * Instantiate a new title area dialog.
@@ -414,7 +416,7 @@ public class TitleAreaDialog extends TrayDialog {
                 messageArea = new ImageAndMessageArea(titleArea, SWT.WRAP);
         		messageArea.setBackground(messageLabel.getBackground());
 
-        		Policy.getAnimator().setAnimationState(ControlAnimator.CLOSED);
+           		animator = Policy.getAnimatorFactory().createAnimator(messageArea);
               }
             // show the error
             messageArea.setToolTipText(errorMessage);
@@ -435,38 +437,17 @@ public class TitleAreaDialog extends TrayDialog {
 	 * 			displayed, and <code>false</code> otherwise.
 	 */
 	private void setMessageAreaVisible(boolean visible) {
-		// return immediately if already OPENING/OPEN and
-		// visible is true or if CLOSING/CLOSED and visible
-		// is false. 
-		switch (Policy.getAnimator().getAnimationState()) {
-		case ControlAnimator.OPENING:
-		case ControlAnimator.OPEN:
-			if (visible)
-				return;
-			break;
-		case ControlAnimator.CLOSING:
-		case ControlAnimator.CLOSED:
-			if (!visible){
-				return;
-			}
-			break;
-		}
-		
-        FormData messageAreaData = new FormData();
-        messageAreaData.right = new FormAttachment(titleImage);
-        messageAreaData.left = new FormAttachment(leftFillerLabel);
-        messageAreaData.bottom = new FormAttachment(100,0);
-        messageArea.setLayoutData(messageAreaData);
 		messageArea.moveAbove(null);
 		
 		// assumes that bottom of the message area should match
 		// the bottom of te parent composite.
 		int bottom = titleArea.getBounds().y + titleArea.getBounds().height;
 		
-		// Only set bounds if the message area is CLOSED. The bounds 
-		// are dependent on whether a message image is being shown.
+		// Only set bounds if the message area is CLOSED (i.e. not visible) 
+		// and out of place. The bounds are dependent on whether a message 
+		// image is being shown.
 		Rectangle msgLabelBounds = messageLabel.getBounds();
-		if(Policy.getAnimator().getAnimationState() == ControlAnimator.CLOSED) {
+		if(messageArea.isVisible() == false && messageArea.getBounds().y != bottom) {
 			messageArea.setBounds(
 					(messageImageLabel == null) ? msgLabelBounds.x: 
 						messageImageLabel.getBounds().x,
@@ -475,10 +456,22 @@ public class TitleAreaDialog extends TrayDialog {
 						msgLabelBounds.width + messageImageLabel.getBounds().width,
 					messageArea.computeSize(SWT.DEFAULT,SWT.DEFAULT).y);
 		}		
-		Policy.getAnimator().setAnimationState(visible ? 
-				ControlAnimator.OPENING: ControlAnimator.CLOSING);
-		Policy.getAnimator().setVisible(visible, messageArea);
+		animator.setVisible(visible);
+		setMessageLayoutData();
 	}
+	
+    /**
+     * Set the layoutData for the messageArea.
+     */
+    private void setMessageLayoutData() {
+    	if(messageArea == null) 
+    		return;
+        FormData messageAreaData = new FormData();
+        messageAreaData.right = new FormAttachment(titleImage);
+        messageAreaData.left = new FormAttachment(leftFillerLabel);
+        messageAreaData.bottom = new FormAttachment(100,0);
+        messageArea.setLayoutData(messageAreaData);
+    }
 
     /**
      * Re-layout the labels for the new message.
@@ -695,7 +688,7 @@ public class TitleAreaDialog extends TrayDialog {
             	messageArea = new ImageAndMessageArea(titleArea, SWT.WRAP);
             	messageArea.setBackground(messageLabel.getBackground());
        		
-            	Policy.getAnimator().setAnimationState(ControlAnimator.CLOSED);
+           		animator = Policy.getAnimatorFactory().createAnimator(messageArea);
             }
             // show the error
             messageArea.setToolTipText(warningMessage);

@@ -50,7 +50,8 @@ public class ImageAndMessageArea extends Composite {
 	/**
 	 * Constructs a new ImageAndMessageArea with an empty decorated field.
 	 * Calls to <code>setText(String text)</code> and <code>setImage(Image image)</code> 
-	 * are required in order to fill the message area. 
+	 * are required in order to fill the message area. Also, the instance will be invisible
+	 * when initially created.
 	 * <p>
 	 * The style bit <code>SWT.WRAP</code> should be used if a larger message area is desired.</p>
 	 * 
@@ -118,6 +119,7 @@ public class ImageAndMessageArea extends Composite {
 				return size;
 			}
 		});
+		setVisible(false);
 	}
 
 	/* (non-Javadoc)

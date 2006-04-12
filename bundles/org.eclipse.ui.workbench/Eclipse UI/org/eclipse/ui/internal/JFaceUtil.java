@@ -60,7 +60,7 @@ final class JFaceUtil {
 		}
 		
 		// Enables the use of the animation functionality provided in WorkbenchControlAnimator
-		Policy.setAnimator(new WorkbenchControlAnimator());
+		Policy.setAnimatorFactory(new WorkbenchAnimatorFactory());
 	}
 
 	/**

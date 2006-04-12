@@ -30,20 +30,60 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class WorkbenchControlAnimator extends ControlAnimator {
 	
+	/**
+	 * A constant denoting the CLOSED animation state of 
+	 * a control (value is 0)
+	 */
+	private static final int CLOSED = 0;
+
+	/**
+	 * A constant denoting the OPENING animation state of 
+	 * a control (value is 1)
+	 */
+	private static final int OPENING = 1;
+
+	/**
+	 * A constant denoting the OPEN animation state of 
+	 * a control (value is 2)
+	 */
+	private static final int OPEN = 2;
+
+	/**
+	 * A constant denoting the CLOSING animation state of 
+	 * a control (value is 3)
+	 */
+	private static final int CLOSING = 3;
+	
 	private UIJob slideJob;
-	private Control control;
+	
 	private int endY;
+	
 	private boolean finished;
+	
 	private boolean inTransition = false;
 	
+	private int state = CLOSED;
+	
 	private int LONG_DELAY = 300;
+	
 	private int SHORT_DELAY = 25;
+	
+
+	/**
+	 * Constructs a new WorbenchControlAnimator instance and passes along the
+	 * control that will be animated.
+	 * 
+	 * @param control the control that will be animated.
+	 */
+	public WorkbenchControlAnimator(Control control) {
+		super(control);
+	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.ControlAnimator#setVisible(boolean, org.eclipse.swt.widgets.Control)
+	 * @see org.eclipse.jface.dialogs.ControlAnimator#setVisible(boolean)
 	 */
-	public void setVisible(boolean visible,Control control) {
-		this.control = control;
+	public void setVisible(boolean visible) {
+		setAnimationState(visible ? OPENING: CLOSING);
 		finished = false;
 
 		control.setVisible(true);
@@ -129,4 +169,27 @@ public class WorkbenchControlAnimator extends ControlAnimator {
 		newSlideJob.setSystem(true);
 		return newSlideJob;
 	}
+	
+	/**
+	 * Sets the state of the control and whether or not
+	 * it should be visible. The value should be one of 
+	 * the following: {@link #OPENING}, {@link #OPEN}, 
+	 * {@link #CLOSING}, or {@link #CLOSED}
+	 * 
+	 * @param state	the desired state of the control
+	 */
+	private void setAnimationState(int state) {
+		this.state = state;
+	}
+
+	/**
+	 * Returns the current state of the control.
+	 * 
+	 * @return the current state of the control: {@link #OPENING}, 
+	 * 		   {@link #OPEN}, {@link #CLOSING}, or {@link #CLOSED}
+	 */
+	private int getAnimationState() {
+		return state;
+	}
+
 }

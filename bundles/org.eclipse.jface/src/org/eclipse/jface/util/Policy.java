@@ -15,7 +15,7 @@ package org.eclipse.jface.util;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ControlAnimator;
+import org.eclipse.jface.dialogs.AnimatorFactory;
 
 /**
  * The Policy class handles settings for behaviour, debug flags and logging within JFace.
@@ -38,7 +38,7 @@ public class Policy {
 
     private static Comparator viewerComparator;
     
-    private static ControlAnimator animator;
+    private static AnimatorFactory animatorFactory;
     
     /**
      * A flag to indicate whether unparented dialogs should
@@ -143,25 +143,27 @@ public class Policy {
     }
     
     /**
-	 * Sets the animator used by JFace to animate the display of an SWT Control.
+	 * Sets the animator factory used by JFace to create control animator
+	 * instances. 
 	 * 
-	 * @param controlAnimator the ControlAnimator to use.
+	 * @param factory the AnimatorFactory to use.
 	 * @since 3.2
 	 */
-	public static void setAnimator(ControlAnimator controlAnimator){
-		animator = controlAnimator;
+	public static void setAnimatorFactory(AnimatorFactory factory){
+		animatorFactory = factory;
 	}
 
 	/**
-	 * Returns the animator used by JFace to animate the display of an SWT Control.
+	 * Returns the animator factory used by JFace to create control animator
+	 * instances. 
 	 * 
-	 * @return the ControlAnimator.
+	 * @return the animator factory used to create control animator instances.
 	 * @since 3.2
 	 */
-	public static ControlAnimator getAnimator() {
-		if (animator == null)
-			animator = new ControlAnimator();
-		return animator;
+	public static AnimatorFactory getAnimatorFactory() {
+		if (animatorFactory == null)
+			animatorFactory = new AnimatorFactory();
+		return animatorFactory;
 	}
 
 }

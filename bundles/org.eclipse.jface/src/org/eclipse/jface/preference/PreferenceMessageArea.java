@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.ImageAndMessageArea;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
@@ -46,6 +45,8 @@ class PreferenceMessageArea extends DialogMessageArea {
 	private PreferenceDialog preferenceDialog;
 	
 	private static int titleLabelOffset = -1;
+	
+	private ControlAnimator animator;
 
 	
 
@@ -72,6 +73,8 @@ class PreferenceMessageArea extends DialogMessageArea {
         messageArea = new ImageAndMessageArea(preferenceDialog.formTitleComposite, SWT.WRAP);
         messageArea.setFont(JFaceResources.getDialogFont());
    		messageArea.setVisible(false);
+   		
+   		animator = Policy.getAnimatorFactory().createAnimator(messageArea);
 	}
 
 	/* (non-Javadoc)
@@ -129,7 +132,7 @@ class PreferenceMessageArea extends DialogMessageArea {
 
             break;
         }
-        messageArea.setVisible(true);
+
         messageArea.moveAbove(null);
         messageArea.setImage(newImage);
         
@@ -138,36 +141,24 @@ class PreferenceMessageArea extends DialogMessageArea {
         lastMessageText = newMessage;
         
 		int bottom = messageArea.getParent().getBounds().height;
-
-        Rectangle titleLabelBounds = titleLabel.getBounds();
-        if(Policy.getAnimator().getAnimationState() == ControlAnimator.CLOSED || 
-           Policy.getAnimator().getAnimationState() == ControlAnimator.CLOSING){
-
-            if(Policy.getAnimator().getAnimationState() == ControlAnimator.CLOSED) {
-    			messageArea.setBounds(
-    					titleLabelBounds.x,
-    					bottom,
-    					titleLabelBounds.width,
-    					messageArea.computeSize(SWT.DEFAULT,SWT.DEFAULT).y);
-    		}
-    		Policy.getAnimator().setAnimationState(ControlAnimator.OPENING);
-    		Policy.getAnimator().setVisible(true, messageArea);
-        }
-        setMessageLayoutData(messageArea.getLayoutData());
+		if (messageArea.isVisible() == false && messageArea.getBounds().y != bottom) {
+			messageArea.setBounds(messageArea.getBounds().x, 
+								  bottom, 
+								  titleLabel.getBounds().width, 
+								  messageArea.computeSize(SWT.DEFAULT,SWT.DEFAULT).y);
+		}
+		animator.setVisible(true);
+		setMessageLayoutData(messageArea.getLayoutData());
 	}
 
-	/* (non-Javadoc)
+	/* (non-Javadoc) 
 	 * @see org.eclipse.jface.dialogs.DialogMessageArea#restoreTitle()
 	 */
 	public void restoreTitle() {
         titleLabel.setVisible(true);
-      if(Policy.getAnimator().getAnimationState() == ControlAnimator.OPENING || 
-         Policy.getAnimator().getAnimationState() == ControlAnimator.OPEN){
-  		Policy.getAnimator().setAnimationState(ControlAnimator.CLOSING);
-  		Policy.getAnimator().setVisible(false, messageArea);
-      }
-      lastMessageText = null;
-      lastMessageType = IMessageProvider.NONE;
+		animator.setVisible(false);
+		lastMessageText = null;
+		lastMessageType = IMessageProvider.NONE;
 	}
 
 	/* (non-Javadoc)
