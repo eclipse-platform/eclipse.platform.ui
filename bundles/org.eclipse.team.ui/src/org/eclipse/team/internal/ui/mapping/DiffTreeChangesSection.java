@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
@@ -222,35 +221,66 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		} else {
 			ISynchronizePageConfiguration configuration = getConfiguration();
 			String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
-			if (id != null) {
-				if (id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
-					return super.getEmptyChangesComposite(parent);
-				} else {
-					// A particular model is active so we need to look for a model that has changes in this
-					// same mode before offering to change modes.
-					ModelProvider[] providers =context.getScope().getModelProviders();
-					providers = ModelOperation.sortByExtension(providers);
-					for (int i = 0; i < providers.length; i++) {
-						ModelProvider provider = providers[i];
-						if (isEnabled(provider)) {
-							ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
-							if (adapter != null) {
-								boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
-								if (hasChanges) {
-									if (provider.getDescriptor().getId().equals(id)) {
-										return super.getEmptyChangesComposite(parent);
-									} else {
-										return getPointerToModel(parent, provider, id);
-									}
-								}
-							}
+			if (id == null)
+				id = ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER;
+			if (id.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+				if (getChangesInMode(getConfiguration().getMode()) > 0 && isAtLeastOneProviderDisabled()) {
+					// There are changes in this mode but they are not visible so enable
+					// all providers
+					return createEnableParticipantModelProvidersPane(parent);
+				}
+			} else {
+				// A particular model is active so we need to look for a model that has changes in this
+				// same mode before offering to change modes.
+				ModelProvider[] providers =findModelsWithChangesInMode(getConfiguration().getMode());
+				ModelProvider currentProvider = null;
+				for (int i = 0; i < providers.length; i++) {
+					ModelProvider provider = providers[i];
+					if (isEnabled(provider)) {
+						if (provider.getDescriptor().getId().equals(id)) {
+							currentProvider = provider;
+						} else {
+							return getPointerToModel(parent, provider, id);
 						}
 					}
 				}
+				if (currentProvider != null || providers.length > 0) {
+					// The current provider has changes but the view is empty
+					// or there is a disabled provider with changes
+					// This is an error so offer to enable and show all models
+					return createEnableParticipantModelProvidersPane(parent);
+				}
 			}
-			return createEnableParticipantModelProvidersPane(parent);
 		}
 		return super.getEmptyChangesComposite(parent);
+	}
+	
+	private boolean isAtLeastOneProviderDisabled() {
+		ModelProvider[] providers =findModelsWithChangesInMode(getConfiguration().getMode());
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			if (!isEnabled(provider)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private ModelProvider[] findModelsWithChangesInMode(int mode) {
+		ModelProvider[] providers =context.getScope().getModelProviders();
+		providers = ModelOperation.sortByExtension(providers);
+		List result = new ArrayList();
+		for (int i = 0; i < providers.length; i++) {
+			ModelProvider provider = providers[i];
+			ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(provider);
+			if (adapter != null) {
+				boolean hasChanges = hasChangesInMode(provider.getId(), adapter, getConfiguration().getMode());
+				if (hasChanges) {
+					result.add(provider);
+				}
+			}
+		}
+		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
 	}
 
 	private boolean isEnabled(ModelProvider provider) {
@@ -300,6 +330,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 				((TeamContentProviderManager)TeamUI.getTeamContentProviderManager()).enablementChanged(
 						descriptors,
 						getEnabledContentDescriptors());
+				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE );
 
 			}
 		});
