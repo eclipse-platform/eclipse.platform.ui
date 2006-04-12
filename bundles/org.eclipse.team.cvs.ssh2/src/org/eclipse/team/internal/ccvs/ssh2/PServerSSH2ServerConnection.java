@@ -111,7 +111,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 				  if(retry<0){
 				    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_3, CVSAuthenticationException.NO_RETRY); 
 				  }
-				  if(session.isConnected()){
+				  if(session != null && session.isConnected()){
 				    session.disconnect();
 				  }
 				  continue;
