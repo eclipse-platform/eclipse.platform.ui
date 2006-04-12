@@ -37,6 +37,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
@@ -189,7 +190,6 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.FILL;
 		setLayoutData(data);
-		fSortProjects.run();
 	}
 
 	/**
@@ -313,11 +313,50 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
+	 * Is sorting by date enabled?
+	 * 
+	 * @return <code>true</code> if it is enabled, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isSortByDate() {
+		return !isSortByProjects();
+	}
+
+	/**
+	 * Is sorting by projects enabled?
+	 * 
+	 * @return <code>true</code> if it is enabled, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isSortByProjects() {
+		final IContentProvider provider= fHistoryViewer.getContentProvider();
+		if (provider instanceof BrowseRefactoringHistoryContentProvider) {
+			final BrowseRefactoringHistoryContentProvider extended= (BrowseRefactoringHistoryContentProvider) provider;
+			return extended.isSortProjects();
+		}
+		return false;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
 		fDeselectAllButton.setEnabled(false);
 		fSelectAllButton.setEnabled(history != null && !history.isEmpty());
+	}
+
+	/**
+	 * Sorts the refactorings by date.
+	 */
+	public void sortByDate() {
+		fSortTimestamps.run();
+	}
+
+	/**
+	 * Sorts the refactorings by projects.
+	 */
+	public void sortByProjects() {
+		fSortProjects.run();
 	}
 }

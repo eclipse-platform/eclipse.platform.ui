@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
@@ -49,6 +50,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 
 	/** The create refactoring script wizard page name */
 	private static final String PAGE_NAME= "CreateRefactoringScriptWizardPage"; //$NON-NLS-1$
+
+	/** The sort dialog setting */
+	protected static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
 
 	/** The refactoring history control */
 	private BrowseRefactoringHistoryControl fHistoryControl= null;
@@ -82,7 +86,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, true) {
-		
+
 			public final String getWorkspaceCaption() {
 				return ScriptingMessages.CreateRefactoringScriptWizardPage_select_caption;
 			}
@@ -102,6 +106,15 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			}
 		};
 		fHistoryControl.createControl();
+		boolean sortProjects= true;
+		final IDialogSettings settings= fWizard.getDialogSettings();
+		if (settings != null)
+			sortProjects= settings.getBoolean(SETTING_SORT);
+		if (sortProjects)
+			fHistoryControl.sortByProjects();
+		else
+			fHistoryControl.sortByDate();
+
 		GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(24);
 		fHistoryControl.setLayoutData(data);
@@ -177,6 +190,10 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	 * Gets called if the wizard is finished.
 	 */
 	public void performFinish() {
+		final IDialogSettings settings= fWizard.getDialogSettings();
+		if (settings != null) {
+			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
+		}
 		fLocationControl.saveHistory();
 	}
 }
