@@ -21,7 +21,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.tests.ccvs.ui.SubscriberParticipantSyncInfoSource;
+import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 
 /**
  * Provides test methods common to CVS sync subscribers
@@ -30,7 +30,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 
 	private ISubscriberChangeListener listener;
 	private List accumulatedTeamDeltas = new ArrayList();
-	private static SyncInfoSource source = new SubscriberParticipantSyncInfoSource();
+	private static SyncInfoSource source = new ModelParticipantSyncInfoSource();
 
 	public CVSSyncSubscriberTest() {
 		super();

@@ -14,7 +14,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.tests.ccvs.ui.SubscriberParticipantSyncInfoSource;
+import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 
 public class AllTestsTeamSubscriber extends EclipseTest {
 	
@@ -33,7 +33,7 @@ public class AllTestsTeamSubscriber extends EclipseTest {
 		suite.addTest(CVSCompareSubscriberTest.suite());
 		suite.addTest(SyncSetTests.suite());
 		//suite.addTest(CVSChangeSetTests.suite());
-		CVSSyncSubscriberTest.setSyncSource(new SubscriberParticipantSyncInfoSource());
+		CVSSyncSubscriberTest.setSyncSource(new ModelParticipantSyncInfoSource());
 		return new CVSTestSetup(suite);
 	}
 }
