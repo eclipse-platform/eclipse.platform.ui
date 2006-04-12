@@ -38,7 +38,6 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		fOpenSearchDialogAction= new OpenSearchDialogAction();
 		fMenu= new Menu(parent);
 		fillMenu(fMenu);
 		return fMenu;
@@ -48,7 +47,6 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
-		fOpenSearchDialogAction= new OpenSearchDialogAction();
 		fMenu= new Menu(parent);
 		fillMenu(fMenu);
 		return fMenu;
@@ -59,7 +57,9 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	 */
 	public void dispose() {
 		fMenu= null;
-		fOpenSearchDialogAction.dispose();
+		if (fOpenSearchDialogAction != null) {
+			fOpenSearchDialogAction.dispose();
+		}
 	}
 	
 	/*
@@ -73,6 +73,9 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
+		if (fOpenSearchDialogAction == null) {
+			fOpenSearchDialogAction= new OpenSearchDialogAction();
+		}
 		fOpenSearchDialogAction.run(action);
 	}
 	
