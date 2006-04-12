@@ -63,12 +63,6 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
  * The NewFolderDialog is used to create a new folder.
  * The folder can optionally be linked to a file system folder.
  * <p>
- * NOTE: 
- * A linked folder can only be created at the project 
- * level. The widgets used to specify a link target are disabled 
- * if the supplied container is not a project.
- * </p>
- * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
