@@ -33,7 +33,6 @@ class FilterEnablementAction extends Action {
 		markerFilter.setEnabled(!markerFilter.isEnabled());
 		setChecked(markerFilter.isEnabled());
 		markerView.updateForFilterChanges();
-		markerView.getViewer().refresh();
 	}
 
 

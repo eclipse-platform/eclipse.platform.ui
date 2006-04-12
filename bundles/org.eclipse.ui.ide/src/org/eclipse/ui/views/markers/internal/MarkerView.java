@@ -614,6 +614,8 @@ public abstract class MarkerView extends TableView {
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 
 		clearEnabledFilters();
+		refreshFilterMenu();
+		refreshViewer();
 	}
 
 	/**
@@ -1349,8 +1351,6 @@ public abstract class MarkerView extends TableView {
 			}
 
 			updateForFilterChanges();
-			refreshFilterMenu();
-			refreshViewer();
 		}
 	}
 
