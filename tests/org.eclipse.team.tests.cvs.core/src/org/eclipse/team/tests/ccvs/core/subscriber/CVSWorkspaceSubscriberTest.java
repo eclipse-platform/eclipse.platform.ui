@@ -26,9 +26,10 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 /**
@@ -110,7 +111,10 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		// The delta will indicate to any interested parties that the sync state of the
 		// file has changed
 		super.setContentsAndEnsureModified(file);
-		assertSyncEquals("Setting contents: ", file, SyncInfo.OUTGOING | SyncInfo.CHANGE);
+		SyncInfo info = getSyncInfoSource().getSyncInfo(getSubscriber(), file);
+		int kind = info.getKind();
+		assertTrue((kind & SyncInfo.CHANGE_MASK) == SyncInfo.CHANGE);
+		assertTrue((kind & SyncInfo.OUTGOING) > 0);
 	}
 	
 	private void assertSyncEquals(String string, IProject project, String[] strings, boolean refresh, int[] kinds) throws CoreException, TeamException {
@@ -1167,14 +1171,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
 		});
 	}
-
-	private void assertIsBinary(IFile local) throws CVSException {
-		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(local);
-		byte[] syncBytes = file.getSyncBytes();
-		if (syncBytes != null) {
-			assertTrue(ResourceSyncInfo.isBinary(syncBytes));
-		}
-	}
 	
 	public void testNestedMarkAsMerged() throws CoreException, InvocationTargetException, InterruptedException {
 		// Create a project and checkout a copy
@@ -1297,4 +1293,50 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		});
 		assertTrue(project.getFile("file1.txt").exists());
 	}
+	
+    public void testBinaryAddition() throws CoreException {
+    	// See bug 132255
+    	KSubstOption option = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
+    	try {
+	    	CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(Command.KSUBST_TEXT_KEYWORDS_ONLY);
+	    	IProject project = createProject(new String[] { "a.txt"});
+			// Checkout a copy
+	    	IProject copy = checkoutCopy(project, "-copy");
+			// Add a binary file that contains LFs
+	    	create(copy.getFile("binaryFile"), true);
+	    	setContentsAndEnsureModified(copy.getFile("binaryFile"), "/n/n\n\n");
+	    	addResources(new IResource[] { copy.getFile("binaryFile") });
+	    	commitProject(copy);
+	    	// Update
+	    	getSyncInfoSource().refresh(getSubscriber(), project);
+	    	getSyncInfoSource().updateResources(getSubscriber(), new IResource[] { project.getFile("binaryFile") });
+	    	assertContentsEqual(copy.getFile("binaryFile"), project.getFile("binaryFile"));
+    	} finally {
+    		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
+    	}
+    }
+    
+    public void testBinaryMarkAsMerged() throws CoreException, InvocationTargetException, InterruptedException {
+    	KSubstOption option = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
+    	try {
+	    	CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(Command.KSUBST_TEXT_KEYWORDS_ONLY);
+	    	IProject project = createProject(new String[] { "a.txt"});
+			// Checkout a copy
+	    	IProject copy = checkoutCopy(project, "-copy");
+			// Add a binary file to the copy and commit
+	    	create(copy.getFile("binaryFile"), true);
+	    	setContentsAndEnsureModified(copy.getFile("binaryFile"), "/n/n\n\n");
+	    	addResources(new IResource[] { copy.getFile("binaryFile") });
+	    	commitProject(copy);
+	    	// Add the same file to the project but don't share it
+	    	create(project.getFile("binaryFile"), true);
+	    	setContentsAndEnsureModified(project.getFile("binaryFile"), "/n/nSome Content\n\n");
+	    	// Sync and mark as merged
+	    	getSyncInfoSource().refresh(getSubscriber(), project);
+	    	getSyncInfoSource().markAsMerged(getSubscriber(), new IResource[] { project.getFile("binaryFile") });
+	    	assertIsBinary(project.getFile("binaryFile"));
+    	} finally {
+    		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
+    	}
+    }
 }

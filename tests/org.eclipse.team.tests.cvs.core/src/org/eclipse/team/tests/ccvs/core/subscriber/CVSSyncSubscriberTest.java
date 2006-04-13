@@ -19,7 +19,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 
@@ -196,5 +198,13 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	protected void markAsMerged(CVSSyncTreeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
 		getSyncInfoSource().markAsMerged(subscriber, resources);
+	}
+	
+	protected void assertIsBinary(IFile local) throws CVSException {
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(local);
+		byte[] syncBytes = file.getSyncBytes();
+		if (syncBytes != null) {
+			assertTrue(ResourceSyncInfo.isBinary(syncBytes));
+		}
 	}
 }
