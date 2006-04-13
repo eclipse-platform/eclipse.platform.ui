@@ -14,5 +14,3 @@ Require-Bundle: org.eclipse.equinox.common
 Bundle-Activator: org.eclipse.core.internal.runtime.auth.Activator
 Export-Package: org.eclipse.core.internal.runtime.auth;x-friends:="org.eclipse.core.runtime"
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
- J2SE-1.3

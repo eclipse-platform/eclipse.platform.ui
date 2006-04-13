@@ -17,5 +17,3 @@ Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,
  org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.runtime.compatibility.auth;resolution:=optional
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
- J2SE-1.3
