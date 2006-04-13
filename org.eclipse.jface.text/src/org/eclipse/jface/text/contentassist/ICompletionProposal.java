@@ -53,6 +53,12 @@ import org.eclipse.jface.text.IDocument;
  *				<li>specify whether a proposal is automatically insertable</li>
  *			</ul>
  * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension5} since version 3.2 introducing
+ *		the following function:
+ *			<ul>
+ *				<li>Allow background computation of the additional info.</li>
+ *			</ul>
+ * </li>
  * </ul>
  * </p>
  * <p>
@@ -88,10 +94,13 @@ public interface ICompletionProposal {
 	Point getSelection(IDocument document);
 
 	/**
-	 * Returns optional additional information about the proposal.
-	 * The additional information will be presented to assist the user
-	 * in deciding if the selected proposal is the desired choice.
-	 *
+	 * Returns optional additional information about the proposal. The additional information will
+	 * be presented to assist the user in deciding if the selected proposal is the desired choice.
+	 * <p>
+	 * If {@link ICompletionProposalExtension5} is implemented, this method should not be called any
+	 * longer. This method may be deprecated in a future release.
+	 * </p>
+	 * 
 	 * @return the additional information or <code>null</code>
 	 */
 	String getAdditionalProposalInfo();
