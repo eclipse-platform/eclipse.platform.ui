@@ -1130,12 +1130,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			Calendar yesterdayCal = Calendar.getInstance();
 			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
 			tempCategories[1] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
-			//Get last week
-			Calendar lastWeekCal = Calendar.getInstance();
-			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
-			tempCategories[2] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_LastWeek, lastWeekCal, yesterdayCal);
-			//Everything before after week is previous
-			tempCategories[3] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, lastWeekCal);
+			//Get this month
+			Calendar monthCal = Calendar.getInstance();
+			monthCal.set(Calendar.DAY_OF_MONTH, 1);
+			tempCategories[2] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_ThisMonth, monthCal, yesterdayCal);
+			//Everything before this month is previous
+			tempCategories[3] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Previous, null, monthCal);
 		
 			ArrayList finalCategories = new ArrayList();
 			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){

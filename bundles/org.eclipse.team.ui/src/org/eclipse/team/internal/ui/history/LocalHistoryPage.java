@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.history;
 
 import java.util.ArrayList;
-import com.ibm.icu.util.Calendar;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.*;
@@ -41,6 +40,8 @@ import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.IProgressConstants;
+
+import com.ibm.icu.util.Calendar;
 
 public class LocalHistoryPage extends HistoryPage {
 	
@@ -517,12 +518,12 @@ public class LocalHistoryPage extends HistoryPage {
 			Calendar yesterdayCal = Calendar.getInstance();
 			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
 			tempCategories[1] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Yesterday, yesterdayCal, null);
-			//Get last week
-			Calendar lastWeekCal = Calendar.getInstance();
-			lastWeekCal.roll(Calendar.DAY_OF_YEAR, -7);
-			tempCategories[2] = new DateHistoryCategory(TeamUIMessages.HistoryPage_LastWeek, lastWeekCal, yesterdayCal);
+			//Get this month
+			Calendar monthCal = Calendar.getInstance();
+			monthCal.set(Calendar.DAY_OF_MONTH, 1);
+			tempCategories[2] = new DateHistoryCategory(TeamUIMessages.HistoryPage_ThisMonth, monthCal, yesterdayCal);
 			//Everything before after week is previous
-			tempCategories[3] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Previous, null, lastWeekCal);
+			tempCategories[3] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Previous, null, monthCal);
 		
 			ArrayList finalCategories = new ArrayList();
 			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){

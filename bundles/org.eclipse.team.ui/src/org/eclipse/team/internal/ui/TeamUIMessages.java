@@ -540,7 +540,7 @@ public class TeamUIMessages extends NLS {
 	
 	public static String HistoryPage_Today;
 	public static String HistoryPage_Yesterday;
-	public static String HistoryPage_LastWeek;
+	public static String HistoryPage_ThisMonth;
 	public static String HistoryPage_Previous;
 	
 	public static String OpenRevisionAction_DeletedRevTitle;

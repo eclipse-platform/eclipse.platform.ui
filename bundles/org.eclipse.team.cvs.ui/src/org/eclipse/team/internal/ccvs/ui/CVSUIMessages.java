@@ -1096,7 +1096,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_GroupByDate;
 	public static String CVSHistoryPage_Today;
 	public static String CVSHistoryPage_Yesterday;
-	public static String CVSHistoryPage_LastWeek;
+	public static String CVSHistoryPage_ThisMonth;
 	public static String CVSHistoryPage_Previous;
 	public static String CVSHistoryPage_NoRevisionsForMode;
 	public static String CVSHistoryPage_NoFilter;
