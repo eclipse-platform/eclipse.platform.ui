@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.actions;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -206,12 +207,10 @@ public class CommonActionProviderDescriptor implements
 		if (enablement == null) {
 			return false;
 		}
-
-		IEvaluationContext context = null;
-
-		Iterator elements = aStructuredSelection.iterator();
-		while (elements.hasNext()) {
-			context = new EvaluationContext(null, elements.next());
+		
+		if(aStructuredSelection.isEmpty()) {
+			IEvaluationContext context = null; 
+			context = new EvaluationContext(null, Collections.EMPTY_LIST);
 			context.setAllowPluginActivation(true);
 			try { 
 				if (enablement.evaluate(context) != EvaluationResult.TRUE) {
@@ -220,6 +219,22 @@ public class CommonActionProviderDescriptor implements
 			} catch (CoreException e) {
 				NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
 				return false;
+			} 
+		} else {
+
+			IEvaluationContext context = null;
+			Iterator elements = aStructuredSelection.iterator();
+			while (elements.hasNext()) {
+				context = new EvaluationContext(null, elements.next());
+				context.setAllowPluginActivation(true);
+				try { 
+					if (enablement.evaluate(context) != EvaluationResult.TRUE) {
+						return false;
+					}
+				} catch (CoreException e) {
+					NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
+					return false;
+				}
 			}
 		}
 		return true;
