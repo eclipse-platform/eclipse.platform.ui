@@ -31,6 +31,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -167,7 +168,9 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		ModelSynchronizeParticipant family = getParticipant(subscriber);
 		while (waitUntilFamilyDone(subscriber) 
 				|| waitUntilFamilyDone(family)
-				|| waitUntilFamilyDone(family.getContext())) {
+				|| waitUntilFamilyDone(family.getContext())
+				|| waitUntilFamilyDone(family.getContext().getScope())
+				|| waitUntilFamilyDone(((SynchronizationContext)family.getContext()).getScopeManager())) {
 			// just keep looping until we no longer wait for any jobs
 		}
 	}
