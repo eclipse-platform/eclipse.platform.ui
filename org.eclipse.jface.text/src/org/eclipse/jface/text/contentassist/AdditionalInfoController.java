@@ -467,6 +467,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		if (fProposalTable == null || fProposalTable.isDisposed())
 			return;
 		
+		if (fProposal == proposal && (info == null && fInformation == null) || (info != null && info.equals(fInformation)))
+			return;
+		
         fInformation= info;
         fProposal= proposal;
         showInformation();
