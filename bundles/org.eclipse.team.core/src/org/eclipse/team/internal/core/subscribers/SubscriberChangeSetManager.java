@@ -251,14 +251,16 @@ public class SubscriberChangeSetManager extends ActiveChangeSetManager {
          * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#remove(org.eclipse.core.resources.IResource)
          */
         protected void remove(IResource resource) {
-            handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_REMOVAL, IResource.DEPTH_INFINITE), false);
+        	if (handler != null)
+        		handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_REMOVAL, IResource.DEPTH_INFINITE), false);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#change(org.eclipse.core.resources.IResource, int)
          */
         protected void change(IResource resource, int depth) {
-            handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_CHANGE, depth), false);
+        	if (handler != null)
+        		handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_CHANGE, depth), false);
         }
         
         protected boolean hasMembers(IResource resource) {
