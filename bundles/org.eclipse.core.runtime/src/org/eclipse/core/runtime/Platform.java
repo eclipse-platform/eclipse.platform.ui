@@ -449,7 +449,12 @@ public final class Platform {
 	 * </ul>
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+		try {
+			AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so just log and continue
+			logAuthNotAvailable(e);
+		}
 	}
 
 	/** 
@@ -487,7 +492,12 @@ public final class Platform {
 	 * </ul>
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
-		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
+		try {
+			AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so just log and continue
+			logAuthNotAvailable(e);
+		}
 	}
 
 	/**
@@ -544,7 +554,16 @@ public final class Platform {
 	 * </ul>
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
-		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+		try {
+			AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so just log and continue
+			logAuthNotAvailable(e);
+		}
+	}
+
+	private static void logAuthNotAvailable(Throwable e) {
+		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, e));
 	}
 
 	/**
@@ -578,7 +597,13 @@ public final class Platform {
 	 *		such information exists
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
+		try {
+			return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so just log and continue
+			logAuthNotAvailable(e);
+		}
+		return null;
 	}
 
 	/**
@@ -757,7 +782,13 @@ public final class Platform {
 	 *		<code>null</code> if the realm is unknown
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
-		return AuthorizationHandler.getProtectionSpace(resourceUrl);
+		try {
+			return AuthorizationHandler.getProtectionSpace(resourceUrl);
+		} catch (NoClassDefFoundError e) {
+			// The authorization code is not available so just log and continue
+			logAuthNotAvailable(e);
+		}
+		return null;
 	}
 
 	/** 

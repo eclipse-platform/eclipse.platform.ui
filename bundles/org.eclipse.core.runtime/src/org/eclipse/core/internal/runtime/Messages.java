@@ -24,6 +24,9 @@ public class Messages extends NLS {
 	public static String application_notFound;
 	public static String application_returned;
 
+	// authorization
+	public static String auth_notAvailable;
+
 	// line separator platforms
 	public static String line_separator_platform_mac_os_9;
 	public static String line_separator_platform_unix;
