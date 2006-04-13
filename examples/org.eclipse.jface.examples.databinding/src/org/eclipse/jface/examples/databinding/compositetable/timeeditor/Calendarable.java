@@ -17,8 +17,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * This class represents an event that can be displayed on a calendar.
@@ -34,6 +36,15 @@ public class Calendarable {
 		public int compare(Object c1, Object c2) {
 			Calendarable cal1 = (Calendarable) c1;
 			Calendarable cal2 = (Calendarable) c2;
+			if (cal1.isAllDayEvent()) {
+				if (cal2.isAllDayEvent()) {
+					return 0;
+				}
+				return -1;
+			}
+			if (cal2.isAllDayEvent()) {
+				return 1;
+			}
 			return cal1.getStartTime().compareTo(cal2.getStartTime());
 		}
 	};
@@ -173,6 +184,8 @@ public class Calendarable {
 		startTime = null;
 		endTime = null;
 		image = null;
+		upperLeftPositionInDayRowCoordinates = null;
+		lowerRightPositionInDayRowCoordinates = null;
 	}
 
 	/**
@@ -237,5 +250,67 @@ public class Calendarable {
 	public void removeDisposeListener(DisposeListener listener) {
 		disposeListeners.remove(listener);
 	}
+	
+	private Point upperLeftPositionInDayRowCoordinates = null;
+	
 
+	/**
+	 * @return Returns the upperLeftPositionInDayRowCoordinates.
+	 */
+	public Point getUpperLeftPositionInDayRowCoordinates() {
+		return upperLeftPositionInDayRowCoordinates;
+	}
+
+	/**
+	 * Sets the upper left position of the bounding box and initializes the
+	 * lower right position to be the same as the upper left.
+	 * 
+	 * @param upperLeftPositionInDayRowCoordinates The upperLeftPositionInDayRowCoordinates to set.
+	 */
+	public void setUpperLeftPositionInDayRowCoordinates(
+			Point upperLeftPositionInDayRowCoordinates) {
+		this.upperLeftPositionInDayRowCoordinates = upperLeftPositionInDayRowCoordinates;
+		this.lowerRightPositionInDayRowCoordinates = upperLeftPositionInDayRowCoordinates;
+	}
+	
+	private Point lowerRightPositionInDayRowCoordinates = null;
+
+	/**
+	 * @return Returns the lowerRightPositionInDayRowCoordinates.
+	 */
+	public Point getLowerRightPositionInDayRowCoordinates() {
+		return lowerRightPositionInDayRowCoordinates;
+	}
+
+	/**
+	 * Sets the lower right position of the bounding box.
+	 * 
+	 * @param lowerRightPositionInDayRowCoordinates The lowerRightPositionInDayRowCoordinates to set.
+	 */
+	public void setLowerRightPositionInDayRowCoordinates(
+			Point lowerRightPositionInDayRowCoordinates) {
+		this.lowerRightPositionInDayRowCoordinates = lowerRightPositionInDayRowCoordinates;
+	}
+
+	private CalendarableEventControl control = null;
+	
+	/**
+	 * Returns the UI control for this Calendarable.
+	 * 
+	 * @return The UI control for this Calendarable or null if there is none.
+	 */
+	public CalendarableEventControl getControl() {
+		return control;
+	}
+
+	/**
+	 * Set the UI control for this Calendarable.
+	 * 
+	 * @param control The control to set.
+	 */
+	public void setControl(CalendarableEventControl control) {
+		this.control = control;
+	}
 }
+
+

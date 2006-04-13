@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * @since 3.2
@@ -42,12 +43,21 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		return gc.getTime();
 	}
 	
-	private void addCalendarable(Date startTime, Date endTime, String description) {
+	private Calendarable addCalendarable(Date startTime, Date endTime, String description) {
 		Calendarable c = new Calendarable();
 		c.setStartTime(startTime);
 		c.setEndTime(endTime);
 		c.setText(description);
 		expectedEvents.add(c);
+		return c;
+	}
+	
+	private Calendarable addCalendarable(String description) {
+		Calendarable c = new Calendarable();
+		c.setText(description);
+		c.setAllDayEvent(true);
+		expectedEvents.add(c);
+		return c;
 	}
 	
 	private void assertEventInColumnInPositions(Calendarable event, int column, int[] expectedSlotsForEvent) {
@@ -80,7 +90,12 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	private void assertExpectedColumns(int expected) {
 		assertEquals(expected+ " columns", expected, eventLayout.length);
 	}
-	
+
+	private void assertBounds(Calendarable c, Point leftTop, Point rightBottom) {
+		assertEquals("top left position", leftTop, c.getUpperLeftPositionInDayRowCoordinates());
+		assertEquals("bottom right position", rightBottom, c.getLowerRightPositionInDayRowCoordinates());
+	}
+
 	// Tests ------------------------------------------------------------------
 	
 	private static final int DIVISIONS_IN_HOUR = 2;
@@ -97,7 +112,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	}
 
 	public void test_getEventLayout_NoEventsInDay() throws Exception {
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		assertExpectedColumns(1);
 		
 		assertEquals("One column", 1, eventLayout.length);
@@ -113,24 +128,27 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	}
 	
 	public void test_getEventLayout_OneEventNoSpan() throws Exception {
-		addCalendarable(time(8, 00), time(8, 30), "One event");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		Calendarable c = addCalendarable(time(8, 00), time(8, 30), "One event");
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
 		assertEventInColumnInPositions(event(0), 0, new int[] {16});
+		assertBounds(c, new Point(0, 16), new Point(0, 16));
 	}
 
-	public void test_getEventLayout_OneEventSpan3FullBlocks() throws Exception {
-		addCalendarable(time(8, 00), time(9, 30), "One event, 3 timeslots");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+	public void test_getEventLayout_TwoEventsOneIsAllDaySpan3FullBlocks() throws Exception {
+		Calendarable c = addCalendarable(time(8, 00), time(9, 30), "One event, 3 timeslots");
+		addCalendarable("All-day-event");
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
-		assertEventInColumnInPositions(event(0), 0, new int[] {16, 18});
+		assertEventInColumnInPositions(event(1), 0, new int[] {16, 18});
+		assertBounds(c, new Point(0, 16), new Point(0, 18));
 	}
 
 	public void test_getEventLayout_OneEventSpanWithPartialBlock() throws Exception {
 		addCalendarable(time(00, 00), time(0, 31), "One event, 3 timeslots");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 
 		assertExpectedColumns(1);
 		assertEventInColumnInPositions(event(0), 0, new int[] {0, 1});
@@ -138,7 +156,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	
 	public void test_getEventLayout_OneEventStartAndEndTimesSame() throws Exception {
 		addCalendarable(time(01, 00), time(01, 00), "One event, same start and end times");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
 		assertEventInColumnInPositions(event(0), 0, new int[] {2});
@@ -146,7 +164,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	
 	public void test_getEventLayout_OneEventEndTimeBeforeStartTime() throws Exception {
 		addCalendarable(time(01, 00), time(00, 30), "One event, end time before start time");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
 		assertEventInColumnInPositions(event(0), 0, new int[] {2});
@@ -155,7 +173,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	public void test_getEventLayout_OneDayTwoSequentialEventsInputUnsorted() throws Exception {
 		addCalendarable(time(01, 30), time(2, 00), "Second event");
 		addCalendarable(time(01, 00), time(1, 30), "First event");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
 		
@@ -166,7 +184,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	public void test_getEventLayout_OneDayTwoEventsTwoColumnsInputUnsorted() throws Exception {
 		addCalendarable(time(01, 30), time(2, 00), "Second event");
 		addCalendarable(time(01, 00), time(2, 00), "First event");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(2);
 		
@@ -181,8 +199,8 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		addCalendarable(time(01, 00), time(3, 00), "First event");
 		addCalendarable(time(01, 30), time(3, 00), "Second event");
 		addCalendarable(time(02, 00), time(4, 00), "Third event");
-		addCalendarable(time(03, 00), time(4, 00), "Fourth event");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		Calendarable c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(3);
 		
@@ -201,6 +219,36 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		assertEventInColumnInPositions(event(3), 0, new int[] {6, 7});
 		assertEventInColumnInPositions(event(3), 1, new int[] {6, 7});
 		assertEventNotInColumn(event(3), 2);
+		assertBounds(c, new Point(0, 6), new Point(1, 7));
+	}
+
+	public void test_getEventLayout_OneDay4EventsThreeColumnsInputSortedWithAllDayEvents() throws Exception {
+		addCalendarable(time(01, 00), time(3, 00), "First event");
+		addCalendarable("ad1");
+		addCalendarable(time(01, 30), time(3, 00), "Second event");
+		addCalendarable(time(02, 00), time(4, 00), "Third event");
+		addCalendarable("ad2");
+		Calendarable c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
+		
+		assertExpectedColumns(3);
+		
+		assertEventInColumnInPositions(event(2), 0, new int[] {2, 5});
+		assertEventNotInColumn(event(2), 1);
+		assertEventNotInColumn(event(2), 2);
+
+		assertEventNotInColumn(event(3), 0); 
+		assertEventInColumnInPositions(event(3), 1, new int[] {3, 5});
+		assertEventNotInColumn(event(3), 2);
+		
+		assertEventNotInColumn(event(4), 0);
+		assertEventNotInColumn(event(4), 1);
+		assertEventInColumnInPositions(event(4), 2, new int[] {4, 7});
+
+		assertEventInColumnInPositions(event(5), 0, new int[] {6, 7});
+		assertEventInColumnInPositions(event(5), 1, new int[] {6, 7});
+		assertEventNotInColumn(event(5), 2);
+		assertBounds(c, new Point(0, 6), new Point(1, 7));
 	}
 
 	public void test_getEventLayout_OneDay6EventsFourColumnsInputSorted() throws Exception {
@@ -210,7 +258,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		addCalendarable(time(02, 30), time(5, 00), "Fourth event");
 		addCalendarable(time(03, 00), time(5, 00), "Fifth event");
 		addCalendarable(time(04, 00), time(5, 00), "Sixth event");
-		eventLayout = dayModel.getEventLayout(expectedEvents);
+		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(4);
 		

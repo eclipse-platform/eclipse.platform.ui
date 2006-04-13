@@ -108,6 +108,16 @@ public class TimeSlice extends Composite {
 	public LinkedList getColumns() {
 		return columns;
 	}
+	
+	/**
+	 * Returns the control that implements the specified column.
+	 * 
+	 * @param column The column number.
+	 * @return Control the SWT control that implements this column.
+	 */
+	public Control getColumnControl(int column) {
+		return (Control) columns.get(column);
+	}
 
 	/**
 	 * Constructor TimeSlice. Construct a TimeSlice control, passing the parent

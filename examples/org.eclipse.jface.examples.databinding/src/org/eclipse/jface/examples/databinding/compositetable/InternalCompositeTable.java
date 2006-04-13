@@ -686,7 +686,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @return the actual number of rows that are currently visible.
 	 */
 	public int getNumRowsVisible() {
-		return numRowsVisible;
+		return rows.size();
 	}
 
 	/**

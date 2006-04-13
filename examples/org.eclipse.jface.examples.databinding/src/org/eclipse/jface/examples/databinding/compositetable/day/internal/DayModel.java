@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * Represents a model of how the events are laid out in a particular day
@@ -132,7 +133,7 @@ public class DayModel {
 	 *         day. An event where start time is > end time will be "corrected" to
 	 *         fill a single time slot. 
 	 */
-	public Calendarable[][] getEventLayout(List events) {
+	public Calendarable[][] computeEventLayout(List events) {
 		Collections.sort(events, Calendarable.comparator);
 		
 		final int timeSlotsInDay = IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour;
@@ -142,6 +143,8 @@ public class DayModel {
 		// Lay out events
 		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
 			Calendarable event = (Calendarable) eventsIter.next();
+			if (event.isAllDayEvent()) continue;
+			
 			int[] slotsEventSpans = getSlotsForEvent(event);
 			
 			int eventColumn = findColumnForEvent(eventLayout, slotsEventSpans);
@@ -151,6 +154,8 @@ public class DayModel {
 		// Expand them horizontally if possible
 		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
 			Calendarable event = (Calendarable) eventsIter.next();
+			if (event.isAllDayEvent()) continue;
+
 			int[] slotsEventSpans = getSlotsForEvent(event);
 			int eventColumn = findEventColumn(event, eventLayout.getLayout(), slotsEventSpans);
 			
@@ -193,7 +198,7 @@ public class DayModel {
 
 	private boolean columnIsAvailable(int column, Calendarable[][] layout, int[] slotsEventSpans) {
 		int currentSlot = slotsEventSpans[START];
-		while (moreSlotsToProcess(currentSlot, slotsEventSpans)) {
+		while (currentSlot <= slotsEventSpans[END]) {
 			if (isSlotAlreadyOccupiedInColumn(currentSlot, layout, column)) {
 				return false;
 			}
@@ -203,15 +208,17 @@ public class DayModel {
 	}
 	
 	private void placeEvent(Calendarable event, Calendarable[][] eventLayout, int currentColumn, int[] slotsEventSpans) {
-		for (int slot = slotsEventSpans[START]; moreSlotsToProcess(slot, slotsEventSpans); ++slot) {
+		for (int slot = slotsEventSpans[START]; slot <= slotsEventSpans[END]; ++slot) {
 			eventLayout[currentColumn][slot] = event;
+			Point position = new Point(currentColumn, slot);
+			if (event.getUpperLeftPositionInDayRowCoordinates() == null) {
+				event.setUpperLeftPositionInDayRowCoordinates(position);
+			} else {
+				event.setLowerRightPositionInDayRowCoordinates(position);
+			}
 		}
 	}
 	
-	private boolean moreSlotsToProcess(int slot, int[] slotsEventSpans) {
-		return slot <= slotsEventSpans[END];
-	}
-
 	private boolean isSlotAlreadyOccupiedInColumn(int slot, Calendarable[][] layout, int currentColumn) {
 		return layout[currentColumn][slot] != null;
 	}

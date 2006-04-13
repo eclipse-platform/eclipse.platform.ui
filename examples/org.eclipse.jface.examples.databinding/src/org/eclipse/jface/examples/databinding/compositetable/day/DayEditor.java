@@ -24,6 +24,7 @@ import org.eclipse.jface.examples.databinding.compositetable.RowConstructionList
 import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLayout;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLayoutsByDate;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
@@ -36,7 +37,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -67,7 +69,6 @@ public class DayEditor extends Composite implements IEventEditor {
 	public DayEditor(Composite parent, int style) {
 		super(parent, style);
 		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		setLayout(new FillLayout());
 	}
 	
 	/* (non-Javadoc)
@@ -123,12 +124,14 @@ public class DayEditor extends Composite implements IEventEditor {
 		});
 		compositeTable.addScrollListener(new ScrollListener() {
 			public void tableScrolled(ScrollEvent scrollEvent) {
-				refreshCalendarableEventControls();
+				layoutEventControls();
 			}
 		});
 		addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				refreshCalendarableEventControls();
+				Rectangle bounds = DayEditor.this.getBounds();
+				compositeTable.setBounds(0, 0, bounds.width, bounds.height);
+				layoutEventControls();
 			}
 		});
 		
@@ -148,6 +151,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setDefaultStartHour(int defaultStartHour) {
 		model.setDefaultStartHour(defaultStartHour);
 		updateVisibleRows();
+		layoutEventControls();
 	}
 	
 	/* (non-Javadoc)
@@ -156,6 +160,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
 		model.setDayEventCountProvider(eventCountProvider);
 		updateVisibleRows();
+		layoutEventControls();
 	}
 	
 	/* (non-Javadoc)
@@ -164,6 +169,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
 		model.setEventContentProvider(eventContentProvider);
 		updateVisibleRows();
+		layoutEventControls();
 	}
 	
 	/* (non-Javadoc)
@@ -189,6 +195,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void refresh(Date date) {
 		model.refresh(date);
 		updateVisibleRows();
+		layoutEventControls();
 	}
 
 	/* (non-Javadoc)
@@ -278,15 +285,193 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * correct portions of their day columns.
 	 */
 	private void refreshCalendarableEventControls() {
-		DayModel dayLayoutFactory = new DayModel(model.getNumberOfDivisionsInHour());
-		
-		for (int i=0; i < model.getNumberOfDays(); ++i) {
-			Calendarable[][] layout = dayLayoutFactory.getEventLayout(model.getCalendarableEvents(0));
+		freeObsoleteCalendarableEventControls();
+		findEventRowsForNewDays();
+		layoutEventControls();
+	}
+
+	private void freeObsoleteCalendarableEventControls() {
+		List removedDays = dayLayoutsByDate.adjustStartDate(getStartDate());
+		for (Iterator removedDaysIter = removedDays.iterator(); removedDaysIter.hasNext();) {
+			DayLayout dayLayout = (DayLayout) removedDaysIter.next();
+			for (Iterator calendarableIter = dayLayout.model.iterator(); calendarableIter.hasNext();) {
+				Calendarable toRemove = (Calendarable) calendarableIter.next();
+				freeCalendarableControl(toRemove);
+			}
 		}
 	}
 	
-	// CalendarableEventControl construction/destruction here -----------------
+	private void findEventRowsForNewDays() {
+		DayModel dayLayoutFactory = new DayModel(model.getNumberOfDivisionsInHour());
+		for (int day=0; day < model.getNumberOfDays(); ++day) {
+			Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
+			if (dayLayoutsByDate.get(currentDate) == null) {
+				List events = model.getCalendarableEvents(day);
+				Calendarable[][] layout = dayLayoutFactory.computeEventLayout(events);
+				dayLayoutsByDate.put(currentDate, new DayLayout(events, layout));
+			}
+		}
+	}
+
+	private void layoutEventControls() {
+		if (getStartDate() == null) {
+			return;
+		}
+		while(Display.getCurrent().readAndDispatch()) {}	// A hack to make sure that the asyncExec runs immediately
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				Control[] gridRows = compositeTable.getRowControls();
+				
+				for (int day=0; day < model.getNumberOfDays(); ++day) {
+					Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
+					DayLayout layoutForDay = dayLayoutsByDate.get(currentDate);
+					Point[] columnPositions = computeColumns(day, layoutForDay.layout.length, gridRows);
+					
+					int allDayEventRow = 0;
+					
+					for (Iterator dayControlsIter = layoutForDay.model.iterator(); dayControlsIter.hasNext();) {
+						Calendarable calendarable = (Calendarable) dayControlsIter.next();
+						if (calendarable.isAllDayEvent()) {
+							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
+							++allDayEventRow;
+						} else {
+							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
+						}
+					}
+				}
+			}
+		});
+	}
 	
+	protected Point[] computeColumns(int day, int numberOfColumns, Control[] gridRows) {
+		Point[] columns = new Point[numberOfColumns];
+		Rectangle timeSliceBounds = getTimeSliceBounds(day, compositeTable.getTopRow(), gridRows);
+		
+		int baseWidth = timeSliceBounds.width / numberOfColumns;
+		int extraWidth = timeSliceBounds.width % numberOfColumns;
+		
+		int startingPosition = timeSliceBounds.x;
+		for (int column = 0; column < columns.length; column++) {
+			int columnStart = startingPosition;
+			int columnWidth = baseWidth;
+			if (extraWidth > 0) {
+				++columnWidth;
+				--extraWidth;
+			}
+			columns[column] = new Point(columnStart, columnWidth);
+			startingPosition += columnWidth;
+		}
+		return columns;
+	}
+
+	private void fillControlData(Calendarable calendarable) {
+		calendarable.getControl().setText(calendarable.getText());
+	}
+
+	private void layoutAllDayEvent(int day, int allDayEventRow, Calendarable calendarable, Control[] gridRows) {
+		if (eventRowIsVisible(allDayEventRow)) {
+			createCalendarableControl(calendarable);
+			fillControlData(calendarable);
+			
+			Rectangle timeSliceBounds = getTimeSliceBounds(day, allDayEventRow, gridRows);
+			calendarable.getControl().setBounds(timeSliceBounds);
+			calendarable.getControl().moveAbove(compositeTable);
+		} else {
+			freeCalendarableControl(calendarable);
+		}
+	}
+
+	private void layoutTimedEvent(int day, Point[] columnPositions, Calendarable calendarable, Control[] gridRows) {
+		int firstVisibleRow = model.computeStartHour() * model.getNumberOfDivisionsInHour();
+		firstVisibleRow = convertDayRowToViewportCoordinates(firstVisibleRow);
+		int scrolledRows = compositeTable.getTopRow() - numberOfAllDayEventRows;
+		if (scrolledRows < 0) scrolledRows = 0;
+		firstVisibleRow += scrolledRows;
+		int lastVisibleRow = firstVisibleRow + compositeTable.getNumRowsVisible();
+		
+		int startRow = calendarable.getUpperLeftPositionInDayRowCoordinates().y;
+		int endRow = calendarable.getLowerRightPositionInDayRowCoordinates().y;
+		
+		if (timedEventIsVisible(calendarable, firstVisibleRow, lastVisibleRow, startRow, endRow)) {
+			if (startRow < firstVisibleRow)
+				startRow = firstVisibleRow;
+			startRow = convertDayRowToViewportCoordinates(startRow);
+			
+			if (endRow >= lastVisibleRow)
+				endRow = lastVisibleRow-1;
+			endRow = convertDayRowToViewportCoordinates(endRow);
+			
+			createCalendarableControl(calendarable);
+			fillControlData(calendarable);
+			
+			Rectangle startRowBounds = getTimeSliceBounds(day, startRow, gridRows);
+			Rectangle endRowBounds = getTimeSliceBounds(day, endRow, gridRows);
+			
+			int leftmostColumn = calendarable.getUpperLeftPositionInDayRowCoordinates().x;
+			int rightmostColumn = calendarable.getLowerRightPositionInDayRowCoordinates().x;
+			
+			int left = columnPositions[leftmostColumn].x;
+			int top = startRowBounds.y;
+			int width = columnPositions[rightmostColumn].x - columnPositions[leftmostColumn].x + columnPositions[rightmostColumn].y;
+			int height = endRowBounds.y - startRowBounds.y + endRowBounds.height;
+			
+			Rectangle finalPosition = new Rectangle(left, top, width, height);
+			
+			calendarable.getControl().setBounds(finalPosition);
+			calendarable.getControl().moveAbove(compositeTable);
+		} else {
+			freeCalendarableControl(calendarable);
+		}
+	}
+
+	private int convertDayRowToViewportCoordinates(int row) {
+		row -= model.computeStartHour() * model.getNumberOfDivisionsInHour()
+			+ compositeTable.getTopRow() - numberOfAllDayEventRows;
+		return row;
+	}
+	
+	private boolean eventRowIsVisible(int eventRow) {
+		if (compositeTable.getTopRow() <= eventRow) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean timedEventIsVisible(Calendarable calendarable, int firstVisibleRow, int lastVisibleRow, int startRow, int endRow) {
+		if (startRow < firstVisibleRow && endRow < firstVisibleRow)
+			return false;
+		
+		if (startRow > lastVisibleRow && endRow > lastVisibleRow)
+			return false;
+		
+		return true;
+	}
+
+	private void createCalendarableControl(Calendarable calendarable) {
+		if (calendarable.getControl() == null) {
+			calendarable.setControl(newCEC());
+		}
+	}
+	
+	private Rectangle getTimeSliceBounds(int day, int eventRow, Control[] gridRows) {
+		TimeSlice rowObject = (TimeSlice) gridRows[eventRow - compositeTable.getTopRow()];
+		Control slot = rowObject.getColumnControl(day);
+		return getBoundsInDayEditorCoordinates(slot);
+	}
+	
+	private void freeCalendarableControl(Calendarable calendarable) {
+		if (calendarable.getControl() != null) {
+			freeCEC(calendarable.getControl());
+			calendarable.setControl(null);
+		}
+	}
+	
+	private Rectangle getBoundsInDayEditorCoordinates(Control slot) {
+		return Display.getCurrent().map(slot.getParent(), this, slot.getBounds());
+	}
+
+	// CalendarableEventControl construction/destruction here -----------------
+
 	private CalendarableEventControl newCEC() {
 		if (spareCalendarableEventControls.size() > 0) {
 			CalendarableEventControl result = (CalendarableEventControl) spareCalendarableEventControls.remove(0);
@@ -302,6 +487,5 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
-
 
 

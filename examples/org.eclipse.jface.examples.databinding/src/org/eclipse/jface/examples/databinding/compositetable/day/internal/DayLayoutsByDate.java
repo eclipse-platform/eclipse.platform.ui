@@ -68,7 +68,7 @@ public class DayLayoutsByDate {
 			if (elementDate.before(startDate)) {
 				datesToRemove.add(elementDate);
 			}
-			if (elementDate.after(endDate())) {
+			if (elementDate.after(addDaysToDate(startDate, numberOfDays-1))) {
 				datesToRemove.add(elementDate);
 			}
 		}
@@ -121,17 +121,27 @@ public class DayLayoutsByDate {
 		if(date.before(startDate)) {
 			throw new IllegalArgumentException("Date is before time window.");
 		}
-		if(date.after(endDate())) {
+		if(date.after(addDaysToDate(startDate, numberOfDays-1))) {
 			throw new IllegalArgumentException("Date is before time window.");
 		}
 		
 		dayLayoutsByDate.put(date, dayLayout);
 	}
 
-	private Date endDate() {
+	/**
+	 * FIXME: THIS IS UGLY, UGHLY, UUUUUGGGHHHHHLLLLLLLYYYYY!!!!!
+	 *   
+	 * Remove to a single static class that includes all date calculation 
+	 * operations.
+	 * 
+	 * @param startDate
+	 * @param numberOfDays
+	 * @return The result of adding numberOfDays to startDate
+	 */
+	public static Date addDaysToDate(Date startDate, int numberOfDays) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(startDate);
-		gc.add(Calendar.DAY_OF_MONTH, numberOfDays - 1);
+		gc.add(Calendar.DAY_OF_MONTH, numberOfDays);
 		return gc.getTime();
 	}
 	

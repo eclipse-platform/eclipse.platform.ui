@@ -27,6 +27,10 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class CalendarableEventControl extends Canvas  {
 
+	/**
+	 * 
+	 */
+	private static final int MARGIN = 2;
 	private Label label = null;
 
    /**
@@ -69,10 +73,17 @@ public class CalendarableEventControl extends Canvas  {
         label.setText("Label");
         label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
         FillLayout fillLayout = new FillLayout();
-        fillLayout.marginHeight = 5;
-        fillLayout.marginWidth = 5;
+        fillLayout.marginHeight = MARGIN;
+        fillLayout.marginWidth = MARGIN;
         this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE));
         this.setLayout(fillLayout);
+	}
+
+	/**
+	 * @param text
+	 */
+	public void setText(String text) {
+		label.setText(text);
 	}
 		
 } // @jve:decl-index=0:visual-constraint="10,10"
