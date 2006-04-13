@@ -154,14 +154,24 @@
         		id="org.eclipse.ui.navigator.resources.PortingActions"
 				class="org.eclipse.ui.internal.navigator.resources.actions.PortingActionProvider">
 			<enablement> 
+			    <or>
 					<adapt type="org.eclipse.core.resources.IResource" />	 
+					<adapt type="java.util.Collection"> 
+						<count value="0" />
+					</adapt>
+				</or>	 
 			</enablement>
 		</actionProvider>
         <actionProvider
             	class="org.eclipse.ui.internal.navigator.resources.actions.NewActionProvider"
             	id="org.eclipse.ui.navigator.resources.NewActions"> 
         	<enablement> 
-					<adapt type="org.eclipse.core.resources.IResource" />	 
+        			<or>
+						<adapt type="org.eclipse.core.resources.IResource" />	 
+						<adapt type="java.util.Collection"> 
+							<count value="0" />
+						</adapt>
+					</or>
 	         </enablement>
 		</actionProvider> 
         <actionProvider
@@ -183,7 +193,12 @@
               class="org.eclipse.ui.internal.navigator.resources.actions.ResourceMgmtActionProvider"
               id="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
            <enablement>
-              <adapt type="org.eclipse.core.resources.IResource"/>
+                <or>
+					<adapt type="org.eclipse.core.resources.IResource" />	 
+					<adapt type="java.util.Collection"> 
+						<count value="0" />
+					</adapt>
+				</or>
            </enablement>
         </actionProvider>
       <!-- Expression Filters -->  
