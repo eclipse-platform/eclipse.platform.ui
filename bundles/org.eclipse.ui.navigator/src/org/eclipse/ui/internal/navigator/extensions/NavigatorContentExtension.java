@@ -205,19 +205,24 @@ public class NavigatorContentExtension implements IMementoAware,
 	 */
 	public void dispose() {
 		try {
-			synchronized (this) {
-
+			synchronized (this) { 
 				try {
 					if (contentProvider != null) {
 						contentProvider.dispose();
-					}
-					if (labelProvider != null) {
-						labelProvider.dispose();
-					}
+					} 
 				} catch (Throwable t) {
 					String msg = t.getMessage() != null ? t.getMessage() : t.toString() ;
 					NavigatorPlugin.logError(0, msg, t);
-				}				
+				}	
+
+				try {
+					if (labelProvider != null) {
+						labelProvider.dispose();
+					}	  
+				} catch (Throwable t) {
+					String msg = t.getMessage() != null ? t.getMessage() : t.toString() ;
+					NavigatorPlugin.logError(0, msg, t);
+				}			
 			}
 		} finally {
 			isDisposed = true;
