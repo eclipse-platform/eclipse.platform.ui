@@ -114,37 +114,31 @@ public class HTMLPrinter {
 			buffer.insert(position,  pageProlog.toString());
 		}
 	}
-
-	public static void insertPageProlog(StringBuffer buffer, int position, String styles) {
+	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB, String styleSheet) {
 		
-		StringBuffer pageProlog= new StringBuffer(300);
-
-		pageProlog.append("<html>"); //$NON-NLS-1$
-
-		appendStyleSection(pageProlog, styles);
-
-		pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
-		appendColor(pageProlog, getBgColor());
-		pageProlog.append("\">"); //$NON-NLS-1$
-
-		buffer.insert(position,  pageProlog.toString());
+		if (bgRGB == null)
+			insertPageProlog(buffer, position, styleSheet);
+		else {
+			StringBuffer pageProlog= new StringBuffer(300);
+			
+			pageProlog.append("<html>"); //$NON-NLS-1$
+			
+			appendStyleSheetURL(pageProlog, styleSheet);
+			
+			pageProlog.append("<body text=\"#000000\" bgcolor=\""); //$NON-NLS-1$
+			appendColor(pageProlog, bgRGB);
+			pageProlog.append("\">"); //$NON-NLS-1$
+			
+			buffer.insert(position,  pageProlog.toString());
+		}
 	}
-	
-    private static void appendStyleSection(StringBuffer buffer, String styles) {
-		if (styles == null)
-			return;
-
-		buffer.append("<head><style type=\"text/css\">"); //$NON-NLS-1$
-		buffer.append(styles);
-		buffer.append("</style></head>"); //$NON-NLS-1$
-    }
 
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
 		if (styles == null || styles.length == 0)
 			return;
 
 		StringBuffer styleBuf= new StringBuffer(10 * styles.length);
-		for (int i= 0; i < styles.length; i++) {
+		for (int i= 0; styles != null && i < styles.length; i++) {
 			styleBuf.append(" style=\""); //$NON-NLS-1$
 			styleBuf.append(styles[i]);
 			styleBuf.append('"');
@@ -170,6 +164,15 @@ public class HTMLPrinter {
 		}
 	}
 
+	private static void appendStyleSheetURL(StringBuffer buffer, String styleSheet) {
+		if (styleSheet == null)
+			return;
+		
+		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
+		buffer.append(styleSheet);
+		buffer.append("</style></head>"); //$NON-NLS-1$
+	}
+	
 	private static void appendStyleSheetURL(StringBuffer buffer, URL styleSheetURL) {
 		if (styleSheetURL == null)
 			return;
@@ -196,6 +199,10 @@ public class HTMLPrinter {
 
 	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
 		insertPageProlog(buffer, position, getBgColor(), styleSheetURL); 
+	}
+	
+	public static void insertPageProlog(StringBuffer buffer, int position, String styleSheet) {
+		insertPageProlog(buffer, position, getBgColor(), styleSheet); 
 	}
 
 	private static RGB getBgColor() {
