@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.AnimatorFactory;
 import org.eclipse.jface.dialogs.ControlAnimator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -35,7 +36,8 @@ public class WorkbenchAnimatorFactory extends AnimatorFactory {
 	 */
 	public ControlAnimator createAnimator(Control control) {
 		if(PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS) == true)
+				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS) 
+				&& PlatformUI.isWorkbenchRunning())
 			return new WorkbenchControlAnimator(control);
 		return new ControlAnimator(control);
 	}
