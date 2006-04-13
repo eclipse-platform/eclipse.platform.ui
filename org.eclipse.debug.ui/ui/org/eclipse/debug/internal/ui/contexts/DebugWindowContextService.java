@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -106,7 +107,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	
 	protected void notify(int type) {
 		if (fProviders.isEmpty()) {
-			notify(type, null, null);
+			notify(type, new StructuredSelection(), null);
 		} else {
 			IDebugContextProvider provider = (IDebugContextProvider) fProviders.get(0);
 			notify(type, provider.getActiveContext(), provider.getPart());
