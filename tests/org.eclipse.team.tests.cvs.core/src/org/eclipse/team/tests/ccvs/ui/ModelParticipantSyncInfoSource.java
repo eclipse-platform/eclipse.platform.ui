@@ -270,7 +270,9 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
 		ISynchronizeParticipantReference[] participants = synchronizeManager.get(WorkspaceModelParticipant.ID);
 		if (participants.length > 0) {
-			return ((SubscriberMergeContext)((WorkspaceModelParticipant)participants[0].getParticipant()).getContext()).getSubscriber();
+			Subscriber subscriber = ((SubscriberMergeContext)((WorkspaceModelParticipant)participants[0].getParticipant()).getContext()).getSubscriber();
+			refresh(subscriber, subscriber.roots());
+			return subscriber;
 		}
 		WorkspaceModelParticipant participant = new WorkspaceModelParticipant(WorkspaceSubscriberContext.createContext(createWorkspaceScopeManager(), ISynchronizationContext.THREE_WAY));
 		showParticipant(participant);
