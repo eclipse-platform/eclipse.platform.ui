@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -87,23 +88,25 @@ public class LinkEditorAction extends Action implements
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
 			try { 
-				IEditorPart editor = commonNavigator.getSite().getPage()
-						.getActiveEditor();
-				if(editor != null) {
-					IEditorInput input = editor.getEditorInput();
-					ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
-	
-					IStructuredSelection selection = StructuredSelection.EMPTY;
-					IStructuredSelection newSelection = StructuredSelection.EMPTY;
-	
-					for (int i = 0; i < helpers.length; i++) {
-						selection = helpers[i].findSelection(input);
-						if (selection != null && !selection.isEmpty()) {
-							newSelection = mergeSelection(newSelection, selection);
+				IWorkbenchPage page = commonNavigator.getSite().getPage();
+				if(page != null) {
+					IEditorPart editor = page.getActiveEditor();
+					if(editor != null) {
+						IEditorInput input = editor.getEditorInput();
+						ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
+		
+						IStructuredSelection selection = StructuredSelection.EMPTY;
+						IStructuredSelection newSelection = StructuredSelection.EMPTY;
+		
+						for (int i = 0; i < helpers.length; i++) {
+							selection = helpers[i].findSelection(input);
+							if (selection != null && !selection.isEmpty()) {
+								newSelection = mergeSelection(newSelection, selection);
+							}
 						}
-					}
-					if(!newSelection.isEmpty()) {
-						commonNavigator.selectReveal(newSelection);
+						if(!newSelection.isEmpty()) {
+							commonNavigator.selectReveal(newSelection);
+						}
 					}
 				}
 			} catch (Throwable e) { 
