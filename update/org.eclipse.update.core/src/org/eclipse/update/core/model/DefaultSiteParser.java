@@ -33,7 +33,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.core.URLEntry;
 import org.eclipse.update.internal.core.Digest;
 import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.LiteFeature;
@@ -96,6 +98,8 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final String CATEGORY = "category"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String MIRROR = "mirror"; //$NON-NLS-1$
+	private static final String ASSOCIATE_SITES = "associateSites"; //$NON-NLS-1$
+	private static final String ASSOCIATE_SITE = "associateSite"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INFO_URL = "index.html"; //$NON-NLS-1$
 	private static final String FEATURES = "features/"; //$NON-NLS-1$
@@ -544,6 +548,14 @@ public class DefaultSiteParser extends DefaultHandler {
 			}
 		}
 		
+		if ( (site instanceof ExtendedSite) && (attributes.getValue("associateSitesURL") != null)) { //$NON-NLS-1$
+			IURLEntry[] associateSites = getAssociateSites(attributes.getValue("associateSitesURL"), factory); //$NON-NLS-1$
+			if (associateSites != null)
+				((ExtendedSite)site).setAssociateSites(associateSites);
+			else 
+				site.setMirrorsURLString(mirrorsURL);
+		}
+		
 		objectStack.push(site);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
@@ -849,6 +861,43 @@ public class DefaultSiteParser extends DefaultHandler {
 					|| mirrorsURL.startsWith("file://") //$NON-NLS-1$
 					|| mirrorsURL.startsWith("ftp://") //$NON-NLS-1$
 					|| mirrorsURL.startsWith("jar://"))) //$NON-NLS-1$
+		    	UpdateCore.log(Messages.DefaultSiteParser_mirrors, e);
+			return null;
+		}
+	}
+	
+	private static IURLEntry[] getAssociateSites(String associateSitesURL, SiteModelFactory factory) {
+	    
+		try {
+		    DocumentBuilderFactory domFactory = 
+		    DocumentBuilderFactory.newInstance();
+		    DocumentBuilder builder = domFactory.newDocumentBuilder();
+		    Document document = builder.parse(associateSitesURL);
+		    if (document == null)
+		    	return null;
+		    NodeList mirrorNodes = document.getElementsByTagName(ASSOCIATE_SITE); 
+		    URLEntry[] mirrors = new URLEntry[mirrorNodes.getLength()];
+		    for (int i=0; i<mirrorNodes.getLength(); i++) {
+		    	Element mirrorNode = (Element)mirrorNodes.item(i);
+				mirrors[i] = new URLEntry();
+				String infoURL = mirrorNode.getAttribute("url"); //$NON-NLS-1$
+				String label = mirrorNode.getAttribute("label"); //$NON-NLS-1$
+				mirrors[i].setURLString(infoURL);
+				mirrors[i].setAnnotation(label);
+
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
+					debug("Processed mirror: url:" + infoURL + " label:" + label); //$NON-NLS-1$ //$NON-NLS-2$
+		    }
+		    return mirrors;
+		}
+		catch (Exception e) {
+		    // log if absolute url
+		    if (associateSitesURL != null &&
+		    		(associateSitesURL.startsWith("http://") //$NON-NLS-1$
+					|| associateSitesURL.startsWith("https://") //$NON-NLS-1$
+					|| associateSitesURL.startsWith("file://") //$NON-NLS-1$
+					|| associateSitesURL.startsWith("ftp://") //$NON-NLS-1$
+					|| associateSitesURL.startsWith("jar://"))) //$NON-NLS-1$
 		    	UpdateCore.log(Messages.DefaultSiteParser_mirrors, e);
 			return null;
 		}

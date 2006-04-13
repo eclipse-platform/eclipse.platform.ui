@@ -12,6 +12,10 @@ package org.eclipse.update.search;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +29,7 @@ import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteWithMirrors;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.search.SiteSearchCategory;
@@ -59,6 +64,23 @@ public class UpdateSearchRequest {
 	private UpdateSearchScope scope;
 	private boolean searchInProgress = false;
 	private AggregateFilter aggregateFilter = new AggregateFilter();
+	
+	private static class UpdateSearchSite
+	extends UpdateSiteAdapter
+	implements IUpdateSearchSite {
+	private String[] categoriesToSkip;
+
+	public UpdateSearchSite(
+		String label,
+		URL siteURL,
+		String[] categoriesToSkip) {
+		super(label, siteURL);
+		this.categoriesToSkip = categoriesToSkip;
+	}
+	public String[] getCategoriesToSkip() {
+		return categoriesToSkip;
+	}
+}
 
 	class MirroredUpdateSiteAdapter extends UpdateSiteAdapter {
 		public MirroredUpdateSiteAdapter(IURLEntry mirror) {
@@ -215,6 +237,12 @@ public class UpdateSearchRequest {
 		searchInProgress = true;
 		IUpdateSearchQuery[] queries = category.getQueries();
 		IUpdateSearchSite[] candidates = scope.getSearchSites();
+		Set visitedSitesURL = new HashSet();
+		Set visitedSites = new HashSet();
+		for(int i = 0; i < candidates.length; i++) {
+			visitedSitesURL.add(candidates[i].getURL());
+			//visitedSites.add(candidates[i]);
+		}
 		URL updateMapURL = scope.getUpdateMapURL();
 		boolean searchFeatureProvidedSites = scope.isFeatureProvidedSitesEnabled();
 
@@ -245,6 +273,7 @@ public class UpdateSearchRequest {
 						statusList.add(status);
 				}
 				
+				List combinedAssociateSites = new ArrayList();
 				for (int i = 0; i < queries.length; i++) {
 					IUpdateSearchQuery query = queries[i];
 					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
@@ -258,19 +287,23 @@ public class UpdateSearchRequest {
 							continue;
 						SubProgressMonitor subMonitor =
 							new SubProgressMonitor(monitor, 1);
+						List associateSites = new ArrayList();
 						IStatus status =
 							searchOneSite(
 								mappedSite,
 								null,
 								query,
 								collector,
+								associateSites,
 								subMonitor,
 								true);
 						if (status != null)
 							statusList.add(status);
 						if (monitor.isCanceled())
 							break;
+						combinedAssociateSites = combineAssociateSites( combinedAssociateSites, associateSites, visitedSitesURL, visitedSites);
 					}
+					
 					for (int j = 0; j < candidates.length; j++) {
 						if (monitor.isCanceled()) {
 							break;
@@ -278,16 +311,48 @@ public class UpdateSearchRequest {
 						IUpdateSearchSite source = candidates[j];
 						SubProgressMonitor subMonitor =
 							new SubProgressMonitor(monitor, 1);
+						List associateSites = new ArrayList();
 						IStatus status =
 							searchOneSite(
 								source,
 								source.getCategoriesToSkip(),
 								query,
 								collector,
+								associateSites,
 								subMonitor,
 								true);
 						if (status != null)
 							statusList.add(status);
+						combinedAssociateSites = combineAssociateSites( combinedAssociateSites, associateSites, visitedSitesURL, visitedSites);
+					}
+					if (monitor.isCanceled())
+						break;
+					
+					
+					for(int associateSitesDepth = 0; associateSitesDepth < 5; associateSitesDepth++) {
+						List tempCombinedSites = new ArrayList();
+						Iterator combinedAssociateSitesIterator = combinedAssociateSites.iterator();
+						while(combinedAssociateSitesIterator.hasNext()) {
+							
+							IUpdateSearchSite source = (IUpdateSearchSite)combinedAssociateSitesIterator.next();
+							
+							List associateSites = new ArrayList();
+							SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+							IStatus status =
+								searchOneSite(
+									source,
+									source.getCategoriesToSkip(),
+									query,
+									collector,
+									associateSites,
+									subMonitor,
+									true);
+							combinedAssociateSites = combineAssociateSites( tempCombinedSites, associateSites, visitedSitesURL, visitedSites);
+							if (status != null)
+								statusList.add(status);
+						}	
+						combinedAssociateSites = tempCombinedSites;
+						
 					}
 					if (monitor.isCanceled())
 						break;
@@ -300,7 +365,13 @@ public class UpdateSearchRequest {
 		}
 		searchInProgress = false;
 		monitor.done();
+		
 
+		Iterator visitedSitesIterator = visitedSites.iterator();
+		while (visitedSitesIterator.hasNext()) {
+			IUpdateSearchSite associateSite = (IUpdateSearchSite)visitedSitesIterator.next();
+			scope.addSearchSite(associateSite.getLabel(), associateSite.getURL(), null);
+		}
 		if (statusList.size() > 0) {
 			IStatus[] children =
 				(IStatus[]) statusList.toArray(new IStatus[statusList.size()]);
@@ -311,8 +382,25 @@ public class UpdateSearchRequest {
 					children,
 					Messages.Search_networkProblems, 
 					null);
+			System.out.println("U ERROR"); //$NON-NLS-1$
 			throw new CoreException(multiStatus);
 		}
+	}
+
+
+	private List combineAssociateSites(List combinedAssociateSites, List associateSites, Set visitedSitesURL, Set visitedSites) {
+		Iterator iterator = associateSites.iterator();
+
+		while(iterator.hasNext()) {
+			UpdateSearchSite associateSite = (UpdateSearchSite)iterator.next();
+			if ( !visitedSitesURL.contains(associateSite.getURL())) {
+				combinedAssociateSites.add(associateSite);
+				visitedSitesURL.add(associateSite.getURL());
+				visitedSites.add(associateSite);
+			}
+			
+		}
+		return combinedAssociateSites;
 	}
 
 
@@ -339,6 +427,7 @@ public class UpdateSearchRequest {
 		String[] categoriesToSkip,
 		IUpdateSearchQuery query,
 		IUpdateSearchResultCollector collector,
+		List associateSites,
 		SubProgressMonitor monitor,
 		boolean checkMirrors)
 		throws CoreException {
@@ -361,6 +450,7 @@ public class UpdateSearchRequest {
 				return null;
 			}
 			
+			
 			// prompt the user to pick up a site (do not recursively go into mirror sites on the mirror site)
 			if ((collector instanceof IUpdateSearchResultCollectorFromMirror) &&
 				(site instanceof ISiteWithMirrors) &&
@@ -369,7 +459,7 @@ public class UpdateSearchRequest {
 				IURLEntry mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
 				
 				if (mirror != null) 
-					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, new SubProgressMonitor(monitor,1), false);
+					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, associateSites, new SubProgressMonitor(monitor,1), false);
 			}
 		} catch (CoreException e) {
 			// Test the exception. If the exception is
@@ -389,6 +479,15 @@ public class UpdateSearchRequest {
 		text = NLS.bind(Messages.UpdateSearchRequest_checking, siteAdapter.getLabel());
 		monitor.getWrappedProgressMonitor().subTask(text);
 
+		if (site instanceof ExtendedSite) {
+			//System.out.println("ExtendedSite is here"); //$NON-NLS-1$
+			IURLEntry[] associateSitesList = ((ExtendedSite)site).getAssociateSites(); 
+			if (associateSitesList != null) {
+				for(int i = 0; i < associateSitesList.length; i++) {
+					associateSites.add(new UpdateSearchSite(associateSitesList[i].getAnnotation(), associateSitesList[i].getURL(), null));
+				}
+			}
+		}
 		query.run(
 			site,
 			categoriesToSkip,

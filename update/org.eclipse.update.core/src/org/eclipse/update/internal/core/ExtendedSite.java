@@ -13,6 +13,7 @@ package org.eclipse.update.internal.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.internal.model.SiteWithTimestamp;
 
 public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
@@ -22,7 +23,9 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	private String[] availableLocals;
 	private String digestURL;
 	private LiteFeature[] liteFeatures;
+	private IURLEntry[] associateSites;
 	private boolean pack200 = false;
+	
 	
 	public String getDigestURL() {
 		return digestURL;
@@ -112,6 +115,12 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 		}
 		
 		return result;	
+	}
+	public IURLEntry[] getAssociateSites() {
+		return associateSites;
+	}
+	public void setAssociateSites(IURLEntry[] associateSites) {
+		this.associateSites = associateSites;
 	}
 
 }
