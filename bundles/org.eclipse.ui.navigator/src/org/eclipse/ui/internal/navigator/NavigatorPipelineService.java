@@ -180,55 +180,45 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 */
 	public boolean interceptRefresh(
 			PipelinedViewerUpdate aRefreshSynchronization) {
-
-		Set overrideableExtensions = new HashSet();
-		for (Iterator iter = aRefreshSynchronization.getRefreshTargets()
-				.iterator(); iter.hasNext();) {
-			overrideableExtensions.addAll(contentService
-					.findOverrideableContentExtensionsForPossibleChild(iter
-							.next()));
+ 
+		boolean pipelined = false;
+		Object refreshable = null;
+		for (Iterator iter = aRefreshSynchronization.getRefreshTargets().iterator(); iter.hasNext();) {
+			refreshable = iter.next();
+			Set overrideableExtensions =  contentService.findOverrideableContentExtensionsForPossibleChild(refreshable);
+			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) {
+				NavigatorContentExtension overrideableExtension = (NavigatorContentExtension) overrideableExtensionItr.next();
+				if(pipelineRefresh(overrideableExtension, aRefreshSynchronization, refreshable)) {
+					pipelined |= true;
+				}
+				
+			}
 		}
-
-		if (overrideableExtensions.isEmpty()) {
-			return false;
-		}
-
-		return pipelineRefresh(overrideableExtensions, aRefreshSynchronization);
+		return pipelined;
+		
 	}
 
-	private boolean pipelineRefresh(Set overrideableExtensions,
-			PipelinedViewerUpdate aRefreshSynchronization) {
+	private boolean pipelineRefresh(NavigatorContentExtension overrideableExtension,
+			PipelinedViewerUpdate aRefreshSynchronization, Object refreshable) {
 
 		boolean intercepted = false;
-		for (Iterator extensionsItr = overrideableExtensions.iterator(); extensionsItr
-				.hasNext();) {
-			NavigatorContentExtension extension = (NavigatorContentExtension) extensionsItr
-					.next();
+		
+		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
+		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) { 
+			try {
+				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 
-			if (extension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
-
-				intercepted |= ((IPipelinedTreeContentProvider) extension
-						.getContentProvider())
-						.interceptRefresh(aRefreshSynchronization);
-				if (extension.getDescriptor().hasOverridingExtensions()) {
-					Set nextLevelOfOverrideableExtensions = new HashSet();
-					for (Iterator refreshTargetsItr = aRefreshSynchronization
-							.getRefreshTargets().iterator(); refreshTargetsItr
-							.hasNext();) {
-						nextLevelOfOverrideableExtensions
-								.addAll(Arrays
-										.asList(extension
-												.getOverridingExtensionsForPossibleChild(refreshTargetsItr
-														.next())));
-					}
-
-					if (!nextLevelOfOverrideableExtensions.isEmpty()) {
-						intercepted |= pipelineRefresh(
-								nextLevelOfOverrideableExtensions,
-								aRefreshSynchronization);
+					intercepted |= ((IPipelinedTreeContentProvider) overridingExtensionsForPossibleChild[i]
+							.getContentProvider())
+							.interceptRefresh(aRefreshSynchronization);
+					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions()) {
+						intercepted |= pipelineRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);
 					}
 				}
-			}
+			} catch (Throwable e) {
+				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
+				NavigatorPlugin.logError(0, msg, e);
+			}  
 		}
 
 		return intercepted;
