@@ -26,7 +26,9 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
 	public int category(final Object element) {
 		if (element instanceof RefactoringHistoryProject)
 			return 0;
-		return 1;
+		else if (element instanceof RefactoringHistoryDate)
+			return 1;
+		return 2;
 	}
 
 	/**
@@ -37,6 +39,10 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
 			final RefactoringHistoryProject predecessor= (RefactoringHistoryProject) first;
 			final RefactoringHistoryProject successor= (RefactoringHistoryProject) second;
 			return getCollator().compare(predecessor.getProject(), successor.getProject());
+		} else if (first instanceof RefactoringHistoryDate && second instanceof RefactoringHistoryDate) {
+			final RefactoringHistoryDate predecessor= (RefactoringHistoryDate) first;
+			final RefactoringHistoryDate successor= (RefactoringHistoryDate) second;
+			return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
 		}
 		return super.compare(viewer, first, second);
 	}
