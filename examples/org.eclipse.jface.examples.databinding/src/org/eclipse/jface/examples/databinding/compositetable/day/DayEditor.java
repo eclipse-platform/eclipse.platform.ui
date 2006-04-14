@@ -335,7 +335,7 @@ public class DayEditor extends Composite implements IEventEditor {
 							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
 							++allDayEventRow;
 						} else {
-//							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
+							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
 						}
 					}
 				}
