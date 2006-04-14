@@ -81,4 +81,22 @@ public class CalendarableModel_testInit extends TestCase {
 			//success
 		}
 	}
+	
+	public void testColumnWithinDayIsInitializedForOneDay() throws Exception {
+		final int NUM_DAYS=1;
+		cm.setTimeBreakdown(NUM_DAYS, 4);
+		assertColumnWithinDayIsInitialized(NUM_DAYS);
+	}
+
+	public void testColumnWithinDayIsInitializedForSeveralDays() throws Exception {
+		final int NUM_DAYS=5;
+		cm.setTimeBreakdown(NUM_DAYS, 4);
+		assertColumnWithinDayIsInitialized(NUM_DAYS);
+	}
+
+	private void assertColumnWithinDayIsInitialized(final int NUM_DAYS) {
+		for (int i=0; i < NUM_DAYS; ++i) {
+			assertNull(cm.getNumberOfColumnsWithinDay(i));
+		}
+	}
 }

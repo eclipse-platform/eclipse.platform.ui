@@ -24,8 +24,6 @@ import org.eclipse.jface.examples.databinding.compositetable.RowConstructionList
 import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLayout;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLayoutsByDate;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlot;
@@ -53,7 +51,6 @@ import org.eclipse.swt.widgets.Display;
 public class DayEditor extends Composite implements IEventEditor {
 	private CompositeTable compositeTable = null;
 	private CalendarableModel model = new CalendarableModel();
-	private DayLayoutsByDate dayLayoutsByDate;
 	private List spareCalendarableEventControls = new LinkedList();
 	protected TimeSlice daysHeader;
 
@@ -80,7 +77,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 		
 		createCompositeTable(numberOfDays, numberOfDivisionsInHour);
-		dayLayoutsByDate = new DayLayoutsByDate(model.getStartDate(), model.getNumberOfDays());
 	}
 
 	/**
@@ -174,10 +170,12 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
 	 */
 	public void setStartDate(Date startDate) {
-		model.setStartDate(startDate);
+		List removedDays = model.setStartDate(startDate);
 		refreshColumnHeaders(daysHeader.getColumns());
 		updateVisibleRows();
-		refreshCalendarableEventControls();
+		freeObsoleteCalendarableEventControls(removedDays);
+		findEventRowsForNewDays(startDate);
+		layoutEventControls();
 	}
 	
 	/* (non-Javadoc)
@@ -191,7 +189,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
-		model.refresh(date);
+		List removedDays = model.refresh(date);
+		freeObsoleteCalendarableEventControls(removedDays);
 		updateVisibleRows();
 		layoutEventControls();
 	}
@@ -295,36 +294,28 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 	
-	/**
-	 * Make the correct event controls visible for the segment in time that
-	 * we are currently displaying and resize them so that they occupy the
-	 * correct portions of their day columns.
-	 */
-	private void refreshCalendarableEventControls() {
-		freeObsoleteCalendarableEventControls();
-		findEventRowsForNewDays();
-		layoutEventControls();
-	}
-
-	private void freeObsoleteCalendarableEventControls() {
-		List removedDays = dayLayoutsByDate.adjustStartDate(getStartDate());
-		for (Iterator removedDaysIter = removedDays.iterator(); removedDaysIter.hasNext();) {
-			DayLayout dayLayout = (DayLayout) removedDaysIter.next();
-			for (Iterator calendarableIter = dayLayout.model.iterator(); calendarableIter.hasNext();) {
-				Calendarable toRemove = (Calendarable) calendarableIter.next();
-				freeCalendarableControl(toRemove);
-			}
+	private void freeObsoleteCalendarableEventControls(List removedCalendarables) {
+		for (Iterator removedCalendarablesIter = removedCalendarables.iterator(); removedCalendarablesIter.hasNext();) {
+			Calendarable toRemove = (Calendarable) removedCalendarablesIter.next();
+			freeCalendarableControl(toRemove);
 		}
 	}
 	
-	private void findEventRowsForNewDays() {
-		DayModel dayLayoutFactory = new DayModel(model.getNumberOfDivisionsInHour());
+	private void findEventRowsForNewDays(Date startDate) {
+		DayModel dayModel = new DayModel(model.getNumberOfDivisionsInHour());
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
-			Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
-			if (dayLayoutsByDate.get(currentDate) == null) {
+			// Change this to: IF the number of columns for a day (in the model) is null
+//			Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
+//			if (dayLayoutsByDate.get(currentDate) == null) {
+//				List events = model.getCalendarableEvents(day);
+//				int numberOfColunns = dayLayoutFactory.computeEventLayout(events);
+//				dayLayoutsByDate.put(currentDate, new DayLayout(events, layout));
+//			}
+			// New code:
+			if (model.getNumberOfColumnsWithinDay(day) == null) {
 				List events = model.getCalendarableEvents(day);
-				Calendarable[][] layout = dayLayoutFactory.computeEventLayout(events);
-				dayLayoutsByDate.put(currentDate, new DayLayout(events, layout));
+				int numberOfColumns = dayModel.computeEventLayout(events).length;
+				model.setNumberOfColumnsWithinDay(day, numberOfColumns);
 			}
 		}
 	}
@@ -334,29 +325,28 @@ public class DayEditor extends Composite implements IEventEditor {
 			return;
 		}
 		while(Display.getCurrent().readAndDispatch()) {}	// A hack to make sure that the asyncExec runs immediately
-//		Display.getCurrent().asyncExec(new Runnable() {
-//			public void run() {
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
 				Control[] gridRows = compositeTable.getRowControls();
 				
 				for (int day=0; day < model.getNumberOfDays(); ++day) {
-					Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
-					DayLayout layoutForDay = dayLayoutsByDate.get(currentDate);
-					Point[] columnPositions = computeColumns(day, layoutForDay.layout.length, gridRows);
+					int columnsWithinDay = model.getNumberOfColumnsWithinDay(day).intValue();
+					Point[] columnPositions = computeColumns(day, columnsWithinDay, gridRows);
 					
 					int allDayEventRow = 0;
 					
-					for (Iterator dayControlsIter = layoutForDay.model.iterator(); dayControlsIter.hasNext();) {
+					for (Iterator dayControlsIter = model.getCalendarableEvents(day).iterator(); dayControlsIter.hasNext();) {
 						Calendarable calendarable = (Calendarable) dayControlsIter.next();
 						if (calendarable.isAllDayEvent()) {
 							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
 							++allDayEventRow;
 						} else {
-//							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
+							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
 						}
 					}
 				}
-//			}
-//		});
+			}
+		});
 	}
 	
 	protected Point[] computeColumns(int day, int numberOfColumns, Control[] gridRows) {

@@ -119,29 +119,24 @@ public class DayModel {
 
 	/**
 	 * Given an unsorted list of Calendarables, each of which has a start and an
-	 * end time, this method will return a two dimensional array containing
-	 * references to the Calendarables, where the 0th dimension represents the
-	 * columns in which the Calendarables must be arranged in order to not
-	 * overlap in 2D space, and where each row represents a time slice out of
-	 * the day. The number of time slices is IEventEditor.DISPLAYED_HOURS * the
-	 * number of divisions in the hour, as returned by the parent IEventEditor.
+	 * end time, this method will compute the day row coordinates for each 
+	 * Calendarable, set that information into each Calendarable, and will
+	 * return the number of columns that will be required to lay out the given
+	 * list of Calendarables.
 	 * 
-	 * @param events
-	 *            A list of events
-	 * @return An array of columns, where each column contains references to the
-	 *         events in that column for the corresponding time slice in the
-	 *         day. An event where start time is > end time will be "corrected" to
-	 *         fill a single time slot. 
+	 * @param calendarables
+	 *            A list of Calenderables
+	 * @return The number of columns required to lay out those Calendarables. 
 	 */
-	public Calendarable[][] computeEventLayout(List events) {
-		Collections.sort(events, Calendarable.comparator);
+	public Calendarable[][] computeEventLayout(List calendarables) {
+		Collections.sort(calendarables, Calendarable.comparator);
 		
 		final int timeSlotsInDay = IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour;
 		
 		EventLayout eventLayout = new EventLayout(timeSlotsInDay);
 		
 		// Lay out events
-		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+		for (Iterator eventsIter = calendarables.iterator(); eventsIter.hasNext();) {
 			Calendarable event = (Calendarable) eventsIter.next();
 			if (event.isAllDayEvent()) continue;
 			
@@ -152,7 +147,7 @@ public class DayModel {
 		}
 		
 		// Expand them horizontally if possible
-		for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+		for (Iterator eventsIter = calendarables.iterator(); eventsIter.hasNext();) {
 			Calendarable event = (Calendarable) eventsIter.next();
 			if (event.isAllDayEvent()) continue;
 
@@ -172,7 +167,7 @@ public class DayModel {
 		
 		return eventLayout.getLayout();
 	}
-
+	
 	private int findEventColumn(Calendarable event, Calendarable[][] layout, int[] slotsEventSpans) {
 		for (int column = 0; column < layout.length; column++) {
 			if (layout[column][slotsEventSpans[START]] == event) {

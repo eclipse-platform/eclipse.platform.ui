@@ -16,10 +16,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents a bunch of stuff that is intended to be displayed in a calendar control
+ * Represents the model behind the calendar control.  This model manages three
+ * concerns:
+ *   1) Setting/maintaining the visible range of days (startDate, numberOfDays)
+ *   2) Keeping the events for a particular day within the range of visible days
+ *   3) Keeping track of the number of columns required to display the events
+ *      in a given day from the set of visible days.
  * 
  * @since 3.2
  */
@@ -29,9 +35,26 @@ public class CalendarableModel {
 	
 	private int numberOfDays = -1;
 	private int numberOfDivisionsInHour = -1;
-	private ArrayList[] dateColumns = null;
+	private ArrayList[] dayColumns = null;
+	private Integer[] columnsWithinDay = null;
 
 	private int defaultStartHour = DEFAULT_START_HOUR;
+	
+	/**
+	 * @param dayOffset
+	 * @return
+	 */
+	public Integer getNumberOfColumnsWithinDay(int dayOffset) {
+		return columnsWithinDay[dayOffset];
+	}
+	
+	/**
+	 * @param dayOffset
+	 * @param numberOfColumns
+	 */
+	public void setNumberOfColumnsWithinDay(int dayOffset, int numberOfColumns) {
+		columnsWithinDay[dayOffset] = new Integer(numberOfColumns);
+	}
 	
 	/**
 	 * @param numberOfDays
@@ -48,11 +71,19 @@ public class CalendarableModel {
 
 		this.numberOfDays = numberOfDays;
 		this.numberOfDivisionsInHour = numberOfDivisionsInHour;
-		initializeColumns(numberOfDays);
+		initializeDayArrays(numberOfDays);
 		
 		refresh();
 	}
-
+	
+	private void initializeDayArrays(int numberOfDays) {
+		dayColumns  = new ArrayList[numberOfDays]; 
+		for (int i=0; i < numberOfDays; ++i) {
+			dayColumns[i] = new ArrayList();
+		}
+		columnsWithinDay = new Integer[numberOfDays];
+	}
+	
 	/**
 	 * @return The number of days to display
 	 */
@@ -67,21 +98,16 @@ public class CalendarableModel {
 		return numberOfDivisionsInHour;
 	}
 
-	private void initializeColumns(int numberOfDays) {
-		dateColumns  = new ArrayList[numberOfDays]; 
-		for (int i=0; i < numberOfDays; ++i) {
-			dateColumns[i] = new ArrayList();
-		}
-	}
-
 	private Date startDate = null;
 	
 	/**
 	 * @param startDate The starting date to display
+	 * @return The obsolete Calendarable objects
 	 */
-	public void setStartDate(Date startDate) {
+	public List setStartDate(Date startDate) {
 		this.startDate = startDate;
-		refresh();	// FIXME: This currently refreshes everything, even data we already have
+		columnsWithinDay = new Integer[numberOfDays];// FIXME: This currently refreshes everything, even data we already have
+		return refresh();
 	}
 
 	/**
@@ -120,16 +146,18 @@ public class CalendarableModel {
 	/**
 	 * Refresh everything in the display.
 	 */
-	private void refresh() {
+	private List refresh() {
+		LinkedList result = new LinkedList();
 		if(!isInitialized()) {
-			return;
+			return result;
 		}
 		//refresh
 		Date dateToRefresh = null;
-		for (int i = 0; i < dateColumns.length; i++) {
+		for (int i = 0; i < dayColumns.length; i++) {
 			dateToRefresh = calculateDate(i);
-			refresh(dateToRefresh, i);
+			refresh(dateToRefresh, i, result);
 		}
+		return result;
 	}
 
 	/**
@@ -158,13 +186,15 @@ public class CalendarableModel {
 			null != eventCountProvider;
 	}
 	
-	private void refresh(Date date, int column) {
+	private void refresh(Date date, int column, List invalidatedElements) {
 		int numberOfEventsInDay = eventCountProvider.getNumberOfEventsInDay(date);
+
+		while (dayColumns[column].size() > 0) {
+			invalidatedElements.add(dayColumns[column].remove(0));
+		}
+		resizeList(dayColumns[column], numberOfEventsInDay);
 		
-		resizeList(dateColumns[column], numberOfEventsInDay);
-		clearCalendarables(dateColumns[column]);
-		
-		Calendarable[] tempEvents = (Calendarable[]) dateColumns[column]
+		Calendarable[] tempEvents = (Calendarable[]) dayColumns[column]
 				.toArray(new Calendarable[numberOfEventsInDay]);
 
 		eventContentProvider.refresh(
@@ -181,20 +211,15 @@ public class CalendarableModel {
 		}
 	}
 
-	private void clearCalendarables(ArrayList calendarables) {
-		for (Iterator i = calendarables.iterator(); i.hasNext();) {
-			Calendarable c = (Calendarable) i.next();
-			c.reset();
-		}
-	}
-
 	/**
 	 * Refresh the display for the specified Date.  If Date isn't being
 	 * displayed, this method ignores the request.
 	 * 
 	 * @param date the date to refresh.
+	 * @return List any Calendarables that were invalidated
 	 */
-	public void refresh(Date date) {
+	public List refresh(Date date) {
+		LinkedList invalidatedCalendarables = new LinkedList();
 		GregorianCalendar dateToRefresh = new GregorianCalendar();
 		dateToRefresh.setTime(date);
 		for (int offset=0; offset < numberOfDays; ++offset) {
@@ -206,10 +231,11 @@ public class CalendarableModel {
 				target.get(Calendar.MONTH) == dateToRefresh.get(Calendar.MONTH) &&
 				target.get(Calendar.YEAR) == dateToRefresh.get(Calendar.YEAR)) 
 			{
-				refresh(date, offset);
+				refresh(date, offset, invalidatedCalendarables);
 				break;
 			}
 		}
+		return invalidatedCalendarables;
 	}
 
 	/**
@@ -219,7 +245,7 @@ public class CalendarableModel {
 	 * @return A List of events.
 	 */
 	public List getCalendarableEvents(int dayOffset) {
-		return (List) dateColumns[dayOffset].clone();
+		return dayColumns[dayOffset];
 	}
 
 	/**
@@ -229,8 +255,8 @@ public class CalendarableModel {
 	 */
 	public int computeNumberOfAllDayEventRows() {
 		int maxAllDayEvents = 0;
-		for (int day = 0; day < dateColumns.length; day++) {
-			ArrayList calendarables = dateColumns[day];
+		for (int day = 0; day < dayColumns.length; day++) {
+			ArrayList calendarables = dayColumns[day];
 			int allDayEventsInCurrentDay = 0;
 			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
 				Calendarable event = (Calendarable) iter.next();
@@ -258,8 +284,8 @@ public class CalendarableModel {
 		GregorianCalendar gc = new GregorianCalendar();
 		
 		int startHour = getDefaultStartHour();
-		for (int day = 0; day < dateColumns.length; day++) {
-			ArrayList calendarables = dateColumns[day];
+		for (int day = 0; day < dayColumns.length; day++) {
+			ArrayList calendarables = dayColumns[day];
 			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
 				Calendarable event = (Calendarable) iter.next();
 				if (event.isAllDayEvent()) {

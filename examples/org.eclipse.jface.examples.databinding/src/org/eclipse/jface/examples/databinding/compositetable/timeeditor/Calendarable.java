@@ -172,19 +172,6 @@ public class Calendarable {
 		this.text = string;
 	}
 	
-	/**
-	 * Reset the event object to its default state.  This method does not
-	 * dispose any Color or Image objects that may be set into it.
-	 */
-	public void reset() {
-		text = null;
-		startTime = null;
-		endTime = null;
-		image = null;
-		upperLeftPositionInDayRowCoordinates = null;
-		lowerRightPositionInDayRowCoordinates = null;
-	}
-	
 	private Point upperLeftPositionInDayRowCoordinates = null;
 	
 
