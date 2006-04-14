@@ -220,7 +220,7 @@ public class CalendarableModel {
 	 * @return A List of events.
 	 */
 	public List getCalendarableEvents(int dayOffset) {
-		return dateColumns[dayOffset];
+		return (List) dateColumns[dayOffset].clone();
 	}
 
 	/**

@@ -318,8 +318,8 @@ public class DayEditor extends Composite implements IEventEditor {
 			return;
 		}
 		while(Display.getCurrent().readAndDispatch()) {}	// A hack to make sure that the asyncExec runs immediately
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
+//		Display.getCurrent().asyncExec(new Runnable() {
+//			public void run() {
 				Control[] gridRows = compositeTable.getRowControls();
 				
 				for (int day=0; day < model.getNumberOfDays(); ++day) {
@@ -335,12 +335,12 @@ public class DayEditor extends Composite implements IEventEditor {
 							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
 							++allDayEventRow;
 						} else {
-							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
+//							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
 						}
 					}
 				}
-			}
-		});
+//			}
+//		});
 	}
 	
 	protected Point[] computeColumns(int day, int numberOfColumns, Control[] gridRows) {
@@ -383,11 +383,15 @@ public class DayEditor extends Composite implements IEventEditor {
 
 	private void layoutTimedEvent(int day, Point[] columnPositions, Calendarable calendarable, Control[] gridRows) {
 		int firstVisibleRow = model.computeStartHour() * model.getNumberOfDivisionsInHour();
-		firstVisibleRow = convertDayRowToViewportCoordinates(firstVisibleRow);
+		
 		int scrolledRows = compositeTable.getTopRow() - numberOfAllDayEventRows;
-		if (scrolledRows < 0) scrolledRows = 0;
+		int visibleAllDayEventRows = 0;
+		if (scrolledRows < 0) {
+			visibleAllDayEventRows = -1 * scrolledRows;
+			scrolledRows = 0;
+		}
 		firstVisibleRow += scrolledRows;
-		int lastVisibleRow = firstVisibleRow + compositeTable.getNumRowsVisible();
+		int lastVisibleRow = firstVisibleRow + compositeTable.getNumRowsVisible() - visibleAllDayEventRows - 1;
 		
 		int startRow = calendarable.getUpperLeftPositionInDayRowCoordinates().y;
 		int endRow = calendarable.getLowerRightPositionInDayRowCoordinates().y;
@@ -395,10 +399,13 @@ public class DayEditor extends Composite implements IEventEditor {
 		if (timedEventIsVisible(calendarable, firstVisibleRow, lastVisibleRow, startRow, endRow)) {
 			if (startRow < firstVisibleRow)
 				startRow = firstVisibleRow;
-			startRow = convertDayRowToViewportCoordinates(startRow);
 			
-			if (endRow >= lastVisibleRow)
-				endRow = lastVisibleRow-1;
+			if (endRow > lastVisibleRow)
+				endRow = lastVisibleRow;
+			
+			firstVisibleRow = convertDayRowToViewportCoordinates(firstVisibleRow);
+			lastVisibleRow = convertDayRowToViewportCoordinates(lastVisibleRow);
+			startRow = convertDayRowToViewportCoordinates(startRow);
 			endRow = convertDayRowToViewportCoordinates(endRow);
 			
 			createCalendarableControl(calendarable);
@@ -426,7 +433,7 @@ public class DayEditor extends Composite implements IEventEditor {
 
 	private int convertDayRowToViewportCoordinates(int row) {
 		row -= model.computeStartHour() * model.getNumberOfDivisionsInHour()
-			+ compositeTable.getTopRow() - numberOfAllDayEventRows;
+			- numberOfAllDayEventRows;
 		return row;
 	}
 	
