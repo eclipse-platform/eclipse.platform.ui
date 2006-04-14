@@ -13,6 +13,7 @@ package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -27,11 +28,10 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class CalendarableEventControl extends Canvas  {
 
-	/**
-	 * 
-	 */
-	private static final int MARGIN = 2;
+	private static final int MARGIN = 3;
 	private Label label = null;
+	private Color BORDER_COLOR;
+	private Color BACKGROUND_COLOR;
 
    /**
 	 * Constructs a new instance of this class given its parent
@@ -62,20 +62,30 @@ public class CalendarableEventControl extends Canvas  {
 	 */
 	public CalendarableEventControl(Composite parent, int style) {
 		super(parent, style);
+		Display display = parent.getDisplay();
+		BORDER_COLOR = new Color(display, 215, 215, 245);
+		BACKGROUND_COLOR = new Color(display, 240, 240, 255);
 		initialize();
+	}
+	
+	public void dispose() {
+		super.dispose();
+		BORDER_COLOR.dispose();
+		BACKGROUND_COLOR.dispose();
 	}
 
 	/**
 	 * Create the event control's layout
 	 */
 	private void initialize() {
-        label = new Label(this, SWT.NONE);
+		setBackground(BACKGROUND_COLOR);
+        label = new Label(this, SWT.WRAP);
         label.setText("Label");
-        label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+        label.setBackground(BACKGROUND_COLOR);
         FillLayout fillLayout = new FillLayout();
         fillLayout.marginHeight = MARGIN;
         fillLayout.marginWidth = MARGIN;
-        this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE));
+        this.setBackground(BORDER_COLOR);
         this.setLayout(fillLayout);
 	}
 

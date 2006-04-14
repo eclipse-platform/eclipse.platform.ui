@@ -11,11 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
 import org.eclipse.swt.SWTException;
@@ -187,74 +184,12 @@ public class Calendarable {
 		upperLeftPositionInDayRowCoordinates = null;
 		lowerRightPositionInDayRowCoordinates = null;
 	}
-
-	/**
-	 * Disposes of the operating system resources associated with
-	 * the receiver and all its descendents. After this method has
-	 * been invoked, the receiver and all descendents will answer
-	 * <code>true</code> when sent the message <code>isDisposed()</code>.
-	 * Any internal connections between the widgets in the tree will
-	 * have been removed to facilitate garbage collection.
-	 *
-	 * @see #addDisposeListener
-	 * @see #removeDisposeListener
-	 */
-	public void dispose() {
-		fireDisposeEvent();
-	}
-	
-	private List disposeListeners = new ArrayList();
-
-	private void fireDisposeEvent() {
-		for (Iterator disposeListenerIter = disposeListeners.iterator(); disposeListenerIter.hasNext();) {
-			DisposeListener listener = (DisposeListener) disposeListenerIter.next();
-			listener.widgetDisposed(this);
-		}
-	}
-
-	/**
-	 * Adds the listener to the collection of listeners who will
-	 * be notifed when the widget is disposed. When the widget is
-	 * disposed, the listener is notified by sending it the
-	 * <code>widgetDisposed()</code> message.
-	 *
-	 * @param listener the listener which should be notified when the receiver is disposed
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
-	 *
-	 * @see DisposeListener
-	 * @see #removeDisposeListener
-	 */
-	public void addDisposeListener(DisposeListener listener) {
-		disposeListeners.add(listener);
-	}
-
-	/**
-	 * Removes the listener from the collection of listeners who will
-	 * be notifed when the widget is disposed.
-	 * @param listener the listener which should no longer be notified when the receiver is disposed
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 * </ul>
-	 *
-	 * @see DisposeListener
-	 * @see #addDisposeListener
-	 */	
-	public void removeDisposeListener(DisposeListener listener) {
-		disposeListeners.remove(listener);
-	}
 	
 	private Point upperLeftPositionInDayRowCoordinates = null;
 	
 
 	/**
+	 * (non-API)
 	 * @return Returns the upperLeftPositionInDayRowCoordinates.
 	 */
 	public Point getUpperLeftPositionInDayRowCoordinates() {
@@ -262,6 +197,7 @@ public class Calendarable {
 	}
 
 	/**
+	 * (non-API)
 	 * Sets the upper left position of the bounding box and initializes the
 	 * lower right position to be the same as the upper left.
 	 * 
@@ -276,6 +212,7 @@ public class Calendarable {
 	private Point lowerRightPositionInDayRowCoordinates = null;
 
 	/**
+	 * (non-API)
 	 * @return Returns the lowerRightPositionInDayRowCoordinates.
 	 */
 	public Point getLowerRightPositionInDayRowCoordinates() {
@@ -283,6 +220,7 @@ public class Calendarable {
 	}
 
 	/**
+	 * (non-API)
 	 * Sets the lower right position of the bounding box.
 	 * 
 	 * @param lowerRightPositionInDayRowCoordinates The lowerRightPositionInDayRowCoordinates to set.
@@ -295,6 +233,7 @@ public class Calendarable {
 	private CalendarableEventControl control = null;
 	
 	/**
+	 * (non-API)
 	 * Returns the UI control for this Calendarable.
 	 * 
 	 * @return The UI control for this Calendarable or null if there is none.
@@ -304,6 +243,7 @@ public class Calendarable {
 	}
 
 	/**
+	 * (non-API)
 	 * Set the UI control for this Calendarable.
 	 * 
 	 * @param control The control to set.

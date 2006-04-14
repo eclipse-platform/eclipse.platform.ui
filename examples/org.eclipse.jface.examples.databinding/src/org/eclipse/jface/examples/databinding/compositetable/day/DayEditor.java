@@ -28,6 +28,7 @@ import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLay
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayLayoutsByDate;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlot;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
@@ -50,9 +51,6 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  */
 public class DayEditor extends Composite implements IEventEditor {
-	/**
-	 * The default start hour.  Normally 8:00 AM
-	 */
 	private CompositeTable compositeTable = null;
 	private CalendarableModel model = new CalendarableModel();
 	private DayLayoutsByDate dayLayoutsByDate;
@@ -214,6 +212,24 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	// Display Refresh logic here ----------------------------------------------
 	
+	/*
+	 * There are four main coordinate systems the refresh algorithm has to
+	 * deal with:
+	 * 
+	 * 1) Rows starting from midnight (the way the DayModel computes the layout).  
+	 *    These are called Day Row coordinates.
+	 *    
+	 * 2) Rows starting from the top visible row, taking into account all-day 
+	 *    event rows.  These are called Viewport Row coordinates
+	 *    
+	 * 3) Pixel coordinates for each TimeSlot, relative to its parent TimeSlice
+	 *    (the CompositeTable row object) row.  This is relevant because these 
+	 *    are transformed into #4 in order to place CalendarableEventControls.
+	 *    
+	 * 4) Pixel coordinates relative to the top left (the origin) of the entire
+	 *    DayEditor control.
+	 */
+	
 	private int numberOfAllDayEventRows = 0;
 	Calendar calendar = new GregorianCalendar();
 
@@ -335,7 +351,7 @@ public class DayEditor extends Composite implements IEventEditor {
 							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
 							++allDayEventRow;
 						} else {
-							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
+//							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
 						}
 					}
 				}
@@ -346,6 +362,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	protected Point[] computeColumns(int day, int numberOfColumns, Control[] gridRows) {
 		Point[] columns = new Point[numberOfColumns];
 		Rectangle timeSliceBounds = getTimeSliceBounds(day, compositeTable.getTopRow(), gridRows);
+		timeSliceBounds.x += TimeSlot.TIME_BAR_WIDTH + 1;
+		timeSliceBounds.width -= TimeSlot.TIME_BAR_WIDTH + 2;
 		
 		int baseWidth = timeSliceBounds.width / numberOfColumns;
 		int extraWidth = timeSliceBounds.width % numberOfColumns;
@@ -418,9 +436,9 @@ public class DayEditor extends Composite implements IEventEditor {
 			int rightmostColumn = calendarable.getLowerRightPositionInDayRowCoordinates().x;
 			
 			int left = columnPositions[leftmostColumn].x;
-			int top = startRowBounds.y;
+			int top = startRowBounds.y + 1;
 			int width = columnPositions[rightmostColumn].x - columnPositions[leftmostColumn].x + columnPositions[rightmostColumn].y;
-			int height = endRowBounds.y - startRowBounds.y + endRowBounds.height;
+			int height = endRowBounds.y - startRowBounds.y + endRowBounds.height - 1;
 			
 			Rectangle finalPosition = new Rectangle(left, top, width, height);
 			

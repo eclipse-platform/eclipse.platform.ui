@@ -68,7 +68,7 @@ public class DayEditorTest {
 	}
 	
 	private Event[][] events = new Event[][] {
-			{new Event(time(5, 45), time(9, 45), "Stand-up comedy"),
+			{new Event(time(5, 45), time(9, 45), "Stand-up meeting"),
 				new Event(time(11, 00), time(12, 15), "Meet with customer")},
 			{},
 			{},
@@ -77,7 +77,7 @@ public class DayEditorTest {
 				new Event(time(10, 15), time(12, 00), "Work on prototype")},
 			{new Event("National Conference"),
 				new Event("Field trip to PC HQ"),
-				new Event(time(8, 30), time(11, 30), "Stand-up comedy"),
+				new Event(time(8, 30), time(9, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(12, 15), "Meet with customer"),
 				new Event(time(12, 45), time(12, 15), "Meet with customer"),
 				new Event(time(11, 00), time(2, 45), "Meet with customer")},
@@ -85,7 +85,7 @@ public class DayEditorTest {
 			{},
 			{new Event(time(7, 50), time(9, 00), "Stand-up meeting"),
 				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{new Event(time(8, 45), time(9, 45), "Stand-up comedy"),
+			{new Event(time(8, 45), time(9, 45), "Stand-up meeting"),
 				new Event(time(11, 00), time(12, 15), "Meet with customer")},
 			{},
 			{},
@@ -93,7 +93,7 @@ public class DayEditorTest {
 				new Event(time(10, 15), time(12, 00), "Work on prototype")},
 			{},
 			{},
-			{new Event(time(8, 30), time(11, 30), "Stand-up comedy"),
+			{new Event(time(8, 30), time(11, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(12, 15), "Meet with customer"),
 				new Event(time(11, 45), time(12, 15), "Meet with customer"),
 				new Event(time(11, 00), time(2, 45), "Meet with customer")},

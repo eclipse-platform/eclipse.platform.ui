@@ -81,7 +81,7 @@ public class CalendarableModel {
 	 */
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
-		refresh();
+		refresh();	// FIXME: This currently refreshes everything, even data we already have
 	}
 
 	/**
@@ -177,8 +177,7 @@ public class CalendarableModel {
 			list.add(new Calendarable());
 		}
 		while (list.size() > numberOfEventsInDay) {
-			Calendarable c = (Calendarable) list.remove(0);
-			c.dispose();
+			list.remove(0);
 		}
 	}
 

@@ -40,12 +40,15 @@ public class TimeSlot extends Canvas {
 	private boolean focusControl = false;
 
 	private final Color WHITE;
-	private final Color BLACK;
 	private final Color CELL_BACKGROUND;
 	private final Color CELL_BORDER_EMPHASIZED;
 	private final Color CELL_BORDER_LIGHT;
+	private final Color TIME_BAR_COLOR;
 
-	private final int TIME_BAR_WIDTH = 6;
+	/**
+	 * Width of the bar between events
+	 */
+	public static final int TIME_BAR_WIDTH = 3;
 
 	/**
 	 * Constructor EmptyTablePlaceholder. Construct an EmptyTablePlaceholder
@@ -67,12 +70,12 @@ public class TimeSlot extends Canvas {
 		Display display = Display.getCurrent();
 
 		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
-		BLACK = display.getSystemColor(SWT.COLOR_BLACK);
 
 		// Bluish color scheme by default; change as necessary.
 		CELL_BACKGROUND = new Color(display, 250, 250, 255);
 		CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
 		CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
+		TIME_BAR_COLOR = new Color(display, 170, 170, 190);
 
 		setBackground(CELL_BACKGROUND);
 	}
@@ -91,6 +94,7 @@ public class TimeSlot extends Canvas {
 			CELL_BACKGROUND.dispose();
 			CELL_BORDER_EMPHASIZED.dispose();
 			CELL_BORDER_LIGHT.dispose();
+			TIME_BAR_COLOR.dispose();
 		}
 	};
 
@@ -129,9 +133,13 @@ public class TimeSlot extends Canvas {
 				gc.setBackground(WHITE);
 				gc.setForeground(WHITE);
 				gc.fillRectangle(0, 0, TIME_BAR_WIDTH, controlSize.y);
-				gc.setForeground(BLACK);
+				gc.setForeground(CELL_BORDER_LIGHT);
+				int lineStyle = gc.getLineStyle();
+				gc.setLineStyle(SWT.LINE_DOT);
 				gc.drawLine(TIME_BAR_WIDTH + 1, 0, TIME_BAR_WIDTH + 1,
 						controlSize.y);
+				gc.setLineStyle(lineStyle);
+				gc.setForeground(TIME_BAR_COLOR);
 				gc.drawLine(controlSize.x - 1, 0, controlSize.x - 1,
 						controlSize.y);
 				if (hourStart) {
@@ -139,7 +147,8 @@ public class TimeSlot extends Canvas {
 				} else {
 					gc.setForeground(CELL_BORDER_LIGHT);
 				}
-				gc.drawLine(TIME_BAR_WIDTH + 2, 0, controlSize.x - 2, 0);
+//				gc.drawLine(TIME_BAR_WIDTH + 2, 0, controlSize.x - 2, 0);
+				gc.drawLine(0, 0, controlSize.x, 0);
 			} finally {
 				gc.setBackground(oldBackground);
 				gc.setForeground(oldForeground);
@@ -153,9 +162,12 @@ public class TimeSlot extends Canvas {
 					gc.setLineStyle(SWT.LINE_DASH);
 					gc.setLineWidth(FOCUS_LINE_WIDTH);
 					Point parentSize = getSize();
-					gc.drawRectangle(TIME_BAR_WIDTH + FOCUS_LINE_WIDTH,
-									FOCUS_LINE_WIDTH, parentSize.x - TIME_BAR_WIDTH - 4,
-									parentSize.y - 3);
+//					gc.drawRectangle(TIME_BAR_WIDTH + FOCUS_LINE_WIDTH,
+//							FOCUS_LINE_WIDTH, parentSize.x - TIME_BAR_WIDTH - 4,
+//							parentSize.y - 3);
+					gc.drawRectangle(FOCUS_LINE_WIDTH,
+							FOCUS_LINE_WIDTH, parentSize.x - 4,
+							parentSize.y - 3);
 				}
 
 				gc.setForeground(CELL_BACKGROUND);
