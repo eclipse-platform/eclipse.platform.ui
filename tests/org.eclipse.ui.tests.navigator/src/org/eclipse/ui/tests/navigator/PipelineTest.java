@@ -103,7 +103,7 @@ public class PipelineTest extends TestCase {
 		// we do this to force the rendering of the children of items[0]
 		viewer
 				.setSelection(new StructuredSelection(project
-						.getFile(".project"))); //$NON-NLS-1$
+						.getFile(".project")), true); //$NON-NLS-1$
 
 		TreeItem[] rootItems = viewer.getTree().getItems();
 		
