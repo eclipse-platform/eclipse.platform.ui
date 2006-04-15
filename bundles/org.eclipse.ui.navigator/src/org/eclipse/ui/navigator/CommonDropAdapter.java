@@ -146,20 +146,23 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			super.drop(event);
 		} else {
 
+			Object target = getCurrentTarget() != null ? 
+							getCurrentTarget() : getViewer().getInput();
+							
 			CommonDropAdapterAssistant[] assistants = dndService
-					.findCommonDropAdapterAssistants(getCurrentTarget(),
-							getCurrentTransfer());
+				.findCommonDropAdapterAssistants(target, getCurrentTransfer());
 
 			IStatus valid = null;
 			for (int i = 0; i < assistants.length; i++) {
 				try {
+ 
 					valid = assistants[i].validateDrop(getCurrentTarget(),
 							getCurrentOperation(), getCurrentTransfer());
 					if (valid != null && valid.isOK()) {
 						assistants[i].handleDrop(this, event,
 								getCurrentTarget());
 						return;
-					}
+					} 
 				} catch (Throwable t) {
 					NavigatorPlugin.logError(0, t.getMessage(), t);
 				}
@@ -185,28 +188,33 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		IStatus valid = null;
 
 		if (super.validateDrop(aDropTarget, theDropOperation, theTransferData)) {
-			result = true;
-		} else if (FileTransfer.getInstance().isSupportedType(theTransferData)) {
-			// only allow copying when dragging from outside Eclipse
-			// result = theDropOperation != DND.DROP_COPY;
-			result = true;
+			result = true; 
 		} else {
+
+			Object target = aDropTarget != null ? aDropTarget : getViewer().getInput();
 			CommonDropAdapterAssistant[] assistants = dndService
-					.findCommonDropAdapterAssistants(aDropTarget,
+					.findCommonDropAdapterAssistants(target,
 							theTransferData);
 			if (DEBUG) {
 				System.out
 						.println("CommonDropAdapter.validateDrop found " + assistants.length + " drop assistants"); //$NON-NLS-1$//$NON-NLS-2$
+				for(int i=0; i<assistants.length; i++)
+					System.out.println("CommonDropAdapter.validateDrop :" + assistants[i].getClass().getName()); //$NON-NLS-1$
+				
 			}
 			for (int i = 0; i < assistants.length; i++) {
-				try {
-					valid = assistants[i].validateDrop(aDropTarget,
-							theDropOperation, theTransferData);
+				try { 
+					valid = assistants[i].validateDrop(target,
+							theDropOperation, theTransferData); 
 				} catch (Throwable t) {
 					NavigatorPlugin.logError(0, t.getMessage(), t);
 				}
 				if (valid != null && valid.isOK()) {
 					result = true;
+					if (DEBUG) { 
+						System.out
+								.println("CommonDropAdapter.validateDrop found \""+assistants[i].getClass().getName()+"\" would handle drop."); //$NON-NLS-1$ //$NON-NLS-2$ 
+					}					
 					break;
 				}
 			}
