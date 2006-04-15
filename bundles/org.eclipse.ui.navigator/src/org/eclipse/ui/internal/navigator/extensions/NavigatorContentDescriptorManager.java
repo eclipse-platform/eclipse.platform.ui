@@ -51,17 +51,31 @@ public class NavigatorContentDescriptorManager {
 	private class EvaluationCache implements VisibilityListener {
 
 		private final Map evaluations = new WeakHashMap();
+		private final Map evaluationsWithOverrides = new WeakHashMap();
 
 		EvaluationCache(VisibilityAssistant anAssistant) {
 			anAssistant.addListener(this);
 		}
 
 		protected final Set getDescriptors(Object anElement) {
-			return (Set) evaluations.get(anElement);
+			return getDescriptors(anElement, true);
 		}
 
 		protected final void setDescriptors(Object anElement, Set theDescriptors) {
-			evaluations.put(anElement, theDescriptors);
+			setDescriptors(anElement, theDescriptors, true);		
+		}
+		
+		protected final Set getDescriptors(Object anElement, boolean toComputeOverrides) {
+			if(toComputeOverrides)
+				return (Set) evaluations.get(anElement); 
+			return (Set) evaluationsWithOverrides.get(anElement);
+		}
+
+		protected final void setDescriptors(Object anElement, Set theDescriptors, boolean toComputeOverrides) {
+			if(toComputeOverrides)
+				evaluations.put(anElement, theDescriptors);
+			else 
+				evaluationsWithOverrides.put(anElement, theDescriptors);
 		}
 
 		/*
@@ -71,6 +85,7 @@ public class NavigatorContentDescriptorManager {
 		 */
 		public void onVisibilityOrActivationChange() {
 			evaluations.clear();
+			evaluationsWithOverrides.clear();
 		}
 	}
 
@@ -174,7 +189,7 @@ public class NavigatorContentDescriptorManager {
 		return c;
 
 	}
-
+	
 	/**
 	 * 
 	 * Returns all content descriptor(s) which enable for the given element.
@@ -189,18 +204,54 @@ public class NavigatorContentDescriptorManager {
 	 */
 	public Set findDescriptorsForPossibleChild(Object anElement,
 			VisibilityAssistant aVisibilityAssistant) {
+		return findDescriptorsForPossibleChild(anElement, aVisibilityAssistant, true);
+	}
+
+	/**
+	 * 
+	 * Returns all content descriptor(s) which enable for the given element.
+	 * 
+	 * @param anElement
+	 *            the element to return the best content descriptor for
+	 * 
+	 * @param aVisibilityAssistant
+	 *            The relevant viewer assistant; used to filter out unbound
+	 *            content descriptors.
+	 * @return the best content descriptor for the given element.
+	 */
+	public Set findDescriptorsForPossibleChild(Object anElement,
+			VisibilityAssistant aVisibilityAssistant, boolean toComputeOverrides) {
 
 		EvaluationCache cache = getEvaluationCache(
 				cachedPossibleChildrenEvaluations, aVisibilityAssistant);
-		if (cache.getDescriptors(anElement) != null) {
-			return cache.getDescriptors(anElement);
+		if (cache.getDescriptors(anElement, toComputeOverrides) != null) {
+			return cache.getDescriptors(anElement, toComputeOverrides);
 		}
-
+		
 		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
+		if(toComputeOverrides) {
+			addDescriptorsForPossibleChild(anElement, firstClassDescriptorsSet,
 				aVisibilityAssistant, descriptors);
+		} else {
 
-		cache.setDescriptors(anElement, descriptors);
+			NavigatorContentDescriptor descriptor;
+			/* Find other ContentProviders which enable for this object */
+			for (Iterator contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr
+					.hasNext();) {
+				descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+						.next();
+
+				boolean isApplicable = aVisibilityAssistant.isActive(descriptor)
+						&& aVisibilityAssistant.isVisible(descriptor)
+						&& descriptor.isPossibleChild(anElement);
+
+				 if (isApplicable) {
+					descriptors.add(descriptor);
+				}
+
+			}
+		} 
+		cache.setDescriptors(anElement, descriptors, toComputeOverrides);
 
 		return descriptors;
 	}

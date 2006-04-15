@@ -502,7 +502,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			Object anElement) {
 		Set overrideableExtensions = new TreeSet(
 				ExtensionPriorityComparator.INSTANCE);
-		Set descriptors = findDescriptorsWithPossibleChild(anElement);
+		Set descriptors = findDescriptorsWithPossibleChild(anElement, false);
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) iter
 					.next();
@@ -679,6 +679,22 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *         for the given element.
 	 */
 	public Set findDescriptorsWithPossibleChild(Object anElement) {
+		return findDescriptorsWithPossibleChild(anElement, true);
+	}
+	
+
+	/**
+	 * Search for extensions that declare the given element in their
+	 * <b>possibleChildren</b> expression.
+	 * 
+	 * @param anElement
+	 *            The element to use in the query
+	 * @return The set of {@link INavigatorContentDescriptor}s that are
+	 *         <i>visible</i> and <i>active</i> for this content service and
+	 *         have a <b>possibleChildren</b> expression that is <i>enabled</i>
+	 *         for the given element.
+	 */
+	public Set findDescriptorsWithPossibleChild(Object anElement, boolean toComputeOverrides) {
 
 		NavigatorContentDescriptor descriptor = getSourceOfContribution(anElement);
 		Set result = new TreeSet(ExtensionPriorityComparator.INSTANCE);
@@ -686,9 +702,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			result.add(descriptor);
 		}
 		result.addAll(CONTENT_DESCRIPTOR_REGISTRY
-				.findDescriptorsForPossibleChild(anElement, assistant));
+				.findDescriptorsForPossibleChild(anElement, assistant, toComputeOverrides));
 		return result;
-	}
+	}	
 
 	/*
 	 * (non-Javadoc)
