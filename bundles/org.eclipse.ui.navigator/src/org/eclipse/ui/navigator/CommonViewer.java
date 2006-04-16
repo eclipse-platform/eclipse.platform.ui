@@ -284,11 +284,9 @@ public class CommonViewer extends TreeViewer {
 		PipelinedShapeModification modification = new PipelinedShapeModification(
 				null, new ContributorTrackingSet(contentService, elements));
 
-		PipelinedShapeModification interceptedModification = pipeDream
-				.interceptRemove(modification);
+		pipeDream.interceptRemove(modification);
 
-		super.remove(interceptedModification.getChildren().toArray());
-
+		super.remove(modification.getChildren().toArray());
 	}
 
 	/*

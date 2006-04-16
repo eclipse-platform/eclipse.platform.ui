@@ -12,10 +12,11 @@
 package org.eclipse.ui.internal.navigator;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -75,8 +76,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent());
 		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
-			pipelineInterceptAdd(anAddModification, trackedSet, descriptor);
-			
+			pipelineInterceptAdd(anAddModification, trackedSet, descriptor); 
 		}
 		 
 		return anAddModification;
@@ -89,7 +89,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			for (Iterator overridingDescriptorsItr = overridingDescriptors.iterator(); overridingDescriptorsItr
 					.hasNext();) {
 				INavigatorContentDescriptor overridingDescriptor = (INavigatorContentDescriptor) overridingDescriptorsItr.next();
-				if(contentService.isActive(overridingDescriptor.getId())) {
+				if(contentService.isVisible(overridingDescriptor.getId()) && contentService.isActive(overridingDescriptor.getId())) {
 					trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
 					NavigatorContentExtension extension = contentService.getExtension(overridingDescriptor);
 					((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);					
@@ -129,34 +129,55 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	public PipelinedShapeModification interceptRemove(
 			PipelinedShapeModification aRemoveModification) {
 		
-		ContributorTrackingSet trackedSet =(ContributorTrackingSet) aRemoveModification.getChildren();
-		
-		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(aRemoveModification.getParent());
-		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {
-			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
-			pipelineInterceptRemove(aRemoveModification, trackedSet, descriptor);
-			
+		ContributorTrackingSet trackedSet =(ContributorTrackingSet) aRemoveModification.getChildren(); 
+
+		Set interestedExtensions = new LinkedHashSet(); 	
+		for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
+			Object element = (Object) iter.next();
+			if(element instanceof TreePath) {
+				interestedExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(((TreePath)element).getLastSegment()));
+			} else { 
+				interestedExtensions = contentService.findOverrideableContentExtensionsForPossibleChild(element);
+				
+			} 
 		}
-		 
+		for (Iterator overridingExtensionsIter = interestedExtensions.iterator(); overridingExtensionsIter.hasNext();)  
+			pipelineInterceptRemove(aRemoveModification, trackedSet, (NavigatorContentExtension) overridingExtensionsIter.next());
 		return aRemoveModification;
 	}
 	
 
-	private void pipelineInterceptRemove(PipelinedShapeModification anAddModification, ContributorTrackingSet trackedSet, INavigatorContentDescriptor descriptor) {
-		if(descriptor.hasOverridingExtensions()) {
-			Set overridingDescriptors = descriptor.getOverriddingExtensions();
-			for (Iterator overridingDescriptorsItr = overridingDescriptors.iterator(); overridingDescriptorsItr
-					.hasNext();) {
-				INavigatorContentDescriptor overridingDescriptor = (INavigatorContentDescriptor) overridingDescriptorsItr.next();
-				if(contentService.isActive(overridingDescriptor.getId())) {
-					trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
-					NavigatorContentExtension extension = contentService.getExtension(overridingDescriptor);
-					((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptRemove(anAddModification);					
-					trackedSet.setContributor(null);
-					pipelineInterceptRemove(anAddModification, trackedSet, overridingDescriptor);
+	private void pipelineInterceptRemove(PipelinedShapeModification aRemoveModification, ContributorTrackingSet trackedSet, NavigatorContentExtension overrideableExtension) {
+		
+		
+		try {
+			NavigatorContentExtension overridingExtension = null;
+			Set overridingExtensions = new LinkedHashSet();
+			for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
+				Object element = (Object) iter.next();
+				if(element instanceof TreePath) {
+					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(((TreePath)element).getLastSegment())));
+				} else { 
+					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(element)));				
+				} 
+			}
+			 
+			for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr.hasNext();) {
+				overridingExtension = (NavigatorContentExtension) extensionsItr.next();
+				trackedSet.setContributor((NavigatorContentDescriptor) overridingExtension.getDescriptor());
+				if (overridingExtension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
+					((IPipelinedTreeContentProvider) overridingExtension.getContentProvider()).interceptRemove(aRemoveModification);
 				}
-			}		
-		}
+				trackedSet.setContributor(null);
+				if(overridingExtension.getDescriptor().hasOverridingExtensions())
+					pipelineInterceptRemove(aRemoveModification, trackedSet, overridingExtension);
+												
+			} 	
+			
+		} catch (Throwable e) {
+			String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
+			NavigatorPlugin.logError(0, msg, e);
+		}  
 	}
 
 	/**
@@ -186,19 +207,15 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		for (Iterator iter = aRefreshSynchronization.getRefreshTargets().iterator(); iter.hasNext();) {
 			refreshable = iter.next();
 			Set overrideableExtensions =  contentService.findOverrideableContentExtensionsForPossibleChild(refreshable);
-			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) {
-				NavigatorContentExtension overrideableExtension = (NavigatorContentExtension) overrideableExtensionItr.next();
-				if(pipelineRefresh(overrideableExtension, aRefreshSynchronization, refreshable)) {
-					pipelined |= true;
-				}
-				
+			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+				pipelined |= pipelineInterceptRefresh((NavigatorContentExtension) overrideableExtensionItr.next(), aRefreshSynchronization, refreshable);
 			}
 		}
 		return pipelined;
 		
 	}
 
-	private boolean pipelineRefresh(NavigatorContentExtension overrideableExtension,
+	private boolean pipelineInterceptRefresh(NavigatorContentExtension overrideableExtension,
 			PipelinedViewerUpdate aRefreshSynchronization, Object refreshable) {
 
 		boolean intercepted = false;
@@ -211,9 +228,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 					intercepted |= ((IPipelinedTreeContentProvider) overridingExtensionsForPossibleChild[i]
 							.getContentProvider())
 							.interceptRefresh(aRefreshSynchronization);
-					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions()) {
-						intercepted |= pipelineRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);
-					}
+					
+					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())  
+						intercepted |= pipelineInterceptRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);					
 				}
 			} catch (Throwable e) {
 				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
@@ -247,61 +264,44 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 * @return The (potentially reshaped) update to execute against the viewer.
 	 */
 	public boolean interceptUpdate(
-			PipelinedViewerUpdate anUpdateSynchronization) {
-		
-		Set overrideableExtensions = new HashSet();
-		for (Iterator iter = anUpdateSynchronization.getRefreshTargets()
-				.iterator(); iter.hasNext();) {
-			overrideableExtensions.addAll(contentService
-					.findOverrideableContentExtensionsForPossibleChild(iter
-							.next()));
-		}
-
-		if (overrideableExtensions.isEmpty()) {
-			return false;
-		}
-
-		return pipelineUpdate(overrideableExtensions, anUpdateSynchronization);
-	}
-	
-
-	private boolean pipelineUpdate(Set overrideableExtensions,
 			PipelinedViewerUpdate anUpdateSynchronization) { 
-		
-		boolean intercepted = false;
-		for (Iterator extensionsItr = overrideableExtensions.iterator(); extensionsItr
-				.hasNext();) {
-			NavigatorContentExtension extension = (NavigatorContentExtension) extensionsItr
-					.next();
-
-			if (extension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
-
-				intercepted |= ((IPipelinedTreeContentProvider) extension
-						.getContentProvider())
-						.interceptUpdate(anUpdateSynchronization);
-				
-				if (extension.getDescriptor().hasOverridingExtensions()) {
-					Set nextLevelOfOverrideableExtensions = new HashSet();
-					for (Iterator refreshTargetsItr = anUpdateSynchronization
-							.getRefreshTargets().iterator(); refreshTargetsItr
-							.hasNext();) {
-						nextLevelOfOverrideableExtensions
-								.addAll(Arrays
-										.asList(extension
-												.getOverridingExtensionsForPossibleChild(refreshTargetsItr
-														.next())));
-					}
-
-					if (!nextLevelOfOverrideableExtensions.isEmpty()) {
-						intercepted |= pipelineUpdate(
-								nextLevelOfOverrideableExtensions,
-								anUpdateSynchronization);
-					}
-				}
+		 
+		boolean pipelined = false;
+		Object refreshable = null;
+		for (Iterator iter = anUpdateSynchronization.getRefreshTargets().iterator(); iter.hasNext();) {
+			refreshable = iter.next();
+			Set overrideableExtensions =  contentService.findOverrideableContentExtensionsForPossibleChild(refreshable);
+			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+				pipelined |= pipelineInterceptUpdate((NavigatorContentExtension) overrideableExtensionItr.next(), anUpdateSynchronization, refreshable);
 			}
+		}
+		return pipelined;
+		
+	}
+
+	private boolean pipelineInterceptUpdate(NavigatorContentExtension overrideableExtension,
+					PipelinedViewerUpdate anUpdateSynchronization, Object refreshable) {
+
+		boolean intercepted = false; 
+		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
+		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) { 
+			try {
+				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+
+					intercepted |= ((IPipelinedTreeContentProvider) overridingExtensionsForPossibleChild[i]
+							.getContentProvider())
+							.interceptUpdate(anUpdateSynchronization);
+					
+					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())  
+						intercepted |= pipelineInterceptUpdate(overridingExtensionsForPossibleChild[i], anUpdateSynchronization, refreshable);					
+				}
+			} catch (Throwable e) {
+				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
+				NavigatorPlugin.logError(0, msg, e);
+			}  
 		}
 
 		return intercepted;
-	}
+	} 
 
 }
