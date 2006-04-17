@@ -189,7 +189,7 @@
    <extension
          point="org.eclipse.help.base.luceneSearchParticipants">
       <searchParticipant
-            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
+            icon="$nl$/icons/view16/cheatsheet_view.gif"
             id="org.eclipse.ui.cheatsheets"
             name="%searchParticipant.name"
             participant="org.eclipse.ui.internal.cheatsheets.CheatsheetSearchParticipant"/>
