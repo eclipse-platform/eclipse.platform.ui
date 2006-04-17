@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <title>Cheat Sheet Content File XML Format</title>
 </head>
@@ -67,7 +67,7 @@ rendered as a single space or a line break. Whitespace immediately after the
 &lt;<b>description</b>&gt; and &lt;<b>br/</b>&gt; tags is ignored, as is
 whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <h2><code>item</code></h2>
-<pre>&lt;!ELEMENT item (description ([action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*))&gt;&nbsp;
+<pre>&lt;!ELEMENT item (description ([action|command|perform-when] | (subitem|repeated-subitem|conditional-subitem)*) [onCompletion])&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &nbsp; dialog  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
@@ -75,8 +75,8 @@ whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 &nbsp; contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &gt;</pre>
-<p>Each &lt;item&gt; element describes one top-level step in a cheat sheet. The
-&lt;item&gt; is either simple or composite. &lt;item&gt; attributes are as
+<p>Each &lt;item&gt; element describes one top-level step in a cheat sheet. An
+&lt;item&gt; may contain &lt;subitem&gt; elements. &lt;item&gt; attributes are as
 follows:</p>
 <ul type="disc">
   <li><b>title</b> - The title of the cheat sheet item.
@@ -102,16 +102,14 @@ follows:</p>
 custom controls for the item to be displayed in the UI. Contributions to this
 extension point declare the names of additional, string-valued attributes that
 may appear on &lt;item&gt; elements.</p>
-<p>Simple items have a description and an optional action. In the typical
+<p>Simple items have a description and an optional action or command. In the typical
 presentation, the titles of cheat sheet items are shown to the user most of the
 time. An item's description is only shown while the step is in the process of
-being executed. The presence of an &lt;action&gt; (or &lt;perform-when&gt;)
-element is typically associated with a button that the user can press to perform
-the step's action. If no action is present, the step is one that the user must
+being executed. The presence of an &lt;action&gt;, &lt;command&gt; or &lt;perform-when&gt;)element is  associated with a button that the user can press to perform
+the step's action or command. If no action or command is present, the step is one that the user must
 carry out manually and then overtly indicate that they have successfully
 completed the step.</p>
-<p>Composite steps are broken down into sub-steps as specified by the &lt;subitem&gt;
-subelements. Unlike items, which the user must follow in strict sequence, the
+<p>Steps may be broken down into sub-steps as specified by the &lt;subitem&gt; subelements. Unlike items, which the user must follow in strict sequence, the
 sub-items of a given item can be performed in any order. All sub-items within an
 item have to be attempted (or skipped) before progressing to the next item.
 (Which means actions that must be performed in a required sequence cannot be
@@ -122,7 +120,7 @@ acquired in earlier steps. A &lt;repeated-subitem&gt; subelement allows a step
 to include a set of similar sub-steps. Again, the exact set of sub-steps may be
 based on cheat sheet variables whose value are acquired in earlier steps.</p>
 <h2><code>subitem</code></h2>
-<pre>&lt;!ELEMENT subitem ( [action|perform-when] )&gt;&nbsp;
+<pre>&lt;!ELEMENT subitem ( [action|command|perform-when] )&gt;&nbsp;
 &lt;!ATTLIST subitem&nbsp;
 &nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
@@ -148,14 +146,16 @@ sub-items. &lt;subitem&gt; attributes are as follows:</p>
     element matches this string value. This attribute is ignored if the &lt;subitem&gt;
     element is not a child of&nbsp; a &lt;conditional-subitem&gt; element.</li>
 </ul>
-<p>Sub-items have an optional action. The presence of an &lt;action&gt; (or
-&lt;perform-when&gt;) element is typically associated with a button that the
-user can press to perform the sub-step's action. If no action is present, the
+<p>Sub-items may have an optional action or command. The presence of an &lt;action&gt;, 
+&lt;command&gt; or
+&lt;perform-when&gt; element is typically associated with a button that the
+user can press to perform the sub-step's action or command. If no action or 
+command is present, the
 sub-step is one that the user must carry out manually and then overtly indicate
 that they have successfully completed the step.</p>
 <p>Unlike items, which must be followed in strict sequence, the sub-items of a
 given item can be performed in any order. All sub-items within an item have to
-be attempted (or skipped) before progressing to the next item. (Which means
+be completed or skipped before progressing to the next item. (Which means
 actions that must be performed in a required sequence should not be represented
 as sub-items.)</p>
 <h2><code>conditional-subitem</code></h2>
@@ -279,8 +279,47 @@ then the item expands to something equivalent to:
     matches this string value. This attribute is ignored if the &lt;action&gt;
     element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
 </ul>
+<h2><code>command</code></h2>
+<pre>&lt;!ELEMENT command EMPTY&gt;&nbsp;
+&lt;!ATTLIST command&nbsp;
+&nbsp; serialization       CDATA #REQUIRED
+&nbsp; returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      CDATA #IMPLIED
+&gt;</pre>
+<p>Each &lt;command&gt; element describes an command in a cheat sheet.
+&lt;command&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>serialization</b> - A serialized
+  <a href="../../org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/ParameterizedCommand.html">
+  ParameterizedCommand</a>,&nbsp; which is a string containing the command name 
+  and parameters. See the
+  <a href="../../org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/ParameterizedCommand.html#serialize()">
+  ParameterizedCommand.serialize()</a> method for full details on this format. </li>
+  <li><b>returns </b>- An optional attribute which specifies the name of a cheat 
+  sheet variable which will be used to store the return value of the command. 
+  This allows a command to set a cheat sheet variable which is used in 
+  a later &lt;perform-when&gt;, &lt;conditional-subitem&gt; or &lt;repeated-subitem&gt;.</li>
+</ul>
+<p>Below is an example of an item with a command which opens a dialog box and 
+stores the result in the cheat sheet variable &quot;result&quot;.</p>
+<pre>&lt;item title=&quot;View Selection&quot;&gt;
+     &lt;description&gt;Select a view which will be opened in the next step.&lt;/description&gt;
+     &lt;command returns = &quot;result&quot;
+      serialization=&quot;org.eclipse.ui.dialogs.openMessageDialog(title=Select View,buttonLabel0=Package Explorer,message=Select a view ,buttonLabel1=Search View)&quot;/&gt;  
+      &lt;onCompletion&gt; Selected the ${result}. &lt;/onCompletion&gt;
+&lt;/item&gt; </pre>
+<h2><code>onCompletion</code></h2>
+<pre>&lt;!ELEMENT onCompletion EMPTY&gt;
+&lt;!ATTLIST onCompletion&nbsp;
+&gt;</pre>
+<p>The &lt;onCompletion&gt; element contains text which will be displayed when 
+an item is completed. This is particularly useful in the final step of the cheat 
+sheet to acknowledge completion of the entire task. The description consists of text interspersed with simple
+formatting tags following the same rules as for a &lt;description&gt; element. 
+&lt;onCompletion&gt; elements may also contain references to cheat sheet variables of 
+the form&nbsp; &quot;${<i>var</i>}&quot;, which will be expanded using the actual value of 
+the cheat sheet variable <i>var</i> at the time this step was completed..  </p>
 <h2><code>perform-when</code></h2>
-<pre>&lt;!ELEMENT perform-when (action+)&gt;&nbsp;
+<pre>&lt;!ELEMENT perform-when ((action|command)+)&gt;&nbsp;
 &lt;!ATTLIST perform-when&nbsp;
 &nbsp; condition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &gt;</pre>
@@ -288,7 +327,7 @@ then the item expands to something equivalent to:
 &lt;perform-when&gt; attributes are as follows:</p>
 <ul type="disc">
   <li><b>condition</b> - Arbitrary string value used to select which child
-    &lt;action&gt; will be performed. If the attribute string has the form
+    &lt;action&gt; or &lt;command&gt; will be performed. If the attribute string has the form
     &quot;${<i>var</i>}&quot;, it is considered a reference to a cheat sheet
     variable <i>var</i>, and value of the condition will be the value of the
     variable for the cheat sheet at the start of execution of the containing
@@ -309,6 +348,7 @@ element with a matching value.</p>
      &lt;perform-when condition=&quot;${v1}&quot;&gt;
         &lt;action when=&quot;a&quot; class=&quot;com.xyz.action1&quot; pluginId=&quot;com.xyz&quot; /&gt;
         &lt;action when=&quot;b&quot; class=&quot;com.xyz.action2&quot; pluginId=&quot;com.xyz&quot; /&gt;
+        &lt;command when=&quot;c&quot; serialization=&quot;org.eclipse.search.ui.views.SearchView&quot;/&gt;
      &lt;/conditional-subitem&gt;
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
@@ -320,24 +360,62 @@ to
   &lt;/subitem&gt;
 &lt;/item&gt;</pre>
 <h2>Example</h2>
-<p>The following is an example of a very simple cheat sheet content file:</p>
+<p>The following is an example of a simple cheat sheet content file which 
+demonstrates the use of commands, perform-when and conditional subitems.</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;cheatsheet title=&quot;Example&quot;&gt;
+&lt;cheatsheet title=&quot;Sample Cheat Sheet&quot;&gt;
   &lt;intro&gt;
-    &lt;description&gt;Example cheat sheet with two steps.&lt;/description&gt;
+    &lt;description&gt;A cheat sheet which demonstrates the use of perform-when and conditional subitems&lt;/description&gt;
   &lt;/intro&gt;
-  &lt;item title=&quot;Step 1&quot; dialog=&quot;true&quot;&gt;
-     &lt;description&gt;This is a step with an action that involves opening a modal dialog.&lt;/description&gt;
-     &lt;action class=&quot;com.xyz.myaction&quot; pluginId=&quot;com.xyz&quot;/&gt;
+  &lt;item title=&quot;View Selection&quot;&gt;
+     &lt;description&gt;Select a view which will be opened in the following steps.&lt;/description&gt;
+     &lt;command returns = &quot;result&quot;
+      serialization=&quot;org.eclipse.ui.dialogs.openMessageDialog(title=Select View,buttonLabel0=Package Explorer,message=Select a view ,buttonLabel1=Search View)&quot;/&gt;  
+      &lt;onCompletion&gt; Selected the ${result}. &lt;/onCompletion&gt;
+  &lt;/item&gt; 
+  &lt;item title=&quot;Close Views&quot;&gt;
+     &lt;description&gt;Close the search view and package explorer if open&lt;/description&gt;
   &lt;/item&gt;
-  &lt;item title=&quot;Step 2&quot;&gt;
-     &lt;description&gt;This is a fully manual step.&lt;/description&gt;
+  &lt;item title=&quot;Open the view from a perform when item&quot; skip = &quot;true&quot;&gt;
+     &lt;description&gt;Uses perform when to open the view seleted previously.&lt;/description&gt; 
+     &lt;perform-when condition = &quot;${result}&quot;&gt;
+           &lt;command when = &quot;Package Explorer&quot; 
+            serialization=&quot;org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.jdt.ui.PackageExplorer)&quot;/&gt;
+           &lt;command when = &quot;Search View&quot; 
+            serialization=&quot;org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.search.ui.views.SearchView)&quot;/&gt;      
+     &lt;/perform-when&gt;
+  &lt;/item&gt; 
+  &lt;item title=&quot;Close Views&quot;&gt;
+     &lt;description&gt;Close the search view and package explorer if open&lt;/description&gt;
   &lt;/item&gt;
-&lt;/cheatsheet&gt;</pre>
-
-<br>
+  &lt;item title=&quot;Open the view from a perform when subitem&quot;&gt;
+     &lt;description&gt;Uses perform when to open the view seleted previously.&lt;/description&gt; 
+     &lt;subitem label=&quot;Perform when subitem&quot; skip = &quot;true&quot;&gt;
+     &lt;perform-when condition = &quot;${result}&quot;&gt;
+           &lt;command when = &quot;Package Explorer&quot; 
+            serialization=&quot;org.eclipse.jdt.ui.PackageExplorer&quot;/&gt;
+           &lt;command when = &quot;Search View&quot; 
+            serialization=&quot;org.eclipse.search.ui.views.SearchView&quot;/&gt;      
+     &lt;/perform-when&gt;
+     &lt;/subitem&gt;
+  &lt;/item&gt; 
+  &lt;item title=&quot;Close Views&quot;&gt;
+     &lt;description&gt;Close the search view and package explorer if open&lt;/description&gt;
+  &lt;/item&gt;
+  &lt;item title=&quot;Open the view from a conditional subitem&quot;&gt;
+     &lt;description&gt;Uses perform when to open the view seleted previously.&lt;/description&gt; 
+      &lt;conditional-subitem condition=&quot;${result}&quot;&gt;
+         &lt;subitem when=&quot;Package Explorer&quot; label=&quot;Open package explorer.&quot;&gt;
+             &lt;command serialization = &quot;org.eclipse.jdt.ui.PackageExplorer&quot;/&gt;
+         &lt;/subitem&gt;
+         &lt;subitem when=&quot;Search View&quot; label=&quot;Open Search View&quot;&gt;
+             &lt;command serialization = &quot;org.eclipse.search.ui.views.SearchView&quot;/&gt;
+         &lt;/subitem&gt;
+     &lt;/conditional-subitem&gt;
+  &lt;/item&gt;
+&lt;/cheatsheet&gt;<br></pre>
 <p class=note id=copyright>
-Copyright (c) 2004, 2005 IBM Corporation and others.<br>
+Copyright (c) 2004, 2006&nbsp; IBM Corporation and others.<br>
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at 
