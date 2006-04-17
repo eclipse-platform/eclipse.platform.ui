@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties.tabbed;
 
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabDescriptor;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabDescriptor;
 
 /**
  * A listener interested in tab selection events that occur for the tabbed

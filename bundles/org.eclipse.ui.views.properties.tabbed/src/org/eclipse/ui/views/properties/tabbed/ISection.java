@@ -55,7 +55,10 @@ import org.eclipse.ui.IWorkbenchPart;
  * This is because both a tab selection event and an input selection event have
  * occurred.
  * </p>
- * 
+ * <p>
+ * This interface should not be extended or implemented. New section instances
+ * should be created using <code>AbstractPropertySection</code>.
+ * </p>
  * @see org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage
  * 
  * @author Anthony Hunter

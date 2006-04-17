@@ -22,8 +22,8 @@ package org.eclipse.ui.views.properties.tabbed;
  * represents.
  * </p>
  * <p>
- * Clients should extend AbstractTypeMapper which provides a default
- * implementation of this interface.
+ * This interface should not be extended or implemented. New type mapper instances
+ * should be created using <code>AbstractTypeMapper</code>.
  * </p>
  * 
  * @author Anthony Hunter

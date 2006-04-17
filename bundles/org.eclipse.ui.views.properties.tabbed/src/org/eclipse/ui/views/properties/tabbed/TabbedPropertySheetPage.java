@@ -44,18 +44,18 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.views.properties.tabbed.view.Tab;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabDescriptor;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabListContentProvider;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistry;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistryFactory;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyViewer;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheet;
-import org.eclipse.ui.views.properties.tabbed.internal.view.Tab;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabDescriptor;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabListContentProvider;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyComposite;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyRegistry;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyRegistryFactory;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyTitle;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyViewer;
 
 /**
  * A property sheet page that provides a tabbed UI.

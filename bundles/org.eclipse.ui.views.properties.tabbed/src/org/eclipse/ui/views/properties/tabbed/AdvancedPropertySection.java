@@ -48,8 +48,6 @@ public class AdvancedPropertySection
 		data.right = new FormAttachment(100, 0);
 		data.top = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(100, 0);
-		data.height = 100;
-		data.width = 100;
 		page.getControl().setLayoutData(data);
 	}
 
