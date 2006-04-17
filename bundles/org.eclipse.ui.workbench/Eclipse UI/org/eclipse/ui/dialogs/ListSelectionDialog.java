@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Sebastian Davids <sdavids@gmx.de> - Fix for bug 90273 - [Dialogs] 
+ * 			ListSelectionDialog dialog alignment
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -21,7 +24,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,7 +51,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *       input,
  *       new BaseWorkbenchContentProvider(),
  *		 new WorkbenchLabelProvider(),
- *		 "Select the resources to save.");
+ *		 "Select the resources to save:");
  *	dlg.setInitialSelections(dirtyEditors);
  *	dlg.setTitle("Save Resources");
  *	dlg.open();
@@ -103,15 +105,13 @@ public class ListSelectionDialog extends SelectionDialog {
      * @param composite org.eclipse.swt.widgets.Composite
      */
     private void addSelectionButtons(Composite composite) {
-
-        Composite buttonComposite = new Composite(composite, SWT.RIGHT);
+        Composite buttonComposite = new Composite(composite, SWT.NONE);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
         buttonComposite.setLayout(layout);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-                | GridData.GRAB_HORIZONTAL);
-        data.grabExcessHorizontalSpace = true;
-        buttonComposite.setLayoutData(data);
+        buttonComposite.setLayoutData(new GridData(SWT.END, SWT.TOP, true, false));
 
         Button selectButton = createButton(buttonComposite,
                 IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
@@ -129,11 +129,9 @@ public class ListSelectionDialog extends SelectionDialog {
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 listViewer.setAllChecked(false);
-
             }
         };
         deselectButton.addSelectionListener(listener);
-
     }
 
     /**
@@ -164,10 +162,9 @@ public class ListSelectionDialog extends SelectionDialog {
     protected Control createDialogArea(Composite parent) {
         // page group
         Composite composite = (Composite) super.createDialogArea(parent);
-
-        Font font = parent.getFont();
-        composite.setFont(font);
-
+        
+        initializeDialogUnits(composite);
+        
         createMessageArea(composite);
 
         listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
@@ -178,7 +175,6 @@ public class ListSelectionDialog extends SelectionDialog {
 
         listViewer.setLabelProvider(labelProvider);
         listViewer.setContentProvider(contentProvider);
-        listViewer.getControl().setFont(font);
 
         addSelectionButtons(composite);
 
@@ -189,6 +185,8 @@ public class ListSelectionDialog extends SelectionDialog {
 			checkInitialSelections();
 		}
 
+        Dialog.applyDialogFont(composite);
+        
         return composite;
     }
 
