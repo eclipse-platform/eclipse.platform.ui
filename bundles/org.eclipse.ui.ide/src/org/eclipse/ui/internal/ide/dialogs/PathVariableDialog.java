@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
- *     should be activated and used by other components.
+ *     Sebastian Davids <sdavids@gmx.de> - 19346, 42056
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -18,6 +17,7 @@ import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -26,10 +26,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -167,6 +167,7 @@ public class PathVariableDialog extends TitleAreaDialog {
     public PathVariableDialog(Shell parentShell, int type, int variableType,
             IPathVariableManager pathVariableManager, Set namesInUse) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.type = type;
         this.newVariable = type == NEW_VARIABLE;
         this.variableName = ""; //$NON-NLS-1$
@@ -206,11 +207,13 @@ public class PathVariableDialog extends TitleAreaDialog {
         // top level composite
         Composite parentComposite = (Composite) super.createDialogArea(parent);
 
+        initializeDialogUnits(parentComposite);
+        
         // creates dialog area composite
         Composite contents = createComposite(parentComposite);
 
         // creates and lay outs dialog area widgets 
-        createWidgets(contents, parent.getFont());
+        createWidgets(contents);
 
         // validate possibly already incorrect variable definitions
         if (type == EXISTING_VARIABLE) {
@@ -218,6 +221,8 @@ public class PathVariableDialog extends TitleAreaDialog {
             validateVariableValue();
         }
 
+        Dialog.applyDialogFont(parentComposite);
+        
         return contents;
     }
 
@@ -233,11 +238,8 @@ public class PathVariableDialog extends TitleAreaDialog {
 
         FormLayout layout = new FormLayout();
 
-        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-
         contents.setLayout(layout);
-        contents.setFont(parentComposite.getFont());
+        contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         if (newVariable) {
 			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
@@ -251,10 +253,9 @@ public class PathVariableDialog extends TitleAreaDialog {
     /**
      * Creates widgets for this dialog.
      * 
-     * @param parent the parent composite where to create widgets
-     * @param contents 
+     * @param contents the parent composite where to create widgets
      */
-    private void createWidgets(Composite contents, Font font) {
+    private void createWidgets(Composite contents) {
         FormData data;
 
         String nameLabelText = IDEWorkbenchMessages.PathVariableDialog_variableName;
@@ -265,54 +266,35 @@ public class PathVariableDialog extends TitleAreaDialog {
         variableNameLabel.setText(nameLabelText);
 
         data = new FormData();
+        data.top = new FormAttachment(0,
+        		convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN));
+        data.left = new FormAttachment(0,
+        		convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
         variableNameLabel.setLayoutData(data);
-        variableNameLabel.setFont(font);
-
-        // variable value label
-        variableValueLabel = new Label(contents, SWT.LEFT);
-        variableValueLabel.setText(valueLabelText);
-
-        data = new FormData();
-        data.top = new FormAttachment(variableNameLabel,
-                convertVerticalDLUsToPixels(10));
-        variableValueLabel.setLayoutData(data);
-        variableValueLabel.setFont(font);
-
-        // the larger label will be used in the left attachments for the fields  
-        Label largerLabel = nameLabelText.length() > valueLabelText.length() ? variableNameLabel
-                : variableValueLabel;
-
-        // variable name field
+     
+        // variable name field.  Attachments done after all widgets created.
         variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
         variableNameField.setText(variableName);
-
-        data = new FormData();
-        data.width = convertWidthInCharsToPixels(50);
-        data.left = new FormAttachment(largerLabel,
-                convertHorizontalDLUsToPixels(5));
-        variableNameField.setLayoutData(data);
-        variableNameField.setFont(font);
-        variableNameField.setFocus();
-
         variableNameField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 variableNameModified();
             }
         });
-
-        // variable value field
-        variableValueField = new Text(contents, SWT.SINGLE | SWT.BORDER);
-        variableValueField.setText(variableValue);
+        
+        // variable value label
+        variableValueLabel = new Label(contents, SWT.LEFT);
+        variableValueLabel.setText(valueLabelText);
 
         data = new FormData();
-        data.width = convertWidthInCharsToPixels(50);
-        data.left = new FormAttachment(largerLabel,
-                convertHorizontalDLUsToPixels(5));
+        data.left = new FormAttachment(0,
+        		convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
         data.top = new FormAttachment(variableNameLabel,
-                convertVerticalDLUsToPixels(10));
-        variableValueField.setLayoutData(data);
-        variableValueField.setFont(font);
+                convertVerticalDLUsToPixels(5));
+        variableValueLabel.setLayoutData(data);
 
+        // variable value field.  Attachments done after all widgets created.
+        variableValueField = new Text(contents, SWT.SINGLE | SWT.BORDER);
+        variableValueField.setText(variableValue);
         variableValueField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 variableValueModified();
@@ -327,13 +309,10 @@ public class PathVariableDialog extends TitleAreaDialog {
 		}
 
         data = setButtonFormLayoutData(fileButton);
-        data.top = new FormAttachment(variableNameLabel,
-                convertVerticalDLUsToPixels(10));
-        data.left = new FormAttachment(variableValueField,
-                convertHorizontalDLUsToPixels(10));
-        data.right = new FormAttachment(100, -5);
+        data.top = new FormAttachment(variableValueLabel, 0, SWT.CENTER);
+        data.right = new FormAttachment(100,
+        		-convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));        
         fileButton.setLayoutData(data);
-        fileButton.setFont(font);
 
         fileButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -349,19 +328,42 @@ public class PathVariableDialog extends TitleAreaDialog {
 		}
 
         data = setButtonFormLayoutData(folderButton);
-        data.top = new FormAttachment(variableValueLabel,
-                convertVerticalDLUsToPixels(10));
-        data.left = new FormAttachment(variableValueField,
-                convertHorizontalDLUsToPixels(10));
-        data.right = new FormAttachment(100, -5);
+        data.top = new FormAttachment(fileButton, convertVerticalDLUsToPixels(2));
+        data.right = new FormAttachment(100,
+        		-convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN));
         folderButton.setLayoutData(data);
-        folderButton.setFont(font);
 
         folderButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 selectFolder();
             }
         });
+        
+        // Attaching variable name and value fields to file and folder buttons,
+        // so do this now that those buttons have been created.
+        
+        // the larger label will be used in the left attachments for the fields  
+        Label largerLabel = nameLabelText.length() > valueLabelText.length() ? variableNameLabel
+                : variableValueLabel;
+ 
+        data = new FormData();
+        data.left = new FormAttachment(largerLabel,
+                convertHorizontalDLUsToPixels(5));
+        data.right = new FormAttachment(fileButton, -convertHorizontalDLUsToPixels(5));
+        data.top = new FormAttachment(variableNameLabel,
+                convertVerticalDLUsToPixels(5), SWT.CENTER);
+        variableNameField.setLayoutData(data);
+        
+
+        data = new FormData();
+        data.left = new FormAttachment(largerLabel,
+                convertHorizontalDLUsToPixels(5));
+        data.right = new FormAttachment(fileButton, -convertHorizontalDLUsToPixels(5));
+        data.top = new FormAttachment(variableValueLabel, 0, SWT.CENTER);
+        variableValueField.setLayoutData(data);
+
+  
+ 
     }
 
     /**
