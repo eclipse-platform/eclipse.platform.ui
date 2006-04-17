@@ -380,6 +380,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 					try {
 						// Create a new repository location with the new information
 						CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromProperties(createProperties());
+						newLocation.setEncoding(location.getEncoding());
 						location.setAllowCaching(allowCaching);
 						try {
 							// For each project shared with the old location, set connection info to the new one

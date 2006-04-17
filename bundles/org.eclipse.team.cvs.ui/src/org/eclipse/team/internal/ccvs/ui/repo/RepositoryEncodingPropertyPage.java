@@ -43,6 +43,8 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	
 	private EncodingFieldEditor encoding;
 	private ICVSRepositoryLocation location;
+
+	private boolean valueChanged;
 	
 	public class OSGIPreferenceStore implements IPreferenceStore {
 		private Preferences preferences, defaults;
@@ -337,7 +339,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_2, 1); 
 		
 		encoding = new EncodingFieldEditor(CVSRepositoryLocation.PREF_SERVER_ENCODING, CVSUIMessages.RepositoryEncodingPropertyPage_3, composite); 
-		encoding.setPreferencePage(this);
+		encoding.setPage(this);
 		encoding.setPreferenceStore(getLocationPreferenceStore());
 		encoding.load();
 		encoding.setPropertyChangeListener(this);
@@ -375,6 +377,9 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		if (event.getProperty() == FieldEditor.IS_VALID) {
 			setValid(((Boolean)event.getNewValue()).booleanValue());
 			return;
+		} else if (event.getProperty() == FieldEditor.VALUE) {
+			valueChanged = true;
+			return;
 		}
 	}
 	
@@ -382,6 +387,10 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		if (!valueChanged) {
+			// See bug 137073
+			// return true;
+		}
 		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation(false))) {
 			// The location may have been replaced by the main properties page
 			MessageDialog.openInformation(getShell(), CVSUIMessages.RepositoryEncodingPropertyPage_0, NLS.bind(CVSUIMessages.RepositoryEncodingPropertyPage_1, new String[] { location.getLocation(true) })); // 
