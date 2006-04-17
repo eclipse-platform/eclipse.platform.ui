@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
@@ -129,13 +130,20 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 	
 	/**
 	 * Return the scheduling rule that is used when initializing and refreshing
-	 * the scope. By default, it is the workspace root.
+	 * the scope. By default, a rule that covers all projects for the input mappings
+	 * of the scope is returned. Subclasses may override.
 	 * 
 	 * @return the scheduling rule that is used when initializing and refreshing
 	 *         the scope
 	 */
 	public ISchedulingRule getSchedulingRule() {
-		return ResourcesPlugin.getWorkspace().getRoot();
+		Set projects = new HashSet();
+		ResourceMapping[] mappings = scope.getInputMappings();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			projects.addAll(Arrays.asList(mapping.getProjects()));
+		}
+		return MultiRule.combine((IProject[]) projects.toArray(new IProject[projects.size()]));
 	}
 	
 	/* (non-Javadoc)
