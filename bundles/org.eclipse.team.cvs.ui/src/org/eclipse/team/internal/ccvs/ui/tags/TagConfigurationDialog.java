@@ -755,6 +755,9 @@ public class TagConfigurationDialog extends TrayDialog {
 	 * @see Window#close()
 	 */
 	public boolean close() {
+		// Close the tray so we only remember the size without the tray
+		if (getTray() != null)
+			closeTray();
 		Rectangle bounds = getShell().getBounds();
 		if(allowSettingAutoRefreshFiles) {
 			settings.put(ALLOWREFRESH_HEIGHT_KEY, bounds.height);
