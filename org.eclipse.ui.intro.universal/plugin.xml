@@ -54,7 +54,7 @@
             id="org.eclipse.ui.intro.universal.circles"
             name="%theme.name.circles"
             path="$nl$/themes/circles"
-            previewImage="themes/circles/preview.png">
+            previewImage="$nl$/themes/circles/preview.png">
             <property name="workbenchAsRootLink"
             		value="true"/>
             		<!--
@@ -80,7 +80,7 @@
             id="org.eclipse.ui.intro.universal.purpleMesh"
             name="%theme.name.purpleMesh"
             path="$nl$/themes/purpleMesh"
-            previewImage="themes/purpleMesh/preview.png">
+            previewImage="$nl$/themes/purpleMesh/preview.png">
             <property name="launchbarBackground"
             		value="#c6c3e8"/>
             <property name="capitalizeTitles"
