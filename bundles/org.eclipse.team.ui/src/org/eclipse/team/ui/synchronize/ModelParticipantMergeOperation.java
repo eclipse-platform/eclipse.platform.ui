@@ -146,6 +146,8 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 		if (family == PARTICIPANT_MERGE_FAMILY) {
 			return true;
 		}
+		if (participant != null && participant == family)
+			return true;
 		return super.belongsTo(family);
 	}
 	
