@@ -45,6 +45,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -113,6 +114,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	private AbstractUpdatePolicy fUpdatePolicy;
 	
 	protected static final Rectangle NOT_VISIBLE = new Rectangle(0, 0, 0, 0);
+
+	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
+	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
 
     /**
      * Map of parent nodes for which children were needed to "set data"
@@ -233,21 +237,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return fContext;
 	}
 
-//	/**
-//	 * Refreshes all occurrences of the given element in this tree, and visible
-//	 * children.
-//	 * 
-//	 * @param element element to refresh
-//	 */
-//	public void refresh(final Object element) {
-//		// TODO: preserving selection currently has to be UI thread
-////		preservingSelection(new Runnable() {
-////			public void run() {
-//				internalRefresh(element);
-////			}
-////		});		
-//	}	
-	
 	/**
 	 * Returns the model proxy factory for the given element of <code>null</code> if none.
 	 * 
@@ -740,7 +729,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			ISelection oldSelection = null;
 			try {
 				// preserve selection
-				oldSelection = fCurrentSelection;
+				oldSelection = fCurrentSelection;				
 				// perform the update
 				updateCode.run();
 			} finally {
@@ -864,27 +853,23 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     			for (int i = 0; i < childrenNodes.length; i++) {
 					nodeDisposed(childrenNodes[i]);
 				}
-    		}
-    	}
-    }    
-    
-    /**
-     * A node in the model has been updated
-     * 
-     * @param node
-     */
-    public void nodeChanged(ModelNode node) {
-       Widget widget = findItem(node);
-       if (widget != null) {
-           if (isVisible(widget)) {
-               widget.setData(node.getElement());
-               internalRefresh(node);
-           } else {
-               clear(widget);
-           }
-       }
-    }
-    
+			}
+		}
+	}
+
+	/**
+	 * A node in the model has been updated
+	 * 
+	 * @param node
+	 */
+	public void nodeChanged(ModelNode node) {
+		Widget widget = findItem(node);
+		if (widget != null) {
+			widget.setData(node.getElement());
+			internalRefresh(node);
+		}
+	}
+
 	/**
 	 * @return if there are any more pending updates in the viewer
 	 */
@@ -900,97 +885,85 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
 	}
-	
-    /**
-     * Called when nodes are set in the model. The children may not have been retrieved
-     * yet when the tree got the call to "set data".
-     * 
-     * @param parent
-     * @param children
-     */
-    protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
-        int[] indicies = removePendingChildren(parent);
-        Widget widget = findItem(parent);
-        if (widget != null && !widget.isDisposed()) {
-            if (indicies != null) {
-                for (int i = 0; i < indicies.length; i++) {
-                    int index = indicies[i];
-                    Widget item = getChildWidget(widget, index);
-                    if (item != null) {
-                    	if (isVisible(widget)) {
-							if (index < children.length) {
-								ModelNode childNode = children[index];
-								mapElement(childNode, item);
-								item.setData(childNode.getElement());
-								internalRefresh(childNode);
-							}
-                    	} else {
-                    		clear(item);
-                    	}
-                    }
-                }
-                setItemCount(widget, children.length);
-            } else {
-                setItemCount(widget, children.length);
-            }   
-        }
-        attemptPendingUpdates();
-    }
-        
+
+	/**
+	 * Called when nodes are set in the model. The children may not have been
+	 * retrieved yet when the tree got the call to "set data".
+	 * 
+	 * @param parent
+	 * @param children
+	 */
+	protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
+		int[] indicies = removePendingChildren(parent);
+		Widget widget = findItem(parent);
+		if (widget != null && !widget.isDisposed()) {
+			if (indicies != null) {
+				for (int i = 0; i < indicies.length; i++) {
+					int index = indicies[i];
+					Widget item = getChildWidget(widget, index);
+					if (item != null) {
+						if (index < children.length) {
+							ModelNode childNode = children[index];
+							mapElement(childNode, item);
+							item.setData(childNode.getElement());
+							internalRefresh(childNode);
+						}
+					}
+				}
+				setItemCount(widget, children.length);
+			} else {
+				setItemCount(widget, children.length);
+			}
+		}
+		attemptPendingUpdates();
+	}
+
     protected abstract void clear(Widget item);
 
-	protected boolean isVisible(Widget widget) {
-    	return true;
-    }
-    
-    
-    /**
-     * Returns the child widet at the given index for the given parent or <code>null</code>
-     * 
-     * @param parent
-     * @param index
-     * @return
-     */
-    protected abstract Widget getChildWidget(Widget parent, int index);
-    
-    /**
-     * Sets the item count for a parent widget
-     * 
-     * @param parent
-     * @param itemCount
-     */
-    protected abstract void setItemCount(Widget parent, int itemCount);
-    
+	/**
+	 * Returns the child widet at the given index for the given parent or
+	 * <code>null</code>
+	 * 
+	 * @param parent
+	 * @param index
+	 * @return
+	 */
+	protected abstract Widget getChildWidget(Widget parent, int index);
+
+	/**
+	 * Sets the item count for a parent widget
+	 * 
+	 * @param parent
+	 * @param itemCount
+	 */
+	protected abstract void setItemCount(Widget parent, int itemCount);
+
     /**
      * Attempt pending udpates. Subclasses may override but should call super.
      */
     protected void attemptPendingUpdates() {
     	attemptSelection(false);
     }
-    
-    /**
-     * The children of a node have changed.
-     * 
-     * @param parent
-     */
-    protected void nodeChildrenChanged(ModelNode parentNode) {
-    	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-    	if (childrenNodes != null) {
-    		nodeChildrenSet(parentNode, childrenNodes);
-    	} else {
-	       Widget widget = findItem(parentNode);
-	       if (widget != null && !widget.isDisposed()) {
-               if (isVisible(widget)) {
-                   int childCount = parentNode.getChildCount();
-                   setItemCount(widget, childCount);
-                   attemptPendingUpdates();
-               } else {
-                   clear(widget);
-               }
-	       }
-    	}
-    }
-    
+
+	/**
+	 * The children of a node have changed.
+	 * 
+	 * @param parent
+	 */
+	protected void nodeChildrenChanged(ModelNode parentNode) {
+		ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+		if (childrenNodes != null) {
+			nodeChildrenSet(parentNode, childrenNodes);
+		} else {
+			Widget widget = findItem(parentNode);
+			if (widget != null && !widget.isDisposed()) {
+				int childCount = parentNode.getChildCount();
+				setItemCount(widget, childCount);
+				attemptPendingUpdates();
+			}
+		}
+	}
+
     /**
      * Returns the node corresponding to the given widget or <code>null</code>
      * @param widget widget for which a node is requested
@@ -1050,29 +1023,37 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected int[] removePendingChildren(ModelNode parent) {
 		return (int[]) fParentsPendingChildren.remove(parent);
 	}
-	
-    /* (non-Javadoc)
-     * 
-     * A virtual item has been exposed in the control, map its data.
-     * 
-     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void handleEvent(final Event event) {
-        Widget parentItem = getParentWidget(event.item);
-        int index = event.index;
 
-        ModelNode[] nodes = getModel().getNodes(parentItem.getData());
-        if (nodes != null) {
-	        for (int i = 0; i < nodes.length; i++) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * A virtual item has been exposed in the control, map its data.
+	 * 
+	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void handleEvent(final Event event) {		
+		Item item = (Item) event.item;
+		restoreLabels(item);
+
+		Widget parentItem = getParentWidget(event.item);
+		int index = event.index;
+       
+		ModelNode[] nodes = getModel().getNodes(parentItem.getData());
+		if (nodes != null) {
+			for (int i = 0; i < nodes.length; i++) {
 				ModelNode node = nodes[i];
 				Widget widget = findItem(node);
 				if (widget == parentItem) {
 		        	ModelNode[] childrenNodes = node.getChildrenNodes();
 		        	if (childrenNodes != null && index < childrenNodes.length) {
-		        		ModelNode child = childrenNodes[index];
+		        		final ModelNode child = childrenNodes[index];
 		        		mapElement(child, event.item);
 		        		event.item.setData(child.getElement());
-		        		internalRefresh(child);
+		        		preservingSelection(new Runnable() {
+		        		    public void run() {
+		        		        internalRefresh(child);
+		        		    }
+		        		});
 		        	} else {
 		        		addPendingChildIndex(node, index);
 		            }
@@ -1081,21 +1062,24 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			}
         }
     }	
-    
-    /**
-     * Returns the parent widget for the given widget or <code>null</code>
-     * 
-     * @param widget
-     * @return parent widget or <code>null</code>
-     */
-    protected abstract Widget getParentWidget(Widget widget);    
 
-    /**
-     * Updates the children of the given node.
-     * 
-     * @param parent node of which to update children
-     */
-    protected void updateChildren(ModelNode parent) {
-        getModel().updateChildren(parent);
-    }       
+	protected abstract void restoreLabels(Item item);
+
+	/**
+	 * Returns the parent widget for the given widget or <code>null</code>
+	 * 
+	 * @param widget
+	 * @return parent widget or <code>null</code>
+	 */
+	protected abstract Widget getParentWidget(Widget widget);
+
+	/**
+	 * Updates the children of the given node.
+	 * 
+	 * @param parent
+	 *            node of which to update children
+	 */
+	protected void updateChildren(ModelNode parent) {
+		getModel().updateChildren(parent);
+	}
 }

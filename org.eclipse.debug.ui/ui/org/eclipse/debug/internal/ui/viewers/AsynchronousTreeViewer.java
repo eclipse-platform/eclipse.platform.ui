@@ -51,6 +51,7 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -752,23 +753,21 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @param node
      */
     protected void nodeContainerChanged(ModelNode node) {
-         Widget widget = findItem(node);
-        if (widget != null && !widget.isDisposed()) {
-            if (isVisible(widget)) {
-                boolean expanded = true;
-                if (node.isContainer() && getItemCount(widget) == 0) {
-                	setItemCount(widget, 1);
-                }
-                if (widget instanceof TreeItem) {
-                    expanded = ((TreeItem)widget).getExpanded();
-                }
-                if (expanded) {
-                    updateChildren(node);
-                }
-            }
-        }
-        attemptPendingUpdates();
-    }
+		Widget widget = findItem(node);
+		if (widget != null && !widget.isDisposed()) {
+			boolean expanded = true;
+			if (node.isContainer() && getItemCount(widget) == 0) {
+				setItemCount(widget, 1);
+			}
+			if (widget instanceof TreeItem) {
+				expanded = ((TreeItem) widget).getExpanded();
+			}
+			if (expanded) {
+				updateChildren(node);
+			}
+		}
+		attemptPendingUpdates();
+	}
     
     protected int getItemCount(Widget widget) {
     	if (widget instanceof TreeItem) {
@@ -866,25 +865,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     	} else {
     		fTree.clearAll(true);
     	}
-    }
-
-    protected boolean isVisible(Widget widget) {        
-        if (widget instanceof Tree) {
-            return true;
-        } else if (widget.getData() == null) { 
-        	//not mapped yet
-        	return false;
-        } else {
-        	Rectangle treeBounds = getTree().getBounds();
-            TreeItem item = (TreeItem) widget;
-            Rectangle itemBounds = item.getBounds();
-            
-            if (itemBounds.height <= 0 || itemBounds.y < 0 || itemBounds.y > treeBounds.height) {
-                return false;
-            } else {
-                return true;
-            }
-        }
     }
 
     /*
@@ -1154,12 +1134,26 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
         ((AsynchronousTreeModel)getModel()).remove(treePath);
     }
 
-    protected void setLabels(Widget widget, String[] text, ImageDescriptor[] image) {
+    
+    protected void restoreLabels(Item item) {
+    	TreeItem treeItem = (TreeItem) item;
+    	String[] values = (String[]) treeItem.getData(OLD_LABEL);
+    	Image[] images = (Image[])treeItem.getData(OLD_IMAGE);
+		if (values != null) {
+			treeItem.setText(values);
+			treeItem.setImage(images);
+		}
+	}
+
+	protected void setLabels(Widget widget, String[] text, ImageDescriptor[] image) {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
             if (!item.isDisposed()) {
                 item.setText(text);
-                item.setImage(getImages(image));
+                item.setData(OLD_LABEL, text);
+                Image[] images = getImages(image);
+				item.setImage(images);
+                item.setData(OLD_IMAGE, images);
             }
         }
     }
@@ -1176,24 +1170,22 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#nodeChanged(org.eclipse.debug.internal.ui.viewers.ModelNode)
      */
     public void nodeChanged(ModelNode node) {
-        Widget widget = findItem(node);
-        if (widget != null && !widget.isDisposed()) {
-            if (widget instanceof TreeItem) {
-                if (!isVisible(widget)) {
-                    clear(widget);
-                    return;
-                }
-            }
-            widget.setData(node.getElement());
-            mapElement(node, widget);
-            internalRefresh(node);
-            attemptPendingUpdates();
-        }
-    }
+		Widget widget = findItem(node);
+		if (widget != null && !widget.isDisposed()) {
+			if (widget instanceof TreeItem) {
+				clear(widget);
+				return;
+			}
+			widget.setData(node.getElement());
+			mapElement(node, widget);
+			internalRefresh(node);
+			attemptPendingUpdates();
+		}
+	}
     
     /**
-     * Attempt pending udpates. Subclasses may override but should call super.
-     */
+	 * Attempt pending udpates. Subclasses may override but should call super.
+	 */
     protected void attemptPendingUpdates() {
     	attemptExpansion();
     	super.attemptPendingUpdates();

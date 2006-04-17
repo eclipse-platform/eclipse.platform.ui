@@ -160,10 +160,22 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         }
     } 
 
-    public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
+    protected void restoreLabels(Item item) {
+    	TableItem tableItem = (TableItem) item;
+    	String[] values = (String[]) tableItem.getData(OLD_LABEL);
+    	Image[] images = (Image[]) tableItem.getData(OLD_IMAGE);
+		if (values != null) {
+			tableItem.setText(values);
+			tableItem.setImage(images);
+		}
+	}
+
+	public void setLabels(Widget widget, String[] labels, ImageDescriptor[] imageDescriptors) {
         TableItem item = (TableItem) widget;
         item.setText(labels);
+        item.setData(OLD_LABEL, labels);
         Image[] images = new Image[labels.length];
+        item.setData(OLD_IMAGE, images);
         if (imageDescriptors != null) {
             for (int i = 0; i < images.length; i++) {
                 if (i < imageDescriptors.length)
@@ -421,21 +433,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         int itemCount = fTable.getItemCount();
         return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
     }   
-    
-	protected boolean isVisible(Widget widget) {
-        if (widget.isDisposed()) {
-            return false;
-        } if (widget instanceof Table) {
-            return true;
-        } else if (widget instanceof TableItem) {
-            TableItem item = (TableItem) widget;
-            int index = fTable.indexOf(item);
-            int topIndex = fTable.getTopIndex();
-            int bottomIndex = topIndex + getVisibleItemCount(topIndex);
-            return index >= topIndex && index <= bottomIndex;
-        }
-        return super.isVisible(widget);
-    }
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
@@ -473,6 +470,18 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			if (i >= 0) {
 				fTable.clear(i);
 			}
+		}
+	}
+
+	public void nodeChanged(ModelNode node) {
+		Widget widget = findItem(node);
+		if (widget != null && !widget.isDisposed()) {
+			if (widget instanceof TableItem) {
+				clear(widget);
+				return;
+			}
+			widget.setData(node.getElement());
+			internalRefresh(node);
 		}
 	}
 	
