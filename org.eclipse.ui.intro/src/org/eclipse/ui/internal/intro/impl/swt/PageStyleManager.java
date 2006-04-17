@@ -496,8 +496,10 @@ public class PageStyleManager extends SharedStyleManager {
 
     public Image getImage(IntroImage introImage) {
         String imageLocation = introImage.getSrcAsIs();
-        String key = ModelLoaderUtil.createPathToElementKey(introImage, true)
-            .toString();
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(introImage, true);
+        String key = buff!=null?buff.toString():null;
+        if (key==null)
+        	return null;
         if (ImageUtil.hasImage(key))
             return ImageUtil.getImage(key);
         // key not already registered.

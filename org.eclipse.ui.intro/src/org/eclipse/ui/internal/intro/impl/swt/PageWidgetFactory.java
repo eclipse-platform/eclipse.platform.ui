@@ -131,7 +131,8 @@ public class PageWidgetFactory {
         case AbstractIntroElement.IMAGE:
             IntroImage image = (IntroImage) element;
             c = createImage(parent, image);
-            updateLayoutData(c, element);
+            if (c!=null)
+            	updateLayoutData(c, element);
             break;
         case AbstractIntroElement.HTML:
             IntroHTML html = (IntroHTML) element;
@@ -355,8 +356,10 @@ public class PageWidgetFactory {
         }
         // for images, do not use default layout. Grab horizontal is not what we
         // want.
-        TableWrapData td = new TableWrapData();
-        ilabel.setLayoutData(td);
+        if (ilabel!=null) {
+        	TableWrapData td = new TableWrapData();
+        	ilabel.setLayoutData(td);
+        }
         return ilabel;
     }
     
