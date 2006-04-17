@@ -70,6 +70,9 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * it needs to be instantiated.
 	 */
 	protected ListenerList fListeners= new ListenerList();	
+	
+	protected boolean fImageRegistryInitialized = false;
+	
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnntations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
@@ -103,6 +106,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object element) {
+		fImageRegistryInitialized = true;
 		Image image = getPresentation().getImage(element);
         if (image == null) {
             image = getDefaultImage(element);
@@ -115,6 +119,10 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
             }
         }
         return image;
+	}
+	
+	public boolean isImageRegistryInitialized() {
+		return fImageRegistryInitialized;
 	}
 
 	/**

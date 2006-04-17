@@ -444,4 +444,12 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 		return null;
 	}
+
+	public boolean isInitialized(Object element) {
+		LazyModelPresentation configuredPresentation = (LazyModelPresentation) getConfiguredPresentation(element);
+		if (configuredPresentation != null) {
+			return configuredPresentation.isImageRegistryInitialized();
+		}
+		return false;
+	}
 }

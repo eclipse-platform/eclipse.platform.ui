@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -35,7 +36,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 */
 	public void retrieveLabel(final Object element, final IPresentationContext context, final ILabelRequestMonitor result) {
 		Job job = null;
-		if (requiresUIJob()) {
+		if (requiresUIJob(element)) {
 			job = new UIJob("Retrieving labels") { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					computeLabels(element, context, result);
@@ -61,8 +62,8 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * 
 	 * @return whether this label adapter requires to be run in the UI thread.
 	 */
-	protected boolean requiresUIJob() {
-		return false;
+	protected boolean requiresUIJob(Object object) {
+		return !DebugElementHelper.isInitialized(object);
 	}
 	
 	/**

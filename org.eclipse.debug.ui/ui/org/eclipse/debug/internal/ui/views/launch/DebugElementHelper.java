@@ -45,6 +45,12 @@ public class DebugElementHelper {
             fgPresenetation = null;
         }
     }
+    
+    
+    public static boolean isInitialized(Object object) {
+    	DelegatingModelPresentation presentation = getPresentation();
+    	return presentation.isInitialized(object);
+    }
 
     /**
      * Returns an image descriptor for the given debug element.
