@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 public class ProgressRegion implements IWindowTrim {
     ProgressCanvasViewer viewer;
 
-    AnimationItem item;
+    AnimationItem animationItem;
 
     Composite region;
 
@@ -41,6 +41,10 @@ public class ProgressRegion implements IWindowTrim {
 	
 	private int fHeightHint = SWT.DEFAULT;
 
+	/**
+	 * the side the receiver is placed on
+	 */
+	private int side = SWT.BOTTOM;
 
     /**
      * Create a new instance of the receiver.
@@ -71,7 +75,11 @@ public class ProgressRegion implements IWindowTrim {
 			 */
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
-				size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
+				if (isHorizontal(side))
+					size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
+				else {
+					size.x = TrimUtil.TRIM_DEFAULT_HEIGHT;
+				}
 				return size;
 			}
 		};
@@ -79,22 +87,30 @@ public class ProgressRegion implements IWindowTrim {
         GridLayout gl = new GridLayout();
         gl.marginHeight = 0;
         gl.marginWidth = 0;
-        gl.numColumns = 3;
+        if (isHorizontal(side))
+        	gl.numColumns = 3;
         region.setLayout(gl);
 
-        viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36);
+        viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36, isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL);
         viewer.setUseHashlookup(true);
         Control viewerControl = viewer.getControl();
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.widthHint = viewer.getSizeHints().x;
+        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+        Point viewerSizeHints = viewer.getSizeHints();
+        if (isHorizontal(side)) {
+        	gd.widthHint = viewerSizeHints.x;
+        	gd.heightHint = viewerSizeHints.y;
+        } else {
+        	gd.widthHint = viewerSizeHints.y;
+        	gd.heightHint = viewerSizeHints.x;
+        }
         viewerControl.setLayoutData(gd);
 
         int widthPreference = AnimationManager.getInstance()
                 .getPreferredWidth() + 25;
-        item = new ProgressAnimationItem(this);
-        item.createControl(region);
+        animationItem = new ProgressAnimationItem(this, isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL);
+        animationItem.createControl(region);
 
-        item.setAnimationContainer(new AnimationItem.IAnimationContainer() {
+        animationItem.setAnimationContainer(new AnimationItem.IAnimationContainer() {
             /* (non-Javadoc)
              * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
              */
@@ -115,10 +131,15 @@ public class ProgressRegion implements IWindowTrim {
 
             }
         });
-        Control itemControl = item.getControl();
-        gd = new GridData(GridData.FILL_VERTICAL);
-        gd.widthHint = widthPreference;
-        itemControl.setLayoutData(gd);
+        if (isHorizontal(side)) {
+        	gd = new GridData(GridData.FILL_VERTICAL);
+            gd.widthHint = widthPreference;
+        } else { 
+        	gd = new GridData(GridData.FILL_HORIZONTAL);
+            gd.heightHint = widthPreference;
+        }
+
+        animationItem.getControl().setLayoutData(gd);
 
         viewerControl.addMouseListener(new MouseAdapter() {
             /*
@@ -147,7 +168,7 @@ public class ProgressRegion implements IWindowTrim {
      * @return AnimationItem
      */
     public AnimationItem getAnimationItem() {
-        return item;
+        return animationItem;
     }
 
     /**
@@ -170,7 +191,44 @@ public class ProgressRegion implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#dock(int)
 	 */
 	public void dock(int dropSide) {
-		// deliberately do nothing
+		int oldSide = side;
+		side = dropSide;
+		if (oldSide == dropSide || (isVertical(oldSide) && isVertical(dropSide)) || (isHorizontal(oldSide) && isHorizontal(dropSide)))
+			return;
+		recreate();
+		
+	}
+
+	/**
+	 * Answer true if the side is a horizonal one
+	 * 
+	 * @param dropSide
+	 * @return <code>true</code> if the side is horizontal
+	 */
+	private boolean isHorizontal(int dropSide) {
+		return dropSide == SWT.TOP || dropSide == SWT.BOTTOM;
+	}
+
+
+	/**
+	 * Answer true if the side is a horizonal one
+	 * 
+	 * @param dropSide
+	 * @return <code>true</code> if the side is horizontal
+	 */
+	private boolean isVertical(int dropSide) {
+		return dropSide == SWT.LEFT || dropSide == SWT.RIGHT;
+	}
+
+	/**
+	 * Recreate the receiver given the new side
+	 */
+	private void recreate() {
+		if (region != null && !region.isDisposed()) {
+			Composite parent = region.getParent();
+			region.dispose();
+			createContents(parent, workbenchWindow);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +246,7 @@ public class ProgressRegion implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getValidSides()
 	 */
 	public int getValidSides() {
-		return SWT.BOTTOM;
+		return SWT.BOTTOM | SWT.TOP | SWT.LEFT | SWT.RIGHT ;
 	}
 
 	/* (non-Javadoc)

@@ -65,14 +65,18 @@ public class ProgressAnimationItem extends AnimationItem implements
 
     JobInfo lastJobInfo;
 
+    // ProgressBar flags
+	private int flags;
+
     /**
      * Create an instance of the receiver in the supplied region.
      * 
-     * @param region. The ProgressRegion that contains the receiver.
+     * @param region The ProgressRegion that contains the receiver.
+     * @param flags flags to use for creation of the progress bar
      */
-    ProgressAnimationItem(ProgressRegion region) {
+    ProgressAnimationItem(ProgressRegion region, int flags) {
         super(region.workbenchWindow);
-
+        this.flags = flags;
         FinishedJobs.getInstance().addListener(this);
 
         progressRegion = region;
@@ -260,17 +264,31 @@ public class ProgressAnimationItem extends AnimationItem implements
         boolean isCarbon = "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 
         GridLayout gl = new GridLayout();
-        gl.numColumns = isCarbon ? 3 : 2;
+        if (isHorizontal())
+        	gl.numColumns = isCarbon ? 3 : 2;
         gl.marginHeight = 0;
         gl.marginWidth = 0;
-        gl.horizontalSpacing = 2;
+        if (isHorizontal()) {
+        	gl.horizontalSpacing = 2;
+        } else { 
+        	gl.verticalSpacing = 2;
+        }
         top.setLayout(gl);
 
-        bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
+        bar = new ProgressBar(top, flags | SWT.INDETERMINATE);
         bar.setVisible(false);
         bar.addMouseListener(mouseListener);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.heightHint = 12;
+        
+        GridData gd;
+        int hh = 12;
+        if (isHorizontal()) {
+        	gd = new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
+        	gd.heightHint = hh;
+        } else {
+        	gd = new GridData(SWT.CENTER, SWT.BEGINNING, false, true);
+        	gd.widthHint = hh;        	
+        }
+
         bar.setLayoutData(gd);
 
         toolbar = new ToolBar(top, SWT.FLAT);
@@ -292,7 +310,14 @@ public class ProgressAnimationItem extends AnimationItem implements
         return top;
     }
 
-    /*
+    /**
+	 * @return <code>true</code> if the control is horizontally oriented
+	 */
+	private boolean isHorizontal() {
+		return (flags & SWT.HORIZONTAL) != 0;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.internal.progress.AnimationItem#getControl()

@@ -3324,13 +3324,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		if (progressRegion != null) {
 			if (getWindowConfigurer().getShowProgressIndicator()) {
-				if (progressRegion.getControl().getLayoutData() == null) {
-					progressRegion.setWidthHint(progressRegion.getControl()
-							.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
-					progressRegion
-							.setHeightHint(getStatusLineManager().getControl()
-									.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-				}
 				if (defaultLayout.getTrim(progressRegion.getId()) == null) {
 					defaultLayout.addTrim(SWT.BOTTOM, progressRegion);
 				}

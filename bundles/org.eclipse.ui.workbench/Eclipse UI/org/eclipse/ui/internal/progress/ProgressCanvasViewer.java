@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -25,11 +26,13 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.TrimUtil;
 
 /**
  * The ProgressCanvasViewer is the viewer used by progress windows. It displays text
@@ -51,6 +54,8 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     private int maxCharacterWidth;
 
+	private int orientation = SWT.HORIZONTAL;
+
     /**
      * Create a new instance of the receiver with the supplied
      * parent and style bits.
@@ -58,9 +63,11 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
      * @param style style bits for the canvas
      * @param itemsToShow the number of items this will show
      * @param numChars The number of characters for the width hint.
+     * @param side the side to display text, this helps determine horizontal vs vertical
      */
-    ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars) {
+    ProgressCanvasViewer(Composite parent, int style, int itemsToShow, int numChars, int orientation) {
         super();
+        this.orientation = orientation;
         numShowItems = itemsToShow;
         maxCharacterWidth = numChars;
         canvas = new Canvas(parent, style);
@@ -174,16 +181,29 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
             public void paintControl(PaintEvent event) {
 
                 GC gc = event.gc;
+                Transform transform = null;
+                if (orientation == SWT.VERTICAL) {
+	                transform = new Transform(event.display);
+	            	transform.translate(TrimUtil.TRIM_DEFAULT_HEIGHT, 0);
+	            	transform.rotate(90);
+                }
                 ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
 
                 int itemCount = Math.min(displayedItems.length, numShowItems);
 
                 int yOffset = 0;
+                int xOffset = 0;
                 if (numShowItems == 1) {//If there is a single item try to center it
                     Rectangle clientArea = canvas.getParent().getClientArea();
-                    int size = clientArea.height;
-                    yOffset = size - (fontMetrics.getHeight());
-                    yOffset = yOffset / 2;
+                    if (orientation == SWT.HORIZONTAL) {
+                    	int size = clientArea.height;
+	                    yOffset = size - (fontMetrics.getHeight());
+	                    yOffset = yOffset / 2;
+                    } else {
+                    	int size = clientArea.width;
+                    	xOffset = size - (fontMetrics.getHeight());
+                    	xOffset = xOffset / 2;
+                    }
                 }
 
                 for (int i = 0; i < itemCount; i++) {
@@ -191,9 +211,15 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
                     if(string == null) {
 						string = "";//$NON-NLS-1$
 					}
-                    gc.drawString(string, 2, yOffset
-                            + (i * fontMetrics.getHeight()), true);
+                    if (orientation == SWT.HORIZONTAL) {
+                    	gc.drawString(string, 2, yOffset + (i * fontMetrics.getHeight()), true);
+                    } else {
+		            	gc.setTransform(transform);
+                    	gc.drawString(string, xOffset + (i * fontMetrics.getHeight()), 2, true);
+                    }
                 }
+                if (transform != null)
+                	transform.dispose();
             }
         });
     }
