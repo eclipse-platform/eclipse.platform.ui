@@ -105,9 +105,76 @@ public class CalendarableModel {
 	 * @return The obsolete Calendarable objects
 	 */
 	public List setStartDate(Date startDate) {
+		// If there's no overlap between the old and new date ranges
+		if (this.startDate == null || 
+				startDate.after(calculateDate(this.startDate, numberOfDays)) ||
+				calculateDate(startDate, numberOfDays).before(this.startDate))
+		{
+			this.startDate = startDate;
+			columnsWithinDay = new Integer[numberOfDays];
+			return refresh();
+		}
+		
+		// There's an overlap
+		List obsoleteCalendarables = new LinkedList();
+		int overlap = -1;
+		
+		// If we're scrolling viewport to the left
+		if (startDate.before(this.startDate)) {
+			// Calculate the overlap
+			for (int day=0; day < numberOfDays; ++day) {
+				Date candidate = calculateDate(startDate, day);
+				if (candidate.equals(this.startDate))
+					overlap = day;
+			}
+			for (int day=numberOfDays-1; day >= 0; --day) {
+				if (numberOfDays - day <= overlap) {
+					// Shift the arrays; track obsolete calendarables
+					for (Iterator invalidated = dayColumns[day].iterator(); invalidated.hasNext();) {
+						obsoleteCalendarables.add(invalidated.next());
+					}
+					dayColumns[day] = dayColumns[day-overlap];
+					columnsWithinDay[day] = columnsWithinDay[day-overlap];
+				} if (day >= overlap) {
+					// Shift the arrays
+					dayColumns[day] = dayColumns[day-overlap];
+					columnsWithinDay[day] = columnsWithinDay[day-overlap];
+				} else {
+					// Recalculate new columns
+					dayColumns[day] = new ArrayList();
+					columnsWithinDay[day] = null;
+					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
+				}
+			}
+		} else {
+			// We're scrolling the viewport to the right
+			for (int day=0; day < numberOfDays; ++day) {
+				Date candidate = calculateDate(this.startDate, day);
+				if (candidate.equals(startDate))
+					overlap = day;
+			}
+			for (int day=0; day < numberOfDays; ++day) {
+				if (day < overlap) {
+					// Shift the arrays; track obsolete calendarables
+					for (Iterator invalidated = dayColumns[day].iterator(); invalidated.hasNext();) {
+						obsoleteCalendarables.add(invalidated.next());
+					}
+					dayColumns[day] = dayColumns[day+overlap];
+					columnsWithinDay[day] = columnsWithinDay[day+overlap];
+				} if (day < numberOfDays - overlap) {
+					// Shift the arrays
+					dayColumns[day] = dayColumns[day+overlap];
+					columnsWithinDay[day] = columnsWithinDay[day+overlap];
+				} else {
+					// Recalculate new columns
+					dayColumns[day] = new ArrayList();
+					columnsWithinDay[day] = null;
+					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
+				}
+			}
+		}
 		this.startDate = startDate;
-		columnsWithinDay = new Integer[numberOfDays];// FIXME: This currently refreshes everything, even data we already have
-		return refresh();
+		return obsoleteCalendarables;
 	}
 
 	/**
@@ -154,7 +221,7 @@ public class CalendarableModel {
 		//refresh
 		Date dateToRefresh = null;
 		for (int i = 0; i < dayColumns.length; i++) {
-			dateToRefresh = calculateDate(i);
+			dateToRefresh = calculateDate(startDate, i);
 			refresh(dateToRefresh, i, result);
 		}
 		return result;
@@ -163,12 +230,13 @@ public class CalendarableModel {
 	/**
 	 * Returns the date that is the numberOfDaysFromStartDate.
 	 * 
+	 * @param startDate The start date 
 	 * @param numberOfDaysFromStartDate
 	 * @return Date
 	 */
-	public Date calculateDate(int numberOfDaysFromStartDate) {
+	public Date calculateDate(Date startDate, int numberOfDaysFromStartDate) {
 		GregorianCalendar gc = new GregorianCalendar();
-		gc.setTime(this.startDate);
+		gc.setTime(startDate);
 		gc.roll(Calendar.DATE, numberOfDaysFromStartDate);
 		return gc.getTime();
 	}
@@ -223,7 +291,7 @@ public class CalendarableModel {
 		GregorianCalendar dateToRefresh = new GregorianCalendar();
 		dateToRefresh.setTime(date);
 		for (int offset=0; offset < numberOfDays; ++offset) {
-			Date refreshTarget = calculateDate(offset);
+			Date refreshTarget = calculateDate(startDate, offset);
 			GregorianCalendar target = new GregorianCalendar();
 			target.setTime(refreshTarget);
 			

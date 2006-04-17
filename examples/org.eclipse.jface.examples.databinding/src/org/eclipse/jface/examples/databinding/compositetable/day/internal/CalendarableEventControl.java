@@ -13,7 +13,10 @@ package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -85,8 +88,9 @@ public class CalendarableEventControl extends Canvas  {
         FillLayout fillLayout = new FillLayout();
         fillLayout.marginHeight = MARGIN;
         fillLayout.marginWidth = MARGIN;
-        this.setBackground(BORDER_COLOR);
-        this.setLayout(fillLayout);
+        setBackground(BORDER_COLOR);
+        setLayout(fillLayout);
+        addPaintListener(paintListener);
 	}
 
 	/**
@@ -96,4 +100,49 @@ public class CalendarableEventControl extends Canvas  {
 		label.setText(text);
 	}
 		
+	private int clipping;
+	
+	/**
+	 * Sets the clipping style bits
+	 * @param clipping  One of SWT.TOP or SWT.BOTTOM
+	 */
+	public void setClipping(int clipping) {
+		this.clipping = clipping;
+	}
+	
+	/**
+	 * @return The clipping style bits
+	 */
+	public int getClipping() {
+		return clipping;
+	}
+	
+	private PaintListener paintListener = new PaintListener() {
+		public void paintControl(PaintEvent e) {
+			Rectangle bounds = getBounds();
+			Color savedForeground = e.gc.getForeground();
+			Color savedBackground = e.gc.getBackground();
+			e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			if ((clipping & SWT.TOP) != 0) {
+				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += (2*MARGIN + 2)) {
+					int[] arrowPoints = new int[] {arrow, MARGIN, arrow + MARGIN, 0, arrow + 2 * MARGIN, MARGIN};
+					e.gc.fillPolygon(arrowPoints);
+					e.gc.drawPolygon(arrowPoints);
+				}
+			}
+			if ((clipping & SWT.BOTTOM) != 0) {
+				int bottom = bounds.height-1;
+				int marginBottom = bounds.height - MARGIN-1;
+				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += 2*MARGIN + 3) {
+					int[] arrowPoints = new int[] {arrow, marginBottom, arrow + MARGIN, bottom, arrow + 2 * MARGIN, marginBottom};
+					e.gc.fillPolygon(arrowPoints);
+					e.gc.drawPolygon(arrowPoints);
+				}
+			}
+			e.gc.setForeground(savedForeground);
+			e.gc.setBackground(savedBackground);
+		}
+	};
+	
 } // @jve:decl-index=0:visual-constraint="10,10"

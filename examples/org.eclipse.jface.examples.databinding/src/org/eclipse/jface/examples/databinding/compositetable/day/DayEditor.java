@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 
 /**
  * A DayEditor is an SWT control that can display events on a time line that can
@@ -125,11 +126,29 @@ public class DayEditor extends Composite implements IEventEditor {
 			public void controlResized(ControlEvent e) {
 				Rectangle bounds = DayEditor.this.getBounds();
 				compositeTable.setBounds(0, 0, bounds.width, bounds.height);
-				layoutEventControls();
+				layoutEventControlsDeferred();
 			}
 		});
 		
 		compositeTable.setRunTime(true);
+	}
+	
+	private class DayEditorLayout extends Layout {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
+		 */
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+			return new Point(wHint, hHint);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+		 */
+		protected void layout(Composite composite, boolean flushCache) {
+			Rectangle bounds = DayEditor.this.getBounds();
+			compositeTable.setBounds(0, 0, bounds.width, bounds.height);
+			layoutEventControls();
+		}
 	}
 
 	/**
@@ -171,10 +190,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public void setStartDate(Date startDate) {
 		List removedDays = model.setStartDate(startDate);
+		findEventRowsForNewDays(startDate);
 		refreshColumnHeaders(daysHeader.getColumns());
 		updateVisibleRows();
 		freeObsoleteCalendarableEventControls(removedDays);
-		findEventRowsForNewDays(startDate);
 		layoutEventControls();
 	}
 	
@@ -304,14 +323,6 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void findEventRowsForNewDays(Date startDate) {
 		DayModel dayModel = new DayModel(model.getNumberOfDivisionsInHour());
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
-			// Change this to: IF the number of columns for a day (in the model) is null
-//			Date currentDate = DayLayoutsByDate.addDaysToDate(getStartDate(), day);
-//			if (dayLayoutsByDate.get(currentDate) == null) {
-//				List events = model.getCalendarableEvents(day);
-//				int numberOfColunns = dayLayoutFactory.computeEventLayout(events);
-//				dayLayoutsByDate.put(currentDate, new DayLayout(events, layout));
-//			}
-			// New code:
 			if (model.getNumberOfColumnsWithinDay(day) == null) {
 				List events = model.getCalendarableEvents(day);
 				int numberOfColumns = dayModel.computeEventLayout(events).length;
@@ -320,34 +331,43 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 
+	private void layoutEventControlsDeferred() {
+		if (getStartDate() == null) {
+			return;
+		}
+		refreshEventControlPositions.run();
+		Display.getCurrent().asyncExec(refreshEventControlPositions);
+	}
+	
 	private void layoutEventControls() {
 		if (getStartDate() == null) {
 			return;
 		}
-		while(Display.getCurrent().readAndDispatch()) {}	// A hack to make sure that the asyncExec runs immediately
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				Control[] gridRows = compositeTable.getRowControls();
+		refreshEventControlPositions.run();
+	}
+	
+	private Runnable refreshEventControlPositions = new Runnable() {
+		public void run() {
+			Control[] gridRows = compositeTable.getRowControls();
+			
+			for (int day=0; day < model.getNumberOfDays(); ++day) {
+				int columnsWithinDay = model.getNumberOfColumnsWithinDay(day).intValue();
+				Point[] columnPositions = computeColumns(day, columnsWithinDay, gridRows);
 				
-				for (int day=0; day < model.getNumberOfDays(); ++day) {
-					int columnsWithinDay = model.getNumberOfColumnsWithinDay(day).intValue();
-					Point[] columnPositions = computeColumns(day, columnsWithinDay, gridRows);
-					
-					int allDayEventRow = 0;
-					
-					for (Iterator dayControlsIter = model.getCalendarableEvents(day).iterator(); dayControlsIter.hasNext();) {
-						Calendarable calendarable = (Calendarable) dayControlsIter.next();
-						if (calendarable.isAllDayEvent()) {
-							layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
-							++allDayEventRow;
-						} else {
-							layoutTimedEvent(day, columnPositions, calendarable, gridRows);
-						}
+				int allDayEventRow = 0;
+				
+				for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+					Calendarable calendarable = (Calendarable) calendarablesIter.next();
+					if (calendarable.isAllDayEvent()) {
+						layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
+						++allDayEventRow;
+					} else {
+						layoutTimedEvent(day, columnPositions, calendarable, gridRows);
 					}
 				}
 			}
-		});
-	}
+		}
+	};
 	
 	protected Point[] computeColumns(int day, int numberOfColumns, Control[] gridRows) {
 		Point[] columns = new Point[numberOfColumns];
@@ -372,14 +392,15 @@ public class DayEditor extends Composite implements IEventEditor {
 		return columns;
 	}
 
-	private void fillControlData(Calendarable calendarable) {
+	private void fillControlData(Calendarable calendarable, int clippingStyle) {
 		calendarable.getControl().setText(calendarable.getText());
+		calendarable.getControl().setClipping(clippingStyle);
 	}
 
 	private void layoutAllDayEvent(int day, int allDayEventRow, Calendarable calendarable, Control[] gridRows) {
 		if (eventRowIsVisible(allDayEventRow)) {
 			createCalendarableControl(calendarable);
-			fillControlData(calendarable);
+			fillControlData(calendarable, SWT.NULL);
 			
 			Rectangle timeSliceBounds = getTimeSliceBounds(day, allDayEventRow, gridRows);
 			calendarable.getControl().setBounds(timeSliceBounds);
@@ -405,11 +426,17 @@ public class DayEditor extends Composite implements IEventEditor {
 		int endRow = calendarable.getLowerRightPositionInDayRowCoordinates().y;
 		
 		if (timedEventIsVisible(calendarable, firstVisibleRow, lastVisibleRow, startRow, endRow)) {
-			if (startRow < firstVisibleRow)
-				startRow = firstVisibleRow;
+			int clippingStyle = SWT.NULL;
 			
-			if (endRow > lastVisibleRow)
+			if (startRow < firstVisibleRow) {
+				startRow = firstVisibleRow;
+				clippingStyle |= SWT.TOP;
+			}
+			
+			if (endRow > lastVisibleRow) {
 				endRow = lastVisibleRow;
+				clippingStyle |= SWT.BOTTOM;
+			}
 			
 			firstVisibleRow = convertDayRowToViewportCoordinates(firstVisibleRow);
 			lastVisibleRow = convertDayRowToViewportCoordinates(lastVisibleRow);
@@ -417,7 +444,7 @@ public class DayEditor extends Composite implements IEventEditor {
 			endRow = convertDayRowToViewportCoordinates(endRow);
 			
 			createCalendarableControl(calendarable);
-			fillControlData(calendarable);
+			fillControlData(calendarable, clippingStyle);
 			
 			Rectangle startRowBounds = getTimeSliceBounds(day, startRow, gridRows);
 			Rectangle endRowBounds = getTimeSliceBounds(day, endRow, gridRows);
