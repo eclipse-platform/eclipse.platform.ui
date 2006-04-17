@@ -117,13 +117,19 @@ public class SizePropertySource
     }
 
     public void setPropertyValue(Object propName, Object value) {
-        if (ID_WIDTH.equals(propName)) {
-            Integer newInt = new Integer((String) value);
-            point.x = newInt.intValue();
+        int newInt;
+        try {
+            newInt = Integer.parseInt((String) value);
+        } catch (NumberFormatException e) {
+            newInt = -1;
         }
-        if (ID_HEIGHT.equals(propName)) {
-            Integer newInt = new Integer((String) value);
-            point.y = newInt.intValue();
+
+        if (newInt > 0) {
+            if (ID_WIDTH.equals(propName)) {
+                point.x = newInt;
+            } else if (ID_HEIGHT.equals(propName)) {
+                point.y = newInt;
+            }
         }
         firePropertyChanged();
     }
