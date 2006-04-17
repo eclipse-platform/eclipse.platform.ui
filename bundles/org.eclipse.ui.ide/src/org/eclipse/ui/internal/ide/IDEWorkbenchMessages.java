@@ -856,6 +856,8 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String IDE_areYouSure;
 	
+	public static String IDEIdleHelper_backgroundGC;
+	
 	public static String SystemSettingsChange_title;
 	public static String SystemSettingsChange_message;
 	public static String SystemSettingsChange_yes;

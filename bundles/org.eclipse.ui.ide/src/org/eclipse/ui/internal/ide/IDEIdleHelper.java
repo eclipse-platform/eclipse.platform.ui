@@ -1,7 +1,12 @@
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -89,8 +94,39 @@ class IDEIdleHelper {
 	 * The time interval until the next garbage collection
 	 */
 	private int nextGCInterval = DEFAULT_GC_INTERVAL;
+	
+	private Job gcJob = new Job(IDEWorkbenchMessages.IDEIdleHelper_backgroundGC) {
+		protected IStatus run(IProgressMonitor monitor) {
+			final Display display = configurer.getWorkbench().getDisplay();
+			if (display != null && !display.isDisposed()) {
+				final long start = System.currentTimeMillis();
+				System.gc();
+				System.runFinalization();
+				lastGC = start;
+				final int duration = (int) (System.currentTimeMillis() - start);
+				if (Policy.DEBUG_GC) {
+					System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
+				}
+				if (duration > maxGC) {
+					if (Policy.DEBUG_GC) {
+						System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
+					}
+					shutdown();
+				} else {
+					//if the gc took a long time, ensure the next gc doesn't happen for awhile
+					nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
+					if (Policy.DEBUG_GC) {
+						System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	};
 
-	/**
+
+
+	private Runnable handler;	/**
 	 * Creates and initializes the idle handler
 	 * @param aConfigurer The workbench configurer.
 	 */
@@ -119,13 +155,25 @@ class IDEIdleHelper {
 
 		//hook idle handler
 		final Display display = configurer.getWorkbench().getDisplay();
-		final Runnable handler = new Runnable() {
-			public void run() {
-				if (!configurer.getWorkbench().isClosing()) {
-					display.timerExec(performGC(), this);
-				}
-			}
-		};
+		handler = new Runnable() {
+					public void run() {
+						if (!display.isDisposed() && !configurer.getWorkbench().isClosing()) {
+							int nextInterval;
+							final long start = System.currentTimeMillis();
+							//don't garbage collect if background jobs are running
+							if (!Platform.getJobManager().isIdle()) {
+								nextInterval = IDLE_INTERVAL;
+							} else if ((start - lastGC) < nextGCInterval) {
+								//don't garbage collect if we have collected within the specific interval
+								nextInterval = nextGCInterval - (int) (start - lastGC);
+							} else {
+								gcJob.schedule();
+								nextInterval = minGCInterval;
+							}
+							display.timerExec(nextInterval, this);
+						}
+					}
+				};
 		idleListener = new Listener() {
 			public void handleEvent(Event event) {
 				display.timerExec(IDLE_INTERVAL, handler);
@@ -136,53 +184,25 @@ class IDEIdleHelper {
 	}
 
 	/**
-	 * The idle handler has detected that the system is idle. Perform
-	 * idle processing. Returns the amount of time that should pass before
-	 * the next GC.
-	 */
-	protected int performGC() {
-		//don't garbage collect if background jobs are running
-		if (!Platform.getJobManager().isIdle()) {
-			return IDLE_INTERVAL;
-		}
-		final long start = System.currentTimeMillis();
-		//don't garbage collect if we have collected within the specific interval
-		if ((start - lastGC) < nextGCInterval) {
-			return nextGCInterval - (int) (start - lastGC);
-		}
-		System.gc();
-		System.runFinalization();
-		lastGC = start;
-		final int duration = (int) (System.currentTimeMillis() - start);
-		if (Policy.DEBUG_GC) {
-			System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
-		}
-		if (duration > maxGC) {
-			if (Policy.DEBUG_GC) {
-				System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
-			}
-			shutdown();
-			return -1;
-		}
-		//if the gc took a long time, ensure the next gc doesn't happen for awhile
-		nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
-		if (Policy.DEBUG_GC) {
-			System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
-		}
-		return nextGCInterval;
-	}
-
-	/**
 	 * Shuts down the idle helper, removing any installed listeners, etc.
 	 */
 	void shutdown() {
 		if (idleListener == null) {
 			return;
 		}
-		Display display = configurer.getWorkbench().getDisplay();
+		final Display display = configurer.getWorkbench().getDisplay();
 		if (display != null && !display.isDisposed()) {
-			display.removeFilter(SWT.KeyUp, idleListener);
-			display.removeFilter(SWT.MouseUp, idleListener);
+			try {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						display.timerExec(-1, handler);
+						display.removeFilter(SWT.KeyUp, idleListener);
+						display.removeFilter(SWT.MouseUp, idleListener);
+					}
+				});
+			} catch (SWTException ex) {
+				// ignore (display might be disposed)
+			}			
 		}
 	}
 }

@@ -302,7 +302,22 @@ public class HeapStatus extends Composite {
     private void gc() {
     	BusyIndicator.showWhile(getDisplay(), new Runnable() {
 			public void run() {
-				busyGC();
+				Thread t = new Thread() {
+					public void run() {
+						busyGC();
+					}};
+				t.start();
+				while(t.isAlive()) {
+					try {
+						Display d = getDisplay();
+						while(d != null && !d.isDisposed() && d.readAndDispatch()) {
+							// loop
+						}
+						t.join(10);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
 			}
 		});
     }
