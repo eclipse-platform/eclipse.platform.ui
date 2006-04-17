@@ -1,4 +1,5 @@
 package org.eclipse.ui.internal.progress;
+
 /*******************************************************************************
  * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -88,6 +89,10 @@ class ProgressInfoItem extends Composite {
 	static final int MIN_ICON_SIZE = 16;
 
 	private static final String EMPTY_STRING = "";//$NON-NLS-1$
+
+	private static final String TEXT_KEY = "Text"; //$NON-NLS-1$
+
+	private static final String ACTION_KEY = "Action";//$NON-NLS-1$
 
 	interface IndexListener {
 		/**
@@ -209,11 +214,11 @@ class ProgressInfoItem extends Composite {
 
 		actionBar = new ToolBar(this, SWT.FLAT);
 		actionBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW)); // set
-																				// cursor
-																				// to
-																				// overwrite
-																				// any
-																				// busy
+		// cursor
+		// to
+		// overwrite
+		// any
+		// busy
 
 		// cursor we might have
 		actionButton = new ToolItem(actionBar, SWT.NONE);
@@ -535,13 +540,13 @@ class ProgressInfoItem extends Composite {
 		}
 
 		// Remove completed tasks
-		if (infos.length <= taskEntries.size()) {
-			for (int i = infos.length; i < taskEntries.size(); i++) {
+		if (infos.length < taskEntries.size()) {
+			for (int i = infos.length + 1; i < taskEntries.size(); i++) {
 				((Link) taskEntries.get(i)).dispose();
 
 			}
-			if(infos.length > 1)
-				taskEntries = taskEntries.subList(0, infos.length-1);
+			if (infos.length > 1)
+				taskEntries = taskEntries.subList(0, infos.length - 1);
 			else
 				taskEntries.clear();
 		}
@@ -670,7 +675,7 @@ class ProgressInfoItem extends Composite {
 		barData.right = new FormAttachment(actionBar,
 				IDialogConstants.HORIZONTAL_SPACING * -1);
 		barData.height = MAX_PROGRESS_HEIGHT;
-		barData.width = 0;//default is too large
+		barData.width = 0;// default is too large
 		progressBar.setLayoutData(barData);
 
 		if (taskEntries.size() > 0) {
@@ -713,7 +718,7 @@ class ProgressInfoItem extends Composite {
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
 			}
 
-			linkData.right = new FormAttachment(100);
+			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			link.setLayoutData(linkData);
 
 			final Link finalLink = link;
@@ -725,7 +730,17 @@ class ProgressInfoItem extends Composite {
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-					((IAction) finalLink.getData()).run();
+					((IAction) finalLink.getData(ACTION_KEY)).run();
+				}
+			});
+			
+			link.addListener(SWT.Resize, new Listener(){
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+				 */
+				public void handleEvent(Event event) {
+					updateText((String) finalLink.getData(TEXT_KEY), finalLink);
+					
 				}
 			});
 			taskEntries.add(link);
@@ -733,18 +748,31 @@ class ProgressInfoItem extends Composite {
 			link = (Link) taskEntries.get(index);
 		}
 
+		link.setToolTipText(taskString);
+		link.setData(TEXT_KEY, taskString);
+
 		// check for action property
 		Object property = linkJob
 				.getProperty(IProgressConstants.ACTION_PROPERTY);
 		if (property instanceof IAction) {
-			link.setData(property);
+			link.setData(ACTION_KEY, property);
 		}
 
-		link.setToolTipText(taskString);
-		taskString = Dialog.shortenText(taskString, link);
-		link.setText(property == null ? taskString : NLS.bind(
-				"<a>{0}</a>", taskString));//$NON-NLS-1$
+		updateText(taskString, link);
 
+	}
+
+	/**
+	 * Update the text in the link
+	 * @param taskString
+	 * @param link
+	 */
+	private void updateText(String taskString, Link link) {
+		taskString = Dialog.shortenText(taskString, link);
+
+		//Put in a hyperlink if there is an action
+		link.setText(link.getData(ACTION_KEY) == null ? taskString : NLS.bind(
+				"<a>{0}</a>", taskString));//$NON-NLS-1$
 	}
 
 	/**
