@@ -276,13 +276,7 @@ public class SaveAsDialog extends TitleAreaDialog {
     private boolean validatePage() {
         if (!resourceGroup.areAllValuesValid()) {
             if (!resourceGroup.getResource().equals("")) { //$NON-NLS-1$
-            	// HACK.  Special case for empty field, since required field
-            	// emphasis is showing.
-            	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=133044
-            	if (resourceGroup.getProblemType() != ResourceAndContainerGroup.PROBLEM_RESOURCE_EMPTY &&
-            			resourceGroup.getProblemType() != ResourceAndContainerGroup.PROBLEM_CONTAINER_EMPTY) {
-            		setErrorMessage(resourceGroup.getProblemMessage());	
-            	}
+				setErrorMessage(resourceGroup.getProblemMessage());
 			} else {
             	setErrorMessage(null);
             }
