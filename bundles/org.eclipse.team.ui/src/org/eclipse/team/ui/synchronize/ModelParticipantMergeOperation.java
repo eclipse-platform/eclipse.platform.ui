@@ -23,68 +23,12 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.mapping.ModelParticipantPageDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * The steps of an optimistic merge operation are:
- * <ol>
- * <li>Obtain the selection to be operated on.
- * <li>Determine the projection of the selection onto resources
- * using resource mappings and traversals.
- * 		<ul>
- * 		<li>this will require traversals using both the ancestor and remote
- *      for three-way merges.
- *      <li>for model providers with registered merger, mapping set need 
- *      not be expanded (this is tricky if one of the model providers doesn't
- *      have a merge but all others do).
- *      <li>if the model does not have a custom merger, ensure that additional
- *      mappings are included (i.e. for many model elements to one resource case)
- * 		</ul>
- * <li>Create a MergeContext for the merge
- *      <ul>
- * 		<li>Determine the synchronization state of all resources
- *      covered by the input.
- *      <li>Pre-fetch the required contents.
- * 		</ul>
- * <li>Obtain and invoke the merger for each provider
- *      <ul>
- * 		<li>This will auto-merge as much as possible
- *      <li>If everything was merged, cleanup and stop
- *      <li>Otherwise, a set of un-merged resource mappings is returned
- * 		</ul>
- * <li>Delegate manual merge to the model provider
- *      <ul>
- * 		<li>This hands off the context to the manual merge
- *      <li>Once completed, the manual merge must clean up
- * 		</ul>
- * </ol>
- * 
- * <p>
- * Handle multiple model providers where one extends all others by using
- * the top-most model provider. The assumption is that the model provider
- * will delegate to lower level model providers when appropriate.
- * <p>
- * Special case to support sub-file merges.
- * <ul>
- * <li>Restrict when sub-file merging is supported
- * 		<ul>
- * 		<li>Only one provider involved (i.e. consulting participants results
- * 		in participants that are from the model provider or below).
- * 		<li>The provider has a custom auto and manual merger.
- * 		</ul>
- * <li>Prompt to warn when sub-file merging is not possible.
- * <li>Need to display the additional elements that will be affected.
- * This could be done in a diff tree or some other view. It needs to
- * consider incoming changes including additions.
- * </ul>
- * <p>
- * Special case to handle conflicting model providers.
- * <ul>
- * <li>Prompt user to indicate the conflict
- * <li>Allow user to exclude one of the models?
- * <li>Allow use to choose order of evaluation?
- * <li>Support tabbed sync view
- * </ul>
+ * A model merge operation that uses a participant to preview the changes
+ * in either a dialog or the Synchronize view.
  * 
  * @since 3.2
  */
@@ -101,6 +45,8 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	private boolean ownsParticipant = true;
 
 	private boolean sentToSyncView;
+	
+	private static final Object PARTICIPANT_MERGE_FAMILY = new Object();
 	
 	/**
 	 * Create a merge participant operation for the scope of the given manager.
@@ -163,7 +109,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 				if (isPreviewInDialog()) {
 					CompareConfiguration cc = new CompareConfiguration();
 					ISynchronizePageConfiguration pageConfiguration = participant.createPageConfiguration();
-					// Restrict preview page to only support incomign and conflict modes
+					// Restrict preview page to only support incoming and conflict modes
 					if (pageConfiguration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY) {
 						pageConfiguration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 						pageConfiguration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
@@ -175,6 +121,11 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 					ISynchronizeView view = mgr.showSynchronizeViewInActivePage();
 					mgr.addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 					view.display(participant);
+					Object adapted = view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+					if (adapted instanceof IWorkbenchSiteProgressService) {
+						IWorkbenchSiteProgressService siteProgress = (IWorkbenchSiteProgressService) adapted;
+						siteProgress.showBusyForFamily(PARTICIPANT_MERGE_FAMILY);
+					}
 				}
 				return Status.OK_STATUS;
 			}
@@ -191,6 +142,13 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 		job.schedule();
 	}
 
+	public boolean belongsTo(Object family) {
+		if (family == PARTICIPANT_MERGE_FAMILY) {
+			return true;
+		}
+		return super.belongsTo(family);
+	}
+	
 	/**
 	 * Return whether previews should occur in a dialog or in the synchronize view.
 	 * @return whether previews should occur in a dialog or in the synchronize view
@@ -219,7 +177,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	}
 
 	/**
-	 * Create the synchronize pariticipant to be used by this operation
+	 * Create the synchronize participant to be used by this operation
 	 * to preview changes. By default, a {@link ModelSynchronizeParticipant}
 	 * is created using the scope manager ({@link #getScopeManager()}) context 
 	 * from ({@link #createMergeContext()}) and job name ({@link #getJobName()})
@@ -227,7 +185,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 	 * <p>
 	 * Once created, it is the responsibility of the participant to dispose of the 
 	 * synchronization context when it is no longer needed. 
-	 * @return a newly created synchronize pariticipant to be used by this operation
+	 * @return a newly created synchronize participant to be used by this operation
 	 */
 	protected ModelSynchronizeParticipant createParticipant() {
 		return ModelSynchronizeParticipant.createParticipant(createMergeContext(), getJobName());
