@@ -303,7 +303,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(startDate);
 
-		SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d");
+		SimpleDateFormat formatter = new SimpleDateFormat("EE, MMM d");
 		formatter.applyPattern(formatter.toLocalizedPattern());
 		
 		for (Iterator iter = columns.iterator(); iter.hasNext();) {

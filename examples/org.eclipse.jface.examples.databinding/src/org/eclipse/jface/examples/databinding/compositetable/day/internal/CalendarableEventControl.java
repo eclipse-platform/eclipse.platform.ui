@@ -108,6 +108,7 @@ public class CalendarableEventControl extends Canvas  {
 	 */
 	public void setClipping(int clipping) {
 		this.clipping = clipping;
+		redraw();
 	}
 	
 	/**
