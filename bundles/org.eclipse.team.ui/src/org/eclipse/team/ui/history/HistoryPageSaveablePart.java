@@ -55,9 +55,13 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 			cc.setLeftEditable(isFile(object));
 			cc.setRightEditable(false);
 			HistoryPageSaveablePart input = new HistoryPageSaveablePart(shell, cc, pageSource, object);
-			SaveablePartDialog cd = new SaveablePartDialog(shell, input);
-			cd.setBlockOnOpen(true);
-			cd.open();
+			try {
+				SaveablePartDialog cd = new SaveablePartDialog(shell, input);
+				cd.setBlockOnOpen(true);
+				cd.open();
+			} finally {
+				input.dispose();
+			}
 			return true;
 		}
 		return false;
@@ -148,4 +152,9 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 		}
 	}
 	
+	public void dispose() {
+		super.dispose();
+		if (historyPage != null)
+			((HistoryPage)historyPage).dispose();
+	}
 }

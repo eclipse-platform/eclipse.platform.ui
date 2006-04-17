@@ -109,9 +109,13 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 			cc.setLeftEditable(false);
 			cc.setRightEditable(false);
 			ReplaceSaveablePart input = new ReplaceSaveablePart(shell, cc, pageSource, object);
-			SaveablePartDialog cd = new ReplaceCompareDialog(shell, input);
-			cd.setBlockOnOpen(true);
-			cd.open();
+			try {
+				SaveablePartDialog cd = new ReplaceCompareDialog(shell, input);
+				cd.setBlockOnOpen(true);
+				cd.open();
+			} finally {
+				input.dispose();
+			}
 		}
 	}
 	/* (non-Javadoc)

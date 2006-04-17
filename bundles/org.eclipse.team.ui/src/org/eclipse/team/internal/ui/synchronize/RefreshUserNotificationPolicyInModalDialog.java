@@ -71,8 +71,12 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 				return RefreshUserNotificationPolicyInModalDialog.this.title;
 			}
 		};
-		ParticipantPageDialog dialog = new ParticipantPageDialog(shell, input, participant);
-		dialog.setBlockOnOpen(true);
-		dialog.open();
+		try {
+			ParticipantPageDialog dialog = new ParticipantPageDialog(shell, input, participant);
+			dialog.setBlockOnOpen(true);
+			dialog.open();
+		} finally {
+			input.dispose();
+		}
 	}
 }
