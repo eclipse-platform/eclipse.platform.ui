@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -29,6 +31,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.provider.Diff;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
@@ -145,8 +148,8 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		waitForCollectionToFinish(subscriber);
 		IDiff subscriberDiff =  subscriber.getDiff(resource);
 		IDiff contextDiff = getContextDiff(subscriber, resource);
-		assertDiffsEqual(subscriberDiff, contextDiff);
-		return subscriberDiff;
+		assertDiffsEqual(subscriber, subscriberDiff, contextDiff);
+		return contextDiff;
 	}
 	
 	public void refresh(Subscriber subscriber, IResource[] resources) throws TeamException {
@@ -193,7 +196,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		return waited;
 	}
 
-	private void assertDiffsEqual(IDiff subscriberDiff, IDiff contextDiff) {
+	private void assertDiffsEqual(Subscriber subscriber, IDiff subscriberDiff, IDiff contextDiff) throws CoreException {
 		if (subscriberDiff == null && contextDiff == null)
 			return;
 		if (subscriberDiff == null && contextDiff != null) {
@@ -203,6 +206,11 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 					+ contextDiff.toDiffString());
 		}
 		if (subscriberDiff != null && contextDiff == null) {
+			if (subscriber instanceof CVSCompareSubscriber) {
+				// The compare context filters out nodes whose contents are equal
+				if (localContentsMatchRemote(subscriberDiff))
+					return;
+			}
 			Assert.fail("Subscriber contains change: "
 					+ subscriberDiff.toDiffString()
 					+ " for "
@@ -221,6 +229,49 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		}
 	}
 
+	private boolean localContentsMatchRemote(IDiff subscriberDiff) throws CoreException {
+		IResource resource = ResourceDiffTree.getResourceFor(subscriberDiff);
+		if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			IFileRevision remote = SyncInfoToDiffConverter.getRemote(subscriberDiff);
+			return compareContent(file.getContents(), remote.getStorage(DEFAULT_MONITOR).getContents());
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not the contents
+	 * of the given streams are considered to be equal. Closes both input streams.
+	 */
+	public boolean compareContent(InputStream a, InputStream b) {
+		int c, d;
+		if (a == null && b == null)
+			return true;
+		try {
+			if (a == null || b == null)
+				return false;
+			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
+				//body not needed
+			}
+			return (c == -1 && d == -1);
+		} catch (IOException e) {
+			return false;
+		} finally {
+			try {
+				if (a != null)
+					a.close();
+			} catch (IOException e) {
+				// ignore
+			}
+			try {
+				if (b != null)
+					b.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+	}
+	
 	private IDiff getContextDiff(Subscriber subscriber, IResource resource) {
 		ModelSynchronizeParticipant p = getParticipant(subscriber);
 		return p.getContext().getDiffTree().getDiff(resource);

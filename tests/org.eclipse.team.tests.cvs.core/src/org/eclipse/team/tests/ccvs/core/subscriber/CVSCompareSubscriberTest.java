@@ -141,7 +141,7 @@ public class CVSCompareSubscriberTest extends CVSSyncSubscriberTest {
 	    	// Compare with the tag and merge the changes
 	    	CVSCompareSubscriber subscriber = getSyncInfoSource().createCompareSubscriber(project, v1);
 	    	getSyncInfoSource().refresh(subscriber, project);
-	    	getSyncInfoSource().updateResources(subscriber, new IResource[] { project.getFile("binaryFile") });
+	    	getSyncInfoSource().overrideAndUpdateResources(subscriber, false, new IResource[] { project.getFile("binaryFile") });
 	    	assertContentsEqual(copy.getFile("binaryFile"), project.getFile("binaryFile"));
     	} finally {
     		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
