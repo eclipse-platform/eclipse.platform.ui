@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.properties.tabbed.internal.view;
+package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;

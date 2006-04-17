@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.properties.tabbed.internal.l10n;
+package org.eclipse.ui.internal.views.properties.tabbed.l10n;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 public final class TabbedPropertyMessages
 	extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.views.properties.tabbed.internal.l10n.TabbedPropertyMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages";//$NON-NLS-1$
 
 	/**
 	 * Constructor for TabbedPropertyMessages.

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.properties.tabbed.internal;
+package org.eclipse.ui.internal.views.properties.tabbed;
 
 /**
  * A list of status codes for this plug-in.

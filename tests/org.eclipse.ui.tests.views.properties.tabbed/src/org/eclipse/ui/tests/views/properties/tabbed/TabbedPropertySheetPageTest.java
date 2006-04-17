@@ -21,14 +21,14 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.views.properties.tabbed.view.Tab;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.InformationTwoSection;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.NameSection;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ISection;
-import org.eclipse.ui.views.properties.tabbed.internal.view.Tab;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyComposite;
-import org.eclipse.ui.views.properties.tabbed.internal.view.TabbedPropertyList;
 
 public class TabbedPropertySheetPageTest
     extends TestCase {

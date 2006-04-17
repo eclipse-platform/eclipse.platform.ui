@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.properties.tabbed.internal.view;
+package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
+import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
+import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
-import org.eclipse.ui.views.properties.tabbed.internal.TabbedPropertyViewPlugin;
-import org.eclipse.ui.views.properties.tabbed.internal.TabbedPropertyViewStatusCodes;
-import org.eclipse.ui.views.properties.tabbed.internal.l10n.TabbedPropertyMessages;
 
 /**
  * Provides information about the tabbed property extension points. Each tabbed

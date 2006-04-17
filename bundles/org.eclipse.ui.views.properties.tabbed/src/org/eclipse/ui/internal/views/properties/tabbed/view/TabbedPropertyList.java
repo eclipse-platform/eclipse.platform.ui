@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.properties.tabbed.internal.view;
+package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -44,9 +44,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.views.properties.tabbed.ITabItem;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
-import org.eclipse.ui.views.properties.tabbed.internal.l10n.TabbedPropertyMessages;
 
 
 /**
