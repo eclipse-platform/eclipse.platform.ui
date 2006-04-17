@@ -13,7 +13,6 @@ package org.eclipse.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -53,14 +52,12 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenResourceAction extends WorkspaceAction implements
-		IResourceChangeListener {
+public class OpenResourceAction extends WorkspaceAction implements IResourceChangeListener {
 
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID
-			+ ".OpenResourceAction"; //$NON-NLS-1$
+	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenResourceAction"; //$NON-NLS-1$
 
 	/**
 	 * Creates a new action.
@@ -70,10 +67,23 @@ public class OpenResourceAction extends WorkspaceAction implements
 	 */
 	public OpenResourceAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.OpenResourceAction_text);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
 		setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
 		setId(ID);
+	}
+
+	/**
+	 * Returns the total number of closed projects in the workspace.
+	 */
+	private int countClosedProjects() {
+		int count = 0;
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (!projects[i].isOpen()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	/*
@@ -97,8 +107,25 @@ public class OpenResourceAction extends WorkspaceAction implements
 		return IDEWorkbenchMessages.OpenResourceAction_dialogTitle;
 	}
 
-	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-			throws CoreException {
+	/**
+	 * Returns whether there are closed projects in the workspace that are
+	 * not part of the current selection.
+	 */
+	private boolean hasOtherClosedProjects() {
+		//count the closed projects in the selection
+		int closedInSelection = 0;
+		Iterator resources = getSelectedResources().iterator();
+		while (resources.hasNext()) {
+			IProject project = (IProject) resources.next();
+			if (!project.isOpen())
+				closedInSelection++;
+		}
+		//there are other closed projects if the selection does
+		//not contain all closed projects in the workspace
+		return closedInSelection < countClosedProjects();
+	}
+
+	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
 		((IProject) resource).open(monitor);
 	}
 
@@ -110,8 +137,7 @@ public class OpenResourceAction extends WorkspaceAction implements
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean promptToOpenWithReferences() {
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		String key = IDEInternalPreferences.OPEN_REQUIRED_PROJECTS;
 		String value = store.getString(key);
 		if (MessageDialogWithToggle.ALWAYS.equals(value)) {
@@ -121,9 +147,7 @@ public class OpenResourceAction extends WorkspaceAction implements
 			return false;
 		}
 		String message = IDEWorkbenchMessages.OpenResourceAction_openRequiredProjects;
-		MessageDialogWithToggle dialog = MessageDialogWithToggle
-				.openYesNoCancelQuestion(getShell(), IDEWorkbenchMessages.Question, message, null,
-						false, store, key);
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), IDEWorkbenchMessages.Question, message, null, false, store, key);
 		int result = dialog.getReturnCode();
 		if (result == Window.CANCEL) {
 			throw new OperationCanceledException();
@@ -142,8 +166,7 @@ public class OpenResourceAction extends WorkspaceAction implements
 		if (selectionIsOfType(IResource.PROJECT)) {
 			IResourceDelta delta = event.getDelta();
 			if (delta != null) {
-				IResourceDelta[] projDeltas = delta
-						.getAffectedChildren(IResourceDelta.CHANGED);
+				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
 				for (int i = 0; i < projDeltas.length; ++i) {
 					IResourceDelta projDelta = projDeltas[i];
 					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
@@ -163,14 +186,13 @@ public class OpenResourceAction extends WorkspaceAction implements
 	 */
 	public void run() {
 		try {
-			if (promptToOpenWithReferences()) {
+			if (hasOtherClosedProjects() && promptToOpenWithReferences()) {
 				runOpenWithReferences();
 			}
 			ISchedulingRule rule = null;
 			// be conservative and include all projects in the selection - projects
 			// can change state between now and when the job starts
-			IResourceRuleFactory factory = ResourcesPlugin.getWorkspace()
-					.getRuleFactory();
+			IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
 			Iterator resources = getSelectedResources().iterator();
 			while (resources.hasNext()) {
 				IProject project = (IProject) resources.next();
@@ -188,26 +210,11 @@ public class OpenResourceAction extends WorkspaceAction implements
 	private void runOpenWithReferences() {
 		final List resources = new ArrayList(getActionResources());
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
-			/**
-			 * Returns the total number of closed projects in the workspace.
-			 */
-			private int countClosedProjects() {
-				int count = 0;
-				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
-						.getProjects();
-				for (int i = 0; i < projects.length; i++) {
-					if (!projects[i].isOpen()) {
-						count++;
-					}
-				}
-				return count;
-			}
 
 			/**
 			 * Opens a project along with all projects it references
 			 */
-			private void doOpenWithReferences(IProject project,
-					IProgressMonitor monitor) throws CoreException {
+			private void doOpenWithReferences(IProject project, IProgressMonitor monitor) throws CoreException {
 				if (!project.exists() || project.isOpen()) {
 					return;
 				}
@@ -218,8 +225,7 @@ public class OpenResourceAction extends WorkspaceAction implements
 				}
 			}
 
-			public IStatus runInWorkspace(IProgressMonitor monitor)
-					throws CoreException {
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {
 					// at most we can only open all projects currently closed
 					monitor.beginTask("", countClosedProjects() * 1000); //$NON-NLS-1$
