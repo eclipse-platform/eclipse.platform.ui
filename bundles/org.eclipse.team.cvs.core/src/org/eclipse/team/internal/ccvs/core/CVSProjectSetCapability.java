@@ -159,25 +159,33 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * @param monitor the progress monitor (not <code>null</code>)
 	 */
 	private IProject[] checkout(
-		IProject[] projects,
-		Map infoMap,
+		final IProject[] projects,
+		final Map infoMap,
 		IProgressMonitor monitor)
 		throws TeamException {
-			
-		monitor.beginTask("", 1000 * projects.length); //$NON-NLS-1$
-		List result = new ArrayList();
+		
+		final List result = new ArrayList();
 		try {
-			for (int i = 0; i < projects.length; i++) {
-				if (monitor.isCanceled())
-					break;
-				IProject project = projects[i];
-				LoadInfo info = (LoadInfo) infoMap.get(project);
-				if (info != null && info.checkout(new SubProgressMonitor(monitor, 1000)))
-					result.add(project);
-			}
-		}
-		finally {
-			monitor.done();
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					monitor.beginTask("", 1000 * projects.length); //$NON-NLS-1$
+					try {
+						for (int i = 0; i < projects.length; i++) {
+							if (monitor.isCanceled())
+								break;
+							IProject project = projects[i];
+							LoadInfo info = (LoadInfo) infoMap.get(project);
+							if (info != null && info.checkout(new SubProgressMonitor(monitor, 1000)))
+								result.add(project);
+						}
+					}
+					finally {
+						monitor.done();
+					}
+				}
+			}, getCheckoutRule(projects), IResource.NONE, monitor);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
 		}
 		return (IProject[])result.toArray(new IProject[result.size()]);
 	}
