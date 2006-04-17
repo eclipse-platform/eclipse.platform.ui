@@ -65,21 +65,26 @@ A:hover {
 	text-decoration:underline; 
 }
 
-A.active {
-	background:Highlight;
-	width:100%;
-}
-
 A.nolink {
 	text-decoration:none; 
 }
 
 A.nolink:link, A.nolink:visited {
-	color:black;
+	color:WindowText;
 }
 
 A.nolink:hover {
 	text-decoration:none; 
+}
+
+A.active {
+	background:Highlight;
+	color:HighlightText;
+	width:100%;
+}
+
+A.active:link, A.active:visited {
+	color:HighlightText;
 }
 
 <%if (data.isMozilla()) {%>
