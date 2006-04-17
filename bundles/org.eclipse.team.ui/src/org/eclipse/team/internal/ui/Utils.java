@@ -774,6 +774,9 @@ public class Utils {
 	 * doesn't exceed the given width. This implementation
 	 * replaces characters in the center of the original string with an
 	 * ellipsis ("...").
+	 * @param maxWidth the maximum length for the text
+	 * @param textValue the text to be shortened
+	 * @return the shortened text
 	 */
 	public static String shortenText(int maxWidth, String textValue) {
 		int length = textValue.length();

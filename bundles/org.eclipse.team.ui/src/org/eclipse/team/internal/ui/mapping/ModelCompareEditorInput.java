@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
@@ -193,7 +194,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		} else {
 			fullPath = getName();
 		}
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, participant.getName()), fullPath });
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, participant.getName()), fullPath });
 	}
 	
 	/* (non-Javadoc)

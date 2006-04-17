@@ -92,7 +92,7 @@ public abstract class ForwardingChangesSection extends ChangesSection {
 		composite.setLayoutData(data);
 		
 		if(! isThreeWay()) {
-			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { getConfiguration().getParticipant().getName() }));	 
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) }));	 
 			return composite;
 		}
 		

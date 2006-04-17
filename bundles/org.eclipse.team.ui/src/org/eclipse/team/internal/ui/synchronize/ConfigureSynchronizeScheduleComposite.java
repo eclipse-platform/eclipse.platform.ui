@@ -75,7 +75,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		setLayoutData(new GridData());
 		Composite area = this;
 
-		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { schedule.getParticipant().getName() }), 0, 2); 
+		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, schedule.getParticipant().getName()) }), 0, 2); 
 		{
 			final Label label = new Label(area, SWT.WRAP);
 			final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

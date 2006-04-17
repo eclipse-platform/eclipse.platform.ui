@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.ide.IDE;
@@ -142,7 +143,7 @@ public class MergeAllActionHandler extends MergeActionHandler implements IDiffCh
 	
 	protected String getJobName() {
 		String name = getConfiguration().getParticipant().getName();
-		return NLS.bind(TeamUIMessages.MergeAllActionHandler_0, Utils.shortenText(30, name));
+		return NLS.bind(TeamUIMessages.MergeAllActionHandler_0, Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, name));
 	}
 	
 	protected boolean promptToUpdate() {

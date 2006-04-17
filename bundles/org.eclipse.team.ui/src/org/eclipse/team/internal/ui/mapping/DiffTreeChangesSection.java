@@ -362,7 +362,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);	
 
-		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_3, new String[] { getConfiguration().getParticipant().getName() })); 
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_3, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) })); 
 
 		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_4, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
@@ -393,9 +393,9 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);
 		if (isRefreshRunning()) {
-			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_6, new String[] { getConfiguration().getParticipant().getName() }));
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_6, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) }));
 		} else {
-			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_7, new String[] { getConfiguration().getParticipant().getName() }));
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.DiffTreeChangesSection_7, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) }));
 		}
 		return composite;
 	}
@@ -508,7 +508,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);	
 
-		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { getConfiguration().getParticipant().getName() })); 
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) })); 
 
 		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.ChangesSection_8, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {

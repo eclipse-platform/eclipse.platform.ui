@@ -19,8 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.DialogSynchronizePageSite;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -91,7 +90,7 @@ public final class ParticipantPagePane {
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitle()
 	 */
 	public String getTitle() {
-		return participant.getName();
+		return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, participant.getName());
 	}
 
 	/* (non-Javadoc)

@@ -95,7 +95,7 @@ public class ParticipantPageSaveablePart extends PageSaveablePart implements ICo
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitle()
 	 */
 	public String getTitle() {
-		return participant.getName();
+		return Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, participant.getName());
 	}
 
 	/* (non-Javadoc)

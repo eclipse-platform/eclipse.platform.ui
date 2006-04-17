@@ -82,7 +82,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				if(prompt) {
 					return TeamUIMessages.RefreshSubscriberJob_2a; 
 				} else {
-					return NLS.bind(TeamUIMessages.RefreshSubscriberJob_2b, new String[] { Utils.shortenText(100, participant.getName()) }); 
+					return NLS.bind(TeamUIMessages.RefreshSubscriberJob_2b, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, participant.getName()) }); 
 				}
 			}
 		};

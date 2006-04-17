@@ -26,8 +26,7 @@ import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.MergeAllActionHandler;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
@@ -61,7 +60,7 @@ public class WorkspaceModelParticipant extends
 			configuration.setProperty(MERGE_ALL_ACTION_ID, new MergeAllActionHandler(configuration) {
 				protected String getJobName() {
 					String name = getConfiguration().getParticipant().getName();
-					return NLS.bind(CVSUIMessages.WorkspaceModelParticipant_0, Utils.shortenText(30, name));
+					return NLS.bind(CVSUIMessages.WorkspaceModelParticipant_0, Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, name));
 				}
 				
 				protected boolean promptToUpdate() {

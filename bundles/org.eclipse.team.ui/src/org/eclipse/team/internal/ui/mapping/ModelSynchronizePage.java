@@ -117,13 +117,13 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 					input = provider;
 					configuration.setProperty(
 							ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
-							NLS.bind(TeamUIMessages.ShowModelProviderAction_0, new String[] {Utils.getLabel(provider), configuration.getParticipant().getName()}));
+							NLS.bind(TeamUIMessages.ShowModelProviderAction_0, new String[] {Utils.getLabel(provider), Utils.shortenText(30, configuration.getParticipant().getName()) }));
 				}	
 			} else {
 				input = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 				configuration.setProperty(
 						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
-						configuration.getParticipant().getName());
+						Utils.shortenText(30, configuration.getParticipant().getName()));
 				IDialogSettings pageSettings = configuration.getSite().getPageSettings();
 				if(pageSettings != null) {
 					pageSettings.put(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, (String)newValue);

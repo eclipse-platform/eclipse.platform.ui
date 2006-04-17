@@ -20,8 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -208,7 +207,7 @@ public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
-		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { getConfiguration().getParticipant().getName() })); 
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) })); 
 
 		return composite;
 	}
