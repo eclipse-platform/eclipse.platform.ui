@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Igor Fedorenko <igorfie@yahoo.com> - 
+ *     		Fix for Bug 136921 [IDE] New File dialog locks for 20 seconds
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
