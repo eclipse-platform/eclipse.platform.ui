@@ -12,14 +12,16 @@
 package org.eclipse.update.core.model;
 
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Feature model object.

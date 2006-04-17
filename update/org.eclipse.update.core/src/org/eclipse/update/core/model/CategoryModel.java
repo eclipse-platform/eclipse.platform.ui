@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Comparator;
 
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.Site;
 
 /**
  * Feature category definition model object.

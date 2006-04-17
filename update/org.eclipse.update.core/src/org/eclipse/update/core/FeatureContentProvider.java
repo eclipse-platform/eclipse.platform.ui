@@ -10,13 +10,37 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.model.ContentEntryModel;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.internal.core.FeatureDownloadException;
+import org.eclipse.update.internal.core.FileFragment;
+import org.eclipse.update.internal.core.InternalSiteManager;
+import org.eclipse.update.internal.core.LockManager;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Base implementation of a feature content provider. This class provides a set

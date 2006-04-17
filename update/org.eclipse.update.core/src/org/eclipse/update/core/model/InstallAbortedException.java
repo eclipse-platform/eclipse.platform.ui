@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Exception thrown when the user cancelled an installation.

@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.*;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.internal.core.SiteURLFactory;
+import org.eclipse.update.internal.model.ConfiguredSiteModel;
 
 /**
  * Site model object.

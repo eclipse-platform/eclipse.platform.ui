@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Install handler entry.

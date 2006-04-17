@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
  
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.Volume;
  
 /**
  * Utility class providing local file system information.

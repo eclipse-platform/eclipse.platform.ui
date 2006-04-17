@@ -12,7 +12,7 @@ package org.eclipse.update.internal.verifier;
 
 import java.security.*;
 import java.security.cert.*;
-import com.ibm.icu.text.DateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.osgi.internal.provisional.verifier.CertificateChain;

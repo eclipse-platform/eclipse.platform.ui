@@ -10,10 +10,18 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.FeatureModelFactory;
+import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
+import org.eclipse.update.core.model.InstallHandlerEntryModel;
+import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.core.model.URLEntryModel;
 
 /**
  * Base implementation of a feature factory.

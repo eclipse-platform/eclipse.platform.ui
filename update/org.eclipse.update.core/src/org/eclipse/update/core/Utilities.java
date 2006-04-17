@@ -11,7 +11,7 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import com.ibm.icu.text.DateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;

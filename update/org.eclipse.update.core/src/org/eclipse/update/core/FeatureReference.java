@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.internal.core.FeatureTypeFactory;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Convenience implementation of a feature reference.

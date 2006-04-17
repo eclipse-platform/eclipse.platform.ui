@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.update.core.IFeature;
 
 /**
  * Local Site.

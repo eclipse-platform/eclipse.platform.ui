@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.FeatureReference;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IUpdateConstants;
+import org.eclipse.update.core.Import;
 
 
 /**

@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.xml.sax.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.core.Messages;
+import org.xml.sax.SAXException;
 
 /**
  * Default site model factory.

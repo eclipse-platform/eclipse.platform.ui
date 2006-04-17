@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.model.CategoryModel;
 
 /**
  * Convenience implementation of feature category definition.

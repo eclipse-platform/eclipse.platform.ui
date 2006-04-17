@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.model.InstallHandlerEntryModel;
 
 /**
  * Convenience implementation of an install handler entry.

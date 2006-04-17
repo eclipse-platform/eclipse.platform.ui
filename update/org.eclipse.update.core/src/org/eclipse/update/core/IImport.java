@@ -11,7 +11,7 @@
 package org.eclipse.update.core;
 
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Plug-in dependency entry.

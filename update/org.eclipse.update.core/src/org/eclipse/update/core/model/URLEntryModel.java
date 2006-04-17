@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Annotated URL model object.

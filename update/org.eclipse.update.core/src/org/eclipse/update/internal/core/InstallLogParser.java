@@ -14,7 +14,7 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.*;
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;

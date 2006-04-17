@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Site archive model object.
