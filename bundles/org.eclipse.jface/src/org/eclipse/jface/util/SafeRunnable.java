@@ -58,7 +58,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 				message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 			}
             MessageDialog.openError(null,
-                    JFaceResources.getString("Error"), message); //$NON-NLS-1$
+                    JFaceResources.getString("error"), message); //$NON-NLS-1$
         }
     }
 
