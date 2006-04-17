@@ -285,14 +285,16 @@ public class ConsoleManager implements IConsoleManager {
                     synchronized (fConsoleViews) {
                         for (Iterator iter = fConsoleViews.iterator(); iter.hasNext();) {
                             ConsoleView consoleView = (ConsoleView) iter.next();
-                            boolean consoleVisible = page.isPartVisible(consoleView);
-                            if (consoleVisible) {
-                                consoleFound = true;
-                                boolean bringToTop = shouldBringToTop(console, consoleView);
-                                if (bringToTop) {
-                                    page.bringToTop(consoleView);
-                                }
-                                consoleView.display(console);
+                            if (consoleView.getSite().getPage().equals(page)) {
+	                            boolean consoleVisible = page.isPartVisible(consoleView);
+	                            if (consoleVisible) {
+	                                consoleFound = true;
+	                                boolean bringToTop = shouldBringToTop(console, consoleView);
+	                                if (bringToTop) {
+	                                    page.bringToTop(consoleView);
+	                                }
+	                                consoleView.display(console);
+	                            }
                             }
                         }
                     }
