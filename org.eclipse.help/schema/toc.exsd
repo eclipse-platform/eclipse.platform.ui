@@ -196,9 +196,6 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
                <documentation>
                   a plug-in-relative path of the prebuilt search index. The index referenced by the path must exist. Missing index will be flagged in the log file. Note that each locale must have a different index. If a plug-in contributes index directories for multiple locales, it should append the locale using standard Eclipse NLS lookup. (e.g. &lt;code&gt;index/&lt;/code&gt;, &lt;code&gt;nl/ja/JP/index/&lt;/code&gt;, &lt;code&gt;nl/en/US/index/&lt;/code&gt; etc.).
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
