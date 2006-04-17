@@ -161,14 +161,14 @@ public class EclipseConnector {
 					null, -1, url.substring("help:".length()), //$NON-NLS-1$
 					HelpURLStreamHandler.getDefault());
 		} else {
-			if (url.startsWith("jar:")) {
+			if (url.startsWith("jar:")) { //$NON-NLS-1$
 				// fix for bug 83929
-				int excl = url.indexOf("!/");
+				int excl = url.indexOf("!/"); //$NON-NLS-1$
 				String jar = url.substring(0, excl);
 				String path = url.length() > excl + 2 ? url.substring(excl + 2)
-						: "";
-				url = jar.replaceAll("!", "%21") + "!/"
-						+ path.replaceAll("!", "%21");
+						: ""; //$NON-NLS-1$
+				url = jar.replaceAll("!", "%21") + "!/" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ path.replaceAll("!", "%21"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			helpURL = new URL(url);
 		}

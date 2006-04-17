@@ -34,8 +34,8 @@ public class FramesetFilter implements IFilter {
 			return out;
 		}
 
-		if ("/nftopic".equals(req.getServletPath()) || 
-			"/ntopic".equals(req.getServletPath()) || 
+		if ("/nftopic".equals(req.getServletPath()) ||  //$NON-NLS-1$
+			"/ntopic".equals(req.getServletPath()) ||  //$NON-NLS-1$
 			UrlUtil.isBot(req)) { 
 			return out;
 		}
@@ -58,7 +58,7 @@ public class FramesetFilter implements IFilter {
 		script.append(scriptPart3);
 		try {
 			return new FilterHTMLHeadOutputStream(out, script.toString()
-					.getBytes("ASCII"));
+					.getBytes("ASCII")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return out;
 		}

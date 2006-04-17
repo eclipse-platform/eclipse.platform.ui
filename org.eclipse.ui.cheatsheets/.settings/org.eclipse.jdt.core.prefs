@@ -1,4 +1,4 @@
-#Mon Apr 17 10:36:41 EDT 2006
+#Mon Apr 17 10:37:11 EDT 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
 org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
@@ -7,6 +7,7 @@ org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
 org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
 org.eclipse.jdt.core.compiler.problem.discouragedReference=warning
 org.eclipse.jdt.core.compiler.problem.emptyStatement=ignore
+org.eclipse.jdt.core.compiler.problem.fallthroughCase=ignore
 org.eclipse.jdt.core.compiler.problem.fieldHiding=ignore
 org.eclipse.jdt.core.compiler.problem.finalParameterBound=warning
 org.eclipse.jdt.core.compiler.problem.finallyBlockNotCompletingNormally=warning
@@ -23,7 +24,9 @@ org.eclipse.jdt.core.compiler.problem.missingSerialVersion=warning
 org.eclipse.jdt.core.compiler.problem.noEffectAssignment=warning
 org.eclipse.jdt.core.compiler.problem.noImplicitStringConversion=warning
 org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=error
+org.eclipse.jdt.core.compiler.problem.nullReference=ignore
 org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=warning
+org.eclipse.jdt.core.compiler.problem.parameterAssignment=ignore
 org.eclipse.jdt.core.compiler.problem.possibleAccidentalBooleanAssignment=ignore
 org.eclipse.jdt.core.compiler.problem.rawTypeReference=ignore
 org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled

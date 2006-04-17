@@ -80,7 +80,7 @@ public class HighlightFilter implements IFilter {
 		//
 		buf.append(scriptPart5);
 		try {
-			return buf.toString().getBytes("ASCII");
+			return buf.toString().getBytes("ASCII"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return new byte[0];
 		}

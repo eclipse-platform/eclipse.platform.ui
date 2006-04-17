@@ -191,7 +191,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 				buffer.reset();
 				if (bodyContent != null) {
 					out.write('\n');
-					byte [] bytes = bodyContent.getBytes(charset!=null?charset:"UTF-8");
+					byte [] bytes = bodyContent.getBytes(charset!=null?charset:"UTF-8"); //$NON-NLS-1$
 					out.write(bytes);
 					out.write('\n');
 				}

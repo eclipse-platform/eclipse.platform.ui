@@ -192,18 +192,18 @@ public class ControlServlet extends HttpServlet {
 		try {
 			String className = getStandaloneClassName(command);
 			if (className == null) {
-				System.out.println("No class name for command " + command);
+				System.out.println("No class name for command " + command); //$NON-NLS-1$
 				return;
 			}
 			Class c = bundle.loadClass(className);
 			if (c == null) {
-				System.out.println("No class for command " + command);
+				System.out.println("No class for command " + command); //$NON-NLS-1$
 				return;
 			}
 			Class[] parameterTypes = getParameterTypes(className);
 			Constructor constr = c.getConstructor(parameterTypes);
 			if (constr == null) {
-				System.out.println("No expected constructor for command "
+				System.out.println("No expected constructor for command " //$NON-NLS-1$
 						+ command);
 				return;
 			}
@@ -217,9 +217,9 @@ public class ControlServlet extends HttpServlet {
 			Object o = constr.newInstance(initargs);
 			Object ret = m.invoke(o, new Object[]{});
 			if (!CMD_APPLY.equalsIgnoreCase(command) &&((Boolean)ret).equals(Boolean.FALSE)){
-				System.out.println("Command not executed.");
+				System.out.println("Command not executed."); //$NON-NLS-1$
 			} else {
-				System.out.println("Command executed.");
+				System.out.println("Command executed."); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
 			Throwable t = e;
