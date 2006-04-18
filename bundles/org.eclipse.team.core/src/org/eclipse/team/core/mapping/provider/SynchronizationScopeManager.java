@@ -141,7 +141,20 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 		ResourceMapping[] mappings = scope.getInputMappings();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			projects.addAll(Arrays.asList(mapping.getProjects()));
+			Object modelObject = mapping.getModelObject();
+			if (modelObject instanceof IResource) {
+				IResource resource = (IResource) modelObject;
+				if (resource.getType() == IResource.ROOT)
+					// If the workspace root is one of the inputs, 
+					// then use the workspace root as the rule
+					return ResourcesPlugin.getWorkspace().getRoot();
+				projects.add(resource.getProject());
+			} else {
+				// If one of the inputs is not a resource, then use the 
+				// root as the rule since we don't know whether projects
+				// can be added or removed
+				return ResourcesPlugin.getWorkspace().getRoot();
+			}
 		}
 		return MultiRule.combine((IProject[]) projects.toArray(new IProject[projects.size()]));
 	}
