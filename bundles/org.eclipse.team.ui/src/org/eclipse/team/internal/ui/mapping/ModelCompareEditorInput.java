@@ -147,11 +147,6 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * @see org.eclipse.compare.CompareEditorInput#getTitleImage()
 	 */
 	public Image getTitleImage() {
-		if (input != null) {
-			Image image = input.getImage();
-			if (image != null)
-				return image;
-		} 
 		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
 		Image image = reg.get(ITeamUIImages.IMG_SYNC_VIEW);
 		if (image == null) {
@@ -174,11 +169,6 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		if (input != null) {
-			Image image = input.getImage();
-			if (image != null)
-				return ImageDescriptor.createFromImage(image);
-		} 
 		return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW);
 	}
 	
