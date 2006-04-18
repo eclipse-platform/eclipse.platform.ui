@@ -138,6 +138,8 @@ public class ModelSelectionDropDownAction extends Action implements ISynchroniza
 	
 	private ModelProvider getNextProvider() {
 		ModelProvider[] providers = getSynchronizationContext().getScope().getModelProviders();
+		if (providers.length == 0) 
+			return null;
 		providers = ModelOperation.sortByExtension(providers);
 		String id = getActiveProviderId();
 		int index = 0;
@@ -157,6 +159,7 @@ public class ModelSelectionDropDownAction extends Action implements ISynchroniza
 
 	public void update() {
 		ModelProvider next = getNextProvider();
+		if (next == null) return;
 		String text = NLS.bind(TeamUIMessages.ModelSelectionDropDownAction_1, next.getDescriptor().getLabel()); 
 		setToolTipText(text);
 		setText(text);
@@ -183,6 +186,7 @@ public class ModelSelectionDropDownAction extends Action implements ISynchroniza
 	 */
 	public void run() {
 		ModelProvider next = getNextProvider();
+		if (next == null) return;
 		Action action = new ShowModelProviderAction(configuration, next);
 		action.run();
 	}
