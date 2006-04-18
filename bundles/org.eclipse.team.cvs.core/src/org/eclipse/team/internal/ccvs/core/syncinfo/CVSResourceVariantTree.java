@@ -223,10 +223,11 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			cvsFolder.setFolderSyncInfo(newInfo);
 		}
         if (remote == null && !isManaged(local)) {
-            // Do not record the lack of existance of a remote for unmanaged local files
+            // Do not record the lack of existence of a remote for unmanaged local files
             // Instead, just flush the remote bytes if there are any
+        	boolean changed = getByteStore().getBytes(local) != null;
             flushVariants(local, IResource.DEPTH_ZERO);
-            return false;
+            return changed;
         } else {
     		boolean changed = super.setVariant(local, remote);
     		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
