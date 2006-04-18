@@ -30,7 +30,16 @@ public class AllTests extends TestCase {
 			fail("Unable to create warm up test");
 		}
 
-		suite.addTest(new PerformanceSessionTestSuite(RuntimeTestsPlugin.PI_RUNTIME_TESTS, 5, StartupTest.class));
+		// For this test to take advantage of the new runtime processing, we set "-eclipse.activateRuntimePlugins=false"
+		try {
+			PerformanceSessionTestSuite headlessSuite = new PerformanceSessionTestSuite(RuntimeTestsPlugin.PI_RUNTIME_TESTS, 5, StartupTest.class);
+			Setup headlessSetup = headlessSuite.getSetup();
+			headlessSetup.setSystemProperty("eclipse.activateRuntimePlugins", "false");
+			suite.addTest(headlessSuite);
+		} catch (SetupException e) {
+			fail("Unable to setup headless startup performance test");
+		}
+		
 		suite.addTest(new UIPerformanceSessionTestSuite(RuntimeTestsPlugin.PI_RUNTIME_TESTS, 5, UIStartupTest.class));
 		suite.addTest(BenchPath.suite());
 		suite.addTest(ContentTypePerformanceTest.suite());

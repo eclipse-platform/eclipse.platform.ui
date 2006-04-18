@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.preferences.PreferenceForwarder;
+import org.eclipse.core.internal.preferences.legacy.PreferenceForwarder;
 import org.eclipse.core.runtime.Preferences;
 
 /**

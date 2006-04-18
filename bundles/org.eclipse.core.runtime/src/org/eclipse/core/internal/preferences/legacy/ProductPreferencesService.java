@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.preferences;
+package org.eclipse.core.internal.preferences.legacy;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;

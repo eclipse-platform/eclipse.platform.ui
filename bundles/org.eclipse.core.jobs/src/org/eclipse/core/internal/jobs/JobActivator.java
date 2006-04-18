@@ -20,6 +20,12 @@ import org.osgi.framework.*;
 public class JobActivator implements BundleActivator {
 
 	/**
+	 * Eclipse property. Set to <code>false</code> to avoid registering JobManager
+	 * as an OSGi service.
+	 */
+	private static final String PROP_REGISTER_JOB_SERVICE = "eclipse.service.jobs"; //$NON-NLS-1$
+
+	/**
 	 * The bundle associated this plug-in
 	 */
 	private static BundleContext bundleContext;
@@ -35,7 +41,10 @@ public class JobActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		JobOSGiUtils.getDefault().openServices();
-		registerServices();
+
+		boolean shouldRegister = !"false".equalsIgnoreCase(context.getProperty(PROP_REGISTER_JOB_SERVICE)); //$NON-NLS-1$
+		if (shouldRegister)
+			registerServices();
 	}
 
 	/**

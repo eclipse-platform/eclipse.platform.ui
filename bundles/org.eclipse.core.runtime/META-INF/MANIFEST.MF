@@ -6,14 +6,14 @@ Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.internal.preferences;x-internal:=true,
+Export-Package: org.eclipse.core.internal.preferences.legacy;x-internal:=true,
  org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
  org.eclipse.core.runtime
-Require-Bundle: org.eclipse.equinox.registry;visibility:=reexport,
+Require-Bundle: org.eclipse.osgi;visibility:=reexport,
+ org.eclipse.equinox.common;visibility:=reexport,
  org.eclipse.core.jobs;visibility:=reexport,
+ org.eclipse.equinox.registry;visibility:=reexport,
  org.eclipse.equinox.preferences;visibility:=reexport,
  org.eclipse.core.contenttype;visibility:=reexport,
- org.eclipse.equinox.common;visibility:=reexport,
- org.eclipse.osgi;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.runtime.compatibility.auth;resolution:=optional
 Eclipse-LazyStart: true

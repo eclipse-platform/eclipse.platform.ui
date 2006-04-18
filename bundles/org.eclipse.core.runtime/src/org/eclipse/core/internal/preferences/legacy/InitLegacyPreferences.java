@@ -8,8 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.preferences;
+package org.eclipse.core.internal.preferences.legacy;
 
+import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;

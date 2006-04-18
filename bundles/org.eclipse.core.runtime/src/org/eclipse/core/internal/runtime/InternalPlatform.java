@@ -15,7 +15,10 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.preferences.*;
+import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
+import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
+import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
+import org.eclipse.core.internal.preferences.legacy.ProductPreferencesService;
 import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -110,6 +113,8 @@ public final class InternalPlatform {
 	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
 	public static final String PROP_USER_AREA = "osgi.user.area"; //$NON-NLS-1$
 	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
+	public static final String PROP_ACTIVATE_PLUGINS = "eclipse.activateRuntimePlugins"; //$NON-NLS-1$
+
 	private static final InternalPlatform singleton = new InternalPlatform();
 
 	private static final String UPDATE = "-update"; //$NON-NLS-1$
@@ -341,6 +346,16 @@ public final class InternalPlatform {
 
 	public Location getConfigurationLocation() {
 		assertInitialized();
+		if (configurationLocation == null) {
+			Filter filter = null;
+			try {
+				filter = context.createFilter(Location.CONFIGURATION_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this.  It should never happen as we have tested the above format.
+			}
+			configurationLocation = new ServiceTracker(context, filter, null);
+			configurationLocation.open();
+		}
 		return (Location) configurationLocation.getService();
 	}
 
@@ -360,7 +375,7 @@ public final class InternalPlatform {
 	public EnvironmentInfo getEnvironmentInfoService() {
 		if (environmentTracker == null) {
 			if (context == null)
-				 return null;
+				return null;
 			environmentTracker = new ServiceTracker(context, EnvironmentInfo.class.getName(), null);
 			environmentTracker.open();
 		}
@@ -393,6 +408,16 @@ public final class InternalPlatform {
 
 	public Location getInstallLocation() {
 		assertInitialized();
+		Filter filter = null;
+		if (installLocation == null) {
+			try {
+				filter = context.createFilter(Location.INSTALL_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this.  It should never happen as we have tested the above format.
+			}
+			installLocation = new ServiceTracker(context, filter, null);
+			installLocation.open();
+		}
 		return (Location) installLocation.getService();
 	}
 
@@ -407,6 +432,16 @@ public final class InternalPlatform {
 
 	public Location getInstanceLocation() {
 		assertInitialized();
+		if (instanceLocation == null) {
+			Filter filter = null;
+			try {
+				filter = context.createFilter(Location.INSTANCE_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this.  It should never happen as we have tested the above format.
+			}
+			instanceLocation = new ServiceTracker(context, filter, null);
+			instanceLocation.open();
+		}
 		return (Location) instanceLocation.getService();
 	}
 
@@ -633,7 +668,7 @@ public final class InternalPlatform {
 	}
 
 	public IExtensionRegistry getRegistry() {
-		return RegistryFactory.getRegistry(); 
+		return RegistryFactory.getRegistry();
 	}
 
 	public ResourceBundle getResourceBundle(Bundle bundle) {
@@ -693,6 +728,16 @@ public final class InternalPlatform {
 
 	public Location getUserLocation() {
 		assertInitialized();
+		if (userLocation == null) {
+			Filter filter = null;
+			try {
+				filter = context.createFilter(Location.USER_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this.  It should never happen as we have tested the above format.
+			}
+			userLocation = new ServiceTracker(context, filter, null);
+			userLocation.open();
+		}
 		return (Location) userLocation.getService();
 	}
 
@@ -726,41 +771,6 @@ public final class InternalPlatform {
 		if (DEBUG) {
 			DEBUG_PLUGIN_PREFERENCES = getBooleanOption(Platform.PI_RUNTIME + "/preferences/plugin", false); //$NON-NLS-1$
 		}
-	}
-
-	private void initializeLocationTrackers() {
-		Filter filter = null;
-		try {
-			filter = context.createFilter(Location.CONFIGURATION_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		configurationLocation = new ServiceTracker(context, filter, null);
-		configurationLocation.open();
-
-		try {
-			filter = context.createFilter(Location.USER_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		userLocation = new ServiceTracker(context, filter, null);
-		userLocation.open();
-
-		try {
-			filter = context.createFilter(Location.INSTANCE_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		instanceLocation = new ServiceTracker(context, filter, null);
-		instanceLocation.open();
-
-		try {
-			filter = context.createFilter(Location.INSTALL_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
-		}
-		installLocation = new ServiceTracker(context, filter, null);
-		installLocation.open();
 	}
 
 	public boolean isFragment(Bundle bundle) {
@@ -967,7 +977,6 @@ public final class InternalPlatform {
 	 */
 	public void start(BundleContext runtimeContext) {
 		this.context = runtimeContext;
-		initializeLocationTrackers();
 		splashHandler = getSplashHandler();
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
 		initializeDebugFlags();
@@ -978,6 +987,16 @@ public final class InternalPlatform {
 		addLogListener(platformLog);
 		adapterManagerListener = new AdapterManagerListener(); // after extension registry
 		startServices();
+
+		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching 
+		// a class from the corresponding plugin(s). 
+		boolean shouldActivate = !"false".equalsIgnoreCase(context.getProperty(PROP_ACTIVATE_PLUGINS)); //$NON-NLS-1$
+		if (shouldActivate) {
+			// activate Preferences plugin by creating a class from it:
+			new org.eclipse.core.runtime.preferences.DefaultScope();
+			// activate Jobs plugin by creating a class from it:
+			org.eclipse.core.runtime.jobs.Job.getJobManager();
+		}
 	}
 
 	/**
@@ -1021,8 +1040,14 @@ public final class InternalPlatform {
 	}
 
 	private void startServices() {
+		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
+		// so we don't want to enforce it here. 
 		customPreferencesService = getBundleContext().registerService(IProductPreferencesService.class.getName(), new ProductPreferencesService(), new Hashtable());
-		legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
+
+		// Only register this interface if compatibility is installed - the check for a bundle presence
+		// is a quick test that doesn't consume much.
+		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
+			legacyPreferencesService = getBundleContext().registerService(ILegacyPreferences.class.getName(), new InitLegacyPreferences(), new Hashtable());
 	}
 
 	private void stopServices() {

@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.preferences;
+package org.eclipse.core.internal.preferences.legacy;
 
 import java.io.*;
 import java.util.Iterator;
 import java.util.Properties;
+import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.DefaultScope;

@@ -15,12 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
-import org.eclipse.core.internal.preferences.PreferenceForwarder;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The abstract superclass of all plug-in runtime class
@@ -107,11 +104,14 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * String constant used for the default scope name for legacy 
-	 * Eclipse plug-in preferences. 
+	 * Eclipse plug-in preferences. The value of <code>PLUGIN_PREFERENCE_SCOPE</code> should
+	 * match the InstanceScope's variable SCOPE from org.eclipse.core.runtime.preferences.
+	 * The value is copied in this file to prevent unnecessary activation of
+	 * the Preferences plugin on startup.
 	 * 
 	 * @since 3.0
 	 */
-	public static final String PLUGIN_PREFERENCE_SCOPE = InstanceScope.SCOPE;
+	public static final String PLUGIN_PREFERENCE_SCOPE = "instance"; //$NON-NLS-1$
 
 	/**
 	 * The bundle associated this plug-in
@@ -158,7 +158,7 @@ public abstract class Plugin implements BundleActivator {
 	 * 
 	 * @since 2.0
 	 */
-	private PreferenceForwarder preferences = null;
+	private Preferences preferences = null;
 
 	/**
 	 * Creates a new plug-in runtime object.  This method is called by the platform
@@ -338,7 +338,19 @@ public abstract class Plugin implements BundleActivator {
 
 		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
 			InternalPlatform.message("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
-		preferences = new PreferenceForwarder(this, bundle.getSymbolicName());
+
+		// Performance: isolate PreferenceForwarder into an inner class so that it mere presence
+		// won't force the PreferenceForwarder class to be loaded (which triggers Preferences plugin
+		// activation).
+		final Bundle bundleCopy = bundle;
+		final Preferences[] preferencesCopy = new Preferences[1];
+		Runnable innerCall = new Runnable() {
+			public void run() {
+				preferencesCopy[0] = new org.eclipse.core.internal.preferences.legacy.PreferenceForwarder(this, bundleCopy.getSymbolicName());
+			}
+		};
+		innerCall.run();
+		preferences = preferencesCopy[0];
 		return preferences;
 	}
 
@@ -359,12 +371,22 @@ public abstract class Plugin implements BundleActivator {
 		// need to save them because someone else might have
 		// made changes via the OSGi APIs.
 		getPluginPreferences();
-		try {
-			preferences.flush();
-		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_saveProblems, e);
-			InternalPlatform.getDefault().log(status);
-		}
+
+		// Performance: isolate PreferenceForwarder and BackingStoreException into 
+		// an inner class to avoid class loading (and then activation of the Preferences plugin)
+		// as the Plugin class is loaded.
+		final Preferences preferencesCopy = preferences;
+		Runnable innerCall = new Runnable() {
+			public void run() {
+				try {
+					((org.eclipse.core.internal.preferences.legacy.PreferenceForwarder) preferencesCopy).flush();
+				} catch (org.osgi.service.prefs.BackingStoreException e) {
+					IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.preferences_saveProblems, e);
+					InternalPlatform.getDefault().log(status);
+				}
+			}
+		};
+		innerCall.run();
 	}
 
 	/**

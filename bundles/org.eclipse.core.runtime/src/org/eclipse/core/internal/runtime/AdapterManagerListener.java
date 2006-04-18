@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
  * 
  * @since org.eclipse.core.runtime 3.2
  */
-public final class AdapterManagerListener implements IRegistryChangeListener {
+public final class AdapterManagerListener implements IRegistryChangeListener, IAdapterManagerProvider {
 	public static final String ADAPTER_POINT_ID = "org.eclipse.core.runtime.adapters"; //$NON-NLS-1$
 
 	private AdapterManager theAdapterManager;
@@ -29,8 +29,7 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 	 */
 	public AdapterManagerListener() {
 		theAdapterManager = AdapterManager.getDefault();
-		registerFactoryProxies();
-		RegistryFactory.getRegistry().addRegistryChangeListener(this);
+		theAdapterManager.registerLazyFactoryProvider(this);
 	}
 
 	/**
@@ -38,13 +37,25 @@ public final class AdapterManagerListener implements IRegistryChangeListener {
 	 * the plug-in registry.  Note that the actual factory implementations
 	 * are loaded lazily as they are needed.
 	 */
-	private void registerFactoryProxies() {
+	public boolean addFactories(AdapterManager adapterManager) {
 		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ADAPTER_POINT_ID);
 		if (point == null)
-			return;
+			return false;
+
+		boolean factoriesAdded = false;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++)
-			registerExtension(extensions[i]);
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+			for (int j = 0; j < elements.length; j++) {
+				AdapterFactoryProxy proxy = AdapterFactoryProxy.createProxy(elements[j]);
+				if (proxy != null) {
+					adapterManager.registerFactory(proxy, proxy.getAdaptableType());
+					factoriesAdded = true;
+				}
+			}
+		}
+		RegistryFactory.getRegistry().addRegistryChangeListener(this);
+		return factoriesAdded;
 	}
 
 	private void registerExtension(IExtension extension) {
