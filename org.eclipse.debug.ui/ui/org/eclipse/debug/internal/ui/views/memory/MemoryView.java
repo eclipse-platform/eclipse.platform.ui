@@ -12,9 +12,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -23,9 +21,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IMemoryBlockListener;
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
@@ -103,12 +98,10 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	private MemoryViewSynchronizationService fSyncService;
 	
-	private boolean fPinMBDisplay = true;	// pin memory block display, on by default
+	private boolean fPinMBDisplay = false;	// pin memory block display, on by default
 	private static int fViewCnt = 0;
 
 	private IContextActivation fContext;
-	
-	private Set fRegisteredMemoryBlocks = new HashSet();
 	
 	private AbstractHandler fAddHandler;
 	private AbstractHandler fToggleMonitorsHandler;
@@ -118,18 +111,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private int fViewOrientation = HORIZONTAL_VIEW_ORIENTATION;
 	
 	private String fActivePaneId;
-	
-	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener() {
-
-		public void memoryBlocksAdded(IMemoryBlock[] memory) {
-			// do nothing
-		}
-
-		public void memoryBlocksRemoved(IMemoryBlock[] memory) {
-			// clean up registered memory blocks
-			unRegisterMemoryBlocks(memory);
-		}};
-
 		
 	class MemoryViewSelectionProvider implements ISelectionProvider, ISelectionChangedListener
 	{
@@ -356,7 +337,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
-		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fMemoryBlockListener);
 		
 		// restore view pane after finishing creating all the view panes
 		restoreView();
@@ -533,7 +513,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	
 	public void dispose() {
 	    getSite().getPage().removePartListener(fPartListener);
-	    DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
 	    
 		Enumeration enumeration = fViewPanes.elements();
 		while (enumeration.hasMoreElements())
@@ -553,8 +532,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			MemoryViewIdRegistry.deregisterView(secondaryId);
 		
 		fSyncService.shutdown();
-		
-		fRegisteredMemoryBlocks.clear();
 		
 		if (fAddHandler != null)
 			fAddHandler.dispose();
@@ -821,23 +798,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			return VIEW_PANE_ORIENTATION_PREF + "." + viewId; //$NON-NLS-1$
 
 		return VIEW_PANE_ORIENTATION_PREF;
-	}
-	
-	public void registerMemoryBlocks(IMemoryBlock[] memoryBlocks)
-	{
-		for (int i=0; i<memoryBlocks.length; i++)
-			fRegisteredMemoryBlocks.add(memoryBlocks[i]);
-	}
-	
-	public void unRegisterMemoryBlocks(IMemoryBlock[] memoryBlocks)
-	{
-		for (int i=0; i<memoryBlocks.length; i++)
-			fRegisteredMemoryBlocks.remove(memoryBlocks[i]);
-	}
-	
-	public boolean isMemoryBlockRegistered(IMemoryBlock memoryBlock)
-	{
-		return fRegisteredMemoryBlocks.contains(memoryBlock);
 	}
 	
 	private void createOrientationActions()

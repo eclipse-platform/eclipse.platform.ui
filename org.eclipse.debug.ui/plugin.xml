@@ -754,7 +754,7 @@
                icon="$nl$/icons/full/elcl16/pin.gif"
                id="org.eclipse.debug.ui.PinMemoryBlockAction"
                label="%PinMemoryBlockAction.label"
-               state="true"
+               state="false"
                style="toggle"
                toolbarPath="additions"
                tooltip="%PinMemoryBlockAction.label"/>

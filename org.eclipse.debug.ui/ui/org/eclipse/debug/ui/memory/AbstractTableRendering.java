@@ -1065,7 +1065,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		fTableCursor.setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
 		fTableCursor.setVisible(true);
-		fTableCursor.setFocus();
 		
 		fCursorKeyAdapter = new KeyAdapter() {
 			public void keyPressed(KeyEvent e)

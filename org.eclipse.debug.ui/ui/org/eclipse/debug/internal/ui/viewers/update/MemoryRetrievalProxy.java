@@ -17,18 +17,14 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
-import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 
 public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryBlockListener {
 	private IMemoryBlockRetrieval fRetrieval;
@@ -52,10 +48,8 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 			{
 				if (retrieval == fRetrieval)
 				{
-					if (toSelect(memory[i]))
-						delta.addNode(memory[i], IModelDelta.ADDED | IModelDelta.SELECT);
-					else
-						delta.addNode(memory[i], IModelDelta.ADDED);
+					// select and take view's pinning state into account
+					delta.addNode(memory[i], IModelDelta.ADDED | IModelDelta.SELECT);
 				}
 			}
 		}
@@ -144,30 +138,4 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		}
 		return false;
 	}
-	
-	private boolean toSelect(IMemoryBlock memoryBlock)
-	{
-		// if it's the first memory block, always select
-		IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
-		if (memoryBlocks.length == 1)
-			return true;
-		
-		if (getPresentationContext() instanceof MemoryViewPresentationContext)
-		{
-			// if registered, meaning the memory block is added from this view, select
-			MemoryViewPresentationContext context = (MemoryViewPresentationContext)getPresentationContext();
-			IMemoryRenderingSite site = context.getMemoryRenderingSite();
-			IWorkbenchPart part = site.getSite().getPart();
-			if (part instanceof MemoryView)
-			{
-				if (((MemoryView)part).isMemoryBlockRegistered(memoryBlock))
-					return true;
-				// if display is not pinned, select
-				else if (!(((MemoryView)part).isPinMBDisplay()))
-					return true;
-			}
-		}
-		return false;
-	}
-	
 }

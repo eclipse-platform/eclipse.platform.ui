@@ -196,6 +196,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public static final String PROPERTY_ROW_SIZE = AbstractTableRendering.PROPERTY_ROW_SIZE;
 	
+	private boolean fActivated = false;
+	
 //	TODO:  linux - cannot resize columns to preferred size
 //	TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 	
@@ -1559,7 +1561,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		// This fix is a hack to delay the resize until the viewer has a chance to get
 		// the setData event from the UI thread.  Otherwise, the columns will be
 		// squeezed together.
-		// TODO:  test on linux
 		UIJob job = new UIJob("resize to fit"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				resizeColumnsToPreferredSize();
@@ -2872,7 +2873,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private void hideGotoAddressComposite()
 	{
 		fSashForm.setMaximizedControl(fTableViewer.getControl());
-		fTableViewer.getControl().setFocus();
+		if (isActivated())
+			fTableViewer.getControl().setFocus();
 	}
 	
 	/**
@@ -2895,7 +2897,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	public void activated() {
 		super.activated();
-
+		
+		fActivated = true;
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
 		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
@@ -2923,6 +2926,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 
 	public void deactivated() {
+		
+		fActivated = false;
     	IWorkbench workbench = PlatformUI.getWorkbench();
 		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
 		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
@@ -2937,6 +2942,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				contextSupport.deactivateContexts(fContext);
 		}
 		super.deactivated();
+	}
+	
+	private boolean isActivated()
+	{
+		return fActivated;
 	}
 	
 	/**

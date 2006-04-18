@@ -123,6 +123,8 @@ public class GoToAddressComposite {
 		boolean hex = isHex();
 		int radix = hex?16:10;
 		
+		expression = expression.trim();
+		
 		if (isGoToAddress())
 		{
 			expression = expression.toUpperCase();

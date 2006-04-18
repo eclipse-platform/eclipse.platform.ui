@@ -23,12 +23,10 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.memory.MemoryView;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
-import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
@@ -181,21 +179,11 @@ public class GoToAddressAction extends Action
 		 
 		try {
 			if (retrieval != null)
-			{
-				// save the pin setting in the parent view
-				IMemoryRenderingSite site = fRendering.getMemoryRenderingContainer().getMemoryRenderingSite();
-				MemoryView view = null;
-				if (site instanceof MemoryView)
-				{
-					view = (MemoryView)site;
-				}
-				
+			{	
 				IMemoryBlockExtension mbext = retrieval.getExtendedMemoryBlock(expression, elem);
 				if (mbext != null)
 				{
 					IMemoryBlock[] memArray = new IMemoryBlock[]{mbext};
-					if (view != null)
-						view.registerMemoryBlocks(memArray);
 					DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks(memArray);
 				}
 				

@@ -109,7 +109,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		fTableCursor.setForeground(display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 		
 		fTableCursor.setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-		fTableCursor.setFocus();
 		
 		fCursorKeyAdapter = new KeyAdapter() {
 			public void keyPressed(KeyEvent e)

@@ -336,7 +336,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public Control createViewPane(Composite parent, String paneId, String label)
 	{
 		fPaneId = paneId;
-		fTreeViewer = new AsynchronousTreeViewer(parent);
+		fTreeViewer = new MemoryViewTreeViewer(parent);
 		fLabel = label;
 		
 		IMemoryRenderingSite site = getMemoryRenderingSite();

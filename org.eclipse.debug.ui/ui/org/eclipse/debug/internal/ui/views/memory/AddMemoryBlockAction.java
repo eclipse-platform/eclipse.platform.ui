@@ -207,9 +207,6 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 						fLastMemoryBlock = memBlock;
 						
 						IMemoryBlock[] memArray = new IMemoryBlock[]{memBlock};
-						MemoryView view = getMemoryView();
-						if (view != null)
-							view.registerMemoryBlocks(memArray);
 						
 						MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(memArray);
 						if (fAddDefaultRenderings)
@@ -267,9 +264,6 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 						// add memory block to memory block manager
 						fLastMemoryBlock = memBlock;	
 						IMemoryBlock[] memArray = new IMemoryBlock[]{memBlock};
-						MemoryView view = getMemoryView();
-						if (view != null)
-							view.registerMemoryBlocks(memArray);
 						
 						MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(memArray);
 						if (fAddDefaultRenderings)

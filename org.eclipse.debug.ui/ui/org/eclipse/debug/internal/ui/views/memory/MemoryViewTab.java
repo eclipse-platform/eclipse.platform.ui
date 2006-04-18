@@ -61,12 +61,6 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		control.addListener(SWT.Activate, this);
 		control.addListener(SWT.Deactivate, this);
 		
-		// force the new control to have focus
-//		control.setFocus();
-		
-		// activate rendering upon creations
-		fRendering.activated();
-		
 		fTabItem.setControl(control);
 		fTabItem.setData(this);
 		fTabItem.setText(getLabel());
