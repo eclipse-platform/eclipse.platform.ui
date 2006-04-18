@@ -15,6 +15,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -40,10 +43,12 @@ public class TimeSlot extends Canvas {
 	private boolean focusControl = false;
 
 	private final Color WHITE;
-	private final Color CELL_BACKGROUND;
+	private final Color CELL_BACKGROUND_LIGHT;
+	private final Color CELL_BACKGROUND_WHITE;
 	private final Color CELL_BORDER_EMPHASIZED;
 	private final Color CELL_BORDER_LIGHT;
 	private final Color TIME_BAR_COLOR;
+	private final Color FOCUS_RUBBERBAND;
 
 	/**
 	 * Width of the bar between events
@@ -66,18 +71,21 @@ public class TimeSlot extends Canvas {
 		addFocusListener(focusListener);
 		addPaintListener(paintListener);
 		addDisposeListener(disposeListener);
+		addKeyListener(keyListener);
 
 		Display display = Display.getCurrent();
 
 		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
 
 		// Bluish color scheme by default; change as necessary.
-		CELL_BACKGROUND = new Color(display, 250, 250, 255);
+		CELL_BACKGROUND_LIGHT = new Color(display, 250, 250, 255);
+		CELL_BACKGROUND_WHITE = new Color(display, 255, 255, 255);
 		CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
 		CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
 		TIME_BAR_COLOR = new Color(display, 170, 170, 190);
+		FOCUS_RUBBERBAND = new Color(display, 100, 100, 170);
 
-		setBackground(CELL_BACKGROUND);
+		setBackground(CELL_BACKGROUND_LIGHT);
 	}
 
 	/**
@@ -91,10 +99,33 @@ public class TimeSlot extends Canvas {
 			removeDisposeListener(disposeListener);
 
 			// Dispose colors here
-			CELL_BACKGROUND.dispose();
+			CELL_BACKGROUND_LIGHT.dispose();
+			CELL_BACKGROUND_WHITE.dispose();
 			CELL_BORDER_EMPHASIZED.dispose();
 			CELL_BORDER_LIGHT.dispose();
 			TIME_BAR_COLOR.dispose();
+			FOCUS_RUBBERBAND.dispose();
+		}
+	};
+	
+	private KeyListener keyListener = new KeyAdapter() {
+		public void keyPressed(KeyEvent e) {
+			switch (e.keyCode) {
+			case SWT.ARROW_LEFT:
+				traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+				return;
+			case SWT.ARROW_RIGHT:
+				traverse(SWT.TRAVERSE_TAB_NEXT);
+				return;
+			}
+			switch (e.character) {
+			case SWT.TAB:
+				if ((e.stateMask & SWT.SHIFT) != 0) {
+					traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+				} else {
+					traverse(SWT.TRAVERSE_TAB_NEXT);
+				}
+			}
 		}
 	};
 
@@ -161,16 +192,14 @@ public class TimeSlot extends Canvas {
 				if (focusControl) {
 					gc.setLineStyle(SWT.LINE_DASH);
 					gc.setLineWidth(FOCUS_LINE_WIDTH);
+					gc.setForeground(FOCUS_RUBBERBAND);
 					Point parentSize = getSize();
-//					gc.drawRectangle(TIME_BAR_WIDTH + FOCUS_LINE_WIDTH,
-//							FOCUS_LINE_WIDTH, parentSize.x - TIME_BAR_WIDTH - 4,
-//							parentSize.y - 3);
 					gc.drawRectangle(FOCUS_LINE_WIDTH,
 							FOCUS_LINE_WIDTH, parentSize.x - 4,
 							parentSize.y - 3);
 				}
 
-				gc.setForeground(CELL_BACKGROUND);
+				gc.setForeground(CELL_BACKGROUND_LIGHT);
 			} finally {
 				gc.setForeground(oldForeground);
 				gc.setLineStyle(oldLineStyle);
@@ -218,5 +247,20 @@ public class TimeSlot extends Canvas {
 	 */
 	public boolean isHourStart() {
 		return hourStart;
+	}
+	
+	private boolean allDayEvent = false;
+	
+
+	/**
+	 * @param isAllDayEvent
+	 */
+	public void setAllDay(boolean isAllDayEvent) {
+		this.allDayEvent = isAllDayEvent;
+		if (isAllDayEvent) {
+			setBackground(CELL_BACKGROUND_WHITE);
+		} else {
+			setBackground(CELL_BACKGROUND_LIGHT);
+		}
 	}
 }

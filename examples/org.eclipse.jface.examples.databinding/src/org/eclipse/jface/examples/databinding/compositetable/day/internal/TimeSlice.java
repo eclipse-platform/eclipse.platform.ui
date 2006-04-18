@@ -183,7 +183,6 @@ public class TimeSlice extends Composite {
 	 * the beginning of the control's life cycle, and the value passed must be
 	 * >1.
 	 * <p>
-	 * 
 	 * Calling this method more than once results in undefined behavior.
 	 * 
 	 * @param numberOfColumns
@@ -191,13 +190,19 @@ public class TimeSlice extends Composite {
 	 */
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
+		Control[] tabStops = new Control[numberOfColumns];
 		for (int i = numberOfColumns; i > 0; --i) {
 			if (headerControl) {
-				columns.add(new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER | SWT.CENTER));
+				CLabel control = new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER | SWT.CENTER);
+				tabStops[numberOfColumns-i] = control;
+				columns.add(control);
 			} else {
-				columns.add(new TimeSlot(this, SWT.NONE));
+				TimeSlot control = new TimeSlot(this, SWT.NONE);
+				tabStops[numberOfColumns-i] = control;
+				columns.add(control);
 			}
 		}
+		setTabList(tabStops);
 	}
 
 	private Date currentTime = new Date();
@@ -218,8 +223,11 @@ public class TimeSlice extends Composite {
 			timeLabel.setImage(allDayImage);
 			timeLabel.setText("");
 			setHourStartOnDays(false);
+			setAllDayEventOnDays(true);
 			return;
 		}
+		
+		setAllDayEventOnDays(false);
 		timeLabel.setImage(null);
 		
 		this.currentTime = currentTime;
@@ -244,6 +252,16 @@ public class TimeSlice extends Composite {
 			if (dayCandidate instanceof TimeSlot) {
 				TimeSlot day = (TimeSlot) dayCandidate;
 				day.setHourStart(isHourStart);
+			}
+		}
+	}
+
+	private void setAllDayEventOnDays(boolean isAllDayEvent) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.setAllDay(isAllDayEvent);
 			}
 		}
 	}

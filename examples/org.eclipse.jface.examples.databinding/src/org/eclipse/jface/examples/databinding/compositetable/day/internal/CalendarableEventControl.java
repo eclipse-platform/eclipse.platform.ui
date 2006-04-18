@@ -126,15 +126,15 @@ public class CalendarableEventControl extends Canvas  {
 			e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 			e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 			if ((clipping & SWT.TOP) != 0) {
-				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += (2*MARGIN + 2)) {
-					int[] arrowPoints = new int[] {arrow, MARGIN, arrow + MARGIN, 0, arrow + 2 * MARGIN, MARGIN};
+				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += 2*MARGIN + 3) {
+					int[] arrowPoints = new int[] {arrow, MARGIN-1, arrow + MARGIN, 0, arrow + 2 * MARGIN, MARGIN-1};
 					e.gc.fillPolygon(arrowPoints);
 					e.gc.drawPolygon(arrowPoints);
 				}
 			}
 			if ((clipping & SWT.BOTTOM) != 0) {
 				int bottom = bounds.height-1;
-				int marginBottom = bounds.height - MARGIN-1;
+				int marginBottom = bounds.height - MARGIN;
 				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += 2*MARGIN + 3) {
 					int[] arrowPoints = new int[] {arrow, marginBottom, arrow + MARGIN, bottom, arrow + 2 * MARGIN, marginBottom};
 					e.gc.fillPolygon(arrowPoints);

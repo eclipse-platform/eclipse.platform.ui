@@ -403,6 +403,9 @@ public class DayEditor extends Composite implements IEventEditor {
 			fillControlData(calendarable, SWT.NULL);
 			
 			Rectangle timeSliceBounds = getTimeSliceBounds(day, allDayEventRow, gridRows);
+			int gutterWidth = TimeSlot.TIME_BAR_WIDTH + 1;
+			timeSliceBounds.x += gutterWidth;
+			timeSliceBounds.width -= gutterWidth;
 			calendarable.getControl().setBounds(timeSliceBounds);
 			calendarable.getControl().moveAbove(compositeTable);
 		} else {
