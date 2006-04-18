@@ -28,9 +28,9 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	private TestWidgetFactory widgetFactory;
 
-	private int xIterations = 10;
+	private int xIterations = 5;
 
-	private int yIterations = 10;
+	private int yIterations = 5;
 
 	private String tagString;
 
@@ -73,10 +73,10 @@ public class ResizeTest extends BasicPerformanceTest {
 
 		waitForBackgroundJobs();
 		processEvents();
-		for (int j = 0; j < 100; j++) {
+		for (int j = 0; j < 50; j++) {
 
 			startMeasuring();
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 2; i++) {
 
 				for (int xIteration = 0; xIteration < xIterations; xIteration += 5) {
 
