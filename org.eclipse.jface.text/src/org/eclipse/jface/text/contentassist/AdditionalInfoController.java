@@ -271,7 +271,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         	long current= System.currentTimeMillis();
         	Task task= currentTask();
 
-        	do {
+        	while (task != EXIT) {
         		long delay= fNextWakeup - current;
         		if (delay <= 0) {
         			task.run();
@@ -282,7 +282,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         			current= System.currentTimeMillis();
         			task= currentTask();
         		}
-        	} while (task != EXIT);
+        	}
         }
         
         private Task currentTask() {
