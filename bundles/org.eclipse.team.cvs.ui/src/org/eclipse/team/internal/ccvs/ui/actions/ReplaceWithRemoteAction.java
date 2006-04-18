@@ -42,8 +42,6 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 				return;
 		}
 		replaceOperation.run();
-		// TODO: Involve models in the replace
-	    //new ModelReplaceOperation(getTargetPart(), getSelectedResourceMappings(CVSProviderPlugin.getTypeId()), getResourceMappingContext()).run();
 	}
 	
 	/**
