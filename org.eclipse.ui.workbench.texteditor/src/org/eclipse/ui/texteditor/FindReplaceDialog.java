@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.texteditor;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +56,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistField;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -1247,7 +1247,7 @@ class FindReplaceDialog extends Dialog {
 						statusMessage(EditorMessages.FindReplace_Status_replacement_label);
 					} else {
 						String msg= EditorMessages.FindReplace_Status_replacements_label;
-						msg= MessageFormat.format(msg, new Object[] {String.valueOf(replaceCount)});
+						msg= NLSUtility.format(msg, String.valueOf(replaceCount));
 						statusMessage(msg);
 					}
 				} else {

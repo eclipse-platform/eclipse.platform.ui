@@ -12,7 +12,6 @@
 package org.eclipse.ui.texteditor;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.widgets.Composite;
@@ -28,6 +27,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -196,7 +196,7 @@ public class GotoLineAction extends TextEditorAction {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 
 			String title= fBundle.getString(fPrefix + "dialog.title"); //$NON-NLS-1$
-			String message= MessageFormat.format(fBundle.getString(fPrefix + "dialog.message"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
+			String message= NLSUtility.format(fBundle.getString(fPrefix + "dialog.message"), new Integer(fLastLine)); //$NON-NLS-1$
 
 			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, "", new NumberValidator()); //$NON-NLS-1$
 			if (d.open() == Window.OK) {

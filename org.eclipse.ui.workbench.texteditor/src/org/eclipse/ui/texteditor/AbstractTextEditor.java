@@ -15,7 +15,6 @@ package org.eclipse.ui.texteditor;
 
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -154,6 +153,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.operations.LinearUndoViolationUserApprover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
@@ -5381,7 +5381,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			fLineLabel.fValue= line + 1;
 			fColumnLabel.fValue= column + 1;
-			return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
+			return NLSUtility.format(fPositionLabelPattern, fPositionLabelPatternArguments);
 
 		} catch (BadLocationException x) {
 			return fErrorLabel;

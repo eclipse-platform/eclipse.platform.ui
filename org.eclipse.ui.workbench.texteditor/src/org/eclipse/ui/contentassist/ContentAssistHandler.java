@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.contentassist;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -37,6 +35,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
@@ -183,8 +182,7 @@ public class ContentAssistHandler {
 				TriggerSequence[] activeBindings= bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				if (activeBindings.length == 0)
 					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable;
-				Object[] args= { activeBindings[0].format() };
-				return MessageFormat.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, args);
+				return NLSUtility.format(ContentAssistMessages.ContentAssistHandler_contentAssistAvailableWithKeyBinding, activeBindings[0].format());
 			}
 		};
 		fContentAssistSubjectAdapter.setContentAssistCueProvider(labelProvider);

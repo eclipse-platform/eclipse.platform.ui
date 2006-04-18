@@ -12,7 +12,6 @@
 
 package org.eclipse.ui.texteditor;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -49,6 +48,7 @@ import org.eclipse.jface.text.TextEvent;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.texteditor.NLSUtility;
 
 /**
  * An incremental find target. Replace is always disabled.
@@ -425,7 +425,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		if (!fFound) {
 			String pattern= EditorMessages.Editor_FindIncremental_not_found_pattern;
-			statusError(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
+			statusError(NLSUtility.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
 		} else if (string.length() == 0) {
 			if (fForward)
@@ -434,7 +434,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				statusMessage(REVERSE_FIELD_NAME);
 		} else if (!fForward || fWrapPosition > -1) {
 			String pattern= EditorMessages.Editor_FindIncremental_found_pattern;
-			statusMessage(MessageFormat.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
+			statusMessage(NLSUtility.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 		} else {
 			statusMessage(string);
 		}
