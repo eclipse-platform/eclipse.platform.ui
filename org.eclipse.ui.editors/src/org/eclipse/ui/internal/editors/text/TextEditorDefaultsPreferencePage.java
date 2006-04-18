@@ -576,11 +576,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					String insertString;
 
 					if (needsPrefixDelimiter && needsPostfixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)});
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, Action.findModifierString(e.stateMask));
 					else if (needsPrefixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, new String[] {Action.findModifierString(e.stateMask)});
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, Action.findModifierString(e.stateMask));
 					else if (needsPostfixDelimiter)
-						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, new String[] {Action.findModifierString(e.stateMask)});
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, Action.findModifierString(e.stateMask));
 					else
 						insertString= Action.findModifierString(e.stateMask);
 
