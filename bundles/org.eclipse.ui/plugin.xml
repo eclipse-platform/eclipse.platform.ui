@@ -179,8 +179,38 @@
             sequence="M3+ARROW_LEFT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            sequence="M3+ARROW_LEFT"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
+            sequence="COMMAND+["
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
+            sequence="COMMAND+ALT+ARROW_LEFT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.navigate.forwardHistory"
             sequence="M3+ARROW_RIGHT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M3+ARROW_RIGHT"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
+            sequence="COMMAND+]"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
+            sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.openEditorDropDown"
@@ -253,7 +283,19 @@
             sequence="M2+DEL"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+DEL"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId=""
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -262,17 +304,22 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
 
-   	  <!-- Command+SPACE is spot light on panther, so use Ctrl+SPACE everywhere -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="CTRL+SPACE"/>
+	        sequence="CTRL+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1+M2+SPACE"/>
+	        sequence="CTRL+M2+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
       <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
