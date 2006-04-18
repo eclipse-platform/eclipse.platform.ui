@@ -479,6 +479,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					if (objects[j] instanceof IActionSetDescriptor) {
 						perspectives[i]
 								.removeActionSet((IActionSetDescriptor) objects[j]);
+						getActionPresentation()
+								.removeActionSet((IActionSetDescriptor) objects[j]);
 					}
 				}
 			}

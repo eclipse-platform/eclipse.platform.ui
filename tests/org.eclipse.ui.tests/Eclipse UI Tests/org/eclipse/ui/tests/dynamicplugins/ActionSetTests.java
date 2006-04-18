@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.internal.PluginActionSet;
@@ -19,6 +22,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.tests.leaks.LeakTests;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
@@ -38,35 +42,63 @@ public class ActionSetTests extends DynamicTestCase implements
     }
 
     public void testActionSets() throws Exception {
-        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
-        getBundle();
         WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
+        boolean [] found = new boolean[] {false};
+        WWinPluginAction [] action = new WWinPluginAction[1];
+        
+        assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
+        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+        findInPresentation(window, action, found);
+        assertFalse("Action set found", found[0]);
+        assertNull("Action found", action[0]);
+        
+        action[0] = null;
+        found[0] = false;
+        getBundle();
+        
+        assertNotNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
         assertNotNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
-        IActionSet [] sets = window.getActionPresentation().getActionSets();
-        boolean found = false;
-        WWinPluginAction action = null;
+        findInPresentation(window, action, found);
+        assertTrue("Action set not found", found[0]);
+        assertNotNull("Action not found", action[0]);
+        
+        ReferenceQueue queue = new ReferenceQueue();
+        WeakReference ref = new WeakReference(action[0], queue);
+        
+        action[0] = null;
+        found[0] = false;
+        removeBundle();
+        
+        assertNull(window.getActionBars().getMenuManager().findUsingPath("menu1"));
+        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
+        LeakTests.checkRef(queue, ref);
+        findInPresentation(window, action, found);
+        assertFalse("Action set found", found[0]);
+        assertNull("Action found", action[0]);
+        
+    }
+
+    /**
+     * @return
+     */
+    private void findInPresentation(WorkbenchWindow window,
+            WWinPluginAction[] action, boolean[] found) {
+        IActionSet[] sets = window.getActionPresentation().getActionSets();
+
         for (int i = 0; i < sets.length; i++) {
-            if (((PluginActionSet)sets[i]).getDesc().getId().equals("org.eclipse.newActionSet1.newActionSet2")) {
-                found = true;
-                IAction [] pluginActions = ((PluginActionSet)sets[i]).getPluginActions();
+            if (((PluginActionSet) sets[i]).getDesc().getId().equals(
+                "org.eclipse.newActionSet1.newActionSet2")) {
+                found[0] = true;
+                IAction[] pluginActions = ((PluginActionSet) sets[i])
+                    .getPluginActions();
                 for (int j = 0; j < pluginActions.length; j++) {
-                    if (pluginActions[j].getId().equals("org.eclipse.ui.tests.action1"))
-                        action = (WWinPluginAction) pluginActions[j];
+                    if (pluginActions[j].getId().equals(
+                        "org.eclipse.ui.tests.action1"))
+                        action[0] = (WWinPluginAction) pluginActions[j];
                 }
                 break;
             }
         }
-        assertTrue("Action set not found", found);
-        assertNotNull("Action not found", action);
-//        ReferenceQueue queue = new ReferenceQueue();
-//        WeakReference ref = new WeakReference(action, queue);
-//        action = null;
-        removeBundle();
-        
-        assertNull(window.getActionBars().getMenuManager().findMenuUsingPath("menu1"));
-//        LeakTests.checkRef(queue, ref);
-        
-        assertNull(getActionSetRegistry().findActionSet(ACTION_SET_ID));
     }
 
     /**
