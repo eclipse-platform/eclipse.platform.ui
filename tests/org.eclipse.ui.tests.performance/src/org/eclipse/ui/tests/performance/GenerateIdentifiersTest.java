@@ -30,7 +30,7 @@ public class GenerateIdentifiersTest extends BasicPerformanceTest {
     protected void runTest() throws Throwable {       
         final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
         
-        tagIfNecessary("UI - Generate Identifiers", Dimension.ELAPSED_PROCESS);
+        tagIfNecessary("UI - Generate Identifiers", Dimension.CPU_TIME);
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 // construct the Identifiers to test
