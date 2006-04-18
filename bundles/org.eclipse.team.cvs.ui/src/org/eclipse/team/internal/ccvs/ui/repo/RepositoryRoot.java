@@ -343,7 +343,7 @@ public class RepositoryRoot extends PlatformObject {
 	public CVSTag[] refreshDefinedTags(ICVSFolder folder, boolean recurse, IProgressMonitor monitor) throws TeamException {
 	    monitor.beginTask(null, 100);
 	    CVSTag[] tags = null;
-	    if (!recurse) {
+	    if (!recurse && !folder.getFolderSyncInfo().isVirtualDirectory()) {
 	        // Only try the auto-refresh file(s) if we are not recursing into sub-folders
 	        tags = fetchTagsUsingAutoRefreshFiles(folder, Policy.subMonitorFor(monitor, 50));
 	    }
