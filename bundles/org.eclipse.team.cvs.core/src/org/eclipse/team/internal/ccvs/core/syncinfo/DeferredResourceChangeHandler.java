@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -73,7 +66,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void ignoreFileChanged(IFile file) {
-		//if (isSharedWithCVS(file))
+		if (isSharedWithCVS(file))
 			queueEvent(new ResourceEvent(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
@@ -151,12 +144,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 	
 	private boolean isSharedWithCVS(IResource resource) {
-		IProject project = resource.getProject();
-		if (project.isAccessible()) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-			return provider != null;
-		}
-		return false;
+		return CVSTeamProvider.isSharedWithCVS(resource.getProject());
 	}
 
 	protected Object getJobFamiliy() {

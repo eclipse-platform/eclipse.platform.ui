@@ -89,6 +89,12 @@ public abstract class ResponseHandler {
                 // The repositoryDir is already a relative path
                 relativePath = repositoryDir;
             }
+            IResource resource = folder.getIResource();
+            if (resource != null && resource.getProject().isAccessible() && !CVSTeamProvider.isSharedWithCVS(resource.getProject())) {
+            	// The project isn't shared but we are about to perform an operation on it.
+            	// we need to flag the project as shared so that the sync info management works
+            	CVSTeamProvider.markAsTempShare(resource.getProject());
+            }
             folder.setFolderSyncInfo(new FolderSyncInfo(
 				relativePath,
 				session.getCVSRepositoryLocation().getLocation(false),

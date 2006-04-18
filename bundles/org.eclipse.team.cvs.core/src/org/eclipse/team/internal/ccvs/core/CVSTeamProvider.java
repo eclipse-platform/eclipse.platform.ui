@@ -68,7 +68,52 @@ public class CVSTeamProvider extends RepositoryProvider {
 	// property used to indicate whether the project is configured to use Watch/edit
 	private final static QualifiedName WATCH_EDIT_PROP_KEY = 
 		new QualifiedName("org.eclipse.team.cvs.core", "watch_edit");  //$NON-NLS-1$  //$NON-NLS-2$
-			
+
+	/**
+	 * Session property key used to indicate that the project, although not officially shared,
+	 * is a target of a CVS operation.
+	 */
+	private static final QualifiedName TEMP_SHARED = new QualifiedName(CVSProviderPlugin.ID, "tempShare"); //$NON-NLS-1$
+	
+	/**
+	 * Return whether the project is mapped to CVS or is the target of a CVS operation
+	 * that will most likely lead to the project being shared.
+	 * @param project the project
+	 * @return whether the project is mapped to CVS or is the target of a CVS operation
+	 * that will most likely lead to the project being shared
+	 */
+	public static boolean isSharedWithCVS(IProject project) {
+		if (project.isAccessible()) {
+			if (RepositoryProvider.isShared(project)) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+				if (provider != null)
+					return true;
+			}
+			try {
+				Object sessionProperty = project.getSessionProperty(TEMP_SHARED);
+				return sessionProperty != null && sessionProperty.equals(Boolean.TRUE);
+			} catch (CoreException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Mark the project as being a target of a CVS operation so the sync info management
+	 * will occur.
+	 * @param project the project
+	 */
+	public static void markAsTempShare(IProject project) {
+    	if (RepositoryProvider.isShared(project))
+    		return;
+    	try {
+    		project.setSessionProperty(CVSTeamProvider.TEMP_SHARED, Boolean.TRUE);
+		} catch (CoreException e) {
+			CVSProviderPlugin.log(e);
+		}
+	}
+	
     /**
      * Return the file modification validator used for all CVS repository providers.
      * @return the file modification validator used for all CVS repository providers
@@ -241,6 +286,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	public void configureProject() throws CoreException {
+		getProject().setSessionProperty(TEMP_SHARED, null);
 		ResourceStateChangeListeners.getListener().projectConfigured(getProject());
 	}
 	/**
