@@ -449,6 +449,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		clientArea.y += marginHeight;
 		clientArea.height -= 2 * marginHeight;
 
+		// Get the max of the trim's preferred size for each side
 		int trim_top = top.calculateTrimSize(clientArea.width,
 				clientArea.height);
 		int trim_bottom = bottom.calculateTrimSize(clientArea.width,
@@ -458,20 +459,33 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		int trim_right = right.calculateTrimSize(clientArea.width,
 				clientArea.height);
 
+		// Determine the amount of 'useable' space for the trim
 		int leftOfLayout = clientArea.x;
 		int leftOfCenterPane = leftOfLayout + trim_left + leftSpacing;
 		int widthOfCenterPane = clientArea.width - trim_left - trim_right
 				- leftSpacing - rightSpacing;
 		int rightOfCenterPane = clientArea.x + clientArea.width - trim_right;
 
+		// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
+		// on any side. The following code is in place specifically to
+		// handle the CBanner's CoolBar wrapping. The code that calculates 'trim_top'
+		// above won't pick up if the CoolBar wraps and uses extra height
+		// So we have to re-calc the value based on the actual trim height
+		// as laid out.
+		
+		// Do the layout of the top and update the height to match the actual
+		// height used
 		int topOfLayout = clientArea.y;
+		trim_top = arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
+				trim_top), top.getCaches(), !top.isVertical(), spacing);
+
+		// Now that we have an accurate value for the top's height we can 
+		// proceed with the rest of the layout 'normally'.
 		int topOfCenterPane = topOfLayout + trim_top + topSpacing;
 		int heightOfCenterPane = clientArea.height - trim_top - trim_bottom
 				- topSpacing - bottomSpacing;
 		int bottomOfCenterPane = clientArea.y + clientArea.height - trim_bottom;
 
-		arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
-				trim_top), top.getCaches(), !top.isVertical(), spacing);
 		arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane,
 				widthOfCenterPane, trim_bottom), bottom.getCaches(), !bottom
 				.isVertical(), spacing);
@@ -501,7 +515,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @param spacing
 	 *            in pixels
 	 */
-	private static void arrange(Rectangle area, List caches,
+	private static int arrange(Rectangle area, List caches,
 			boolean horizontally, int spacing) {
 		Point currentPosition = new Point(area.x, area.y);
 
@@ -549,8 +563,17 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				}
 
 				if (TrimDragPreferences.showRaggedTrim()) {
-					Point prefSize = next.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					Point prefSize = next.getControl().computeSize(thisSize, SWT.DEFAULT);					
 					if (horizontally) {
+						// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
+						// on any side. The following code is in place specifically to
+						// handle the CBanner's CoolBar wrapping. We need to  pick up
+						// if the CoolBar wraps and uses extra height
+						// So we have to re-calc the value based on the actual trim height
+						// as laid out.
+						if (prefSize.y > hint)
+							hint = prefSize.y;
+						
 						next.getControl().setBounds(currentPosition.x,
 								currentPosition.y, thisSize, prefSize.y);
 						currentPosition.x += thisSize + spacing;
@@ -573,6 +596,8 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				}
 			}
 		}
+		
+		return hint;
 	}
 
 	/**

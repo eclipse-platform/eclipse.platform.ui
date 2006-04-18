@@ -317,10 +317,6 @@ public class TrimCommonUIHandle extends Composite {
 	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int)
 	 */
 	public Point computeSize(int wHint, int hHint) {
-		if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT) {
-			return super.computeSize(wHint, hHint);
-		}
-
 		Point ctrlPrefSize = trim.getControl().computeSize(wHint, hHint);
 		if (orientation == SWT.HORIZONTAL) {
 			return new Point(getHandleSize(), ctrlPrefSize.y);
