@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *     Konstantin Scheglov <scheglov_ke@nlmk.ru > - Fix for bug 41172
  *     [Dialogs] Bug with Image in TitleAreaDialog
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 82064
+ *     [Dialogs] TitleAreaDialog#setTitleImage cannot be called before open()
+
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -87,7 +90,9 @@ public class TitleAreaDialog extends TrayDialog {
 
     private Label titleLabel;
 
-    private Label titleImage;
+    private Label titleImageLabel;
+    
+    private Image titleImage;
 
     private Label leftFillerLabel;
 
@@ -237,9 +242,13 @@ public class TitleAreaDialog extends TrayDialog {
         int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
         titleArea.setBackground(background);
         // Dialog image @ right
-        titleImage = new Label(titleArea, SWT.CENTER);
-        titleImage.setBackground(background);
-        titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
+        titleImageLabel = new Label(titleArea, SWT.CENTER);
+        titleImageLabel.setBackground(background);
+        if (titleImage == null || titleImage.isDisposed()) {
+        	titleImageLabel.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
+        } else {
+        	titleImageLabel.setImage(titleImage);
+        }
         FormData imageData = new FormData();
         imageData.top = new FormAttachment(0, 0);
         // Note: do not use horizontalSpacing on the right as that would be a
@@ -248,7 +257,7 @@ public class TitleAreaDialog extends TrayDialog {
         // flush to the right
         // hand side. see reopened comments in 41172
         imageData.right = new FormAttachment(100, 0); // horizontalSpacing
-        titleImage.setLayoutData(imageData);
+        titleImageLabel.setLayoutData(imageData);
         // Title label @ top, left
         titleLabel = new Label(titleArea, SWT.LEFT);
         JFaceColors.setColors(titleLabel, foreground, background);
@@ -256,7 +265,7 @@ public class TitleAreaDialog extends TrayDialog {
         titleLabel.setText(" ");//$NON-NLS-1$
         FormData titleData = new FormData();
         titleData.top = new FormAttachment(0, verticalSpacing);
-        titleData.right = new FormAttachment(titleImage);
+        titleData.right = new FormAttachment(titleImageLabel);
         titleData.left = new FormAttachment(0, horizontalSpacing);
         titleLabel.setLayoutData(titleData);
         // Message image @ bottom, left
@@ -282,7 +291,7 @@ public class TitleAreaDialog extends TrayDialog {
      * area. This is used for layout decisions.
      */
     private void determineTitleImageLargest() {
-        int titleY = titleImage.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        int titleY = titleImageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         int labelY = titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         labelY += verticalSpacing;
@@ -304,11 +313,11 @@ public class TitleAreaDialog extends TrayDialog {
             int horizontalSpacing) {
         FormData messageLabelData = new FormData();
         messageLabelData.top = new FormAttachment(titleLabel, verticalSpacing);
-        messageLabelData.right = new FormAttachment(titleImage);
+        messageLabelData.right = new FormAttachment(titleImageLabel);
         messageLabelData.left = new FormAttachment(messageImageLabel,horizontalSpacing);
         messageLabelData.height = messageLabelHeight;
         if (titleImageLargest) {
-			messageLabelData.bottom = new FormAttachment(titleImage, 0,
+			messageLabelData.bottom = new FormAttachment(titleImageLabel, 0,
                     SWT.BOTTOM);
 		}
         messageLabel.setLayoutData(messageLabelData);
@@ -360,7 +369,7 @@ public class TitleAreaDialog extends TrayDialog {
      * @return the title image label
      */
     protected Label getTitleImageLabel() {
-        return titleImage;
+        return titleImageLabel;
     }
 
     /**
@@ -467,7 +476,7 @@ public class TitleAreaDialog extends TrayDialog {
     	if(messageArea == null) 
     		return;
         FormData messageAreaData = new FormData();
-        messageAreaData.right = new FormAttachment(titleImage);
+        messageAreaData.right = new FormAttachment(titleImageLabel);
         messageAreaData.left = new FormAttachment(leftFillerLabel);
         messageAreaData.bottom = new FormAttachment(100,0);
         messageArea.setLayoutData(messageAreaData);
@@ -625,14 +634,19 @@ public class TitleAreaDialog extends TrayDialog {
      * Sets the title image to be shown in the title area of this dialog.
      * 
      * @param newTitleImage
-     *            the title image show
+     *            the title image to be shown
      */
     public void setTitleImage(Image newTitleImage) {
-        titleImage.setImage(newTitleImage);
-        titleImage.setVisible(newTitleImage != null);
-        if (newTitleImage != null) {
-            resetWorkAreaAttachments(titleArea);
-        }
+    	titleImage = newTitleImage;
+    	// Check that the title area has been created.
+    	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=82064
+    	if (titleImageLabel != null && !titleImageLabel.isDisposed()) {
+    		titleImageLabel.setImage(newTitleImage);
+    		titleImageLabel.setVisible(newTitleImage != null);
+    		if (newTitleImage != null) {
+    			resetWorkAreaAttachments(titleArea);
+    		}
+    	}
     }
 
     /**
