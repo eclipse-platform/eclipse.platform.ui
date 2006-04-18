@@ -501,7 +501,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		commandLine.append(name);
 		commandLine.append('=');
 		commandLine.append(value);
-        if (value.charAt(value.length() - 1) == File.separatorChar) {
+        if (value.length() > 0 && value.charAt(value.length() - 1) == File.separatorChar) {
             commandLine.append(File.separatorChar);
         }
 		commandLine.append("\""); //$NON-NLS-1$
