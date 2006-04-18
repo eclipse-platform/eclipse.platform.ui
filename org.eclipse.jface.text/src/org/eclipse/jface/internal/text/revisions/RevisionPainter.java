@@ -444,7 +444,7 @@ public final class RevisionPainter {
 		 */
 		protected IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent))
-				return new BrowserInformationControl(parent, SWT.TOOL | SWT.NO_TRIM, SWT.NONE, null, true);
+				return new BrowserInformationControl(parent, SWT.TOOL | SWT.NO_TRIM, SWT.NONE, null);
 			return new DefaultInformationControl(parent, SWT.NONE, null);
 		}
 	}

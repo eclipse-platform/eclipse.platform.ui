@@ -120,9 +120,9 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	/** Tells whether the browser has content */
 	private boolean fBrowserHasContent;
 	/** The control width constraint */
-	private int fMaxWidth= -1;
+	private int fMaxWidth= SWT.DEFAULT;
 	/** The control height constraint */
-	private int fMaxHeight= -1;
+	private int fMaxHeight= SWT.DEFAULT;
 	private Font fStatusTextFont;
 	private Label fStatusTextField;
 	private String fStatusFieldText;
@@ -132,7 +132,6 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	private Label fSeparator;
 	private String fInputText;
 	private TextLayout fTextLayout;
-	private boolean fPack;
 
 	private TextStyle fBoldStyle;
 
@@ -146,7 +145,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	 * @param style the additional styles for the styled text widget
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style) {
-		this(parent, shellStyle, style, null, false);
+		this(parent, shellStyle, style, null);
 	}
 
 	/**
@@ -159,17 +158,14 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	 * @param style the additional styles for the styled text widget
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
-	 * @param pack if <code>true</code> the shell will be packed before it is shown
 	 */
-	public BrowserInformationControl(Shell parent, int shellStyle, int style, String statusFieldText, boolean pack) {
+	public BrowserInformationControl(Shell parent, int shellStyle, int style, String statusFieldText) {
 		fStatusFieldText= statusFieldText;
 		
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		fTextLayout= new TextLayout(display);
-		
-		fPack= pack;
 
 		Composite composite= fShell;
 		GridLayout layout= new GridLayout(1, false);
@@ -346,10 +342,6 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 				fStatusTextField.setVisible(state);
 				fSeparator.setVisible(state);
 			}
-			
-			if (fPack) {
-				pack();
-			}
 		}
 
 		fShell.setVisible(visible);
@@ -357,48 +349,6 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 			setInformation(""); //$NON-NLS-1$
 	}
 
-	protected void pack() {
-		TextPresentation presentation= new TextPresentation();
-		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInputText), presentation);
-		String text;
-		try {
-			text= reader.getString();
-		} catch (IOException e) {
-			text= ""; //$NON-NLS-1$
-		}
-		
-		fTextLayout.setText(text);
-		Iterator iter= presentation.getAllStyleRangeIterator();
-		while (iter.hasNext()) {
-			StyleRange sr= (StyleRange)iter.next();
-			if (sr.fontStyle == SWT.BOLD)
-				fTextLayout.setStyle(fBoldStyle, sr.start, sr.start + sr.length - 1);
-		}
-		Rectangle bounds= fTextLayout.getBounds();
-		
-		bounds.width= bounds.width + 15; 
-		bounds.height= bounds.height + 25; 
-		
-		if (fStatusFieldText != null && fSeparator != null) {
-			fTextLayout.setText(fStatusFieldText);
-			Rectangle statusBounds= fTextLayout.getBounds();
-			Rectangle separatorBounds= fSeparator.getBounds();
-			bounds.width= Math.max(bounds.width, statusBounds.width);
-			bounds.height= bounds.height + statusBounds.height + separatorBounds.height;
-		}
-		
-		// Apply size constraints
-		bounds.width= Math.min(fMaxWidth, bounds.width);
-		bounds.height= Math.min(fMaxHeight, bounds.height);
-		
-		// Ensure minimal size
-		bounds.width= Math.max(MIN_WIDTH, bounds.width);
-		bounds.height= Math.max(MIN_HEIGHT, bounds.height);
-		
-		setSize(bounds.width, bounds.height);
-		
-	}
-	
 	/**
 	 * Creates and initializes the text layout used
 	 * to compute the size hint.
@@ -482,7 +432,48 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		return new Point(fMaxWidth, fMaxHeight);
+		TextPresentation presentation= new TextPresentation();
+		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInputText), presentation);
+		String text;
+		try {
+			text= reader.getString();
+		} catch (IOException e) {
+			text= ""; //$NON-NLS-1$
+		}
+
+		fTextLayout.setText(text);
+		Iterator iter= presentation.getAllStyleRangeIterator();
+		while (iter.hasNext()) {
+			StyleRange sr= (StyleRange)iter.next();
+			if (sr.fontStyle == SWT.BOLD)
+				fTextLayout.setStyle(fBoldStyle, sr.start, sr.start + sr.length - 1);
+		}
+		Rectangle bounds= fTextLayout.getBounds();
+		int width= bounds.width;
+		int height= bounds.height;
+		
+		width += 15; 
+		height += 25; 
+
+		if (fStatusFieldText != null && fSeparator != null) {
+			fTextLayout.setText(fStatusFieldText);
+			Rectangle statusBounds= fTextLayout.getBounds();
+			Rectangle separatorBounds= fSeparator.getBounds();
+			width= Math.max(width, statusBounds.width);
+			height= height + statusBounds.height + separatorBounds.height;
+		}
+
+		// Apply size constraints
+		if (fMaxWidth != SWT.DEFAULT)
+			width= Math.min(fMaxWidth, width);
+		if (fMaxHeight != SWT.DEFAULT)
+			height= Math.min(fMaxHeight, height);
+
+		// Ensure minimal size
+		width= Math.max(MIN_WIDTH, width);
+		height= Math.max(MIN_HEIGHT, height);
+		
+		return new Point(width, height);
 	}
 
 	/*
