@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -169,7 +168,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * The differences between <code>fLeftDocument</code> and <code>fRightDocument</code>.
 	 * This is the model we work on.
 	 */
-	private List fDifferences= Collections.synchronizedList(new ArrayList());
+	private List fDifferences= new ArrayList();
 	/**
 	 * The differences removed in one iteration. Stored to be able to send out differentiated
 	 * annotation events.
@@ -581,7 +580,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				DocumentEquivalenceClass rightEquivalent= new DocumentEquivalenceClass(actual, hash);
 				fRightEquivalent= rightEquivalent;
 				IRangeComparator act= new DocEquivalenceComparator(rightEquivalent, null);
-				List diffs= Collections.synchronizedList(RangeDifferencer.findRanges(monitor, ref, act));
+				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
 				synchronized (DocumentLineDiffer.this) {
