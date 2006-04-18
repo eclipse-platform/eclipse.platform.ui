@@ -37,8 +37,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
  * {@link RefactoringCore#getHistoryService()}.
  * </p>
  * <p>
- * All time stamps are measured in UTC milliseconds from the epoch (see
- * {@link java.util#Calendar}).
+ * All time stamps are measured as the milliseconds since January 1, 1970,
+ * 00:00:00 GMT.
  * </p>
  * <p>
  * Note: this interface is not intended to be implemented by clients.
@@ -244,7 +244,8 @@ public interface IRefactoringHistoryService {
 	 * </p>
 	 * 
 	 * @param stream
-	 *            the input stream
+	 *            a <code>UTF-8</code> input stream where to read the
+	 *            refactoring history from
 	 * @param flags
 	 *            the refactoring descriptor flags to filter the refactoring
 	 *            descriptors
@@ -305,7 +306,8 @@ public interface IRefactoringHistoryService {
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 * @param stream
-	 *            the output stream
+	 *            a <code>UTF-8</code> output stream where to write the
+	 *            refactoring descriptors to
 	 * @param flags
 	 *            the flags which must be present in order to be written to the
 	 *            output stream, or <code>RefactoringDescriptor#NONE</code>
@@ -341,9 +343,10 @@ public interface IRefactoringHistoryService {
 	 * </p>
 	 * 
 	 * @param descriptor
-	 *            the refactoring session descriptor
+	 *            the refactoring session descriptor to write
 	 * @param stream
-	 *            the output stream
+	 *            a <code>UTF-8</code> output stream where to write the
+	 *            refactoring session to
 	 * @param time
 	 *            <code>true</code> to write time information associated with
 	 *            the refactorings, <code>false</code> otherwise
@@ -356,10 +359,6 @@ public interface IRefactoringHistoryService {
 	 *             <li>An I/O error occurs while writing the refactoring
 	 *             descriptors to the output stream.</li>
 	 *             </ul>
-	 * 
-	 * @see RefactoringDescriptor#NONE
-	 * @see RefactoringDescriptor#STRUCTURAL_CHANGE
-	 * @see RefactoringDescriptor#BREAKING_CHANGE
 	 * 
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR

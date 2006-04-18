@@ -45,8 +45,8 @@ import org.eclipse.core.runtime.Assert;
  * contains more text with refactoring-specific information.
  * </p>
  * <p>
- * All time stamps are measured in UTC milliseconds from the epoch (see
- * {@link java.util#Calendar}).
+ * All time stamps are measured as the milliseconds since January 1, 1970,
+ * 00:00:00 GMT.
  * </p>
  * <p>
  * Note: this class is not indented to be subclassed outside the refactoring

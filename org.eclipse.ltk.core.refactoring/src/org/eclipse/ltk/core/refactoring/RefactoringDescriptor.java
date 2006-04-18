@@ -35,9 +35,11 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * refactorings and provide more refactoring-specific information, such as which
  * elements have participated in the refactoring. </li>
  * <li> refactoring descriptor flags, which tell the framework what capabilities
- * a certain refactorings has when executed in a remote context. </li>
- * <li> a timestamp, measured in UTC milliseconds from the epoch, which denotes
- * the original execution time of the refactoring. </li>
+ * or properties a certain refactorings has when executed in a remote context.
+ * </li>
+ * <li> a timestamp, measured as the milliseconds since January 1, 1970,
+ * 00:00:00 GMT, which denotes the original execution time of the refactoring.
+ * </li>
  * <li> a unique ID, which denotes a certain kind of refactoring (ie. Rename
  * File). This ID is usually composed of the plugin identifier of the
  * contributing plugin and a plugin-wide unique identifier (ie.
@@ -70,8 +72,8 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * information in order to provide a means of schema evolution.
  * </p>
  * <p>
- * All time stamps are measured in UTC milliseconds from the epoch (see
- * {@link java.util#Calendar}).
+ * All time stamps are measured as the milliseconds since January 1, 1970,
+ * 00:00:00 GMT.
  * </p>
  * <p>
  * Note: this class is indented to be subclassed by clients to provide
