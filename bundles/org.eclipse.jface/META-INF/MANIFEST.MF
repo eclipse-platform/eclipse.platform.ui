@@ -35,4 +35,3 @@ Export-Package: org.eclipse.jface,
 Require-Bundle: org.eclipse.swt;visibility:=reexport,
  org.eclipse.core.commands;visibility:=reexport,
  org.eclipse.equinox.common
-Import-Package: com.ibm.icu.text

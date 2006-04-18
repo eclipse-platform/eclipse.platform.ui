@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;	// Not using ICU to support standalone JFace scenario
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;

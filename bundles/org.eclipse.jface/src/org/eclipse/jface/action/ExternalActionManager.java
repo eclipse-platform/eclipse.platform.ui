@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.action;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;	// Not using ICU to support standalone JFace scenario
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.viewers;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;	// Not using ICU to support standalone JFace scenario
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
