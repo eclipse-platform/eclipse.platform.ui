@@ -14,7 +14,6 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
@@ -40,8 +39,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	}
 
 	protected StructuredViewer createViewer(Shell shell) {
-		
-		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
+
 		viewer = new ComboViewer(shell);
 		contentProvider = new RefreshTestContentProvider(ELEMENT_COUNT);
 		viewer.setContentProvider(contentProvider);
@@ -56,6 +54,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 */
 	public void testRefresh() throws Throwable {
 
+		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
 		ELEMENT_COUNT = 1000;
 		openBrowser();
 
@@ -66,8 +65,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, MIN_ITERATIONS, ITERATIONS,
-				JFacePerformanceSuite.MAX_TIME);
+		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
 		assertPerformance();
@@ -80,8 +78,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 */
 	public void testRefreshSmall() throws Throwable {
 
-		tagIfNecessary("JFace - Refresh 50 item combo 1000 times",
-				Dimension.ELAPSED_PROCESS);
+		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
 
 		ELEMENT_COUNT = 50;
 		openBrowser();
@@ -95,8 +92,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 				processEvents();
 				stopMeasuring();
 			}
-		}, MIN_ITERATIONS, slowGTKIterations(),
-				JFacePerformanceSuite.MAX_TIME);
+		}, MIN_ITERATIONS, slowGTKIterations(), JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
 		assertPerformance();
