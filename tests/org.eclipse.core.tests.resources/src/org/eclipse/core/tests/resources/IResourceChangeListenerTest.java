@@ -208,7 +208,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	 * Runs code to handle a core exception
 	 */
 	protected void handleCoreException(CoreException e) {
-		assertTrue("CoreException: " + e.getMessage(), false);
+		fail("IResourceChangeListenerTest", e);
 	}
 
 	/**
