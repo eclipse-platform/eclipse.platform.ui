@@ -14,11 +14,12 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.internal.xhtml.UAContentParser;
 import org.eclipse.help.internal.xhtml.UATransformManager;
+import org.eclipse.help.internal.xhtml.XHTMLContentDescriber;
 import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -30,13 +31,16 @@ import org.w3c.dom.Document;
 
 public class DynamicContentProducer implements IHelpContentProducer {
 
+	private IContentDescriber xhtmlDescriber;
+
 	public InputStream getInputStream(String pluginID, String href, Locale locale) {
-		String file = href;
-		int qloc = href.indexOf('?');
-		if (qloc != -1) {
-			file = href.substring(0, qloc);
-		}
 		if (isXHTML(pluginID, href, locale)) {
+			String file = href;
+			int qloc = href.indexOf('?');
+			if (qloc != -1) {
+				file = href.substring(0, qloc);
+			}
+
 			/*
 			 * Filtering can be turned off when, for example,
 			 * indexing documents.
@@ -60,42 +64,33 @@ public class DynamicContentProducer implements IHelpContentProducer {
 	 * @param locale the document's locale
 	 * @return whether or not the document is XHTML
 	 */
-	private static boolean isXHTML(String pluginID, String href, Locale locale) {
+	private boolean isXHTML(String pluginID, String href, Locale locale) {
 		String file = href;
 		int qloc = href.indexOf('?');
 		if (qloc != -1) {
 			file = href.substring(0, qloc);
 		}
-		int lastSlash = file.lastIndexOf('/');
-		String fileName;
-		if (lastSlash != -1) {
-			fileName = file.substring(lastSlash + 1);
-		}
-		else {
-			fileName = file;
+		if (xhtmlDescriber == null) {
+			xhtmlDescriber = new XHTMLContentDescriber();
 		}
 		// first open it to peek inside to see whether it's really XHTML
-		InputStream contents = openXHTMLFromPluginRaw(pluginID, file, locale.toString());
-		IContentType type = null;
+		InputStream in = null;
 		try {
-			type = Platform.getContentTypeManager().findContentTypeFor(contents, fileName);
+			in = openXHTMLFromPluginRaw(pluginID, file, locale.toString());
+			return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			HelpPlugin.logError("An error occured in DynamicContentProducer while trying to determine the content type", e); //$NON-NLS-1$
 		}
 		finally {
-			if (contents != null) {
+			if (in != null) {
 				try {
-					contents.close();
+					in.close();
 				}
 				catch (IOException e) {
 					// nothing we can do
 				}
 			}
-		}
-		// if it has the right content type it's XHTML
-		if (type != null) {
-			return "org.eclipse.help.xhtml".equals(type.getId()); //$NON-NLS-1$
 		}
 		return false;
 	}

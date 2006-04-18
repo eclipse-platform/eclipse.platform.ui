@@ -197,7 +197,7 @@ public class SearchIndex implements ISearchIndex {
 				participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(pid);
 			// NEW: check for file extension-based search participant;
 			if (participant == null)
-				participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name, url);
+				participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
 			if (participant != null) {
 				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
@@ -214,7 +214,8 @@ public class SearchIndex implements ISearchIndex {
 			// default to html
 			IStatus status = htmlSearchParticipant.addDocument(this, pluginId, name, url, id, doc);
 			if (status.getSeverity() == IStatus.OK) {
-				indexedDocs.put(name, "0"); //$NON-NLS-1$
+				String filters = doc.get("filters"); //$NON-NLS-1$
+				indexedDocs.put(name, filters != null ? filters : "0"); //$NON-NLS-1$
 				iw.addDocument(doc);
 			}
 			return status;
@@ -1029,7 +1030,7 @@ public class SearchIndex implements ISearchIndex {
 	public IStatus addDocument(String pluginId, String name, URL url, String id, Document doc) {
 		// try a registered participant for the file format
 		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager()
-				.getParticipant(pluginId, name, url);
+				.getParticipant(pluginId, name);
 		if (participant != null) {
 			return participant.addDocument(this, pluginId, name, url, id, doc);
 		}

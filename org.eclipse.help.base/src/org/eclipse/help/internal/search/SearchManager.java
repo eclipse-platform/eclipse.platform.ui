@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
@@ -65,11 +64,8 @@ public class SearchManager implements ITocsChangedListener {
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
 
-	/**
-	 * Caches search participants
-	 */
-	private Map searchParticipants = new HashMap();
-
+	private Map searchParticipantsById = new HashMap();
+	private Map searchParticipantsByPlugin = new HashMap();
 	private ArrayList globalSearchParticipants;
 
 	private static class ParticipantDescriptor implements IHelpResource {
@@ -85,31 +81,7 @@ public class SearchManager implements ITocsChangedListener {
 			return element.getAttribute("id"); //$NON-NLS-1$
 		}
 
-		public boolean matchesContentType(String fileName) {
-			return matchesContentType(fileName, null);
-		}
-		
-		public boolean matchesContentType(String fileName, URL url) {
-			String contentType = element.getAttribute("content-type"); //$NON-NLS-1$
-			IContentType type = null;
-			if (url == null) {
-				type = Platform.getContentTypeManager().findContentTypeFor(fileName);
-			}
-			else {
-				try {
-					type = Platform.getContentTypeManager().findContentTypeFor(url.openStream(), fileName);
-				}
-				catch (IOException e) {
-					return false;
-				}
-			}
-			if (type != null) {
-				return type.getId().equals(contentType);
-			}
-			return false;
-		}
-		
-		public boolean matchesExtension(String extension) {
+		public boolean matches(String extension) {
 			String ext = element.getAttribute("extensions"); //$NON-NLS-1$
 			if (ext == null)
 				return false;
@@ -122,10 +94,6 @@ public class SearchManager implements ITocsChangedListener {
 			return false;
 		}
 
-		public boolean hasContentType() {
-			return element.getAttribute("content-type") != null; //$NON-NLS-1$
-		}
-		
 		public boolean hasExtensions() {
 			return element.getAttribute("extensions") != null; //$NON-NLS-1$
 		}
@@ -300,20 +268,10 @@ public class SearchManager implements ITocsChangedListener {
 			return false;
 		int dotLoc = url.lastIndexOf('.');
 		String ext = url.substring(dotLoc + 1);
-		String fileName = url.substring(url.lastIndexOf('/') + 1);
 		for (int i = 0; i < list.size(); i++) {
 			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
-			if (desc.hasContentType()) {
-				if (desc.matchesContentType(fileName)) {
-					return true;
-				}
-			}
-			// extensions attribute deprecated
-			else if (desc.hasExtensions()) {
-				if (desc.matchesExtension(ext)) {
-					return true;
-				}
-			}
+			if (desc.matches(ext))
+				return true;
 		}
 		return false;
 	}
@@ -379,44 +337,64 @@ public class SearchManager implements ITocsChangedListener {
 	}
 
 	/**
+	 * Returns the lucene search participant with the given id, or null if it could not
+	 * be found.
+	 * 
+	 * @param participantId the participant's unique id
+	 * @return the participant with the given id
+	 */
+	public LuceneSearchParticipant getParticipant(String participantId) {
+		ParticipantDescriptor desc = (ParticipantDescriptor)searchParticipantsById.get(participantId);
+		if (desc != null) {
+			return desc.getParticipant();
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns a TOC file participant for the provided plug-in and file name.
 	 * 
 	 * @param pluginId
-	 * @param path
+	 * @param fileName
 	 * @return
 	 */
 
-	public LuceneSearchParticipant getParticipant(String pluginId, String path, URL url) {
+	public LuceneSearchParticipant getParticipant(String pluginId, String fileName) {
 		ArrayList list = getParticipantDescriptors(pluginId);
 		if (list == null)
 			return null;
-		int dotLoc = path.lastIndexOf('.');
-		int lastSlash = path.lastIndexOf('/');
-		String ext = path.substring(dotLoc + 1);
-		String fileName;
-		if (lastSlash == -1) {
-			fileName = path;
-		}
-		else {
-			fileName = path.substring(lastSlash + 1);
-		}
+		int dotLoc = fileName.lastIndexOf('.');
+		String ext = fileName.substring(dotLoc + 1);
 		for (int i = 0; i < list.size(); i++) {
 			ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
-			if (desc.hasContentType()) {
-				if (desc.matchesContentType(fileName, url)) {
-					return desc.getParticipant();
-				}
-			}
-			// extensions attribute deprecated
-			else if (desc.hasExtensions()) {
-				if (desc.matchesExtension(ext)) {
-					return desc.getParticipant();
-				}
-			}
+			if (desc.matches(ext))
+				return desc.getParticipant();
 		}
 		return null;
 	}
 
+	/**
+	 * Returns whether or not the given search participant is bound to the given
+	 * plugin.
+	 * 
+	 * @param pluginId the id of the plugin
+	 * @param participantId the id of the search participant
+	 * @return whether or not the participant is bound to the plugin
+	 */
+	public boolean isParticipantBound(String pluginId, String participantId) {
+		List list = getParticipantDescriptors(pluginId);
+		if (list != null) {
+			Iterator iter = list.iterator();
+			while (iter.hasNext()) {
+				ParticipantDescriptor desc = (ParticipantDescriptor)iter.next();
+				if (participantId.equals(desc.getId())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns a set of plug-in Ids that have search participants or bindings.
 	 * 
@@ -446,26 +424,11 @@ public class SearchManager implements ITocsChangedListener {
 	 * Loops through all the loaded search participants and notifies them that they can drop the
 	 * cached data to reduce runtime memory footprint.
 	 */
-
 	public void clearSearchParticipants() {
-		// global participants
-		if (globalSearchParticipants != null) {
-			for (int i = 0; i < globalSearchParticipants.size(); i++) {
-				ParticipantDescriptor desc = (ParticipantDescriptor) globalSearchParticipants.get(i);
-				desc.clear();
-			}
-		}
-		// file search participants
-		Collection values = searchParticipants.values();
-		for (Iterator iter=values.iterator(); iter.hasNext();) {
-			Object slot = iter.next();
-			if (slot instanceof ArrayList) {
-				ArrayList list = (ArrayList)slot;
-				for (int i = 0; i < list.size(); i++) {
-					ParticipantDescriptor desc = (ParticipantDescriptor) list.get(i);
-					desc.clear();
-				}
-			}
+		Iterator iter = searchParticipantsById.values().iterator();
+		while (iter.hasNext()) {
+			ParticipantDescriptor desc = (ParticipantDescriptor)iter.next();
+			desc.clear();
 		}
 	}
 
@@ -490,7 +453,7 @@ public class SearchManager implements ITocsChangedListener {
 					if (!rel.getName().equals("searchParticipant")) //$NON-NLS-1$
 						continue;
 					// don't allow binding the global participants
-					if (rel.getAttribute("content-type") == null && rel.getAttribute("extensions") == null) //$NON-NLS-1$ //$NON-NLS-2$
+					if (rel.getAttribute("extensions") == null) //$NON-NLS-1$
 						continue;
 					String id = rel.getAttribute("id"); //$NON-NLS-1$
 					if (id != null && id.equals(refId)) {
@@ -509,7 +472,9 @@ public class SearchManager implements ITocsChangedListener {
 					continue;
 				if (list == null)
 					list = new ArrayList();
-				list.add(new ParticipantDescriptor(element));
+				ParticipantDescriptor desc = new ParticipantDescriptor(element); 
+				list.add(desc);
+				searchParticipantsById.put(desc.getId(), desc);
 			}
 		}
 		if (binding != null)
@@ -528,7 +493,7 @@ public class SearchManager implements ITocsChangedListener {
 	private ArrayList addBoundDescriptors(ArrayList list, ArrayList binding) {
 		for (int i = 0; i < binding.size(); i++) {
 			IConfigurationElement refEl = (IConfigurationElement) binding.get(i);
-			Collection collection = searchParticipants.values();
+			Collection collection = searchParticipantsByPlugin.values();
 			boolean found = false;
 			for (Iterator iter = collection.iterator(); iter.hasNext();) {
 				if (found)
@@ -552,7 +517,9 @@ public class SearchManager implements ITocsChangedListener {
 			if (!found) {
 				if (list == null)
 					list = new ArrayList();
-				list.add(new ParticipantDescriptor(refEl));
+				ParticipantDescriptor d = new ParticipantDescriptor(refEl);
+				list.add(d);
+				searchParticipantsById.put(d.getId(), d);
 			}
 		}
 		return list;
@@ -596,12 +563,12 @@ public class SearchManager implements ITocsChangedListener {
 	}
 
 	private ArrayList getParticipantDescriptors(String pluginId) {
-		Object result = searchParticipants.get(pluginId);
+		Object result = searchParticipantsByPlugin.get(pluginId);
 		if (result == null) {
 			result = createSearchParticipants(pluginId);
 			if (result == null)
 				result = PARTICIPANTS_NOT_FOUND;
-			searchParticipants.put(pluginId, result);
+			searchParticipantsByPlugin.put(pluginId, result);
 		}
 		if (result == PARTICIPANTS_NOT_FOUND)
 			return null;

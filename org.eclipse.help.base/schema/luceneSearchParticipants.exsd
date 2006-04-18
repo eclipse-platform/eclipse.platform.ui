@@ -104,20 +104,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  Note: This attribute is deprecated; use the content-types attribute instead.
-&lt;p&gt;
-an optional field containing the list of file types handled by the search participant. This is a string containing comma separate file extensions (e.g. &quot;abc, xyz&quot;). This attribute should be used when files are made explicitly known to the help system in the &lt;code&gt;org.eclipse.help.toc&lt;/code&gt; extension point. The absence of this attribute is an indication that the participant will index all the documents it is responsible for by itself. 
-&lt;p&gt;Note also that participants that are registered for known documents have plug-in scope. If you want a participant to apply to documents in another plug-in, you must use the &lt;code&gt;binding&lt;/code&gt; element to extend the scope. In contrast, participants that do not specify this attribute have global scope.
-               </documentation>
-               <appInfo>
-                  <meta.attribute deprecated="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="content-type" type="string">
-            <annotation>
-               <documentation>
-                  an optional field containing the list of content types handled by the search participant. This is a string containing a comma-separated list of content type identifiers (e.g. &quot;html, xhtml&quot;). This attribute should be used when files are made explicitly known to the help system in the &lt;code&gt;org.eclipse.help.toc&lt;/code&gt; extension point. The absence of this attribute and the extensions (deprecated) attribute is an indication that the participant will index all the documents it is responsible for by itself. 
+                  an optional field containing the list of file types handled by the search participant. This is a string containing comma separate file extensions (e.g. &quot;abc, xyz&quot;). This attribute should be used when files are made explicitly known to the help system in the &lt;code&gt;org.eclipse.help.toc&lt;/code&gt; extension point. The absence of this attribute is an indication that the participant will index all the documents it is responsible for by itself. 
 &lt;p&gt;Note also that participants that are registered for known documents have plug-in scope. If you want a participant to apply to documents in another plug-in, you must use the &lt;code&gt;binding&lt;/code&gt; element to extend the scope. In contrast, participants that do not specify this attribute have global scope.
                </documentation>
             </annotation>

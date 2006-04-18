@@ -163,7 +163,7 @@
    <extension
          point="org.eclipse.help.base.luceneSearchParticipants">
       <searchParticipant
-            content-type="org.eclipse.help.xhtml"
+            extensions="xhtml"
             id="org.eclipse.help.base.xhtml"
             participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"
             headless="true"/>
