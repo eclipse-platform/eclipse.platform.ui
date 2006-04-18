@@ -448,12 +448,12 @@
 	        commandId="org.eclipse.ui.edit.text.scroll.lineUp"
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1+ARROW_UP"/>
+	        sequence="CTRL+ARROW_UP"/>	<!-- hardcode CTRL to avoid overwriting Command+UP on carbon -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.scroll.lineDown"
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1+ARROW_DOWN"/>
+	        sequence="CTRL+ARROW_DOWN"/>	<!-- hardcode CTRL to avoid overwriting Command+DOWN on carbon -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.toggleOverwrite"
 	        contextId="org.eclipse.ui.textEditorScope"
@@ -464,15 +464,15 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+F10"/>
-	  <!-- Command+Q is quit on carbon, so don't overwrite it -->
 	  <key
-	        sequence="CTRL+Q"
 	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	        contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+Q"/>	<!-- Command+Q is quit on carbon, so don't overwrite it -->
 	  <key
-	        sequence="M2+CR"
-	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.smartEnter"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        sequence="M2+CR"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
 	        sequence="M1+M2+CR"
@@ -515,7 +515,63 @@
 	        commandId="org.eclipse.ui.edit.text.goto.wordNext"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.lineEnd"
+	        sequence="END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.lineEnd"
+            platform="carbon"
+	        sequence="M1+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.textEnd"
+	        sequence="M1+END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            platform="carbon"
+	        sequence="END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="ALT+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.goto.wordNext"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        sequence="M1+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.lineStart"
+	        sequence="HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.lineStart"
+            platform="carbon"
+	        sequence="M1+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.textStart"
+	        sequence="M1+HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.goto.textStart"
+            platform="carbon"
+	        sequence="HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="ALT+ARROW_LEFT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -525,7 +581,19 @@
 	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+            platform="carbon"
+	        sequence="ALT+DEL"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        sequence="M1+BS"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="ALT+BS"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -535,7 +603,31 @@
 	        commandId="org.eclipse.ui.edit.text.select.wordNext"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+            platform="carbon"
+	        sequence="M1+M2+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId=""
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="ALT+SHIFT+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.select.wordNext"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        sequence="M1+M2+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.select.wordPrevious"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="M1+M2+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId=""
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="ALT+SHIFT+ARROW_LEFT"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.select.wordPrevious"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -583,6 +675,8 @@
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M4+."
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      
+      <!-- emacs key bindings -->
       <key
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             contextId="org.eclipse.ui.textEditorScope"
