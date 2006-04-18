@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -86,6 +87,8 @@ public abstract class TableView extends ViewPart {
 	private IAction preferencesAction;
 
 	private MarkerTreeContentProvider contentProvider;
+
+	private ISelectionProvider selectionProvider = new MarkerSelectionProviderAdapter();
 
 	/*
 	 * (non-Javadoc) Method declared on IViewPart.
@@ -158,9 +161,9 @@ public abstract class TableView extends ViewPart {
 		MenuManager mgr = initContextMenu();
 		Menu menu = mgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(mgr, getViewer());
+		getSite().registerContextMenu(mgr, selectionProvider);
 
-		getSite().setSelectionProvider(getViewer());
+		getSite().setSelectionProvider(selectionProvider);
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		initMenu(actionBars.getMenuManager());
@@ -189,6 +192,7 @@ public abstract class TableView extends ViewPart {
 
 	/**
 	 * Set the sorter to be the new sorter.
+	 * 
 	 * @param sorter2
 	 */
 	void setSorter(TableSorter sorter2) {
@@ -198,6 +202,7 @@ public abstract class TableView extends ViewPart {
 
 	/**
 	 * Update the viewer for sorter updates
+	 * 
 	 * @param sorter2
 	 */
 	void updateForNewSorter(TableSorter sorter2) {
@@ -734,8 +739,8 @@ public abstract class TableView extends ViewPart {
 	}
 
 	/**
-	 * Update the direction indicator as column is
-	 * now the primary column.
+	 * Update the direction indicator as column is now the primary column.
+	 * 
 	 * @param column
 	 */
 	void updateDirectionIndicator(TreeColumn column) {
@@ -746,4 +751,12 @@ public abstract class TableView extends ViewPart {
 			getViewer().getTree().setSortDirection(SWT.DOWN);
 	}
 
+	/**
+	 * Set the selection of the receiver.
+	 * 
+	 * @param selection
+	 */
+	protected void setSelection(IStructuredSelection selection) {
+		selectionProvider.setSelection(selection);
+	}
 }

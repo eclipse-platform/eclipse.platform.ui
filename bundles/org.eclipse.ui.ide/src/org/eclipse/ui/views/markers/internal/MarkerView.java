@@ -426,8 +426,9 @@ public abstract class MarkerView extends TableView {
 		}
 
 		/**
-		 * Return the currently selected concrete marker or
-		 * <code>null</code> if there isn't one.
+		 * Return the currently selected concrete marker or <code>null</code>
+		 * if there isn't one.
+		 * 
 		 * @return ConcreteMarker
 		 */
 		private ConcreteMarker getSelectedConcreteMarker() {
@@ -775,6 +776,18 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#viewerSelectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void viewerSelectionChanged(IStructuredSelection selection) {
+
+		Object[] rawSelection = selection.toArray();
+
+		List markers = new ArrayList();
+
+		for (int idx = 0; idx < rawSelection.length; idx++) {
+
+			if (rawSelection[idx] instanceof ConcreteMarker)
+				markers.add(((ConcreteMarker) rawSelection[idx]).getMarker());
+		}
+
+		setSelection(new StructuredSelection(markers));
 
 		updateStatusMessage(selection);
 	}
@@ -1610,7 +1623,6 @@ public abstract class MarkerView extends TableView {
 		return adapter;
 	}
 
-
 	/**
 	 * Add a listener for the end of the update.
 	 * 
@@ -1712,7 +1724,5 @@ public abstract class MarkerView extends TableView {
 		updateJob.saveSelection(getViewer().getSelection());
 
 	}
-	
-	
 
 }
