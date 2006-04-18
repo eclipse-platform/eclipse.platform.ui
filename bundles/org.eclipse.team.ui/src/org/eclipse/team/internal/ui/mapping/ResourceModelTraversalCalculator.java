@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
@@ -25,6 +23,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.*;
 
@@ -71,7 +70,7 @@ public class ResourceModelTraversalCalculator {
 	private boolean hasNonResource(TreePath parentPath) {
 		for (int i = 0; i < parentPath.getSegmentCount(); i++) {
 			Object o = parentPath.getSegment(i);
-			if (!(o instanceof IResource) && !(o instanceof ModelProvider)) {
+			if (!(o instanceof IResource) && !(o instanceof ModelProvider) && !(o instanceof ChangeSet)) {
 				return true;
 			}
 		}
