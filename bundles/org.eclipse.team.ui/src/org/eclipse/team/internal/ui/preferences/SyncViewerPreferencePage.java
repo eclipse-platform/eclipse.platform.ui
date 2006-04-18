@@ -33,6 +33,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	private BooleanFieldEditor showSyncInLabels = null;
 	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
     private RadioGroupFieldEditor defaultLayout = null;
+    private boolean includeDefaultLayout = true;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
 		/*
@@ -77,15 +78,17 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		
-	    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
-	            TeamUIMessages.SyncViewerPreferencePage_0, 3,  
-	            new String[][] {
-	            	{TeamUIMessages.SyncViewerPreferencePage_1, FLAT_LAYOUT}, 
-	            	{TeamUIMessages.SyncViewerPreferencePage_2, TREE_LAYOUT}, 
-	            	{TeamUIMessages.SyncViewerPreferencePage_3, COMPRESSED_LAYOUT} 
-	    		}, 
-	    		getFieldEditorParent(), true /* use a group */);
-	    addField(defaultLayout);
+		if (isIncludeDefaultLayout()) {
+		    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
+		            TeamUIMessages.SyncViewerPreferencePage_0, 3,  
+		            new String[][] {
+		            	{TeamUIMessages.SyncViewerPreferencePage_1, FLAT_LAYOUT}, 
+		            	{TeamUIMessages.SyncViewerPreferencePage_2, TREE_LAYOUT}, 
+		            	{TeamUIMessages.SyncViewerPreferencePage_3, COMPRESSED_LAYOUT} 
+		    		}, 
+		    		getFieldEditorParent(), true /* use a group */);
+		    addField(defaultLayout);
+		}
 
 		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, TeamUIMessages.SyncViewerPreferencePage_13, 3,  
 				new String[][] {
@@ -216,5 +219,13 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
 			store.putValue(SYNCVIEW_DEFAULT_PERSPECTIVE, SYNCVIEW_DEFAULT_PERSPECTIVE_NONE);
 		}
+	}
+
+	public boolean isIncludeDefaultLayout() {
+		return includeDefaultLayout;
+	}
+
+	public void setIncludeDefaultLayout(boolean includeDefaultLayout) {
+		this.includeDefaultLayout = includeDefaultLayout;
 	}	
 }

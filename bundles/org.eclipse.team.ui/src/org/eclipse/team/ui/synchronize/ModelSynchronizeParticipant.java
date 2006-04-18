@@ -24,6 +24,7 @@ import org.eclipse.team.core.mapping.provider.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelEnablementPreferencePage;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
+import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.*;
@@ -584,11 +585,9 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public PreferencePage[] getPreferencePages() {
 		List pages = new ArrayList();
-		PreferencePage[] preferencePages = super.getPreferencePages();
-		for (int i = 0; i < preferencePages.length; i++) {
-			PreferencePage page = preferencePages[i];
-			pages.add(page);
-		}
+		SyncViewerPreferencePage syncViewerPreferencePage = new SyncViewerPreferencePage();
+		syncViewerPreferencePage.setIncludeDefaultLayout(false);
+		pages.add(syncViewerPreferencePage);
 		pages.add(new ModelEnablementPreferencePage());
 		ITeamContentProviderDescriptor[] descriptors = TeamUI.getTeamContentProviderManager().getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {

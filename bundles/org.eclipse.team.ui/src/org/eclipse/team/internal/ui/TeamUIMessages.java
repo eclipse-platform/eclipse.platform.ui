@@ -138,6 +138,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String ResourceModelLabelProvider_0;
 
+	public static String ResourceModelPreferencePage_0;
+
 	public static String simpleInternal;
 	public static String exception;
 
