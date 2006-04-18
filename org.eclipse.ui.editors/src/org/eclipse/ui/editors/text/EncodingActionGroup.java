@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.ResourceAction;
@@ -205,7 +205,7 @@ public class EncodingActionGroup extends ActionGroup {
 			return defaultText;
 		}
 
-		return MessageFormat.format(format, new String[] { encoding });
+		return NLSUtility.format(format, encoding);
 	}
 
 	/*

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.quickdiff;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -35,13 +34,5 @@ class QuickDiffMessages {
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
-	}
-
-	public static String getFormattedString(String key, Object arg) {
-		return getFormattedString(key, new Object[] { arg });
-	}
-
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
 	}
 }

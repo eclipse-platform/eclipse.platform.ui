@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.editors.text;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -133,7 +132,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 						page.openEditor(input, editorId);
 					} catch (PartInitException e) {
 						EditorsPlugin.log(e.getStatus());
-						String msg= MessageFormat.format(TextEditorMessages.OpenExternalFileAction_message_errorOnOpen, new Object[] { fileStore.getName() });
+						String msg= NLSUtility.format(TextEditorMessages.OpenExternalFileAction_message_errorOnOpen, fileStore.getName());
 						MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg);
 					}
 				} else {
@@ -145,7 +144,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 
 			if (numberOfFilesNotFound > 0) {
 				String msgFmt= numberOfFilesNotFound == 1 ? TextEditorMessages.OpenExternalFileAction_message_fileNotFound : TextEditorMessages.OpenExternalFileAction_message_filesNotFound;
-				String msg= MessageFormat.format(msgFmt, new Object[] { notFound.toString() });
+				String msg= NLSUtility.format(msgFmt, notFound.toString());
 				MessageDialog.openError(fWindow.getShell(), TextEditorMessages.OpenExternalFileAction_title, msg);
 			}
 		}

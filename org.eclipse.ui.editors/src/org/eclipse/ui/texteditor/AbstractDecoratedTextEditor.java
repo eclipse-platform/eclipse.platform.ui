@@ -13,8 +13,6 @@ package org.eclipse.ui.texteditor;
 import java.io.File;
 import java.util.Iterator;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
@@ -115,6 +113,7 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
@@ -1531,7 +1530,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		        		shell,
 		        		TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_title,
 		        		null,
-		        		MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_message, new String[] { path }),
+		        		NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_message, path),
 		        		MessageDialog.WARNING,
 		        		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL },
 		        		1); // 'No' is the default
@@ -1560,7 +1559,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			dialog.create();
 
 			if (provider.isDeleted(input) && original != null) {
-				String message= MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_warning_saveAs_deleted, new Object[] { original.getName() });
+				String message= NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_warning_saveAs_deleted, original.getName());
 				dialog.setErrorMessage(null);
 				dialog.setMessage(message, IMessageProvider.WARNING);
 			}
@@ -1600,7 +1599,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			final IStatus status= x.getStatus();
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
 				String title= TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_title;
-				String msg= MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_message, new String[] { x.getMessage() });
+				String msg= NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_message, x.getMessage());
 				MessageDialog.openError(shell, title, msg);
 			}
 		} finally {

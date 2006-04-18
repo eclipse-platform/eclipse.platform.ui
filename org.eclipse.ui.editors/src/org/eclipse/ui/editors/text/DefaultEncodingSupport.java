@@ -12,7 +12,6 @@ package org.eclipse.ui.editors.text;
 
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -237,7 +236,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 			if (t instanceof CharConversionException) {
 				if (encoding != null)
-					return MessageFormat.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, new Object[] { encoding });
+					return NLSUtility.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, encoding);
 				return TextEditorMessages.Editor_error_unreadable_encoding_message;
 			}
 

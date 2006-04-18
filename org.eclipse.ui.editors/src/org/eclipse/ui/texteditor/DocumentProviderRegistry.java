@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 
 
 /**
@@ -118,7 +118,7 @@ public class DocumentProviderRegistry {
 		extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "documentProviders"); //$NON-NLS-1$
 
 		if (extensionPoint == null) {
-			String msg= MessageFormat.format(TextEditorMessages.DocumentProviderRegistry_error_extension_point_not_found, new Object[] { PlatformUI.PLUGIN_ID });
+			String msg= NLSUtility.format(TextEditorMessages.DocumentProviderRegistry_error_extension_point_not_found, PlatformUI.PLUGIN_ID);
 			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 			ILog log= Platform.getLog(bundle);
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, null));
