@@ -265,9 +265,19 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		Point size= fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		size.x= Math.min(size.x, fMaxWidth);
-		size.y= Math.min(size.y, fMaxHeight);
+		// compute the preferred size
+		int x= SWT.DEFAULT;
+		int y= SWT.DEFAULT;
+		Point size= fShell.computeSize(x, y);
+		if (size.x > fMaxWidth)
+			x= fMaxWidth;
+		if (size.y > fMaxHeight)
+			y= fMaxHeight;
+
+		// recompute using the constraints if the preferred size is larger than the constraints
+		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
+			size= fShell.computeSize(x, y, false);
+
 		return size;
 	}
 
