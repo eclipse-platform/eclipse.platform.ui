@@ -541,7 +541,7 @@ class ProgressInfoItem extends Composite {
 
 		// Remove completed tasks
 		if (infos.length < taskEntries.size()) {
-			for (int i = infos.length + 1; i < taskEntries.size(); i++) {
+			for (int i = infos.length; i < taskEntries.size(); i++) {
 				((Link) taskEntries.get(i)).dispose();
 
 			}
