@@ -63,6 +63,11 @@ public class InputDialog extends Dialog {
      * Error message label widget.
      */
     private Text errorMessageText;
+    
+    /**
+     * Error message string.
+     */
+    private String errorMessage;
 
     /**
      * Creates an input dialog with OK and Cancel buttons. Note that the dialog
@@ -171,6 +176,9 @@ public class InputDialog extends Dialog {
                 | GridData.HORIZONTAL_ALIGN_FILL));
         errorMessageText.setBackground(errorMessageText.getDisplay()
                 .getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        // Set the error message text
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=66292
+        setErrorMessage(errorMessage);
 
         applyDialogFont(composite);
         return composite;
@@ -250,14 +258,16 @@ public class InputDialog extends Dialog {
      * @since 3.0
      */
     public void setErrorMessage(String errorMessage) {
-        errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
-        errorMessageText.getParent().update();
-        // Access the ok button by id, in case clients have overridden button creation.
-        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
-        Control button = getButton(IDialogConstants.OK_ID);
-        if (button != null) {
-			button.setEnabled(errorMessage == null);
-		}
-
+    	this.errorMessage = errorMessage;
+    	if (errorMessageText != null && !errorMessageText.isDisposed()) {
+    		errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
+    		errorMessageText.getParent().update();
+    		// Access the ok button by id, in case clients have overridden button creation.
+    		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
+    		Control button = getButton(IDialogConstants.OK_ID);
+    		if (button != null) {
+    			button.setEnabled(errorMessage == null);
+    		}
+    	}
     }
 }
