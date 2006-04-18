@@ -102,11 +102,13 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 				// if anything goes wrong, treat it as not xhtml
 			}
 			finally {
-				try {
-					in.close();
-				}
-				catch (IOException e) {
-					// nothing we can do here
+				if (in != null) {
+					try {
+						in.close();
+					}
+					catch (IOException e) {
+						// nothing we can do
+					}
 				}
 			}
 		}
