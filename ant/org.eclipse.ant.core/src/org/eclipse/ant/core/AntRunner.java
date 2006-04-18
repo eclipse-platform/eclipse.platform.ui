@@ -13,7 +13,6 @@ package org.eclipse.ant.core;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Entry point for running Ant builds inside Eclipse.
@@ -291,7 +291,7 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (buildRunning) {
-			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalCoreAntMessages.AntRunner_Already_in_progess, new String[]{buildFileLocation}), null);
+			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, NLS.bind(InternalCoreAntMessages.AntRunner_Already_in_progess, new String[]{buildFileLocation}), null);
 			throw new CoreException(status);
 		}
 		buildRunning= true;
@@ -436,7 +436,7 @@ public class AntRunner implements IPlatformRunnable {
 		if (missingClassName != null) {
 			missingClassName= missingClassName.replace('/', '.');
 			message= InternalCoreAntMessages.AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__2;
-			message= MessageFormat.format(message, new String[]{missingClassName});
+			message= NLS.bind(message, new String[]{missingClassName});
 		} else {
 			message= InternalCoreAntMessages.AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__1;
 		}
