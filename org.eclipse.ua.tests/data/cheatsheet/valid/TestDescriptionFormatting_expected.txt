@@ -25,10 +25,8 @@ Let's get started!"
       </item>
       <item
             title="Item with a line break"
-            description="<form><p>
-Line one
-<br/>
-Line two with a special &lt; char in the middle.
+            description="<form><p>Line one
+<br/>Line two with a special &lt; char in the middle.
 </p></form>"
             Href="null"
             contextId="null">
@@ -39,21 +37,13 @@ Line two with a special &lt; char in the middle.
       </item>
       <item
             title="Item with all the special charaters"
-            description="<form><p>
-&lt; - less than
-<br/>
-<b>Special characters</b><br/>
-less than:   &lt;
-<br/>
-greater than: &gt;
-<br/>
-ampersand:   &amp;
-<br/>
-apostrophe:  &apos;
-<br/>
-quote:       &quot;
-<br/>
-</p></form>"
+            description="<form><p>&lt; - less than
+<br/><b>Special characters</b><br/>less than:   &lt;
+<br/>greater than: &gt;
+<br/>ampersand:   &amp;
+<br/>apostrophe:  &apos;
+<br/>quote:       &quot;
+<br/></p></form>"
             Href="null"
             contextId="null">
          <nullAction/>

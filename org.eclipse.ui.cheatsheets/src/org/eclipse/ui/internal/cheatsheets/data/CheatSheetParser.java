@@ -337,11 +337,23 @@ public class CheatSheetParser {
 		StringBuffer text = new StringBuffer();
 		
 		boolean containsMarkup = false;
+		
+		// The documentation for the content file specifies
+		// that leading whitespace should be ignored at the
+		// beginning of a description or after a <br/>. This 
+		// applies also to <onCompletion> elements.
+		// See Bug 129208 and Bug 131185
+		boolean isLeadingTrimRequired = true;
 
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if(node.getNodeType() == Node.TEXT_NODE) {
-				text.append(node.getNodeValue());
+				String nodeValue = node.getNodeValue();
+			    if (isLeadingTrimRequired) {
+					nodeValue = trimLeadingWhitespace(nodeValue);
+				}
+				text.append(nodeValue);
+				isLeadingTrimRequired = false;
 			} else if(node.getNodeType() == Node.ELEMENT_NODE) {
 				// handle <b></b> and <br/>
 				if(node.getNodeName().equals(IParserTags.BOLD)) {
@@ -349,9 +361,11 @@ public class CheatSheetParser {
 					text.append(IParserTags.BOLD_START_TAG);
 					text.append(node.getFirstChild().getNodeValue());
 					text.append(IParserTags.BOLD_END_TAG);
+					isLeadingTrimRequired = false;
 				} else if(node.getNodeName().equals(IParserTags.BREAK)) {
 					containsMarkup = true;	
 					text.append(IParserTags.BREAK_TAG);
+					isLeadingTrimRequired = true;
 				} else {
 					warnUnknownMarkupElement(startNode, nodeName, node);
 				}
@@ -366,6 +380,18 @@ public class CheatSheetParser {
 
 		// Remove the new line, form feed and tab chars
 		return text.toString().trim();
+	}
+
+	private String trimLeadingWhitespace(String nodeValue) {
+		int firstNonWhitespaceIndex = 0;
+		while (firstNonWhitespaceIndex < nodeValue.length() && 
+				Character.isWhitespace(nodeValue.charAt(firstNonWhitespaceIndex))) {
+			firstNonWhitespaceIndex++;
+		}
+		if (firstNonWhitespaceIndex > 0) {
+		    return nodeValue.substring(firstNonWhitespaceIndex, nodeValue.length());
+		}
+		return nodeValue;
 	}
 
 	/*
