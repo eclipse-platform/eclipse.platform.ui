@@ -12,12 +12,12 @@ package org.eclipse.ui.externaltools.internal.ui;
 
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -219,9 +220,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
                     if (shell == null) {
                         return;
                     }
-					IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getLocation().toOSString()}), null);
+					IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_Exists, new String[]{config.getLocation().toOSString()}), null);
 					ErrorDialog.openError(getShell(), ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
-									MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
+									NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_External_Tool_Builder__0__Not_Added_2, new String[]{config.getName()}),
 									status);
 					userHasMadeChanges= true;
 				} else {
@@ -979,7 +980,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 						} catch (CoreException e) {
                             Shell shell= getShell();
                             if (shell != null) {
-                                MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {workingCopy.getName()}));
+                                MessageDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_39, NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_40, new String[] {workingCopy.getName()}));
                             }
 						}
 					}

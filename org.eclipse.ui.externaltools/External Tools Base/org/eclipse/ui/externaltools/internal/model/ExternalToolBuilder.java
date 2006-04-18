@@ -11,8 +11,8 @@
 package org.eclipse.ui.externaltools.internal.model;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.osgi.framework.Bundle;
@@ -166,7 +167,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private void launchBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.ExternalToolBuilder_Running__0_____1, new String[] { config.getName()}));
+		monitor.subTask(NLS.bind(ExternalToolsModelMessages.ExternalToolBuilder_Running__0_____1, new String[] { config.getName()}));
 		buildStarted(kind);
 		// The default value for "launch in background" is true in debug core. If
 		// the user doesn't go through the UI, the new attribute won't be set. This means

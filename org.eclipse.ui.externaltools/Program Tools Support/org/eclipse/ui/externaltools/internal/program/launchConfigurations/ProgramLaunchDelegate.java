@@ -13,7 +13,6 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -163,7 +163,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName);
 		
 		if (p != null) {
-			monitor.beginTask(MessageFormat.format(ExternalToolsProgramMessages.ProgramLaunchDelegate_3, new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN);
+			monitor.beginTask(NLS.bind(ExternalToolsProgramMessages.ProgramLaunchDelegate_3, new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 			if (process == null) {
 				p.destroy();

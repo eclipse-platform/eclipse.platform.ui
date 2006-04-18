@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ui;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,6 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -70,7 +69,7 @@ class BuilderLabelProvider extends LabelProvider {
 			if (extension != null) {
 				builderName = extension.getLabel();
 			} else {
-				builderName = MessageFormat.format(ExternalToolsUIMessages.BuilderPropertyPage_missingBuilder, new Object[] { builderID });
+				builderName = NLS.bind(ExternalToolsUIMessages.BuilderPropertyPage_missingBuilder, new Object[] { builderID });
 			}
 			return builderName;
 		}

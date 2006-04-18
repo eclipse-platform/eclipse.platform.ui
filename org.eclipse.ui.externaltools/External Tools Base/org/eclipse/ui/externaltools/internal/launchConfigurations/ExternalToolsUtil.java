@@ -13,7 +13,6 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +25,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.RefreshTab;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -64,11 +64,11 @@ public class ExternalToolsUtil {
 	public static IPath getLocation(ILaunchConfiguration configuration) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
 		if (location == null) {
-			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_Location_not_specified_by__0__1, new String[] { configuration.getName()}), null, 0);
+			abort(NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_Location_not_specified_by__0__1, new String[] { configuration.getName()}), null, 0);
 		} else {
 			String expandedLocation = getStringVariableManager().performStringSubstitution(location);
 			if (expandedLocation == null || expandedLocation.length() == 0) {
-				String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
+				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
 				abort(msg, null, 0);
 			} else {
 				File file = new File(expandedLocation);
@@ -76,7 +76,7 @@ public class ExternalToolsUtil {
 					return new Path(expandedLocation);
 				} 
 				
-				String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
+				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
 				abort(msg, null, 0);
 			}
 		}
@@ -120,7 +120,7 @@ public class ExternalToolsUtil {
 				if (path.isDirectory()) {
 					return new Path(expandedLocation);
 				} 
-				String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidDirectory__0_, new Object[] { expandedLocation, configuration.getName()});
+				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidDirectory__0_, new Object[] { expandedLocation, configuration.getName()});
 				abort(msg, null, 0);
 			}
 		}

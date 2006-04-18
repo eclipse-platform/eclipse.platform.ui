@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -19,6 +18,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -36,7 +36,7 @@ public class BuildProjectResolver implements IDynamicVariableResolver {
 		if (resource != null && resource.exists()) {
 			return resource.getLocation().toOSString();
 		}
-		abort(MessageFormat.format(VariableMessages.BuildProjectResolver_3, new String[]{getReferenceExpression(variable, argument)}), null);
+		abort(NLS.bind(VariableMessages.BuildProjectResolver_3, new String[]{getReferenceExpression(variable, argument)}), null);
 		return null;
 	}
 	
