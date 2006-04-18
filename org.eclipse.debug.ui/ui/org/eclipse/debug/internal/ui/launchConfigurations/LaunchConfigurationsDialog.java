@@ -117,11 +117,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.50f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.52f;
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
-	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(800, 600);
+	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(800, 620);
 	/**
 	 * defines some default sashweights when we have a new workspace
 	 * @since 3.2
