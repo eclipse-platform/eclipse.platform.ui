@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -312,7 +310,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					public void run() throws Exception {
 						participant.setup(document);
 						if (document.getDocumentPartitioner() != null) {
-							String message= NLS.bind(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
+							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
 							FileBuffersPlugin.getDefault().getLog().log(status);
 						}
