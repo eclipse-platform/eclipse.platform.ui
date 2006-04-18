@@ -346,13 +346,15 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Get the host (and port)
 			errorMessage = CVSMessages.CVSRepositoryLocation_parsingHost;
 			end= location.indexOf(COLON, start);
+			int hostEnd = end;
 			if (end == -1) {
 			    // The last colon is optional so look for the slash that starts the path
 			    end = location.indexOf('/', start);
+			    hostEnd = end;
 			    // Decrement the end since the slash is part of the path
 			    if (end != -1) end--;
 			}
-			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, end); //$NON-NLS-1$
+			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, hostEnd); //$NON-NLS-1$
 			int port = USE_DEFAULT_PORT;
 			boolean havePort = false;
 			if (hmOptions.containsKey("port")) { //$NON-NLS-1$
