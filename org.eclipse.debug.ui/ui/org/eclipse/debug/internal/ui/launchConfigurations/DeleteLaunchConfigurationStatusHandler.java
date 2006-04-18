@@ -87,11 +87,13 @@ public class DeleteLaunchConfigurationStatusHandler implements IStatusHandler {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 			IResource[] resources = null;
 			for(int i = 0; i < configs.length; i++) {
-				resources = configs[i].getMappedResources();
-				if(resources != null) {
-					for(int j = 0; j < resources.length; j++){
-						if(resources[j].equals(project)) {
-							list.add(configs[i]);
+				if(configs[i].isLocal()) {
+					resources = configs[i].getMappedResources();
+					if(resources != null) {
+						for(int j = 0; j < resources.length; j++){
+							if(resources[j].equals(project)) {
+								list.add(configs[i]);
+							}
 						}
 					}
 				}
