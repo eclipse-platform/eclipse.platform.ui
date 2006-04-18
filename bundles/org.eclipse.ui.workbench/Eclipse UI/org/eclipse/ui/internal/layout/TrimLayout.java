@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -563,7 +564,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				}
 
 				if (TrimDragPreferences.showRaggedTrim()) {
-					Point prefSize = next.getControl().computeSize(thisSize, SWT.DEFAULT);					
+					Point prefSize = next.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);					
 					if (horizontally) {
 						// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
 						// on any side. The following code is in place specifically to
@@ -571,8 +572,11 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 						// if the CoolBar wraps and uses extra height
 						// So we have to re-calc the value based on the actual trim height
 						// as laid out.
-						if (prefSize.y > hint)
-							hint = prefSize.y;
+						if (next.getControl() instanceof CBanner) {
+							prefSize = next.getControl().computeSize(thisSize, SWT.DEFAULT);					
+							if (prefSize.y > hint)
+								hint = prefSize.y;
+						}
 						
 						next.getControl().setBounds(currentPosition.x,
 								currentPosition.y, thisSize, prefSize.y);
