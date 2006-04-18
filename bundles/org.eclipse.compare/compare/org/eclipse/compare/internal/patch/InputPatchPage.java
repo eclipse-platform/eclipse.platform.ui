@@ -23,6 +23,8 @@ import com.ibm.icu.text.MessageFormat;
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -33,9 +35,11 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -345,6 +349,9 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 				
 				clearErrorMessage();
 				fShowError= true;
+				int state= getInputMethod();
+				setEnablePatchFile(state == FILE);
+				setEnableWorkspacePatch(state == WORKSPACE);
 				updateWidgetEnablements();
 			}
 		});
@@ -406,7 +413,20 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				fPatchWizard.showPage(getNextPage());
+				ISelection selection= event.getSelection();
+				if (selection instanceof TreeSelection) {
+					TreeSelection treeSel= (TreeSelection) selection;
+					Object res= treeSel.getFirstElement();
+					if (res != null) {
+						if (res instanceof IProject || res instanceof IFolder) {
+							if (fTreeViewer.getExpandedState(res))
+								fTreeViewer.collapseToLevel(res, 1);
+							else
+								fTreeViewer.expandToLevel(res, 1);
+						} else if (res instanceof IFile)
+							fPatchWizard.showPage(getNextPage());
+					}
+				}
 			}
 		});
 	}
