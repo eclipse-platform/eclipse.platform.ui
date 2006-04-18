@@ -173,7 +173,7 @@ public class ExtensionsRegistry {
 		if (value != null) {
 			IContentType contentType= fContentTypeManager.getContentType(value);
 			if (contentType == null) {
-				log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_contentTypeDoesNotExist, new Object[] { value }), null));
+				log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_contentTypeDoesNotExist, value), null));
 				return;
 			}
 			ContentTypeAdapter adapter= new ContentTypeAdapter(contentType);
@@ -209,7 +209,7 @@ public class ExtensionsRegistry {
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(FileBuffersPlugin.PLUGIN_ID, extensionPointName);
 		if (extensionPoint == null) {
-			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_extensionPointNotFound, new Object[] { extensionPointName}), null));
+			log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, NLSUtility.format(FileBuffersMessages.ExtensionsRegistry_error_extensionPointNotFound, extensionPointName), null));
 			return;
 		}
 
