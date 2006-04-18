@@ -832,7 +832,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     /**
      * Restores the working set filter from the persistence store.
      */
-    void initWorkingSetFilter() {
+    protected void initWorkingSetFilter() {
         String workingSetName = settings.get(STORE_WORKING_SET);
 
         IWorkingSet workingSet = null;
