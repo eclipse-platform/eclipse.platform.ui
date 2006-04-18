@@ -309,21 +309,21 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			super.buttonPressed(buttonId);
 		}
 	}
-	
+
 	/**
-	 * Return whether the current configuration can be discarded.  This involves determining
+	 * Return whether the current configuration should be saved or discarded.  This involves determining
 	 * if it is dirty, and if it is, asking the user what to do.
 	 * 
 	 * @return if we can discard the current config or not
 	 */
-	private boolean canDiscardCurrentConfig() {				
+	private int shouldSaveCurrentConfig() {				
 		if (getTabViewer().isDirty()) {
 			if (getTabViewer().canSave()) {
-				return showSaveChangesDialog() == IDialogConstants.NO_ID;
+				return showSaveChangesDialog();
 			}
-			return showUnsavedChangesDialog() == IDialogConstants.YES_ID;
+			return showUnsavedChangesDialog();
 		}
-		return true;
+		return IDialogConstants.YES_ID;
 	}
 	
 	/* (non-Javadoc)
@@ -535,7 +535,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         viewForm.setContent(viewFormContents);
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
 			public boolean getConfirmation() {
-				return canDiscardCurrentConfig();
+				int status = shouldSaveCurrentConfig();
+				return status == IDialogConstants.YES_ID || status == IDialogConstants.NO_ID;
 			}
 		};
 		getDuplicateAction().setConfirmationRequestor(requestor);
@@ -841,7 +842,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Notification the 'Close' button has been pressed.
 	 */
 	protected void handleClosePressed() {
-		if(canDiscardCurrentConfig()) {
+		int status = shouldSaveCurrentConfig();
+		if(status != IDialogConstants.CANCEL_ID) {
+			if(status == IDialogConstants.YES_ID) {
+				getTabViewer().handleApplyPressed();
+			}
 			cancelPressed();
 		}
 	}
