@@ -129,7 +129,7 @@ public abstract class ForwardingChangesSection extends ChangesSection {
 			}
 		}
 		// There is no other mode that can be shown so just indicate that there are no changes
-		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { getConfiguration().getParticipant().getName() }));	 //	
+		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) }));	 //	
 		return composite;
 	}
 	
