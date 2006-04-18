@@ -1,5 +1,6 @@
-#Sun Mar 12 19:33:48 CET 2006
+#Tue Apr 18 13:07:27 CEST 2006
 eclipse.preferences.version=1
+internal.default.compliance=user
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;org.osgi;org.eclipse.core.runtime;org.eclipse.core.expressions;org.eclipse.core.internal.expressions;
 org.eclipse.jdt.ui.ondemandthreshold=99
