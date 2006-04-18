@@ -11,6 +11,7 @@
 package org.eclipse.search.internal.ui.util;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -36,7 +37,22 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	private Combo fTextField;
 	private Button fBrowseButton;
 
-	final static String TYPE_DELIMITER= SearchMessages.FileTypeEditor_typeDelimiter; 
+	private final static String TYPE_DELIMITER= SearchMessages.FileTypeEditor_typeDelimiter;
+	public final static String FILE_PATTERN_NEGATOR= "!"; //$NON-NLS-1$
+
+	private static final Comparator FILE_TYPES_COMPARATOR= new Comparator() {
+		public int compare(Object o1, Object o2) {
+			return compare((String) o1, (String) o2);
+		}
+		public int compare(String fp1, String fp2) {
+			boolean isNegative1= fp1.startsWith(FILE_PATTERN_NEGATOR);
+			boolean isNegative2= fp2.startsWith(FILE_PATTERN_NEGATOR);
+			if (isNegative1 != isNegative2) {
+				return isNegative1 ? 1 : -1;
+			}
+			return fp1.compareTo(fp2);
+		}
+	}; 
 
 	public FileTypeEditor(IEditorRegistry registry, Combo textField, Button browseButton) {
 		fTextField= textField;
@@ -102,6 +118,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	}
 
 	public static String typesToString(String[] types) {
+		Arrays.sort(types, FILE_TYPES_COMPARATOR);
 		StringBuffer result= new StringBuffer();
 		for (int i= 0; i < types.length; i++) {
 			if (i > 0) {

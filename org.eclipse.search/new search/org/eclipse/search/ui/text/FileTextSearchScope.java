@@ -33,6 +33,7 @@ import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.WorkingSetComparator;
+import org.eclipse.search.internal.ui.util.FileTypeEditor;
 
 /**
  * A text search scope used by the file search dialog. Additionally to roots it allows to define file name
@@ -120,9 +121,9 @@ public final class FileTextSearchScope extends TextSearchScope {
 
 	private final String fDescription;
 	private final IResource[] fRootElements;
-	
 	private final String[] fFileNamePatterns;
-	private Matcher fFileNameMatcher;
+	private Matcher fPositiveFileNameMatcher;
+	private Matcher fNegativeFileNameMatcher;
 	
 	private boolean fVisitDerived;
 	private IWorkingSet[] fWorkingSets;
@@ -131,7 +132,8 @@ public final class FileTextSearchScope extends TextSearchScope {
 		fDescription= description;
 		fRootElements= resources;
 		fFileNamePatterns= fileNamePatterns;
-		fFileNameMatcher= null;
+		fPositiveFileNameMatcher= null;
+		fNegativeFileNameMatcher= null;
 		fVisitDerived= visitDerived;
 		fWorkingSets= workingSets;
 	}
@@ -227,20 +229,46 @@ public final class FileTextSearchScope extends TextSearchScope {
 	}
 	
 	private boolean matchesFileName(String fileName) {
- 		return getFileNameMatcher().reset(fileName).matches();
+		if (fPositiveFileNameMatcher == null) {
+			computeFileNameMatcher();
+		}
+ 		return fPositiveFileNameMatcher.reset(fileName).matches() &&
+ 			(fNegativeFileNameMatcher == null || ! fNegativeFileNameMatcher.reset(fileName).matches());
 	}
 	
-	private Matcher getFileNameMatcher() {
-		if (fFileNameMatcher == null) {
-			Pattern pattern;
-			if (fFileNamePatterns == null || fFileNamePatterns.length == 0) {
-				pattern= Pattern.compile(".*"); //$NON-NLS-1$
-			} else {
-				pattern= PatternConstructor.createPattern(fFileNamePatterns, IS_CASE_SENSITIVE_FILESYSTEM);
+	private void computeFileNameMatcher() {
+		fPositiveFileNameMatcher= null;
+		fNegativeFileNameMatcher= null;
+		
+		// split patterns in positive and negative ones.
+		final int size= fFileNamePatterns == null ? 0 : fFileNamePatterns.length;
+		ArrayList positivePatterns= new ArrayList(size);
+		ArrayList negativePatterns= new ArrayList(size);
+		for (int i= 0; i < size; i++) {
+			String pattern= fFileNamePatterns[i];
+			if (pattern.startsWith(FileTypeEditor.FILE_PATTERN_NEGATOR)) {
+				pattern= pattern.substring(FileTypeEditor.FILE_PATTERN_NEGATOR.length()).trim();
+				if (pattern.length() > 0) {
+					negativePatterns.add(pattern);
+				}
 			}
-			fFileNameMatcher= pattern.matcher(""); //$NON-NLS-1$
+			else {
+				positivePatterns.add(pattern);
+			}
 		}
-		return fFileNameMatcher;
+		
+		if (positivePatterns.isEmpty()) {
+			positivePatterns.add("*"); //$NON-NLS-1$
+		} 
+		fPositiveFileNameMatcher= createMatcher((String[]) positivePatterns.toArray(new String[positivePatterns.size()]));
+		if (!negativePatterns.isEmpty()) {
+			fNegativeFileNameMatcher= createMatcher((String[]) negativePatterns.toArray(new String[negativePatterns.size()]));
+		}
+	}
+	
+	private Matcher createMatcher(String[] patterns) {
+		Pattern pattern= PatternConstructor.createPattern(patterns, IS_CASE_SENSITIVE_FILESYSTEM);
+		return pattern.matcher(""); //$NON-NLS-1$
 	}
 	
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
