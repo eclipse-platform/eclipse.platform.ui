@@ -81,14 +81,16 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 			if (getChangeType() != UNCHANGED)
 				return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
 
-			for (ListIterator it= fList.listIterator(); it.hasNext();) {
-				if (fDifference.equals(it.next())) {
-					if (it.hasNext()) {
-						RangeDifference next= (RangeDifference) it.next();
-						if (next.rightLength() == 0)
-							return Math.max(next.leftLength() - next.rightLength(), 0);
+			synchronized (fList) {
+				for (ListIterator it= fList.listIterator(); it.hasNext();) {
+					if (fDifference.equals(it.next())) {
+						if (it.hasNext()) {
+							RangeDifference next= (RangeDifference) it.next();
+							if (next.rightLength() == 0)
+								return Math.max(next.leftLength() - next.rightLength(), 0);
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
@@ -111,13 +113,15 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	 */
 	public int getRemovedLinesAbove() {
 		if (getChangeType() == UNCHANGED && fOffset == 0) {
-			for (ListIterator it= fList.listIterator(fList.size()); it.hasPrevious();) {
-				if (fDifference.equals(it.previous())) {
-					if (it.hasPrevious()) {
-						RangeDifference previous= (RangeDifference) it.previous();
-						return Math.max(previous.leftLength() - previous.rightLength(), 0);
+			synchronized (fList) {
+				for (ListIterator it= fList.listIterator(fList.size()); it.hasPrevious();) {
+					if (fDifference.equals(it.previous())) {
+						if (it.hasPrevious()) {
+							RangeDifference previous= (RangeDifference) it.previous();
+							return Math.max(previous.leftLength() - previous.rightLength(), 0);
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}

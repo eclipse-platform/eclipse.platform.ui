@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -168,7 +169,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * The differences between <code>fLeftDocument</code> and <code>fRightDocument</code>.
 	 * This is the model we work on.
 	 */
-	private List fDifferences= new ArrayList();
+	private List fDifferences= Collections.synchronizedList(new ArrayList());
 	/**
 	 * The differences removed in one iteration. Stored to be able to send out differentiated
 	 * annotation events.
@@ -282,33 +283,36 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		int rOffset= -1, rLength= -1, lOffset= -1, lLength= -1;
 		RangeDifference diff= null;
-		Iterator it= fDifferences.iterator();
+		final List differences= fDifferences;
+		synchronized (differences) {
+			Iterator it= differences.iterator();
 
-		// get start
-		while (it.hasNext()) {
-			diff= (RangeDifference) it.next();
-			if (line < diff.rightEnd()) {
-				rOffset= fRightDocument.getLineOffset(line);
-				int leftLine= Math.min(diff.leftStart() + line - diff.rightStart(), diff.leftEnd() - 1);
-				lOffset= fLeftDocument.getLineOffset(leftLine);
-				break;
+			// get start
+			while (it.hasNext()) {
+				diff= (RangeDifference) it.next();
+				if (line < diff.rightEnd()) {
+					rOffset= fRightDocument.getLineOffset(line);
+					int leftLine= Math.min(diff.leftStart() + line - diff.rightStart(), diff.leftEnd() - 1);
+					lOffset= fLeftDocument.getLineOffset(leftLine);
+					break;
+				}
 			}
-		}
 
-		if (rOffset == -1 || lOffset == -1)
-			return;
+			if (rOffset == -1 || lOffset == -1)
+				return;
 
-		// get end / length
-		int to= line + nLines - 1;
-		while (it.hasNext()) {
-			diff= (RangeDifference) it.next();
-			if (to < diff.rightEnd()) {
-				int rEndOffset= fRightDocument.getLineOffset(to) + fRightDocument.getLineLength(to);
-				rLength= rEndOffset - rOffset;
-				int leftLine= Math.min(diff.leftStart() + to - diff.rightStart(), diff.leftEnd() - 1);
-				int lEndOffset= fLeftDocument.getLineOffset(leftLine) + fLeftDocument.getLineLength(leftLine);
-				lLength= lEndOffset - lOffset;
-				break;
+			// get end / length
+			int to= line + nLines - 1;
+			while (it.hasNext()) {
+				diff= (RangeDifference) it.next();
+				if (to < diff.rightEnd()) {
+					int rEndOffset= fRightDocument.getLineOffset(to) + fRightDocument.getLineLength(to);
+					rLength= rEndOffset - rOffset;
+					int leftLine= Math.min(diff.leftStart() + to - diff.rightStart(), diff.leftEnd() - 1);
+					int lEndOffset= fLeftDocument.getLineOffset(leftLine) + fLeftDocument.getLineLength(leftLine);
+					lLength= lEndOffset - lOffset;
+					break;
+				}
 			}
 		}
 
@@ -333,12 +337,15 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			return 0;
 
 		RangeDifference diff= null;
-		for (Iterator it= fDifferences.iterator(); it.hasNext();) {
-			diff= (RangeDifference) it.next();
-			if (line >= diff.rightStart() && line < diff.rightEnd()) {
-				if (diff.kind() == RangeDifference.NOCHANGE && it.hasNext())
-					diff= (RangeDifference) it.next();
-				break;
+		final List differences= fDifferences;
+		synchronized (differences) {
+			for (Iterator it= differences.iterator(); it.hasNext();) {
+				diff= (RangeDifference) it.next();
+				if (line >= diff.rightStart() && line < diff.rightEnd()) {
+					if (diff.kind() == RangeDifference.NOCHANGE && it.hasNext())
+						diff= (RangeDifference) it.next();
+					break;
+				}
 			}
 		}
 
@@ -574,7 +581,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				DocumentEquivalenceClass rightEquivalent= new DocumentEquivalenceClass(actual, hash);
 				fRightEquivalent= rightEquivalent;
 				IRangeComparator act= new DocEquivalenceComparator(rightEquivalent, null);
-				List diffs= RangeDifferencer.findRanges(monitor, ref, act);
+				List diffs= Collections.synchronizedList(RangeDifferencer.findRanges(monitor, ref, act));
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
 				synchronized (DocumentLineDiffer.this) {
@@ -978,26 +985,46 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 
 		// replace changed diff range
-		ListIterator it= fDifferences.listIterator();
-		Iterator newIt= diffs.iterator();
-		RangeDifference current;
-		boolean changed= false;
+		synchronized (fDifferences) {
+			final ListIterator it= fDifferences.listIterator();
+			Iterator newIt= diffs.iterator();
+			RangeDifference current;
+			boolean changed= false;
 
-		// replace regions from consistentBefore to consistentAfter with new diffs
+			// replace regions from consistentBefore to consistentAfter with new diffs
 
-		// search for consistentBefore
-		do {
-			Assert.isTrue(it.hasNext());
-			current= (RangeDifference) it.next();
-		} while (current != consistentBefore);
-		Assert.isTrue(current == consistentBefore);
+			// search for consistentBefore
+			do {
+				Assert.isTrue(it.hasNext());
+				current= (RangeDifference) it.next();
+			} while (current != consistentBefore);
+			Assert.isTrue(current == consistentBefore);
 
-		fChanged.clear();
-		fRemoved.clear();
-		fAdded.clear();
+			fChanged.clear();
+			fRemoved.clear();
+			fAdded.clear();
 
-		// replace until consistentAfter
-		while (current != consistentAfter) {
+			// replace until consistentAfter
+			while (current != consistentAfter) {
+				if (newIt.hasNext()) {
+					Object o= newIt.next();
+					if (!current.equals(o)) {
+						fRemoved.add(current);
+						fAdded.add(o);
+						changed= true;
+						it.set(o);
+					}
+				} else {
+					fRemoved.add(current);
+					it.remove();
+					changed= true;
+				}
+				Assert.isTrue(it.hasNext());
+				current= (RangeDifference) it.next();
+			}
+
+			// replace consistentAfter
+			Assert.isTrue(current == consistentAfter);
 			if (newIt.hasNext()) {
 				Object o= newIt.next();
 				if (!current.equals(o)) {
@@ -1011,57 +1038,39 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				it.remove();
 				changed= true;
 			}
-			Assert.isTrue(it.hasNext());
-			current= (RangeDifference) it.next();
-		}
 
-		// replace consistentAfter
-		Assert.isTrue(current == consistentAfter);
-		if (newIt.hasNext()) {
-			Object o= newIt.next();
-			if (!current.equals(o)) {
-				fRemoved.add(current);
-				fAdded.add(o);
+			// add remaining new diffs
+			while (newIt.hasNext()) {
+				Object next= newIt.next();
+				fAdded.add(next);
+				it.add(next);
 				changed= true;
-				it.set(o);
 			}
-		} else {
-			fRemoved.add(current);
-			it.remove();
-			changed= true;
-		}
 
-		// add remaining new diffs
-		while (newIt.hasNext()) {
-			Object next= newIt.next();
-			fAdded.add(next);
-			it.add(next);
-			changed= true;
-		}
-
-		// shift the old remaining diffs
-		boolean init= true;
-		int leftShift= 0;
-		int rightShift= 0;
-		while (it.hasNext()) {
-			current= (RangeDifference) it.next();
-			if (init) {
-				init= false;
-				leftShift= last.leftEnd() - current.leftStart();
-				rightShift= last.rightEnd() - current.rightStart();
-				if (leftShift != 0 || rightShift != 0)
-					changed= true;
-				else
-					break;
+			// shift the old remaining diffs
+			boolean init= true;
+			int leftShift= 0;
+			int rightShift= 0;
+			while (it.hasNext()) {
+				current= (RangeDifference) it.next();
+				if (init) {
+					init= false;
+					leftShift= last.leftEnd() - current.leftStart();
+					rightShift= last.rightEnd() - current.rightStart();
+					if (leftShift != 0 || rightShift != 0)
+						changed= true;
+					else
+						break;
+				}
+//				fChanged.add(current); // not needed since positional shifting is not handled by an annotation model
+				current.shiftLeft(leftShift);
+				current.shiftRight(rightShift);
 			}
-//			fChanged.add(current); // not needed since positional shifting is not handled by an annotation model
-			current.shiftLeft(leftShift);
-			current.shiftRight(rightShift);
+			
+			fUpdateNeeded= changed;
 		}
 
-		fUpdateNeeded= changed;
 		fLastDifference= null;
-
 	}
 
 	/**
@@ -1292,10 +1301,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @return the corresponding RangeDifference, or <code>null</code>
 	 */
 	private RangeDifference getRangeDifferenceForRightLine(int rightLine) {
-		for (Iterator it= fDifferences.iterator(); it.hasNext();) {
-			RangeDifference d= (RangeDifference) it.next();
-			if (rightLine >= d.rightStart() && rightLine < d.rightEnd()) {
-				return d;
+		final List differences= fDifferences;
+		synchronized (differences) {
+			for (Iterator it= differences.iterator(); it.hasNext();) {
+				RangeDifference d= (RangeDifference) it.next();
+				if (rightLine >= d.rightStart() && rightLine < d.rightEnd()) {
+					return d;
+				}
 			}
 		}
 		return null;
@@ -1363,14 +1375,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				fRightDocument.removeDocumentListener(this);
 			fRightDocument= null;
 			fRightEquivalent= null;
+			
+			fDifferences.clear();
 		}
 
 		if (fReferenceProvider != null) {
 			fReferenceProvider.dispose();
 			fReferenceProvider= null;
 		}
-
-		fDifferences.clear();
 	}
 
 	/*
@@ -1391,7 +1403,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
-		final List copy= new ArrayList(fDifferences);
+		final List copy;
+		List differences= fDifferences; // atomic
+		synchronized (differences) {
+			copy= new ArrayList(differences);
+        }
 		final Iterator iter= copy.iterator();
 		return new Iterator() {
 
