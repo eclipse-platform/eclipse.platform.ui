@@ -224,6 +224,10 @@ public class CoreItem extends ViewItem {
 	}
 
 	private ImageHyperlink getStartButton() {
+		if (item.getSubItems() != null && item.getSubItems().size() > 0) {
+			// Bug 137332 - don't look in items with subitems
+			return null;
+		}
 		if(buttonComposite != null) {
 			Control[] controls = buttonComposite.getChildren();
 			for (int i = 0; i < controls.length; i++) {
