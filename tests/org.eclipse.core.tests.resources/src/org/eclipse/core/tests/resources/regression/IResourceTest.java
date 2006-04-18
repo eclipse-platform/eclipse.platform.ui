@@ -226,6 +226,21 @@ public class IResourceTest extends ResourceTest {
 			fail("2.99", e);
 		}
 	}
+	
+	public void testBug111821() {
+		IProject project = getWorkspace().getRoot().getProject("testBug111821");
+		IFolder folder = project.getFolder(new Path(null, "c:"));
+		ensureExistsInWorkspace(project, true);
+		QualifiedName partner = new QualifiedName("HowdyThere", "Partner");
+		ISynchronizer sync = getWorkspace().getSynchronizer();
+		sync.add(partner);
+		try {
+			sync.setSyncInfo(partner, folder, new byte[] {1});
+			fail("1.0");//should not get here
+		} catch (CoreException e) {
+			//expected
+		}
+	}
 
 	/**
 	 * 1GA6QJP: ITPCORE:ALL - Copying a resource does not copy its lastmodified time
