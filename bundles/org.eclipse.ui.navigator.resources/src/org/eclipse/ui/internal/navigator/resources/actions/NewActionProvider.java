@@ -42,6 +42,8 @@ public class NewActionProvider extends CommonActionProvider {
 
 	private static final String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples"; //$NON-NLS-1$
 
+	private static final String NEW_MENU_NAME = "common.new.menu";//$NON-NLS-1$
+
 	private IAction showDlgAction;
 
 	private IAction newProjectAction;
@@ -49,30 +51,26 @@ public class NewActionProvider extends CommonActionProvider {
 	private IAction newExampleAction;
 
 	private WizardActionGroup newWizardActionGroup;
-	
+
 	private boolean contribute = false;
 
 	public void init(ICommonActionExtensionSite anExtensionSite) {
 
 		if (anExtensionSite.getViewSite() instanceof ICommonViewerWorkbenchSite) {
-			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) anExtensionSite
-					.getViewSite()).getWorkbenchWindow();
+			IWorkbenchWindow window = ((ICommonViewerWorkbenchSite) anExtensionSite.getViewSite()).getWorkbenchWindow();
 			showDlgAction = ActionFactory.NEW.create(window);
 			newProjectAction = new NewProjectAction(window);
 			newExampleAction = new NewExampleAction(window);
 
-			newWizardActionGroup = new WizardActionGroup(window, PlatformUI
-					.getWorkbench().getNewWizardRegistry(),
-					WizardActionGroup.TYPE_NEW, anExtensionSite.getContentService());
-			
+			newWizardActionGroup = new WizardActionGroup(window, PlatformUI.getWorkbench().getNewWizardRegistry(), WizardActionGroup.TYPE_NEW, anExtensionSite.getContentService());
+
 			contribute = true;
 		}
 	}
 
 	/**
-	 * Adds a submenu to the given menu with the name
-	 * "group.new" see {@link ICommonMenuConstants#GROUP_NEW}). 
-	 * The submenu contains the following structure:
+	 * Adds a submenu to the given menu with the name "group.new" see
+	 * {@link ICommonMenuConstants#GROUP_NEW}). The submenu contains the following structure:
 	 * 
 	 * <ul>
 	 * <li>a new generic project wizard shortcut action, </li>
@@ -87,7 +85,7 @@ public class NewActionProvider extends CommonActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		IMenuManager submenu = new MenuManager(
 				WorkbenchNavigatorMessages.NewActionProvider_NewMenu_label,
-				ICommonMenuConstants.GROUP_NEW);
+				NEW_MENU_NAME);
 		if(!contribute) {
 			return;
 		}
@@ -121,10 +119,8 @@ public class NewActionProvider extends CommonActionProvider {
 	 * @return True if there exists a full examples wizard category.
 	 */
 	private boolean hasExamples() {
-		IWizardRegistry newRegistry = PlatformUI.getWorkbench()
-				.getNewWizardRegistry();
-		IWizardCategory category = newRegistry
-				.findCategory(FULL_EXAMPLES_WIZARD_CATEGORY);
+		IWizardRegistry newRegistry = PlatformUI.getWorkbench().getNewWizardRegistry();
+		IWizardCategory category = newRegistry.findCategory(FULL_EXAMPLES_WIZARD_CATEGORY);
 		return category != null;
 
 	}
