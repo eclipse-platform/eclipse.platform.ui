@@ -107,7 +107,7 @@ public class RefactoringUI {
 	}
 	
 	/**
-	 * Creates a dialog capable to present the given refactoring wizard. Clients of
+	 * Creates a dialog capable of presenting the given refactoring wizard. Clients of
 	 * this method can assume that the returned dialog is an instance of 
 	 * {@link org.eclipse.jface.wizard.IWizardContainer IWizardContainer}. However the 
 	 * dialog is not necessarily an instance of {@link org.eclipse.jface.wizard.WizardDialog
