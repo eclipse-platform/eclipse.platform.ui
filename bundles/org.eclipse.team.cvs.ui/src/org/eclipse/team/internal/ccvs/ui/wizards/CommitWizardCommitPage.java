@@ -332,6 +332,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 			if (set.contains(resource)) {
 				return true;
 			}
+			if (set instanceof ActiveChangeSet) {
+				ActiveChangeSet acs = (ActiveChangeSet) set;
+				if (acs.getDiffTree().members(resource).length > 0)
+					return true;
+			}
 		}
 		return false;
    }
