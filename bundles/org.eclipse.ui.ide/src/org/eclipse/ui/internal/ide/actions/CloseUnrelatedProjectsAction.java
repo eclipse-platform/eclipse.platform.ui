@@ -17,8 +17,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Shell;
@@ -98,6 +100,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 */
 	protected void clearCache() {
 		super.clearCache();
+		oldSelection = Collections.EMPTY_LIST;
 		selectionDirty = true;
 	}
 
@@ -135,4 +138,31 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		}
 		return projectsToClose;
 	}
+	
+    /**
+     * Handles a resource changed event by updating the enablement
+     * when projects change.
+     * <p>
+     * This method overrides the super-type implementation to update
+     * the selection when the open state or description of any project changes.
+     */
+    public void resourceChanged(IResourceChangeEvent event) {
+        // don't bother looking at delta if selection not applicable
+        if (selectionIsOfType(IResource.PROJECT)) {
+            IResourceDelta delta = event.getDelta();
+            if (delta != null) {
+                IResourceDelta[] projDeltas = delta
+                        .getAffectedChildren(IResourceDelta.CHANGED);
+                for (int i = 0; i < projDeltas.length; ++i) {
+                    IResourceDelta projDelta = projDeltas[i];
+                    //changing either the description or the open state can affect enablement
+                    if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
+                        selectionChanged(getStructuredSelection());
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
 }
