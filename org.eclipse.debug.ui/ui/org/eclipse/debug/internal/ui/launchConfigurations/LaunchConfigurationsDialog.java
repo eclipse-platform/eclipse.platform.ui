@@ -323,7 +323,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 			return showUnsavedChangesDialog();
 		}
-		return IDialogConstants.YES_ID;
+		return IDialogConstants.NO_ID;
 	}
 	
 	/* (non-Javadoc)
@@ -845,9 +845,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		int status = shouldSaveCurrentConfig();
 		if(status != IDialogConstants.CANCEL_ID) {
 			if(status == IDialogConstants.YES_ID) {
-				if(getTabViewer().isDirty()) {
-					getTabViewer().handleApplyPressed();
-				}
+				getTabViewer().handleApplyPressed();
 			}
 			cancelPressed();
 		}
