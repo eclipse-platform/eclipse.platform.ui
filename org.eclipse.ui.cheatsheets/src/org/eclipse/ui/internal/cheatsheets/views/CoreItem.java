@@ -42,9 +42,12 @@ import org.eclipse.ui.internal.cheatsheets.data.RepeatedSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
 
 public class CoreItem extends ViewItem {
+
 	protected boolean buttonsHandled = false;
 
 	private ArrayList listOfSubItemCompositeHolders;
+	
+	private static final int SUBITEM_COLUMNS = 6;
 
 	/**
 	 * Constructor for CoreItem.
@@ -113,7 +116,10 @@ public class CoreItem extends ViewItem {
 		buttonComposite = page.getToolkit().createComposite(bodyWrapperComposite);
 		
 		TableWrapLayout xbuttonlayout = new TableWrapLayout();
-		xbuttonlayout.numColumns = 6;
+		xbuttonlayout.numColumns = SUBITEM_COLUMNS;
+		xbuttonlayout.leftMargin = 0;
+		xbuttonlayout.rightMargin = 0;
+		xbuttonlayout.horizontalSpacing = 0;
 
 		TableWrapData xbuttonData = new TableWrapData(TableWrapData.FILL);
 
@@ -124,6 +130,7 @@ public class CoreItem extends ViewItem {
 
 	private void createSubItemButtons(SubItem sub, String thisValue, int index) {
 		int added = 0;
+		final int LABEL_MARGIN = 5; // space to the left and right of the label
 		
 		//Spacer label added.
 		Label checkDoneLabel = page.getToolkit().createLabel(buttonComposite, null);
@@ -138,7 +145,19 @@ public class CoreItem extends ViewItem {
 			labelText = sub.getLabel();
 		}
 		Label label = page.getToolkit().createLabel(buttonComposite, labelText, SWT.WRAP);
+		TableWrapData labelData = new TableWrapData();
+		labelData.indent = LABEL_MARGIN;
+		label.setLayoutData(labelData);
 		label.setBackground(itemColor);
+		added++;
+		
+		// Add some space to the right of the label
+		
+		Label spacer = page.getToolkit().createLabel(buttonComposite, null);
+		TableWrapData spacerData = new TableWrapData();
+		spacerData.maxWidth = 0;
+		spacerData.indent = LABEL_MARGIN;
+		spacer.setLayoutData(spacerData);
 		added++;
 
 		AbstractExecutable subExecutable = null;
@@ -183,10 +202,12 @@ public class CoreItem extends ViewItem {
 			});
 		}
 
-		while (added < 6) {
+		while (added < SUBITEM_COLUMNS) {
 			// Add filler labels as needed to complete the row
 			Label filler = page.getToolkit().createLabel(buttonComposite, null);
-			filler.setBackground(itemColor);
+			TableWrapData fillerData = new TableWrapData();
+			fillerData.maxWidth = 0;
+			filler.setLayoutData(fillerData);
 			added++;
 		}
 		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub));
