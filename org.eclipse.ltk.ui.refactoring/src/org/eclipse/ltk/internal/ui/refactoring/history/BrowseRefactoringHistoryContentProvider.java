@@ -267,8 +267,10 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 					list.add(new RefactoringHistoryProject(project));
 			}
 			return list.toArray();
-		} else
+		} else if (fControlConfiguration.isTimeDisplayed())
 			return super.getRootElements();
+		else
+			return new Object[] { new RefactoringHistoryCollection()};
 	}
 
 	/**
