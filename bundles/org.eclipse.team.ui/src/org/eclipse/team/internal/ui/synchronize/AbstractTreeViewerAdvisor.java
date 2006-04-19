@@ -213,7 +213,7 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	protected boolean handleDoubleClick(StructuredViewer viewer, DoubleClickEvent event) {
 		if (super.handleDoubleClick(viewer, event)) return true;
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-		Object element = selection.getFirstElement();
+		Object element = getFirstElementOrPath(selection);
 		AbstractTreeViewer treeViewer = (AbstractTreeViewer) getViewer();
 		if(element != null) {
 			if (treeViewer.getExpandedState(element)) {
@@ -225,7 +225,18 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 		return true;
 	}
 
-	protected void expandToNextDiff(Object element) {
+	private Object getFirstElementOrPath(IStructuredSelection selection) {
+		if (selection instanceof TreeSelection) {
+			TreeSelection ts = (TreeSelection) selection;
+			TreePath[] paths = ts.getPaths();
+			if (paths.length > 0)
+				return paths[0];
+		}
+		Object element = selection.getFirstElement();
+		return element;
+	}
+
+	protected void expandToNextDiff(Object elementOrPath) {
 		AbstractTreeViewerAdvisor.navigate((TreeViewer)getViewer(), true /* next */, false /* no-open */, true /* only-expand */);
 	}
 }
