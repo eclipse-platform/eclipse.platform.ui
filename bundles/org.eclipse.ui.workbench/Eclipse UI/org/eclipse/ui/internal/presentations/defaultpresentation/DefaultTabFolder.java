@@ -495,4 +495,12 @@ public class DefaultTabFolder extends AbstractTabFolder {
         
         layout(true);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		getFolder().setVisible(visible);
+	}
 }

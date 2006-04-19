@@ -817,4 +817,20 @@ public final class PaneFolder {
         return viewForm;
     }
 
+    /**
+	 * Propogate the visibility change requests to the proxy controls. When
+	 * their target is null, they no longer get visibility updates. Currently
+	 * this only propagates the changes to the ProxyControls held by this
+	 * folder.
+	 * 
+	 * @param visible
+	 *            <code>true</code> - it's visible.
+	 * @since 3.2
+	 */
+    public void setVisible(boolean visible) {
+		contentProxy.setVisible(visible);
+		viewFormTopCenterProxy.setVisible(visible);
+		viewFormTopLeftProxy.setVisible(visible);
+		viewFormTopRightProxy.setVisible(visible);
+	}
 }

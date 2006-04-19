@@ -389,7 +389,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
     
     public void setVisible(boolean isVisible) {
         this.isVisible  = isVisible;
-        getTabFolder().getControl().setVisible(isVisible);
+        getTabFolder().setVisible(isVisible);
         if (isVisible) {
             layout(true);
         }

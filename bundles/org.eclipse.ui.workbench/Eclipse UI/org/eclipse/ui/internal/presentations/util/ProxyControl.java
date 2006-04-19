@@ -117,6 +117,21 @@ public class ProxyControl {
         }
 	    
 	};
+	
+	/**
+	 * Allow the visibility of the proxy control to be updated. When the target
+	 * is not <code>null</code> it's visibility is tied to the listener. But
+	 * in the case where some action causes the target to be populated while
+	 * its visibility is <code>false</code>, it won't re-appear until its
+	 * visibility is set to <code>true</code>.
+	 * 
+	 * @param visible
+	 *            <code>true</code> - set it to visible
+	 * @since 3.2
+	 */
+	public void setVisible(boolean visible) {
+			this.visible = visible;
+	}
     
 	/**
 	 * Movement listener. Updates the bounds of the target to match the 

@@ -377,4 +377,15 @@ public abstract class AbstractTabFolder {
         return false;
     }
     
+    /**
+	 * Set the folder to visible. This can be extended to propogate the
+	 * visibility request to other components in the subclass.
+	 * 
+	 * @param visible
+	 *            <code>true</code> - the folder is visible.
+	 * @since 3.2
+	 */
+    public void setVisible(boolean visible) {
+		getControl().setVisible(visible);
+	}
 }
