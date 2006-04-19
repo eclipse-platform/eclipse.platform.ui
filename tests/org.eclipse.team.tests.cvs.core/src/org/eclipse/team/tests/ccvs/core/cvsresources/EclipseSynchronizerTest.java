@@ -34,10 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
@@ -272,6 +269,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 
 	public void testIsIgnored() throws CoreException, TeamException {
 		IProject project = getUniqueTestProject("isIgnoredTests");
+		CVSTeamProvider.markAsTempShare(project);
 		IResource[] resources = buildResources(project, new String[] {"a.txt", "c.java", "folder1/", "folder1/b.txt", "folder2/"}, true /* include project */);
 		
 		sync.addIgnored(project, "*.txt");
