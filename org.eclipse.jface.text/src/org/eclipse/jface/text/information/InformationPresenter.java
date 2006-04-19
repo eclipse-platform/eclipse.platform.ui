@@ -22,7 +22,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -373,14 +372,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (end > 0 && start < end)
 			bounds= styledText.getTextBounds(start, end - 1);
 		else {
-			GC gc= new GC(styledText);
-			int width= gc.getFontMetrics().getAverageCharWidth();
-			gc.dispose();
 			Point loc= styledText.getLocationAtOffset(start);
-			bounds= new Rectangle(loc.x, loc.y, width, styledText.getLineHeight(start));
+			bounds= new Rectangle(loc.x, loc.y, 0, styledText.getLineHeight(start));
 		}
 		
-		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+		return bounds;
 	}
 
 	/**

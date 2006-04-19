@@ -53,6 +53,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
@@ -378,8 +379,6 @@ public final class RevisionPainter {
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-		    // TODO Auto-generated method stub
-		    
 		}
 
 		/*
@@ -439,13 +438,23 @@ public final class RevisionPainter {
 	 * The information control creator.
 	 */
 	private static final class HoverInformationControlCreator extends AbstractReusableInformationControlCreator {
+		private boolean fIsFocusable;
+		
+		public HoverInformationControlCreator(boolean isFocusable) {
+			fIsFocusable= isFocusable;
+		}
+		
 		/*
 		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
 		protected IInformationControl doCreateInformationControl(Shell parent) {
-			if (BrowserInformationControl.isAvailable(parent))
-				return new BrowserInformationControl(parent, SWT.TOOL | SWT.NO_TRIM, SWT.NONE, null);
-			return new DefaultInformationControl(parent, SWT.NONE, null);
+			int style= fIsFocusable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
+			
+			if (BrowserInformationControl.isAvailable(parent)) {
+	            final int shellStyle= SWT.TOOL | (fIsFocusable ? SWT.RESIZE : SWT.NO_TRIM);
+	            return new BrowserInformationControl(parent, shellStyle, style, null);
+            }
+			return new DefaultInformationControl(parent, style, null);
 		}
 	}
 	
@@ -484,8 +493,7 @@ public final class RevisionPainter {
 	/**
 	 * The revision hover displays information about the currently selected revision.
 	 */
-	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2 {
-
+	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2, IInformationProviderExtension2 {
 		
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
@@ -500,7 +508,7 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 		 */
 		public IInformationControlCreator getHoverControlCreator() {
-			return new HoverInformationControlCreator();
+			return new HoverInformationControlCreator(false);
 		}
 
 		/*
@@ -558,6 +566,13 @@ public final class RevisionPainter {
 			ChangeRegion region= getChangeRegion(lineNumber);
 			return region == null ? null : new LineRange(lineNumber, 1);
 		}
+
+		/*
+         * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+         */
+        public IInformationControlCreator getInformationPresenterControlCreator() {
+			return new HoverInformationControlCreator(true);
+        }
 	}
 
 	/* Listeners and helpers. */
