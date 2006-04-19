@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
@@ -120,10 +121,13 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 			if(local == null) {
 				local = getBase(element);
 			}
-			IResourceVariant remote = getRemote(element);
-			StringBuffer revisionString = new StringBuffer();
-			String remoteRevision = getRevisionString(remote);
 			String localRevision = getRevisionString(local);
+			if (!isIncludeRemoteRevision()) {
+				return localRevision;
+			}
+			StringBuffer revisionString = new StringBuffer();
+			IResourceVariant remote = getRemote(element);
+			String remoteRevision = getRevisionString(remote);
 			if(localRevision != null) {
 				revisionString.append(localRevision);
 			}
@@ -133,6 +137,10 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 			return revisionString.toString();
 		}
 		return null;
+	}
+
+	private boolean isIncludeRemoteRevision() {
+		return configuration.getParticipant() instanceof WorkspaceModelParticipant;
 	}
 
 	private SyncInfo getSyncInfo(Object element) {
