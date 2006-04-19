@@ -3,11 +3,6 @@
 	<name>org.eclipse.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.help</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.swt</project>
-		<project>org.eclipse.ui.workbench</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
