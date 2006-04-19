@@ -25,10 +25,8 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
 	 */
 	public int category(final Object element) {
 		if (element instanceof RefactoringHistoryProject)
-			return RefactoringHistoryNode.PROJECT;
-		else if (element instanceof RefactoringHistoryNode)
-			return ((RefactoringHistoryNode) element).getKind() + 100;
-		return Integer.MAX_VALUE;
+			return 0;
+		return 1;
 	}
 
 	/**
@@ -42,11 +40,25 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
 		} else if (first instanceof RefactoringHistoryDate && second instanceof RefactoringHistoryDate) {
 			final RefactoringHistoryDate predecessor= (RefactoringHistoryDate) first;
 			final RefactoringHistoryDate successor= (RefactoringHistoryDate) second;
-			return (int) (successor.getTimeStamp() - predecessor.getTimeStamp());
+			final int delta= predecessor.getKind() - successor.getKind();
+			if (delta != 0)
+				return delta;
+			final long result= successor.getTimeStamp() - predecessor.getTimeStamp();
+			if (result < 0)
+				return -1;
+			else if (result > 0)
+				return 1;
+			return 0;
 		} else if (first instanceof RefactoringHistoryEntry && second instanceof RefactoringHistoryEntry) {
 			final RefactoringHistoryEntry predecessor= (RefactoringHistoryEntry) first;
 			final RefactoringHistoryEntry successor= (RefactoringHistoryEntry) second;
-			return (int) (successor.getDescriptor().getTimeStamp() - predecessor.getDescriptor().getTimeStamp());
+			final long delta= successor.getDescriptor().getTimeStamp() - predecessor.getDescriptor().getTimeStamp();
+			if (delta < 0)
+				return -1;
+			else if (delta > 0)
+				return 1;
+			else
+				return 0;
 		}
 		return super.compare(viewer, first, second);
 	}
