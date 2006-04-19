@@ -20,3 +20,6 @@ Import-Package: javax.xml.parsers,
  org.xml.sax,
  org.xml.sax.ext,
  org.xml.sax.helpers
+Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+ CDC-1.0/Foundation-1.0,
+ J2SE-1.3
