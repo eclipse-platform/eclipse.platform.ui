@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
+import org.eclipse.debug.internal.ui.viewers.ModelNode;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
@@ -31,10 +32,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
 abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableViewer {
@@ -459,6 +463,40 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	protected boolean hasPendingSetTopIndex()
 	{
 		return !fTopIndexQueue.isEmpty();
+	}
+	
+	public void handleEvent(Event event) {
+		Item item = (Item) event.item;
+		restoreLabels(item);
+
+		Widget parentItem = getParentWidget(event.item);
+		int index = event.index;
+       
+		ModelNode[] nodes = getModel().getNodes(parentItem.getData());
+		if (nodes != null) {
+			for (int i = 0; i < nodes.length; i++) {
+				ModelNode node = nodes[i];
+				Widget widget = findItem(node);
+				if (widget == parentItem) {
+		        	ModelNode[] childrenNodes = node.getChildrenNodes();
+		        	if (childrenNodes != null && index < childrenNodes.length) {
+		        		final ModelNode child = childrenNodes[index];
+		        		mapElement(child, event.item);
+		        		event.item.setData(child.getElement());
+		        		
+		        		// The preserving selection call here from AsynchronousViewer 
+		        		// is causing the table viewer to not scroll or move cursor properly.
+		        		// #interalRefresh on a child will never cause a structural
+		        		// change in a table viewer.  As a result, there is no need to preserve selection
+		        		internalRefresh(child);
+		        		
+		        	} else {
+		        		addPendingChildIndex(node, index);
+		            }
+		        	return;
+				}
+			}
+        }
 	}
 
 }

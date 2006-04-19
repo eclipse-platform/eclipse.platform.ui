@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
 public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
@@ -1060,6 +1061,19 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			formatViewer();
 			resizeColumnsToPreferredSize();
+		}
+	}
+
+	protected void clear(Widget item) {
+		super.clear(item);
+		
+		// this table viewer assumes that #getData will return null
+		// set data to null when clearing an item.
+		// only visible item will get SET DATA event again and at that time
+		// the viewer would set the data back.
+		if (item instanceof TableItem)
+		{
+			item.setData(null);
 		}
 	}
 }
