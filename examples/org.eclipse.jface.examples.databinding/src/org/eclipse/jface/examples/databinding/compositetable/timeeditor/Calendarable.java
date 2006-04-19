@@ -172,6 +172,48 @@ public class Calendarable {
 		this.text = string;
 	}
 	
+	private Object data = null;
+	
+	/**
+	 * Returns the application defined widget data associated
+	 * with the receiver, or null if it has not been set. The
+	 * <em>widget data</em> is a single, unnamed field that is
+	 * stored with every widget. 
+	 * <p>
+	 * Applications may put arbitrary objects in this field. If
+	 * the object stored in the widget data needs to be notified
+	 * when the widget is disposed of, it is the application's
+	 * responsibility to hook the Dispose event on the widget and
+	 * do so.
+	 * </p>
+	 *
+	 * @return the widget data
+	 * @see #setData(Object)
+	 */
+	public Object getData() {
+		return data;
+	}
+
+	/**
+	 * Sets the application defined widget data associated
+	 * with the receiver to be the argument. The <em>widget
+	 * data</em> is a single, unnamed field that is stored
+	 * with every widget. 
+	 * <p>
+	 * Applications may put arbitrary objects in this field. If
+	 * the object stored in the widget data needs to be notified
+	 * when the widget is disposed of, it is the application's
+	 * responsibility to hook the Dispose event on the widget and
+	 * do so.
+	 * </p>
+	 *
+	 * @param data the widget data
+	 * @see #getData()
+	 */
+	public void setData(Object data) {
+		this.data = data;
+	}
+	
 	private Point upperLeftPositionInDayRowCoordinates = null;
 	
 
@@ -236,8 +278,15 @@ public class Calendarable {
 	 * @param control The control to set.
 	 */
 	public void setControl(CalendarableEventControl control) {
+		if (control == null) {
+			this.control.setCalendarable(null);
+		}
 		this.control = control;
+		if (control != null) {
+			control.setCalendarable(this);
+		}
 	}
+
 }
 
 

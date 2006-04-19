@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.eclipse.jface.examples.databinding.compositetable.internal.EmptyTablePlaceholder;
+import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.jface.examples.databinding.compositetable.internal.ISelectableRegionControl;
 import org.eclipse.jface.examples.databinding.compositetable.internal.TableRow;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.DuckType;
@@ -1609,6 +1610,23 @@ public class InternalCompositeTable extends Composite implements Listener {
 	}
 
 	/**
+	 * Method getControlRow.  Given a row control, returns its row number
+	 * relative to the topRow.
+	 * 
+	 * @param rowControl The row object to find
+	 * @return The row number of the rowControl relative to the topRow (0-based)
+	 * @throws IllegalArgumentException if rowControl is not currently visible
+	 */
+	public int getControlRow(Control rowControl) {
+		for (int row = 0; row < rows.size(); row++) {
+			if (getRowByNumber(row).getRowControl() == rowControl) {
+				return row;
+			}
+		}
+		throw new IllegalArgumentException("getControlRow passed a control that is not visible inside CompositeTable");
+	}
+
+	/**
 	 * Returns the TableRow by the specified 0-based offset from the top visible
 	 * row.
 	 * 
@@ -1700,5 +1718,6 @@ public class InternalCompositeTable extends Composite implements Listener {
 			}
 		});
 	}
+
 
 }

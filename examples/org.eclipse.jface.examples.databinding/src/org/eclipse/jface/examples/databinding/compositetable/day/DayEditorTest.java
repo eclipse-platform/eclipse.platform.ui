@@ -75,8 +75,8 @@ public class DayEditorTest {
 			{new Event("Nat. Conference"),
 				new Event(time(7, 50), time(9, 00), "Stand-up meeting"),
 				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{new Event("Nat. Conference"),
-				new Event("Field trip to PC HQ"),
+			{new Event("Field trip to PC HQ"),
+				new Event("Nat. Conference"),
 				new Event(time(8, 30), time(9, 30), "Stand-up meeting"),
 				new Event(time(10, 00), time(13, 15), "Meet with customer"),
 				new Event(time(12, 45), time(14, 15), "RC1 due"),
@@ -196,12 +196,12 @@ public class DayEditorTest {
 		private void fillEvent(Calendarable c, Event event) {
 			if (event.allDay) {
 				c.setAllDayEvent(true);
-				c.setText(event.description);
 			} else {
 				c.setStartTime(event.startTime);
 				c.setEndTime(event.endTime);
-				c.setText(event.description);
 			}
+			c.setData(event);
+			c.setText(event.description);
 		}
 	};
 

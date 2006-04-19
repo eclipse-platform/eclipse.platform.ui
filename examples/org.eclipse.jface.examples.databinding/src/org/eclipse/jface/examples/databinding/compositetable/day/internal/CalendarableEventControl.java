@@ -11,8 +11,15 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -35,6 +42,7 @@ public class CalendarableEventControl extends Canvas  {
 	private Label label = null;
 	private Color BORDER_COLOR;
 	private Color BACKGROUND_COLOR;
+	private Color SELECTED_BORDER_COLOR;
 
    /**
 	 * Constructs a new instance of this class given its parent
@@ -68,6 +76,8 @@ public class CalendarableEventControl extends Canvas  {
 		Display display = parent.getDisplay();
 		BORDER_COLOR = new Color(display, 215, 215, 245);
 		BACKGROUND_COLOR = new Color(display, 240, 240, 255);
+		SELECTED_BORDER_COLOR = new Color(display, 140, 140, 200);
+
 		initialize();
 	}
 	
@@ -75,6 +85,7 @@ public class CalendarableEventControl extends Canvas  {
 		super.dispose();
 		BORDER_COLOR.dispose();
 		BACKGROUND_COLOR.dispose();
+		SELECTED_BORDER_COLOR.dispose();
 	}
 
 	/**
@@ -91,6 +102,7 @@ public class CalendarableEventControl extends Canvas  {
         setBackground(BORDER_COLOR);
         setLayout(fillLayout);
         addPaintListener(paintListener);
+        label.addMouseListener(labelMouseListener);
 	}
 
 	/**
@@ -98,6 +110,7 @@ public class CalendarableEventControl extends Canvas  {
 	 */
 	public void setText(String text) {
 		label.setText(text);
+		label.setToolTipText(text);
 	}
 		
 	private int clipping;
@@ -145,5 +158,88 @@ public class CalendarableEventControl extends Canvas  {
 			e.gc.setBackground(savedBackground);
 		}
 	};
+
+	/**
+	 * Set or clear the selection indicator in the UI.
+	 * 
+	 * @param selected true if this control should appear selected; false otherwise.
+	 */
+	public void setSelected(boolean selected) {
+		if (selected) {
+			setBackground(SELECTED_BORDER_COLOR);
+		} else {
+			setBackground(BORDER_COLOR);
+		}
+	}
+	
+	private List mouseListeners = new LinkedList();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	public void addMouseListener(MouseListener listener) {
+		super.addMouseListener(listener);
+		mouseListeners.add(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		super.removeMouseListener(listener);
+		mouseListeners.remove(listener);
+	}
+	
+	private MouseListener labelMouseListener = new MouseListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+			e.widget = CalendarableEventControl.this;
+			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
+				MouseListener l = (MouseListener) listenerIter.next();
+				l.mouseDoubleClick(e);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+			e.widget = CalendarableEventControl.this;
+			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
+				MouseListener l = (MouseListener) listenerIter.next();
+				l.mouseDown(e);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent e) {
+			e.widget = CalendarableEventControl.this;
+			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
+				MouseListener l = (MouseListener) listenerIter.next();
+				l.mouseUp(e);
+			}
+		}
+	};
+
+	private Calendarable calendarable;
+
+	/**
+	 * Method setCalendarable. Sets the associated model.
+	 * @param calendarable
+	 */
+	public void setCalendarable(Calendarable calendarable) {
+		this.calendarable = calendarable;
+	}
+
+	/**
+	 * @return Returns the calendarable.
+	 */
+	public Calendarable getCalendarable() {
+		return calendarable;
+	}
 	
 } // @jve:decl-index=0:visual-constraint="10,10"

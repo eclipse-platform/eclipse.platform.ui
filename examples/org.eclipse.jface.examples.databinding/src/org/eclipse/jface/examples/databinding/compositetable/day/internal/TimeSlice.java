@@ -19,12 +19,14 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Represents a time slice that is the same time but may span several days.
@@ -117,6 +119,23 @@ public class TimeSlice extends Composite {
 	 */
 	public Control getColumnControl(int column) {
 		return (Control) columns.get(column);
+	}
+	
+	/**
+	 * Return the column number of the specified widget.
+	 * 
+	 * @param widget the TimeSlot widget
+	 * @return the column number of the specified TimeSlot within this TimeSlice.
+	 */
+	public int getControlColumn(Widget widget) {
+		int columnNumber = 0;
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			if (columnsIter.next() == widget) {
+				return columnNumber;
+			}
+			++columnNumber;
+		}
+		throw new IllegalArgumentException("Unrecognized widget passed to getControlColumn");
 	}
 
 	/**
@@ -262,6 +281,35 @@ public class TimeSlice extends Composite {
 			if (dayCandidate instanceof TimeSlot) {
 				TimeSlot day = (TimeSlot) dayCandidate;
 				day.setAllDay(isAllDayEvent);
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Control#addFocusListener
+	 * 
+	 * @param listener
+	 */
+	public void addCellFocusListener(FocusListener listener) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.addFocusListener(listener);
+			}
+		}
+	}
+	
+	/**
+	 * @see org.eclipse.swt.widgets.Control#removeFocusListener
+	 * @param listener
+	 */
+	public void removeCellFocusListener(FocusListener listener) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.removeFocusListener(listener);
 			}
 		}
 	}

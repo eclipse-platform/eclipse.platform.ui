@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -798,6 +799,18 @@ public class CompositeTable extends Canvas {
 	public Control[] getRowControls() {
 		return contentPane.getRowControls();
 	}
+	
+	/**
+	 * Method getControlRow.  Given a row control, returns its row number
+	 * relative to the topRow.
+	 * 
+	 * @param rowControl The row object to find
+	 * @return The row number of the rowControl relative to the topRow (0-based)
+	 * @throws IllegalArgumentException if rowControl is not currently visible
+	 */
+	public int getControlRow(Control rowControl) {
+		return contentPane.getControlRow(rowControl);
+	}
 
 	/**
 	 * Method getSelection. Returns the currently-selected (column, row) pair
@@ -1070,6 +1083,7 @@ public class CompositeTable extends Canvas {
 	public void removeScrollListener(ScrollListener scrollListener) {
 		scrollListeners.remove(scrollListener);
 	}
+
 
 } // @jve:decl-index=0:visual-constraint="10,10"
 

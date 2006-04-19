@@ -33,9 +33,15 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCon
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -108,6 +114,7 @@ public class DayEditor extends Composite implements IEventEditor {
 			public void rowConstructed(Control newRow) {
 				TimeSlice timeSlice = (TimeSlice) newRow;
 				timeSlice.setNumberOfColumns(numberOfDays);
+				timeSlice.addCellFocusListener(cellFocusListener);
 			}
 		});
 		compositeTable.addRowContentProvider(new IRowContentProvider() {
@@ -133,6 +140,175 @@ public class DayEditor extends Composite implements IEventEditor {
 		compositeTable.setRunTime(true);
 	}
 	
+	private FocusListener cellFocusListener = new FocusAdapter() {
+		public void focusGained(FocusEvent e) {
+			TimeSlice sendingRow = (TimeSlice) ((Composite) e.widget).getParent();
+			int day = sendingRow.getControlColumn(e.widget);
+			int row = compositeTable.getControlRow(sendingRow);
+			int dayRow = convertViewportRowToDayRow(row);
+			Calendarable toSelect = getFirstCalendarableAt(day, dayRow);
+			if (toSelect == null) {
+				toSelect = getAllDayCalendarableAt(day, row + compositeTable.getTopRow());
+			}
+			setSelection(toSelect);
+		}
+	};
+
+	/** (non-API)
+	 * Method getFirstCalendarableAt. Finds the calendarable event at the 
+	 * specified day/row in DayRow coordinates.  If no calendarable exists
+	 * at the specified coordinates, does nothing.
+	 * 
+	 * @param day The day offset
+	 * @param row The row offset in DayRow coordinates
+	 * @return the first Calendarable in the specified (day, row) or null if none.
+	 */
+	protected Calendarable getFirstCalendarableAt(int day, int row) {
+		Calendarable[][] eventLayout = model.getEventLayout(day);
+		Calendarable selectedCalendarable = null;
+		for (int column=0; column < eventLayout.length; ++column) {
+			Calendarable calendarable = eventLayout[column][row];
+			if (calendarable != null) {
+				if (selectedCalendarable == null) {
+					selectedCalendarable = calendarable;
+				} else if (calendarable.getStartTime().after(selectedCalendarable.getStartTime())) {
+					selectedCalendarable = calendarable;
+				}
+			}
+		}
+		return selectedCalendarable;
+	}
+	
+	/**
+	 * Find the all day event that is positioned at the specified day and row in viewport coordinates
+	 * 
+	 * @param day
+	 * @param row
+	 * @return The found Calendarable or null if none
+	 */
+	protected Calendarable getAllDayCalendarableAt(int day, int row) {
+		int allDayEventRow = 0;
+		for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+			Calendarable candidate = (Calendarable) calendarablesIter.next();
+			if (candidate.isAllDayEvent()) {
+				if (allDayEventRow == row) {
+					return candidate;
+				}
+				++allDayEventRow;
+			}
+		}
+		return null;
+	}
+
+	private Calendarable selectedCalendarable = null;
+
+	/**
+	 * Method selectCalendarable.  Selects the specified Calendarable event.
+	 * 
+	 * @param newSelection The Calendarable to select.
+	 */
+	public void setSelection(Calendarable newSelection) {
+		if (selectedCalendarable == newSelection) {
+			return;
+		}
+		if (selectedCalendarable != null) {
+			// The control could be null if it just got scrolled off the screen top or bottom
+			if (selectedCalendarable.getControl() != null) {
+				selectedCalendarable.getControl().setSelected(false);
+			}
+		}
+		selectedCalendarable = newSelection;
+		if (newSelection != null) {
+			newSelection.getControl().setSelected(true);
+		}
+		fireSelectionChangeEvent(selectedCalendarable, newSelection);
+	}
+	
+	/**
+	 * Method getSelection.  Returns the selected Calendarable event or null
+	 * if no Calendarable is selected.
+	 * 
+	 * @return the selected Calendarable or null if nothing is selected.
+	 */
+	public Calendarable getSelection() {
+		return selectedCalendarable;
+	}
+	
+	private List selectionChangeListeners = new LinkedList();
+
+	private void fireSelectionChangeEvent(Calendarable currentSelection, Calendarable newSelection) {
+		SelectionChangeEvent sce = new SelectionChangeEvent(currentSelection, newSelection);
+		for (Iterator listenersIter = selectionChangeListeners.iterator(); listenersIter.hasNext();) {
+			CalendarableSelectionChangeListener listener = (CalendarableSelectionChangeListener) listenersIter.next();
+			listener.selectionChanged(sce);
+		}
+	}
+	
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when the receiver's selection changes, by sending
+	 * it one of the messages defined in the <code>CalendarableSelectionChangeListener</code>
+	 * interface.
+	 * <p>
+	 * <code>selectionChanged</code> is called when the selection changes.
+	 * </p>
+	 *
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableSelectionChangeListener
+	 * @see #removeSelectionChangeListener
+	 * @see SelectionChangeEvent
+	 */
+	public void addSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		if (l == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		selectionChangeListeners.add(l);
+	}
+	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when the receiver's selection changes, by sending
+	 * it one of the messages defined in the <code>CalendarableSelectionChangeListener</code>
+	 * interface.
+	 * <p>
+	 * <code>selectionChanged</code> is called when the selection changes.
+	 * </p>
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableSelectionChangeListener
+	 * @see #addSelectionChangeListener
+	 * @see SelectionChangeEvent
+	 */
+	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		if (l == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		selectionChangeListeners.remove(l);
+	}
+
+
 	private class DayEditorLayout extends Layout {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
@@ -268,6 +444,18 @@ public class DayEditor extends Composite implements IEventEditor {
 		return minute;
 	}
 
+	private int convertViewportRowToDayRow(int row) {
+		int topRowOffset = compositeTable.getTopRow() - numberOfAllDayEventRows;
+		int startOfDayOffset = model.computeStartHour() * model.getNumberOfDivisionsInHour();
+		return row + topRowOffset + startOfDayOffset;
+	}
+
+	private int convertDayRowToViewportCoordinates(int row) {
+		row -= model.computeStartHour() * model.getNumberOfDivisionsInHour()
+			- numberOfAllDayEventRows;
+		return row;
+	}
+	
 	/*
 	 * Update the number of rows that are displayed inside the CompositeTable control
 	 */
@@ -316,6 +504,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void freeObsoleteCalendarableEventControls(List removedCalendarables) {
 		for (Iterator removedCalendarablesIter = removedCalendarables.iterator(); removedCalendarablesIter.hasNext();) {
 			Calendarable toRemove = (Calendarable) removedCalendarablesIter.next();
+			if (selectedCalendarable == toRemove) {
+				setSelection(null);
+			}
 			freeCalendarableControl(toRemove);
 		}
 	}
@@ -323,10 +514,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void findEventRowsForNewDays(Date startDate) {
 		DayModel dayModel = new DayModel(model.getNumberOfDivisionsInHour());
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
-			if (model.getNumberOfColumnsWithinDay(day) == null) {
+			if (model.getNumberOfColumnsWithinDay(day) == -1) {
 				List events = model.getCalendarableEvents(day);
-				int numberOfColumns = dayModel.computeEventLayout(events).length;
-				model.setNumberOfColumnsWithinDay(day, numberOfColumns);
+				Calendarable[][] eventLayout = dayModel.computeEventLayout(events);
+				model.setEventLayout(day, eventLayout);
 			}
 		}
 	}
@@ -351,7 +542,7 @@ public class DayEditor extends Composite implements IEventEditor {
 			Control[] gridRows = compositeTable.getRowControls();
 			
 			for (int day=0; day < model.getNumberOfDays(); ++day) {
-				int columnsWithinDay = model.getNumberOfColumnsWithinDay(day).intValue();
+				int columnsWithinDay = model.getNumberOfColumnsWithinDay(day);
 				Point[] columnPositions = computeColumns(day, columnsWithinDay, gridRows);
 				
 				int allDayEventRow = 0;
@@ -441,8 +632,6 @@ public class DayEditor extends Composite implements IEventEditor {
 				clippingStyle |= SWT.BOTTOM;
 			}
 			
-			firstVisibleRow = convertDayRowToViewportCoordinates(firstVisibleRow);
-			lastVisibleRow = convertDayRowToViewportCoordinates(lastVisibleRow);
 			startRow = convertDayRowToViewportCoordinates(startRow);
 			endRow = convertDayRowToViewportCoordinates(endRow);
 			
@@ -469,12 +658,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 
-	private int convertDayRowToViewportCoordinates(int row) {
-		row -= model.computeStartHour() * model.getNumberOfDivisionsInHour()
-			- numberOfAllDayEventRows;
-		return row;
-	}
-	
 	private boolean eventRowIsVisible(int eventRow) {
 		if (compositeTable.getTopRow() <= eventRow) {
 			return true;
@@ -517,16 +700,55 @@ public class DayEditor extends Composite implements IEventEditor {
 
 	// CalendarableEventControl construction/destruction here -----------------
 
+	MouseAdapter selectCompositeTableOnMouseDownAdapter = new MouseAdapter() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+			CalendarableEventControl control = (CalendarableEventControl) e.widget;
+			Calendarable calendarable = control.getCalendarable();
+			int day = model.getDay(calendarable);
+			int row = 0;
+			if (calendarable.isAllDayEvent()) {
+				int allDayEventRow = 0;
+				for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+					Calendarable candidate = (Calendarable) calendarablesIter.next();
+					if (candidate.isAllDayEvent()) {
+						if (candidate == calendarable) {
+							row = allDayEventRow - compositeTable.getTopRow();
+							break;
+						}
+						++allDayEventRow;
+					}
+				}
+			} else {
+				// Convert to viewport coordinates
+				Point upperLeft = calendarable.getUpperLeftPositionInDayRowCoordinates();
+				int topRowOffset = compositeTable.getTopRow() - numberOfAllDayEventRows;
+				int startOfDayOffset = model.computeStartHour() * model.getNumberOfDivisionsInHour();
+				row = upperLeft.y - topRowOffset - startOfDayOffset;
+				if (row < 0) {
+					row = 0;
+				}
+			}
+			compositeTable.setSelection(day, row);
+		}
+	};
+
 	private CalendarableEventControl newCEC() {
 		if (spareCalendarableEventControls.size() > 0) {
 			CalendarableEventControl result = (CalendarableEventControl) spareCalendarableEventControls.remove(0);
 			result.setVisible(true);
 			return result;
 		}
-		return new CalendarableEventControl(this, SWT.NULL);
+		CalendarableEventControl calendarableEventControl = new CalendarableEventControl(this, SWT.NULL);
+		calendarableEventControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
+		return calendarableEventControl;
 	}
 	
 	private void freeCEC(CalendarableEventControl control) {
+		control.setSelected(false);
+		control.setCalendarable(null);
 		control.setVisible(false);
 		spareCalendarableEventControls.add(control);
 	}

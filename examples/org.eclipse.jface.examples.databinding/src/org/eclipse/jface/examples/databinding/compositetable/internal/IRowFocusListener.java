@@ -9,13 +9,16 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.jface.examples.databinding.compositetable;
+package org.eclipse.jface.examples.databinding.compositetable.internal;
 
+import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Interface IRowFocusListener.  An interface for objects that want to listen to and have the
- * possibility of vetoing row change events on a CompositeTable.
+ * Interface IRowFocusListener. An interface for objects that want to listen to
+ * and have the possibility of vetoing row change events on a CompositeTable.
+ * This interface is not intended to be implemented except within the
+ * CompositeTable implementation.  Extend RowFocusAdapter instead.
  * 
  * @author djo
  */

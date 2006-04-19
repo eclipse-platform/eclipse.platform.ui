@@ -36,24 +36,42 @@ public class CalendarableModel {
 	private int numberOfDays = -1;
 	private int numberOfDivisionsInHour = -1;
 	private ArrayList[] dayColumns = null;
-	private Integer[] columnsWithinDay = null;
+	private Calendarable[][][] eventLayout = null;  // [day][column][row]
 
 	private int defaultStartHour = DEFAULT_START_HOUR;
 	
 	/**
 	 * @param dayOffset
-	 * @return
+	 * @return the number of columns within the day or -1 if this has not been computed yet.
 	 */
-	public Integer getNumberOfColumnsWithinDay(int dayOffset) {
-		return columnsWithinDay[dayOffset];
+	public int getNumberOfColumnsWithinDay(int dayOffset) {
+		if (eventLayout == null) {
+			return -1;
+		}
+		if (eventLayout[dayOffset] == null) {
+			return -1;
+		}
+		return eventLayout[dayOffset].length;
 	}
 	
 	/**
+	 * Sets the eventLayout for a particular dayOffset
+	 * 
 	 * @param dayOffset
-	 * @param numberOfColumns
+	 * @param eventLayout
 	 */
-	public void setNumberOfColumnsWithinDay(int dayOffset, int numberOfColumns) {
-		columnsWithinDay[dayOffset] = new Integer(numberOfColumns);
+	public void setEventLayout(int dayOffset, Calendarable[][] eventLayout) {
+		this.eventLayout[dayOffset] = eventLayout;
+	}
+	
+	/**
+	 * Gets the eventLayout for a particular dayOffset
+	 * 
+	 * @param dayOffset
+	 * @return the eventLayout array for the specified day or null if none has been computed.
+	 */
+	public Calendarable[][] getEventLayout(int dayOffset) {
+		return eventLayout[dayOffset];
 	}
 	
 	/**
@@ -81,7 +99,7 @@ public class CalendarableModel {
 		for (int i=0; i < numberOfDays; ++i) {
 			dayColumns[i] = new ArrayList();
 		}
-		columnsWithinDay = new Integer[numberOfDays];
+		eventLayout = new Calendarable[numberOfDays][][];
 	}
 	
 	/**
@@ -111,7 +129,7 @@ public class CalendarableModel {
 				calculateDate(startDate, numberOfDays).before(this.startDate))
 		{
 			this.startDate = startDate;
-			columnsWithinDay = new Integer[numberOfDays];
+			eventLayout = new Calendarable[numberOfDays][][];
 			return refresh();
 		}
 		
@@ -134,15 +152,15 @@ public class CalendarableModel {
 						obsoleteCalendarables.add(invalidated.next());
 					}
 					dayColumns[day] = dayColumns[day-overlap];
-					columnsWithinDay[day] = columnsWithinDay[day-overlap];
+					eventLayout[day] = eventLayout[day-overlap];
 				} if (day >= overlap) {
 					// Shift the arrays
 					dayColumns[day] = dayColumns[day-overlap];
-					columnsWithinDay[day] = columnsWithinDay[day-overlap];
+					eventLayout[day] = eventLayout[day-overlap];
 				} else {
 					// Recalculate new columns
 					dayColumns[day] = new ArrayList();
-					columnsWithinDay[day] = null;
+					eventLayout[day] = null;
 					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
 				}
 			}
@@ -160,15 +178,15 @@ public class CalendarableModel {
 						obsoleteCalendarables.add(invalidated.next());
 					}
 					dayColumns[day] = dayColumns[day+overlap];
-					columnsWithinDay[day] = columnsWithinDay[day+overlap];
+					eventLayout[day] = eventLayout[day+overlap];
 				} if (day < numberOfDays - overlap) {
 					// Shift the arrays
 					dayColumns[day] = dayColumns[day+overlap];
-					columnsWithinDay[day] = columnsWithinDay[day+overlap];
+					eventLayout[day] = eventLayout[day+overlap];
 				} else {
 					// Recalculate new columns
 					dayColumns[day] = new ArrayList();
-					columnsWithinDay[day] = null;
+					eventLayout[day] = null;
 					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
 				}
 			}
@@ -386,5 +404,26 @@ public class CalendarableModel {
 	public int getDefaultStartHour() {
 		return defaultStartHour;
 	}
+	
+
+	/**
+	 * Method getDay.  Returns the day on which the specified Calendarable appers.
+	 * 
+	 * @param calendarable The calendarable to find
+	 * @return The day offset (0-based)
+	 * @throws IllegalArgumentException if Calendarable isn't found
+	 */
+	public int getDay(Calendarable calendarable) {
+		for (int day = 0; day < dayColumns.length; day++) {
+			for (Iterator calendarableIter = dayColumns[day].iterator(); calendarableIter.hasNext();) {
+				Calendarable event = (Calendarable) calendarableIter.next();
+				if (event == calendarable) {
+					return day;
+				}
+			}
+		}
+		throw new IllegalArgumentException("Invalid Calenderable passed");
+	}
+
 
 }
