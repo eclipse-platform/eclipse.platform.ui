@@ -34,7 +34,8 @@ import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
+import org.eclipse.ui.internal.navigator.extensions.CommonExtensionSite;
+import org.eclipse.ui.navigator.*;
 
 public class ChangeSetContentProvider extends ResourceModelContentProvider implements ITreePathContentProvider {
 
@@ -607,8 +608,25 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			ActiveChangeSetManager collector = csc.getActiveChangeSetManager();
 			collector.addListener(collectorListener);
 		}
+		ChangeSetSorter sorter = getSorter();
+		if (sorter != null) {
+			sorter.setConfiguration(getConfiguration());
+		}
 	}
 
+	private ChangeSetSorter getSorter() {
+		INavigatorContentService contentService = ((CommonExtensionSite)getExtensionSite()).getContentService();
+		INavigatorSorterService sortingService = contentService.getSorterService();
+		INavigatorContentExtension extension = getExtensionSite().getExtension();
+		if (extension != null) {
+			ViewerSorter sorter = sortingService.findSorter(extension.getDescriptor(), getModelProvider(), new DiffChangeSet(), new DiffChangeSet());
+			if (sorter instanceof ChangeSetSorter) {
+				return (ChangeSetSorter) sorter;
+			}
+		}
+		return null;
+	}
+	
 	private void initializeCheckedInChangeSetCollector(ChangeSetCapability csc) {
 		if (csc.supportsCheckedInChangeSets()) {
 			checkedInCollector = ((ModelParticipantChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());

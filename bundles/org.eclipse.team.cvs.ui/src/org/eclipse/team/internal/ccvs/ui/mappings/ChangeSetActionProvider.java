@@ -264,10 +264,6 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_1a, ChangeSetSorter.COMMENT)); 
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_2a, ChangeSetSorter.DATE)); 
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_3a, ChangeSetSorter.USER));
-			ChangeSetSorter sorter = getSorter();
-			if (sorter != null) {
-				sorter.setConfiguration(getSynchronizePageConfiguration());
-			}
 		}
 		if (getChangeSetCapability().supportsActiveChangeSets()) {
 			addToChangeSet = new MenuManager(TeamUIMessages.ChangeLogModelProvider_12); 
@@ -486,19 +482,6 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 			ITreeContentProvider provider = extension.getContentProvider();
 			if (provider instanceof ChangeSetContentProvider) {
 				return (ChangeSetContentProvider) provider;
-			}
-		}
-		return null;
-	}
-	
-	private ChangeSetSorter getSorter() {
-		INavigatorContentService contentService = getActionSite().getContentService();
-		INavigatorSorterService sortingService = contentService.getSorterService();
-		INavigatorContentExtension extension = getExtension();
-		if (extension != null) {
-			ViewerSorter sorter = sortingService.findSorter(extension.getDescriptor(), getModelProvider(), new DiffChangeSet(), new DiffChangeSet());
-			if (sorter instanceof ChangeSetSorter) {
-				return (ChangeSetSorter) sorter;
 			}
 		}
 		return null;
