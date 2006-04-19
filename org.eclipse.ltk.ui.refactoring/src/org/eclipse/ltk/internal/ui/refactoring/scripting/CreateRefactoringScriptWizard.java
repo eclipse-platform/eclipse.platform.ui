@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
@@ -51,8 +53,12 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
+
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard to create a refactoring script.
@@ -71,7 +77,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	private RefactoringDescriptorProxy[] fRefactoringDescriptors= {};
 
 	/** The refactoring history */
-	private final RefactoringHistory fRefactoringHistory;
+	private RefactoringHistory fRefactoringHistory;
 
 	/** The refactoring script location, or <code>null</code> */
 	private URI fScriptLocation= null;
@@ -97,12 +103,26 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			fNewSettings= false;
 			setDialogSettings(section);
 		}
-		final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 		try {
-			service.connect();
-			fRefactoringHistory= service.getWorkspaceHistory(null);
-		} finally {
-			service.disconnect();
+			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (context == null)
+				context= PlatformUI.getWorkbench().getProgressService();
+			context.run(false, false, new IRunnableWithProgress() {
+
+				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+					try {
+						service.connect();
+						fRefactoringHistory= service.getWorkspaceHistory(monitor);
+					} finally {
+						service.disconnect();
+					}
+				}
+			});
+		} catch (InvocationTargetException exception) {
+			RefactoringUIPlugin.log(exception);
+		} catch (InterruptedException exception) {
+			// Do nothing
 		}
 		fWizardPage= new CreateRefactoringScriptWizardPage(this);
 	}

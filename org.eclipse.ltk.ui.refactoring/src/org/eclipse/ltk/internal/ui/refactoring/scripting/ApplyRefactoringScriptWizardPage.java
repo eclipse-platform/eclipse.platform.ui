@@ -35,7 +35,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -80,8 +80,15 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		new Label(composite, SWT.NONE).setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
-		fLocationControl= new RefactoringScriptLocationControl(fWizard, composite) {
+
+		final Group group= new Group(composite, SWT.NONE);
+		group.setText(ScriptingMessages.ApplyRefactoringScriptWizardPage_location_caption);
+		final GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fLocationControl= new RefactoringScriptLocationControl(fWizard, group) {
 
 			protected final void handleClipboardScriptChanged() {
 				super.handleClipboardScriptChanged();

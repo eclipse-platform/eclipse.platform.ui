@@ -232,7 +232,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected int getColumnCount() {
+	protected int getContainerColumns() {
 		return 1;
 	}
 
@@ -246,7 +246,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * Returns the deselect all button.
 	 * 
-	 * @return the deselect all button
+	 * @return the deselect all button, or <code>null</code>
 	 */
 	public Button getDeselectAllButton() {
 		return fDeselectAllButton;
@@ -262,7 +262,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	/**
 	 * Returns the select all button.
 	 * 
-	 * @return the select all button
+	 * @return the select all button, or <code>null</code>
 	 */
 	public Button getSelectAllButton() {
 		return fSelectAllButton;
@@ -291,8 +291,10 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 		if (history != null) {
 			final int checked= getCheckedDescriptors().length;
 			final int total= history.getDescriptors().length;
-			fSelectAllButton.setEnabled(checked < total);
-			fDeselectAllButton.setEnabled(checked > 0);
+			if (fSelectAllButton != null)
+				fSelectAllButton.setEnabled(checked < total);
+			if (fDeselectAllButton != null)
+				fDeselectAllButton.setEnabled(checked > 0);
 		}
 	}
 
@@ -342,8 +344,10 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	 */
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
-		fDeselectAllButton.setEnabled(false);
-		fSelectAllButton.setEnabled(history != null && !history.isEmpty());
+		if (fDeselectAllButton != null)
+			fDeselectAllButton.setEnabled(false);
+		if (fSelectAllButton != null)
+			fSelectAllButton.setEnabled(history != null && !history.isEmpty());
 	}
 
 	/**

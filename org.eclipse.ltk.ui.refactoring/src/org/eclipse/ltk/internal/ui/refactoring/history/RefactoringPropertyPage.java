@@ -11,8 +11,7 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -50,11 +49,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
@@ -120,17 +123,35 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		}
 	}
 
+	/** The dialog settings key */
+	private static String DIALOG_SETTINGS_KEY= "RefactoringPropertyPage"; //$NON-NLS-1$
+
+	/** The empty descriptors constant */
+	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= new RefactoringDescriptorProxy[0];
+
 	/** Preference key for the warn delete preference */
 	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.descriptor"; //$NON-NLS-1$;
 
 	/** Preference key for the warn delete all preference */
 	private static final String PREFERENCE_DO_NOT_WARN_DELETE_ALL= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
 
+	/** The sort dialog setting */
+	private static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
+
 	/** The refactoring preference */
 	private boolean fHasProjectHistory= false;
 
+	/** The refactoring history control */
+	private ShowRefactoringHistoryControl fHistoryControl;
+
 	/** The preferences working copy manager, or <code>null</code> */
 	private IWorkingCopyManager fManager= null;
+
+	/** Has the property page new dialog settings? */
+	private boolean fNewSettings;
+
+	/** The dialog settings, or <code>null</code> */
+	private IDialogSettings fSettings= null;
 
 	/** The share history button, or <code>null</code> */
 	private Button fShareHistoryButton= null;
@@ -140,6 +161,14 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	public RefactoringPropertyPage() {
 		noDefaultAndApplyButton();
+		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
+		if (section == null)
+			fNewSettings= true;
+		else {
+			fNewSettings= false;
+			fSettings= section;
+		}
 	}
 
 	/**
@@ -155,22 +184,31 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final Composite composite= new Composite(parent, SWT.NONE);
 		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		layout.marginRight= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 
-		final Label label= new Label(composite, SWT.WRAP);
-		label.setText(RefactoringUIMessages.RefactoringPropertyPage_label_message);
+		fHistoryControl= new ShowRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false) {
 
-		final PropertyPageRefactoringHistoryControl control= new PropertyPageRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false));
-		control.createControl();
-		control.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
+			public String getProjectPattern() {
+				return RefactoringUIMessages.RefactoringPropertyPage_project_pattern;
+			}
+		});
+		fHistoryControl.createControl();
+		boolean sortProjects= true;
+		final IDialogSettings settings= fSettings;
+		if (settings != null)
+			sortProjects= settings.getBoolean(SETTING_SORT);
+		if (sortProjects)
+			fHistoryControl.sortByProjects();
+		else
+			fHistoryControl.sortByDate();
+
+		fHistoryControl.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
 				final IProject project= getCurrentProject();
 				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 				MessageDialogWithToggle dialog= null;
-				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !control.getInput().isEmpty()) {
+				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !fHistoryControl.getInput().isEmpty()) {
 					dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 				}
@@ -187,31 +225,18 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							else
 								RefactoringUIPlugin.log(exception);
 						}
-						control.setInput(service.getProjectHistory(project, null));
+						fHistoryControl.setInput(service.getProjectHistory(project, null));
 					} finally {
 						service.disconnect();
 					}
 				}
 			}
 		});
-		control.getDeleteButton().addSelectionListener(new SelectionAdapter() {
+		fHistoryControl.getDeleteButton().addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
-				final RefactoringDescriptorProxy[] selection= control.getCheckedDescriptors();
+				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
-					Arrays.sort(selection, new Comparator() {
-
-						public final int compare(final Object first, final Object second) {
-							final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-							final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-							final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
-							if (delta > 0)
-								return 1;
-							else if (delta < 0)
-								return -1;
-							return 0;
-						}
-					});
 					final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
 						service.connect();
@@ -226,8 +251,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 								RefactoringUIPlugin.log(exception);
 						}
 						if (query.hasDeletions()) {
-							control.setInput(service.getProjectHistory(getCurrentProject(), null));
-							control.setCheckedDescriptors(new RefactoringDescriptorProxy[0]);
+							fHistoryControl.setInput(service.getProjectHistory(getCurrentProject(), null));
+							fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
 						}
 					} finally {
 						service.disconnect();
@@ -235,11 +260,11 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		control.getEditButton().addSelectionListener(new SelectionAdapter() {
+		fHistoryControl.getEditButton().addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
-				String comment= ""; //$NON-NLS-1$
-				final RefactoringDescriptorProxy[] selection= control.getSelectedDescriptors();
+				String details= ""; //$NON-NLS-1$
+				final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
 				if (selection.length > 0) {
 					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 					try {
@@ -248,13 +273,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 						if (descriptor != null) {
 							final String current= descriptor.getComment();
 							if (current != null)
-								comment= current;
+								details= current;
 						}
-						final EditCommentDialog dialog= new EditCommentDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, RefactoringUIMessages.RefactoringPropertyPage_edit_message, comment);
+						final EditRefactoringDetailsDialog dialog= new EditRefactoringDetailsDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_edit_message, selection[0].getDescription()), details);
 						if (dialog.open() == 0) {
-							service.setRefactoringComment(selection[0], dialog.getComment(), null);
-							control.setSelectedDescriptors(new RefactoringDescriptorProxy[0]);
-							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
+							service.setRefactoringComment(selection[0], dialog.getDetails(), null);
+							fHistoryControl.setSelectedDescriptors(EMPTY_DESCRIPTORS);
+							fHistoryControl.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
 						}
 					} catch (CoreException exception) {
 						RefactoringUIPlugin.log(exception);
@@ -277,12 +302,26 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		final IProject project= getCurrentProject();
 		if (project != null) {
-			final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 			try {
-				service.connect();
-				control.setInput(service.getProjectHistory(project, null));
-			} finally {
-				service.disconnect();
+				IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (context == null)
+					context= PlatformUI.getWorkbench().getProgressService();
+				context.run(false, false, new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+						try {
+							service.connect();
+							fHistoryControl.setInput(service.getProjectHistory(project, monitor));
+						} finally {
+							service.disconnect();
+						}
+					}
+				});
+			} catch (InvocationTargetException exception) {
+				RefactoringUIPlugin.log(exception);
+			} catch (InterruptedException exception) {
+				// Do nothing
 			}
 		}
 		applyDialogFont(composite);
@@ -342,6 +381,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * {@inheritDoc}
 	 */
 	public boolean performOk() {
+		if (fNewSettings) {
+			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
+			section= settings.addNewSection(DIALOG_SETTINGS_KEY);
+			fSettings= section;
+		}
+		fSettings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
 		final IProject project= getCurrentProject();
 		if (project != null)
 			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistoryButton.getSelection()).toString());

@@ -80,6 +80,16 @@ public final class ScriptingMessages extends NLS {
 
 	public static String ScriptLocationControl_location_label;
 
+	public static String ShowRefactoringHistoryWizard_caption;
+
+	public static String ShowRefactoringHistoryWizard_confirm_deletion;
+
+	public static String ShowRefactoringHistoryWizard_description;
+
+	public static String ShowRefactoringHistoryWizard_title;
+
+	public static String ShowRefactoringHistoryWizard_workspace_caption;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ScriptingMessages.class);

@@ -22,17 +22,17 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
 /**
- * Dialog to edit a comment of a refactoring.
+ * Dialog to edit the details of a refactoring.
  * 
  * @since 3.2
  */
-public final class EditCommentDialog extends Dialog {
+public final class EditRefactoringDetailsDialog extends Dialog {
 
-	/** The comment text */
-	private String fComment= "";//$NON-NLS-1$
+	/** The detail text */
+	private String fDetails= "";//$NON-NLS-1$
 
-	/** The comment text field */
-	private Text fCommentField;
+	/** The details text field */
+	private Text fDetailsField;
 
 	/** The message to display */
 	private final String fMessage;
@@ -41,7 +41,7 @@ public final class EditCommentDialog extends Dialog {
 	private final String fTitle;
 
 	/**
-	 * Creates a new edit comment dialog.
+	 * Creates a new edit details dialog.
 	 * 
 	 * @param shell
 	 *            the parent shell, or <code>null</code>
@@ -49,17 +49,17 @@ public final class EditCommentDialog extends Dialog {
 	 *            the dialog title, or <code>null</code> if none
 	 * @param message
 	 *            the dialog message, or <code>null</code> if none
-	 * @param comment
-	 *            the initial comment, or <code>null</code> if none
+	 * @param details
+	 *            the initial details, or <code>null</code> if none
 	 */
-	public EditCommentDialog(final Shell shell, final String title, final String message, final String comment) {
+	public EditRefactoringDetailsDialog(final Shell shell, final String title, final String message, final String details) {
 		super(shell);
 		fTitle= title;
 		fMessage= message;
-		if (comment == null)
-			fComment= "";//$NON-NLS-1$
+		if (details == null)
+			fDetails= "";//$NON-NLS-1$
 		else
-			fComment= comment;
+			fDetails= details;
 	}
 
 	/**
@@ -67,9 +67,9 @@ public final class EditCommentDialog extends Dialog {
 	 */
 	protected void buttonPressed(final int id) {
 		if (id == IDialogConstants.OK_ID)
-			fComment= fCommentField.getText();
+			fDetails= fDetailsField.getText();
 		else
-			fComment= null;
+			fDetails= null;
 		super.buttonPressed(id);
 	}
 
@@ -88,10 +88,10 @@ public final class EditCommentDialog extends Dialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		fCommentField.setFocus();
-		if (fComment != null) {
-			fCommentField.setText(fComment);
-			fCommentField.selectAll();
+		fDetailsField.setFocus();
+		if (fDetails != null) {
+			fDetailsField.setText(fDetails);
+			fDetailsField.selectAll();
 		}
 	}
 
@@ -109,20 +109,20 @@ public final class EditCommentDialog extends Dialog {
 			label.setLayoutData(data);
 			label.setFont(parent.getFont());
 		}
-		fCommentField= new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		fDetailsField= new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
 		final GridData data= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
-		data.heightHint= convertHeightInCharsToPixels(4);
-		fCommentField.setLayoutData(data);
+		data.heightHint= convertHeightInCharsToPixels(8);
+		fDetailsField.setLayoutData(data);
 		applyDialogFont(composite);
 		return composite;
 	}
 
 	/**
-	 * Returns the current comment.
+	 * Returns the current details.
 	 * 
-	 * @return the current comment
+	 * @return the current details
 	 */
-	public String getComment() {
-		return fComment;
+	public String getDetails() {
+		return fDetails;
 	}
 }

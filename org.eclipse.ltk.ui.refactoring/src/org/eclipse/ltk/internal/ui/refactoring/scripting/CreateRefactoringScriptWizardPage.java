@@ -191,9 +191,8 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	 */
 	public void performFinish() {
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null) {
+		if (settings != null)
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
-		}
 		fLocationControl.saveHistory();
 	}
 }

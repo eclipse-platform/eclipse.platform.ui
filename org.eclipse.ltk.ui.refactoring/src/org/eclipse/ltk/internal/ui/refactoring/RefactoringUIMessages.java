@@ -92,12 +92,6 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String PreviewWizardPage_showAll_text;
 
-	public static String PropertyPageRefactoringHistoryControl_delete_all_label;
-
-	public static String PropertyPageRefactoringHistoryControl_delete_label;
-
-	public static String PropertyPageRefactoringHistoryControl_edit_label;
-
 	public static String RedoRefactoringAction_error_message;
 
 	public static String RedoRefactoringAction_error_title;
@@ -254,7 +248,7 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringPropertyPage_edit_message;
 
-	public static String RefactoringPropertyPage_label_message;
+	public static String RefactoringPropertyPage_project_pattern;
 
 	public static String RefactoringPropertyPage_share_message;
 
@@ -303,6 +297,12 @@ public final class RefactoringUIMessages extends NLS {
 	public static String SelectRefactoringHistoryControl_deselect_all_label;
 
 	public static String SelectRefactoringHistoryControl_select_all_label;
+
+	public static String ShowRefactoringHistoryControl_delete_all_label;
+
+	public static String ShowRefactoringHistoryControl_delete_label;
+
+	public static String ShowRefactoringHistoryControl_edit_label;
 
 	public static String UndoManagerAction_internal_error_message;
 

@@ -270,8 +270,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	private final Set fSelectedDescriptors= new HashSet();
 
-	/** The label which displays the selected refactoring descriptors */
-	private Label fSelectedLabel= null;
+	/** The selection label, or <code>null</code> */
+	private Label fSelectionLabel= null;
 
 	/** The splitter control */
 	private Splitter fSplitterControl= null;
@@ -325,7 +325,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void createControl() {
 		RefactoringCore.getHistoryService().connect();
-		GridLayout layout= new GridLayout(getColumnCount(), false);
+		GridLayout layout= new GridLayout(getContainerColumns(), false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		layout.horizontalSpacing= 0;
@@ -389,6 +389,21 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Creates the detail label of the control
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createDetailLabel(final Composite parent) {
+		Assert.isNotNull(parent);
+		final Label label= new Label(parent, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
+		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
+		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data.horizontalSpan= 1;
+		label.setLayoutData(data);
+	}
+
+	/**
 	 * Creates the detail pane of the control.
 	 * 
 	 * @param parent
@@ -398,24 +413,17 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	protected Composite createDetailPane(final Composite parent) {
 		Assert.isNotNull(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
-		final GridLayout layout= new GridLayout(2, true);
+		final GridLayout layout= new GridLayout(getDetailColumns(), true);
 		layout.horizontalSpacing= 0;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
-		final Label label= new Label(composite, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
-		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
-		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		data.horizontalSpan= 1;
-		label.setLayoutData(data);
-		fSelectedLabel= new Label(composite, SWT.HORIZONTAL | SWT.RIGHT | SWT.WRAP);
-		data= new GridData(GridData.HORIZONTAL_ALIGN_END);
-		data.horizontalSpan= 1;
-		fSelectedLabel.setLayoutData(data);
+		createDetailLabel(composite);
+		createSelectionLabel(composite);
 		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		fCommentField.setText(fControlConfiguration.getCommentCaption());
-		data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
-		data.horizontalSpan= 2;
+		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		data.horizontalSpan= getDetailColumns();
 		fCommentField.setLayoutData(data);
 		return composite;
 	}
@@ -446,6 +454,20 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Creates the selection label of the control
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createSelectionLabel(final Composite parent) {
+		Assert.isNotNull(parent);
+		fSelectionLabel= new Label(parent, SWT.HORIZONTAL | SWT.RIGHT | SWT.WRAP);
+		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_END);
+		data.horizontalSpan= 1;
+		fSelectionLabel.setLayoutData(data);
+	}
+
+	/**
 	 * Creates the toolbar of the control.
 	 * 
 	 * @param parent
@@ -473,11 +495,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
-	 * Returns the number of columns to use for the control layout.
+	 * Returns the number of columns to use for the container layout.
 	 * 
 	 * @return the number of columns
 	 */
-	protected int getColumnCount() {
+	protected int getContainerColumns() {
 		return 2;
 	}
 
@@ -540,6 +562,15 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Returns the number of columns to use for the detail pane layout.
+	 * 
+	 * @return the number of columns
+	 */
+	protected int getDetailColumns() {
+		return 2;
+	}
+
+	/**
 	 * Returns the text to be displayed in the history pane.
 	 * 
 	 * @return the text in the history pane
@@ -583,14 +614,16 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Handles the check state changed event.
 	 */
 	protected void handleCheckStateChanged() {
-		final RefactoringHistory history= getInput();
-		if (history != null) {
-			final int total= history.getDescriptors().length;
-			final int checked= fCheckedDescriptors.size();
-			if (total > 0 && checked > 0 && fControlConfiguration.isCheckableViewer())
-				fSelectedLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
-			else
-				fSelectedLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
+		if (fSelectionLabel != null) {
+			final RefactoringHistory history= getInput();
+			if (history != null) {
+				final int total= history.getDescriptors().length;
+				final int checked= fCheckedDescriptors.size();
+				if (total > 0 && fControlConfiguration.isCheckableViewer())
+					fSelectionLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
+				else
+					fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
+			}
 		}
 	}
 

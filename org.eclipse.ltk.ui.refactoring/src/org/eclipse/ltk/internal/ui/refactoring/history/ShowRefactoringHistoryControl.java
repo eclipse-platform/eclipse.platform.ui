@@ -32,11 +32,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
- * Refactoring history control to be used in the refactoring property page.
+ * Refactoring history control to show the workspace refactoring history.
  * 
  * @since 3.2
  */
-public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryControl {
+public class ShowRefactoringHistoryControl extends BrowseRefactoringHistoryControl {
 
 	/** The delete all button, or <code>null</code> */
 	private Button fDeleteAllButton= null;
@@ -48,15 +48,22 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 	private Button fEditButton= null;
 
 	/**
-	 * Creates a new property page refactoring history control.
+	 * Creates a new show refactoring history control.
 	 * 
 	 * @param parent
 	 *            the parent control
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
-	public PropertyPageRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
+	public ShowRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void createBottomButtonBar(final Composite parent) {
+		// No button bar
 	}
 
 	/**
@@ -67,6 +74,64 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.heightHint= new PixelConverter(this).convertHeightInCharsToPixels(24);
 		setLayoutData(data);
+	}
+
+	/**
+	 * Creates the delete all button of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createDeleteAllButton(final Composite parent) {
+		Assert.isNotNull(parent);
+		fDeleteAllButton= new Button(parent, SWT.NONE);
+		fDeleteAllButton.setEnabled(false);
+		fDeleteAllButton.setText(RefactoringUIMessages.ShowRefactoringHistoryControl_delete_all_label);
+		final GridData data= new GridData();
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteAllButton);
+		fDeleteAllButton.setLayoutData(data);
+	}
+
+	/**
+	 * Creates the delete button of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createDeleteButton(final Composite parent) {
+		Assert.isNotNull(parent);
+		fDeleteButton= new Button(parent, SWT.NONE);
+		fDeleteButton.setEnabled(false);
+		fDeleteButton.setText(RefactoringUIMessages.ShowRefactoringHistoryControl_delete_label);
+		final GridData data= new GridData();
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteButton);
+		fDeleteButton.setLayoutData(data);
+	}
+
+	/**
+	 * Creates the edit button of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createEditButton(final Composite parent) {
+		Assert.isNotNull(parent);
+		fEditButton= new Button(parent, SWT.NONE);
+		fEditButton.setEnabled(false);
+		fEditButton.setText(RefactoringUIMessages.ShowRefactoringHistoryControl_edit_label);
+		final GridData data= new GridData();
+		data.verticalIndent= new PixelConverter(parent).convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		data.horizontalAlignment= GridData.FILL;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fEditButton);
+		fEditButton.setLayoutData(data);
 	}
 
 	/**
@@ -89,51 +154,38 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 		final GridLayout layout= new GridLayout(1, false);
 		composite.setLayout(layout);
 
-		GridData data= new GridData();
+		final GridData data= new GridData();
 		data.grabExcessHorizontalSpace= false;
 		data.grabExcessVerticalSpace= true;
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.TOP;
 		composite.setLayoutData(data);
 
-		fDeleteButton= new Button(composite, SWT.NONE);
-		fDeleteButton.setEnabled(false);
-		fDeleteButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_delete_label);
-		data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteButton);
-		fDeleteButton.setLayoutData(data);
-
-		fDeleteAllButton= new Button(composite, SWT.NONE);
-		fDeleteAllButton.setEnabled(false);
-		fDeleteAllButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_delete_all_label);
-		data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteAllButton);
-		fDeleteAllButton.setLayoutData(data);
-
-		fEditButton= new Button(composite, SWT.NONE);
-		fEditButton.setEnabled(false);
-		fEditButton.setText(RefactoringUIMessages.PropertyPageRefactoringHistoryControl_edit_label);
-		data= new GridData();
-		data.verticalIndent= new PixelConverter(parent).convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fEditButton);
-		fEditButton.setLayoutData(data);
+		createDeleteButton(composite);
+		createDeleteAllButton(composite);
+		createEditButton(composite);
 
 		Dialog.applyDialogFont(parent);
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	protected void createSelectionLabel(final Composite parent) {
+		// No selection label
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getContainerColumns() {
+		return 2;
+	}
+
+	/**
 	 * Returns the delete all button.
 	 * 
-	 * @return the delete all button
+	 * @return the delete all button, or <code>null</code>
 	 */
 	public Button getDeleteAllButton() {
 		return fDeleteAllButton;
@@ -142,16 +194,23 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 	/**
 	 * Returns the delete button.
 	 * 
-	 * @return the delete button
+	 * @return the delete button, or <code>null</code>
 	 */
 	public Button getDeleteButton() {
 		return fDeleteButton;
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	protected int getDetailColumns() {
+		return 1;
+	}
+
+	/**
 	 * Returns the edit button.
 	 * 
-	 * @return the edit button
+	 * @return the edit button, or <code>null</code>
 	 */
 	public Button getEditButton() {
 		return fEditButton;
@@ -162,7 +221,8 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	protected void handleCheckStateChanged() {
 		super.handleCheckStateChanged();
-		fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
+		if (fDeleteButton != null)
+			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
 	/**
@@ -170,8 +230,10 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	protected void handleSelectionChanged(final IStructuredSelection selection) {
 		super.handleSelectionChanged(selection);
-		fEditButton.setEnabled(getSelectedDescriptors().length == 1);
-		fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
+		if (fEditButton != null)
+			fEditButton.setEnabled(getSelectedDescriptors().length == 1);
+		if (fDeleteButton != null)
+			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
 
 	/**
@@ -179,8 +241,11 @@ public class PropertyPageRefactoringHistoryControl extends RefactoringHistoryCon
 	 */
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
-		fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
-		fDeleteButton.setEnabled(false);
-		fEditButton.setEnabled(false);
+		if (fDeleteAllButton != null)
+			fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
+		if (fDeleteButton != null)
+			fDeleteButton.setEnabled(false);
+		if (fEditButton != null)
+			fEditButton.setEnabled(false);
 	}
 }
