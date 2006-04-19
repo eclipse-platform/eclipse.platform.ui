@@ -209,8 +209,13 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		if (contentConsumers != null) {
 			Iterator iter = contentConsumers.iterator();
 			while (iter.hasNext()) {
-				SiteFilePluginContentConsumer element = (SiteFilePluginContentConsumer) iter.next();
-				element.abort();
+				Object element = iter.next();
+				if (element instanceof  SiteFilePluginContentConsumer) {
+					((SiteFilePluginContentConsumer)element).abort();
+				} else if (element instanceof  SiteFilePackedPluginContentConsumer){
+					((SiteFilePackedPluginContentConsumer)element).abort();
+				}
+				
 			}
 		}
 		contentConsumers = null;
