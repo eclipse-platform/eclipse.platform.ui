@@ -13,6 +13,7 @@ package org.eclipse.team.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.commands.*;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceMarkAsMergedHandler;
@@ -143,7 +144,13 @@ public abstract class MergeActionHandler extends AbstractHandler {
 	 */
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		try {
-			getOperation().run();
+			SynchronizationOperation operation = getOperation();
+			IRunnableContext context = getConfiguration().getRunnableContext();
+			if (context != null) {
+				context.run(true, true, operation);
+			} else {
+				operation.run();
+			}
 		} catch (InvocationTargetException e) {
 			Utils.handle(e);
 		} catch (InterruptedException e) {

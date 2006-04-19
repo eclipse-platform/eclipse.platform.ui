@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -34,6 +39,14 @@ public final class ModelParticipantPageDialog extends ParticipantPageDialog {
 	public ModelParticipantPageDialog(Shell shell, ModelSynchronizeParticipant participant, CompareConfiguration cc, ISynchronizePageConfiguration pc) {
 		super(shell, createInput(shell, participant, cc, pc), participant);
 		this.participant = participant;
+		pc.setRunnableContext(new IRunnableContext() {
+			public void run(boolean fork, boolean cancelable,
+					IRunnableWithProgress runnable) throws InvocationTargetException,
+					InterruptedException {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				dialog.run(fork, cancelable, runnable);
+			}
+		});
 	}
 
 	private static SaveablePartAdapter createInput(Shell shell, ModelSynchronizeParticipant participant, CompareConfiguration cc, ISynchronizePageConfiguration pc) {
