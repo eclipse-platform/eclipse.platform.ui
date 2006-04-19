@@ -24,6 +24,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 	// the changes viewer are contributed via the viewer and not the page.
 	private Action configureSchedule;
 	private Action refreshSelectionAction;
+	private org.eclipse.team.internal.ui.mapping.RemoveFromViewAction removeFromViewAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -59,6 +60,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 				Utils.initAction(configureSchedule, "action.configureSchedulel."); //$NON-NLS-1$
 			}
 		}
+		removeFromViewAction = new org.eclipse.team.internal.ui.mapping.RemoveFromViewAction(configuration);
 	}
 
 	/* (non-Javadoc)
@@ -69,8 +71,10 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 			&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
 			// Place synchronize with navigate to save space
 			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshSelectionAction);
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, removeFromViewAction);
 		} else {
 			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshSelectionAction);
+			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, removeFromViewAction);
 		}
 	}
 
