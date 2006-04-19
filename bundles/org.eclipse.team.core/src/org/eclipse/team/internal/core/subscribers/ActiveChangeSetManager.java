@@ -16,9 +16,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * A change set manager that contains sets that represent collections of
@@ -26,6 +31,8 @@ import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
  */
 public abstract class ActiveChangeSetManager extends ChangeSetManager implements IDiffChangeListener {
 
+    private static final String CTX_DEFAULT_SET = "defaultSet"; //$NON-NLS-1$
+    
     private ActiveChangeSet defaultSet;
 
 	/**
@@ -309,4 +316,79 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
 		}
 	}
 
+	/**
+	 * Save the state of this manager including all its contained sets
+	 * into the given preferences node.
+	 * @param prefs a preferences node
+	 */
+	protected void save(Preferences prefs) {
+        // Clear the persisted state before saving the new state
+        try {
+            String[] oldSetNames = prefs.childrenNames();
+            for (int i = 0; i < oldSetNames.length; i++) {
+                String string = oldSetNames[i];
+                prefs.node(string).removeNode();
+            }
+        } catch (BackingStoreException e) {
+            TeamPlugin.log(IStatus.ERROR, NLS.bind("An error occurred purging the commit set state for {0}", new String[] { getName() }), e); //$NON-NLS-1$
+        }
+        ChangeSet[] sets = getSets();
+        for (int i = 0; i < sets.length; i++) {
+            ChangeSet set = sets[i];
+			if (set instanceof ActiveChangeSet && !set.isEmpty()) {
+			    Preferences child = prefs.node(((ActiveChangeSet)set).getTitle());
+			    ((ActiveChangeSet)set).save(child);
+			}
+		}
+		if (getDefaultSet() != null) {
+		    prefs.put(CTX_DEFAULT_SET, getDefaultSet().getTitle());
+		}
+		try {
+            prefs.flush();
+        } catch (BackingStoreException e) {
+            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_3, new String[] { getName() }), e); 
+        }
+    }
+    
+	/**
+	 * Load the manager's state from the given preferences node.
+	 * @param prefs a preferences node
+	 */
+	protected void load(Preferences prefs) {
+		String defaultSetTitle = prefs.get(CTX_DEFAULT_SET, null);
+        try {
+			String[] childNames = prefs.childrenNames();
+			for (int i = 0; i < childNames.length; i++) {
+			    String string = childNames[i];
+			    Preferences childPrefs = prefs.node(string);
+			    ActiveChangeSet set = createSet(string, childPrefs);
+			    if (!set.isEmpty()) {
+			    	if (getDefaultSet() == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
+			    	    makeDefault(set);
+			    	}
+			    	add(set);
+			    }
+			}
+		} catch (BackingStoreException e) {
+			TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_4, new String[] { getName() }), e); 
+		}
+    }
+	
+	/**
+	 * Return the name of this change set manager.
+	 * @return the name of this change set manager
+	 */
+	protected abstract String getName();
+
+    /**
+     * Create a change set from the given preferences that were 
+     * previously saved.
+     * @param childPrefs the previously saved preferences
+     * @return the created change set
+     */
+    protected ActiveChangeSet createSet(String title, Preferences childPrefs) {
+        ActiveChangeSet changeSet = doCreateSet(title);
+        changeSet.init(childPrefs);
+        return changeSet;
+    }
 }

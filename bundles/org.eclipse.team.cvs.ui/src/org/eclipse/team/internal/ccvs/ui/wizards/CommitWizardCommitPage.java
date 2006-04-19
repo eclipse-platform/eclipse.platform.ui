@@ -31,6 +31,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -308,7 +309,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         int numMatchedSets = 0;
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];
-            if (containsOne(set, resourcesToCommit)) {
+            if (isUserSet(set) && containsOne(set, resourcesToCommit)) {
             	if(numMatchedSets > 0) comment.append(System.getProperty("line.separator")); //$NON-NLS-1$
                 comment.append(set.getComment());
                 numMatchedSets++;
@@ -317,14 +318,22 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         return comment.toString();
     }
     
-    private boolean containsOne(ChangeSet set, IResource[] resourcesToCommit) {
-   	 for (int j = 0; j < resourcesToCommit.length; j++) {
-           IResource resource = resourcesToCommit[j];
-           if (set.contains(resource)) {
-               return true;
-           }
-       }
-       return false;
+    private boolean isUserSet(ChangeSet set) {
+		if (set instanceof ActiveChangeSet) {
+			ActiveChangeSet acs = (ActiveChangeSet) set;
+			return acs.isUserCreated();
+		}
+		return false;
+	}
+
+	private boolean containsOne(ChangeSet set, IResource[] resourcesToCommit) {
+   	 	for (int j = 0; j < resourcesToCommit.length; j++) {
+			IResource resource = resourcesToCommit[j];
+			if (set.contains(resource)) {
+				return true;
+			}
+		}
+		return false;
    }
     
 }    

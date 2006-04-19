@@ -141,7 +141,9 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
             if (selection.size() == 1) {
                 Object first = selection.getFirstElement();
                 if (first instanceof ActiveChangeSet) {
-					return (ActiveChangeSet) first;
+					ActiveChangeSet activeChangeSet = (ActiveChangeSet) first;
+					if (activeChangeSet.isUserCreated())
+						return activeChangeSet;
 				}
             }
             return null;

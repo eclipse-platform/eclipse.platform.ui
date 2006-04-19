@@ -22,7 +22,6 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.*;
-import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -31,7 +30,6 @@ import org.osgi.service.prefs.Preferences;
 public class SubscriberChangeSetManager extends ActiveChangeSetManager {
     
     private static final String PREF_CHANGE_SETS = "changeSets"; //$NON-NLS-1$
-    private static final String CTX_DEFAULT_SET = "defaultSet"; //$NON-NLS-1$
     
     private static final int RESOURCE_REMOVAL = 1;
     private static final int RESOURCE_CHANGE = 2;
@@ -270,7 +268,7 @@ public class SubscriberChangeSetManager extends ActiveChangeSetManager {
     
     public SubscriberChangeSetManager(Subscriber subscriber) {
         collector = new ResourceCollector(subscriber);
-        load();
+        load(getPreferences());
         handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); // 
     }
     
@@ -313,70 +311,7 @@ public class SubscriberChangeSetManager extends ActiveChangeSetManager {
         handler.shutdown();
         collector.dispose();
         super.dispose();
-        save();
-    }
-    
-    private void save() {
-		Preferences prefs = getPreferences();
-        // Clear the persisted state before saving the new state
-        try {
-            String[] oldSetNames = prefs.childrenNames();
-            for (int i = 0; i < oldSetNames.length; i++) {
-                String string = oldSetNames[i];
-                prefs.node(string).removeNode();
-            }
-        } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind("An error occurred purging the commit set state for {0}", new String[] { getSubscriber().getName() }), e); //$NON-NLS-1$
-        }
-        ChangeSet[] sets = getSets();
-        for (int i = 0; i < sets.length; i++) {
-            ChangeSet set = sets[i];
-			if (set instanceof ActiveChangeSet && !set.isEmpty()) {
-			    Preferences child = prefs.node(((ActiveChangeSet)set).getTitle());
-			    ((ActiveChangeSet)set).save(child);
-			}
-		}
-		if (getDefaultSet() != null) {
-		    prefs.put(CTX_DEFAULT_SET, getDefaultSet().getTitle());
-		}
-		try {
-            prefs.flush();
-        } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_3, new String[] { getSubscriber().getName() }), e); 
-        }
-    }
-    
-    private void load() {
-        Preferences prefs = getPreferences();
-		String defaultSetTitle = prefs.get(CTX_DEFAULT_SET, null);
-		try {
-            String[] childNames = prefs.childrenNames();
-            for (int i = 0; i < childNames.length; i++) {
-                String string = childNames[i];
-                Preferences childPrefs = prefs.node(string);
-                ActiveChangeSet set = createSet(string, childPrefs);
-                if (!set.isEmpty()) {
-	            	if (getDefaultSet() == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
-	            	    makeDefault(set);
-	            	}
-	            	add(set);
-                }
-            }
-        } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_4, new String[] { getSubscriber().getName() }), e); 
-        }
-    }
-
-    /**
-     * Create a change set from the given preferences that were 
-     * previously saved.
-     * @param childPrefs the previously saved preferences
-     * @return the created change set
-     */
-    protected ActiveChangeSet createSet(String title, Preferences childPrefs) {
-        ActiveChangeSet changeSet = doCreateSet(title);
-        changeSet.init(childPrefs);
-        return changeSet;
+        save(getPreferences());
     }
 
     private Preferences getPreferences() {
@@ -418,4 +353,11 @@ public class SubscriberChangeSetManager extends ActiveChangeSetManager {
 		}
 		monitor.worked(1);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager#getName()
+	 */
+	protected String getName() {
+		return getSubscriber().getName();
+	}
 }
