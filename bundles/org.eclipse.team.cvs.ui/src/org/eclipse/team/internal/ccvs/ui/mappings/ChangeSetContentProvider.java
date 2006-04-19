@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
@@ -29,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
+import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
@@ -451,13 +449,19 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private boolean isVisible(Object object, IResourceDiffTree tree) {
-		//TODO: need to match diff direction with mode
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
-			if (tree.getDiff(resource) != null)
+			IDiff diff = tree.getDiff(resource);
+			if (diff != null && isVisible(diff))
 				return true;
 			int depth = getTraversalCalculator().getLayoutDepth(resource, null);
-			return tree.getDiffs(resource, depth).length > 0;
+			IDiff[] diffs = tree.getDiffs(resource, depth);
+			for (int i = 0; i < diffs.length; i++) {
+				IDiff child = diffs[i];
+				if (isVisible(child)) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -493,7 +497,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 				List result = new ArrayList();
 				for (int i = 0; i < sets.length; i++) {
 					DiffChangeSet set = sets[i];
-					TreePath path = getPathForElement(set.getDiffTree(), resource);
+					TreePath path = getPathForElement(set, resource);
 					if (path != null)
 						result.add(path);
 				}
@@ -542,10 +546,60 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private TreePath getPathForElement(IResourceDiffTree tree, IResource resource) {
-		// TODO Auto-generated method stub
+		List pathList = getPath(tree, resource);
+		if (pathList != null) {
+			TreePath path = new TreePath(pathList.toArray());
+			return path;
+		}
 		return null;
 	}
 	
+
+	private TreePath getPathForElement(DiffChangeSet set, IResource resource) {
+		List pathList = getPath(set.getDiffTree(), resource);
+		if (pathList != null) {
+			pathList.add(0, set);
+			TreePath path = new TreePath(pathList.toArray());
+			return path;
+		}
+		return null;
+	}
+	
+	private List getPath(IResourceDiffTree tree, IResource resource) {
+		boolean hasDiff = tree.getDiff(resource) == null;
+		if (hasDiff && tree.members(resource).length == 0)
+			return null;
+		if (resource.getType() == IResource.ROOT) {
+			return null;
+		}
+		List result = new ArrayList();
+		result.add(resource.getProject());
+		if (resource.getType() != IResource.PROJECT) {
+			String layout = getTraversalCalculator().getLayout();
+			if (layout.equals(IPreferenceIds.FLAT_LAYOUT)) {
+				result.add(resource);
+			} else if (layout.equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+				result.add(resource);
+			} else if (layout.equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FILE) {
+				IContainer parent = resource.getParent();
+				if (parent.getType() != IResource.PROJECT)
+					result.add(parent);
+				result.add(resource);
+			} else {
+				List resourcePath = new ArrayList();
+				IResource next = resource;
+				while (next.getType() != IResource.PROJECT) {
+					resourcePath.add(next);
+					next = next.getParent();
+				}
+				for (int i = resourcePath.size() - 1; i >=0; i--) {
+					result.add(resourcePath.get(i));
+				}
+			}
+		}
+		return result;
+	}
+
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
 		ChangeSetCapability csc = getChangeSetCapability();
