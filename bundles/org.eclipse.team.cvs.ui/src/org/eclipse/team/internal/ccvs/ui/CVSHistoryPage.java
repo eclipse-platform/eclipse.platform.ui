@@ -13,12 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.DateFormat;
-import java.util.ArrayList;
-import com.ibm.icu.util.Calendar; // ok to use in APIs, internal package
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
@@ -53,11 +48,12 @@ import org.eclipse.team.core.history.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileHistory;
-import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
+import org.eclipse.team.internal.ccvs.core.filehistory.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.ui.actions.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -72,9 +68,13 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.util.Calendar;
+
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
 	
 	/* private */ ICVSFile file;
+	/* private */ ICVSFile previousFile;
 	/* private */ IFileRevision currentFileRevision;
 	
 	// cached for efficiency
@@ -847,6 +847,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshCVSFileHistoryJob.cancel();
 		}
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
+		IResource resource = previousFile.getIResource();
+		if (resource != null){
+			IResource workspaceFile = ResourcesPlugin.getWorkspace().getRoot().findMember(resource.getFullPath());
+			refreshCVSFileHistoryJob.setWorkspaceFile((IFile) workspaceFile);	
+		} 
+		
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
@@ -876,6 +882,37 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		} else if (cvsFileHistory != null) {
 			entry = cvsFileHistory.getFileRevision(revision);
+		}
+	
+		if (entry != null) {
+			IStructuredSelection selection = new StructuredSelection(entry);
+			treeViewer.getTree().setRedraw(false);
+			treeViewer.setSelection(selection, true);
+			treeViewer.getTree().setRedraw(true);
+		}
+	}
+	
+	/**
+	 * Select the local revision in the receiver. Local revisions are differentiated by their
+	 * timestamps.
+	 */
+	public void selectLocalRevision(long timeStamp){
+		IFileRevision entry = null;
+		if (entries != null) {
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getTimestamp() == timeStamp) {
+					entry = entries[i];
+					break;
+				}
+			}
+		}else if (cvsFileHistory != null) {
+			IFileRevision[] tempEntries = cvsFileHistory.getFileRevisions();
+			for (int i = 0; i < tempEntries.length; i++) {
+				if (tempEntries[i].getTimestamp() == timeStamp) {
+					entry = tempEntries[i];
+					break;
+				}
+			}
 		}
 	
 		if (entry != null) {
@@ -1001,11 +1038,22 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		private boolean grouping;
 		private Object[] elementsToExpand;
 		private boolean revisionsFound;
+		private IFile workspaceFile;
+		private CVSHistoryPage page;
+		private boolean selectOnly;
+		private boolean useLocalSelect;
 		
-		public RefreshCVSFileHistory() {
+		private CVSLocalFileRevision localFileRevision;
+		
+		public RefreshCVSFileHistory(CVSHistoryPage page) {
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
+			this.page = page;
 		}
 		
+		public void setWorkspaceFile(IFile workspaceFile) {
+			this.workspaceFile = workspaceFile;
+		}
+
 		public void setIncludeLocals(boolean flag) {
 			if (fileHistory != null)
 				fileHistory.includeLocalRevisions(flag);
@@ -1019,7 +1067,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		public void setRefetchHistory(boolean refetch) {
 			if (fileHistory != null)
 				fileHistory.setRefetchRevisions(refetch);
-			
 		}
 
 		public void setFileHistory(CVSFileHistory fileHistory) {
@@ -1029,7 +1076,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		public void setGrouping (boolean value){
 			this.grouping = value;
 		}
+		
+		public void setSelectOnly(boolean select) {
+			this.selectOnly = select;
+		}
 
+		public void setSelectLocal(boolean localSelect) {
+			this.useLocalSelect = localSelect;
+		}
+
+		public void setLocalFileRevision(CVSLocalFileRevision localRev){
+			this.localFileRevision = localRev;
+		}
+		
 		public IStatus run(IProgressMonitor monitor)  {
 		
 			IStatus status = Status.OK_STATUS;
@@ -1050,41 +1109,56 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				Utils.asyncExec(new Runnable() {
 					public void run() {
 						historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
-						historyTableProvider.setFile(fileHistory, file);
-						if (grouping) {
-							mapExpandedElements(treeViewer.getExpandedElements());
-							treeViewer.getTree().setLinesVisible(revisionsFound);
-							treeViewer.getTree().setRedraw(false);
-							treeViewer.setInput(categories);
-							//if user is switching modes and already has expanded elements
-							//selected try to expand those, else expand all
-							if (elementsToExpand.length > 0)
-								treeViewer.setExpandedElements(elementsToExpand);
-							else {
-								treeViewer.expandAll();
-								Object[] el = treeViewer.getExpandedElements();
-								if (el != null && el.length > 0) {
-									treeViewer.setSelection(new StructuredSelection(el[0]));
-									treeViewer.getTree().deselectAll();
+						historyTableProvider.setFile(fileHistory, workspaceFile);
+						//historyTableProvider.setWorkspaceFile(workspaceFile);
+						if (!selectOnly){
+							if (grouping) {
+								mapExpandedElements(treeViewer.getExpandedElements());
+								treeViewer.getTree().setLinesVisible(revisionsFound);
+								treeViewer.getTree().setRedraw(false);
+								treeViewer.setInput(categories);
+								//if user is switching modes and already has expanded elements
+								//selected try to expand those, else expand all
+								if (elementsToExpand.length > 0)
+									treeViewer.setExpandedElements(elementsToExpand);
+								else {
+									treeViewer.expandAll();
+									Object[] el = treeViewer.getExpandedElements();
+									if (el != null && el.length > 0) {
+										treeViewer.setSelection(new StructuredSelection(el[0]));
+										treeViewer.getTree().deselectAll();
+									}
+								}
+								treeViewer.getTree().setRedraw(true);
+							} else {
+								if (fileHistory.getFileRevisions().length > 0) {
+									treeViewer.getTree().setLinesVisible(true);
+									treeViewer.setInput(fileHistory);
+								} else {
+									categories = new AbstractHistoryCategory[] {getErrorMessage()};
+									treeViewer.getTree().setLinesVisible(false);
+									treeViewer.setInput(categories);
 								}
 							}
-							treeViewer.getTree().setRedraw(true);
-						} else {
-							if (fileHistory.getFileRevisions().length > 0) {
-								treeViewer.getTree().setLinesVisible(true);
-								treeViewer.setInput(fileHistory);
-							} else {
-								categories = new AbstractHistoryCategory[] {getErrorMessage()};
-								treeViewer.getTree().setLinesVisible(false);
-								treeViewer.setInput(categories);
-							}
 						}
-						
 						//Update the history (if it exists) to reflect the new
 						//counts
 						if (historyFilter != null){
 							CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
 							showFilter(tempFilter);
+						}
+						
+						//Select the current file if we didn't have to refetch the history
+						if (file != null){
+							try {
+								if (useLocalSelect){
+									page.selectLocalRevision(localFileRevision.getTimestamp());
+								} else {
+									String workspaceRevision = ResourceSyncInfo.getRevision(file.getSyncBytes());
+									page.selectRevision(workspaceRevision);
+								}
+							} catch (CVSException e){
+							}
 						}
 					}
 				}, treeViewer);
@@ -1176,6 +1250,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			MessageHistoryCategory messageCategory = new MessageHistoryCategory(NLS.bind(CVSUIMessages.CVSHistoryPage_NoRevisionsForMode, new String[] { message }));
 			return messageCategory;
 		}
+
+	
+		
 	}
 	
 	
@@ -1244,6 +1321,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (provider instanceof CVSTeamProvider)
 			return true;
 		} else if (object instanceof ICVSRemoteResource){
+			return true;
+		} else if (object instanceof CVSFileRevision) {
+			return true;
+		} else if (object instanceof CVSLocalFileRevision) {
 			return true;
 		}
 		
@@ -1366,26 +1447,73 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public boolean inputSet() {
 		//reset currentFileRevision
 		currentFileRevision = null;
-		ICVSFile cvsFile = getCVSFile(getInput());
-		this.file = cvsFile;
+		Object inputObj = getInput();
+	
+		ICVSFile cvsFile = getCVSFile(inputObj);
 		if (cvsFile == null)
 			return false;
 		
-		//blank current input only after we're sure that we have a file
-		//to fetch history for
-		this.treeViewer.setInput(null);
 		
-		cvsFileHistory = new CVSFileHistory(cvsFile);
-		//fetch both local and remote revisions the first time around
-		cvsFileHistory.includeLocalRevisions(true);
+		this.file = cvsFile;
+
 		if (refreshCVSFileHistoryJob == null)
-			refreshCVSFileHistoryJob = new RefreshCVSFileHistory();
+			refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
 		
+		//if this input is the same as the last, don't refetch the history
+		//just update the selection
+		boolean needRefresh = checkPreviousInput();
+		
+		//if the input is a local file revision, pass it to the refresh job to 
+		//allow the refresh job to use it to match the time stamp of the local
+		//files displayed in the history page
+		if (inputObj instanceof CVSLocalFileRevision){
+			refreshCVSFileHistoryJob.setLocalFileRevision((CVSLocalFileRevision) inputObj);
+		}
+		//let the refresh job know which flavour of select to use (ie. select CVSFileRevisions
+		//or CVSLocalFileRevision)
+		refreshCVSFileHistoryJob.setSelectLocal(inputObj instanceof CVSLocalFileRevision);
+		
+		
+		//If the file history doesn't need to be refreshed, we can just
+		//use the previous input file history
+		if (needRefresh){
+			cvsFileHistory = new CVSFileHistory(cvsFile);
+			//fetch both local and remote revisions the first time around
+			cvsFileHistory.includeLocalRevisions(true);
+			refreshCVSFileHistoryJob.setSelectOnly(false);
+			
+			//blank current input only after we're sure that we have a file
+			//to fetch history for
+			this.treeViewer.setInput(null);
+		} else {
+			refreshCVSFileHistoryJob.setSelectOnly(true);
+		}
+	
 		//always refresh the history if the input gets set
-		refreshHistory(true);
+		refreshHistory(needRefresh);
 		return true;
 	}
 	
+	/*
+	 * Check to see if we need to refresh the input; if the previous file
+	 * that was being shown
+	 */
+	private boolean checkPreviousInput() {
+		
+		if (previousFile != null){
+			try {
+				if (file.getRepositoryRelativePath().equals(previousFile.getRepositoryRelativePath())){
+					return false;
+				}
+			} catch (CVSException e) {
+			}
+		}
+		
+		//set previous file to current file
+		previousFile = file;
+		return true;
+	}
+
 	private void updateFilterMode(int mode) {
 		currentFilerMode=mode;
 		switch(mode){
@@ -1416,8 +1544,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 		//the refresh job gets created once the input is set
 		//don't bother trying to refresh any history until the input has been set
-		if (refreshCVSFileHistoryJob != null)
+		if (refreshCVSFileHistoryJob != null){
+			refreshCVSFileHistoryJob.setSelectOnly(false);
 			refreshHistory(false);
+		}
 	}
 
 	public TreeViewer getTreeViewer() {

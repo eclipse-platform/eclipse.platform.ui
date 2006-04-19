@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.history;
 
+import java.net.URI;
+
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -148,5 +151,12 @@ public class LocalFileRevision extends FileRevision {
 	public boolean isDescendentOf(IFileRevision revision) {
 		long compareRevisionTime = revision.getTimestamp();
 		return (this.getTimestamp() > compareRevisionTime);
+	}
+	
+	public URI getURI() {
+		if (file != null)
+			return file.getLocationURI();
+		
+		return URIUtil.toURI(state.getFullPath());
 	}
 }

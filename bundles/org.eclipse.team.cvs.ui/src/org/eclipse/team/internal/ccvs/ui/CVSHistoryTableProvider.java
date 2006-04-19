@@ -11,9 +11,10 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import com.ibm.icu.text.DateFormat;
+import java.net.URI;
 import java.util.Date;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -30,6 +31,8 @@ import org.eclipse.team.core.history.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
@@ -37,15 +40,18 @@ import org.eclipse.team.internal.ui.history.DateHistoryCategory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 
+import com.ibm.icu.text.DateFormat;
+
 public class CVSHistoryTableProvider {
 
 	public static final String CATEGORIES_COLOR = "org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories";  //$NON-NLS-1$
 	
 	private IFileHistory currentFileHistory;
-	private ICVSFile cvsFile;
-
+	private IFile workspaceFile;
+	
 	/* private */TreeViewer viewer;
 	/* private */Font currentRevisionFont;
+
 	private boolean baseModified;
 
 	//column constants
@@ -221,13 +227,24 @@ public class CVSHistoryTableProvider {
 			if (entry == null)
 				return null;
 			String revision = entry.getContentIdentifier();
-			String comment = entry.getComment();
+			//String comment = entry.getComment();
 			String tempCurrentRevision = getCurrentRevision();
-			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision) ||
-				(comment != null && comment.equals(CVSUIMessages.CVSHistoryTableProvider_currentVersion))) {
-				return getCurrentRevisionFont();
+			Font returnFont = null;
+			
+			if (tempCurrentRevision != null && tempCurrentRevision.equals(revision)) {
+				returnFont = getCurrentRevisionFont();
 			}
-			return null;
+			//Check to see if this is the local workspace file
+			if (workspaceFile != null){
+				URI entryURI = entry.getURI();
+				URI workspaceURI = workspaceFile.getLocationURI();
+				if (entryURI != null && workspaceURI != null){
+					if (entryURI.compareTo(workspaceURI) == 0)
+						return getCurrentRevisionFont();	
+				}
+			}
+			
+			return returnFont;
 		}
 
 		private Font getCurrentRevisionFont() {
@@ -241,6 +258,7 @@ public class CVSHistoryTableProvider {
 			}
 			return currentRevisionFont;
 		}
+		
 	}
 
 	/**
@@ -506,9 +524,9 @@ public class CVSHistoryTableProvider {
 		};
 	}
 
-	public void setFile(IFileHistory fileHistory, ICVSFile cvsFile) {
+	public void setFile(IFileHistory fileHistory, IFile workspaceFile) {
 		this.currentFileHistory = fileHistory;
-		this.cvsFile = cvsFile;
+		this.workspaceFile = workspaceFile;
 	}
 
 
@@ -519,9 +537,12 @@ public class CVSHistoryTableProvider {
 	public String getCurrentRevision() {
 		
 		try {
-			if (cvsFile != null && cvsFile.getSyncInfo() != null) {
-				return cvsFile.getSyncInfo().getRevision();
+			if (workspaceFile != null) {
+				ICVSFile cvsWorkspaceFile = CVSWorkspaceRoot.getCVSFileFor(workspaceFile);
+				String workspaceRevision = ResourceSyncInfo.getRevision(cvsWorkspaceFile.getSyncBytes());
+				return workspaceRevision;
 			}
+		
 		} catch (CVSException e) {
 		}
 
@@ -567,5 +588,9 @@ public class CVSHistoryTableProvider {
 		public void propertyChange(PropertyChangeEvent event) {
 			provider.viewer.refresh();
 		}
+	}
+
+	public void setWorkspaceFile(IFile workspaceFile) {
+		this.workspaceFile = workspaceFile;
 	}
 }

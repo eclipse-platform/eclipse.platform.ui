@@ -27,7 +27,6 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.core.history.LocalFileRevision;
 
 public class CVSFileHistory extends FileHistory {
 
@@ -267,14 +266,14 @@ public class CVSFileHistory extends FileHistory {
 		IFileRevision[] fileRevisions = new IFileRevision[arrayLength];
 		for (int i = 0; i < localRevisions.length; i++) {
 			IFileState localFileState = localRevisions[i];
-			LocalFileRevision localRevision = new LocalFileRevision(localFileState);
+			CVSLocalFileRevision localRevision = new CVSLocalFileRevision(localFileState);
 			fileRevisions[i] = localRevision;
 		}
 
 		if (modified) {
 			//local file exists
 			IFile localFile = (IFile) cvsFile.getIResource();
-			LocalFileRevision currentFile = new LocalFileRevision(localFile);
+			CVSLocalFileRevision currentFile = new CVSLocalFileRevision(localFile);
 			CVSFileHistoryProvider provider = new CVSFileHistoryProvider();
 			currentFile.setBaseRevision(provider.getWorkspaceFileRevision(localFile));
 			fileRevisions[localRevisions.length] = currentFile;
