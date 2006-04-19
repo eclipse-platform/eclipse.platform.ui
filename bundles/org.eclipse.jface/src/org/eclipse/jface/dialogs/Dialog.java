@@ -1301,7 +1301,12 @@ public abstract class Dialog extends Window {
 		// layout and construction styles.
 		Control dialogContents = getContents();
 		if (buttonBar != null) {
-			buttonBar.addMouseListener(restoreSizeMouseListener);
+			// Hook onto the button bar composite and
+			// any nested composites within the button bar.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=137315
+			addRestoreSizeMouseListenerToComposites(buttonBar);	
+			// Hook onto any nested composites between the button bar
+			// and the contents.
 			Control control = buttonBar.getParent();
 			while (control != dialogContents && control != null) {
 				control.addMouseListener(restoreSizeMouseListener);
@@ -1310,6 +1315,22 @@ public abstract class Dialog extends Window {
 		}
 		if (dialogContents != null) {
 			dialogContents.addMouseListener(restoreSizeMouseListener);
+		}
+	}
+	
+	/**
+	 * Add mouse listeners to the specified control if it is a composite,
+	 * and any child composites.  Called recursively.
+	 * 
+	 *  @since 3.2
+	 */
+	private void addRestoreSizeMouseListenerToComposites(Control control) {
+		if (control instanceof Composite) {
+			control.addMouseListener(restoreSizeMouseListener);
+			Control [] children = ((Composite)control).getChildren();
+			for (int i=0; i<children.length; i++) {
+				addRestoreSizeMouseListenerToComposites(children[i]);
+			}
 		}
 	}
 	
