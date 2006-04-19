@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
  * <code>IInformationControlCreator</code>, extension interfaces are used as
  * a means of evolution. The following extension interfaces exist:
  * <ul>
- * <li>{@link org.eclipse.jface.text.IInformationControlCreatorExtension}since
+ * <li>{@link org.eclipse.jface.text.IInformationControlCreatorExtension} since
  *     version 3.0 introducing checks of whether existing information control can
  *     be reused and whether information control creators can replace each other.
  * </li>
