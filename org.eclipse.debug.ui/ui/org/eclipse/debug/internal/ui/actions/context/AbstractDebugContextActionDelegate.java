@@ -29,6 +29,12 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
      * The underlying action for this delegate
      */
     private IAction fWindowAction;
+    
+    /**
+     * Whether this action has been initialized before it has been run
+     * (ensures enablement state is up to date when lazily instantiated)
+     */
+    private boolean fInitialized = false;
 
 	public AbstractDebugContextActionDelegate() {
 	}
@@ -64,6 +70,12 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
 	public synchronized void run(IAction action) {
+		if (!fInitialized) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+			}
+		}
         fDebugAction.run();
 	}
 
@@ -101,7 +113,11 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
 		fDebugAction.setWindow(window);
 	}
 
-    public void setEnabled(boolean enabled) {
+    public synchronized void setEnabled(boolean enabled) {
+    	if (!fInitialized) {
+    		fInitialized = true;
+    		notifyAll();
+    	}
         fWindowAction.setEnabled(enabled);
     }
     
