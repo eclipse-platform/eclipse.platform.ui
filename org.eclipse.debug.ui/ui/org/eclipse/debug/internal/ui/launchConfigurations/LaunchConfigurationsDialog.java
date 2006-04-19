@@ -845,7 +845,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		int status = shouldSaveCurrentConfig();
 		if(status != IDialogConstants.CANCEL_ID) {
 			if(status == IDialogConstants.YES_ID) {
-				getTabViewer().handleApplyPressed();
+				if(getTabViewer().isDirty()) {
+					getTabViewer().handleApplyPressed();
+				}
 			}
 			cancelPressed();
 		}
