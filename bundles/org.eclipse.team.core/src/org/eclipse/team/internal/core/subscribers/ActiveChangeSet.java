@@ -29,10 +29,11 @@ public class ActiveChangeSet extends DiffChangeSet {
     private static final String CTX_TITLE = "title"; //$NON-NLS-1$
     private static final String CTX_COMMENT = "comment"; //$NON-NLS-1$
     private static final String CTX_RESOURCES = "resources"; //$NON-NLS-1$
+    private static final String CTX_USER_CREATED = "userCreated"; //$NON-NLS-1$
     
     private final ActiveChangeSetManager manager;
     private String comment;
-	private boolean userCreated;
+	private boolean userCreated = true;
     
 	/**
 	 * Create a change set with the given title
@@ -133,6 +134,7 @@ public class ActiveChangeSet extends DiffChangeSet {
 	        }
 	        prefs.put(CTX_RESOURCES, buffer.toString());
         }
+        prefs.putBoolean(CTX_USER_CREATED, isUserCreated());
     }
 
     public void init(Preferences prefs) {
@@ -163,6 +165,7 @@ public class ActiveChangeSet extends DiffChangeSet {
                 tree.endInput(null);
             }
         }
+        userCreated = prefs.getBoolean(CTX_USER_CREATED, true);
     }
 
     private IResource getResource(IWorkspaceRoot root, String next) {
