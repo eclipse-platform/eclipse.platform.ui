@@ -42,6 +42,8 @@ public class ViewerLabel {
 
 	private Image startImage;
 
+	private boolean hasPendingDecorations;
+
 	/**
 	 * Create a new instance of the receiver with the supplied
 	 * initial text and image.
@@ -227,5 +229,16 @@ public class ViewerLabel {
 	 */
 	public void setForeground(Color foreground) {
 		this.foreground = foreground;
+	}
+
+	/**
+	 * @param b
+	 */
+	/* public */ void setHasPendingDecorations(boolean hasPendingDecorations) {
+		this.hasPendingDecorations = hasPendingDecorations;
+	}
+
+	/* public */ boolean hasPendingDecorations() {
+		return hasPendingDecorations;
 	}
 }

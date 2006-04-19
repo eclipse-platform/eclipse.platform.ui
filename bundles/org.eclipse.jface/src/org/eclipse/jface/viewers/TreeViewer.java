@@ -267,6 +267,9 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (updateLabel.hasNewImage()) {
 				treeItem.setImage(updateLabel.getImage());
 			}
+			
+			if (!updateLabel.hasPendingDecorations())
+				getColorAndFontCollector().applyFontsAndColors(treeItem);
 
 		} else {// Use the table based support
 			for (int column = 0; column < columnCount; column++) {
@@ -311,8 +314,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					treeItem.setImage(column, image);
 				}
 			}
+			getColorAndFontCollector().applyFontsAndColors(treeItem);
 		}
-		getColorAndFontCollector().applyFontsAndColors(treeItem);
 	}
 	
 	/**

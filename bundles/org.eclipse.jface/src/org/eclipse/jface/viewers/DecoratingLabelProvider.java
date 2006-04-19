@@ -335,6 +335,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
                 decorationReady = false;
             }
         }
+        settings.setHasPendingDecorations(!decorationReady);
         // update icon and label
 
         if (provider instanceof ITreePathLabelProvider) {
