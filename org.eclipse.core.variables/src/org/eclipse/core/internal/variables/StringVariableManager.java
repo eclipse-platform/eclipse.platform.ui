@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +49,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.IValueVariableListener;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -218,7 +218,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			IConfigurationElement element = elements[i];
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
-				VariablesPlugin.logMessage(MessageFormat.format("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
+				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
 				continue;
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
@@ -267,7 +267,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element= (Element) node;
 				if (!element.getNodeName().equals(VALUE_VARIABLE_TAG)) {
-					VariablesPlugin.logMessage(MessageFormat.format("Invalid XML element encountered while loading value variables: {0}", new String[] {node.getNodeName()}), null); //$NON-NLS-1$
+					VariablesPlugin.logMessage(NLS.bind("Invalid XML element encountered while loading value variables: {0}", new String[] {node.getNodeName()}), null); //$NON-NLS-1$
 					continue;
 				}
 				String name= element.getAttribute(NAME_TAG);
@@ -299,7 +299,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			IConfigurationElement element = elements[i];
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
-				VariablesPlugin.logMessage(MessageFormat.format("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
+				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
 				continue;
 			}
 			String description= element.getAttribute(ATTR_DESCRIPTION);
@@ -370,7 +370,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (getValueVariable(variable.getName()) != null) {
-				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null)); 
+				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null)); 
 			}			
 		}
 		if (status.isOK()) {

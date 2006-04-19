@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.variables;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +22,7 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Performs string substitution for context and value variables.
@@ -103,7 +103,7 @@ public class StringSubstitutionEngine {
 						problemVariableList.append(", "); //$NON-NLS-1$
 					}
 					problemVariableList.setLength(problemVariableList.length()-2); //truncate the last ", "
-					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.REFERENCE_CYCLE_ERROR, MessageFormat.format(VariablesMessages.StringSubstitutionEngine_4, new String[]{problemVariableList.toString()}), null)); 
+					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.REFERENCE_CYCLE_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{problemVariableList.toString()}), null)); 
 				}				
 			}		
 			
@@ -256,7 +256,7 @@ public class StringSubstitutionEngine {
 			if (dynamicVariable == null) {
 				// no variables with the given name
 				if (reportUndefinedVariables) {
-					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.StringSubstitutionEngine_3, new String[]{name}), null)); 
+					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_3, new String[]{name}), null)); 
 				} 
 				// leave as is
 				return getOriginalVarText(var);
@@ -279,7 +279,7 @@ public class StringSubstitutionEngine {
 			return getOriginalVarText(var);
 		} 
 		// error - an argument specified for a value variable
-		throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.StringSubstitutionEngine_4, new String[]{valueVariable.getName()}), null)); 
+		throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, NLS.bind(VariablesMessages.StringSubstitutionEngine_4, new String[]{valueVariable.getName()}), null)); 
 	}
 
 	private String getOriginalVarText(VariableReference var) {

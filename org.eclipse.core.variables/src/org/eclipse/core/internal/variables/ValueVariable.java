@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.variables;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.IValueVariableInitializer;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Implementation of a value variable.
@@ -81,10 +80,10 @@ public class ValueVariable extends StringVariable implements IValueVariable {
 							IValueVariableInitializer initializer = (IValueVariableInitializer)object;
 							initializer.initialize(this);
 						} else {
-							VariablesPlugin.logMessage(MessageFormat.format("Unable to initialize variable {0} - initializer must be an instance of IValueVariableInitializer.", new String[]{getName()}), null); //$NON-NLS-1$
+							VariablesPlugin.logMessage(NLS.bind("Unable to initialize variable {0} - initializer must be an instance of IValueVariableInitializer.", new String[]{getName()}), null); //$NON-NLS-1$
 						}
 					} catch (CoreException e) {
-						VariablesPlugin.logMessage(MessageFormat.format("Unable to initialize variable {0}",new String[]{getName()}), e); //$NON-NLS-1$
+						VariablesPlugin.logMessage(NLS.bind("Unable to initialize variable {0}",new String[]{getName()}), e); //$NON-NLS-1$
 					}
 				}
 			} else {
