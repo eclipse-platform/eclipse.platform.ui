@@ -228,6 +228,9 @@ public class IResourceTest extends ResourceTest {
 	}
 	
 	public void testBug111821() {
+		//this test only makes sense on Windows
+		if (!Platform.OS_WIN32.equals(Platform.getOS()))
+			return;
 		IProject project = getWorkspace().getRoot().getProject("testBug111821");
 		IFolder folder = project.getFolder(new Path(null, "c:"));
 		ensureExistsInWorkspace(project, true);
