@@ -283,7 +283,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		else
 			availableSpaceLabel.setText(
 				NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size, "" + available)); //$NON-NLS-1$
-		if(required > available){
+		//if the available space was retireved from the OS and the required space is greater that the available space, do not let the user continue
+		if(available != LocalSystemInfo.SIZE_UNKNOWN && required > available){
 			this.setPageComplete(false);
 			//TODO: set error message: "...not enough space..."
 		}else
