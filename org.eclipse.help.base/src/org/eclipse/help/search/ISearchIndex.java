@@ -37,8 +37,6 @@ public interface ISearchIndex {
 	 *            the URL of the document using format '/pluginId/href'
 	 * @param id
 	 *            the unique id of this document as defined in the participant
-	 * @param locale
-	 *            the index locale
 	 * @param doc
 	 *            the Lucene document
 	 * @return the status of the operation

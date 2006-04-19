@@ -327,7 +327,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	/**
 	 * Returns the name of the element that is currently at the top of the element stack.
 	 * 
-	 * @return
+	 * @return the name of the element that is currently at the top of the element stack
 	 */
 
 	protected String getTopElement() {

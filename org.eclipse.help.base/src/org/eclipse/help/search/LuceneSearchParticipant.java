@@ -62,8 +62,6 @@ public abstract class LuceneSearchParticipant {
 	 * 
 	 * @param id
 	 *            the unique identifier of this participant
-	 * @param index
-	 *            the search index for the current locale
 	 */
 
 	public final void init(String id) {
