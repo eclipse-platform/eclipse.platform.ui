@@ -372,6 +372,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		// Hide old page.
 		if (currentPageContainer != null) {
 			currentPageContainer.getSubBars().deactivate();
+			//give the current page a chance to dispose
+			currentPageContainer.getPage().dispose();
 			// remove our selection listener
 			/*            ISelectionProvider provider = ((PageSite) mapPageToSite.get(activeRec.page)).getSelectionProvider();
 			 if (provider != null)
@@ -675,6 +677,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		//Call dispose on current and default pages
 		currentPageContainer.getPage().dispose();
 		defaultPageContainer.getPage().dispose();
+		currentPageContainer = null;
+		defaultPageContainer = null;
 		//Remove the part listeners
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
