@@ -340,11 +340,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 						if (control.isDisposed() || !control.isFocusControl())
 							return;
 						
-						promoteKeyListener();
 						if (showStyle == SHOW_PROPOSALS) {
-							fireSessionBeginEvent();
+							if (!prepareToShowCompletions())
+								return;
 							fProposalPopup.showProposals(true);
+							fLastAutoActivation= System.currentTimeMillis();
 						} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
+							promoteKeyListener();
 							fContextInfoPopup.showContextProposals(true);
 						}
 					}
@@ -798,6 +800,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	private boolean fIsStatusLineVisible;
+	/**
+	 * The last system time when auto activation performed.
+	 * @since 3.2
+	 */
+	private long fLastAutoActivation= Long.MIN_VALUE;
+
 
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1419,8 +1427,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#showPossibleCompletions
 	 */
 	public String showPossibleCompletions() {
-		promoteKeyListener();
-		fireSessionBeginEvent();
+		if (!prepareToShowCompletions())
+			return null;
 		if (fIsPrefixCompletionEnabled)
 			return fProposalPopup.incrementalComplete();
 		return fProposalPopup.showProposals(false);
@@ -1431,10 +1439,29 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	public String completePrefix() {
-		fireSessionBeginEvent();
-		promoteKeyListener();
+		if (!prepareToShowCompletions())
+			return null;
 		return fProposalPopup.incrementalComplete();
 	}
+
+	/**
+	 * Prepares to show content assist proposals. It returns false if auto-activation has kicked in
+	 * recently.
+	 * 
+	 * @return <code>true</code> if the caller should continue and show the proposals,
+	 *         <code>false</code> otherwise.
+	 * @since 3.2
+	 */
+	private boolean prepareToShowCompletions() {
+		long current= System.currentTimeMillis();
+		int gracePeriod= Math.max(fAutoActivationDelay, 200);
+		if (current < fLastAutoActivation + gracePeriod)
+			return false;
+		
+	    promoteKeyListener();
+		fireSessionBeginEvent();
+		return true;
+    }
 
 	/**
 	 * Callback to signal this content assistant that the presentation of the possible completions
@@ -1443,6 +1470,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 2.1
 	 */
 	protected void possibleCompletionsClosed() {
+		fLastAutoActivation= Long.MIN_VALUE;
 		storeCompletionProposalPopupSize();
 	}
 
