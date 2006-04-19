@@ -41,8 +41,9 @@ public class CalendarableEventControl extends Canvas  {
 	private static final int MARGIN = 3;
 	private Label label = null;
 	private Color BORDER_COLOR;
-	private Color BACKGROUND_COLOR;
 	private Color SELECTED_BORDER_COLOR;
+	private Color BACKGROUND_COLOR;
+	private Color SELECTED_BACKGROUND_COLOR;
 
    /**
 	 * Constructs a new instance of this class given its parent
@@ -75,8 +76,9 @@ public class CalendarableEventControl extends Canvas  {
 		super(parent, style);
 		Display display = parent.getDisplay();
 		BORDER_COLOR = new Color(display, 215, 215, 245);
+		SELECTED_BORDER_COLOR = new Color(display, 190, 190, 220);
+		SELECTED_BACKGROUND_COLOR = new Color(display, 225, 225, 245);
 		BACKGROUND_COLOR = new Color(display, 240, 240, 255);
-		SELECTED_BORDER_COLOR = new Color(display, 140, 140, 200);
 
 		initialize();
 	}
@@ -86,6 +88,7 @@ public class CalendarableEventControl extends Canvas  {
 		BORDER_COLOR.dispose();
 		BACKGROUND_COLOR.dispose();
 		SELECTED_BORDER_COLOR.dispose();
+		SELECTED_BACKGROUND_COLOR.dispose();
 	}
 
 	/**
@@ -167,8 +170,10 @@ public class CalendarableEventControl extends Canvas  {
 	public void setSelected(boolean selected) {
 		if (selected) {
 			setBackground(SELECTED_BORDER_COLOR);
+			label.setBackground(SELECTED_BACKGROUND_COLOR);
 		} else {
 			setBackground(BORDER_COLOR);
+			label.setBackground(BACKGROUND_COLOR);
 		}
 	}
 	
