@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class BuilderTest extends AbstractBuilderTest {
 	public static Test suite() {
 		return new TestSuite(BuilderTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new BuilderTest("testChangeDynamicBuildOrder"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new BuilderTest("testChangeDynamicBuildOrder"));
+		//		return suite;
 	}
 
 	public BuilderTest() {
@@ -60,7 +60,7 @@ public class BuilderTest extends AbstractBuilderTest {
 		if (builder != null)
 			builder.reset();
 	}
-	
+
 	/**
 	 * Make sure this test runs first, before any other test
 	 * has a chance to mess with the build order.
@@ -158,49 +158,6 @@ public class BuilderTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
-	}
-
-	/**
-	 * Tests installing and running a builder that always fails in its build method
-	 */
-	public void testExceptionBuilder() {
-		// Create some resource handles
-		IProject project = getWorkspace().getRoot().getProject("PROJECT");
-		try {
-			setAutoBuilding(false);
-			// Create and open a project
-			project.create(getMonitor());
-			project.open(getMonitor());
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-		// Create and set a build spec for the project
-		try {
-			IProjectDescription desc = project.getDescription();
-			ICommand command1 = desc.newCommand();
-			command1.setBuilderName(ExceptionBuilder.BUILDER_NAME);
-			desc.setBuildSpec(new ICommand[] {command1});
-			project.setDescription(desc, getMonitor());
-		} catch (CoreException e) {
-			fail("2.0", e);
-		}
-		final boolean[] listenerCalled = new boolean[] {false};
-		IResourceChangeListener listener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				listenerCalled[0] = true;
-			}
-		};
-		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
-		//do an incremental build -- build should fail, but POST_BUILD should still occur
-		try {
-			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-			fail("3.0");
-		} catch (CoreException e) {
-			//expected
-		} finally {
-			getWorkspace().removeResourceChangeListener(listener);
-		}
-		assertTrue("1.0", listenerCalled[0]);
 	}
 
 	public void testBuildClean() {
@@ -420,55 +377,6 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("11.99", e);
 		}
 	}
-	
-	/**
-	 * Tests that when a project is copied, the copied project has a full build
-	 * but the source project does not.
-	 */
-	public void testCopyProject() {
-		IWorkspace workspace = getWorkspace();
-		// Create some resource handles
-		IProject proj1 = workspace.getRoot().getProject("testCopyProject" + 1);
-		IProject proj2 = workspace.getRoot().getProject("testCopyProject" + 2);
-		try {
-			// Turn auto-building on
-			setAutoBuilding(true);
-			// Create some resources
-			proj1.create(getMonitor());
-			proj1.open(getMonitor());
-			ensureDoesNotExistInWorkspace(proj2);
-		} catch (CoreException e) {
-			fail("1.99", e);
-		}
-		// Create and set a build spec for project one
-		try {
-			IProjectDescription desc = proj1.getDescription();
-			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
-			proj1.setDescription(desc, getMonitor());
-		} catch (CoreException e) {
-			fail("2.99", e);
-		}
-		waitForBuild();
-		SortBuilder.getInstance().reset();
-		try {
-			IProjectDescription desc = proj1.getDescription();
-			desc.setName(proj2.getName());
-			proj1.copy(desc, IResource.NONE, getMonitor());
-		} catch (CoreException e) {
-			fail("3.99", e);
-		}
-		waitForBuild();
-		SortBuilder builder = SortBuilder.getInstance();
-		assertEquals("4.0", proj2, builder.getProject());
-
-		//builder 2 should have done a full build
-		builder.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
-		builder.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
-		builder.addExpectedLifecycleEvent("Build0");
-		builder.assertLifecycleEvents("4.4");
-		assertTrue("4.5", builder.wasFullBuild());
-
-	}
 
 	/**
 	 * Tests the lifecycle of a builder.
@@ -564,6 +472,68 @@ public class BuilderTest extends AbstractBuilderTest {
 	}
 
 	/**
+	 * Tests that changing the dynamic build order will induce an autobuild on a project.
+	 * This is a regression test for bug 60653.
+	 */
+	public void testChangeDynamicBuildOrder() {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		final IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
+		final IProject proj2 = workspace.getRoot().getProject("PROJECT" + 2);
+		try {
+			// Turn auto-building on and make sure there is no explicit build order
+			setAutoBuilding(true);
+			IWorkspaceDescription wsDescription = getWorkspace().getDescription();
+			wsDescription.setBuildOrder(null);
+			getWorkspace().setDescription(wsDescription);
+			// Create and set a build spec for project two
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					proj2.create(getMonitor());
+					proj2.open(getMonitor());
+					IProjectDescription desc = proj2.getDescription();
+					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
+					proj2.setDescription(desc, getMonitor());
+				}
+			}, getMonitor());
+			waitForBuild();
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		// Set up a plug-in lifecycle verifier for testing purposes
+		TestBuilder verifier = SortBuilder.getInstance();
+		verifier.reset();
+		//create project two and establish a build order by adding a dynamic 
+		//reference from proj2->proj1 in the same operation
+		try {
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					// Create and set a build specs for project one
+					proj1.create(getMonitor());
+					proj1.open(getMonitor());
+					IProjectDescription desc = proj1.getDescription();
+					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+					proj1.setDescription(desc, getMonitor());
+
+					//add the dynamic reference to project two
+					IProjectDescription description = proj2.getDescription();
+					description.setDynamicReferences(new IProject[] {proj1});
+					proj2.setDescription(description, IResource.NONE, null);
+				}
+			}, getMonitor());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+		waitForBuild();
+		//ensure the build happened in the correct order, and that both projects were built
+		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		verifier.addExpectedLifecycleEvent("Build0");
+		verifier.addExpectedLifecycleEvent("Build1");
+		verifier.assertLifecycleEvents("3.0");
+	}
+
+	/**
 	 * Ensure that build order is preserved when project is closed/opened.
 	 */
 	public void testCloseOpenProject() {
@@ -604,6 +574,55 @@ public class BuilderTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
+	}
+
+	/**
+	 * Tests that when a project is copied, the copied project has a full build
+	 * but the source project does not.
+	 */
+	public void testCopyProject() {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		IProject proj1 = workspace.getRoot().getProject("testCopyProject" + 1);
+		IProject proj2 = workspace.getRoot().getProject("testCopyProject" + 2);
+		try {
+			// Turn auto-building on
+			setAutoBuilding(true);
+			// Create some resources
+			proj1.create(getMonitor());
+			proj1.open(getMonitor());
+			ensureDoesNotExistInWorkspace(proj2);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		// Create and set a build spec for project one
+		try {
+			IProjectDescription desc = proj1.getDescription();
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+			proj1.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		waitForBuild();
+		SortBuilder.getInstance().reset();
+		try {
+			IProjectDescription desc = proj1.getDescription();
+			desc.setName(proj2.getName());
+			proj1.copy(desc, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		waitForBuild();
+		SortBuilder builder = SortBuilder.getInstance();
+		assertEquals("4.0", proj2, builder.getProject());
+
+		//builder 2 should have done a full build
+		builder.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		builder.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		builder.addExpectedLifecycleEvent("Build0");
+		builder.assertLifecycleEvents("4.4");
+		assertTrue("4.5", builder.wasFullBuild());
+
 	}
 
 	/**
@@ -687,66 +706,48 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.99");
 		}
 	}
-	/**
-	 * Tests that changing the dynamic build order will induce an autobuild on a project.
-	 * This is a regression test for bug 60653.
-	 */
-	public void testChangeDynamicBuildOrder() {
-		IWorkspace workspace = getWorkspace();
-		// Create some resource handles
-		final IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
-		final IProject proj2 = workspace.getRoot().getProject("PROJECT" + 2);
-		try {
-			// Turn auto-building on and make sure there is no explicit build order
-			setAutoBuilding(true);
-			IWorkspaceDescription wsDescription = getWorkspace().getDescription();
-			wsDescription.setBuildOrder(null);
-			getWorkspace().setDescription(wsDescription);
-			// Create and set a build spec for project two
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					proj2.create(getMonitor());
-					proj2.open(getMonitor());
-					IProjectDescription desc = proj2.getDescription();
-					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
-					proj2.setDescription(desc, getMonitor());
-				}
-			}, getMonitor());
-			waitForBuild();
-		} catch (CoreException e) {
-			fail("1.99", e);
-		}
-		// Set up a plug-in lifecycle verifier for testing purposes
-		TestBuilder verifier = SortBuilder.getInstance();
-		verifier.reset();
-		//create project two and establish a build order by adding a dynamic 
-		//reference from proj2->proj1 in the same operation
-		try {
-			getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					// Create and set a build specs for project one
-					proj1.create(getMonitor());
-					proj1.open(getMonitor());
-					IProjectDescription desc = proj1.getDescription();
-					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
-					proj1.setDescription(desc, getMonitor());
 
-					//add the dynamic reference to project two
-					IProjectDescription description = proj2.getDescription();
-					description.setDynamicReferences(new IProject[] {proj1});
-					proj2.setDescription(description, IResource.NONE, null);
-				}
-			}, getMonitor());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
+	/**
+	 * Tests installing and running a builder that always fails in its build method
+	 */
+	public void testExceptionBuilder() {
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		try {
+			setAutoBuilding(false);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
 		}
-		waitForBuild();
-		//ensure the build happened in the correct order, and that both projects were built
-		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
-		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
-		verifier.addExpectedLifecycleEvent("Build0");
-		verifier.addExpectedLifecycleEvent("Build1");
-		verifier.assertLifecycleEvents("3.0");
+		// Create and set a build spec for the project
+		try {
+			IProjectDescription desc = project.getDescription();
+			ICommand command1 = desc.newCommand();
+			command1.setBuilderName(ExceptionBuilder.BUILDER_NAME);
+			desc.setBuildSpec(new ICommand[] {command1});
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		final boolean[] listenerCalled = new boolean[] {false};
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				listenerCalled[0] = true;
+			}
+		};
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+		//do an incremental build -- build should fail, but POST_BUILD should still occur
+		try {
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+			//expected
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener);
+		}
+		assertTrue("1.0", listenerCalled[0]);
 	}
 
 	/**
