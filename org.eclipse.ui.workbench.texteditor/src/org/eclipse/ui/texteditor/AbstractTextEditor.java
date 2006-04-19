@@ -170,7 +170,7 @@ import org.eclipse.ui.part.EditorPart;
  * Subclasses are responsible for configuring the editor appropriately.
  * The standard text editor, <code>TextEditor</code>, is one such example.</p>
  * <p>
- * If a subclass calls <code>setEditorContextMenuId</code> the arguments is
+ * If a subclass calls <code>setEditorContextMenuId</code> the argument is
  * used as the id under which the editor's context menu is registered for extensions.
  * If no id is set, the context menu is registered under <b>[editor_id].EditorContext</b>
  * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
@@ -2636,9 +2636,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			getEditorSite().registerContextMenu(DEFAULT_EDITOR_CONTEXT_MENU_ID, manager, getSelectionProvider(), isEditorInputIncludedInContextMenu());
 
 		if ((fEditorContextMenuId != null && fCompatibilityMode) || fEditorContextMenuId  == null) {
-			String partId= getSite().getId();
+			String partId= getEditorSite().getId();
 			if (partId != null)
-				getSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider()); //$NON-NLS-1$
+				getEditorSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider(), isEditorInputIncludedInContextMenu()); //$NON-NLS-1$
 		}
 
 		if (fEditorContextMenuId == null)
