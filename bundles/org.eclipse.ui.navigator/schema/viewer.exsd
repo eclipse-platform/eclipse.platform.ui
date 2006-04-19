@@ -365,7 +365,7 @@ If the &lt;b&gt;popupMenu&lt;/b&gt; element is specified and contains NO &lt;b&g
    <element name="dragAssistant">
       <annotation>
          <documentation>
-            A Drag and Drop assistant provides lightweight hook to supply extra transfer types and logic to set the drag data. This element is not required as the basic &lt;b&gt;org.eclipse.ui.navigator.CommonViewer&lt;/b&gt; provides a &lt;b&gt;org.eclipse.ui.jface.util.LocalSelectionTransfer&lt;/b&gt; type. 
+            A Drag and Drop assistant provides lightweight hook to supply extra transfer types and logic to set the drag data. This element is not required as the basic &lt;b&gt;org.eclipse.ui.navigator.CommonViewer&lt;/b&gt; provides a &lt;b&gt;org.eclipse.jface.util.LocalSelectionTransfer&lt;/b&gt; type. 
 &lt;br&gt;&lt;br&gt;
 &lt;b&gt;
 Clients should only define this extension in lightweight plugins with shallow dependency trees. The drag assistants must be loaded up front when the viewer is created, which will force the load of affected plugins. 
