@@ -22,12 +22,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
@@ -40,11 +40,14 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	/** The page name */
 	private final static String PAGE_NAME= "historyOverviewPage"; //$NON-NLS-1$
 
+	/** The sort dialog setting */
+	private static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
+
 	/** The refactoring history control configuration to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The refactoring history control */
-	private IRefactoringHistoryControl fHistoryControl= null;
+	private BrowseRefactoringHistoryControl fHistoryControl= null;
 
 	/** The refactoring history */
 	private final RefactoringHistory fRefactoringHistory;
@@ -88,8 +91,21 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		fHistoryControl= new RefactoringHistoryControl(composite, fControlConfiguration);
+		fHistoryControl= new BrowseRefactoringHistoryControl(composite, fControlConfiguration) {
+
+			protected void createBottomButtonBar(final Composite control) {
+				// No button bar
+			}
+		};
 		fHistoryControl.createControl();
+		boolean sortProjects= true;
+		final IDialogSettings settings= getWizard().getDialogSettings();
+		if (settings != null)
+			sortProjects= settings.getBoolean(SETTING_SORT);
+		if (sortProjects)
+			fHistoryControl.sortByProjects();
+		else
+			fHistoryControl.sortByDate();
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_HISTORY_WIZARD_PAGE);
@@ -107,6 +123,15 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	 */
 	public IWizardPage getPreviousPage() {
 		return getWizard().getPreviousPage(this);
+	}
+
+	/**
+	 * Gets called if the wizard is finished.
+	 */
+	public void performFinish() {
+		final IDialogSettings settings= getWizard().getDialogSettings();
+		if (settings != null)
+			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
 	}
 
 	/**

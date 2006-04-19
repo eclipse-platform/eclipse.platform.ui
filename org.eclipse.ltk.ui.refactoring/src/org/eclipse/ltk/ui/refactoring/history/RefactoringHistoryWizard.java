@@ -996,6 +996,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
+		if (fOverviewPage != null)
+			fOverviewPage.performFinish();
 		final IWizardContainer wizard= getContainer();
 		final RefactoringStatus status= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
