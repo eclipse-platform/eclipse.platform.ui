@@ -101,12 +101,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	/** The refactoring history, or <code>null</code> */
 	private RefactoringHistory fRefactoringHistory= null;
 
-	/**
-	 * The refactoring descriptor proxies, in descending order of their time
-	 * stamps, or <code>null</code>
-	 */
-	private RefactoringDescriptorProxy[] fRefactoringProxies= null;
-
 	/** The refactoring root structure, or <code>null</code> */
 	private long[][] fRefactoringRoots= null;
 
@@ -215,15 +209,14 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring descriptor proxies
 	 */
 	private RefactoringDescriptorProxy[] getRefactoringDescriptorProxies() {
-		if (fRefactoringProxies == null)
-			fRefactoringProxies= fRefactoringHistory.getDescriptors();
+		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		if (fRefactoringStamps == null) {
-			final int length= fRefactoringProxies.length;
+			final int length= proxies.length;
 			fRefactoringStamps= new long[length];
 			for (int index= 0; index < length; index++)
-				fRefactoringStamps[index]= fRefactoringProxies[index].getTimeStamp();
+				fRefactoringStamps[index]= proxies[index].getTimeStamp();
 		}
-		return fRefactoringProxies;
+		return proxies;
 	}
 
 	/**
@@ -540,6 +533,5 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 			fRefactoringHistory= null;
 		fRefactoringRoots= null;
 		fRefactoringStamps= null;
-		fRefactoringProxies= null;
 	}
 }
