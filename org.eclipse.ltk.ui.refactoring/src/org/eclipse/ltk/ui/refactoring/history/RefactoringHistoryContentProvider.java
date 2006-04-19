@@ -483,7 +483,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Returns the refactoring history root elements.
+	 * Returns the refactoring history root elements. This method must only be
+	 * called for refactoring histories with associated time information.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
