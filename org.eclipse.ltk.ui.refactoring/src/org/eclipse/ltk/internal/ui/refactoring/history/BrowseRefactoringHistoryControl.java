@@ -75,6 +75,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 			provider.setSortProjects(true);
 			fHistoryViewer.setSorter(fViewerSorter);
 			fHistoryViewer.refresh(false);
+			setExpandedState();
 			reconcileCheckState();
 			fSortProjects.setChecked(true);
 			fSortTimestamps.setChecked(false);
@@ -89,6 +90,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 			provider.setSortProjects(false);
 			fHistoryViewer.setSorter(null);
 			fHistoryViewer.refresh(false);
+			setExpandedState();
 			reconcileCheckState();
 			fSortTimestamps.setChecked(true);
 			fSortProjects.setChecked(false);

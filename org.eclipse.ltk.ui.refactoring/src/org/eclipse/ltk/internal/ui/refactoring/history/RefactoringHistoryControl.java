@@ -721,6 +721,22 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Sets the expanded state of the viewer.
+	 */
+	protected void setExpandedState() {
+		final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
+		if (provider != null) {
+			handleCheckStateChanged();
+			final Object[] roots= provider.getRootElements();
+			if (roots != null && roots.length > 0) {
+				final Object first= roots[0];
+				if (first != null)
+					fHistoryViewer.setExpandedState(first, true);
+			}
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void setInput(final RefactoringHistory history) {
@@ -731,13 +747,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			if (provider != null) {
 				provider.inputChanged(fHistoryViewer, null, history);
-				handleCheckStateChanged();
-				final Object[] roots= provider.getRootElements();
-				if (roots != null && roots.length > 0) {
-					final Object first= roots[0];
-					if (first != null)
-						fHistoryViewer.setExpandedState(first, true);
-				}
+				setExpandedState();
 			}
 		}
 	}
