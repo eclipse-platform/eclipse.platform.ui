@@ -1002,6 +1002,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
+		DragUtil.addDragTarget(null, trimDropTarget);
 
 		// Create the client composite area (where page content goes).
 		createPageComposite(shell);
