@@ -149,7 +149,10 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 	public void createControl(final Composite parent) {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
+		final GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginLeft= 5;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, false) {
 
