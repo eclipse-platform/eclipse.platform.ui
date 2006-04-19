@@ -1,5 +1,6 @@
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -53,12 +54,24 @@ public class FieldCategory extends AbstractField {
 
 		if (obj instanceof ConcreteMarker) {
 			ConcreteMarker marker = (ConcreteMarker) obj;
-			if (marker.getGroup() == null) {
 
+			if (marker.getGroup() == null) {
+				if (!marker.getMarker().exists())
+					return MarkerMessages.FieldCategory_Uncategorized;
 				String groupName = MarkerSupportRegistry.getInstance()
 						.getCategory(marker.getMarker());
 				if (groupName == null) {
-					groupName = Util.getMarkerTypeName(marker);
+
+					String typeId;
+					try {
+						typeId = marker.getMarker().getType();
+					} catch (CoreException e) {
+						Util.log(e);
+						return MarkerMessages.FieldCategory_Uncategorized;
+					}
+					MarkerType type = MarkerTypesModel.getInstance().getType(
+							typeId);
+					groupName = type.getLabel();
 				}
 				marker.setGroup(groupName);
 			}

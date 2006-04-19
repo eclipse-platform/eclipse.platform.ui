@@ -367,22 +367,4 @@ public final class Util {
 		}
 		return false;
 	}
-
-	/**
-	 * Return the name of the marker type if it can be determined.
-	 * 
-	 * @param marker
-	 * @param model
-	 * @return String or <code>null</code>
-	 */
-	public static String getMarkerTypeName(ConcreteMarker marker) {
-		try {
-			String typeId = marker.getMarker().getType();
-			MarkerType type = MarkerTypesModel.getInstance().getType(typeId);
-			return type.getLabel();
-		} catch (CoreException e) {
-			log(e);
-			return null;
-		}
-	}
 }
