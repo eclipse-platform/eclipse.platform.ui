@@ -706,6 +706,46 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.99");
 		}
 	}
+	/**
+	 * Tests that enabling autobuild causes a build to occur.
+	 */
+	public void testEnableAutobuild() {
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		try {
+			// Turn auto-building off
+			setAutoBuilding(false);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		// Create and set a build spec for the project
+		try {
+			IProjectDescription desc = project.getDescription();
+			ICommand command = desc.newCommand();
+			command.setBuilderName(SortBuilder.BUILDER_NAME);
+			desc.setBuildSpec(new ICommand[] {command});
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		// Set up a plug-in lifecycle verifier for testing purposes
+		TestBuilder verifier = null;
+		//Cause a build by enabling autobuild
+		try {
+			setAutoBuilding(true);
+			waitForBuild();
+			verifier = SortBuilder.getInstance();
+			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+			verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
+			verifier.assertLifecycleEvents("3.1");
+		} catch (CoreException e) {
+			fail("3.2", e);
+		}
+	}
 
 	/**
 	 * Tests installing and running a builder that always fails in its build method
