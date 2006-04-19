@@ -11,13 +11,13 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -78,7 +78,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 		if (fSortProjects && element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
 			if (node instanceof RefactoringHistoryProject)
-				return getRefactoringHistoryEntries(((RefactoringHistoryProject) node).getProject());
+				return getRefactoringHistoryEntries((RefactoringHistoryProject) node);
 			else {
 				final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(node);
 				if (provider != null)
@@ -177,7 +177,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 					return provider;
 				}
 			}
-		} else
+		} else if (!(node instanceof RefactoringHistoryEntry))
 			return getRefactoringHistoryContentProvider(WORKSPACE_PROJECT);
 		return null;
 	}
@@ -208,23 +208,31 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 *            the project
 	 * @return the refactoring history entries
 	 */
-	private Object[] getRefactoringHistoryEntries(final String project) {
-		final RefactoringHistory history= getRefactoringHistory(project);
+	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryProject project) {
+		final String name= project.getProject();
+		final RefactoringHistory history= getRefactoringHistory(name);
 		if (history != null) {
-			final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(project);
-			if (provider != null) {
-				provider.inputChanged(null, null, history);
-				final Object[] elements= provider.getRootElements();
-				if (!WORKSPACE_PROJECT.equals(project)) {
-					final RefactoringHistoryProject root= new RefactoringHistoryProject(project);
-					for (int index= 0; index < elements.length; index++) {
-						if (elements[index] instanceof RefactoringHistoryDate) {
-							final RefactoringHistoryDate date= (RefactoringHistoryDate) elements[index];
-							elements[index]= new RefactoringHistoryDate(root, date.getTimeStamp(), date.getKind());
+			if (fControlConfiguration.isTimeDisplayed()) {
+				final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(project);
+				if (provider != null) {
+					provider.inputChanged(null, null, history);
+					final Object[] elements= provider.getRootElements();
+					if (!WORKSPACE_PROJECT.equals(name)) {
+						for (int index= 0; index < elements.length; index++) {
+							if (elements[index] instanceof RefactoringHistoryDate) {
+								final RefactoringHistoryDate date= (RefactoringHistoryDate) elements[index];
+								elements[index]= new RefactoringHistoryDate(project, date.getTimeStamp(), date.getKind());
+							}
 						}
 					}
+					return elements;
 				}
-				return elements;
+			} else {
+				final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
+				final RefactoringHistoryEntry[] entries= new RefactoringHistoryEntry[proxies.length];
+				for (int index= 0; index < proxies.length; index++)
+					entries[index]= new RefactoringHistoryEntry(project, proxies[index]);
+				return entries;
 			}
 		}
 		return NO_ELEMENTS;
@@ -235,27 +243,30 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 */
 	public Object[] getRootElements() {
 		if (fSortProjects) {
-			final LinkedList elements= new LinkedList();
+			final List list= new ArrayList(32);
 			for (final Iterator iterator= getRefactoringHistories().keySet().iterator(); iterator.hasNext();) {
 				final String project= (String) iterator.next();
 				if (project.equals(WORKSPACE_PROJECT)) {
 					final RefactoringHistory history= getRefactoringHistory(project);
 					if (project != null) {
-						final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(project);
-						if (provider != null) {
-							provider.inputChanged(null, null, history);
-							Stack stack= new Stack();
-							final Object[] result= provider.getRootElements();
-							for (int index= 0; index < result.length; index++)
-								stack.push(result[index]);
-							while (!stack.isEmpty())
-								elements.addFirst(stack.pop());
+						if (fControlConfiguration.isTimeDisplayed()) {
+							final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(project);
+							if (provider != null) {
+								provider.inputChanged(null, null, history);
+								list.addAll(Arrays.asList(provider.getRootElements()));
+							}
+						} else {
+							final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
+							final RefactoringHistoryEntry[] entries= new RefactoringHistoryEntry[proxies.length];
+							for (int index= 0; index < proxies.length; index++)
+								entries[index]= new RefactoringHistoryEntry(null, proxies[index]);
+							list.addAll(Arrays.asList(entries));
 						}
 					}
 				} else
-					elements.add(new RefactoringHistoryProject(project));
+					list.add(new RefactoringHistoryProject(project));
 			}
-			return elements.toArray();
+			return list.toArray();
 		} else
 			return super.getRootElements();
 	}
