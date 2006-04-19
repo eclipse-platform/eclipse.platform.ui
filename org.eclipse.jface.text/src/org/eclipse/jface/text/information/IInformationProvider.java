@@ -23,7 +23,7 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>{@link IInformationProviderExtension} since version 2.1 introducing
  *		the ability to handle documents with multiple partitions</li>
  * <li>{@link IInformationProviderExtension2} since version 3.0 introducing
- *		the ability to handle documents with multiple partitions</li>
+ *		the ability to provide its own information control creator</li>
  * </ul>
  * </p>
  * <p>
