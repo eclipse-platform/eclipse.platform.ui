@@ -129,10 +129,10 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * {@inheritDoc}
 	 */
 	public Object[] getChildren(final Object element) {
-		if (element instanceof RefactoringHistoryNode && fRefactoringHistory != null) {
+		if (element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
-			if (proxies != null && proxies.length > 0) {
+			if (proxies.length > 0) {
 				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
 				final int kind= node.getKind();
 				switch (kind) {
@@ -141,7 +141,6 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					default: {
 						if (node instanceof RefactoringHistoryDate) {
 							final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
-							final Calendar calendar= Calendar.getInstance();
 							final long stamp= date.getTimeStamp();
 							switch (kind) {
 								case RefactoringHistoryNode.TODAY:
@@ -160,14 +159,18 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 									return getRefactoringHistoryEntries(date, stamp, stamp + 1000 * 60 * 60 * 24 - 1);
 								case RefactoringHistoryNode.WEEK:
 									return getRefactoringHistoryDays(date, stamp, stamp + 1000 * 60 * 60 * 24 * 7 - 1);
-								case RefactoringHistoryNode.MONTH:
+								case RefactoringHistoryNode.MONTH: {
+									final Calendar calendar= Calendar.getInstance();
 									calendar.setTimeInMillis(stamp);
 									calendar.add(Calendar.MONTH, 1);
 									return getRefactoringHistoryWeeks(date, stamp, calendar.getTimeInMillis() - 1);
-								case RefactoringHistoryNode.YEAR:
+								}
+								case RefactoringHistoryNode.YEAR: {
+									final Calendar calendar= Calendar.getInstance();
 									calendar.setTimeInMillis(stamp);
 									calendar.add(Calendar.YEAR, 1);
 									return getRefactoringHistoryMonths(date, stamp, calendar.getTimeInMillis() - 1);
+								}
 							}
 						}
 					}
@@ -488,7 +491,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring history root elements
 	 */
 	public Object[] getRootElements() {
-		final List list= new ArrayList(8);
+		final List list= new ArrayList(16);
 		if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 			if (proxies.length > 0) {

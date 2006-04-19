@@ -56,13 +56,16 @@ import org.eclipse.jface.viewers.LabelProvider;
 public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	/** The collection image */
-	private Image fCollectionImage= null;
+	private final Image fCollectionImage;
 
 	/** The container image */
-	private Image fContainerImage= null;
+	private final Image fContainerImage;
 
-	/** The resource bundle to use */
+	/** The control configuration to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
+
+	/** The current locale to use */
+	private final Locale fCurrentLocale;
 
 	/** The cached date format, or <code>null</code> */
 	private DateFormat fDateFormat= null;
@@ -74,10 +77,10 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	private Image fDecoratedItemImage= null;
 
 	/** The element image */
-	private Image fElementImage= null;
+	private final Image fElementImage;
 
 	/** The item image */
-	private Image fItemImage= null;
+	private final Image fItemImage;
 
 	/**
 	 * Creates a new refactoring history label provider.
@@ -92,6 +95,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
 		fCollectionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
+		fCurrentLocale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
 	}
 
 	/**
@@ -211,43 +215,42 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 					if (node instanceof RefactoringHistoryDate) {
 						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
 						final Date stamp= new Date(date.getTimeStamp());
-						final Locale locale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
 						Format format= null;
 						String pattern= ""; //$NON-NLS-1$
 						switch (kind) {
 							case RefactoringHistoryNode.THIS_WEEK:
 								pattern= fControlConfiguration.getThisWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format, locale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.LAST_WEEK:
 								pattern= fControlConfiguration.getLastWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format, locale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.WEEK:
 								pattern= fControlConfiguration.getWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format, locale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.YEAR:
 								pattern= fControlConfiguration.getYearPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format, locale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.THIS_MONTH:
 								pattern= fControlConfiguration.getThisMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.LAST_MONTH:
 								pattern= fControlConfiguration.getLastMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, locale);
+								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, fCurrentLocale);
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
-									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, locale);
+									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, fCurrentLocale);
 									buffer.append(Messages.format(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
 								} else
 									format= DateFormat.getDateInstance();
@@ -262,7 +265,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								break;
 						}
 						if (format != null)
-							buffer.append(Messages.format(pattern, new String[] { format.format(stamp)}));
+							buffer.append(Messages.format(pattern,format.format(stamp)));
 					}
 				}
 			}

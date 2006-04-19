@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
@@ -51,9 +49,6 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 	 *            the size of the image
 	 */
 	public RefactoringDescriptorImageDescriptor(final ImageDescriptor image, final int flags, final Point size) {
-		Assert.isNotNull(image);
-		Assert.isTrue(flags >= 0);
-		Assert.isNotNull(size);
 		fImage= image;
 		fFlags= flags;
 		fSize= size;

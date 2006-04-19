@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
@@ -34,7 +32,6 @@ public final class RefactoringImageDescriptor extends ImageDescriptor {
 	 *            the image to describe
 	 */
 	public RefactoringImageDescriptor(final Image image) {
-		Assert.isNotNull(image);
 		fImage= image;
 	}
 
