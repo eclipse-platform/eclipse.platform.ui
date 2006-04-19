@@ -466,10 +466,20 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (path.getSegmentCount() == 1) {
 			Object first = path.getFirstSegment();
 			if (first instanceof ChangeSet) {
-				return isVisibleInMode(first);
+				return isVisibleInMode(first) && hasChildrenInContext((ChangeSet)first);
 			}
 		}
 		return getChildren(path).length > 0;
+	}
+
+	private boolean hasChildrenInContext(ChangeSet set) {
+		IResource[] resources = set.getResources();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			if (getContext().getDiffTree().getDiff(resource) != null)
+				return true;
+		}
+		return false;
 	}
 
 	public TreePath[] getParents(Object element) {

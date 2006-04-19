@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
@@ -60,9 +57,9 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			fireOpen(new OpenEvent(this, getSelection()));
 		}
 		protected void internalRefresh(Object element, boolean updateLabels) {
-			Object[] expanded = getVisibleExpandedElements();
+			TreePath[] expanded = getVisibleExpandedPaths();
 			super.internalRefresh(element, updateLabels);
-			setExpandedElements(expanded);
+			setExpandedTreePaths(expanded);
 			checkForEmptyViewer();
 		}
 		protected void internalRemove(Object parent, Object[] elements) {
@@ -111,6 +108,34 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			getNavigatorContentService().getDnDService().bindDragAssistant(new ResourceDragAdapterAssistant());
 			super.initDragAndDrop();
 		}
+	    /**
+	     * Gets the expanded elements that are visible to the user. An expanded
+	     * element is only visible if the parent is expanded.
+	     * 
+	     * @return the visible expanded elements
+	     * @since 2.0
+	     */
+	    public TreePath[] getVisibleExpandedPaths() {
+	        ArrayList v = new ArrayList();
+	        internalCollectVisibleExpanded(v, getControl());
+	        return (TreePath[]) v.toArray(new TreePath[v.size()]);
+	    }
+
+	    private void internalCollectVisibleExpanded(ArrayList result, Widget widget) {
+	        Item[] items = getChildren(widget);
+	        for (int i = 0; i < items.length; i++) {
+	            Item item = items[i];
+	            if (getExpanded(item)) {
+	            	TreePath path = getTreePathFromItem(item);
+	                if (path != null) {
+						result.add(path);
+	                }
+	                //Only recurse if it is expanded - if
+	                //not then the children aren't visible
+	                internalCollectVisibleExpanded(result, item);
+	            }
+	        }
+	    }
 	}
 
 	/**
