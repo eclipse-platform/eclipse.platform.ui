@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -143,27 +144,37 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 		IExtension[] extensions = point.getExtensions();
 		// initial population
+		Map groupingEntries = new HashMap();
+		Set attributeMappings = new HashSet();
 		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
-			processExtension(tracker, extension);
+			processExtension(tracker, extension, groupingEntries,
+					attributeMappings);
 		}
+		postProcessExtensions(groupingEntries, attributeMappings);
 		tracker.registerHandler(this, ExtensionTracker
 				.createExtensionPointFilter(point));
 
 	}
 
 	/**
-	 * Process the extension and register the result with the tracker.
+	 * Process the extension and register the result with the tracker. Fill the
+	 * map of groupingEntries and attribueMappings processed for post
+	 * processing.
 	 * 
 	 * @param tracker
 	 * @param extension
+	 * @param groupingEntries
+	 *            Mapping of group names to the markerGroupingEntries registered
+	 *            for them
+	 * @param attributeMappings
+	 *            the markerAttributeGroupings found
+	 * @see #postProcessExtensions(Map, Collection)
 	 */
 	private void processExtension(IExtensionTracker tracker,
-			IExtension extension) {
+			IExtension extension, Map groupingEntries,
+			Collection attributeMappings) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-
-		Map groupingEntries = new HashMap();
-		Collection attributeMappings = new HashSet();
 
 		for (int j = 0; j < elements.length; j++) {
 			IConfigurationElement element = elements[j];
@@ -233,14 +244,28 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 						IExtensionTracker.REF_STRONG);
 			}
 
-			processGroupingEntries(groupingEntries);
-			processAttributeMappings(attributeMappings);
-
 		}
 	}
 
 	/**
-	 * Process the grouping entries into thier required plug-ins.
+	 * Process the cross references after all of the extensions have been read.
+	 * 
+	 * @param groupingEntries
+	 * @param attributeMappings
+	 * @param groupingEntries
+	 *            Mapping of group names to the markerGroupingEntries registered
+	 *            for them
+	 * @param attributeMappings
+	 *            the markerAttributeGroupings found
+	 */
+	private void postProcessExtensions(Map groupingEntries,
+			Collection attributeMappings) {
+		processGroupingEntries(groupingEntries);
+		processAttributeMappings(attributeMappings);
+	}
+
+	/**
+	 * Process the grouping entries into thier required grouping entries.
 	 * 
 	 * @param groupingEntries
 	 */
@@ -275,7 +300,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Process the attribute mappings into thier required plug-ins.
+	 * Process the attribute mappings into thier required grouping entries.
 	 * 
 	 * @param attributeMappings
 	 */
@@ -342,7 +367,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 *      org.eclipse.core.runtime.IExtension)
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		processExtension(tracker, extension);
+		Map groupingEntries = new HashMap();
+		Set attributeMappings = new HashSet();
+		processExtension(tracker, extension, groupingEntries, attributeMappings);
+		postProcessExtensions(groupingEntries, attributeMappings);
 	}
 
 	/**
@@ -670,10 +698,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return the default group.
+	 * 
 	 * @return IField
 	 */
 	public IField getDefaultGroup() {
-		
+
 		return (IField) markerGroups.get(SEVERITY_ID);
 	}
 
