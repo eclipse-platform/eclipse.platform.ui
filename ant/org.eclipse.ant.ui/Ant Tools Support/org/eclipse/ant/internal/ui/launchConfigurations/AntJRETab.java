@@ -87,9 +87,10 @@ public class AntJRETab extends JavaJRETab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		fWorkingDirectoryBlock.setEnabled(!fJREBlock.isDefaultJRE());
-		fVMArgumentsBlock.setEnabled(!fJREBlock.isDefaultJRE());
-		if (fJREBlock.isDefaultJRE()) {
+		boolean isDefaultJRE = fJREBlock.isDefaultJRE();
+        fWorkingDirectoryBlock.setEnabled(!isDefaultJRE);
+		fVMArgumentsBlock.setEnabled(!isDefaultJRE);
+		if (isDefaultJRE) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
@@ -115,13 +116,18 @@ public class AntJRETab extends JavaJRETab {
 	private boolean useDefaultSeparateJRE(ILaunchConfigurationWorkingCopy configuration) {
 		boolean deflt= false;
 		String vmInstallType= null;
+        String jreContainerPath= null;
 		try {
 			vmInstallType= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+            jreContainerPath= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 		} catch (CoreException e) {
 		}
 		if (vmInstallType != null) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 		}
+        if (jreContainerPath != null) {
+            configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
+        }
 		IVMInstall defaultVMInstall= getDefaultVMInstall(configuration);
 		if (defaultVMInstall != null) {
 			IVMInstall vm= fJREBlock.getJRE();
@@ -131,6 +137,9 @@ public class AntJRETab extends JavaJRETab {
 		if (vmInstallType != null) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstallType);
 		}
+        if (jreContainerPath != null) {
+            configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, jreContainerPath);
+        }
 		return deflt;
 	}
 	
