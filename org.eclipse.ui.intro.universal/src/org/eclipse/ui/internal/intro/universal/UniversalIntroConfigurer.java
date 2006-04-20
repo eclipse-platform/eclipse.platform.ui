@@ -62,6 +62,11 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 				value = resolveVariable(product.getDefiningBundle(), value);
 				return value;
 			}
+			// if intro description for the page is not defined
+			// return a blank string to prevent the variable
+			// from showing up in the page
+			if (variableName.startsWith(VAR_INTRO_DESCRIPTION_PREFIX))
+				return ""; //$NON-NLS-1$
 			// nothing - try preferences
 			Preferences prefs = UniversalIntroPlugin.getDefault()
 					.getPluginPreferences();

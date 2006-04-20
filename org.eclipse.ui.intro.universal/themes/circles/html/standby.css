@@ -122,37 +122,42 @@ body {
 	display :none;
 }
 
-a#overview img { background-image : url(../graphics/icons/ctool/ov_nav_32.gif); }
-/*
+a#overview img { background-image : url(../graphics/standby/ov_standby.gif); }
 a#overview:hover img,
 a#overview:focus img,
-a#overview:active img { background-image : url(../graphics/icons/ctool/overview48.gif); }
-*/
+a#overview:active img { background-image : url(../graphics/standby/ov_standbyhov.gif); }
 
-a#tutorials img { background-image : url(../graphics/icons/ctool/tu_nav_32.gif); }
-/*
+a#firststeps img { background-image : url(../graphics/standby/fs_standby.gif); }
+a#firststeps:hover img,
+a#firststeps:focus img,
+a#firststeps:active img { background-image : url(../graphics/standby/fs_standbyhov.gif); }
+
+a#tutorials img { background-image : url(../graphics/standby/tu_standby.gif); }
 a#tutorials:hover img,
 a#tutorials:focus img,
-a#tutorials:active img { background-image : url(../graphics/icons/ctool/tutorials48.gif); }
-*/
+a#tutorials:active img { background-image : url(../graphics/standby/tu_standbyhov.gif); }
 
-a#samples img { background-image : url(../graphics/icons/ctool/sa_nav_32.gif); }
-/*
+a#samples img { background-image : url(../graphics/standby/sa_standby.gif); }
 a#samples:hover img,
 a#samples:focus img,
-a#samples:active img { background-image : url(../graphics/icons/ctool/samples48.gif); }
-*/
+a#samples:active img { background-image : url(../graphics/standby/sa_standbyhov.gif); }
 
+a#whatsnew img { background-image : url(../graphics/standby/wn_standby.gif); }
+a#whatsnew:hover img,
+a#whatsnew:focus img,
+a#whatsnew:active img { background-image : url(../graphics/standby/wn_standbyhov.gif); }
 
-a#whatsnew img { background-image : url(../graphics/icons/ctool/wn_nav_32.gif); }
-/*
-a#news:hover img,
-a#news:focus img,
-a#news:active img { background-image : url(../graphics/icons/ctool/whatsnew48.gif); }
-*/
+a#webresources img { background-image : url(../graphics/standby/wr_standby.gif); }
+a#webresources:hover img,
+a#webresources:focus img,
+a#webresources:active img { background-image : url(../graphics/standby/wr_standbyhov.gif); }
 
-a#firststeps img { background-image : url(../graphics/icons/ctool/fs_nav_32.gif); }
-a#webresources img { background-image : url(../graphics/icons/ctool/wr_nav_32.gif); }
-a#migrate img { background-image : url(../graphics/icons/ctool/mi_nav_32.gif); }
+a#migrate img { background-image : url(../graphics/standby/mi_standby.gif); }
+a#migrate:hover img,
+a#migrate:focus img,
+a#migrate:active img { background-image : url(../graphics/standby/mi_standbyhov.gif); }
 
-a#workbench img { background-image : url(../graphics/icons/ctool/wb_nav_32.gif); }
+a#workbench img { background-image : url(../graphics/standby/wb_standby.gif); }
+a#workbench:hover img,
+a#workbench:focus img,
+a#workbench:active img { background-image : url(../graphics/standby/wb_standbyhov.gif); }

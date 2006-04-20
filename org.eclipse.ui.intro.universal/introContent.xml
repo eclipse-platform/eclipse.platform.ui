@@ -62,7 +62,7 @@
             <group id="content-header" label="Overview" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">Overview</text>
-            <text style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
+            <text style-id="page-description" id="page-description">$introDescription-overview$</text>
 			<!-- panes -->
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
@@ -94,7 +94,7 @@
             <group id="content-header" label="Tutorials" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">Tutorials</text>
-            <text style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
+            <text style-id="page-description" id="page-description">$introDescription-tutorials$</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>		
@@ -124,7 +124,7 @@
             <group id="content-header" label="Samples" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">Samples</text>
-            <text style-id="page-description" id="page-description">Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
+            <text style-id="page-description" id="page-description">$introDescription-samples$</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>		
@@ -154,6 +154,7 @@
             <group id="content-header" label="What's New" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">What's New</text>
+            <text style-id="page-description" id="page-description">$introDescription-whatsnew$</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>			
@@ -183,6 +184,7 @@
             <group id="content-header" label="First Steps" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">First Steps</text>
+            <text style-id="page-description" id="page-description">$introDescription-firststeps$</text>
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>				
@@ -212,6 +214,7 @@
             <group id="content-header" label="Web Resources" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">Web Resources</text>
+            <text style-id="page-description" id="page-description">$introDescription-webresources$</text>			
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>			
@@ -242,6 +245,7 @@
             <group id="content-header" label="Migrate" filteredFrom="swt">
             </group>
             <text style-id="page-title" id="page-title" filteredFrom="html">Migrate</text>
+            <text style-id="page-description" id="page-description">$introDescription-migrate$</text>			
  			<group id="top-left" computed="true"/>
 			<group id="top-right" computed="true"/>
 			<group id="content-divider" filteredFrom="swt"/>			

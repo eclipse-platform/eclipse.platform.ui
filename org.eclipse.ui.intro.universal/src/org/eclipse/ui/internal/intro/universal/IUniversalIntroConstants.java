@@ -97,6 +97,7 @@ public interface IUniversalIntroConstants {
 	String VAR_INTRO_ROOT_PAGES = "INTRO_ROOT_PAGES"; //$NON-NLS-1$
 	String VAR_INTRO_DATA = "INTRO_DATA";  //$NON-NLS-1$
 	String VAR_WORKBENCH_AS_ROOT_LINK="workbenchAsRootLink"; //$NON-NLS-1$
+	String VAR_INTRO_DESCRIPTION_PREFIX = "introDescription"; //$NON-NLS-1$
 	
 	//Page table properties
 	String P_IMPORTANCE = "importance"; //$NON-NLS-1$
