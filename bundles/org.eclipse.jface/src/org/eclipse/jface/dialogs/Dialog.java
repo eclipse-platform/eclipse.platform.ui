@@ -162,6 +162,14 @@ public abstract class Dialog extends Window {
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 	
 	/**
+	 * The dialog settings key name for the font used when the dialog
+	 * height and width was stored.
+	 *
+	 *@since 3.2
+	 */
+	private static final String DIALOG_FONT_DATA = "DIALOG_FONT_NAME"; //$NON-NLS-1$
+	
+	/**
 	 * A value that can be used for stored dialog width or height that
 	 * indicates that the default bounds should be used.
 	 * 
@@ -1205,6 +1213,10 @@ public abstract class Dialog extends Window {
 			if ((strategy & DIALOG_PERSISTSIZE) != 0) {
 				settings.put(DIALOG_WIDTH, shellSize.x);
 				settings.put(DIALOG_HEIGHT, shellSize.y);
+				FontData [] fontDatas = JFaceResources.getDialogFont().getFontData();
+				if (fontDatas.length > 0) {
+					settings.put(DIALOG_FONT_DATA, fontDatas[0].toString());
+				}
 			}
 		}
 	}
@@ -1227,18 +1239,37 @@ public abstract class Dialog extends Window {
 		if ((getDialogBoundsStrategy() & DIALOG_PERSISTSIZE)!= 0) {
 			IDialogSettings settings = getDialogBoundsSettings();
 			if (settings != null) {
-				try {
-					// Get the stored width and height.
-					int width = settings.getInt(DIALOG_WIDTH);
-					if (width != DIALOG_DEFAULT_BOUNDS) {
-						result.x = width;
+				// Check that the dialog font matches the font used
+				// when the bounds was stored.  If the font has changed,
+				// we do not honor the stored settings.  
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132821
+				boolean useStoredBounds = true;
+				String previousDialogFontData = settings.get(DIALOG_FONT_DATA);
+				// There is a previously stored font, so we will check it.
+				// Note that if we haven't stored the font before, then we will
+				// use the stored bounds.  This allows restoring of dialog bounds 
+				// that were stored before we started storing the fontdata.
+				if (previousDialogFontData != null && previousDialogFontData.length() > 0) {
+					FontData [] fontDatas = JFaceResources.getDialogFont().getFontData();
+					if (fontDatas.length > 0) {
+						String currentDialogFontData = fontDatas[0].toString();
+						useStoredBounds = currentDialogFontData.equalsIgnoreCase(previousDialogFontData);
 					}
-					int height = settings.getInt(DIALOG_HEIGHT);
-					if (height != DIALOG_DEFAULT_BOUNDS) {
-						result.y = height;
+				}
+				if (useStoredBounds) {
+					try {
+						// Get the stored width and height.
+						int width = settings.getInt(DIALOG_WIDTH);
+						if (width != DIALOG_DEFAULT_BOUNDS) {
+							result.x = width;
+						}
+						int height = settings.getInt(DIALOG_HEIGHT);
+						if (height != DIALOG_DEFAULT_BOUNDS) {
+							result.y = height;
+						}
+		
+					} catch (NumberFormatException e) {
 					}
-	
-				} catch (NumberFormatException e) {
 				}
 			}
 		}
