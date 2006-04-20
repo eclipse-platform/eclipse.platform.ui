@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
@@ -42,7 +41,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
@@ -112,8 +110,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * The update policy for this viewer.
 	 */
 	private AbstractUpdatePolicy fUpdatePolicy;
-	
-	protected static final Rectangle NOT_VISIBLE = new Rectangle(0, 0, 0, 0);
 
 	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
 	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
@@ -143,13 +139,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		Assert.isTrue(enable);
 		super.setUseHashlookup(enable);
 	}
-
-	public Control getControl() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
@@ -235,23 +224,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	public IPresentationContext getPresentationContext() {
 		return fContext;
-	}
-
-	/**
-	 * Returns the model proxy factory for the given element of <code>null</code> if none.
-	 * 
-	 * @param element element to retrieve adapters for
-	 * @return model proxy factory adapter or <code>null</code>
-	 */
-	protected IModelProxyFactoryAdapter getModelProxyFactoryAdapter(Object element) {
-		IModelProxyFactoryAdapter adapter = null;
-		if (element instanceof IModelProxyFactoryAdapter) {
-			adapter = (IModelProxyFactoryAdapter) element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IModelProxyFactoryAdapter) adaptable.getAdapter(IModelProxyFactoryAdapter.class);
-		}
-		return adapter;
 	}
 
 	/* (non-Javadoc)
