@@ -96,7 +96,7 @@ public class CalendarableModel_testInit extends TestCase {
 
 	private void assertColumnWithinDayIsInitialized(final int NUM_DAYS) {
 		for (int i=0; i < NUM_DAYS; ++i) {
-			assertNull(cm.getNumberOfColumnsWithinDay(i));
+			assertEquals("It's initialized", -1, cm.getNumberOfColumnsWithinDay(i));
 		}
 	}
 }
