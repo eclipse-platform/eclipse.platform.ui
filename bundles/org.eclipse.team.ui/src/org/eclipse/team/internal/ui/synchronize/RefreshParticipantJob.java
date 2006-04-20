@@ -222,10 +222,10 @@ public abstract class RefreshParticipantJob extends Job {
 	 * @param listener
 	 */
 	public RefreshParticipantJob(ISynchronizeParticipant participant, String jobName, String taskName, IRefreshSubscriberListener listener) {
-		super(taskName);
+		super(jobName);
 		Assert.isNotNull(participant);
 		this.participant = participant;
-		this.taskName = jobName;
+		this.taskName = taskName;
 		setPriority(Job.DECORATE);
 		setRefreshInterval(3600 /* 1 hour */);
 		
