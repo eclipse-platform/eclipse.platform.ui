@@ -27,6 +27,8 @@ public class PresentationUtil {
     private static Point anchor;
 
     private final static int HYSTERESIS = 16;
+    
+    private static int initialMouseButton = 0;
 
     private final static String LISTENER_ID = PresentationUtil.class.getName()
             + ".dragListener"; //$NON-NLS-1$
@@ -71,6 +73,10 @@ public class PresentationUtil {
     private static Listener mouseDownListener = new Listener() {
         public void handleEvent(Event event) {
             if (event.widget instanceof Control) {
+            	// Remember the button that started the drag so we
+            	// can forward it on the call to the 'externalDragListener'
+            	initialMouseButton = event.button;
+            	
                 dragSource = (Control) event.widget;
                 currentListener = (Listener) dragSource.getData(LISTENER_ID);
                 anchor = DragUtil.getEventLoc(event);
@@ -91,9 +97,21 @@ public class PresentationUtil {
             if (dragSource != null && !dragSource.isDisposed()
                     && dragSource == e.widget) {
                 Event de = dragEvent;
+                
+                // cache the current value so we can restore it later
+                int originalMouseButton = de.button;
+                
+                // Update the button field so that the drag listener
+                // can detect whether or not it's a 'right button' drag
+                de.button = initialMouseButton;
+                
                 Listener l = currentListener;
                 cancelDrag();
                 l.handleEvent(de);
+                
+                // Restore the event's state so that other listeners see 
+                // the original values
+                de.button = originalMouseButton;
             } else {
                 cancelDrag();
             }
@@ -104,6 +122,8 @@ public class PresentationUtil {
         currentListener = null;
         dragEvent = null;
         dragSource = null;
+
+        initialMouseButton = 0;
     }
 
     /**

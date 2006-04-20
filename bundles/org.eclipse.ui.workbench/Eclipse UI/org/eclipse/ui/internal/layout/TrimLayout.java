@@ -564,7 +564,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 				}
 
 				if (TrimDragPreferences.showRaggedTrim()) {
-					Point prefSize = next.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);					
+					Point prefSize = next.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 					if (horizontally) {
 						// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
 						// on any side. The following code is in place specifically to

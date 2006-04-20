@@ -92,8 +92,11 @@ public class TrimCommonUIHandle extends Composite {
      */
     private Listener dragListener = new Listener() {
         public void handleEvent(Event event) {
-            Point position = DragUtil.getEventLoc(event);
-            startDraggingTrim(position);
+        	// Only allow 'left mouse' drags...
+        	if (event.button == 1) {
+	            Point position = DragUtil.getEventLoc(event);
+	            startDraggingTrim(position);
+        	}
         }
     };
 
@@ -312,11 +315,11 @@ public class TrimCommonUIHandle extends Composite {
     	Cursor dragCursor = toDrag.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
     	setCursor(dragCursor);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int)
+	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
 	 */
-	public Point computeSize(int wHint, int hHint) {
+	public Point computeSize(int wHint, int hHint, boolean changed) {
 		Point ctrlPrefSize = trim.getControl().computeSize(wHint, hHint);
 		if (orientation == SWT.HORIZONTAL) {
 			return new Point(getHandleSize(), ctrlPrefSize.y);
@@ -325,7 +328,7 @@ public class TrimCommonUIHandle extends Composite {
 		// Must be vertical....
 		return new Point(ctrlPrefSize.x, getHandleSize());
 	}
-
+	
 	/**
 	 * Construct (if necessary) a context menu contribution item and return it. This
 	 * is explicitly <code>public</code> so that trim elements can retrieve the item
