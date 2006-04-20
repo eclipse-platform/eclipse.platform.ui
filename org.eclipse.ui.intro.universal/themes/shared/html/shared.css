@@ -50,6 +50,10 @@
 	color: #6699cc;
 }
 
+.section-title-link:hover .section-title {
+	text-decoration: underline;
+}
+
 /*
  * Toggle image during hover.
  */
