@@ -853,13 +853,17 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
      */
     protected void clear(Widget widget) {
-    	if (widget instanceof TreeItem) {
+    	if (widget instanceof TreeItem && !widget.isDisposed()) {
     		TreeItem item = (TreeItem) widget;
     		TreeItem parentItem = item.getParentItem();
     		if (parentItem == null) {
-    			fTree.clear(fTree.indexOf(item), true);
+    			int index = fTree.indexOf(item);
+                if (index >= 0)
+                    fTree.clear(index, true);
     		} else {
-    			parentItem.clear(parentItem.indexOf(item), true);
+    			int index = parentItem.indexOf(item);
+                if (index >= 0)
+                    parentItem.clear(index, true);
     		}
     		item.clearAll(true);
     	} else {
