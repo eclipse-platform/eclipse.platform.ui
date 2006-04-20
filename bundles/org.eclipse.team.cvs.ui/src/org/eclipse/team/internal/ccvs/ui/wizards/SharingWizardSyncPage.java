@@ -197,7 +197,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 			getShell().setSize(Math.max(width, 300), Math.max(height, 300));
 			if(input != null) {
 				Viewer viewer = input.getPageConfiguration().getPage().getViewer();
-				if(viewer instanceof AbstractTreeViewer) {
+				if(viewer instanceof AbstractTreeViewer && !viewer.getControl().isDisposed()) {
 					((AbstractTreeViewer)viewer).expandToLevel(2);
 				}
 			}
