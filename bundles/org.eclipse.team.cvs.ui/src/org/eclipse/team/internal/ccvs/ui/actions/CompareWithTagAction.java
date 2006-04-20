@@ -16,10 +16,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareOperation;
+import org.eclipse.team.internal.ccvs.ui.mappings.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -45,21 +47,28 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 		}
 		
         // Create a subscriber that can cover all projects involved
-        CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
+       
 		if (isShowModelSync()) {
+			final CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
+			ResourceMapping[] mappings = getCVSResourceMappings();
 			try {
-				ResourceMapping[] mappings = getCVSResourceMappings();
-				try {
-					// TODO: Only prime the area covered by the mappings
-					compareSubscriber.primeRemoteTree();
-				} catch(CVSException e) {
-					// ignore, the compare will fail if there is a real problem.
-				}
-				new ModelCompareOperation(getTargetPart(), mappings, compareSubscriber).run();
-			} catch (InterruptedException e) {
-				// Ignore
+				// TODO: Only prime the area covered by the mappings
+				compareSubscriber.primeRemoteTree();
+			} catch(CVSException e) {
+				// ignore, the compare will fail if there is a real problem.
 			}
+			SubscriberScopeManager manager = new SubscriberScopeManager(compareSubscriber.getName(), mappings, compareSubscriber, true){
+				public void dispose() {
+					compareSubscriber.dispose();
+					super.dispose();
+				}
+			};
+			SynchronizationContext context = CompareSubscriberContext.createContext(manager, compareSubscriber);
+			ModelCompareParticipant participant = new ModelCompareParticipant(context);
+			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
+			participant.run(getTargetPart());
 		} else {
+			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
 	        ResourceMapping[] resourceMappings = getCVSResourceMappings();
 			if (isLogicalModel(resourceMappings)) {
 	            compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);

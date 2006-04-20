@@ -25,12 +25,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
-import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
+import org.eclipse.team.internal.ccvs.ui.mappings.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
@@ -51,24 +52,14 @@ public class SyncAction extends WorkspaceTraversalAction {
 			return;
 		}
 		if (isShowModelSync()) {
-			try {
-				ResourceMapping[] mappings = getCVSResourceMappings();
-				if (mappings.length == 0)
-					return;
-				new ModelUpdateOperation(getTargetPart(), WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true, CommitAction.isIncludeChangeSets(getShell(), CVSUIMessages.SyncAction_1))) {
-					protected boolean isAttemptHeadlessMerge() {
-						return false;
-					}
-					protected boolean isPreviewInDialog() {
-						return false;
-					}
-					protected String getJobName() {
-						return CVSUIMessages.SyncAction_0;
-					}
-				}.run();
-			} catch (InterruptedException e) {
-				// Ignore
-			}
+			ResourceMapping[] mappings = getCVSResourceMappings();
+			if (mappings.length == 0)
+				return;
+			SubscriberScopeManager manager = WorkspaceSubscriberContext.createWorkspaceScopeManager(mappings, true, CommitAction.isIncludeChangeSets(getShell(), CVSUIMessages.SyncAction_1));
+			WorkspaceSubscriberContext context = WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
+			WorkspaceModelParticipant participant = new WorkspaceModelParticipant(context);
+			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+			participant.run(getTargetPart());
 		} else {
 	        IResource[] resources = getResourcesToCompare(getWorkspaceSubscriber());
 			if (resources == null || resources.length == 0) return;
