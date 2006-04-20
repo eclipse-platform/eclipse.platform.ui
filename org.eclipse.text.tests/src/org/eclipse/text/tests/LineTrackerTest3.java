@@ -353,6 +353,14 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 
 	}
 	
+	public void testNoDelimiterLine() throws Exception {
+	    set("abcef");
+	    checkLines(new int[] { 5 });
+	    
+	    replace(0, 0, ""); // switch to TreeLineTracker
+	    checkLines(new int[] { 5 });
+    }
+	
 	public void testFunnyLastLineCompatibility2() throws Exception {
 		/* empty last line */
 		set("x\n");

@@ -69,7 +69,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * Turns assertions on/off. Don't make this a a debug option for performance reasons - this way
 	 * the compiler can optimize the asserts away.
 	 */
-	private static final boolean ASSERT= false;
+	private static final boolean ASSERT= true;
 	
 	/**
 	 * The empty delimiter of the last line. The last line and only the last line must have this
@@ -185,6 +185,8 @@ abstract class TreeLineTracker implements ILineTracker {
     	
     	Line line= (Line) lines.get(0);
     	String delim= line.delimiter;
+    	if (delim == null)
+    		delim= NO_DELIM;
     	int length= line.length;
     	fRoot= new Node(length, delim);
     	Node node= fRoot;
@@ -196,7 +198,8 @@ abstract class TreeLineTracker implements ILineTracker {
 			node= insertAfter(node, length, delim);
         }
 		
-		insertAfter(node, 0, NO_DELIM);
+		if (node.delimiter != NO_DELIM)
+			insertAfter(node, 0, NO_DELIM);
 		
 		if (ASSERT) checkTree();
     }
