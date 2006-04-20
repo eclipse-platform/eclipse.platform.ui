@@ -335,7 +335,7 @@ public class ModelSynchronizeParticipant extends
 	 * @return the short task name to show in the status line.
 	 */
 	protected String getShortTaskName() {
-		return TeamUIMessages.Participant_synchronizing; 
+		return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, getShortName());
 	}
 	
 	/**
