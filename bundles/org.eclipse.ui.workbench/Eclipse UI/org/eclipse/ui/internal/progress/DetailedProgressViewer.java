@@ -30,7 +30,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	private ScrolledComposite scrolled;
 
-	private Text noEntryLabel;
+	private Composite noEntryArea;
 
 	/**
 	 * Create a new instance of the receiver with a control that is a child of
@@ -60,10 +60,15 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		scrolled.setContent(control);
 		hookControl(control);
 
-		noEntryLabel = new Text(scrolled, SWT.NONE);
+		noEntryArea = new Composite(scrolled, SWT.NONE);
+		noEntryArea.setLayout(new GridLayout());
+
+		Text noEntryLabel = new Text(noEntryArea, SWT.SINGLE);
 		noEntryLabel.setText(ProgressMessages.ProgressView_NoOperations);
-		noEntryLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		noEntryLabel.setBackground(noEntryArea.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		GridData textData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		noEntryLabel.setLayoutData(textData);
 		noEntryLabel.setEditable(false);
 
 	}
@@ -115,7 +120,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		if (control.getChildren().length > 0) {
 			scrolled.setContent(control);
 		} else {
-			scrolled.setContent(noEntryLabel);
+			scrolled.setContent(noEntryArea);
 		}
 	}
 
