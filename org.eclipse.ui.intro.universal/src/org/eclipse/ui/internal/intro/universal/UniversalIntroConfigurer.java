@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IntroConfigurer;
@@ -375,7 +374,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		img.setAttribute("id", imgId); //$NON-NLS-1$
 		img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
 		// img.setAttribute("src", imgSrc); //$NON-NLS-1$
-		boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+		boolean highContrast = ImageUtil.isHighContrast();
 		if (highContrast) {
 			String key = HIGH_CONTRAST_PREFIX+id;
 			String value = getVariable(key);

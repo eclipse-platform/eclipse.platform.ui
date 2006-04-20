@@ -188,18 +188,18 @@ public final class ImageUtil {
 	}
 	
 	/**
-	 * Tests for high contrast mode in a thread-safe way.
-	 * @return
+	 * Tests for high contrast mode. Returns false if not called from a
+	 * UI thread (causes deadlocks during junit tests).
+	 * 
+	 * @return whether or not the display is in high contrast mode
 	 */
-	
 	public static boolean isHighContrast() {
-		final boolean [] result = new boolean[1];
 		final Display display = PlatformUI.getWorkbench().getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				result[0] = display.getHighContrast();
-			}
-		});
-		return result[0];
+		if (Display.getCurrent() == display) {
+			return display.getHighContrast();
+		}
+		else {
+			return false;
+		}
 	}
 }
