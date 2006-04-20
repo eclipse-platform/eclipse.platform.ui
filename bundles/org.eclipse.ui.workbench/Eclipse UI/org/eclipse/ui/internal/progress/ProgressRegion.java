@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 public class ProgressRegion implements IWindowTrim {
     ProgressCanvasViewer viewer;
 
-    AnimationItem animationItem;
+    ProgressAnimationItem animationItem;
 
     Composite region;
 
@@ -226,8 +226,12 @@ public class ProgressRegion implements IWindowTrim {
 	private void recreate() {
 		if (region != null && !region.isDisposed()) {
 			Composite parent = region.getParent();
+			boolean animating = animationItem.animationRunning();
+	        AnimationManager.getInstance().removeItem(animationItem);
 			region.dispose();
 			createContents(parent, workbenchWindow);
+			if (animating)
+				animationItem.animationStart();
 		}
 	}
 

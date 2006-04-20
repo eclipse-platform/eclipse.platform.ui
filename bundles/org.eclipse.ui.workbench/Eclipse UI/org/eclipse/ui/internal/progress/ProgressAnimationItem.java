@@ -341,6 +341,12 @@ public class ProgressAnimationItem extends AnimationItem implements
         refresh();
     }
 
+    /**
+     * @return <code>true</code> when the animation is running
+     */
+    public boolean animationRunning() {
+    	return animationRunning;
+    }
     /*
      * (non-Javadoc)
      * 
