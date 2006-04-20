@@ -48,7 +48,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	public String getVariable(String variableName) {
 		if (variableName.equals(HIGH_CONTRAST)) {
-			boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+			boolean highContrast = ImageUtil.isHighContrast();
 			if (highContrast)
 				return variableName;
 			else
@@ -391,7 +391,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		element.setAttribute("label", label); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
 		element.setAttribute("id", id); //$NON-NLS-1$
-		boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+		boolean highContrast = ImageUtil.isHighContrast();
 		if (highContrast) {
 			IntroElement img = new IntroElement("img"); //$NON-NLS-1$
 			img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$

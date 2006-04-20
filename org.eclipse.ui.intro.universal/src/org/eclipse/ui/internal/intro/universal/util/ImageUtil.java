@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.universal.IUniversalIntroConstants;
 import org.eclipse.ui.internal.intro.universal.UniversalIntroPlugin;
 import org.osgi.framework.Bundle;
@@ -183,5 +185,21 @@ public final class ImageUtil {
 			// key has already been registered. do nothing.
 			return;
 		registry.put(key, createImageDescriptor(base, imageName));
+	}
+	
+	/**
+	 * Tests for high contrast mode in a thread-safe way.
+	 * @return
+	 */
+	
+	public static boolean isHighContrast() {
+		final boolean [] result = new boolean[1];
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				result[0] = display.getHighContrast();
+			}
+		});
+		return result[0];
 	}
 }
