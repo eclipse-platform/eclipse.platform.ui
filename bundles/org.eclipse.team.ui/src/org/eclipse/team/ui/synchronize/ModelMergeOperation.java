@@ -225,10 +225,10 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * Subclasses may override.
 	 * @param status the status returned from the merger that reported the conflict
 	 */
-	protected void handleMergeFailure(IStatus status) {
+	protected void handleMergeFailure(final IStatus status) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getShell(), TeamUIMessages.MergeIncomingChangesAction_0, TeamUIMessages.MergeIncomingChangesAction_1);
+				MessageDialog.openInformation(getShell(), TeamUIMessages.MergeIncomingChangesAction_0, status.getMessage());
 			};
 		});
 		handlePreviewRequest();
