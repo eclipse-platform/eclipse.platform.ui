@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.IFeature;
@@ -230,7 +232,7 @@ public class UpdateSearchRequest {
 	public void performSearch(
 		IUpdateSearchResultCollector collector,
 		IProgressMonitor monitor)
-		throws CoreException {
+		throws CoreException, OperationCanceledException {
 		
 		ArrayList statusList = new ArrayList();
 
@@ -373,6 +375,8 @@ public class UpdateSearchRequest {
 			scope.addSearchSite(associateSite.getLabel(), associateSite.getURL(), null);
 		}
 		if (statusList.size() > 0) {
+			if (statusList.size()==1 && ((IStatus)statusList.get(0)).getSeverity()==IStatus.CANCEL)
+				throw new OperationCanceledException();
 			IStatus[] children =
 				(IStatus[]) statusList.toArray(new IStatus[statusList.size()]);
 			MultiStatus multiStatus =
@@ -456,7 +460,14 @@ public class UpdateSearchRequest {
 				(site instanceof ISiteWithMirrors) &&
                 !(siteAdapter instanceof MirroredUpdateSiteAdapter)) {
 				
-				IURLEntry mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
+				IURLEntry mirror = null;
+				try {
+					mirror = ((IUpdateSearchResultCollectorFromMirror)collector).getMirror((ISiteWithMirrors)site, siteAdapter.getLabel());
+				}
+				catch (OperationCanceledException e) {
+					monitor.setCanceled(true);
+					return Status.CANCEL_STATUS;
+				}
 				
 				if (mirror != null) 
 					return searchOneSite(new MirroredUpdateSiteAdapter(mirror), categoriesToSkip, query, collector, associateSites, new SubProgressMonitor(monitor,1), false);

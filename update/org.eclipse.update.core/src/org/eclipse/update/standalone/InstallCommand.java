@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -195,6 +196,8 @@ public class InstallCommand extends ScriptedCommand {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(ce);
 			return false;
+		} catch (OperationCanceledException ce) {
+			return true;
 		} finally {
 			monitor.done();
 		}

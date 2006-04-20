@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.update.core.IFeature;
@@ -186,6 +187,8 @@ public class UpdateJob extends Job {
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
+		} catch (OperationCanceledException ce) {
+			return Status.CANCEL_STATUS;
 		}
 	}
 
@@ -204,6 +207,8 @@ public class UpdateJob extends Job {
 			searchRequest.performSearch(resultCollector, monitor);
 		} catch (CoreException e) {
 			statusList.add(e.getStatus());
+		} catch (OperationCanceledException ce) {
+			return Status.CANCEL_STATUS;
 		}
 		if (UpdateCore.DEBUG) {
 			UpdateCore.debug("Automatic update search finished - " //$NON-NLS-1$
@@ -290,7 +295,7 @@ public class UpdateJob extends Job {
 		 *      java.lang.String)
 		 */
 		public IURLEntry getMirror(final ISiteWithMirrors site,
-				final String siteName) {
+				final String siteName) throws OperationCanceledException {
 			if (isUpdate && isAutomatic)
 				return null;
 			if (mirrors.containsKey(site))
@@ -306,17 +311,23 @@ public class UpdateJob extends Job {
 				} else {
 					// here we need to prompt the user
 					final IURLEntry[] returnValue = new IURLEntry[1];
+					final boolean [] canceled = new boolean[1];
 					UpdateUI.getStandardDisplay().syncExec(new Runnable() {
 						public void run() {
 							MirrorsDialog dialog = new MirrorsDialog(UpdateUI
 									.getActiveWorkbenchShell(), site, siteName);
 							dialog.create();
-							dialog.open();
+							int result = dialog.open();
+							if (result==MirrorsDialog.CANCEL) {
+								canceled[0] = true;
+							}
 							IURLEntry mirror = dialog.getMirror();
 							mirrors.put(site, mirror);
 							returnValue[0] = mirror;
 						}
 					});
+					if (canceled[0])
+						throw new OperationCanceledException();
 					return returnValue[0];
 				}
 			} catch (CoreException e) {

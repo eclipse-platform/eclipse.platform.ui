@@ -186,6 +186,8 @@ public class UpdateCommand extends ScriptedCommand {
 				UpdateCore.log(ce);
 			}
 			return false;
+		} catch (OperationCanceledException ce) {
+			return true;
 		} finally {
 			monitor.done();
 		}

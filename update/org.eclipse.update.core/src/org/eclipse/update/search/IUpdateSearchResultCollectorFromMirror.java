@@ -11,6 +11,7 @@
 
 package org.eclipse.update.search;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.update.core.ISiteWithMirrors;
 import org.eclipse.update.core.IURLEntry;
 
@@ -39,6 +40,8 @@ public interface IUpdateSearchResultCollectorFromMirror extends
 	 * @param site the site to get the mirror for
 	 * @param siteName the name of the site
 	 * @return a mirror (url+label) for the specified site, or null if no mirror is needed
+	 * @throws OperationCanceledException if the user chooses to cancel
+	 * the prompt instead of choosing the mirror from the list.
 	 */
-	public IURLEntry getMirror(ISiteWithMirrors site, String siteName); 
+	public IURLEntry getMirror(ISiteWithMirrors site, String siteName) throws OperationCanceledException;
 }
