@@ -81,7 +81,7 @@ public class DayEditorTest {
 				new Event(time(10, 00), time(13, 15), "Meet with customer"),
 				new Event(time(12, 45), time(14, 15), "RC1 due"),
 				new Event(time(13, 45), time(14, 15), "Way too much work"),
-				new Event(time(11, 00), time(13, 30), "Callisto meeting")},
+				new Event(time(10, 00), time(13, 30), "Callisto meeting")},
 			{new Event("Nat. Conference")},
 			{},
 			{new Event(time(8, 50), time(9, 00), "Stand-up meeting"),

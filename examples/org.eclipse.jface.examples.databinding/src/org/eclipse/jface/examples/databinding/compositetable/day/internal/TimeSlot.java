@@ -118,14 +118,6 @@ public class TimeSlot extends Canvas {
 				traverse(SWT.TRAVERSE_TAB_NEXT);
 				return;
 			}
-			switch (e.character) {
-			case SWT.TAB:
-				if ((e.stateMask & SWT.SHIFT) != 0) {
-					traverse(SWT.TRAVERSE_TAB_PREVIOUS);
-				} else {
-					traverse(SWT.TRAVERSE_TAB_NEXT);
-				}
-			}
 		}
 	};
 

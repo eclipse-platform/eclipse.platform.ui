@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -314,5 +315,27 @@ public class TimeSlice extends Composite {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void addKeyListener(KeyListener listener) {
+		super.addKeyListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.addKeyListener(listener);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		super.removeKeyListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.removeKeyListener(listener);
+		}
+	}
+	
 } // @jve:decl-index=0:visual-constraint="10,10"
 

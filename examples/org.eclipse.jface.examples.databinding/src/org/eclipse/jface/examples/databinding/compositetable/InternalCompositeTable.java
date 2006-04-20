@@ -230,6 +230,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	public void setSliderVisible(boolean visible) {
 		this.sliderVisible = visible;
 		sliderHolder.setLayoutData(getSliderGridData());
+		Display.getCurrent().addFilter(SWT.KeyDown, displayKeyDownFilter);
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
 				sliderHolder.getParent().layout(true);
@@ -372,7 +373,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		if (rowControl == null) {
 			return;
 		}
-
+		
 		clientAreaHeight = controlHolder.getSize().y;
 		if (clientAreaHeight <= 0) {
 			return;
@@ -416,12 +417,12 @@ public class InternalCompositeTable extends Composite implements Listener {
 			// Scroll the view so that the right number of row
 			// objects are showing and they have the right data
 			if (rows.size() - Math.abs(currentVisibleTopRow - topRow) > 0) {
-				if (currentRow >= numRowsVisible) {	// was "if"
-					deleteRowAt(0);
-					++currentVisibleTopRow;
-					++topRow;
-					--currentRow;
-				}
+//				if (currentRow >= numRowsVisible) {
+//					deleteRowAt(0);
+//					++currentVisibleTopRow;
+//					++topRow;
+//					--currentRow;
+//				}
 				scrollTop();
 				fixNumberOfRows();
 			} else {
@@ -445,7 +446,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		
 		// Make sure that the currentRow is within the visible range
 		// (after PgDn, it could wind up outside the visible range)
-		if (currentRow >= numRowsVisible) {
+		if (currentRow >= numRowsVisible && getNumRowsVisible() < numRowsInDisplay) {
 			currentRow = numRowsVisible-1;
 		}
 
@@ -836,6 +837,14 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 	private boolean needToRequestRC = true;
 
+	private Listener displayKeyDownFilter = new Listener() {
+		public void handleEvent(Event event) {
+			if (rowControl.getClass().isAssignableFrom(event.widget.getClass())) {
+				makeFocusedRowVisible();
+			}
+		}
+	};
+	
 	/**
 	 * Handle a keyPressed event on any row control.
 	 * 
@@ -845,6 +854,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 *            the actual KeyEvent
 	 */
 	public void keyPressed(TableRow sender, KeyEvent e) {
+		if (makeFocusedRowVisible()) return;
+		
 		if ((e.stateMask & SWT.CONTROL) != 0) {
 			switch (e.keyCode) {
 			case SWT.HOME:
@@ -1135,6 +1146,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 *            The SWT TraverseEvent
 	 */
 	public void keyTraversed(TableRow sender, TraverseEvent e) {
+		if (makeFocusedRowVisible()) return;
+
 		if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
 			if (currentColumn >= sender.getNumColumns() - 1) {
 				e.detail = SWT.TRAVERSE_NONE;
@@ -1157,6 +1170,27 @@ public class InternalCompositeTable extends Composite implements Listener {
 	}
 
 	/**
+	 * Makes sure that the focused row is visible
+	 * 
+	 * @return true if the display needed to be scrolled; false otherwise
+	 */
+	public boolean makeFocusedRowVisible() {
+		int topRowDelta = topRow - slider.getSelection();
+		if (currentRow < 0) {
+			topRowDelta = currentRow;
+		} else if (currentRow >= getNumRowsVisible()) {
+			topRowDelta = currentRow - getNumRowsVisible() + 1;
+		} else {
+			return false;
+		}
+		currentRow += -1 * topRowDelta;
+		
+		setTopRow(topRow + topRowDelta);
+		getControl(currentColumn, currentRow).setFocus(); // ?? Can I get away with avoiding asyncExec here ??
+		return true;
+	}
+
+	/**
 	 * The SelectionListener for the table's slider control.
 	 */
 	private SelectionListener sliderSelectionListener = new SelectionListener() {
@@ -1170,10 +1204,33 @@ public class InternalCompositeTable extends Composite implements Listener {
 				return;
 			}
 
-			deselect(getControl(currentColumn, currentRow));
+			deselectCurrentRowIfVisible();
 
+			int delta = topRow - slider.getSelection();
+			int oldCurrentRow = currentRow;
+			currentRow += delta;
+			
 			setTopRow(slider.getSelection());
-			deferredSetFocus(getControl(currentColumn, currentRow), true);
+			
+			// If the focused row just became visible, show the focus
+			if (oldCurrentRow < 0 || oldCurrentRow >= getNumRowsVisible()) {
+				if (currentRow >= 0 && currentRow < getNumRowsVisible()) {
+					Control newFocusControl = getControl(currentColumn, currentRow);
+					if (newFocusControl.isFocusControl()) {
+						newFocusControl.notifyListeners(SWT.FocusIn, new Event());
+					} else {
+						deferredSetFocus(newFocusControl, true);
+					}
+				}
+			} else {
+				// If the new viewport doesn't overlap the old one, hide the focus
+				if (currentRow < 0 || currentRow >= getNumRowsVisible()) {
+//					deleteRowAt(oldCurrentRow);
+//					getControl(currentColumn, oldCurrentRow).getParent().setVisible(false);
+//					getControl(currentColumn, oldCurrentRow).getParent().setVisible(true);
+					getControl(currentColumn, oldCurrentRow).notifyListeners(SWT.FocusOut, new Event());
+				}
+			}
 		}
 
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -1185,25 +1242,36 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * Scroll wheel event handling.
 	 */
 	public void handleEvent(Event event) {
-
 		if (event.count > 0) {
 			if (topRow > 0) {
 				if (!fireRequestRowChangeEvent()) {
 					return;
 				}
-				deselect(getControl(currentColumn, currentRow));
+				deselectCurrentRowIfVisible();
 				setTopRow(topRow - 1);
-				deferredSetFocus(getControl(currentColumn, currentRow), true);
+				++currentRow;
+				if (currentRow == 0) {
+					deferredSetFocus(getControl(currentColumn, currentRow), true);
+				}
 			}
 		} else {
 			if (topRow < numRowsInCollection - numRowsVisible) {
 				if (!fireRequestRowChangeEvent()) {
 					return;
 				}
-				deselect(getControl(currentColumn, currentRow));
+				deselectCurrentRowIfVisible();
 				setTopRow(topRow + 1);
-				deferredSetFocus(getControl(currentColumn, currentRow), true);
+				--currentRow;
+				if (currentRow == getNumRowsVisible()-1) {
+					deferredSetFocus(getControl(currentColumn, currentRow), true);
+				}
 			}
+		}
+	}
+
+	private void deselectCurrentRowIfVisible() {
+		if (currentRow >= 0 && currentRow < numRowsVisible) {
+			deselect(getControl(currentColumn, currentRow));
 		}
 	}
 
@@ -1625,6 +1693,24 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		throw new IllegalArgumentException("getControlRow passed a control that is not visible inside CompositeTable");
 	}
+	
+	/**
+	 * Method getControlRowObject.  Given a row control, returns its row number
+	 * relative to the topRow.
+	 * 
+	 * @param rowControl The row object to find
+	 * @return The row object managing the rowControl
+	 * @throws IllegalArgumentException if rowControl is not currently visible
+	 */
+	public TableRow getControlRowObject(Control rowControl) {
+		for (Iterator rowsIter = rows.iterator(); rowsIter.hasNext();) {
+			TableRow row = (TableRow) rowsIter.next();
+			if (row.getRowControl() == rowControl) {
+				return row;
+			}
+		}
+		throw new IllegalArgumentException("getControlRowObject passed a control that is not visible inside CompositeTable");
+	}
 
 	/**
 	 * Returns the TableRow by the specified 0-based offset from the top visible
@@ -1695,7 +1781,11 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	private void internalSetSelection(int column, int row, boolean rowChange) {
 		Control toFocus = getControl(column, row);
-		deferredSetFocus(toFocus, rowChange);
+		if (toFocus.isFocusControl()) {
+			toFocus.notifyListeners(SWT.FocusIn, new Event());
+		} else {
+			deferredSetFocus(toFocus, rowChange);
+		}
 	}
 
 	/**

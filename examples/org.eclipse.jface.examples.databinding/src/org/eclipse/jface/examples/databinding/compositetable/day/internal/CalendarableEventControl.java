@@ -76,8 +76,8 @@ public class CalendarableEventControl extends Canvas  {
 		super(parent, style);
 		Display display = parent.getDisplay();
 		BORDER_COLOR = new Color(display, 215, 215, 245);
-		SELECTED_BORDER_COLOR = new Color(display, 190, 190, 220);
-		SELECTED_BACKGROUND_COLOR = new Color(display, 225, 225, 245);
+		SELECTED_BORDER_COLOR = new Color(display, 220, 220, 220);
+		SELECTED_BACKGROUND_COLOR = new Color(display, 245, 245, 235);
 		BACKGROUND_COLOR = new Color(display, 240, 240, 255);
 
 		initialize();

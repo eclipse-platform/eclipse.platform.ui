@@ -713,6 +713,18 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
+	 * Makes sure that the focused row is visible
+	 * 
+	 * @return true if the display needed to be scrolled; false otherwise
+	 */
+	public boolean makeFocusedRowVisible() {
+		if (contentPane != null) {
+			return contentPane.makeFocusedRowVisible();
+		}
+		return false;
+	}
+	
+	/**
 	 * Method refreshAllRows. Refresh all visible rows in the CompositeTable
 	 * from the original data.
 	 */

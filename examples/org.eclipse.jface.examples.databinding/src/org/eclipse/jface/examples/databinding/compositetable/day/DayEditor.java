@@ -40,6 +40,9 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
@@ -115,6 +118,7 @@ public class DayEditor extends Composite implements IEventEditor {
 				TimeSlice timeSlice = (TimeSlice) newRow;
 				timeSlice.setNumberOfColumns(numberOfDays);
 				timeSlice.addCellFocusListener(cellFocusListener);
+				timeSlice.addKeyListener(keyListener);
 			}
 		});
 		compositeTable.addRowContentProvider(new IRowContentProvider() {
@@ -140,19 +144,92 @@ public class DayEditor extends Composite implements IEventEditor {
 		compositeTable.setRunTime(true);
 	}
 	
+	private KeyListener keyListener = new KeyAdapter() {
+		public void keyPressed(KeyEvent e) {
+			int selectedRow = convertViewportRowToDayRow(compositeTable.getCurrentRow());
+			int selectedDay = compositeTable.getCurrentColumn();
+			Calendarable selection = selectedCalendarable;
+
+			if (selection == null) {
+				switch (e.character) {
+				case SWT.TAB:
+					if ((e.stateMask & SWT.SHIFT) != 0) {
+						selection = findNextCalendarable(selectedDay, selectedRow);
+					} else {
+						selection = findPreviousCalendarable(selectedDay, selectedRow);
+					}
+				}
+			} else {
+				switch (e.character) {
+				case SWT.TAB:
+					if ((e.stateMask & SWT.SHIFT) != 0) {
+						selection = findNextCalendarable(selection);
+					} else {
+						selection = findPreviousCalendarable(selection);
+					}
+				}
+			}
+			
+			setSelection(selection);
+		}
+	};
+	
+	private Calendarable findNextCalendarable(int selectedDay, int selectedRow) {
+		Calendarable result = null;
+		int startDay = selectedDay;
+		
+//		searchTimedEvents(startDay, selectedRow)
+		
+		while (selectedDay != startDay) {
+			
+			Calendarable[][] eventLayout = model.getEventLayout(selectedDay);
+		}
+		return result;
+	}
+
+	private Calendarable findPreviousCalendarable(int selectedDay, int selectedRow) {
+		return findPreviousCalendarable(findNextCalendarable(selectedDay, selectedRow));
+	}
+	
+	private Calendarable findNextCalendarable(Calendarable selection) {
+		if (selection.isAllDayEvent()) {
+			
+		} else {
+			
+		}
+		return null;
+	}
+
+	protected Calendarable findPreviousCalendarable(Calendarable selection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private boolean selectCalendarableControlOnSetFocus = true;
+	
 	private FocusListener cellFocusListener = new FocusAdapter() {
 		public void focusGained(FocusEvent e) {
 			TimeSlice sendingRow = (TimeSlice) ((Composite) e.widget).getParent();
 			int day = sendingRow.getControlColumn(e.widget);
 			int row = compositeTable.getControlRow(sendingRow);
-			int dayRow = convertViewportRowToDayRow(row);
-			Calendarable toSelect = getFirstCalendarableAt(day, dayRow);
-			if (toSelect == null) {
-				toSelect = getAllDayCalendarableAt(day, row + compositeTable.getTopRow());
+			if (selectCalendarableControlOnSetFocus) {
+				setSelectionByDayAndRow(day, row, null);
+			} else {
+				selectCalendarableControlOnSetFocus = true;
 			}
-			setSelection(toSelect);
 		}
 	};
+	
+	private void setSelectionByDayAndRow(int day, int row, Calendarable aboutToSelect) {
+		int dayRow = convertViewportRowToDayRow(row);
+		if (aboutToSelect == null)
+			aboutToSelect = getFirstCalendarableAt(day, dayRow);
+		if (aboutToSelect == null) {
+			aboutToSelect = getAllDayCalendarableAt(day, row + compositeTable.getTopRow());
+		}
+		setSelection(aboutToSelect);
+		aboutToSelect = null;
+	}
 
 	/** (non-API)
 	 * Method getFirstCalendarableAt. Finds the calendarable event at the 
@@ -217,13 +294,24 @@ public class DayEditor extends Composite implements IEventEditor {
 				selectedCalendarable.getControl().setSelected(false);
 			}
 		}
+		
+		scrollCalendarableIntoView(newSelection);
 		selectedCalendarable = newSelection;
+		
 		if (newSelection != null) {
 			newSelection.getControl().setSelected(true);
 		}
 		fireSelectionChangeEvent(selectedCalendarable, newSelection);
 	}
 	
+	/**
+	 * @param newSelection
+	 */
+	private void scrollCalendarableIntoView(Calendarable newSelection) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Method getSelection.  Returns the selected Calendarable event or null
 	 * if no Calendarable is selected.
@@ -678,6 +766,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void createCalendarableControl(Calendarable calendarable) {
 		if (calendarable.getControl() == null) {
 			calendarable.setControl(newCEC());
+			if (calendarable == selectedCalendarable) {
+				calendarable.getControl().setSelected(true);
+			}
 		}
 	}
 	
@@ -706,15 +797,15 @@ public class DayEditor extends Composite implements IEventEditor {
 		 */
 		public void mouseDown(MouseEvent e) {
 			CalendarableEventControl control = (CalendarableEventControl) e.widget;
-			Calendarable calendarable = control.getCalendarable();
-			int day = model.getDay(calendarable);
+			Calendarable aboutToSelect = control.getCalendarable();
+			int day = model.getDay(aboutToSelect);
 			int row = 0;
-			if (calendarable.isAllDayEvent()) {
+			if (aboutToSelect.isAllDayEvent()) {
 				int allDayEventRow = 0;
 				for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
 					Calendarable candidate = (Calendarable) calendarablesIter.next();
 					if (candidate.isAllDayEvent()) {
-						if (candidate == calendarable) {
+						if (candidate == aboutToSelect) {
 							row = allDayEventRow - compositeTable.getTopRow();
 							break;
 						}
@@ -723,7 +814,7 @@ public class DayEditor extends Composite implements IEventEditor {
 				}
 			} else {
 				// Convert to viewport coordinates
-				Point upperLeft = calendarable.getUpperLeftPositionInDayRowCoordinates();
+				Point upperLeft = aboutToSelect.getUpperLeftPositionInDayRowCoordinates();
 				int topRowOffset = compositeTable.getTopRow() - numberOfAllDayEventRows;
 				int startOfDayOffset = model.computeStartHour() * model.getNumberOfDivisionsInHour();
 				row = upperLeft.y - topRowOffset - startOfDayOffset;
@@ -731,7 +822,9 @@ public class DayEditor extends Composite implements IEventEditor {
 					row = 0;
 				}
 			}
+			selectCalendarableControlOnSetFocus = false;
 			compositeTable.setSelection(day, row);
+			setSelectionByDayAndRow(day, row, aboutToSelect);
 		}
 	};
 
