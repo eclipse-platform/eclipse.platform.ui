@@ -76,6 +76,10 @@ a .link-label {
 	font-weight : bold;
 }
 
+#navigation-links a.high-contrast .link-label {
+	display : none !important;
+}
+
 /* Text in links. */
 a .text {
 	font-size : 8pt;
@@ -266,6 +270,13 @@ body, .page {
 	left : 9px;
 }
 
+#navigation-links a.high-contrast img {
+	height: 32px;
+	width: 32px;
+	top: 5px;
+	left: 0px;
+}
+
 /*
  * Adjust image position for hover version.
  */
@@ -416,6 +427,22 @@ body, .page {
 	background-image : url(../graphics/icons/ctool/wb_nav_hover.gif); 
 	width : 51px;
 	height : 64px;
+}
+
+#action-links a.high-contrast img,
+#action-links a.high-contrast:hover img,
+#action-links a.high-contrast:focus img,
+#action-links a.high-contrast:active img {
+	display: none !important;
+}
+
+#action-links a.high-contrast .link-label,
+#action-links a.high-contrast:hover .link-label,
+#action-links a.high-contrast:focus .link-label,
+#action-links a.high-contrast:active .link-label {
+	display: block !important;
+	text-decoration: underline;
+	top : 5px;
 }
 
 /* 

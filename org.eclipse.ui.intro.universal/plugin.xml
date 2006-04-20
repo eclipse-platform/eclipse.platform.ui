@@ -75,6 +75,36 @@
             		  value="$theme$graphics/launchbar/migrate16.png"/>
             <property name="launchbarWebresourcesIcon"
             		  value="$theme$graphics/launchbar/webresources16.png"/>
+
+            <property name="highContrast-overview"
+            		  value="$theme$graphics/icons/ctool/overview.png"/>
+            <property name="highContrast-firststeps"
+            		  value="$theme$graphics/icons/ctool/firststeps.png"/>
+            <property name="highContrast-tutorials"
+            		  value="$theme$graphics/icons/ctool/tutorials.png"/>
+            <property name="highContrast-samples"
+            		  value="$theme$graphics/icons/ctool/samples.png"/>
+            <property name="highContrast-whatsnew"
+            		  value="$theme$graphics/icons/ctool/whatsnew.png"/>
+            <property name="highContrast-webresources"
+            		  value="$theme$graphics/icons/ctool/webresources.png"/>
+            <property name="highContrast-migrate"
+            		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            		  
+            <property name="highContrastNav-overview"
+            		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
+            <property name="highContrastNav-firststeps"
+            		  value="$theme$graphics/icons/ctool/fs_nav.png"/>
+            <property name="highContrastNav-tutorials"
+            		  value="$theme$graphics/icons/ctool/tu_nav.png"/>
+            <property name="highContrastNav-samples"
+            		  value="$theme$graphics/icons/ctool/sa_nav.png"/>
+            <property name="highContrastNav-whatsnew"
+            		  value="$theme$graphics/icons/ctool/wn_nav.png"/>
+            <property name="highContrastNav-webresources"
+            		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
+            <property name="highContrastNav-migrate"
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/>            		  
       </theme>
       <theme
             id="org.eclipse.ui.intro.universal.purpleMesh"
@@ -99,6 +129,21 @@
             		  value="$theme$graphics/launchbar/migrate16.png"/>
             <property name="launchbarWebresourcesIcon"
             		  value="$theme$graphics/launchbar/webresources16.png"/>
+            		  
+            <property name="highContrast-overview"
+            		  value="$theme$graphics/icons/etool/overview72.gif"/>
+            <property name="highContrast-firststeps"
+            		  value="$theme$graphics/icons/etool/firsteps72.gif"/>
+            <property name="highContrast-tutorials"
+            		  value="$theme$graphics/icons/etool/tutorials72.gif"/>
+            <property name="highContrast-samples"
+            		  value="$theme$graphics/icons/etool/samples72.gif"/>
+            <property name="highContrast-whatsnew"
+            		  value="$theme$graphics/icons/etool/whatsnew72.gif"/>
+            <property name="highContrast-webresources"
+            		  value="$theme$graphics/icons/etool/webrsrc72.gif"/>
+            <property name="highContrast-migrate"
+            		  value="$theme$graphics/icons/etool/migrate72.gif"/>
       </theme>
    </extension>
 </plugin>

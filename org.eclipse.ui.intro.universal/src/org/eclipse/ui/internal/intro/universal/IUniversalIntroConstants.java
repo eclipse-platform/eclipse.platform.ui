@@ -110,4 +110,7 @@ public interface IUniversalIntroConstants {
 	String LAUNCHBAR_WHATSNEW_ICON = "launchbarWhatsnewIcon"; //$NON-NLS-1$
 	String LAUNCHBAR_MIGRATE_ICON = "launchbarMigrateIcon"; //$NON-NLS-1$
 	String LAUNCHBAR_WEBRESOURCES_ICON = "launchbarWebresourcesIcon"; //$NON-NLS-1$
+	String HIGH_CONTRAST_PREFIX = "highContrast-"; //$NON-NLS-1$
+	String HIGH_CONTRAST_NAV_PREFIX = "highContrastNav-"; //$NON-NLS-1$
+	String HIGH_CONTRAST = "high-contrast"; //$NON-NLS-1$
 }

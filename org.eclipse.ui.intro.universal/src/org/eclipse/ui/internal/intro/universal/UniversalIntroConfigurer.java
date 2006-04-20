@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IntroConfigurer;
@@ -46,6 +47,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	public String getVariable(String variableName) {
+		if (variableName.equals(HIGH_CONTRAST)) {
+			boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+			if (highContrast)
+				return variableName;
+			else
+				return ""; //$NON-NLS-1$
+		}
 		IProduct product = Platform.getProduct();
 		if (product != null) {
 			// try product property first
@@ -362,6 +370,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		img.setAttribute("id", imgId); //$NON-NLS-1$
 		img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
 		// img.setAttribute("src", imgSrc); //$NON-NLS-1$
+		boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+		if (highContrast) {
+			String key = HIGH_CONTRAST_PREFIX+id;
+			String value = getVariable(key);
+			if (value!=null)
+				img.setAttribute("src", value); //$NON-NLS-1$
+		}
 		img.setAttribute("alt", imgAlt); //$NON-NLS-1$
 		IntroElement text = new IntroElement("text"); //$NON-NLS-1$
 		text.setValue(imgText);
@@ -376,6 +391,18 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		element.setAttribute("label", label); //$NON-NLS-1$
 		element.setAttribute("url", url); //$NON-NLS-1$
 		element.setAttribute("id", id); //$NON-NLS-1$
+		boolean highContrast = PlatformUI.getWorkbench().getDisplay().getHighContrast();
+		if (highContrast) {
+			IntroElement img = new IntroElement("img"); //$NON-NLS-1$
+			img.setAttribute("style-id", "content-img"); //$NON-NLS-1$ //$NON-NLS-2$
+			String key = HIGH_CONTRAST_NAV_PREFIX+id;
+			String value = getVariable(key);
+			if (value!=null)
+				img.setAttribute("src", value); //$NON-NLS-1$
+			img.setAttribute("alt", label); //$NON-NLS-1$
+			element.addChild(img);		
+			styleId += " "+HIGH_CONTRAST; //$NON-NLS-1$
+		}
 		element.setAttribute("style-id", styleId); //$NON-NLS-1$
 		return element;
 	}

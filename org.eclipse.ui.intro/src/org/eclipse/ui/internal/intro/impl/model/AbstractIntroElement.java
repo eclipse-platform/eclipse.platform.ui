@@ -178,7 +178,7 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
 
 
     private AbstractIntroElement parent;
-    private IConfigurationElement cfgElement;
+    private Object cfgElement;
     private Bundle bundle;
     private String mixinStyle;
 
@@ -188,7 +188,7 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      */
     AbstractIntroElement(IConfigurationElement element) {
         cfgElement = element;
-        bundle = BundleUtil.getBundleFromConfigurationElement(cfgElement);
+        bundle = BundleUtil.getBundleFromConfigurationElement(element);
     }
 
 
@@ -201,6 +201,7 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      * @param pd
      */
     AbstractIntroElement(Element element, Bundle bundle) {
+    	this.cfgElement = element;
         this.bundle = bundle;
     }
 
@@ -232,7 +233,11 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
      * @return
      */
     public IConfigurationElement getCfgElement() {
-        return cfgElement;
+        return cfgElement instanceof IConfigurationElement?(IConfigurationElement)cfgElement:null;
+    }
+    
+    public Element getElement() {
+    	return cfgElement instanceof Element?(Element)cfgElement:null;
     }
 
     /**

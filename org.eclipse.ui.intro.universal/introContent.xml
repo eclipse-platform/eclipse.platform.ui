@@ -52,7 +52,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -85,7 +85,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -115,7 +115,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -145,7 +145,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -174,7 +174,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -203,7 +203,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>
@@ -233,7 +233,7 @@
             <group id="page-links" computed="true">
             </group>
             <group id="action-links">
-                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench">
+                <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Workbench" id="workbench" style-id="$high-contrast$">
                     <text>Go to the workbench</text>
                 </link>
             </group>

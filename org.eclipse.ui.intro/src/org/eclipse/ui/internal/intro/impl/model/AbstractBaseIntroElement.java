@@ -69,6 +69,11 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
     public String getStyleId() {
         return style_id;
     }
+    
+    protected void loadFromParent() {
+        style_id = getAttribute(getElement(), ATT_STYLE_ID);
+        filteredFrom = getAttribute(getElement(), ATT_FILTERED_FROM);
+    }
 
     /**
      * @return Returns the filter_kind.
