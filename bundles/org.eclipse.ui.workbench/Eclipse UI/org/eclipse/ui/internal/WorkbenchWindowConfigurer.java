@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -620,8 +621,16 @@ public final class WorkbenchWindowConfigurer implements
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Control createCoolBarControl(Composite parent) {
-        return actionBarConfigurer.getActionBarPresentationFactory().createCoolBarControl(
-        		(ICoolBarManager2) window.getCoolBarManager2(), parent);
+    	ICoolBarManager coolBarManager = window.getCoolBarManager2();
+    	if (coolBarManager != null) {
+        	if (coolBarManager instanceof ICoolBarManager2) {
+				return ((ICoolBarManager2) coolBarManager).createControl2(parent);
+			}
+        	if (coolBarManager instanceof CoolBarManager) {
+				return ((CoolBarManager) coolBarManager).createControl(parent);
+			}
+        }
+        return null;
     }
 
     /* (non-Javadoc)

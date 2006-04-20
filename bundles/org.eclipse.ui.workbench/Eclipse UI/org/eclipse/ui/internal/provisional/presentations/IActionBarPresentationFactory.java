@@ -15,8 +15,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * The intention of this class is to allow for replacing the implementation of
@@ -40,18 +38,6 @@ public interface IActionBarPresentationFactory {
 	public ICoolBarManager2 createCoolBarManager();
 
 	/**
-	 * Creates the control for the window's cool bar. Subclasses may override.
-	 * 
-	 * @param coolBarManager
-	 *            the window's cool bar manager
-	 * @param parent
-	 *            the parent composite
-	 * @return the window's cool bar control
-	 */
-	public Control createCoolBarControl(ICoolBarManager2 coolBarManager,
-			Composite parent);
-
-	/**
 	 * Creates a tool bar manager for window's tool bar area.
 	 * 
 	 * @return the tool bar manager
@@ -59,35 +45,11 @@ public interface IActionBarPresentationFactory {
 	public IToolBarManager2 createToolBarManager();
 
 	/**
-	 * Creates the control for the window's tool bar. Subclasses may override.
-	 * 
-	 * @param toolBarManager
-	 *            the window's toolbar manager
-	 * @param parent
-	 *            the parent composite
-	 * @return the window's tool bar control
-	 */
-	public Control createToolBarControl(IToolBarManager2 toolBarManager,
-			Composite parent);
-
-	/**
 	 * Creates a tool bar manager for a view's tool bar.
 	 * 
 	 * @return the tool bar manager
 	 */
 	public IToolBarManager2 createViewToolBarManager();
-
-	/**
-	 * Creates the control for a view tool bar. Subclasses may override.
-	 * 
-	 * @param toolBarManager
-	 *            the view's tool bar manager
-	 * @param parent
-	 *            the parent composite
-	 * @return the view's tool bar control
-	 */
-	public Control createViewToolBarControl(IToolBarManager2 toolBarManager,
-			Composite parent);
 
 	/**
 	 * Creates a toolbar contribution item for a window toolbar manager to be

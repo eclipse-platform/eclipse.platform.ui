@@ -46,7 +46,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
-import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
@@ -3417,19 +3416,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
     protected ICoolBarManager createCoolBarManager2(int style) {
         return getActionBarPresentationFactory().createCoolBarManager();
     }
-    
-    /**
-     * Creates the control for the cool bar manager.
-     * <p>
-     * Subclasses may override this method to customize the cool bar manager.
-     * </p>
-     * 
-     * @return an instance of <code>CoolBar</code>\
-	 * @since 3.2
-     */
-    protected Control createCoolBarControl(Composite parent) {
-        return getActionBarPresentationFactory().createCoolBarControl((ICoolBarManager2) getCoolBarManager2(), parent);
-    }
 
     /**
      * Returns a new tool bar manager for the window.
@@ -3441,18 +3427,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     protected IToolBarManager createToolBarManager2(int style) {
         return getActionBarPresentationFactory().createToolBarManager();
-    }
-
-    /**
-     * Creates the control for the tool bar manager.
-     * <p>
-     * Subclasses may override this method to customize the tool bar manager.
-     * </p>
-     * @return a Control
-	 * @since 3.2
-     */
-    protected Control createToolBarControl(Composite parent) {
-        return getActionBarPresentationFactory().createToolBarControl((IToolBarManager2) getToolBarManager2(), parent);
     }
     
     /**

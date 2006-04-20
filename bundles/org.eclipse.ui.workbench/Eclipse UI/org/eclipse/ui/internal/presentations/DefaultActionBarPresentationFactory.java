@@ -18,8 +18,6 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ToolBarContributionItem2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 
 /**
@@ -44,14 +42,6 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createCoolBarControl(org.eclipse.jface.action.ICoolBarManager, org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createCoolBarControl(ICoolBarManager2 coolBarManager,
-			Composite parent) {
-		return coolBarManager.createControl2(parent);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createToolBarManager()
 	 */
 	public IToolBarManager2 createToolBarManager() {
@@ -59,26 +49,10 @@ public class DefaultActionBarPresentationFactory implements IActionBarPresentati
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createToolBarControl(org.eclipse.jface.action.IToolBarManager2, org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createToolBarControl(IToolBarManager2 toolBarManager,
-			Composite parent) {
-		return toolBarManager.createControl2(parent);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createViewToolBarManager()
 	 */
 	public IToolBarManager2 createViewToolBarManager() {
 		return new ToolBarManager2(SWT.FLAT | SWT.RIGHT | SWT.WRAP);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.IActionBarPresentationFactory#createViewToolBarControl(org.eclipse.jface.action.IToolBarManager2, org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createViewToolBarControl(IToolBarManager2 toolBarManager,
-			Composite parent) {
-		return toolBarManager.createControl2(parent);
 	}
 
 	/* (non-Javadoc)
