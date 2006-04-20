@@ -573,7 +573,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT, MessageDialogWithToggle.NEVER);
 		
 		store.setDefault(ICVSUIConstants.PREF_UPDATE_HANDLING, ICVSUIConstants.PREF_UPDATE_HANDLING_PERFORM);
-		store.setDefault(ICVSUIConstants.PREF_UPDATE_PREVIEW, ICVSUIConstants.PREF_UPDATE_PREVIEW_IN_DIALOG);
+		store.setDefault(ICVSUIConstants.PREF_UPDATE_PREVIEW, ICVSUIConstants.PREF_UPDATE_PREVIEW_IN_SYNCVIEW);
 		
 		store.setDefault(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC, true);
 		
