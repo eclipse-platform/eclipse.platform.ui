@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class EclipseRSSViewer implements IIntroContentProvider {
 	private static final String NEWS_URL = "http://www.eclipse.org/home/eclipsenews.rss"; //$NON-NLS-1$
+	private static final String INTRO_SHOW_IN_BROWSER = "http://org.eclipse.ui.intro/openBrowser?url="; //$NON-NLS-1$
 	private static final int MAX_NEWS_ITEMS = 5;
 	private static final String HREF_BULLET = "bullet"; //$NON-NLS-1$
 
@@ -200,11 +202,11 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 					NewsItem item = (NewsItem) items.get(i);
 					out.print("<li>"); //$NON-NLS-1$
 					out.print("<a class=\"topicList\" href=\""); //$NON-NLS-1$
-					out.print(item.url);
+					out.print(createExternalURL(item.url));
 					out.print("\">"); //$NON-NLS-1$
 					out.print(item.label);
 					out.print("</a>"); //$NON-NLS-1$
-					out.print("</li>"); //$NON-NLS-1$
+					out.println("</li>"); //$NON-NLS-1$
 				}
 			} else {
 				out.print("<p class=\"status-text\">"); //$NON-NLS-1$
@@ -261,6 +263,12 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		}
 		buffer.append("</form>"); //$NON-NLS-1$
 		formText.setText(buffer.toString(), true, false);
+	}
+
+	private String createExternalURL(String url) {
+		//TODO don't know which encoding to pass here - revisit
+		return INTRO_SHOW_IN_BROWSER+
+							URLEncoder.encode(url);
 	}
 
 	private Image createImage(IPath path) {

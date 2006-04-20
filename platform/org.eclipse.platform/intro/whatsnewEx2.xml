@@ -5,7 +5,7 @@
        		<link style-id="content-link" label="New Updates" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.platform&amp;class=org.eclipse.platform.internal.LaunchUpdateIntroAction" id="updates">
           		<text>Get the latest updates from Eclipse.org</text>
        		</link>
-       		<link style-id="content-link" label="Eclipse community" url="http://www.eclipse.org" id="eclipse">
+       		<link style-id="content-link" label="Eclipse community" url="http://org.eclipse.ui.intro/openBrowser?url=http://www.eclipse.org" id="eclipse">
           		<text>Join the community, read articles and news on Eclipse.org</text>
        		</link>
 			<group id="rss-news" label="Latest News" expandable="true" expanded="true">
