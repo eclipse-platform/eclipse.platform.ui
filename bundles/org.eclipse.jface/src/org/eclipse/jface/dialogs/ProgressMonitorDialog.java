@@ -27,7 +27,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -365,13 +367,20 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     /*
      * (non-Javadoc) Method declared in Window.
      */
-    protected void configureShell(Shell shell) {
+    protected void configureShell(final Shell shell) {
         super.configureShell(shell);
         shell.setText(JFaceResources.getString("ProgressMonitorDialog.title")); //$NON-NLS-1$
         if (waitCursor == null) {
 			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
 		}
         shell.setCursor(waitCursor);
+        // Add a listener to set the message properly when the dialog becomes visible
+        shell.addListener(SWT.Show, new Listener() {
+			public void handleEvent(Event event) {
+				setMessage(message);
+			}
+		
+		});
     }
 
     /*
@@ -600,7 +609,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
     private void setMessage(String messageString) {
         //must not set null text in a label
         message = messageString == null ? "" : messageString; //$NON-NLS-1$
-        if (messageLabel == null || messageLabel.isDisposed()) {
+        if (messageLabel == null || messageLabel.isDisposed() || !messageLabel.isVisible()) {
 			return;
 		}
         messageLabel.setToolTipText(messageString);
