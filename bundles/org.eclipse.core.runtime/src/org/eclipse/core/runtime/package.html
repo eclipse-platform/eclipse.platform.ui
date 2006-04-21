@@ -5,16 +5,13 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides core support for plug-ins and the plug-in registry.
+Provides support for the runtime platform, core utility methods and the extension registry.
 <h2>
 Package Specification</h2>
-This package specifies the API related to running the platform itself.  This includes 
-area such as the definition and management of plug-ins and the starting, stopping and maintaining the 
-platform itself.  In addition, this API supplies various utility types such as <tt>Path</tt>, 
-<tt>IPath</tt> and various flavours of progress monitors.
-<p>
-Clients writing plug-ins or accessing plug-in functionality will likely be interested in the types
-provided by this package.
-</p>
+This package contains three components:<ul>
+<li>APIs related to the runtime platform itself (provided by the <tt>org.eclipse.core.runtime</tt> plug-in)</li>
+<li>Various utility types such as <tt>Path</tt>, <tt>IPath</tt> and various flavours of progress monitors (provided by the <tt>org.eclipse.equinox.common</tt> plug-in)</li>
+<li>Extension registry mechanism (provided by the <tt>org.eclipse.equinox.registry</tt> plug-in)</li>
+</ul>
 </body>
 </html>
