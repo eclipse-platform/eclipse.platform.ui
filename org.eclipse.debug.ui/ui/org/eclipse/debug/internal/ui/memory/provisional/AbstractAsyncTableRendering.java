@@ -2030,7 +2030,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		menu.add(new Separator());
 		menu.add(fFormatRenderingAction);
 
-		if (!isDynamicLoad())
+		if (!isDynamicLoad() && getMemoryBlock() instanceof IMemoryBlockExtension)
 		{		
 			menu.add(new Separator());
 			menu.add(fPrevAction);

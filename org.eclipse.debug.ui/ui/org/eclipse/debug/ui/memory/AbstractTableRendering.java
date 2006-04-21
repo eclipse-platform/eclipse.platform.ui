@@ -1828,7 +1828,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		menu.add(fFormatRenderingAction);
 
-		if (!isDynamicLoad())
+		if (!isDynamicLoad() && getMemoryBlock() instanceof IMemoryBlockExtension)
 		{		
 			menu.add(new Separator());
 			menu.add(fPrevAction);
