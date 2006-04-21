@@ -153,7 +153,12 @@ public class PerspectiveSwitcher implements IWindowTrim {
         }
         public void perspectiveClosed(IWorkbenchPage page,
                 IPerspectiveDescriptor perspective) {
-            removePerspectiveShortcut(perspective, page);
+        	// Don't remove the shortcut if the workbench is
+        	// closing. This causes a spurious 'layout' on the
+        	// shell during close, leading to possible life-cycle issues
+        	if (page != null && !page.getWorkbenchWindow().getWorkbench().isClosing()) {
+        		removePerspectiveShortcut(perspective, page);
+        	}
         }
         public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             selectPerspectiveShortcut(perspective, page, true);
