@@ -492,9 +492,10 @@ public class NavigatorContentServiceContentProvider implements
 	 */
 	private Object pipelineParent(Object anInputElement,
 			NavigatorContentExtension[] theOverridingExtensions,
-			Object aSuggestedParent) {
+			Object theCurrentParent) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
+		Object aSuggestedParent = null;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
@@ -512,7 +513,7 @@ public class NavigatorContentServiceContentProvider implements
 				}
 			}
 		}
-		return aSuggestedParent;
+		return aSuggestedParent != null ? aSuggestedParent : theCurrentParent;
 	}
 
 	/**
@@ -644,7 +645,7 @@ public class NavigatorContentServiceContentProvider implements
 		
 					// We know the content provider is a SafeDelegateTreeContentProvider
 					// which implements ITreePathContentProvider
-					ITreeContentProvider tcp = foundExtension.internalGetContentProvider();
+					ITreeContentProvider tcp = foundExtension.getContentProvider();
 					if (tcp instanceof ITreePathContentProvider) {
 						ITreePathContentProvider tpcp = (ITreePathContentProvider) tcp;
 						TreePath[] parents = tpcp.getParents(anElement);
@@ -656,7 +657,19 @@ public class NavigatorContentServiceContentProvider implements
 									overridingExtensions, parentPaths);
 						}
 						result.addAll(parentPaths);
+					} else {
+						List segments = new ArrayList();
+						Object parent = findParent(foundExtension, anElement);
+						Object lastParent = null;
+						while(parent != null && parent != viewer.getInput() && parent != lastParent) {
+							lastParent = parent;
+							segments.add(0, parent);
+							parent = findParent(foundExtension, parent);
+							
+						}
+						result.add(new TreePath(segments.toArray()));
 					}
+					 
 				}
 			} catch (RuntimeException re) {
 				NavigatorPlugin
@@ -683,6 +696,20 @@ public class NavigatorContentServiceContentProvider implements
 		}
 		
 		return (TreePath[]) result.toArray(new TreePath[result.size()]);
+	}
+
+	/**
+	 * Search for parents and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 */
+	private Object findParent(NavigatorContentExtension foundExtension, Object anElement) { 
+		Object parent = null; 
+		INavigatorContentDescriptor foundDescriptor;  
+		parent = foundExtension.getContentProvider().getParent(anElement); 
+		if(parent == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findParent(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		}  
+		return parent;
 	}
 
 	/**

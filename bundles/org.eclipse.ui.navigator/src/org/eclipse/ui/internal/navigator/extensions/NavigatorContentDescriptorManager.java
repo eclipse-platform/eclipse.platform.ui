@@ -119,9 +119,9 @@ public class NavigatorContentDescriptorManager {
 	 * @return Returns all content descriptor(s).
 	 */
 	public NavigatorContentDescriptor[] getAllContentDescriptors() {
-		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[firstClassDescriptors
+		NavigatorContentDescriptor[] finalDescriptors = new NavigatorContentDescriptor[allDescriptors
 				.size()];
-		allDescriptors.values().toArray(finalDescriptors);
+		finalDescriptors = (NavigatorContentDescriptor[]) allDescriptors.values().toArray(finalDescriptors);
 		Arrays.sort(finalDescriptors, ExtensionPriorityComparator.INSTANCE);
 		return finalDescriptors;
 	}
@@ -390,7 +390,7 @@ public class NavigatorContentDescriptorManager {
 					.hasNext();) {
 				descriptor = (NavigatorContentDescriptor) overridingIterator
 						.next();
-				overriddenDescriptor = (NavigatorContentDescriptor) firstClassDescriptors
+				overriddenDescriptor = (NavigatorContentDescriptor) allDescriptors
 						.get(descriptor.getSuppressedExtensionId());
 				if (overriddenDescriptor != null) {
 

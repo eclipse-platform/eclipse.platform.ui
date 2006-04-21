@@ -11,6 +11,9 @@
 package org.eclipse.ui.internal.navigator;
 
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
@@ -25,7 +28,9 @@ import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -88,10 +93,11 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object anElement) {
-		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		Image image = null;
-		for (int i = 0; i < labelProviders.length && image == null; i++) {
-			image = labelProviders[i].getImage(anElement);
+
+		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+		Image image = null; 
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && image == null; ) { 
+			image = findImage((NavigatorContentExtension) itr.next(), anElement);
 		}
 		return image;  
 	}
@@ -109,13 +115,41 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object anElement) {
-		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		String text = null;
-		for (int i = 0; i < labelProviders.length && text == null; i++) {
-			text = labelProviders[i].getText(anElement);
+		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+		String text = null; 
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && text == null; ) { 
+			text = findText((NavigatorContentExtension) itr.next(), anElement);
 		}
 		// decorate the element
-		return text == null ? "" : text; //$NON-NLS-1$
+		return text == null ? "Null Label" : text; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Search for text label and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 */
+	private String findText(NavigatorContentExtension foundExtension, Object anElement) { 
+		String text = null; 
+		INavigatorContentDescriptor foundDescriptor;  
+		text = foundExtension.getLabelProvider().getText(anElement); 
+		if(text == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		}  
+		return text;
+	}
+	
+	/**
+	 * Search for image and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 */
+	private Image findImage(NavigatorContentExtension foundExtension, Object anElement) { 
+		Image image = null;
+		INavigatorContentDescriptor foundDescriptor;  
+		image = foundExtension.getLabelProvider().getImage(anElement); 
+		if(image == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findImage(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		}  
+		return image;
 	}
 	
 	/* (non-Javadoc)
@@ -267,8 +301,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(elementPath.getLastSegment());
-		Image image = null;
-		for (int i = 0; i < labelProviders.length && image == null; i++) {
+		for (int i = 0; i < labelProviders.length && (!label.hasNewText() && label.getText() != null); i++) {
 			ILabelProvider labelProvider = labelProviders[i];
 			if (labelProvider instanceof ITreePathLabelProvider) {
 				ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
@@ -278,6 +311,8 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 				label.setText(getText(elementPath.getLastSegment()));
 			}
 		}
+		if(label.getText() == null)
+			label.setText(""); //$NON-NLS-1$
 	}
 
 }

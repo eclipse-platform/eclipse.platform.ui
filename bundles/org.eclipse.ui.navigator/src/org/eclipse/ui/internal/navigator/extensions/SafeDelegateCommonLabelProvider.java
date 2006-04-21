@@ -138,10 +138,20 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {
 		if (delegateLabelProvider instanceof ITreePathLabelProvider) {
 			ITreePathLabelProvider tplp = (ITreePathLabelProvider) delegateLabelProvider;
+			String text = label.getText() != null ? label.getText() : ""; //$NON-NLS-1$
+			Image image = label.getImage();
 			tplp.updateLabel(label, elementPath);
+			if(label.getText() == null)
+				label.setText(text);
+			if(label.getImage() == null && image != null)
+				label.setImage(image);
 		} else {
-			label.setImage(getImage(elementPath.getLastSegment()));
-			label.setText(getText(elementPath.getLastSegment()));
+			Image image = getImage(elementPath.getLastSegment());
+			if(image != null)
+				label.setImage(image);
+			String text = getText(elementPath.getLastSegment());
+			if(text != null)
+				label.setText(text);
 		}
 	}
 

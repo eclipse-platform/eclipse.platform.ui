@@ -204,13 +204,15 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
  
 		boolean pipelined = false;
 		Object refreshable = null;
+		Set overrideableExtensions = new LinkedHashSet();
 		for (Iterator iter = aRefreshSynchronization.getRefreshTargets().iterator(); iter.hasNext();) {
 			refreshable = iter.next();
-			Set overrideableExtensions =  contentService.findOverrideableContentExtensionsForPossibleChild(refreshable);
-			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
-				pipelined |= pipelineInterceptRefresh((NavigatorContentExtension) overrideableExtensionItr.next(), aRefreshSynchronization, refreshable);
-			}
+			overrideableExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(refreshable));
 		}
+		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+			pipelined |= pipelineInterceptRefresh((NavigatorContentExtension) overrideableExtensionItr.next(), aRefreshSynchronization, refreshable);
+		}
+
 		return pipelined;
 		
 	}
@@ -268,13 +270,16 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		 
 		boolean pipelined = false;
 		Object refreshable = null;
+
+		Set overrideableExtensions = new LinkedHashSet();
 		for (Iterator iter = anUpdateSynchronization.getRefreshTargets().iterator(); iter.hasNext();) {
 			refreshable = iter.next();
-			Set overrideableExtensions =  contentService.findOverrideableContentExtensionsForPossibleChild(refreshable);
-			for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
-				pipelined |= pipelineInterceptUpdate((NavigatorContentExtension) overrideableExtensionItr.next(), anUpdateSynchronization, refreshable);
-			}
+			overrideableExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(refreshable));
 		}
+		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+			pipelined |= pipelineInterceptUpdate((NavigatorContentExtension) overrideableExtensionItr.next(), anUpdateSynchronization, refreshable);
+		}
+
 		return pipelined;
 		
 	}

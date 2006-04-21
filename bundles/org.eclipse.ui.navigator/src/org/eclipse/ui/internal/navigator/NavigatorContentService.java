@@ -538,6 +538,18 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 		return overrideableExtensions;
 	}
+	
+	/** 
+	 * 
+	 * @param anExtensionId
+	 * @return An instance of the content extension for the given extension id. 
+	 */
+	public INavigatorContentExtension getContentExtensionById(String anExtensionId) {
+		NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId);
+		if(descriptor != null)
+			return getExtension(descriptor);
+		return null;
+	}
 
 	/**
 	 * Search for extensions that declare the given element in their
