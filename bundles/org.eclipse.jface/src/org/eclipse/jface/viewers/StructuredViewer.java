@@ -1649,7 +1649,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
      * @since 3.2
 	 */
 	public void setComparator(ViewerComparator comparator){
-		if (this.sorter != sorter){
+		if (this.sorter != comparator){
 			this.sorter = comparator;
 			refresh();
 		}
