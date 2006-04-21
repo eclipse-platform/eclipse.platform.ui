@@ -212,20 +212,21 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	 * @see org.eclipse.team.core.mapping.MergeContext#merge(org.eclipse.team.core.diff.IDiffNode, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(IDiff delta, boolean force, IProgressMonitor monitor) throws CoreException {
-		// First, verify that the provided delta matches the current state
-		// i.e. it is possible that a concurrent change has occurred
-		SyncInfo info = getSyncInfo(getDiffTree().getResource(delta));
 		if (getMergeType() == ISynchronizationContext.TWO_WAY) {
 			force = true;
 		}
-		if (info == null || info.getKind() == SyncInfo.IN_SYNC || (SyncInfo.getDirection(info.getKind()) == SyncInfo.OUTGOING && !force)) {
+		// First, verify that the provided delta matches the current state
+		// i.e. it is possible that a concurrent change has occurred
+		IThreeWayDiff currentDiff = (IThreeWayDiff)getSubscriber().getDiff(getDiffTree().getResource(delta));
+		if (currentDiff == null 
+				|| currentDiff.getKind() == IDiff.NO_CHANGE 
+				|| (currentDiff.getDirection() == IThreeWayDiff.OUTGOING && !force)) {
 			// Seems like this one was already merged so return OK
 			return Status.OK_STATUS;
 		}
-//		IDiffNode currentState = SyncInfoToDiffConverter.getDeltaFor(info);
-//		if (!equals(currentState, delta)) {
-//			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
-//		}
+		if (!equals(currentDiff, (IThreeWayDiff)delta)) {
+			throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, delta.getPath()));
+		}
 		try {
 			monitor.beginTask(null, 100);
 			IStatus status = super.merge(delta, force, Policy.subMonitorFor(monitor, 99));
@@ -241,6 +242,11 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private boolean equals(IThreeWayDiff currentDiff, IThreeWayDiff otherDiff) {
+		return currentDiff.getKind() == otherDiff.getKind() 
+			&& currentDiff.getDirection() == otherDiff.getDirection();
 	}
 
 	private void pruneEmptyParents(IDiff[] deltas) throws CVSException {

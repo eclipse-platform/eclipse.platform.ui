@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
@@ -22,11 +23,11 @@ import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 
 public class MergeSubscriberContext extends CVSSubscriberMergeContext {
@@ -81,6 +82,10 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 		final IStatus[] status = new IStatus[] { Status.OK_STATUS };
 		run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
+				IThreeWayDiff currentDiff = (IThreeWayDiff)getSubscriber().getDiff(getDiffTree().getResource(diff));
+				if (!MergeSubscriberContext.this.equals(currentDiff, (IThreeWayDiff)diff)) {
+					throw new CVSException(NLS.bind(CVSUIMessages.CVSMergeContext_1, diff.getPath()));
+				}
 				status[0] = MergeSubscriberContext.super.merge(diff, ignoreLocalChanges, monitor);
 				if (status[0].isOK()) {
 					IResource resource = ResourceDiffTree.getResourceFor(diff);
@@ -102,4 +107,8 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 		return status[0];
 	}
 
+	boolean equals(IThreeWayDiff currentDiff, IThreeWayDiff otherDiff) {
+		return currentDiff.getKind() == otherDiff.getKind() 
+			&& currentDiff.getDirection() == otherDiff.getDirection();
+	}
 }
