@@ -12,7 +12,7 @@ package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -66,6 +66,12 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
         listeners.add(listener);
     }
 
+    /**
+     * Adds a listener for post selection changes in this multi page selection provider.
+     *
+     * @param listener a selection changed listener
+     * @since 3.2
+     */
     public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
     	postListeners.add(listener);
 	}
@@ -87,6 +93,7 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
      * selection has changed.
      * 
      * @param event the event to propogate.
+     * @since 3.2
      */
     public void firePostSelectionChanged(final SelectionChangedEvent event) {
 		Object[] listeners = postListeners.getListeners();
@@ -96,7 +103,7 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
 	private void fireEventChange(final SelectionChangedEvent event, Object[] listeners) {
 		for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.selectionChanged(event);
                 }
@@ -135,7 +142,12 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
         listeners.remove(listener);
     }
     
-
+    /**
+     * Removes a listener for post selection changes in this multi page selection provider.
+     *
+     * @param listener a selection changed listener
+     * @since 3.2
+     */
     public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
     	postListeners.remove(listener);
 	}
