@@ -23,7 +23,7 @@ class FieldArray {
 	 * buffer is the underlying Buffer object.
 	 * offset is the offset within that buffer.
 	 * length is the length of each field in the array
-	 * stride the the number of bytes from the beginning of one element to the beginning of the next
+	 * stride the number of bytes from the beginning of one element to the beginning of the next
 	 * count is the number of elements in the array
 	 */
 	public FieldArray(Buffer buffer, int offset, int length, int stride, int count) {

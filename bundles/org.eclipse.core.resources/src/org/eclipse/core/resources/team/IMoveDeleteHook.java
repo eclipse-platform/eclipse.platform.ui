@@ -39,7 +39,7 @@ public interface IMoveDeleteHook {
 	 * In broad terms, a full re-implementation should delete the file in the
 	 * local file system and then call <code>tree.deletedFile</code> to complete
 	 * the updating of the workspace resource tree to reflect this fact. If
-	 * unsuccessful in deleting the file from the the local file system, it
+	 * unsuccessful in deleting the file from the local file system, it
 	 * should instead call <code>tree.failed</code> to report the reason for
 	 * the failure. In either case, it should return <code>true</code> to
 	 * indicate that the operation was attempted. The <code>FORCE</code> update
@@ -212,7 +212,7 @@ public interface IMoveDeleteHook {
 	 * accessible. In broad terms, a full re-implementation should move the file 
 	 * in the local file system and then call <code>tree.moveFile</code> to
 	 * complete the updating of the workspace resource tree to reflect this
-	 * fact. If unsuccessful in moving the file in the the local file system,
+	 * fact. If unsuccessful in moving the file in the local file system,
 	 * it should instead call <code>tree.failed</code> to report the reason for
 	 * the failure. In either case, it should return <code>true</code> to
 	 * indicate that the operation was attempted.
@@ -275,7 +275,7 @@ public interface IMoveDeleteHook {
 	 * directory tree in the local file system and then call
 	 * <code>tree.movedFolder</code> to complete the updating of the workspace
 	 * resource tree to reflect this fact. If unsuccessful in moving the 
-	 * directory or any of its descendents in the the local file system,
+	 * directory or any of its descendents in the local file system,
 	 * call <code>tree.failed</code> to report each reason for failure.
 	 * In either case, return <code>true</code> to indicate that the operation
 	 * was attempted.

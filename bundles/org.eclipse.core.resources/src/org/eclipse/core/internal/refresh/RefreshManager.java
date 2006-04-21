@@ -66,7 +66,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	}
 
 	/**
-	 * Checks for changes to the the PREF_AUTO_UPDATE property.
+	 * Checks for changes to the PREF_AUTO_UPDATE property.
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {

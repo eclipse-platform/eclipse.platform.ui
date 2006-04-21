@@ -56,7 +56,7 @@ public abstract class AbstractDataTree {
 	}
 
 	/**
-	 * Returns a copy of the the receiver, which shares the receiver's
+	 * Returns a copy of the receiver, which shares the receiver's
 	 * instance variables.
 	 */
 	protected AbstractDataTree copy() {

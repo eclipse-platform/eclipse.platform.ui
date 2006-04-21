@@ -725,7 +725,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * and <code>AVOID_NATURE_CONFIG</code> are ignored.
 	 * </p>
 	 * <p>
-	 * Prior to modifying the the project description file, the file modification
+	 * Prior to modifying the project description file, the file modification
 	 * validator (if provided by the Team plug-in), will be given a chance to 
 	 * perform any last minute preparations.  Validation is performed by calling
 	 * <code>IFileModificationValidator.validateSave</code> on the project 
