@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -27,9 +25,10 @@ public class ModelDelta implements IModelDelta {
 	private IModelDelta fParent;
 	private Object fElement;
 	private int fFlags;
-	private List fNodes = new ArrayList();
+	private ModelDelta[] fNodes = EMPTY_NODES;
 	private Object fReplacement;
 	private int fIndex;
+	private static final ModelDelta[] EMPTY_NODES = new ModelDelta[0];
 
 	/**
 	 * Constructs a new delta for the given element.
@@ -95,7 +94,7 @@ public class ModelDelta implements IModelDelta {
 	public ModelDelta addNode(Object element, int flags) {
 		ModelDelta node = new ModelDelta(element, flags);
 		node.setParent(this);
-		fNodes.add(node);
+		addDelta(node);
 		return node;
 	}
 
@@ -112,7 +111,7 @@ public class ModelDelta implements IModelDelta {
     public ModelDelta addNode(Object element, Object replacement, int flags) {
         ModelDelta node = new ModelDelta(element, replacement, flags);
         node.setParent(this);
-        fNodes.add(node);
+        addDelta(node);
         return node;
     }
 
@@ -128,7 +127,7 @@ public class ModelDelta implements IModelDelta {
     public ModelDelta addNode(Object element, int index, int flags) {
         ModelDelta node = new ModelDelta(element, index, flags);
         node.setParent(this);
-        fNodes.add(node);
+        addDelta(node);
         return node;
     }
     
@@ -166,6 +165,17 @@ public class ModelDelta implements IModelDelta {
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
 	public ModelDelta[] getNodes() {
-		return (ModelDelta[]) fNodes.toArray(new ModelDelta[0]);
+		return fNodes;
+	}
+	
+	private void addDelta(ModelDelta delta) {
+		if (fNodes.length == 0) {
+			fNodes = new ModelDelta[]{delta};
+		} else {
+			ModelDelta[] nodes = new ModelDelta[fNodes.length + 1];
+			System.arraycopy(fNodes, 0, nodes, 0, fNodes.length);
+			nodes[fNodes.length] = delta;
+			fNodes = nodes;
+		}
 	}
 }
