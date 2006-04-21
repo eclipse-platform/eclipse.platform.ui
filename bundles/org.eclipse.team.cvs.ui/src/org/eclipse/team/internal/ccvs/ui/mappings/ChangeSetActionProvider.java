@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -30,15 +27,16 @@ import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelTraversalCalculator;
 import org.eclipse.team.internal.ui.synchronize.*;
-import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
-import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
-public class ChangeSetActionProvider extends SynchronizationActionProvider {
+public class ChangeSetActionProvider extends ResourceModelActionProvider {
 
 	/**
      * Menu group that can be added to the context menu

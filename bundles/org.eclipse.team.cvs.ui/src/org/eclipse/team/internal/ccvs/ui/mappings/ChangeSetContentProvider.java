@@ -433,12 +433,20 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			case ISynchronizePageConfiguration.INCOMING_MODE:
 				return cs instanceof CVSCheckedInChangeSet;
 			case ISynchronizePageConfiguration.OUTGOING_MODE:
-				return cs instanceof ActiveChangeSet;
+				return cs instanceof ActiveChangeSet || hasConflicts(cs);
 			default:
 				break;
 			}
 		}
 		return true;
+	}
+
+	private boolean hasConflicts(ChangeSet cs) {
+		if (cs instanceof DiffChangeSet) {
+			DiffChangeSet dcs = (DiffChangeSet) cs;
+			return dcs.getDiffTree().countFor(IThreeWayDiff.CONFLICTING, IThreeWayDiff.DIRECTION_MASK) > 0;
+		}
+		return false;
 	}
 
 	private boolean containsConflicts(ChangeSet cs) {

@@ -16,18 +16,22 @@ import java.util.Set;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.core.subscribers.ChangeSet;
-import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
+import org.eclipse.team.internal.core.subscribers.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 
 public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	private Image changeSetImage;
+	private Font boldFont;
 
 	protected String getDelegateText(Object elementOrPath) {
 		Object element = internalGetElement(elementOrPath);
@@ -59,6 +63,8 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 		if (changeSetImage != null) {
 			changeSetImage.dispose();
 		}
+		if (boldFont != null)
+			boldFont.dispose();
 		super.dispose();
 	}
 	
@@ -169,6 +175,32 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 			return tp.getLastSegment();
 		}
 		return elementOrPath;
+	}
+	
+	public Font getFont(Object element) {
+		element = internalGetElement(element);
+	    if (element instanceof ActiveChangeSet && isDefaultActiveSet((ActiveChangeSet)element)) {
+	    	if (boldFont == null) {
+				Font defaultFont = JFaceResources.getDefaultFont();
+				FontData[] data = defaultFont.getFontData();
+				for (int i = 0; i < data.length; i++) {
+					data[i].setStyle(SWT.BOLD);
+				}				
+				boldFont = new Font(TeamUIPlugin.getStandardDisplay(), data);
+			}
+			return boldFont;
+	    }
+		return super.getFont(element);
+	}
+
+	private boolean isDefaultActiveSet(ActiveChangeSet set) {
+		ChangeSetCapability changeSetCapability = getContentProvider().getChangeSetCapability();
+		if (changeSetCapability != null) {
+			ActiveChangeSetManager activeChangeSetManager = changeSetCapability.getActiveChangeSetManager();
+			if (activeChangeSetManager != null)
+				return activeChangeSetManager.isDefault(set);
+		}
+		return false;
 	}
 
 }

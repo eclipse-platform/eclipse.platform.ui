@@ -16,6 +16,8 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.team.core.diff.*;
@@ -27,11 +29,12 @@ import org.eclipse.team.ui.mapping.MergeActionHandler;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.ide.IDE;
 
-public abstract class ResourceMergeActionHandler extends MergeActionHandler implements IDiffChangeListener {
+public abstract class ResourceMergeActionHandler extends MergeActionHandler implements IDiffChangeListener, IPropertyChangeListener {
 
 	public ResourceMergeActionHandler(ISynchronizePageConfiguration configuration) {
 		super(configuration);
 		getSynchronizationContext().getDiffTree().addDiffChangeListener(this);
+		configuration.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -123,6 +126,16 @@ public abstract class ResourceMergeActionHandler extends MergeActionHandler impl
 			}
 		}, (StructuredViewer)getConfiguration().getPage().getViewer());
 		
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty() == ISynchronizePageConfiguration.P_MODE) {
+			Utils.syncExec(new Runnable() {
+				public void run() {
+					updateEnablement(getStructuredSelection());
+				}
+			}, (StructuredViewer)getConfiguration().getPage().getViewer());
+		}
 	}
 
 }
