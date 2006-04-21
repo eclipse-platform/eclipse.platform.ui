@@ -530,7 +530,7 @@ public final class InternalPlatform {
 	//TODO I guess it is now time to get rid of that
 	/*
 	 * This method is retained for R1.0 compatibility because it is defined as API.
-	 * It's function matches the API description (returns <code>null</code> when
+	 * Its function matches the API description (returns <code>null</code> when
 	 * argument URL is <code>null</code> or cannot be read).
 	 */
 	public URL[] getPluginPath(URL pluginPathLocation /*R1.0 compatibility*/
