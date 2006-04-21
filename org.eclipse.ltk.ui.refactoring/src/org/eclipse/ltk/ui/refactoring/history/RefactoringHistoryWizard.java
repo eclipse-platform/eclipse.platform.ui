@@ -89,14 +89,15 @@ import org.eclipse.ui.PlatformUI;
  * history. A refactoring history wizard differs from a normal wizard in the
  * following characteristics:
  * <ul>
- * <li>A refactoring wizard consists of 0 .. n user defined pages, one error
- * page to present the outcome of a refactoring's condition checking and one
- * preview page to present a preview of the workspace changes.</li>
+ * <li>A refactoring history wizard consists of a sequence of one error page to
+ * present the outcome of a refactoring's condition checking and one preview
+ * page to present a preview of the workspace changes.</li>
  * <li> Refactorings are applied to the workspace as soon as a preview has been
- * accepted. The execution of a refactoring history triggers a series of error
- * pages and preview pages. Within this sequence of pages, going back is not
- * supported anymore. However, cancelling the refactoring history wizard will
- * undo the already performed refactorings.</li>
+ * accepted. Additionally, refactoring history wizards support the headless
+ * execution of refactorings. The user guided execution of a refactoring history
+ * triggers a series of error pages and preview pages. Within this sequence of
+ * pages, going back is not supported anymore. However, canceling the
+ * refactoring history wizard will undo the already performed refactorings.</li>
  * </ul>
  * <p>
  * A refactoring history wizard is usually opened using the {@link WizardDialog}.
