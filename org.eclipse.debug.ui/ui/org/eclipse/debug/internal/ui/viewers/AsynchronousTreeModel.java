@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.jface.viewers.TreePath;
@@ -129,7 +126,6 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param node
      */
     protected void remove(final ModelNode node) {
-        // TODO: preserving selection?
         final ModelNode parentNode = node.getParentNode();
         if (parentNode == null) {
             return;
@@ -143,7 +139,6 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         preservingSelection(new Runnable() {
 			public void run() {
 		        viewer.nodeDisposed(node);
-				viewer.nodeChildrenChanged(parentNode);
 			}
 		});
     }
@@ -154,7 +149,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param parent
      * @param element
      */
-	protected void add(ModelNode parent, Object element) {
+	protected void add(final ModelNode parent, Object element) {
         Object[] children = filter(parent.getElement(), new Object[] { element });
         if (children.length == 0) {
             return; // added element was filtered out.
@@ -173,7 +168,14 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         }
         //TODO sort???
         // notify the viewer to update
-        getTreeViewer().nodeChildrenChanged(parent);		
+        
+        // TODO: this could be more efficient by not refreshing all children
+        preservingSelection(new Runnable() {
+			public void run() {
+				getTreeViewer().nodeChildrenChanged(parent);
+			}
+		});
+        		
 	}
 	
     /**
@@ -189,16 +191,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         }
         TreePath[] paths = new TreePath[nodes.length];
         for (int i = 0; i < nodes.length; i++) {
-        	ModelNode node = nodes[i];
-            List path = new ArrayList();
-            path.add(element);
-            node = node.getParentNode();
-            while (node != null) {
-                Object data = node.getElement();
-                path.add(0, data);
-                node = node.getParentNode();
-            }
-            paths[i] = new TreePath(path.toArray());
+            paths[i] = nodes[i].getTreePath();
         }
         return paths;
     }	
@@ -246,7 +239,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param node
      * @param containsChildren
      */
-     void setIsContainer(ModelNode node, boolean containsChildren) {
+     void setIsContainer(final ModelNode node, boolean containsChildren) {
     	ModelNode[] prevChildren = null;
     	synchronized (this) {
 			prevChildren = node.getChildrenNodes();
@@ -261,20 +254,12 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 			}
 		}
 //    	 update tree outside lock
-        AsynchronousTreeViewer viewer = getTreeViewer();
-		if (containsChildren) {
-            if (prevChildren == null) {
-                viewer.nodeChildrenChanged(node);
-                viewer.nodeContainerChanged(node);
-            } else {
-                viewer.nodeContainerChanged(node);
-            }
-        } else if (!containsChildren && prevChildren != null) {            
-            for (int i = 0; i < prevChildren.length; i++) {
-                ModelNode child = prevChildren[i];
-                viewer.nodeDisposed(child);
-            }            
-            viewer.nodeChildrenChanged(node);
-        }
+    	preservingSelection(new Runnable() {
+			public void run() {
+				getViewer().nodeChildrenChanged(node);
+		    	getTreeViewer().nodeContainerChanged(node);
+			}
+		});
+    	
     }    
 }

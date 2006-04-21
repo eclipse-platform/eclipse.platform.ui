@@ -488,11 +488,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		        		// is causing the table viewer to not scroll or move cursor properly.
 		        		// #interalRefresh on a child will never cause a structural
 		        		// change in a table viewer.  As a result, there is no need to preserve selection
-		        		internalRefresh(child);
-		        		
-		        	} else {
-		        		addPendingChildIndex(node, index);
-		            }
+		        		internalRefresh(child);	
+		        	}
 		        	return;
 				}
 			}

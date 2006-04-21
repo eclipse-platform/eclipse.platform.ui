@@ -86,7 +86,6 @@ public abstract class AsynchronousModel {
         fDisposed = true;
         cancelPendingUpdates();
 		disposeAllModelProxies();
-		fPendingUpdates.clear();
 		ModelNode rootNode = getRootNode();
 		if (rootNode != null) {
 			rootNode.dispose();
@@ -252,7 +251,7 @@ public abstract class AsynchronousModel {
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
 	 */
-	public ModelNode[] getNodes(Object element) {
+	public synchronized ModelNode[] getNodes(Object element) {
 		return (ModelNode[]) fElementToNodes.get(element);
 	}
 	
@@ -303,7 +302,8 @@ public abstract class AsynchronousModel {
 	 * @param update
 	 */
 	protected void viewerUpdateScheduled(IAsynchronousRequestMonitor update) {
-		synchronized (fViewerUpdates) {
+		// synch viewer updates and pending updates on same lock - fPendingUpdates
+		synchronized (fPendingUpdates) {
 			fViewerUpdates.add(update);
 		}
 	}
@@ -421,7 +421,8 @@ public abstract class AsynchronousModel {
 	 * @param monitor
 	 */
 	protected void viewerUpdateComplete(IAsynchronousRequestMonitor monitor) {
-		synchronized (fViewerUpdates) {
+		// synch viewer updates and pending updates on same lock - fPendingUpdates
+		synchronized (fPendingUpdates) {
 			fViewerUpdates.remove(monitor);
 		}
 		getViewer().updateComplete(monitor);
@@ -474,6 +475,7 @@ public abstract class AsynchronousModel {
         
         ModelNode[] prevKids = null;
         ModelNode[] newChildren = null;
+        ModelNode[] unmap = null; 
         
         synchronized (this) {
         	if (isDisposed()) {
@@ -489,55 +491,49 @@ public abstract class AsynchronousModel {
     			}
             	parentNode.setChildren(newChildren);
             } else {
-    	        for (int i = 0; i < prevKids.length; i++) {
-    				ModelNode kid = prevKids[i];
-    				if (i >= children.length) {
-    					kid.dispose();
-    					unmapNode(kid);
-    				} else {
-    					ModelNode prevNode = prevKids[i];
-    					Object nextChild = children[i];
-    					if (!prevNode.getElement().equals(nextChild)) {
-    						unmapNode(prevNode);
-    					}
-    					mapElement(nextChild, prevNode);
-    				}
-    			}
-    			// create new children
-    	        if (children.length > prevKids.length) {
-    		        newChildren = new ModelNode[children.length];
-    		        System.arraycopy(prevKids, 0, newChildren, 0, prevKids.length);
-    		        for (int i = prevKids.length; i < children.length; i ++) {
-    		        	Object child = children[i];
-    					ModelNode childNode = new ModelNode(parentNode, child);
-    		        	mapElement(child, childNode);
-    		        	newChildren[i] = childNode;
-    		        }
-    		        parentNode.setChildren(newChildren);
-    	        }
-                if (children.length < prevKids.length) {
-                	newChildren = new ModelNode[children.length];
-                    System.arraycopy(prevKids, 0, newChildren, 0, children.length);
-                    parentNode.setChildren(newChildren);
-                }
+            	newChildren = new ModelNode[children.length];
+            	unmap = new ModelNode[prevKids.length];
+            	for (int i = 0; i < prevKids.length; i++) {
+					unmap[i] = prevKids[i];	
+				}
+            	for (int i = 0; i < children.length; i++) {
+					Object child = children[i];
+					boolean found = false;
+					for (int j = 0; j < prevKids.length; j++) {
+						ModelNode prevKid = prevKids[j];
+						if (prevKid != null && child.equals(prevKid.getElement())) {
+							newChildren[i] = prevKid;
+							prevKids[j] = null;
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						newChildren[i] = new ModelNode(parentNode, child);
+						mapElement(child, newChildren[i]);
+					}
+				}
+            	for (int i = 0; i < prevKids.length; i++) {
+            		ModelNode kid = prevKids[i];
+            		if (kid != null) {
+            			kid.dispose();
+            			unmapNode(kid);
+            		}
+            	}
+    	        parentNode.setChildren(newChildren);
             }        	
         }
         
         //update viewer outside the lock
-    	final ModelNode[] finalPrevKids = prevKids; 
+    	final ModelNode[] finalUnmap = unmap; 
         preservingSelection(new Runnable() {
             public void run() {
-            	if (finalPrevKids != null) {
-	                for (int i = 0; i < finalPrevKids.length; i++) {
-	                    ModelNode kid = finalPrevKids[i];
-	                    if (i >= children.length) {
-	                        viewer.nodeDisposed(kid);
-	                    } else {
-	                        viewer.nodeChanged(kid);
-	                    }
-	                }
+            	if (finalUnmap != null) {
+	            	for (int i = 0; i < finalUnmap.length; i++) {
+						viewer.unmapNode(finalUnmap[i]);
+					}
             	}
-                viewer.nodeChildrenChanged(parentNode);
+            	viewer.nodeChildrenChanged(parentNode);
             }
         });        	        
 

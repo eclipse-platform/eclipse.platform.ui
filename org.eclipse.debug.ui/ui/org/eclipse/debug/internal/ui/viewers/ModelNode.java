@@ -92,7 +92,7 @@ public class ModelNode {
 	 * 
 	 * @return
 	 */
-	public TreePath getTreePath() {
+	public synchronized TreePath getTreePath() {
 		List path = new ArrayList();
 		ModelNode node = this;
 		while (node != null) {

@@ -36,13 +36,20 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
      */
     private AsynchronousModel fModel;
     
+    /**
+     * Wehther this request's 'done' method has been called.
+     */
+    private boolean fDone = false;
+    
     protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if widget is disposed. The item may
             // have been removed from the tree when another children update
             // occured.
         	getModel().viewerUpdateScheduled(AsynchronousRequestMonitor.this);
-            getModel().requestComplete(AsynchronousRequestMonitor.this);
+        	if (fDone) {
+        		getModel().requestComplete(AsynchronousRequestMonitor.this);
+        	}
             if (!isCanceled() && !getNode().isDisposed()) {
             	IStatus status = getStatus();
                 if (status != null && !status.isOK()) {
@@ -123,6 +130,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
     public final void done() {
+    	fDone = true;
 		if (!isCanceled()) {
 			fViewerUpdateJob.schedule();
 		}

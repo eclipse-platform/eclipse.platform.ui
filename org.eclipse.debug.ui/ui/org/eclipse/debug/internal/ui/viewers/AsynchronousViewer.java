@@ -113,16 +113,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
 	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
-
-    /**
-     * Map of parent nodes for which children were needed to "set data"
-     * in the virtual widget. A parent is added to this map when we try go
-     * get children but they aren't there yet. The children are retrieved
-     * asynchronously, and later put back into the widgetry.
-     * The value is an array of ints of the indicies of the children that 
-     * were requested. 
-     */	
-	private Map fParentsPendingChildren = new HashMap();
 	
 	/**
 	 * Creates a new viewer 
@@ -191,14 +181,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @param element element to update
 	 */
 	public void update(Object element) {
-		if (element == getInput()) {
-			return; // the input is not displayed
-		}
 		ModelNode[] nodes = getModel().getNodes(element);
 		if (nodes != null) {
 			for (int i = 0; i < nodes.length; i++) {
-				ModelNode node = nodes[i];
-				updateLabel(node);
+				updateLabel(nodes[i]);
 			}
 		}
 	}
@@ -210,6 +196,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @param item its associated item
 	 */
 	protected void updateLabel(ModelNode node) {
+		// the input is not displayed
 		if (!node.getElement().equals(getInput())) {
 			getModel().updateLabel(node);
 		}
@@ -241,7 +228,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected synchronized void inputChanged(Object input, Object oldInput) {
-		fParentsPendingChildren.clear();
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
             fUpdatePolicy.init(this);
@@ -393,6 +379,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
+		// this viewer maps model nodes to widgets, so the element is a ModelNode
 		AsynchronousModel model = getModel();
 		if (model != null) {
 			if (element.equals(model.getRootNode())) {
@@ -736,11 +723,36 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 	
 	protected synchronized void restoreSelection(ISelection oldSelection) {
-		doAttemptSelectionToWidget(oldSelection, false);
+		ISelection remaining = doAttemptSelectionToWidget(oldSelection, false);
 		// send out notification if old and new differ
 		fCurrentSelection = newSelectionFromWidget();
-		if (!fCurrentSelection.equals(oldSelection))
-			handleInvalidSelection(oldSelection, fCurrentSelection);		
+		if (!fCurrentSelection.equals(oldSelection)) {
+			handleInvalidSelection(oldSelection, fCurrentSelection);
+			// if the remaining selection still exists in the model, make it pending
+			if (selectionExists(remaining)) {
+				setSelection(remaining);
+			}
+		}
+	}
+	
+	/**
+	 * Returns whether the selection exists in the model
+	 */
+	protected boolean selectionExists(ISelection selection) {
+		if (selection.isEmpty()) {
+			return false;
+		}
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			Iterator iterator = ss.iterator();
+			while (iterator.hasNext()) {
+				Object element = iterator.next();
+				if (getModel().getNodes(element) == null) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
     
 	/**
@@ -818,14 +830,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     protected void nodeDisposed(ModelNode node) {
     	Widget widget = findItem(node);
     	if (widget != null) {
-    		unmapElement(node);
+    		unmapNode(node);
     		widget.dispose();
-    		ModelNode[] childrenNodes = node.getChildrenNodes();
-    		if (childrenNodes != null) {
-    			for (int i = 0; i < childrenNodes.length; i++) {
-					nodeDisposed(childrenNodes[i]);
-				}
-			}
 		}
 	}
 
@@ -834,11 +840,11 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * 
 	 * @param node
 	 */
-	public void nodeChanged(ModelNode node) {
+	protected void nodeChanged(ModelNode node) {
 		Widget widget = findItem(node);
 		if (widget != null) {
-			widget.setData(node.getElement());
-			internalRefresh(node);
+			clear(widget);
+			attemptPendingUpdates();
 		}
 	}
 
@@ -859,38 +865,18 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 
 	/**
-	 * Called when nodes are set in the model. The children may not have been
-	 * retrieved yet when the tree got the call to "set data".
+	 * Clears the given widget
 	 * 
-	 * @param parent
-	 * @param children
+	 * @param item
 	 */
-	protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
-		int[] indicies = removePendingChildren(parent);
-		Widget widget = findItem(parent);
-		if (widget != null && !widget.isDisposed()) {
-			if (indicies != null) {
-				for (int i = 0; i < indicies.length; i++) {
-					int index = indicies[i];
-					Widget item = getChildWidget(widget, index);
-					if (item != null) {
-						if (index < children.length) {
-							ModelNode childNode = children[index];
-							mapElement(childNode, item);
-							item.setData(childNode.getElement());
-							internalRefresh(childNode);
-						}
-					}
-				}
-				setItemCount(widget, children.length);
-			} else {
-				setItemCount(widget, children.length);
-			}
-		}
-		attemptPendingUpdates();
-	}
-
     protected abstract void clear(Widget item);
+    
+    /**
+     * Clears the children of the widget.
+     * 
+     * @param item
+     */
+    protected abstract void clearChildren(Widget item);
 
 	/**
 	 * Returns the child widet at the given index for the given parent or
@@ -916,22 +902,36 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     protected void attemptPendingUpdates() {
     	attemptSelection(false);
     }
-
+	
 	/**
-	 * The children of a node have changed.
+	 * Notification a node's children have changed.
+	 * Updates the child count for the parent's widget
+	 * and clears children to be updated.
 	 * 
-	 * @param parent
+	 * @param parentNode
 	 */
 	protected void nodeChildrenChanged(ModelNode parentNode) {
-		ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+		Widget widget = findItem(parentNode);
+		if (widget != null && !widget.isDisposed()) {
+			int childCount = parentNode.getChildCount();
+			clearChildren(widget);
+			setItemCount(widget, childCount);
+			attemptPendingUpdates();
+		}		
+	}
+	
+	/**
+	 * Unmaps the node from its widget and all of its children nodes from
+	 * their widgets.
+	 * 
+	 * @param node
+	 */
+	protected void unmapNode(ModelNode node) {
+		unmapElement(node);
+		ModelNode[] childrenNodes = node.getChildrenNodes();
 		if (childrenNodes != null) {
-			nodeChildrenSet(parentNode, childrenNodes);
-		} else {
-			Widget widget = findItem(parentNode);
-			if (widget != null && !widget.isDisposed()) {
-				int childCount = parentNode.getChildCount();
-				setItemCount(widget, childCount);
-				attemptPendingUpdates();
+			for (int i = 0; i < childrenNodes.length; i++) {
+				unmapNode(childrenNodes[i]);
 			}
 		}
 	}
@@ -964,38 +964,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     	return findItem((Object)node);
     }
 
-    /**
-     * Note that the child at the specified index was requested by a widget
-     * when revealed but that the data was not in the model yet. When the data
-     * becomes available, map it to its widget.
-     * 
-     * @param parent
-     * @param index
-     */
-	protected synchronized void addPendingChildIndex(ModelNode parent, int index) {
-	    int[] indicies = (int[]) fParentsPendingChildren.get(parent);
-	    if (indicies == null) {
-	        indicies = new int[]{index};
-	    } else {
-	        int[] next = new int[indicies.length + 1];
-	        System.arraycopy(indicies, 0, next, 0, indicies.length);
-	        next[indicies.length] = index;
-	        indicies = next;
-	    }
-	    fParentsPendingChildren.put(parent, indicies);    	
-	}
-	
-	/**
-	 * Removes and returns and children indicies that were pending for the given
-	 * parent node. May return <code>null</code>.
-	 * 
-	 * @param parent
-	 * @return indicies of children that data were requested for or <code>null</code>
-	 */
-	protected int[] removePendingChildren(ModelNode parent) {
-		return (int[]) fParentsPendingChildren.remove(parent);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1026,9 +994,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		        		        internalRefresh(child);
 		        		    }
 		        		});
-		        	} else {
-		        		addPendingChildIndex(node, index);
-		            }
+		        	}
 		        	return;
 				}
 			}

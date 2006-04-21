@@ -747,28 +747,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
         return paths;
     }
     
-    /**
-     * Container status of a node changed
-     * 
-     * @param node
-     */
-    protected void nodeContainerChanged(ModelNode node) {
-		Widget widget = findItem(node);
-		if (widget != null && !widget.isDisposed()) {
-			boolean expanded = true;
-			if (node.isContainer() && getItemCount(widget) == 0) {
-				setItemCount(widget, 1);
-			}
-			if (widget instanceof TreeItem) {
-				expanded = ((TreeItem) widget).getExpanded();
-			}
-			if (expanded) {
-				updateChildren(node);
-			}
-		}
-		attemptPendingUpdates();
-	}
-    
     protected int getItemCount(Widget widget) {
     	if (widget instanceof TreeItem) {
 			return ((TreeItem) widget).getItemCount();
@@ -869,6 +847,18 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     	} else {
     		fTree.clearAll(true);
     	}
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChildren(org.eclipse.swt.widgets.Widget)
+     */
+    protected void clearChildren(Widget widget) {
+    	if (widget instanceof TreeItem && !widget.isDisposed()) {
+			TreeItem item = (TreeItem) widget;
+			item.clearAll(true);
+		} else {
+			fTree.clearAll(true);
+		}
     }
 
     /*
@@ -1167,24 +1157,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 */
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTreeModel(this);
-	}
-    
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.AsynchronousModelViewer#nodeChanged(org.eclipse.debug.internal.ui.viewers.ModelNode)
-     */
-    public void nodeChanged(ModelNode node) {
-		Widget widget = findItem(node);
-		if (widget != null && !widget.isDisposed()) {
-			if (widget instanceof TreeItem) {
-				clear(widget);
-				return;
-			}
-			widget.setData(node.getElement());
-			mapElement(node, widget);
-			internalRefresh(node);
-			attemptPendingUpdates();
-		}
 	}
     
     /**
@@ -1522,6 +1494,26 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		}
 		return bool.booleanValue();
 	}
-	 
+	
+	/**
+	 * Notification the container status of a node has changed/been computed.
+	 * 
+	 * @param node
+	 */
+	protected void nodeContainerChanged(ModelNode node) {
+		Widget widget = findItem(node);
+		if (widget != null && !widget.isDisposed()) {
+			if (node.isContainer()) {
+				if (widget instanceof TreeItem) {
+					if (((TreeItem)widget).getExpanded()) {
+						updateChildren(node);
+					}
+				} else {
+					updateChildren(node);
+				}
+				attemptPendingUpdates();
+			}
+		}			
+	}
 	
 }
