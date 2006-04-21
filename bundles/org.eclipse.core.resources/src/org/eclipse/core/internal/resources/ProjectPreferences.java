@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,20 +33,7 @@ import org.osgi.service.prefs.Preferences;
  */
 public class ProjectPreferences extends EclipsePreferences {
 
-	// cache
-	private int segmentCount;
-	private String qualifier;
-	private IProject project;
-	private IEclipsePreferences loadLevel;
-	private IFile file;
-	// cache which nodes have been loaded from disk
-	protected static Set loadedNodes = new HashSet();
-	private boolean isWriting;
-	private boolean initialized = false;
-
 	class SortedProperties extends Properties {
-
-		private static final long serialVersionUID = 1L;
 
 		class IteratorWrapper implements Enumeration {
 			Iterator iterator;
@@ -64,6 +51,8 @@ public class ProjectPreferences extends EclipsePreferences {
 			}
 		}
 
+		private static final long serialVersionUID = 1L;
+
 		/* (non-Javadoc)
 		 * @see java.util.Hashtable#keys()
 		 */
@@ -76,6 +65,245 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	/**
+	 * Cache which nodes have been loaded from disk
+	 */
+	protected static Set loadedNodes = new HashSet();
+	private IFile file;
+	private boolean initialized = false;
+	/**
+	 * Flag indicating that this node is currently reading values from disk,
+	 * to avoid flushing during a read.
+	 */
+	private boolean isReading;
+	/**
+	 * Flag indicating that this node is currently writing values to disk,
+	 * to avoid re-reading after the write completes.
+	 */
+	private boolean isWriting;
+	private IEclipsePreferences loadLevel;
+	private IProject project;
+	private String qualifier;
+
+	// cache
+	private int segmentCount;
+
+	static void deleted(IFile file) throws CoreException {
+		IPath path = file.getFullPath();
+		int count = path.segmentCount();
+		if (count != 3)
+			return;
+		// check if we are in the .settings directory
+		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
+			return;
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		String project = path.segment(0);
+		String qualifier = path.removeFileExtension().lastSegment();
+		ProjectPreferences projectNode = (ProjectPreferences) root.node(ProjectScope.SCOPE).node(project);
+		// if the node isn't known then just return
+		try {
+			if (!projectNode.nodeExists(qualifier))
+				return;
+		} catch (BackingStoreException e) {
+			// ignore
+		}
+
+		// if the node was loaded we need to clear the values and remove
+		// its reference from the parent (don't save it though)
+		// otherwise just remove the reference from the parent
+		String childPath = projectNode.absolutePath() + IPath.SEPARATOR + qualifier;
+		if (projectNode.isAlreadyLoaded(childPath))
+			removeNode(projectNode.node(qualifier));
+		else
+			projectNode.removeNode(qualifier);
+
+		// notifies the CharsetManager if needed
+		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
+			preferencesChanged(file.getProject());
+	}
+
+	static void deleted(IFolder folder) throws CoreException {
+		IPath path = folder.getFullPath();
+		int count = path.segmentCount();
+		if (count != 2)
+			return;
+		// check if we are the .settings directory
+		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
+			return;
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		// The settings dir has been removed/moved so remove all project prefs
+		// for the resource.
+		String project = path.segment(0);
+		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
+		// check if we need to notify the charset manager
+		boolean hasResourcesSettings = getFile(folder, ResourcesPlugin.PI_RESOURCES).exists();
+		// remove the preferences
+		removeNode(projectNode);
+		// notifies the CharsetManager 		
+		if (hasResourcesSettings)
+			preferencesChanged(folder.getProject());
+	}
+
+	/*
+	 * The whole project has been removed so delete all of the project settings
+	 */
+	static void deleted(IProject project) throws CoreException {
+		// The settings dir has been removed/moved so remove all project prefs
+		// for the resource. We have to do this now because (since we aren't
+		// synchronizing) there is short-circuit code that doesn't visit the
+		// children.
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project.getName());
+		// check if we need to notify the charset manager
+		boolean hasResourcesSettings = getFile(project, ResourcesPlugin.PI_RESOURCES).exists();
+		// remove the preferences
+		removeNode(projectNode);
+		// notifies the CharsetManager 		
+		if (hasResourcesSettings)
+			preferencesChanged(project);
+	}
+
+	static void deleted(IResource resource) throws CoreException {
+		switch (resource.getType()) {
+			case IResource.FILE :
+				deleted((IFile) resource);
+				return;
+			case IResource.FOLDER :
+				deleted((IFolder) resource);
+				return;
+			case IResource.PROJECT :
+				deleted((IProject) resource);
+				return;
+		}
+	}
+
+	/*
+	 * Return the corresponding IFile for the given preference node, or null
+	 * if it cannot be calculated.
+	 */
+	static IFile getFile(IEclipsePreferences node) {
+		String path = node.absolutePath();
+		String projectName = getSegment(path, 2);
+		if (projectName == null)
+			return null;
+		String qualifier = getSegment(path, 3);
+		if (qualifier == null)
+			return null;
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(projectName).append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	}
+
+	/*
+	 * Return the preferences file for the given folder and qualifier.
+	 */
+	static IFile getFile(IFolder folder, String qualifier) {
+		Assert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
+		return folder.getFile(new Path(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	}
+
+	/*
+	 * Return the preferences file for the given project and qualifier.
+	 */
+	static IFile getFile(IProject project, String qualifier) {
+		return project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	}
+
+	private static Properties loadProperties(IFile file) throws BackingStoreException {
+		if (Policy.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences from file: " + file.getFullPath()); //$NON-NLS-1$
+		Properties result = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(file.getContents(true));
+			result.load(input);
+		} catch (CoreException e) {
+			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} finally {
+			FileUtil.safeClose(input);
+		}
+		return result;
+	}
+
+	private static void preferencesChanged(IProject project) {
+		Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
+		workspace.getCharsetManager().projectPreferencesChanged(project);
+		workspace.getContentDescriptionManager().projectPreferencesChanged(project);
+	}
+
+	private static void read(ProjectPreferences node, IFile file) throws BackingStoreException, CoreException {
+		if (file == null || !file.exists()) {
+			if (Policy.DEBUG_PREFERENCES)
+				Policy.debug("Unable to determine preference file or file does not exist for node: " + node.absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		Properties fromDisk = loadProperties(file);
+		// no work to do
+		if (fromDisk.isEmpty())
+			return;
+		// create a new node to store the preferences in.
+		IExportedPreferences myNode = (IExportedPreferences) ExportedPreferences.newRoot().node(node.absolutePath());
+		convertFromProperties((EclipsePreferences) myNode, fromDisk, false);
+		//flag that we are currently reading, to avoid unnecessary writing
+		boolean oldIsReading = node.isReading;
+		node.isReading = true;
+		try {
+			Platform.getPreferencesService().applyPreferences(myNode);
+		} finally {
+			node.isReading = oldIsReading;
+		}
+	}
+
+	static void removeNode(Preferences node) throws CoreException {
+		String message = NLS.bind(Messages.preferences_removeNodeException, node.absolutePath());
+		try {
+			node.removeNode();
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		}
+		String path = node.absolutePath();
+		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
+			String key = (String) i.next();
+			if (key.startsWith(path))
+				i.remove();
+		}
+	}
+
+	public static void updatePreferences(IFile file) throws CoreException {
+		IPath path = file.getFullPath();
+		// if we made it this far we are inside /project/.settings and might
+		// have a change to a preference file
+		if (!PREFS_FILE_EXTENSION.equals(path.getFileExtension()))
+			return;
+
+		String project = path.segment(0);
+		String qualifier = path.removeFileExtension().lastSegment();
+		Preferences root = Platform.getPreferencesService().getRootNode();
+		Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
+		String message = null;
+		try {
+			message = NLS.bind(Messages.preferences_syncException, node.absolutePath());
+			if (!(node instanceof ProjectPreferences))
+				return;
+			ProjectPreferences projectPrefs = (ProjectPreferences) node;
+			if (projectPrefs.isWriting)
+				return;
+			read(projectPrefs, file);
+			// make sure that we generate the appropriate resource change events
+			// if encoding settings have changed
+			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))
+				preferencesChanged(file.getProject());
+		} catch (BackingStoreException e) {
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		}
+	}
+
+	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
 	 */
 	public ProjectPreferences() {
@@ -84,7 +312,7 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	private ProjectPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
-		
+
 		// cache the segment count
 		String path = absolutePath();
 		segmentCount = getSegmentCount(path);
@@ -118,52 +346,49 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#nodeExists(java.lang.String)
-	 * 
-	 * If we are at the /project node and we are checking for the existance of a child, we
-	 * want special behaviour. If the child is a single segment name, then we want to
-	 * return true if the node exists OR if a project with that name exists in the workspace.
-	 */
-	public boolean nodeExists(String path) throws BackingStoreException {
-		if (segmentCount != 1)
-			return super.nodeExists(path);
-		if (path.length() == 0)
-			return super.nodeExists(path);
-		if (path.charAt(0) == IPath.SEPARATOR)
-			return super.nodeExists(path);
-		if (path.indexOf(IPath.SEPARATOR) != -1)
-			return super.nodeExists(path);
-		// if we are checking existance of a single segment child of /project, base the answer on
-		// whether or not it exists in the workspace.
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(path).exists() || super.nodeExists(path);
-	}
-
 	/*
-	 * Calculate and return the file system location for this preference node.
-	 * Use the absolute path of the node to find out the project name so 
-	 * we can get its location on disk.
-	 * 
-	 * NOTE: we cannot cache the location since it may change over the course
-	 * of the project life-cycle.
+	 * Figure out what the children of this node are based on the resources
+	 * that are in the workspace.
 	 */
-	protected IPath getLocation() {
-		if (project == null || qualifier == null)
-			return null;
-		IPath path = project.getLocation();
-		return computeLocation(path, qualifier);
+	private String[] computeChildren() {
+		if (project == null)
+			return EMPTY_STRING_ARRAY;
+		IFolder folder = project.getFolder(DEFAULT_PREFERENCES_DIRNAME);
+		if (!folder.exists())
+			return EMPTY_STRING_ARRAY;
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (CoreException e) {
+			return EMPTY_STRING_ARRAY;
+		}
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < members.length; i++) {
+			IResource resource = members[i];
+			if (resource.getType() == IResource.FILE && PREFS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension()))
+				result.add(resource.getFullPath().removeFileExtension().lastSegment());
+		}
+		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
 	}
 
-	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
-		return loadedNodes.contains(node.absolutePath());
-	}
-	
-	protected boolean isAlreadyLoaded(String path) {
-		return loadedNodes.contains(path);
+	public void flush() throws BackingStoreException {
+		if (isReading)
+			return;
+		isWriting = true;
+		try {
+			super.flush();
+		} finally {
+			isWriting = false;
+		}
 	}
 
-	protected void loaded() {
-		loadedNodes.add(absolutePath());
+	private IFile getFile() {
+		if (file == null) {
+			if (project == null || qualifier == null)
+				return null;
+			file = getFile(project, qualifier);
+		}
+		return file;
 	}
 
 	/*
@@ -184,47 +409,84 @@ public class ProjectPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
+	/*
+	 * Calculate and return the file system location for this preference node.
+	 * Use the absolute path of the node to find out the project name so 
+	 * we can get its location on disk.
+	 * 
+	 * NOTE: we cannot cache the location since it may change over the course
+	 * of the project life-cycle.
+	 */
+	protected IPath getLocation() {
+		if (project == null || qualifier == null)
+			return null;
+		IPath path = project.getLocation();
+		return computeLocation(path, qualifier);
+	}
+
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
-	private IFile getFile() {
-		if (file == null) {
-			if (project == null || qualifier == null)
-				return null;
-			file = getFile(project, qualifier);
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+		return loadedNodes.contains(node.absolutePath());
+	}
+
+	protected boolean isAlreadyLoaded(String path) {
+		return loadedNodes.contains(path);
+	}
+
+	protected void load() throws BackingStoreException {
+		IFile localFile = getFile();
+		if (localFile == null || !localFile.exists()) {
+			if (Policy.DEBUG_PREFERENCES)
+				Policy.debug("Unable to determine preference file or file does not exist for node: " + absolutePath()); //$NON-NLS-1$
+			return;
 		}
-		return file;
+		if (Policy.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
+		Properties fromDisk = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(localFile.getContents(true));
+			fromDisk.load(input);
+		} catch (CoreException e) {
+			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} finally {
+			FileUtil.safeClose(input);
+		}
+		convertFromProperties(this, fromDisk, true);
 	}
 
-	/*
-	 * Return the preferences file for the given project and qualifier.
-	 */
-	static IFile getFile(IProject project, String qualifier) {
-		return project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	protected void loaded() {
+		loadedNodes.add(absolutePath());
 	}
 
-	/*
-	 * Return the preferences file for the given folder and qualifier.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#nodeExists(java.lang.String)
+	 * 
+	 * If we are at the /project node and we are checking for the existance of a child, we
+	 * want special behaviour. If the child is a single segment name, then we want to
+	 * return true if the node exists OR if a project with that name exists in the workspace.
 	 */
-	static IFile getFile(IFolder folder, String qualifier) {
-		Assert.isLegal(folder.getName().equals(DEFAULT_PREFERENCES_DIRNAME));
-		return folder.getFile(new Path(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
-	}
-	
-	/*
-	 * Return the corresponding IFile for the given preference node, or null
-	 * if it cannot be calculated.
-	 */
-	static IFile getFile(IEclipsePreferences node) {
-		String path = node.absolutePath();
-		String projectName = getSegment(path, 2);
-		if (projectName == null)
-			return null;
-		String qualifier = getSegment(path, 3);
-		if (qualifier == null)
-			return null;
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(projectName).append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+	public boolean nodeExists(String path) throws BackingStoreException {
+		if (segmentCount != 1)
+			return super.nodeExists(path);
+		if (path.length() == 0)
+			return super.nodeExists(path);
+		if (path.charAt(0) == IPath.SEPARATOR)
+			return super.nodeExists(path);
+		if (path.indexOf(IPath.SEPARATOR) != -1)
+			return super.nodeExists(path);
+		// if we are checking existance of a single segment child of /project, base the answer on
+		// whether or not it exists in the workspace.
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(path).exists() || super.nodeExists(path);
 	}
 
 	protected void save() throws BackingStoreException {
@@ -311,12 +573,12 @@ public class ProjectPreferences extends EclipsePreferences {
 			};
 			//don't bother with scheduling rules if we are already inside an operation
 			try {
-				if (((Workspace)workspace).getWorkManager().isLockAlreadyAcquired()) {
+				if (((Workspace) workspace).getWorkManager().isLockAlreadyAcquired()) {
 					operation.run(null);
 				} else {
 					// we might: create the .settings folder, create the file, or modify the file.
 					ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
-						workspace.run(operation, rule, IResource.NONE, null);
+					workspace.run(operation, rule, IResource.NONE, null);
 				}
 			} catch (OperationCanceledException e) {
 				throw new BackingStoreException(Messages.preferences_operationCanceled);
@@ -325,247 +587,6 @@ public class ProjectPreferences extends EclipsePreferences {
 			String message = NLS.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
-		}
-	}
-
-	protected void load() throws BackingStoreException {
-		IFile localFile = getFile();
-		if (localFile == null || !localFile.exists()) {
-			if (Policy.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine preference file or file does not exist for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		if (Policy.DEBUG_PREFERENCES)
-			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
-		Properties fromDisk = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(localFile.getContents(true));
-			fromDisk.load(input);
-		} catch (CoreException e) {
-			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.preferences_loadException, localFile.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
-		} finally {
-			FileUtil.safeClose(input);
-		}
-		convertFromProperties(this, fromDisk, true);
-	}
-
-	private static Properties loadProperties(IFile file) throws BackingStoreException {
-		if (Policy.DEBUG_PREFERENCES)
-			Policy.debug("Loading preferences from file: " + file.getFullPath()); //$NON-NLS-1$
-		Properties result = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(file.getContents(true));
-			result.load(input);
-		} catch (CoreException e) {
-			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
-			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-			throw new BackingStoreException(message);
-		} finally {
-			FileUtil.safeClose(input);
-		}
-		return result;
-	}
-
-	private static void read(ProjectPreferences node, IFile file) throws BackingStoreException, CoreException {
-		if (file == null || !file.exists()) {
-			if (Policy.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine preference file or file does not exist for node: " + node.absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		Properties fromDisk = loadProperties(file);
-		// no work to do
-		if (fromDisk.isEmpty())
-			return;
-		// create a new node to store the preferences in.
-		IExportedPreferences myNode = (IExportedPreferences) ExportedPreferences.newRoot().node(node.absolutePath());
-		convertFromProperties((EclipsePreferences) myNode, fromDisk, false);
-		Platform.getPreferencesService().applyPreferences(myNode);
-	}
-
-	public static void updatePreferences(IFile file) throws CoreException {
-		IPath path = file.getFullPath();
-		// if we made it this far we are inside /project/.settings and might
-		// have a change to a preference file
-		if (!PREFS_FILE_EXTENSION.equals(path.getFileExtension()))
-			return;
-
-		String project = path.segment(0);
-		String qualifier = path.removeFileExtension().lastSegment();
-		Preferences root = Platform.getPreferencesService().getRootNode();
-		Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
-		String message = null;
-		try {
-			message = NLS.bind(Messages.preferences_syncException, node.absolutePath());
-			if (!(node instanceof ProjectPreferences))
-				return;
-			ProjectPreferences projectPrefs = (ProjectPreferences) node;
-			if (projectPrefs.isWriting)
-				return;
-			read(projectPrefs, file);
-			// make sure that we generate the appropriate resource change events
-			// if encoding settings have changed
-			if (ResourcesPlugin.PI_RESOURCES.equals(qualifier))
-				preferencesChanged(file.getProject());
-		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
-			throw new CoreException(status);
-		}
-	}
-
-	private static void preferencesChanged(IProject project) {
-		Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
-		workspace.getCharsetManager().projectPreferencesChanged(project);
-		workspace.getContentDescriptionManager().projectPreferencesChanged(project);
-	}
-
-	static void removeNode(Preferences node) throws CoreException {
-		String message = NLS.bind(Messages.preferences_removeNodeException, node.absolutePath());
-		try {
-			node.removeNode();
-		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
-			throw new CoreException(status);
-		}
-		String path = node.absolutePath();
-		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			if (key.startsWith(path))
-				i.remove();
-		}
-	}
-
-	/*
-	 * The whole project has been removed so delete all of the project settings
-	 */
-	static void deleted(IProject project) throws CoreException {
-		// The settings dir has been removed/moved so remove all project prefs
-		// for the resource. We have to do this now because (since we aren't
-		// synchronizing) there is short-circuit code that doesn't visit the
-		// children.
-		Preferences root = Platform.getPreferencesService().getRootNode();
-		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project.getName());
-		// check if we need to notify the charset manager
-		boolean hasResourcesSettings = getFile(project, ResourcesPlugin.PI_RESOURCES).exists();
-		// remove the preferences
-		removeNode(projectNode);
-		// notifies the CharsetManager 		
-		if (hasResourcesSettings)
-			preferencesChanged(project);
-	}
-
-	static void deleted(IFile file) throws CoreException {
-		IPath path = file.getFullPath();
-		int count = path.segmentCount();
-		if (count != 3)
-			return;
-		// check if we are in the .settings directory
-		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
-			return;
-		Preferences root = Platform.getPreferencesService().getRootNode();
-		String project = path.segment(0);
-		String qualifier = path.removeFileExtension().lastSegment();
-		ProjectPreferences projectNode = (ProjectPreferences) root.node(ProjectScope.SCOPE).node(project);
-		// if the node isn't known then just return
-		try {
-			if (!projectNode.nodeExists(qualifier))
-				return;
-		} catch (BackingStoreException e) {
-			// ignore
-		}
-
-		// if the node was loaded we need to clear the values and remove
-		// its reference from the parent (don't save it though)
-		// otherwise just remove the reference from the parent
-		String childPath = projectNode.absolutePath() + IPath.SEPARATOR + qualifier;
-		if (projectNode.isAlreadyLoaded(childPath))
-			removeNode(projectNode.node(qualifier));
-		else
-			projectNode.removeNode(qualifier);
-
-		// notifies the CharsetManager if needed
-		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
-			preferencesChanged(file.getProject());
-	}
-
-	static void deleted(IResource resource) throws CoreException {
-		switch (resource.getType()) {
-			case IResource.FILE :
-				deleted((IFile) resource);
-				return;
-			case IResource.FOLDER :
-				deleted((IFolder) resource);
-				return;
-			case IResource.PROJECT :
-				deleted((IProject) resource);
-				return;
-		}
-	}
-
-	static void deleted(IFolder folder) throws CoreException {
-		IPath path = folder.getFullPath();
-		int count = path.segmentCount();
-		if (count != 2)
-			return;
-		// check if we are the .settings directory
-		if (!EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(path.segment(1)))
-			return;
-		Preferences root = Platform.getPreferencesService().getRootNode();
-		// The settings dir has been removed/moved so remove all project prefs
-		// for the resource.
-		String project = path.segment(0);
-		Preferences projectNode = root.node(ProjectScope.SCOPE).node(project);
-		// check if we need to notify the charset manager
-		boolean hasResourcesSettings = getFile(folder, ResourcesPlugin.PI_RESOURCES).exists();
-		// remove the preferences
-		removeNode(projectNode);
-		// notifies the CharsetManager 		
-		if (hasResourcesSettings)
-			preferencesChanged(folder.getProject());
-	}
-
-	/*
-	 * Figure out what the children of this node are based on the resources
-	 * that are in the workspace.
-	 */
-	private String[] computeChildren() {
-		if (project == null)
-			return EMPTY_STRING_ARRAY;
-		IFolder folder = project.getFolder(DEFAULT_PREFERENCES_DIRNAME);
-		if (!folder.exists())
-			return EMPTY_STRING_ARRAY;
-		IResource[] members = null;
-		try {
-			members = folder.members();
-		} catch (CoreException e) {
-			return EMPTY_STRING_ARRAY;
-		}
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < members.length; i++) {
-			IResource resource = members[i];
-			if (resource.getType() == IResource.FILE && PREFS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension()))
-				result.add(resource.getFullPath().removeFileExtension().lastSegment());
-		}
-		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
-	}
-
-	public void flush() throws BackingStoreException {
-		isWriting = true;
-		try {
-			super.flush();
-		} finally {
-			isWriting = false;
 		}
 	}
 }
