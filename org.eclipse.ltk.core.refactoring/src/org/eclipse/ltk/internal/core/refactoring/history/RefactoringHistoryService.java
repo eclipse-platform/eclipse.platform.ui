@@ -713,7 +713,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask("", proxies.length); //$NON-NLS-1$
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length);
 			for (int index= 0; index < proxies.length; index++) {
 				if (query.proceed(proxies[index]).isOK())
 					fireRefactoringDeletedEvent(proxies[index]);
@@ -751,7 +751,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask("", 100); //$NON-NLS-1$
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
 			final String name= project.getName();
 			final IFileStore stateStore= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation());
 			if (name.equals(NAME_WORKSPACE_PROJECT)) {
