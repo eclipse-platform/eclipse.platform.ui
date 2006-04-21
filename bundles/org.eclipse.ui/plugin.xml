@@ -316,16 +316,26 @@
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
-	  <key
-	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="CTRL+M2+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
+      <key
+            locale="zh"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SPACE"/>
       <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+/"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+M2+SPACE"/>	<!-- Command+SPACE+* is reserved on carbon, hardcode to CTRL -->
+      <key
+            locale="zh"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+M2+SPACE"/>
       <key
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
