@@ -924,10 +924,6 @@ public class WorkbenchMessages extends NLS {
     public static String TrimCommon_IntroBar_TrimName;
     public static String TrimCommon_Progress_TrimName;
     public static String TrimCommon_StatusLine_TrimName;
-    
-    // Trim Contribution Errors
-    public static String Trim_WidgetFillError; 
-    public static String Trim_GroupFillError; 
 		
     static {
 		// load message values from bundle file
