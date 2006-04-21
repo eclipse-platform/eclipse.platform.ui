@@ -8,37 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help;
+package org.eclipse.ua.tests.help.preferences;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ua.tests.help.context.AllContextTests;
-import org.eclipse.ua.tests.help.preferences.AllPreferencesTests;
-import org.eclipse.ua.tests.help.producer.AllProducerTests;
-import org.eclipse.ua.tests.help.search.AllSearchTests;
-import org.eclipse.ua.tests.help.toc.AllTocTests;
-
 /*
- * Tests help functionality (automated).
+ * Tests help preferences functionality (automated).
  */
-public class AllHelpTests extends TestSuite {
+public class AllPreferencesTests extends TestSuite {
 
 	/*
 	 * Returns the entire test suite.
 	 */
 	public static Test suite() {
-		return new AllHelpTests();
+		return new AllPreferencesTests();
 	}
 
 	/*
 	 * Constructs a new test suite.
 	 */
-	public AllHelpTests() {
-		addTest(AllContextTests.suite());
-		addTest(AllPreferencesTests.suite());
-		addTest(AllProducerTests.suite());
-		addTest(AllSearchTests.suite());
-		addTest(AllTocTests.suite());
+	public AllPreferencesTests() {
+		addTest(ProductPreferencesTest.suite());
 	}
 }

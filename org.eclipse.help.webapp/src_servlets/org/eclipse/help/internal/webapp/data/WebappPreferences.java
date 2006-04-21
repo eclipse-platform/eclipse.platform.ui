@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.help.internal.webapp.data;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 /**
  * Preferences for availiable to webapp
@@ -40,21 +41,21 @@ public class WebappPreferences {
 	}
 
 	public boolean isIndexView() {
-		return "true".equals(prefs.getString("indexView")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexView"); //$NON-NLS-1$
 	}
 
 	public boolean isBookmarksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-				&& "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
+				&& ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "bookmarksView"); //$NON-NLS-1$
 	}
 
 	public boolean isBookmarksAction() {
-		return "true".equals(prefs.getString("bookmarksView")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "bookmarksView"); //$NON-NLS-1$
 	}
 
 	public boolean isLinksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-				&& "true".equals(prefs.getString("linksView")); //$NON-NLS-1$ //$NON-NLS-2$
+				&& ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "linksView"); //$NON-NLS-1$
 	}
 
 	public String getImagesDirectory() {
@@ -101,7 +102,7 @@ public class WebappPreferences {
 		return value;
 	}
 	public boolean isWindowTitlePrefix() {
-		return "true".equalsIgnoreCase(prefs.getString("windowTitlePrefix")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "windowTitlePrefix"); //$NON-NLS-1$
 	}
 	public boolean isDontConfirmShowAll() {
 		return prefs.getBoolean("dontConfirmShowAll"); //$NON-NLS-1$
@@ -110,22 +111,22 @@ public class WebappPreferences {
 		prefs.setValue("dontConfirmShowAll", dontconfirm); //$NON-NLS-1$
 	}
 	public boolean isActiveHelp() {
-		return "true".equalsIgnoreCase(prefs.getString("activeHelp")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "activeHelp"); //$NON-NLS-1$
 	}
 
 	public boolean isIndexInstruction() {
-		return "true".equalsIgnoreCase(prefs.getString("indexInstruction")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexInstruction"); //$NON-NLS-1$
 	}
 
 	public boolean isIndexButton() {
-		return "true".equalsIgnoreCase(prefs.getString("indexButton")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexButton"); //$NON-NLS-1$
 	}
 
 	public boolean isIndexPlusMinus() {
-		return "true".equalsIgnoreCase(prefs.getString("indexPlusMinus")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexPlusMinus"); //$NON-NLS-1$
 	}
 
 	public boolean isIndexExpandAll() {
-		return "true".equalsIgnoreCase(prefs.getString("indexExpandAll")); //$NON-NLS-1$ //$NON-NLS-2$
+		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexExpandAll"); //$NON-NLS-1$
 	}
 }

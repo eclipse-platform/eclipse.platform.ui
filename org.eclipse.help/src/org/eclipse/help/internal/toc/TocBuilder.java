@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,9 @@ public class TocBuilder {
 		unprocessedTocs = new ArrayList();
 	}
 
-	public Collection getBuiltTocs() {
+	public List getBuiltTocs() {
 		// returns the list of root Toc trees
-		Collection tocCol = new ArrayList(contributedTocFiles.size());
+		List tocCol = new ArrayList(contributedTocFiles.size());
 		for (Iterator it = contributedTocFiles.iterator(); it.hasNext();) {
 			TocFile tocFile = (TocFile) it.next();
 			Toc toc = tocFile.getToc();

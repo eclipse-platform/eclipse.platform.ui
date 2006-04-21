@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.model.*;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
@@ -127,7 +128,7 @@ public class TocManager {
 			Collection contributedTocFiles = getContributedTocFiles(locale);
 			TocBuilder builder = new TocBuilder();
 			builder.build(contributedTocFiles);
-			Collection builtTocs = builder.getBuiltTocs();
+			List builtTocs = builder.getBuiltTocs();
 			tocs = new ITocElement[builtTocs.size()];
 			int i = 0;
 			for (Iterator it = builtTocs.iterator(); it.hasNext();) {
@@ -166,57 +167,32 @@ public class TocManager {
 	}
 	
 	/**
-	 * Orders the TOCs according to a product wide preference.
+	 * Orders the TOCs according to all products' preferences, with the
+	 * active product getting precedence.
 	 */
-	private List orderTocs(Collection unorderedTocs) {
-		// first categorize the TOCs
-		Map categorized = categorizeTocs(unorderedTocs);
-		
-		// order the categories/TOCs according to preferred order
-		List preferredOrder = getPreferredOrder();
-		List orderedEntries = new ArrayList(unorderedTocs.size());
-		for (Iterator it = preferredOrder.iterator(); it.hasNext();) {
-			String entry = (String)it.next();
-			Object obj = categorized.get(entry);
-			if (obj != null) {
-				// move from map to ordered list
-				orderedEntries.add(obj);
-				categorized.remove(entry);
-			}
-		}
-		
-		// add the remaining categories/tocs at the end
-		orderedEntries.addAll(categorized.values());
-		
-		// now expand the categories to get the full list of TOCs
-		List orderedTocs = expandCategories(orderedEntries);
-		
-		return orderedTocs;
-	}
-
-	/**
-	 * Reads preferences to determine the preferred order of the TOCs/TOC categories.
-	 * 
-	 * @return the list of TOC href's/category ids.
-	 */
-	private List getPreferredOrder() {
-		ArrayList orderedTocs = new ArrayList();
+	private List orderTocs(List unorderedTocs) {
 		try {
-			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String preferredTocs = pref.getString(HelpPlugin.BASE_TOCS_KEY);
-			if (preferredTocs != null) {
-				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(
-						preferredTocs, " ;,"); //$NON-NLS-1$
-
-				while (suggestdOrderedInfosets.hasMoreElements()) {
-					orderedTocs.add(suggestdOrderedInfosets.nextElement());
-				}
-			}
-		} catch (Exception e) {
-			HelpPlugin.logError(
-					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
+			// first categorize the TOCs
+			Map categorized = categorizeTocs(unorderedTocs);
+			
+			// get the toc hrefs / category ids to be ordered
+			List itemsToOrder = new ArrayList(categorized.keySet());
+			
+			// order them
+			List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
+			
+			// replace with actual Toc or TocCategory
+			orderedItems = substituteValues(orderedItems, categorized);
+			
+			// expand the categories
+			orderedItems = expandCategories(orderedItems);
+			return orderedItems;
 		}
-		return orderedTocs;
+		catch (Exception e) {
+			// if anything goes wrong, log an error and fall back to unordered tocs
+			HelpPlugin.logError("An unexpected internal error occured while ordering TOCs", e); //$NON-NLS-1$
+			return unorderedTocs;
+		}
 	}
 
 	/**
@@ -326,6 +302,30 @@ public class TocManager {
 			}
 		}
 		return categorized;
+	}
+	
+	/**
+	 * For each item in the list, substitutes it with the value in the map using
+	 * the item as a key. If the map does not have the item as a key, the item is
+	 * omitted.
+	 * 
+	 * @param items the items to substitute
+	 * @param map the map to use for substitution
+	 */
+	private static List substituteValues(List items, Map map) {
+		if (items != null && map != null) {
+			List result = new ArrayList(items.size());
+			Iterator iter = items.iterator();
+			while (iter.hasNext()) {
+				Object key = iter.next();
+				Object value = map.get(key);
+				if (value != null) {
+					result.add(value);
+				}
+			}
+			return result;
+		}
+		return null;
 	}
 	
 	/**
