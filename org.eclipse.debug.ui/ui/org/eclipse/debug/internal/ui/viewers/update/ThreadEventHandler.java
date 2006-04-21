@@ -63,6 +63,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		if (event.isEvaluation()) {
         	ModelDelta delta = buildRootDelta();
     		ModelDelta node = addPathToThread(delta, thread);
+    		node = node.addNode(thread, IModelDelta.NO_CHANGE);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
                 if (frame != null) {
@@ -114,12 +115,32 @@ public class ThreadEventHandler extends DebugEventHandler {
 
 	protected void handleLateSuspend(DebugEvent suspend, DebugEvent resume) {
 		IThread thread = queueSuspendedThread(suspend);
-		fireDeltaUpdatingTopFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND);
+		if (suspend.isEvaluation() && suspend.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
+			// late implicit evaluation - update thread and frame
+        	ModelDelta delta = buildRootDelta();
+    		ModelDelta node = addPathToThread(delta, thread);
+    		node = node.addNode(thread, IModelDelta.STATE);
+			try {
+				IStackFrame frame = thread.getTopStackFrame();
+                if (frame != null) {
+                    node.addNode(frame, IModelDelta.STATE);
+                    fireDelta(delta);
+                }
+			} catch (DebugException e) {
+			}
+        } else {	
+        	fireDeltaUpdatingTopFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND);
+        }
 	}
 
 	protected void handleSuspendTimeout(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
-		fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
+		if (event.isEvaluation() && event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
+			// don't collapse thread when waiting for implicit eval to complete
+			fireDeltaUpdatingThreadState(thread);
+		} else {
+			fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
+		}
 	}
 	
 	private ModelDelta buildRootDelta() {
@@ -173,6 +194,13 @@ public class ThreadEventHandler extends DebugEventHandler {
     			fLastTopFrame.put(thread, frame);
     		}
 		}
+    	fireDelta(delta);
+	}
+	
+	private void fireDeltaUpdatingThreadState(IThread thread) {
+		ModelDelta delta = buildRootDelta();
+		ModelDelta node = addPathToThread(delta, thread);
+	    node = node.addNode(thread, IModelDelta.STATE);
     	fireDelta(delta);
 	}	
 	
