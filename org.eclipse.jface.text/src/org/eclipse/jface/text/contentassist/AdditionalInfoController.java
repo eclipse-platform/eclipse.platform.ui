@@ -430,8 +430,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * @see AbstractInformationControlManager#disposeInformationControl()
 	 */
 	public void disposeInformationControl() {
-		
-		fTimer.terminate();
+
+		if (fTimer !=null) {
+			fTimer.terminate();
+			fTimer= null;
+		}
+
+		fProposal= null;
+		fInformation= null;
 
 		if (fProposalTable != null && !fProposalTable.isDisposed()) {
 			fProposalTable.removeSelectionListener(fSelectionListener);
