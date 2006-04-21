@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Default terminate adapter for standard debug model.
@@ -37,11 +38,13 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter#canTerminate(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
 	 */
 	public void canTerminate(final Object element, final IBooleanRequestMonitor requestMonitor) {
-		Assert.isTrue(element instanceof ITerminate, "element must be instance of ITerminate"); //$NON-NLS-1$
 		Job job = new Job("canTerminate") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				ITerminate terminate = (ITerminate) element;
-				requestMonitor.setResult(terminate.canTerminate());
+				ITerminate terminate = getTarget(element);
+				if (terminate != null)
+					requestMonitor.setResult(terminate.canTerminate());
+				else
+					requestMonitor.setResult(false);
 				requestMonitor.done();
 				return Status.OK_STATUS;
 			}
@@ -54,11 +57,13 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter#isTerminated(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
 	 */
 	public void isTerminated(final Object element, final IBooleanRequestMonitor requestMonitor) {
-		Assert.isTrue(element instanceof ITerminate, "element must be instance of ITerminate"); //$NON-NLS-1$
 		Job job = new Job("isTerminated") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				ITerminate terminate = (ITerminate) element;
-				requestMonitor.setResult(terminate.isTerminated());
+				ITerminate terminate = getTarget(element);
+				if (terminate != null)
+					requestMonitor.setResult(terminate.isTerminated());
+				else
+					requestMonitor.setResult(false);
 				requestMonitor.done();
 				return Status.OK_STATUS;
 			}
@@ -71,16 +76,26 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter#terminate(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
 	 */
 	public void terminate(final Object element, final IAsynchronousRequestMonitor requestMonitor) {
-		Assert.isTrue(element instanceof ITerminate, "element must be instance of ITerminate"); //$NON-NLS-1$
 		Job job = new Job("terminate") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				try {
-                    if (element instanceof IProcess) {
-                        killTargets((IProcess) element);
-                    }
-                    ((ITerminate) element).terminate();
-				} catch (DebugException e) {
-					requestMonitor.setStatus(e.getStatus());
+				ITerminate terminate = getTarget(element);
+				if (terminate != null)
+				{
+					try {
+	                    if (element instanceof IProcess) {
+	                        killTargets((IProcess) element);
+	                    }
+	                    ((ITerminate) element).terminate();
+					} catch (DebugException e) {
+						requestMonitor.setStatus(e.getStatus());
+					}
+				}
+				else
+				{
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
+                			IDebugUIConstants.INTERNAL_ERROR,
+                			"element must be an instance of or adapt to ITerminate", //$NON-NLS-1$
+                			null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -112,6 +127,16 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
                 }
             }
         }
+    }
+    
+    private ITerminate getTarget(Object element)
+    {
+    	 if (element instanceof ITerminate) {
+ 			return (ITerminate) element;
+ 		} else if (element instanceof IAdaptable) {
+ 			return (ITerminate) ((IAdaptable)element).getAdapter(ITerminate.class);
+ 		}
+         return null;
     }
 
 }
