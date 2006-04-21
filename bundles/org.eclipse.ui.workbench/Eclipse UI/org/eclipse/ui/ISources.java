@@ -90,17 +90,20 @@ public interface ISources {
 	/**
 	 * The variable name for the active contexts. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes a particular action set.
+	 * @since 3.2
 	 */
 	public static final int ACTIVE_ACTION_SETS = 1 << 8;
 
 	/**
 	 * The variable name for the active action sets. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
 
@@ -118,6 +121,7 @@ public interface ISources {
 	/**
 	 * The priority given when the source includes the currently active
 	 * workbench window shell.
+	 * @since 3.2
 	 */
 	public static final int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
 
@@ -125,6 +129,7 @@ public interface ISources {
 	 * The variable name for the active workbench window shell. This is for use
 	 * with the <code>ISourceProvider</code> and
 	 * <code>IEvaluationContext</code>.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
 
@@ -148,6 +153,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active editor part. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
 
@@ -213,17 +219,20 @@ public interface ISources {
 	/**
 	 * The variable name for the active selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current menu.
+	 * @since 3.2
 	 */
 	public static final int ACTIVE_MENU = 1 << 31;
 
 	/**
 	 * The variable name for the active menu. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
+	 * @since 3.2
 	 */
 	public static final String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
 }

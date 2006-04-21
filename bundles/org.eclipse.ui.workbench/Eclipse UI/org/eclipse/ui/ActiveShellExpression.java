@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * <p>
- * An expression that checks the active shell variable. The variable names is
+ * An expression that checks the active shell variable. The variable name is
  * <code>ISources.ACTIVE_SHELL_NAME</code> and falls back to
  * <code>ISources.ACTIVE_WORKBENCH_WINDOW</code>. That is, if the active
  * shell doesn't match, then it will be allowed to match the active workbench
@@ -60,6 +60,12 @@ public final class ActiveShellExpression extends Expression {
 		this.activeShell = activeShell;
 	}
 
+	/**
+	 * Expression information for this expression.  Namely active shell and 
+	 * active workbench window name.
+	 * 
+	 * @since 3.2
+	 */
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		info.addVariableNameAccess(ISources.ACTIVE_SHELL_NAME);
 		info.addVariableNameAccess(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);

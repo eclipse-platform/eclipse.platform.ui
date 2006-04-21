@@ -191,6 +191,8 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      * the runnable will run in the UI thread and it is the runnable's
      * responsibility to call <code>Display.readAndDispatch()</code>
      * to ensure UI responsiveness.
+     * 
+     * @since 3.2
      */
     public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 

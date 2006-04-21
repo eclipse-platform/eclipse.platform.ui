@@ -42,6 +42,8 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 	 * @param serviceLocator
 	 *            The service locator for this action bar; must not be
 	 *            <code>null</code>.
+	 *            
+	 * @since 3.2
 	 */
 	public SubActionBars2(final IActionBars2 parent,
 			final IServiceLocator serviceLocator) {

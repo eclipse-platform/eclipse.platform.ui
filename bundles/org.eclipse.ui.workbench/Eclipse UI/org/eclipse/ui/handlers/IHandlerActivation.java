@@ -34,6 +34,8 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 
 	/**
 	 * The depth at which the root exists.
+	 * 
+	 * @since 3.2
 	 */
 	public static final int ROOT_DEPTH = 1;
 

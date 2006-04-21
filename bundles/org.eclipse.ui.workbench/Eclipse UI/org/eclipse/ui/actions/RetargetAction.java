@@ -303,6 +303,13 @@ public class RetargetAction extends PartEventAction implements
         localHelpListener = listener;
     }
 
+	/**
+	 * Returns a string representation of this action.
+	 * 
+	 * @return A string representation of this action.
+	 * 
+	 * @since 3.2 
+	 */
 	public final String toString() {
 		final StringBuffer buffer = new StringBuffer();
 

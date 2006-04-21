@@ -116,6 +116,8 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.LabelProvider#dispose()
+     * 
+     * @since 3.2
      */
     public void dispose() {
     	resourceManager.dispose();

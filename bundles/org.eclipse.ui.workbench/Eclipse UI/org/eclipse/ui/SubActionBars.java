@@ -112,6 +112,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * @param serviceLocator
 	 *            The service locator for this action bar; should not be
 	 *            <code>null</code>.
+	 *            
+	 * @since 3.2
 	 */
 	public SubActionBars(final IActionBars parent,
 			final IServiceLocator serviceLocator) {
@@ -335,6 +337,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 		return parent;
 	}
 
+	/**
+	 * Answer the service locator for this action bar.
+	 * 
+	 * @return an <code>IServiceLocater</code> or the parents if 
+	 *     the receiver does not have one
+	 *     
+	 * @since 3.2
+	 */
 	public final IServiceLocator getServiceLocator() {
 		if (serviceLocator != null) {
 			return serviceLocator;
@@ -534,6 +544,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * 
 	 * @param locator
 	 *            The new locator; must not be <code>null</code>.
+	 *            
+	 * @since 3.2
 	 */
 	protected final void setServiceLocator(final IServiceLocator locator) {
 		if (locator == null) {

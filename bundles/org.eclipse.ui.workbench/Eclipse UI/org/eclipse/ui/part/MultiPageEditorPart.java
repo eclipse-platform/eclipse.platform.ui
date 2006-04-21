@@ -300,6 +300,8 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the parent for all of the editors contents.
 	 * @return the parent for this editor's container. Must not be
 	 *         <code>null</code>.
+	 *         
+	 * @since 3.2
 	 */
 	protected Composite createPageContainer(Composite parent) {
 		return parent;

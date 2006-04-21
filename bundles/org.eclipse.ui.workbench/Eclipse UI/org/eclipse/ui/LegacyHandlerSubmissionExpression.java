@@ -76,6 +76,13 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		this.activeSite = activeSite;
 	}
 
+	/**
+	 * Collect expression info for a legacy handler submission.  Namely 
+	 * the active part id and name, active shell name, active workbench
+	 * window shell name and the active site name.
+	 * 
+	 * @since 3.2
+	 */
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		if (activePartId != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);

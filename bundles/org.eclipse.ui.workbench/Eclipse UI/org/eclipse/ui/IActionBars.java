@@ -93,6 +93,7 @@ public interface IActionBars {
 	 * by looking locally, and then ascending the action bar hierarchy.
 	 * 
 	 * @return The service locator; never <code>null</code>.
+	 * @since 3.2
 	 */
 	public IServiceLocator getServiceLocator();
 

@@ -90,6 +90,8 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * 
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
+	 *      
+	 * @since 3.2
 	 */
 	public void perspectiveDeactivated(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {

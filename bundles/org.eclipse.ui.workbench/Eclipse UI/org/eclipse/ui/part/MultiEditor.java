@@ -324,6 +324,8 @@ public abstract class MultiEditor extends EditorPart {
 
     /**
      * Release the added listener.
+     * 
+     * @since 3.2
      */
 	public void dispose() {
 		getSite().getPage().removePartListener(propagationListener);
