@@ -171,6 +171,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
         Assert.isTrue(!folder.getControl().isDisposed());
 
         if (getTab(part) != null) {
+        	if(indexOf(part) != idx)
+        		move(part, idx);
             return;
         }
 
