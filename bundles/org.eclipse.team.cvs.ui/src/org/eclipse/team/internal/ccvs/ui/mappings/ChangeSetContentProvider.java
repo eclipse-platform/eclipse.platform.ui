@@ -24,6 +24,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSChangeSetCollector;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.IPreferenceIds;
@@ -638,6 +639,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	private void initializeCheckedInChangeSetCollector(ChangeSetCapability csc) {
 		if (csc.supportsCheckedInChangeSets()) {
 			checkedInCollector = ((ModelParticipantChangeSetCapability)csc).createCheckedInChangeSetCollector(getConfiguration());
+			getConfiguration().setProperty(CVSChangeSetCollector.CVS_CHECKED_IN_COLLECTOR, checkedInCollector);
 			checkedInCollector.addListener(collectorListener);
 			checkedInCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
 		}

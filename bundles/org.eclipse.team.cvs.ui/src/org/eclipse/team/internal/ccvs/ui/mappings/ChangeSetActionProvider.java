@@ -52,6 +52,8 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
     private EditChangeSetAction editChangeSet;
     private RemoveChangeSetAction removeChangeSet;
     private MakeDefaultChangeSetAction makeDefault;
+
+	private OpenChangeSetAction openCommitSet;
     
 	private class CreateChangeSetAction extends ModelParticipantAction {
 	    
@@ -262,6 +264,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_1a, ChangeSetSorter.COMMENT)); 
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_2a, ChangeSetSorter.DATE)); 
 			sortByComment.add(new ToggleSortOrderAction(TeamUIMessages.ChangeLogModelProvider_3a, ChangeSetSorter.USER));
+			openCommitSet = new OpenChangeSetAction(getSynchronizePageConfiguration());
 		}
 		if (getChangeSetCapability().supportsActiveChangeSets()) {
 			addToChangeSet = new MenuManager(TeamUIMessages.ChangeLogModelProvider_12); 
@@ -284,6 +287,10 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		if (isContentProviderEnabled()) {
 			super.fillContextMenu(menu);
 			if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
+				appendToGroup(
+						menu, 
+						ISynchronizePageConfiguration.FILE_GROUP, 
+						openCommitSet);
 				appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
 			}
 			if (getChangeSetCapability().enableActiveChangeSetsFor(getSynchronizePageConfiguration())) {
