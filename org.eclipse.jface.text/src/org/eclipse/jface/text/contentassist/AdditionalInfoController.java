@@ -30,7 +30,6 @@ import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension3;
 
 
 /**
@@ -390,7 +389,6 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * @since 3.2
 	 */
 	private Object fInformation;
-	private Rectangle fPopupTrim;
 
 	/**
 	 * Creates a new additional information controller.
@@ -501,7 +499,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	private Point computeTrueShellSize(Shell shell) {
 		Point size= shell.getSize();
 		if (Platform.WS_GTK.equals(Platform.getWS())) {
-			/* bug X: on GTK, getSize does not include the trim */
+			/* XXX bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=136332: on GTK, getSize does not include the trim */
 			Rectangle trim= shell.computeTrim(0, 0, 0, 0);
 			size.x += trim.width;
 			size.y += trim.height;
@@ -514,29 +512,33 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 	    Point location= super.computeLocation(subjectArea, controlSize, anchor);
-	    if (Platform.WS_GTK.equals(Platform.getWS())) {
-	    	int spacing= -1; // no resizable trims on GTK - overlap the two borders to avoid a double single pixel border
-
-	    	if (ANCHOR_BOTTOM == anchor) {
-	    		location.y += spacing;
-	    	} else if (ANCHOR_RIGHT == anchor) {
-	    		location.x += spacing;
-	    	} else if (ANCHOR_TOP == anchor) {
-	    		location.y -= spacing;
-	    	} else if (ANCHOR_LEFT == anchor) {
-	    		location.x -= spacing;
-	    	}
-	    }
+	    
 	    /*
-		 * For some reasons, some information control implementations try to position the control
-		 * actually displaying data at the given location. See
-		 * DefaultInformationControl.setLocation. We cannot account for any inner borders, but we
-		 * try to account for at least the trim.
+		 * Adjust the location by one pixel towards the proposal popup, so that the single pixel
+		 * border of the additional info popup overlays with the border of the popup. This avoids
+		 * having a double black line.
 		 */
-	    if (fPopupTrim != null) {
-	    	location.x -= fPopupTrim.x;
-	    	location.y -= fPopupTrim.y;
+	    int spacing= -1;
+
+	    if (ANCHOR_BOTTOM == anchor) {
+	    	location.y += spacing;
+	    } else if (ANCHOR_RIGHT == anchor) {
+	    	location.x += spacing;
+	    } else if (ANCHOR_TOP == anchor) {
+	    	location.y -= spacing;
+	    } else if (ANCHOR_LEFT == anchor) {
+	    	location.x -= spacing;
 	    }
+
+	    /*
+		 * The location is computed using subjectControl.toDisplay(), which does not include the
+		 * trim of the subject control. As we want the additional info popup aligned with the outer
+		 * coordinates of the proposal popup, adjust this here
+		 */
+	    Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
+	    location.x += trim.x;
+	    location.y += trim.y;
+
 		return location;
 	}
 
@@ -546,12 +548,6 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= computeTrueShellSize(subjectControl.getShell());
-
-		if (informationControl instanceof IInformationControlExtension3) {
-			fPopupTrim= ((IInformationControlExtension3)informationControl).computeTrim();
-		} else {
-			fPopupTrim= new Rectangle(0, 0, 0, 0);
-		}
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;

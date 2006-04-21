@@ -289,10 +289,6 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		Rectangle trim= computeTrim();
-		Point textLocation= fText.getLocation();
-		location.x += trim.x - textLocation.x;
-		location.y += trim.y - textLocation.y;
 		fPopupDialog.getShell().setLocation(location);
 	}
 

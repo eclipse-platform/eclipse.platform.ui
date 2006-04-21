@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,14 +28,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Source viewer based implementation of {@link org.eclipse.jface.text.IInformationControl}.
@@ -246,10 +245,6 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
-		Point textLocation= fText.getLocation();
-		location.x += trim.x - textLocation.x;
-		location.y += trim.y - textLocation.y;
 		fShell.setLocation(location);
 	}
 
