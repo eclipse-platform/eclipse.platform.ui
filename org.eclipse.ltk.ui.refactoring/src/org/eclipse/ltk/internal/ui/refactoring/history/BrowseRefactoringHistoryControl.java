@@ -36,7 +36,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -138,47 +137,15 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 		layout.marginTop= 5;
 		composite.setLayout(layout);
 
-		GridData data= new GridData();
+		final GridData data= new GridData();
 		data.grabExcessHorizontalSpace= true;
 		data.grabExcessVerticalSpace= false;
 		data.horizontalAlignment= SWT.FILL;
 		data.verticalAlignment= SWT.TOP;
 		composite.setLayoutData(data);
 
-		fSelectAllButton= new Button(composite, SWT.NONE);
-		fSelectAllButton.setEnabled(false);
-		fSelectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_select_all_label);
-		data= new GridData();
-		data.horizontalAlignment= GridData.END;
-		data.grabExcessHorizontalSpace= true;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fSelectAllButton);
-		fSelectAllButton.setLayoutData(data);
-
-		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
-
-			public final void widgetSelected(final SelectionEvent event) {
-				handleSelectAll();
-			}
-		});
-
-		fDeselectAllButton= new Button(composite, SWT.NONE);
-		fDeselectAllButton.setEnabled(false);
-		fDeselectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_deselect_all_label);
-		data= new GridData();
-		data.horizontalAlignment= GridData.END;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fDeselectAllButton);
-		fDeselectAllButton.setLayoutData(data);
-
-		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
-
-			public final void widgetSelected(final SelectionEvent event) {
-				handleDeselectAll();
-			}
-		});
-
-		Dialog.applyDialogFont(parent);
+		createSelectAllButton(composite);
+		createDeselectAllButton(composite);
 	}
 
 	/**
@@ -195,6 +162,31 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
+	 * Creates the deselect all button of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createDeselectAllButton(final Composite parent) {
+		Assert.isNotNull(parent);
+		fDeselectAllButton= new Button(parent, SWT.NONE);
+		fDeselectAllButton.setEnabled(false);
+		fDeselectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_deselect_all_label);
+		final GridData data= new GridData();
+		data.horizontalAlignment= GridData.END;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fDeselectAllButton);
+		fDeselectAllButton.setLayoutData(data);
+
+		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				handleDeselectAll();
+			}
+		});
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
@@ -205,6 +197,32 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 		else
 			viewer= new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		return viewer;
+	}
+
+	/**
+	 * Creates the select all button of the control.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createSelectAllButton(final Composite parent) {
+		Assert.isNotNull(parent);
+		fSelectAllButton= new Button(parent, SWT.NONE);
+		fSelectAllButton.setEnabled(false);
+		fSelectAllButton.setText(RefactoringUIMessages.SelectRefactoringHistoryControl_select_all_label);
+		final GridData data= new GridData();
+		data.horizontalAlignment= GridData.END;
+		data.grabExcessHorizontalSpace= true;
+		data.verticalAlignment= GridData.BEGINNING;
+		data.widthHint= SWTUtil.getButtonWidthHint(fSelectAllButton);
+		fSelectAllButton.setLayoutData(data);
+
+		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+
+			public final void widgetSelected(final SelectionEvent event) {
+				handleSelectAll();
+			}
+		});
 	}
 
 	/**

@@ -209,7 +209,12 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public String getProjectPattern() {
 				return RefactoringUIMessages.RefactoringPropertyPage_project_pattern;
 			}
-		});
+		}) {
+
+			protected void createEditButton(final Composite control) {
+				// No edit button so far
+			}
+		};
 		fHistoryControl.createControl();
 		boolean sortProjects= true;
 		final IDialogSettings settings= fSettings;
@@ -260,18 +265,21 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		fHistoryControl.getEditButton().addSelectionListener(new SelectionAdapter() {
+		final Button button= fHistoryControl.getEditButton();
+		if (button != null) {
+			button.addSelectionListener(new SelectionAdapter() {
 
-			public final void widgetSelected(final SelectionEvent event) {
-				final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
-				if (selection.length > 0) {
-					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (context == null)
-						context= PlatformUI.getWorkbench().getProgressService();
-					RefactoringHistoryEditHelper.promptRefactoringDetails(context, fHistoryControl, selection[0]);
+				public final void widgetSelected(final SelectionEvent event) {
+					final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
+					if (selection.length > 0) {
+						IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						if (context == null)
+							context= PlatformUI.getWorkbench().getProgressService();
+						RefactoringHistoryEditHelper.promptRefactoringDetails(context, fHistoryControl, selection[0]);
+					}
 				}
-			}
-		});
+			});
+		}
 		fShareHistoryButton= new Button(composite, SWT.CHECK);
 		fShareHistoryButton.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
 		fShareHistoryButton.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);

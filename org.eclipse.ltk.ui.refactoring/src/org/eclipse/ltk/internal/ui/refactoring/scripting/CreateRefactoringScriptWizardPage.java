@@ -130,7 +130,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fLocationControl= new RefactoringScriptLocationControl(fWizard, group) {
 
 			protected void handleBrowseExternalLocation() {

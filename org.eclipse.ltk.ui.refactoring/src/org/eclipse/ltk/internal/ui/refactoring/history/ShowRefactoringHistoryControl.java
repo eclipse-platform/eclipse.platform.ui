@@ -24,7 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -100,14 +99,16 @@ public class ShowRefactoringHistoryControl extends BrowseRefactoringHistoryContr
 	 * 
 	 * @param parent
 	 *            the parent composite
+	 * @param alignment
+	 *            the alignment of the button
 	 */
-	protected void createDeleteButton(final Composite parent) {
+	protected void createDeleteButton(final Composite parent, final int alignment) {
 		Assert.isNotNull(parent);
 		fDeleteButton= new Button(parent, SWT.NONE);
 		fDeleteButton.setEnabled(false);
 		fDeleteButton.setText(RefactoringUIMessages.ShowRefactoringHistoryControl_delete_label);
 		final GridData data= new GridData();
-		data.horizontalAlignment= GridData.FILL;
+		data.horizontalAlignment= alignment;
 		data.grabExcessHorizontalSpace= true;
 		data.verticalAlignment= GridData.BEGINNING;
 		data.widthHint= SWTUtil.getButtonWidthHint(fDeleteButton);
@@ -161,11 +162,9 @@ public class ShowRefactoringHistoryControl extends BrowseRefactoringHistoryContr
 		data.verticalAlignment= SWT.TOP;
 		composite.setLayoutData(data);
 
-		createDeleteButton(composite);
+		createDeleteButton(composite, GridData.FILL);
 		createDeleteAllButton(composite);
 		createEditButton(composite);
-
-		Dialog.applyDialogFont(parent);
 	}
 
 	/**

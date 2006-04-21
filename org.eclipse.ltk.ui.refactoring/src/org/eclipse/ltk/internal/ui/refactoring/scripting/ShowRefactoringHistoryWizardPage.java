@@ -37,6 +37,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -159,6 +160,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		final GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		layout.marginLeft= 5;
+		layout.marginRight= 5;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		final RefactoringHistoryControlConfiguration configuration= new RefactoringHistoryControlConfiguration(null, true, false) {
@@ -169,8 +171,39 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		};
 		fHistoryControl= new ShowRefactoringHistoryControl(composite, configuration) {
 
+			protected void createBottomButtonBar(final Composite control) {
+				Assert.isNotNull(control);
+				final Composite container= new Composite(control, SWT.NONE);
+				final GridLayout grid= new GridLayout(1, false);
+				grid.marginWidth= 0;
+				grid.marginHeight= 0;
+				container.setLayout(grid);
+
+				final GridData data= new GridData();
+				data.grabExcessHorizontalSpace= true;
+				data.grabExcessVerticalSpace= false;
+				data.horizontalAlignment= SWT.FILL;
+				data.verticalAlignment= SWT.TOP;
+				container.setLayoutData(data);
+
+				createDeleteButton(container, GridData.END);
+			}
+
 			protected void createDeleteAllButton(final Composite control) {
 				// No delete all button
+			}
+
+			protected void createEditButton(final Composite control) {
+				// No edit button so far
+			}
+
+			protected void createRightButtonBar(final Composite control) {
+				final Composite container= new Composite(control, SWT.NONE);
+				container.setLayout(new GridLayout(1, false));
+			}
+
+			protected int getContainerColumns() {
+				return 1;
 			}
 		};
 		fHistoryControl.createControl();
@@ -205,14 +238,17 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				}
 			}
 		});
-		fHistoryControl.getEditButton().addSelectionListener(new SelectionAdapter() {
+		final Button button= fHistoryControl.getEditButton();
+		if (button != null) {
+			button.addSelectionListener(new SelectionAdapter() {
 
-			public final void widgetSelected(final SelectionEvent event) {
-				final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
-				if (selection.length > 0)
-					RefactoringHistoryEditHelper.promptRefactoringDetails(getContainer(), fHistoryControl, selection[0]);
-			}
-		});
+				public final void widgetSelected(final SelectionEvent event) {
+					final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
+					if (selection.length > 0)
+						RefactoringHistoryEditHelper.promptRefactoringDetails(getContainer(), fHistoryControl, selection[0]);
+				}
+			});
+		}
 		IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (context == null)
 			context= PlatformUI.getWorkbench().getProgressService();
