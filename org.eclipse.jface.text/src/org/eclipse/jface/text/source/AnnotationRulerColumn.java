@@ -422,6 +422,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		IRegion line;
 		try {
 			IDocument d= fCachedTextViewer.getDocument();
+			if (d == null)
+				return false;
+			
 			line= d.getLineInformation(lineNumber);
 		}  catch (BadLocationException ex) {
 			return false;
@@ -525,15 +528,19 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return document offset of the upper left corner including partially visible lines
 	 */
 	protected int getInclusiveTopIndexStartOffset() {
-		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int top= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
-			try {
-				IDocument document= fCachedTextViewer.getDocument();
-				return document.getLineOffset(top);
-			} catch (BadLocationException x) {
-			}
+		if (fCachedTextWidget == null || fCachedTextWidget.isDisposed())
+			return -1;
+		
+		IDocument document= fCachedTextViewer.getDocument();
+		if (document == null)
+			return -1;
+		
+		int top= JFaceTextUtil.getPartialTopIndex(fCachedTextViewer);
+		try {
+			return document.getLineOffset(top);
+		} catch (BadLocationException x) {
+			return -1;
 		}
-		return -1;
 	}
 
 	/**
@@ -543,21 +550,21 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return the first invisible document offset of the lower right corner of the view port
 	 */
 	private int getExclusiveBottomIndexEndOffset() {
-
-		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {
-			int bottom= JFaceTextUtil.getPartialBottomIndex(fCachedTextViewer);
-			try {
-				IDocument document= fCachedTextViewer.getDocument();
-
-				if (bottom >= document.getNumberOfLines())
-					bottom= document.getNumberOfLines() - 1;
-
-				return document.getLineOffset(bottom) + document.getLineLength(bottom);
-			} catch (BadLocationException x) {
-			}
+		if (fCachedTextWidget == null || fCachedTextWidget.isDisposed())
+			return -1;
+		
+		IDocument document= fCachedTextViewer.getDocument();
+		if (document == null)
+			return -1;
+		
+		int bottom= JFaceTextUtil.getPartialBottomIndex(fCachedTextViewer);
+		try {
+			if (bottom >= document.getNumberOfLines())
+				bottom= document.getNumberOfLines() - 1;
+			return document.getLineOffset(bottom) + document.getLineLength(bottom);
+		} catch (BadLocationException x) {
+			return -1;
 		}
-
-		return -1;
 	}
 
 	/**
@@ -597,6 +604,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		Point dimension= fCanvas.getSize();
 
 		IDocument doc= fCachedTextViewer.getDocument();
+		if (doc == null)
+			return;
 
 		int topLine= -1, bottomLine= -1;
 		try {
