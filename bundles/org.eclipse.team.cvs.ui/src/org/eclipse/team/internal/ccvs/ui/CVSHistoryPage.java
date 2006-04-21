@@ -49,8 +49,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.filehistory.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
@@ -1505,7 +1504,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		if (previousFile != null){
 			try {
-				if (file.getRepositoryRelativePath().equals(previousFile.getRepositoryRelativePath())){
+				if (isSameRemote(file, previousFile)
+					&& (isSameLocalFile(file, previousFile) 
+							|| (!isLocal(file) && isLocal(previousFile)))) {
 					return false;
 				}
 			} catch (CVSException e) {
@@ -1515,6 +1516,22 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//set previous file to current file
 		previousFile = file;
 		return true;
+	}
+
+	private boolean isLocal(ICVSFile file) {
+		return file.getIResource() != null;
+	}
+
+	private boolean isSameLocalFile(ICVSFile file, ICVSFile previousFile) {
+		IResource r1 = file.getIResource();
+		IResource r2 = previousFile.getIResource();
+		return r1 != null && r2 != null && r1.equals(r2);
+	}
+
+	private boolean isSameRemote(ICVSFile file, ICVSFile previousFile) throws CVSException {
+		String path = file.getRepositoryRelativePath();
+		String previousPath = previousFile.getRepositoryRelativePath();
+		return (path != null && previousPath != null && path.equals(previousPath));
 	}
 
 	private void updateFilterMode(int mode) {

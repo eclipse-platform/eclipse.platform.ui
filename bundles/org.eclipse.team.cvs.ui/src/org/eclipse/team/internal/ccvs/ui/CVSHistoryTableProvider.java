@@ -539,8 +539,11 @@ public class CVSHistoryTableProvider {
 		try {
 			if (workspaceFile != null) {
 				ICVSFile cvsWorkspaceFile = CVSWorkspaceRoot.getCVSFileFor(workspaceFile);
-				String workspaceRevision = ResourceSyncInfo.getRevision(cvsWorkspaceFile.getSyncBytes());
-				return workspaceRevision;
+				byte[] syncBytes = cvsWorkspaceFile.getSyncBytes();
+				if (syncBytes != null) {
+					String workspaceRevision = ResourceSyncInfo.getRevision(syncBytes);
+					return workspaceRevision;
+				}
 			}
 		
 		} catch (CVSException e) {
