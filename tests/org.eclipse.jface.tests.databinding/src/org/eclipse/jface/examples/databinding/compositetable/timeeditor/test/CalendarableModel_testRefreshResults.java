@@ -30,6 +30,27 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 	
 	// Test fixtures ----------------------------------------------------------
 	
+	private CMClientFixture cmf;
+	private CalendarableModel cm;
+
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		cmf = new CMClientFixture();
+		cm = new CalendarableModel();
+	}
+	
+	private void setupModel(String[][] data) {
+		cmf.setData(data);
+		cm.setTimeBreakdown(data.length, 4);
+		cm.setDayEventCountProvider(cmf.eventCountProvider);
+		cm.setEventContentProvider(cmf.eventContentProvider);
+		cm.setStartDate(cmf.startDate);
+		
+		verifyModel(cm, data);
+	}
+	
 	private void verifyModel(CalendarableModel cm, String[][] data) {
 		assertEquals("number of days equal", cm.getNumberOfDays(), data.length);
 		for (int day = 0; day < data.length; day++) {
@@ -54,19 +75,10 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		}
 	}
 	
-	private void setupModelwithFixtureAndData(CalendarableModel cm, CMClientFixture cmf, String[][] data) {
-		cm.setTimeBreakdown(data.length, 4);
-		cm.setDayEventCountProvider(cmf.eventCountProvider);
-		cm.setEventContentProvider(cmf.eventContentProvider);
-		cm.setStartDate(cmf.startDate);
-		
-		verifyModel(cm, data);
-	}
-
 	private CalendarableModel testModelLoading(String[][] data) {
-		CMClientFixture cmf = new CMClientFixture(data);
+		CMClientFixture cmf = new CMClientFixture();
 		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		return cm;
 	}
 	
@@ -75,6 +87,12 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		gc.setTime(date);
 		gc.add(Calendar.DATE, 1);
 		return gc.getTime();
+	}
+	
+	private Calendarable[] getAllDayEvents(String[][] data) {
+		setupModel(data);
+		Calendarable[] allDayEvents = cm.getAllDayCalendarables(0);
+		return allDayEvents;
 	}
 	
 	// Tests ------------------------------------------------------------------
@@ -102,9 +120,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1", "2", "3"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		data[0] = new String[] {"1", "2", "3", "4", "5"};
 		cm.refresh(cmf.startDate);
@@ -116,9 +132,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1", "2", "3"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 
 		data[0] = new String[] {"1"};
 		cm.refresh(cmf.startDate);
@@ -130,9 +144,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1", "2", "3"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 
 		data[0] = new String[] {"1"};
 		
@@ -145,9 +157,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"1", "2", "3"},
 				{"0", "3", "6", "9"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 
 		data[1] = new String[] {"42"};
 
@@ -164,9 +174,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"1", "3", "3"},
 				{"0", "3", "6", "9"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("max one event", 1, cm.computeNumberOfAllDayEventRows());
 	}
@@ -176,9 +184,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"4", "1", "1"},
 				{"0", "3", "6", "9"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("max two event", 2, cm.computeNumberOfAllDayEventRows());
 	}
@@ -188,9 +194,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"4", "1", "1"},
 				{"1", "1", "1", "9"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("max three event", 3, cm.computeNumberOfAllDayEventRows());
 	}
@@ -200,9 +204,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"0", "2", "4"},
 				{"0", "3", "5", "9"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("no all day events", 0, cm.computeNumberOfAllDayEventRows());
 	}
@@ -214,9 +216,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"9", "22", "8"},
 				{"21", "11", "14", "16"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("8 am start", 8, cm.computeStartHour());
 	}
@@ -226,9 +226,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"9", "22", "8"},
 				{"21", "11", "0", "16"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("midnight start", 0, cm.computeStartHour());
 	}
@@ -238,9 +236,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"9", "22", "8"},
 				{"21", "11", "7", "16"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("midnight start", 7, cm.computeStartHour());
 	}
@@ -250,12 +246,97 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"9", "1", "8"},
 				{"21", "11", "7", "16"}
 		};
-		CMClientFixture cmf = new CMClientFixture(data);
-		CalendarableModel cm = new CalendarableModel();
-		setupModelwithFixtureAndData(cm, cmf, data);
+		setupModel(data);
 		
 		assertEquals("midnight start", 7, cm.computeStartHour());
 	}
 	
+	// Test all-day event methods ---------------------------------------------
+	
+	public void testGetAllDayEvents_noEvents() throws Exception {
+		String[][] data = new String[][] {
+				{"2", "3"}
+		};
+		setupModel(data);
+		
+		assertEquals("Should find no all-day events", 0, cm.getAllDayCalendarables(0).length);
+	}
+	
+	public void testGetAllDayEvents_oneEvent() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "2", "3"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		
+		assertEquals("Should find one all-day event", 1, allDayEvents.length);
+		assertEquals("Found 1First", "1First", allDayEvents[0].getText());
+	}
+
+	public void testGetAllDayEvents_threeEvents() throws Exception {
+		String[][] data = new String[][] {
+				{"0", "1First", "1Second", "2", "1Third"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		
+		assertEquals("Should find three all-day event", 3, allDayEvents.length);
+		assertEquals("Found 1First", "1First", allDayEvents[0].getText());
+		assertEquals("Found 1Third", "1Third", allDayEvents[2].getText());
+	}
+	
+	// Test methods that integrate the eventLayout and everything else --------
+	
+	public void testFindAllDayCalendarable_ForwardNoSelection() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		setupModel(data);
+		Calendarable result = cm.findAllDayCalendarable(0, true, null);
+		assertNull("No calendarables forward", result);
+	}
+
+	public void testFindAllDayCalendarable_BackwardNoSelection() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		Calendarable result = cm.findAllDayCalendarable(0, false, null);
+		assertEquals("Should find the last event", allDayEvents[allDayEvents.length-1], result);
+	}
+	
+	public void testFindAllDayCalendarable_BackwardButAtFirst() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		Calendarable result = cm.findAllDayCalendarable(0, false, allDayEvents[0]);
+		assertNull("No Calendarables backward from first", result);
+	}
+	
+	public void testFindAllDayCalendarable_ForwardAtLast() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		Calendarable result = cm.findAllDayCalendarable(0, true, allDayEvents[3]);
+		assertNull("No calendarables forward", result);
+	}
+	
+	public void testFindAllDayCalendarable_ForwardWithSelection() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		Calendarable result = cm.findAllDayCalendarable(0, true, allDayEvents[1]);
+		assertEquals("Should find third event", allDayEvents[2], result);
+	}
+	
+	public void testFindAllDayCalendarable_BackwardWithSelection() throws Exception {
+		String[][] data = new String[][] {
+				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+		};
+		Calendarable[] allDayEvents = getAllDayEvents(data);
+		Calendarable result = cm.findAllDayCalendarable(0, false, allDayEvents[1]);
+		assertEquals("Should find first event", allDayEvents[0], result);
+	}
 	
 }

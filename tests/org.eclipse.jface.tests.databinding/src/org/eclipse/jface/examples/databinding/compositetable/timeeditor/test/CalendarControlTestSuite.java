@@ -27,6 +27,7 @@ public class CalendarControlTestSuite {
 		suite.addTestSuite(DayModel_testGetColumnsForEvents.class);
 		suite.addTestSuite(CalendarableModel_testInit.class);
 		suite.addTestSuite(CalendarableModel_testRefreshResults.class);
+		suite.addTestSuite(CalendarableModel_TestTimedFindMethods.class);
 		//$JUnit-END$
 		return suite;
 	}

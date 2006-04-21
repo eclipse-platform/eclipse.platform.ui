@@ -425,5 +425,108 @@ public class CalendarableModel {
 		throw new IllegalArgumentException("Invalid Calenderable passed");
 	}
 
+	/**
+	 * FIXME: Test me please
+	 * @param row The row starting from the beginning of the day
+	 * @return The hour portion of the time that this row represents
+	 */
+	public int computeHourFromRow(int row) {
+		return row / getNumberOfDivisionsInHour() + computeStartHour();
+	}
+
+	/**
+	 * FIXME: Test me please
+	 * @param row The row starting from the beginning of the day
+	 * @return The minute portion of the time that this row represents
+	 */
+	public int computeMinuteFromRow(int row) {
+		int numberOfDivisionsInHour = getNumberOfDivisionsInHour();
+		int minute = (int) ((double) row
+				% numberOfDivisionsInHour
+				/ numberOfDivisionsInHour * 60);
+		return minute;
+	}
+	
+	/**
+	 * @param day The day to return all day Calendarables for
+	 * @return All the all day Calendarables for the specified day, order maintained
+	 */
+	public Calendarable[] getAllDayCalendarables(int day) {
+		List allDays = new LinkedList();
+		for (Iterator calendarablesIter = getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+			Calendarable candidate = (Calendarable) calendarablesIter.next();
+			if (candidate.isAllDayEvent()) {
+				allDays.add(candidate);
+			}
+		}
+		return (Calendarable[]) allDays.toArray(new Calendarable[allDays.size()]);
+	}
+
+	/**
+	 * @param day The day to search
+	 * @param forward true if we're going forward; false if we're searching backward
+	 * @param selection The currently selected Calendarable or null if none
+	 * @return The next Calendarable in the specified direction where result != selection; null if none
+	 */
+	public Calendarable findAllDayCalendarable(int day, boolean forward, Calendarable selection) {
+		Calendarable[] calendarables = getAllDayCalendarables(day);
+		if (forward) {
+			if (selection == null) {
+				return null;
+			} else if (selection == calendarables[calendarables.length-1]) {
+				return null;
+			}
+			for (int selected = 0; selected < calendarables.length; selected++) {
+				if (calendarables[selected] == selection) {
+					return calendarables[selected+1];
+				}
+			}
+		} else {
+			if (selection == null) {
+				return calendarables[calendarables.length-1];
+			} else if (selection == calendarables[0]) {
+				return null;
+			}
+			for (int selected = 0; selected < calendarables.length; selected++) {
+				if (calendarables[selected] == selection) {
+					return calendarables[selected-1];
+				}
+			}
+		}
+		return calendarables[3];
+	}
+	
+	/**
+	 * @param day The day to search
+	 * @param startingAtRow The first row to search
+	 * @param forward true if we're going forward; false if we're searching backward
+	 * @param selection The currently selected Calendarable or null if none
+	 * @return The next Calendarable in the specified direction where result != selection; null if none
+	 */
+	public Calendarable findTimedCalendarable(int day, int startingAtRow, boolean forward, Calendarable selection) {
+		return null;
+	}
+	
+	/**
+	 * @param selectedDay
+	 * @param selectedRow
+	 * @param selection
+	 * @return
+	 */
+	public Object[] findNextCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param selectedDay
+	 * @param selectedRow
+	 * @param selection
+	 * @return
+	 */
+	public Object[] findPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

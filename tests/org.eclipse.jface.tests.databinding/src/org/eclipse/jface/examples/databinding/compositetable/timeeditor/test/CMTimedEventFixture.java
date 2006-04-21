@@ -18,20 +18,22 @@ import java.util.GregorianCalendar;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.test.CalendarableModel_TestTimedFindMethods.Event;
 
 /**
  * Fixture for testing CalendarableModel
  */
-public class CMClientFixture {
+public class CMTimedEventFixture {
 	
+	private CalendarableModel_TestTimedFindMethods.Event[][] data;
+
 	/**
 	 * Hard-code a start date that's easy to do arithmetic with
 	 */
 	public final Date startDate;
 
-	/**
-	 */
-	public CMClientFixture() {
+	public CMTimedEventFixture(Event[][] data) {
+		this.data = data;
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.set(Calendar.MONTH, 1);
 		gc.set(Calendar.YEAR, 2006);
@@ -62,18 +64,10 @@ public class CMClientFixture {
 			}
 			int dateOffset = getOffset(day);
 			for (int i = 0; i < controls.length; i++) {
-				String text = data[dateOffset][i];
-				if (text.startsWith("1")) {
-					controls[i].setText(text);
-					controls[i].setAllDayEvent(true);
-				} else {
-					controls[i].setText(text);
-					controls[i].setAllDayEvent(false);
-					GregorianCalendar gc = new GregorianCalendar();
-					gc.setTime(new Date());
-					gc.set(Calendar.HOUR_OF_DAY, Integer.parseInt(text));
-					controls[i].setStartTime(gc.getTime());
-				}
+				controls[i].setText(data[dateOffset][i].text);
+				controls[i].setAllDayEvent(data[dateOffset][i].allDay);
+				controls[i].setStartTime(data[dateOffset][i].startTime);
+				controls[i].setEndTime(data[dateOffset][i].endTime);
 			}
 		}
 	}
@@ -86,19 +80,12 @@ public class CMClientFixture {
 	 */
 	public ECNP eventContentProvider = new ECNP();
 
-	private String[][] data;
+	/**
+	 */
+	public int getNumberOfDays() {
+		return data.length;
+	}
 	
-	/**
-	 * @return Returns the data.
-	 */
-	public String[][] getData() {
-		return data;
-	}
 
-	/**
-	 * @param data The data to set.
-	 */
-	public void setData(String[][] data) {
-		this.data = data;
-	}
+
 }
