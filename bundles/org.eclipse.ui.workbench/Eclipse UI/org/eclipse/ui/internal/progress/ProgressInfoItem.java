@@ -299,6 +299,7 @@ class ProgressInfoItem extends Composite {
 			linkData.top = new FormAttachment(progressLabel,
 					IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressLabel, 0, SWT.LEFT);
+			linkData.right = new FormAttachment(actionBar, 0, SWT.LEFT);
 			((Link) taskEntries.get(0)).setLayoutData(linkData);
 
 		}
@@ -831,7 +832,7 @@ class ProgressInfoItem extends Composite {
 
 		Iterator taskEntryIterator = taskEntries.iterator();
 		while (taskEntryIterator.hasNext()) {
-			((Link) taskEntryIterator.next()).setBackground(color);
+			((Link) taskEntryIterator.next()).setBackground(actionBar.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		}
 
 	}
