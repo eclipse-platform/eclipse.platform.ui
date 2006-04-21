@@ -878,7 +878,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	/**
 	 * @return if there are any more pending updates in the viewer
 	 */
-	protected synchronized boolean hasPendingUpdates() {
+	public synchronized boolean hasPendingUpdates() {
         return getModel().hasPendingUpdates();
 	}
 

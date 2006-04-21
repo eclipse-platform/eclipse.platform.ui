@@ -1523,5 +1523,44 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		return bool.booleanValue();
 	}
 	 
+	/**
+	 * Forces labels to be computed for expanded elements.
+	 */
+	public void forceLabelPopulation() {
+		TreeItem[] items = fTree.getItems();
+		for (int i = 0; i < items.length; i++) {
+			forceLabels(fTree, items[i], i);
+		}
+	}
 	
+	private void forceLabels(Widget parent, TreeItem item, int index) {
+		if (item.getText().length() == 0) {
+			ModelNode[] nodes = getModel().getNodes(parent.getData());
+			if (nodes != null) {
+				for (int i = 0; i < nodes.length; i++) {
+					ModelNode node = nodes[i];
+					Widget widget = findItem(node);
+					if (widget == parent) {
+			        	ModelNode[] childrenNodes = node.getChildrenNodes();
+			        	if (childrenNodes != null && index < childrenNodes.length) {
+			        		final ModelNode child = childrenNodes[index];
+			        		mapElement(child, item);
+			        		item.setData(child.getElement());
+			        		preservingSelection(new Runnable() {
+			        		    public void run() {
+			        		        internalRefresh(child);
+			        		    }
+			        		});
+			        	}
+					}
+				}
+	        }
+		}
+		if (item.getExpanded()) {
+			TreeItem[] items = item.getItems();
+			for (int i = 0; i < items.length; i++) {
+				forceLabels(item, items[i], i);
+			}
+		}
+	}
 }

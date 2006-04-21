@@ -15,6 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -30,6 +35,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.progress.UIJob;
 
 public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -87,6 +94,47 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * Do the specific action using the current selection.
 	 */
 	public void run(IAction action) {
+		if (fViewer instanceof AsynchronousTreeViewer) {
+			// force labels to be created
+			final AsynchronousTreeViewer atv = (AsynchronousTreeViewer)fViewer;
+			atv.forceLabelPopulation();
+			Job labelUpdate = new Job("Copy") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					int i = 0;
+					while (atv.hasPendingUpdates() && i < 30) {
+						try {
+							Thread.sleep(100);
+							i++;
+						} catch (InterruptedException e) {
+						}
+					}
+					Job copyJob = new UIJob("Copy") { //$NON-NLS-1$
+						public IStatus runInUIThread(IProgressMonitor m) {
+							performCopy();
+							return Status.OK_STATUS;
+						}
+					
+					};
+					copyJob.setSystem(true);
+					copyJob.setPriority(Job.INTERACTIVE);
+					copyJob.schedule();
+					return Status.OK_STATUS;
+				}
+			};
+			labelUpdate.setSystem(true);
+			IWorkbenchSiteProgressService ps = (IWorkbenchSiteProgressService) getView().getSite().getAdapter(IWorkbenchSiteProgressService.class);
+			if (ps == null) {
+				labelUpdate.schedule();
+			} else {
+				ps.schedule(labelUpdate);
+			}
+			// wait for labels to complete
+		} else {
+			performCopy();
+		}
+	}
+	
+	protected void performCopy() {
 		final Iterator iter= pruneSelection();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
@@ -102,7 +150,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 					clipboard.dispose();
 				}
 			}
-		});
+		});		
 	}
 	
 	protected void doCopy(Clipboard clipboard, TextTransfer plainTextTransfer, StringBuffer buffer) {
