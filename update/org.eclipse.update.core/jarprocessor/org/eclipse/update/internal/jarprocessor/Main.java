@@ -74,16 +74,17 @@ public class Main {
 		options.input = new File(args[i]);
 
 		String problemMessage = null;
+		String inputName = options.input.getName();
 		if (options.unpack) {
 			if (!JarProcessor.canPerformUnpack()) {
 				problemMessage = "The unpack200 command cannot be found."; //$NON-NLS-1$
-			} else 	if (options.input.isFile() && !args[i].endsWith(".zip") && !args[i].endsWith(".pack.gz")) { //$NON-NLS-1$ //$NON-NLS-2$
+			} else 	if (options.input.isFile() && !inputName.endsWith(".zip") && !inputName.endsWith(".pack.gz")) { //$NON-NLS-1$ //$NON-NLS-2$
 				problemMessage = "Input file is not a pack.gz file."; //$NON-NLS-1$
 			} else 	if (options.pack || options.repack || options.signCommand != null) {
 				problemMessage = "Pack, repack or sign cannot be specified with unpack."; //$NON-NLS-1$
 			}
 		} else {
-			if (options.input.isFile() && !args[i].endsWith(".zip") && !args[i].endsWith(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (options.input.isFile() && !inputName.endsWith(".zip") && !inputName.endsWith(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
 				problemMessage = "Input file is not a jar file."; //$NON-NLS-1$
 			} else	if ((options.pack || options.repack) && !JarProcessor.canPerformPack()) {
 				problemMessage = "The pack200 command can not be found."; //$NON-NLS-1$
@@ -99,15 +100,7 @@ public class Main {
 		return options;
 	}
 
-	/**
-	 * @param args
-	 * @throws FileNotFoundException 
-	 */
-	public static void main(String[] args) {
-		Options options = processArguments(args);
-		if (options == null)
-			return;
-
+	public static void runJarProcessor(Options options) {
 		if (options.input.getName().endsWith(".zip")) { //$NON-NLS-1$
 			ZipProcessor processor = new ZipProcessor();
 			processor.setWorkingDirectory(options.outputDir);
@@ -146,6 +139,17 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * @param args
+	 * @throws FileNotFoundException 
+	 */
+	public static void main(String[] args) {
+		Options options = processArguments(args);
+		if (options == null)
+			return;
+		runJarProcessor(options);
 	}
 
 }

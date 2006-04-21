@@ -17,6 +17,7 @@ import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.jarprocessor.JarProcessor;
+import org.eclipse.update.internal.jarprocessor.Utils;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.verifier.CertVerifier;
 
@@ -41,8 +42,11 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	/*
 	 * Constructor 
 	 */
-	public FeaturePackagedContentProvider(URL url) {
+	public FeaturePackagedContentProvider(URL url, ISite site) {
 		super(url);
+		if (site instanceof ExtendedSite) {
+			this.siteModel = (ExtendedSite) site;
+		}
 	}
 
 	/*
@@ -64,13 +68,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		return jarVerifier;
 	}
 
-	public void setFeature(IFeature feature) {
-		super.setFeature(feature);
-		ISite featureSite = feature.getSite();
-		if(featureSite instanceof ExtendedSite){
-			siteModel = (ExtendedSite) featureSite;
-		}
-	}
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */
@@ -227,8 +224,14 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 					JarProcessor processor = JarProcessor.getUnpackProcessor(null);
 					processor.setWorkingDirectory(tempFile.getParent());
 	
-					File packedFile = new File(tempFile.toString() + ".pack.gz"); //$NON-NLS-1$
+					File packedFile = new File(tempFile.toString() + Utils.PACKED_SUFFIX);
 					tempFile.renameTo(packedFile);
+					
+					if (monitor != null) {
+						monitor.saveState();
+						monitor.subTask(Messages.JarContentReference_Unpacking + " " + reference.getIdentifier() + Utils.PACKED_SUFFIX);  //$NON-NLS-1$
+						monitor.showCopyDetails(false);
+					}
 					//unpacking the jar will strip the ".pack.gz" and leave us back with the original filename
 					processor.processJar(packedFile);
 	
@@ -237,6 +240,8 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 				} finally {
 					LockManager.returnLock(packed);
 					LockManager.returnLock(key);
+					if(monitor != null)
+						monitor.restoreState();
 				}
 			}
 		}

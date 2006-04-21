@@ -65,7 +65,7 @@ public class SignCommandStep extends CommandStep {
 	private void normalize(File input, File workingDirectory) {
 		try {
 			File tempJar = new File(workingDirectory, "temp_" + input.getName()); //$NON-NLS-1$
-			JarFile jar = new JarFile(input);
+			JarFile jar = new JarFile(input, false);
 			JarOutputStream jarOut = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(tempJar)));
 			InputStream in = null;
 			try {

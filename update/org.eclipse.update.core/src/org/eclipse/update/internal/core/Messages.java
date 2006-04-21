@@ -335,6 +335,13 @@ public final class Messages extends NLS {
 	public static String HttpResponse_wrongRange;
 	public static String DefaultSiteParser_mirrors;
 	public static String FeatureExecutableContentProvider_UnableToRetriveArchiveContentRef;
+	
+	public static String JarProcessor_unpackNotFound;
+	public static String JarProcessor_noPackUnpack;
+	public static String JarProcessor_packNotFound;
+	
+	public static String SiteOptimizer_inputNotSpecified;
+	public static String SiteOptimizer_inputFileNotFound;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -98,7 +98,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final String CATEGORY = "category"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String MIRROR = "mirror"; //$NON-NLS-1$
-	private static final String ASSOCIATE_SITES = "associateSites"; //$NON-NLS-1$
+	//private static final String ASSOCIATE_SITES = "associateSites"; //$NON-NLS-1$
 	private static final String ASSOCIATE_SITE = "associateSite"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INFO_URL = "index.html"; //$NON-NLS-1$

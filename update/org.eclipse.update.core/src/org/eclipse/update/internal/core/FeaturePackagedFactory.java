@@ -35,7 +35,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			
 					
 		try {	
-			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url);	
+			IFeatureContentProvider contentProvider = new FeaturePackagedContentProvider(url, site);	
 			ContentReference manifest = contentProvider.getFeatureManifestReference(null/*IProgressMonitor*/);
 			featureStream = manifest.getInputStream();
 			feature = (Feature)parseFeature(featureStream);
