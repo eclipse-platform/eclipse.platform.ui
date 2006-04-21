@@ -194,6 +194,8 @@ abstract class TreeLineTracker implements ILineTracker {
 		for (int i= 1; i < n; i++) {
 	        line= (Line) lines.get(i);
 	        delim= line.delimiter;
+	        if (delim == null)
+	        	delim= NO_DELIM;
 	        length= line.length;
 			node= insertAfter(node, length, delim);
         }
