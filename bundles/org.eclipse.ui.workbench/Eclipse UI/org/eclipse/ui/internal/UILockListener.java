@@ -141,6 +141,8 @@ public class UILockListener extends LockListener {
      * Should always be called from the UI thread.
      */
     void doPendingWork() {
+    	//clear the interrupt flag that we may have set in interruptUI()
+    	Thread.interrupted();
         Semaphore work;
         while ((work = pendingWork.remove()) != null) {
         	//remember the old current work before replacing, to handle
