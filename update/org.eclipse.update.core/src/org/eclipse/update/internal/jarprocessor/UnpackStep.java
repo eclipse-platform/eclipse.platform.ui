@@ -38,15 +38,11 @@ public class UnpackStep extends CommandStep {
 		for (int i = 0; i < locations.length; i++) {
 			if (locations[i] == null)
 				continue;
-			try {
-				result = execute(new String[] {locations[i], "-V"}); //$NON-NLS-1$
-				if (result == 0) {
-					unpackCommand = locations[i];
-					canUnpack = Boolean.TRUE;
-					return true;
-				}
-			} catch (IOException e) {
-				//no good
+			result = execute(new String[] {locations[i], "-V"}); //$NON-NLS-1$
+			if (result == 0) {
+				unpackCommand = locations[i];
+				canUnpack = Boolean.TRUE;
+				return true;
 			}
 		}
 
@@ -55,7 +51,11 @@ public class UnpackStep extends CommandStep {
 	}
 
 	public UnpackStep(Properties options) {
-		super(options, null, null);
+		super(options, null, null, false);
+	}
+
+	public UnpackStep(Properties options, boolean verbose) {
+		super(options, null, null, verbose);
 	}
 
 	/* (non-Javadoc)
@@ -89,9 +89,12 @@ public class UnpackStep extends CommandStep {
 					} else {
 						cmd = new String[] {unpackCommand, input.getCanonicalPath(), unpacked.getCanonicalPath()};
 					}
-					execute(cmd);
+					int result = execute(cmd, verbose);
+					if (result != 0 && verbose)
+						System.out.println("Error: " + result + " was returned from command: " + Utils.concat(cmd)); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (IOException e) {
-					//didn't work
+					if (verbose)
+						e.printStackTrace();
 					return null;
 				}
 				return unpacked;
@@ -105,5 +108,9 @@ public class UnpackStep extends CommandStep {
 	 */
 	public File postProcess(File input, File workingDirectory) {
 		return null;
+	}
+
+	public String getStepName() {
+		return "Unpack"; //$NON-NLS-1$
 	}
 }

@@ -21,14 +21,19 @@ import java.util.Set;
  */
 public class PackUnpackStep extends PackStep {
 	private Set exclusions = null;
-	
+
 	public PackUnpackStep(Properties options) {
 		super(options);
 		exclusions = Utils.getPackExclusions(options);
 	}
 
+	public PackUnpackStep(Properties options, boolean verbose) {
+		super(options, verbose);
+		exclusions = Utils.getPackExclusions(options);
+	}
+
 	public String recursionEffect(String entryName) {
-		if (canPack() && entryName.endsWith(".jar") &&  !exclusions.contains(entryName)) { //$NON-NLS-1$
+		if (canPack() && entryName.endsWith(".jar") && !exclusions.contains(entryName)) { //$NON-NLS-1$
 			return entryName;
 		}
 		return null;
@@ -47,16 +52,19 @@ public class PackUnpackStep extends PackStep {
 				cmd[1] = "-r"; //$NON-NLS-1$
 				System.arraycopy(tmp, 1, cmd, 2, tmp.length - 1);
 
-				int result = execute(cmd);
+				int result = execute(cmd, verbose);
 				if (result == 0 && tempFile.exists()) {
 					File finalFile = new File(workingDirectory, input.getName());
-					if(finalFile.exists())
+					if (finalFile.exists())
 						finalFile.delete();
 					tempFile.renameTo(finalFile);
 					return finalFile;
+				} else if (verbose) {
+					System.out.println("Error: " + result + " was returned from command: " + Utils.concat(cmd)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} catch (IOException e) {
-				//didn't work
+				if (verbose)
+					e.printStackTrace();
 				return null;
 			}
 		}
@@ -70,4 +78,7 @@ public class PackUnpackStep extends PackStep {
 		return null;
 	}
 
+	public String getStepName() {
+		return "Repack"; //$NON-NLS-1$
+	}
 }

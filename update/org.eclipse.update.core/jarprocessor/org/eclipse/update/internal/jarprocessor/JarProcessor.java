@@ -22,6 +22,7 @@ public class JarProcessor {
 	private List steps = new ArrayList();
 	private String workingDirectory = ""; //$NON-NLS-1$
 	private int depth = -1;
+	private boolean verbose = false;
 
 	static public JarProcessor getUnpackProcessor(Properties properties) {
 		if (!canPerformUnpack())
@@ -54,6 +55,10 @@ public class JarProcessor {
 	public void setWorkingDirectory(String dir) {
 		workingDirectory = dir;
 	}
+	
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
 
 	public void addProcessStep(IProcessStep step) {
 		steps.add(step);
@@ -74,7 +79,6 @@ public class JarProcessor {
 			files = new File[] {input};
 		}
 		for (int i = 0; i < files.length; i++) {
-			System.out.println("Processing " + files[i].getName()); //$NON-NLS-1$
 			if (files[i].isDirectory()) {
 				String dir = getWorkingDirectory();
 				setWorkingDirectory(dir + "/" + files[i].getName()); //$NON-NLS-1$
@@ -84,8 +88,8 @@ public class JarProcessor {
 				try {
 					processJar(files[i]);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(verbose)
+						e.printStackTrace();
 				}
 			}
 		}
@@ -154,6 +158,11 @@ public class JarProcessor {
 				String name = entry.getName();
 				String newName = recursionEffect(name);
 				if (newName != null) {
+					if(verbose){
+						for(int i = 0; i <= depth; i++)
+							System.out.print("  "); //$NON-NLS-1$
+						System.out.println("Processing nested file: " + name); //$NON-NLS-1$
+					}
 					//extract entry to temp directory
 					File extracted = new File(tempDir, name);
 					File parentDir = extracted.getParentFile();
@@ -216,6 +225,14 @@ public class JarProcessor {
 		if (!workingDir.exists())
 			workingDir.mkdirs();
 
+		if(depth == 0 && verbose) {
+			System.out.print("Running "); //$NON-NLS-1$ 
+			for (Iterator iter = steps.iterator(); iter.hasNext();) {
+				IProcessStep step = (IProcessStep) iter.next();
+				System.out.print(step.getStepName() + " "); //$NON-NLS-1$
+			}
+			System.out.println("on " + input.getPath()); //$NON-NLS-1$
+		}
 		//pre
 		File workingFile = preProcess(input, workingDir);
 

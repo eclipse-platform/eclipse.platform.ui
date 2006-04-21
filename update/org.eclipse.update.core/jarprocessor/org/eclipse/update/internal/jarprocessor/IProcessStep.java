@@ -25,7 +25,7 @@ public interface IProcessStep {
 	 * @param entryName
 	 * @return
 	 */
-	String recursionEffect(String entryName);
+	public String recursionEffect(String entryName);
 	
 	/**
 	 * Perform some processing on the input file before the JarProcessor considers the entries for recursion.
@@ -34,7 +34,7 @@ public interface IProcessStep {
 	 * @param workingDirectory
 	 * @return
 	 */
-	File preProcess(File input, File workingDirectory);
+	public File preProcess(File input, File workingDirectory);
 	
 	/**
 	 * Perform some processing on the input file after the JarProcessor returns from recursion
@@ -43,5 +43,11 @@ public interface IProcessStep {
 	 * @param workingDirectory
 	 * @return
 	 */
-	File postProcess(File input, File workingDirectory);
+	public File postProcess(File input, File workingDirectory);
+	
+	/**
+	 * Return the name of this process step
+	 * @return
+	 */
+	public String getStepName();
 }

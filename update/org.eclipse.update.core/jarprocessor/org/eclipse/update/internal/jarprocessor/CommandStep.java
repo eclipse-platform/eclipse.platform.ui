@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.jarprocessor;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -21,21 +20,37 @@ public abstract class CommandStep implements IProcessStep {
 	protected String command = null;
 	protected String extension = null;
 	private  Properties options = null;
+	protected boolean verbose = false;
 	
-	public CommandStep(Properties options, String command, String extension) {
+	public CommandStep(Properties options, String command, String extension, boolean verbose) {
 		this.command = command;
 		this.extension = extension;
 		this.options = options;
+		this.verbose = verbose;
 	}
 
-	protected static int execute(String[] cmd) throws IOException {
+	protected static int execute(String[] cmd) {
+		return execute(cmd, false);
+	}
+	
+	protected static int execute(String[] cmd, boolean verbose) {
 		Runtime runtime = Runtime.getRuntime();
-		Process proc = runtime.exec(cmd);
+		Process proc = null;
+		try {
+			proc = runtime.exec(cmd);
+		} catch (Exception e) {
+			if(verbose) {
+				System.out.println("Error executing command " + Utils.concat(cmd)); //$NON-NLS-1$
+				e.printStackTrace();
+			}
+			return -1;
+		}
 		try {
 			int result = proc.waitFor();
 			return result;
 		} catch (InterruptedException e) {
-			//ignore
+			if(verbose)
+				e.printStackTrace();
 		}
 		return -1;
 	}

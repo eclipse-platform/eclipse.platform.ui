@@ -22,7 +22,12 @@ public class SignCommandStep extends CommandStep {
 	private Set exclusions = null;
 
 	public SignCommandStep(Properties options, String command) {
-		super(options, command, ".jar"); //$NON-NLS-1$
+		super(options, command, ".jar", false); //$NON-NLS-1$
+		exclusions = Utils.getSignExclusions(options);
+	}
+
+	public SignCommandStep(Properties options, String command, boolean verbose) {
+		super(options, command, ".jar", verbose); //$NON-NLS-1$
 		exclusions = Utils.getSignExclusions(options);
 	}
 
@@ -49,14 +54,17 @@ public class SignCommandStep extends CommandStep {
 		if (command != null) {
 			try {
 				String[] cmd = new String[] {command, input.getCanonicalPath()};
-				int result = execute(cmd);
+				int result = execute(cmd, verbose);
 				if (result == 0) {
 					normalize(input, workingDirectory);
 					return input;
+				} else if (verbose) {
+					System.out.println("Error: " + result + " was returned from command: " + Utils.concat(cmd)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} catch (IOException e) {
-				//boo
-				e.printStackTrace();
+				if (verbose) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return null;
@@ -88,7 +96,14 @@ public class SignCommandStep extends CommandStep {
 			input.delete();
 			tempJar.renameTo(input);
 		} catch (IOException e) {
-			//boo
+			if (verbose) {
+				System.out.println("Error normalizing jar " + input.getName()); //$NON-NLS-1$
+				e.printStackTrace();
+			}
 		}
+	}
+
+	public String getStepName() {
+		return "Sign"; //$NON-NLS-1$
 	}
 }

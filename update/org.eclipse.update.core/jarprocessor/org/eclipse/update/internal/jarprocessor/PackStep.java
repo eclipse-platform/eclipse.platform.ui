@@ -36,15 +36,11 @@ public class PackStep extends CommandStep {
 		for (int i = 0; i < locations.length; i++) {
 			if (locations[i] == null)
 				continue;
-			try {
-				result = execute(new String[] {locations[i], "-V"}); //$NON-NLS-1$
-				if (result == 0) {
-					packCommand = locations[i];
-					canPack = Boolean.TRUE;
-					return true;
-				}
-			} catch (IOException e) {
-				//no good
+			result = execute(new String[] {locations[i], "-V"}); //$NON-NLS-1$
+			if (result == 0) {
+				packCommand = locations[i];
+				canPack = Boolean.TRUE;
+				return true;
 			}
 		}
 
@@ -53,7 +49,12 @@ public class PackStep extends CommandStep {
 	}
 
 	public PackStep(Properties options) {
-		super(options, null, null);
+		super(options, null, null, false);
+		exclusions = Utils.getPackExclusions(options);
+	}
+
+	public PackStep(Properties options, boolean verbose) {
+		super(options, null, null, verbose);
 		exclusions = Utils.getPackExclusions(options);
 	}
 
@@ -73,9 +74,12 @@ public class PackStep extends CommandStep {
 			File outputFile = new File(workingDirectory, input.getName() + Utils.PACKED_SUFFIX);
 			try {
 				String[] cmd = getCommand(input, outputFile);
-				execute(cmd);
+				int result = execute(cmd, verbose);
+				if (result != 0 && verbose)
+					System.out.println("Error: " + result + " was returned from command: " + Utils.concat(cmd)); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
-				//didn't work
+				if (verbose)
+					e.printStackTrace();
 				return null;
 			}
 			return outputFile;
@@ -97,5 +101,9 @@ public class PackStep extends CommandStep {
 			cmd = new String[] {packCommand, outputFile.getCanonicalPath(), input.getCanonicalPath()};
 		}
 		return cmd;
+	}
+
+	public String getStepName() {
+		return "Pack"; //$NON-NLS-1$
 	}
 }

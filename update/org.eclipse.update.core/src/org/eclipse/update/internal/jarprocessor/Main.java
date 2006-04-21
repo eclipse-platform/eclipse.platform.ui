@@ -25,6 +25,7 @@ public class Main {
 		public boolean pack = false;
 		public boolean repack = false;
 		public boolean unpack = false;
+		public boolean verbose = false;
 		public File input = null;
 	}
 
@@ -39,6 +40,7 @@ public class Main {
 		System.out.println("                with repack, sign and pack."); //$NON-NLS-1$
 		System.out.println();
 		System.out.println("-outputDir <dir>  the output directory"); //$NON-NLS-1$
+		System.out.println("-verbose        verbose mode "); //$NON-NLS-1$
 	}
 
 	public static Options processArguments(String[] args) {
@@ -68,6 +70,8 @@ public class Main {
 					return null;
 				}
 				options.outputDir = args[++i];
+			} else if (args[i].equals("-verbose")) { //$NON-NLS-1$
+				options.verbose = true;
 			}
 		}
 
@@ -108,35 +112,37 @@ public class Main {
 			processor.setPack(options.pack);
 			processor.setRepack(options.repack || (options.pack && options.signCommand != null));
 			processor.setUnpack(options.unpack);
+			processor.setVerbose(options.verbose);
 			try {
 				processor.processZip(options.input);
 			} catch (ZipException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (options.verbose)
+					e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (options.verbose)
+					e.printStackTrace();
 			}
 		} else {
 			JarProcessor processor = new JarProcessor();
 			processor.setWorkingDirectory(options.outputDir);
+			processor.setVerbose(options.verbose);
 
 			if (options.repack || (options.pack && options.signCommand != null))
-				processor.addProcessStep(new PackUnpackStep(null));
+				processor.addProcessStep(new PackUnpackStep(null, options.verbose));
 
 			if (options.signCommand != null)
-				processor.addProcessStep(new SignCommandStep(null, options.signCommand));
+				processor.addProcessStep(new SignCommandStep(null, options.signCommand, options.verbose));
 
 			if (options.pack)
-				processor.addProcessStep(new PackStep(null));
+				processor.addProcessStep(new PackStep(null, options.verbose));
 			else if (options.unpack)
-				processor.addProcessStep(new UnpackStep(null));
+				processor.addProcessStep(new UnpackStep(null, options.verbose));
 
 			try {
 				processor.process(options.input, options.unpack ? Utils.PACK_GZ_FILTER : Utils.JAR_FILTER);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (options.verbose)
+					e.printStackTrace();
 			}
 		}
 	}

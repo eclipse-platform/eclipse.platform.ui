@@ -175,4 +175,14 @@ public class Utils {
 		}
 		return Collections.EMPTY_SET;
 	}
+	
+	public static String concat(String [] array){
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < array.length; i++) {
+			if( i > 0 )
+				buffer.append(' ');
+			buffer.append(array[i]);
+		}
+		return buffer.toString();
+	}
 }

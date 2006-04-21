@@ -63,6 +63,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 	public final static String DIGEST_BUILDER = "-digestBuilder"; //$NON-NLS-1$
 	public final static String INPUT = "input"; //$NON-NLS-1$
 	public final static String OUTPUT_DIR = "-outputDir"; //$NON-NLS-1$
+	public final static String VERBOSE = "-verbose"; //$NON-NLS-1$
 	
 	public final static String JAR_PROCESSOR_PACK = "-pack"; //$NON-NLS-1$
 	public final static String JAR_PROCESSOR_UNPACK = "-unpack"; //$NON-NLS-1$
@@ -123,6 +124,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		options.pack = params.containsKey(JAR_PROCESSOR_PACK);
 		options.unpack = params.containsKey(JAR_PROCESSOR_UNPACK);
 		options.repack = params.containsKey(JAR_PROCESSOR_REPACK);
+		options.verbose = params.containsKey(VERBOSE);
 		options.signCommand = (String) params.get(JAR_PROCESSOR_SIGN);
 		options.outputDir = (String) params.get(OUTPUT_DIR);
 		

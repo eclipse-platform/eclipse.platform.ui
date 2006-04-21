@@ -34,6 +34,7 @@ public class ZipProcessor {
 	private boolean signing = false;
 	private boolean repacking = false;
 	private boolean unpacking = false;
+	private boolean verbose = false;
 
 	public void setWorkingDirectory(String dir) {
 		workingDirectory = dir;
@@ -62,13 +63,20 @@ public class ZipProcessor {
 		this.unpacking = unpack;
 	}
 
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
 	public void processZip(File zipFile) throws ZipException, IOException {
+		if (verbose)
+			System.out.println("Processing " + zipFile.getPath()); //$NON-NLS-1$
 		ZipFile zip = new ZipFile(zipFile);
 		initialize(zip);
 
 		String extension = unpacking ? "pack.gz" : ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		File tempDir = new File(getWorkingDirectory(), "temp_" + zipFile.getName()); //$NON-NLS-1$
 		JarProcessor processor = new JarProcessor();
+		processor.setVerbose(verbose);
 		processor.setWorkingDirectory(tempDir.getCanonicalPath());
 		if (unpacking) {
 			processor.addProcessStep(unpackStep);
@@ -97,6 +105,8 @@ public class ZipProcessor {
 					parent = extractedFile.getParentFile();
 					if (!parent.exists())
 						parent.mkdirs();
+					if (verbose)
+						System.out.println("Extracting " + entry.getName()); //$NON-NLS-1$
 					FileOutputStream extracted = new FileOutputStream(extractedFile);
 					Utils.transferStreams(entryStream, extracted, true);
 
@@ -127,6 +137,10 @@ public class ZipProcessor {
 						}
 					}
 					entryStream = new FileInputStream(extractedFile);
+					if (verbose) {
+						System.out.println("Adding " + entry.getName() + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+						System.out.println();
+					}
 				}
 				ZipEntry newEntry = new ZipEntry(name);
 				zipOut.putNextEntry(newEntry);
@@ -158,8 +172,8 @@ public class ZipProcessor {
 				stream = zip.getInputStream(entry);
 				properties.load(stream);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (verbose)
+					e.printStackTrace();
 			} finally {
 				Utils.close(stream);
 			}
@@ -168,9 +182,9 @@ public class ZipProcessor {
 		packExclusions = Utils.getPackExclusions(properties);
 		signExclusions = Utils.getSignExclusions(properties);
 
-		packUnpackStep = new PackUnpackStep(properties);
-		packStep = new PackStep(properties);
-		signStep = new SignCommandStep(properties, command);
-		unpackStep = new UnpackStep(properties);
+		packUnpackStep = new PackUnpackStep(properties, verbose);
+		packStep = new PackStep(properties, verbose);
+		signStep = new SignCommandStep(properties, command, verbose);
+		unpackStep = new UnpackStep(properties, verbose);
 	}
 }
