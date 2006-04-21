@@ -351,6 +351,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			}
 		}
 
+		Control[] existingChildren = control.getChildren();
+		for (int i = 0; i < existingChildren.length; i++) {
+			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
+			item.setColor(i);
+		}
 		control.layout(true);
 		updateForShowingProgress();
 	}

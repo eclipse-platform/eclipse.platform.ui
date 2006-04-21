@@ -536,7 +536,7 @@ class ProgressInfoItem extends Composite {
 					setLinkText(job, message, i);
 				}
 			}
-			setColor(i);
+			setColor(currentIndex);
 		}
 
 		// Remove completed tasks
