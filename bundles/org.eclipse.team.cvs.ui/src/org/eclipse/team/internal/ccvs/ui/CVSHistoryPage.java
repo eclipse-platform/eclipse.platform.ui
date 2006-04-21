@@ -1154,8 +1154,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 								if (useLocalSelect){
 									page.selectLocalRevision(localFileRevision.getTimestamp());
 								} else {
-									String workspaceRevision = ResourceSyncInfo.getRevision(file.getSyncBytes());
-									page.selectRevision(workspaceRevision);
+									byte[] syncBytes = file.getSyncBytes();
+									if (syncBytes != null) {
+										String workspaceRevision = ResourceSyncInfo.getRevision(syncBytes);
+										page.selectRevision(workspaceRevision);
+									}
 								}
 							} catch (CVSException e){
 							}
