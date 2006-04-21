@@ -21,19 +21,12 @@ import org.eclipse.jface.text.ITextStore;
  * 
  * @since 3.2
  */
-public class AbstractLineTrackerTest extends TestCase {
+public abstract class AbstractLineTrackerTest extends TestCase {
 	protected ITextStore fText;
 	protected ILineTracker  fTracker;
 	
 	protected AbstractLineTrackerTest(String name) {
 		super(name);
-	}
-	
-	private int getLineOffset(int line, int[] lines) {
-		int offset= 0;
-		for (int i= 0; i < line; i++)
-			offset += (lines[i] + 1);
-		return offset;
 	}
 	
 	protected final void checkLines(int[] lines) throws BadLocationException {
@@ -47,7 +40,9 @@ public class AbstractLineTrackerTest extends TestCase {
 			assertEquals("line offset of line " + i, getLineOffset(i, lines),  line.getOffset());
 		}
 	}
-	
+
+	abstract int getLineOffset(int line, int[] lines);
+
 	protected final void replace(int offset, int length, String text) throws BadLocationException {
 		fTracker.replace(offset, length, text);
 		fText.replace(offset, length, text);
