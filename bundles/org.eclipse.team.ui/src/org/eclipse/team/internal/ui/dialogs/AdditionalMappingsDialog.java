@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -47,6 +48,10 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createSelectedMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
+        GridLayout layout = new GridLayout(1, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
         selectedMappingsArea = ResourceMappingHierarchyArea.create(scope.asInputScope(), null /* no context */);
         selectedMappingsArea.setDescription(TeamUIMessages.AdditionalMappingsDialog_1);
         selectedMappingsArea.createArea(composite);
@@ -60,6 +65,10 @@ public class AdditionalMappingsDialog extends DetailsDialog {
      */
     private void createAllMappingsArea(Composite parent) {
         Composite composite = createComposite(parent);
+        GridLayout layout = new GridLayout(1, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
         allMappingsArea = ResourceMappingHierarchyArea.create(scope, context);
         allMappingsArea.setDescription(TeamUIMessages.AdditionalMappingsDialog_2);
         //allMappingsArea.addPropertyChangeListener(this);

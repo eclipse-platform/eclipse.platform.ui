@@ -45,13 +45,12 @@ public class ResourceMappingHierarchyArea extends DialogArea implements INavigat
 	}
 
 	public void createArea(Composite parent) {
-        Composite composite = createComposite(parent, 1, true);
+        Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout(1, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
         composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         if (description != null)
             createWrappingLabel(composite, description, 1);
