@@ -832,7 +832,7 @@ class ProgressInfoItem extends Composite {
 
 		Iterator taskEntryIterator = taskEntries.iterator();
 		while (taskEntryIterator.hasNext()) {
-			((Link) taskEntryIterator.next()).setBackground(actionBar.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			((Link) taskEntryIterator.next()).setBackground(color);
 		}
 
 	}
