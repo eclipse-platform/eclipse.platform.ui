@@ -397,7 +397,7 @@ public class ChangeSetActionProvider extends SynchronizationActionProvider {
 
 	private IDiff[] getLocalChanges(TreePath path) {
 		IResourceDiffTree tree = getDiffTree(path);
-		if (path.getSegmentCount() == 1) {
+		if (path.getSegmentCount() == 1 && path.getLastSegment() instanceof IDiffTree) {
 			return ((ResourceDiffTree)tree).getDiffs();
 		}
 		ResourceTraversal[] traversals = getTraversals(path.getLastSegment());
