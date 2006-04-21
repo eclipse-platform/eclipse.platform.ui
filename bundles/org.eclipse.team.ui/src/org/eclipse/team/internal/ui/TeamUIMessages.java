@@ -271,6 +271,10 @@ public class TeamUIMessages extends NLS {
 	public static String ChangesSection_filterChange;
 	public static String ChangesSection_noChanges;
 
+	public static String Utils_18;
+
+	public static String Utils_19;
+
 	public static String Utils_20;
 
 	public static String Utils_21;

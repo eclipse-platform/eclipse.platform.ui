@@ -12,15 +12,8 @@ package org.eclipse.team.internal.ui;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -953,20 +946,14 @@ public class Utils {
 
 	public static String getScopeDescription(ISynchronizationScope scope) {
 		ResourceMapping[] mappings = scope.getInputMappings();
-		StringBuffer  buffer = new StringBuffer();
-		int count = 0;
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
-			String label = getLabel(mapping);
-			if (label.length() > 0) {
-				if(count > 0) buffer.append(", "); //$NON-NLS-1$
-				buffer.append(label);
-				count++;
-			}
+		if (mappings.length == 1) {
+			String label = getLabel(mappings[0]);
+			if (label == null)
+				return TeamUIMessages.Utils_19;
+			else
+				return label;
 		}
-		if (buffer.length() == 0)
-			return new Date().toString();
-		return buffer.toString();
+		return NLS.bind(TeamUIMessages.Utils_18, new Integer(mappings.length));
 	}
 
 	public static ResourceTraversal[] getTraversals(Object[] elements) throws CoreException {

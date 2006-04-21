@@ -348,10 +348,6 @@ public class ModelSynchronizeParticipant extends
 	 * @since 3.1
 	 */
     protected String getLongTaskName(ResourceMapping[] mappings) {
-        if (mappings == null || (mappings.length == getContext().getScope().getMappings().length)) {
-            // Assume we are refreshing everything
-            return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); 
-        }
         int mappingCount = mappings.length;
         if (mappingCount == 1) {
             return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), Utils.getLabel(mappings[0]) }); 
