@@ -1252,13 +1252,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         deferUpdates(true);
         try {        
+        	if(modelManager!=null) {
+            	modelManager.postClose(postCloseInfo);
+            }
+        	
 	        // Close all editors.
 	        for (int i = 0; i < editorRefs.length; i++) {
 	            IEditorReference ref = editorRefs[i];
-                
-	            if(modelManager!=null) {
-	            	modelManager.postClose(postCloseInfo);
-	            }
 	            
 	            // Remove editor from the presentation
                 editorPresentation.closeEditor(ref);
