@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
@@ -9,6 +19,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -193,10 +205,8 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 	 * @see org.eclipse.ui.dialogs.ListDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setFont(parent.getFont());
+		initializeDialogUnits(parent);
+		Composite comp = (Composite) super.createDialogArea(parent);
 		SWTUtil.createLabel(comp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_0, 2);
 		fViewer = new LCViewer(comp, SWT.BORDER);
 		Tree tree = fViewer.getTree();
@@ -208,8 +218,11 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fViewer.expandAll();
 		Composite butcomp = new Composite(comp, SWT.NONE);
-		butcomp.setFont(comp.getFont());
-		butcomp.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		butcomp.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		butcomp.setLayoutData(gd);
@@ -219,19 +232,18 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 			public void widgetSelected(SelectionEvent e) {
 				fViewer.setGrayedElements(new Object[0]);
 				fViewer.setAllChecked(true);
-			}
-			
+			}			
 		});
 		Button dsall = SWTUtil.createPushButton(butcomp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_2, null);
 		dsall.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
 				fViewer.setAllChecked(false);
-			}
-			
+			}			
 		});
 		fPrefButton = new Button(comp, SWT.CHECK);
 		fPrefButton.setText(LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_3);
+		Dialog.applyDialogFont(comp);
 		return comp;
 	}
 	
