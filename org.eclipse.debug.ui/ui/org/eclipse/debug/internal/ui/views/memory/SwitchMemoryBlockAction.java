@@ -11,8 +11,6 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -178,48 +176,32 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 				dropdown =  new Menu(parent);
 
 				// get all memory blocks from tree viewer
-				IMemoryBlock[] allMemoryBlocks = getMemoryBlocksFromViewer();
+				IMemoryBlock[] allMemoryBlocks = null;
 				
 				// get selection from memory view
 				IMemoryBlock memoryBlock = getCurrentMemoryBlock();
-				MemoryBlockNavigationModel model = getTreeNavigationModel();
 			
-				if (model == null)
+				Object context = DebugUITools.getDebugContext();
+				IMemoryBlockRetrieval retrieval =  MemoryViewUtil.getMemoryBlockRetrieval(context);
+				if (retrieval != null)
 				{
-					Object context = DebugUITools.getDebugContext();
-					IMemoryBlockRetrieval retrieval =  MemoryViewUtil.getMemoryBlockRetrieval(context);
-					if (retrieval != null)
-					{
-						allMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
-					}
+					allMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 				}
 				
-				for (int i=0; i<allMemoryBlocks.length; i++)
-				{	
-					SwitchToAction action;
-					if (model != null)
-					{
-						String label = model.getLabel(allMemoryBlocks[i]);
-						if (label == null)
-							action = new SwitchToAction(allMemoryBlocks[i], true);
-						else
-						{
-							label = decorateLabel(allMemoryBlocks[i], label);
-							action = new SwitchToAction(allMemoryBlocks[i], label);
-						}
+				if (allMemoryBlocks != null)
+				{
+					for (int i=0; i<allMemoryBlocks.length; i++)
+					{	
+						SwitchToAction action = new SwitchToAction(allMemoryBlocks[i], true);
+						
+						if (allMemoryBlocks[i] == memoryBlock)
+							action.setChecked(true);
+						
+						ActionContributionItem item = new ActionContributionItem(action);
+						item.fill(dropdown, -1);
+						
+						item.getAction().setChecked(true);
 					}
-					else
-					{
-						action = new SwitchToAction(allMemoryBlocks[i], true);
-					}
-					
-					if (allMemoryBlocks[i] == memoryBlock)
-						action.setChecked(true);
-					
-					ActionContributionItem item = new ActionContributionItem(action);
-					item.fill(dropdown, -1);
-					
-					item.getAction().setChecked(true);
 				}
 			}
 			
@@ -242,24 +224,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		updateActionEnablement();
 	}
 	
-	private MemoryBlockNavigationModel getTreeNavigationModel()
-	{
-		if (fView == null)
-			return null;
-		
-		if (fView instanceof MemoryView) 
-		{
-			MemoryView memView = (MemoryView)fView;
-			IMemoryViewPane pane = memView.getViewPane(MemoryBlocksTreeViewPane.PANE_ID);
-			if (pane instanceof MemoryBlocksTreeViewPane && pane.isVisible())
-			{
-				AsynchronousTreeViewer viewer = ((MemoryBlocksTreeViewPane)pane).getViewer();
-				return new MemoryBlockNavigationModel(viewer);
-			}
-		}
-		return null;
-	}
-	
 	private AsynchronousTreeViewer getViewer()
 	{
 		if (fView == null)
@@ -276,24 +240,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			}
 		}
 		return null;
-	}
-	
-	private IMemoryBlock[] getMemoryBlocksFromViewer()
-	{
-		ArrayList memoryBlocks = new ArrayList();
-		MemoryBlockNavigationModel model = getTreeNavigationModel();
-		if (model != null)
-		{
-			Object[] elements = model.getElements();
-			
-			for (int i=0; i<elements.length; i++)
-			{
-				if (elements[i] instanceof IMemoryBlock)
-					memoryBlocks.add(elements[i]);
-			}
-			
-		}
-		return (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[0]);
 	}
 	
 	private void updateActionEnablement()
@@ -355,17 +301,8 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			
 			if (retrieval != null)
 			{
-				MemoryBlockNavigationModel model = getTreeNavigationModel();
-				if (model != null)
-				{
-					IMemoryBlock[] memoryBlocks = getMemoryBlocksFromViewer();
-					doSwitchToNext(memoryBlocks);
-				}
-				else
-				{
-					IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
-					doSwitchToNext(memoryBlocks);
-				}
+				IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
+				doSwitchToNext(memoryBlocks);
 			}
 		}
 	}
