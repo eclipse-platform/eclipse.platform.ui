@@ -285,7 +285,7 @@ public final class RefactoringHistoryManager {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 22);
 			final IFileInfo info= store.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-			if (store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_INDEX_FILE) && !info.isDirectory() && info.exists()) {
+			if (!info.isDirectory() && info.exists() && store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_INDEX_FILE)) {
 				InputStream stream= null;
 				try {
 					stream= store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -489,7 +489,7 @@ public final class RefactoringHistoryManager {
 
 	/**
 	 * Removes the refactoring history index tree spanned by the specified file
-	 * store
+	 * store.
 	 * 
 	 * @param store
 	 *            the file store spanning the history index tree
@@ -511,8 +511,15 @@ public final class RefactoringHistoryManager {
 					subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_updating_history, stores.length);
 					for (int index= 0; index < stores.length; index++) {
 						final IFileInfo current= stores[index].fetchInfo(EFS.NONE, new SubProgressMonitor(subMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-						if (current.isDirectory())
-							return;
+						if (current.isDirectory()) {
+							final char[] characters= stores[index].getName().toCharArray();
+							for (int offset= 0; offset < characters.length; offset++) {
+								if (Character.isDigit(characters[offset]))
+									return;
+								else
+									continue;
+							}
+						}
 					}
 				} finally {
 					subMonitor.done();
@@ -940,7 +947,6 @@ public final class RefactoringHistoryManager {
 								if (item != null) {
 									final String value= item.getNodeValue();
 									if (String.valueOf(stamp).equals(value)) {
-										node.getParentNode().removeChild(node);
 										try {
 											input.close();
 											input= null;
@@ -950,6 +956,7 @@ public final class RefactoringHistoryManager {
 										if (length == 1)
 											removeIndexTree(folder, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 										else {
+											node.getParentNode().removeChild(node);
 											writeHistoryEntry(history, document, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 											removeIndexEntry(index, stamp, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 										}
