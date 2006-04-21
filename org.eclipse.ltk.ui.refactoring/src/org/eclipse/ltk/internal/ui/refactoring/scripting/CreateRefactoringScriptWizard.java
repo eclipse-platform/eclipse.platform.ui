@@ -31,7 +31,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -200,9 +199,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				} else if (result == 2)
 					return false;
 			}
-			OutputStream stream= null;
+			final OutputStream[] stream= { null};
 			try {
-				stream= new BufferedOutputStream(new FileOutputStream(file));
+				stream[0]= new BufferedOutputStream(new FileOutputStream(file));
 				Arrays.sort(writable, new Comparator() {
 
 					public final int compare(final Object first, final Object second) {
@@ -216,7 +215,27 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						return 0;
 					}
 				});
-				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
+				final RefactoringDescriptorProxy[] finalWritable= writable;
+				try {
+					getContainer().run(false, false, new IRunnableWithProgress() {
+
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								RefactoringCore.getHistoryService().writeRefactoringDescriptors(finalWritable, stream[0], RefactoringDescriptor.NONE, false, monitor);
+							} catch (CoreException exception) {
+								throw new InvocationTargetException(exception);
+							}
+						}
+					});
+				} catch (InvocationTargetException exception) {
+					final Throwable throwable= exception.getTargetException();
+					if (throwable instanceof CoreException) {
+						final CoreException extended= (CoreException) throwable;
+						throw extended;
+					}
+				} catch (InterruptedException exception) {
+					// Do nothing
+				}
 				return true;
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
@@ -231,9 +250,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
 				return true;
 			} finally {
-				if (stream != null) {
+				if (stream[0] != null) {
 					try {
-						stream.close();
+						stream[0].close();
 					} catch (IOException exception) {
 						// Do nothing
 					}
@@ -255,7 +274,27 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						return 0;
 					}
 				});
-				RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, new NullProgressMonitor());
+				final RefactoringDescriptorProxy[] finalWritable= writable;
+				try {
+					getContainer().run(false, false, new IRunnableWithProgress() {
+
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								RefactoringCore.getHistoryService().writeRefactoringDescriptors(finalWritable, stream, RefactoringDescriptor.NONE, false, monitor);
+							} catch (CoreException exception) {
+								throw new InvocationTargetException(exception);
+							}
+						}
+					});
+				} catch (InvocationTargetException exception) {
+					final Throwable throwable= exception.getTargetException();
+					if (throwable instanceof CoreException) {
+						final CoreException extended= (CoreException) throwable;
+						throw extended;
+					}
+				} catch (InterruptedException exception) {
+					// Do nothing
+				}
 				try {
 					final String string= stream.toString(IRefactoringSerializationConstants.OUTPUT_ENCODING);
 					Clipboard clipboard= null;

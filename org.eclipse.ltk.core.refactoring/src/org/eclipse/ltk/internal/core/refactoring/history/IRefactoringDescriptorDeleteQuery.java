@@ -25,6 +25,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 public interface IRefactoringDescriptorDeleteQuery {
 
 	/**
+	 * Have any refactoring descriptors been deleted?
+	 * 
+	 * @return <code>true</code> if any descriptors have been deleted,
+	 *         <code>true</code> otherwise
+	 */
+	public boolean hasDeletions();
+
+	/**
 	 * Returns whether the current delete operation can be executed.
 	 * <p>
 	 * The refactoring descriptor will considered to be deleted only if this

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -26,17 +27,19 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,6 +50,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -82,25 +86,29 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		/** The return code */
 		private int fReturnCode= -1;
 
+		/** The shell to use */
+		private final Shell fShell;
+
 		/** Has the user already been warned once? */
 		private boolean fWarned= false;
 
 		/**
 		 * Creates a new refactoring descriptor delete query.
 		 * 
+		 * @param shell
+		 *            the shell to use
 		 * @param count
 		 *            the number of descriptors to delete
 		 */
-		public RefactoringDescriptorDeleteQuery(final int count) {
+		public RefactoringDescriptorDeleteQuery(final Shell shell, final int count) {
+			Assert.isNotNull(shell);
 			Assert.isTrue(count >= 0);
+			fShell= shell;
 			fCount= count;
 		}
 
 		/**
-		 * Returns whether any deletions have been performed successfully.
-		 * 
-		 * @return <code>true</code> if any deletions have been performed,
-		 *         <code>false</code> otherwise
+		 * {@inheritDoc}
 		 */
 		public boolean hasDeletions() {
 			return fReturnCode == IDialogConstants.YES_ID;
@@ -110,15 +118,25 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		 * {@inheritDoc}
 		 */
 		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
-			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-			if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
-				final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { new Integer(fCount).toString(), getCurrentProject().getName()}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
-				store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-				fReturnCode= dialog.getReturnCode();
+			final IProject project= getCurrentProject();
+			if (project != null) {
+				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
+				if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
+					fShell.getDisplay().syncExec(new Runnable() {
+
+						public final void run() {
+							if (!fShell.isDisposed()) {
+								final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { new Integer(fCount).toString(), project.getName()}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
+								store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+								fReturnCode= dialog.getReturnCode();
+							}
+						}
+					});
+				}
+				fWarned= true;
+				if (fReturnCode == IDialogConstants.YES_ID)
+					return new RefactoringStatus();
 			}
-			fWarned= true;
-			if (fReturnCode == IDialogConstants.YES_ID)
-				return new RefactoringStatus();
 			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 		}
 	}
@@ -127,7 +145,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private static String DIALOG_SETTINGS_KEY= "RefactoringPropertyPage"; //$NON-NLS-1$
 
 	/** The empty descriptors constant */
-	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= new RefactoringDescriptorProxy[0];
+	static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= new RefactoringDescriptorProxy[0];
 
 	/** Preference key for the warn delete preference */
 	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.descriptor"; //$NON-NLS-1$;
@@ -206,29 +224,18 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 			public final void widgetSelected(final SelectionEvent event) {
 				final IProject project= getCurrentProject();
-				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-				MessageDialogWithToggle dialog= null;
-				if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !fHistoryControl.getInput().isEmpty()) {
-					dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
-					store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
-				}
-				if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
-					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-					try {
-						service.connect();
-						try {
-							service.deleteRefactoringHistory(project, null);
-						} catch (CoreException exception) {
-							final Throwable throwable= exception.getStatus().getException();
-							if (throwable instanceof IOException)
-								MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-							else
-								RefactoringUIPlugin.log(exception);
-						}
-						fHistoryControl.setInput(service.getProjectHistory(project, null));
-					} finally {
-						service.disconnect();
+				if (project != null) {
+					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if (context == null)
+						context= PlatformUI.getWorkbench().getProgressService();
+					final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
+					MessageDialogWithToggle dialog= null;
+					if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !fHistoryControl.getInput().isEmpty()) {
+						dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+						store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 					}
+					if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID)
+						promptDeleteHistory(context, project);
 				}
 			}
 		});
@@ -237,25 +244,18 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
-					final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-					try {
-						service.connect();
-						final RefactoringDescriptorDeleteQuery query= new RefactoringDescriptorDeleteQuery(selection.length);
-						try {
-							service.deleteRefactoringDescriptors(selection, query, null);
-						} catch (CoreException exception) {
-							final Throwable throwable= exception.getStatus().getException();
-							if (throwable instanceof IOException)
-								MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-							else
-								RefactoringUIPlugin.log(exception);
-						}
-						if (query.hasDeletions()) {
-							fHistoryControl.setInput(service.getProjectHistory(getCurrentProject(), null));
-							fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
-						}
-					} finally {
-						service.disconnect();
+					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if (context == null)
+						context= PlatformUI.getWorkbench().getProgressService();
+					final IProject project= getCurrentProject();
+					if (project != null) {
+						final Shell shell= getShell();
+						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, selection.length), new IRefactoringHistoryProvider() {
+
+							public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
+								return RefactoringHistoryService.getInstance().getProjectHistory(project, monitor);
+							}
+						}, selection);
 					}
 				}
 			}
@@ -263,29 +263,12 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		fHistoryControl.getEditButton().addSelectionListener(new SelectionAdapter() {
 
 			public final void widgetSelected(final SelectionEvent event) {
-				String details= ""; //$NON-NLS-1$
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
 				if (selection.length > 0) {
-					RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-					try {
-						service.connect();
-						final RefactoringDescriptor descriptor= selection[0].requestDescriptor(null);
-						if (descriptor != null) {
-							final String current= descriptor.getComment();
-							if (current != null)
-								details= current;
-						}
-						final EditRefactoringDetailsDialog dialog= new EditRefactoringDetailsDialog(getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_edit_message, selection[0].getDescription()), details);
-						if (dialog.open() == 0) {
-							service.setRefactoringComment(selection[0], dialog.getDetails(), null);
-							fHistoryControl.setSelectedDescriptors(EMPTY_DESCRIPTORS);
-							fHistoryControl.setSelectedDescriptors(new RefactoringDescriptorProxy[] { selection[0]});
-						}
-					} catch (CoreException exception) {
-						RefactoringUIPlugin.log(exception);
-					} finally {
-						service.disconnect();
-					}
+					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if (context == null)
+						context= PlatformUI.getWorkbench().getProgressService();
+					RefactoringHistoryEditHelper.promptRefactoringDetails(context, fHistoryControl, selection[0]);
 				}
 			}
 		});
@@ -302,27 +285,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 		final IProject project= getCurrentProject();
 		if (project != null) {
-			try {
-				IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (context == null)
-					context= PlatformUI.getWorkbench().getProgressService();
-				context.run(false, false, new IRunnableWithProgress() {
-
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-						try {
-							service.connect();
-							fHistoryControl.setInput(service.getProjectHistory(project, monitor));
-						} finally {
-							service.disconnect();
-						}
-					}
-				});
-			} catch (InvocationTargetException exception) {
-				RefactoringUIPlugin.log(exception);
-			} catch (InterruptedException exception) {
-				// Do nothing
-			}
+			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (context == null)
+				context= PlatformUI.getWorkbench().getProgressService();
+			handleInputEvent(context, project);
 		}
 		applyDialogFont(composite);
 
@@ -352,6 +318,37 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (manager != null)
 			return manager.getWorkingCopy(preferences);
 		return preferences;
+	}
+
+	/**
+	 * Handles the input event.
+	 * 
+	 * @param context
+	 *            the runnable context to use
+	 * @param project
+	 *            the project
+	 */
+	private void handleInputEvent(final IRunnableContext context, final IProject project) {
+		Assert.isNotNull(context);
+		Assert.isNotNull(project);
+		try {
+			context.run(false, false, new IRunnableWithProgress() {
+
+				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+					try {
+						service.connect();
+						fHistoryControl.setInput(service.getProjectHistory(project, monitor));
+					} finally {
+						service.disconnect();
+					}
+				}
+			});
+		} catch (InvocationTargetException exception) {
+			RefactoringUIPlugin.log(exception);
+		} catch (InterruptedException exception) {
+			// Do nothing
+		}
 	}
 
 	/**
@@ -401,7 +398,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 
 						public final IStatus run(final IProgressMonitor monitor) {
 							try {
-								service.setSharedRefactoringHistory(project, history, null);
+								service.setSharedRefactoringHistory(project, history, monitor);
 							} catch (CoreException exception) {
 								RefactoringUIPlugin.log(exception);
 								return exception.getStatus();
@@ -417,6 +414,64 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				RefactoringUIPlugin.log(exception);
 			}
 		return super.performOk();
+	}
+
+	/**
+	 * Prompts the user to delete the project refactoring history.
+	 * 
+	 * @param context
+	 *            the runnable context to use
+	 * @param project
+	 *            the project to delete its refactoring history
+	 */
+	protected void promptDeleteHistory(final IRunnableContext context, final IProject project) {
+		Assert.isNotNull(context);
+		Assert.isNotNull(project);
+		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
+		try {
+			service.connect();
+			try {
+				final Shell shell= getShell();
+				context.run(false, true, new IRunnableWithProgress() {
+
+					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
+							try {
+								service.deleteRefactoringHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							} catch (CoreException exception) {
+								final Throwable throwable= exception.getStatus().getException();
+								if (throwable instanceof IOException) {
+									shell.getDisplay().syncExec(new Runnable() {
+
+										public void run() {
+											MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+										}
+									});
+								} else
+									throw new InvocationTargetException(exception);
+							}
+							final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							shell.getDisplay().syncExec(new Runnable() {
+
+								public void run() {
+									fHistoryControl.setInput(history);
+									fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
+								}
+							});
+						} finally {
+							monitor.done();
+						}
+					}
+				});
+			} catch (InvocationTargetException exception) {
+				RefactoringUIPlugin.log(exception);
+			} catch (InterruptedException exception) {
+				// Do nothing
+			}
+		} finally {
+			service.disconnect();
+		}
 	}
 
 	/**
