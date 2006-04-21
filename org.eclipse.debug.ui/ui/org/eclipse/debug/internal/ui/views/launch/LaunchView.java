@@ -235,7 +235,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
-		setAction(FIND_ACTION, new FindElementAction((AsynchronousTreeViewer) getViewer()));
+		setAction(FIND_ACTION, new FindElementAction(this, (AsynchronousTreeViewer) getViewer()));
         
         
         IWorkbenchWindow window = getSite().getWorkbenchWindow();

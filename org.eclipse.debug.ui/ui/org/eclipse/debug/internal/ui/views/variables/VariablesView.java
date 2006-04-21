@@ -849,7 +849,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
-		action= new FindElementAction(getVariablesViewer());
+		action= new FindElementAction(this, getVariablesViewer());
 		setAction(FIND_ELEMENT, action);
 		
 		// TODO: Still using "old" resource access
