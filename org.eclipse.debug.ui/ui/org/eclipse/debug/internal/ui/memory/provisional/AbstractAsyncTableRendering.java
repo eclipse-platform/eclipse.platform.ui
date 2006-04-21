@@ -1317,7 +1317,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		fBytePerLine = bytesPerLine;
 		fColumnSize = columnSize;
 		formatViewer();
-		
+
 		updateSyncRowSize();
 		updateSyncColSize();
 		
@@ -2340,11 +2340,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				int size = newRowSize;
-				if (size < getBytesPerColumn())
-					size = getBytesPerColumn();
+				int colSize = getBytesPerColumn();
+				if (newRowSize < colSize)
+					colSize = newRowSize;
 				
-				format(size, getBytesPerColumn());
+				format(newRowSize, colSize);
 			}
 		});		
 	}
