@@ -14,10 +14,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
 
 /**
@@ -26,7 +31,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
  *
  * @since 3.0
  */
-public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtension {
+public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtension, IInformationProviderExtension2 {
 
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
@@ -232,13 +237,6 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
-	 */
-	public IInformationControlCreator getHoverControlCreator() {
-		return null;
-	}
-
-	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
 	 */
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
@@ -305,5 +303,26 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	 */
 	public boolean canHandleMouseCursor() {
 		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
+	 */
+	public IInformationControlCreator getHoverControlCreator() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @since 3.2
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle= SWT.RESIZE | SWT.TOOL;
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;
+				return new DefaultInformationControl(parent, shellStyle, style, null);
+			}
+		};			
 	}
 }
