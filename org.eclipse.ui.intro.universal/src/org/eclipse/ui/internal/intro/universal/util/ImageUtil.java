@@ -194,12 +194,12 @@ public final class ImageUtil {
 	 * @return whether or not the display is in high contrast mode
 	 */
 	public static boolean isHighContrast() {
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		if (Display.getCurrent() == display) {
-			return display.getHighContrast();
+		if (PlatformUI.isWorkbenchRunning()) {
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			if (Display.getCurrent() == display) {
+				return display.getHighContrast();
+			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 }
