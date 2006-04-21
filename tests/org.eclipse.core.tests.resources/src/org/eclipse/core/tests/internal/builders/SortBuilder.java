@@ -186,7 +186,7 @@ public class SortBuilder extends TestBuilder {
 
 	/**
 	 * Creates the given resource, and its parent if necessary.  The
-	 * resource must not be a solution and it's project must exist.
+	 * resource must not be a solution and its project must exist.
 	 * @param resource
 	 * @exception Exception if the resource is not a folder or a file
 	 */

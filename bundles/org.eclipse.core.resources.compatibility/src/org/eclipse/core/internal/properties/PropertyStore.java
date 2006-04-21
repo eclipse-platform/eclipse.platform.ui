@@ -446,7 +446,7 @@ public class PropertyStore {
 	 * Sets the given property to the given resource.
 	 * <p>
 	 * The property is added to depth zero.  If the resource already has
-	 * a proprety with the same name, it's value is updated to the given
+	 * a property with the same name, its value is updated to the given
 	 * value (i.e. SET_UPDATE add rule equivalent.)</p>
 	 *
 	 * @param resourceName the resource to receive the property.

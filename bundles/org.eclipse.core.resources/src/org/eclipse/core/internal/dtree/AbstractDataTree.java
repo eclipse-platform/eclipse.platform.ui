@@ -145,7 +145,7 @@ public abstract class AbstractDataTree {
 	 * @param parentKey 
 	 *	parent of child to retrieve.
 	 * @param index 
-	 *	index of the child to retrieve in it's parent.
+	 *	index of the child to retrieve in its parent.
 	 * @exception ObjectNotFoundException
 	 * 	parentKey does not exist in the receiver
 	 * @exception ArrayIndexOutOfBoundsException

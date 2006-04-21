@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.QualifiedName;
 /* package */interface IVisitor {
 	/**
 	 * Answers whether the visitor requires that the <code>IStoredProperty</code>
-	 * has it's value filled when matched from the store.
+	 * has its value filled when matched from the store.
 	 * <p>
 	 * Retrieving the property value may be expensive in time and memory usage
 	 * (dependent upon the size of the property value.)</p>

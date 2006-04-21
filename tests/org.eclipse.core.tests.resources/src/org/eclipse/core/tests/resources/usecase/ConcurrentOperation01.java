@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This operation does not change any resource. It only has one
- * syncPoint in order to inform that it's runnning.
+ * syncPoint in order to inform that it's running.
  */
 public class ConcurrentOperation01 extends ConcurrentOperation {
 
