@@ -576,7 +576,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		PluginModel root = (PluginModel) objectStack.peek();
 		currentExtPoint.setParent(root);
 
-		// Now populate the the vector just below us on the objectStack with this extension point
+		// Now populate the vector just below us on the objectStack with this extension point
 		scratchVectors[EXTENSION_POINT_INDEX].addElement(currentExtPoint);
 	}
 

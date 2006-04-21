@@ -344,7 +344,7 @@ public final class ContentTypeCatalog {
 		}
 		ContentType[] children = getChildren(root);
 		if (children == null)
-			// this content type has no subtypes - keep traversing the tree
+			// this content type has no sub-types - keep traversing the tree
 			return true;
 		for (int i = 0; i < children.length; i++)
 			if (!internalAccept(visitor, children[i]))
@@ -467,7 +467,7 @@ public final class ContentTypeCatalog {
 			// no restrictions, get everything
 			result = (Set) associations.get(FileSpec.getMappingKeyFor(text));
 		else {
-			// only those specs satisfying the the type mask should be included
+			// only those specs satisfying the type mask should be included
 			Set initialSet = (Set) associations.get(FileSpec.getMappingKeyFor(text));
 			if (initialSet != null && !initialSet.isEmpty()) {
 				// copy so we can modify
