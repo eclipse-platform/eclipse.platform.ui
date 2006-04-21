@@ -174,6 +174,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			}
 		});
 
+		//Refresh to populate with the current tasks
+		item.refresh();
 		return item;
 	}
 
