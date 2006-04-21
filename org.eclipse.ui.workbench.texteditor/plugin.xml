@@ -520,6 +520,12 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="M1+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.lineEnd"
             platform="carbon"
 	        sequence="M1+ARROW_RIGHT"
@@ -528,6 +534,12 @@
 	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.textEnd"
 	        sequence="M1+END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="END"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
@@ -553,6 +565,12 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="M1+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.lineStart"
             platform="carbon"
 	        sequence="M1+ARROW_LEFT"
@@ -561,6 +579,12 @@
 	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.textStart"
 	        sequence="M1+HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="HOME"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
@@ -582,6 +606,12 @@
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
+	        sequence="M1+DEL"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId=""
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
 	        sequence="ALT+DEL"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
@@ -590,6 +620,12 @@
 	        sequence="M1+BS"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            platform="carbon"
+	        sequence="M1+BS"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId=""
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
             platform="carbon"
@@ -632,26 +668,6 @@
 	        commandId="org.eclipse.ui.edit.text.select.wordPrevious"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            locale="zh"
-   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"            
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+SPACE"/>
-      <key   
-            locale="zh"  
-            contextId="org.eclipse.ui.textEditorScope"   
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
-            sequence="M3+/"/> 
-      <key
-            locale="zh"
-            commandId="org.eclipse.ui.edit.text.hippieCompletion"
-            contextId="org.eclipse.ui.textEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M3+/"/>
-      <key
-            locale="zh"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+SPACE"/>
-      <key
             commandId="org.eclipse.ui.edit.text.toggleInsertMode"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M1+M2+INSERT"
@@ -675,6 +691,17 @@
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M4+."
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key   
+            locale="zh"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="zh"
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
       
       <!-- emacs key bindings -->
       <key
