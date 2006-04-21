@@ -139,6 +139,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         preservingSelection(new Runnable() {
 			public void run() {
 		        viewer.nodeDisposed(node);
+				viewer.nodeChildrenChanged(parentNode);
 			}
 		});
     }
@@ -239,7 +240,7 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param node
      * @param containsChildren
      */
-     void setIsContainer(final ModelNode node, boolean containsChildren) {
+     void setIsContainer(ModelNode node, boolean containsChildren) {
     	ModelNode[] prevChildren = null;
     	synchronized (this) {
 			prevChildren = node.getChildrenNodes();
@@ -254,12 +255,20 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 			}
 		}
 //    	 update tree outside lock
-    	preservingSelection(new Runnable() {
-			public void run() {
-				getViewer().nodeChildrenChanged(node);
-		    	getTreeViewer().nodeContainerChanged(node);
-			}
-		});
-    	
+        AsynchronousTreeViewer viewer = getTreeViewer();
+		if (containsChildren) {
+            if (prevChildren == null) {
+                viewer.nodeChildrenChanged(node);
+                viewer.nodeContainerChanged(node);
+            } else {
+                viewer.nodeContainerChanged(node);
+            }
+        } else if (!containsChildren && prevChildren != null) {            
+            for (int i = 0; i < prevChildren.length; i++) {
+                ModelNode child = prevChildren[i];
+                viewer.nodeDisposed(child);
+            }            
+            viewer.nodeChildrenChanged(node);
+        }
     }    
 }

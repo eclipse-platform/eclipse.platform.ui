@@ -475,7 +475,6 @@ public abstract class AsynchronousModel {
         
         ModelNode[] prevKids = null;
         ModelNode[] newChildren = null;
-        ModelNode[] unmap = null; 
         
         synchronized (this) {
         	if (isDisposed()) {
@@ -491,49 +490,55 @@ public abstract class AsynchronousModel {
     			}
             	parentNode.setChildren(newChildren);
             } else {
-            	newChildren = new ModelNode[children.length];
-            	unmap = new ModelNode[prevKids.length];
-            	for (int i = 0; i < prevKids.length; i++) {
-					unmap[i] = prevKids[i];	
-				}
-            	for (int i = 0; i < children.length; i++) {
-					Object child = children[i];
-					boolean found = false;
-					for (int j = 0; j < prevKids.length; j++) {
-						ModelNode prevKid = prevKids[j];
-						if (prevKid != null && child.equals(prevKid.getElement())) {
-							newChildren[i] = prevKid;
-							prevKids[j] = null;
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						newChildren[i] = new ModelNode(parentNode, child);
-						mapElement(child, newChildren[i]);
-					}
-				}
-            	for (int i = 0; i < prevKids.length; i++) {
-            		ModelNode kid = prevKids[i];
-            		if (kid != null) {
-            			kid.dispose();
-            			unmapNode(kid);
-            		}
-            	}
-    	        parentNode.setChildren(newChildren);
+    	        for (int i = 0; i < prevKids.length; i++) {
+    				ModelNode kid = prevKids[i];
+    				if (i >= children.length) {
+    					kid.dispose();
+    					unmapNode(kid);
+    				} else {
+    					ModelNode prevNode = prevKids[i];
+    					Object nextChild = children[i];
+    					if (!prevNode.getElement().equals(nextChild)) {
+    						unmapNode(prevNode);
+    					}
+    					mapElement(nextChild, prevNode);
+    				}
+    			}
+    			// create new children
+    	        if (children.length > prevKids.length) {
+    		        newChildren = new ModelNode[children.length];
+    		        System.arraycopy(prevKids, 0, newChildren, 0, prevKids.length);
+    		        for (int i = prevKids.length; i < children.length; i ++) {
+    		        	Object child = children[i];
+    					ModelNode childNode = new ModelNode(parentNode, child);
+    		        	mapElement(child, childNode);
+    		        	newChildren[i] = childNode;
+    		        }
+    		        parentNode.setChildren(newChildren);
+    	        }
+                if (children.length < prevKids.length) {
+                	newChildren = new ModelNode[children.length];
+                    System.arraycopy(prevKids, 0, newChildren, 0, children.length);
+                    parentNode.setChildren(newChildren);
+                }
             }        	
         }
         
         //update viewer outside the lock
-    	final ModelNode[] finalUnmap = unmap; 
+    	final ModelNode[] finalPrevKids = prevKids; 
         preservingSelection(new Runnable() {
             public void run() {
-            	if (finalUnmap != null) {
-	            	for (int i = 0; i < finalUnmap.length; i++) {
-						viewer.unmapNode(finalUnmap[i]);
-					}
+            	if (finalPrevKids != null) {
+	                for (int i = 0; i < finalPrevKids.length; i++) {
+	                    ModelNode kid = finalPrevKids[i];
+	                    if (i >= children.length) {
+	                        viewer.nodeDisposed(kid);
+	                    } else {
+	                        viewer.nodeChanged(kid);
+	                    }
+	                }
             	}
-            	viewer.nodeChildrenChanged(parentNode);
+                viewer.nodeChildrenChanged(parentNode);
             }
         });        	        
 
