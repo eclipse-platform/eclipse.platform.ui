@@ -24,7 +24,13 @@ import org.eclipse.team.ui.TeamUI;
  */
 public abstract class ModelParticipantWizard extends ParticipantSynchronizeWizard {
 
+
 	private ModelElementSelectionPage selectionPage;
+	
+	public ModelParticipantWizard() {
+		super();
+		setNeedsProgressMonitor(true);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#createParticipant()

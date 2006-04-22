@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -37,6 +38,8 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	
 	private INavigatorContentService service;
 	private ISynchronizationScopeManager manager;
+	private ContainerCheckedTreeViewer fViewer;
+	private boolean initialized;
 
 	public ModelElementSelectionPage(IResource[] roots) {
 		super("elementSelection"); //$NON-NLS-1$
@@ -49,17 +52,11 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		}
 		manager = new SynchronizationScopeManager(TeamUIMessages.ModelElementSelectionPage_0, (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]), 
 						ResourceMappingContext.LOCAL_CONTEXT, true);
-		try {
-			// TODO
-			manager.initialize(new NullProgressMonitor());
-		} catch (CoreException e) {
-			Utils.handleError(getShell(), e, null, null);
-		}
 	}
 
 	protected ContainerCheckedTreeViewer createViewer(Composite top) {
 		GridData data;
-		ContainerCheckedTreeViewer fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
+		fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
 		service = NavigatorContentServiceFactory.INSTANCE.createContentService(CommonViewerAdvisor.TEAM_NAVIGATOR_CONTENT, fViewer);
 		service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
 		service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
@@ -76,7 +73,6 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			}
 		});
 		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
-		fViewer.setInput(manager.getScope());
 		return fViewer;
 	}
 	
@@ -132,6 +128,39 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 
 	public void onLoad(INavigatorContentExtension anExtension) {
 		anExtension.getStateModel().setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, manager.getScope());
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible && !initialized) {
+			initialize();
+			if (initialized) {
+				service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
+				service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
+				fViewer.setInput(manager.getScope());
+			}
+		}
+	}
+
+	private void initialize() {
+		try {
+			getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException,
+						InterruptedException {
+					try {
+						manager.initialize(monitor);
+						initialized = true;
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			
+			});
+		} catch (InvocationTargetException e) {
+			Utils.handleError(getShell(), e, null, null);
+		} catch (InterruptedException e) {
+			// ignore
+		}
 	}
 
 }

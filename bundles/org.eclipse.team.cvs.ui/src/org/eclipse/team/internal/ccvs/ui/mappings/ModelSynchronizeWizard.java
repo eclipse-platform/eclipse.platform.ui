@@ -77,6 +77,7 @@ public class ModelSynchronizeWizard extends ParticipantSynchronizeWizard {
 	
 	public ModelSynchronizeWizard() {
 		super();
+		setNeedsProgressMonitor(isShowModelSync());
 	}
 
 	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
