@@ -75,6 +75,11 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 					notifyIfNeededModal(event);
 				}
 				setToolTipText(getToolTipText());
+				// Go to the sync view
+				ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+				if (view != null) {
+					view.display(participant);
+				}
 			}
 			
 			public String getToolTipText() {
