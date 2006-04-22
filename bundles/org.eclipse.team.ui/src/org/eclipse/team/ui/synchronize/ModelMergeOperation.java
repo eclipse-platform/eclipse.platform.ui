@@ -150,10 +150,11 @@ public abstract class ModelMergeOperation extends ModelOperation {
 			IStatus status = ModelMergeOperation.validateMerge(getMergeContext(), Policy.subMonitorFor(monitor, 10));
 			if (!status.isOK()) {
 				handleValidationFailure(status);
-			}
-			status = performMerge(Policy.subMonitorFor(monitor, 90));
-			if (!status.isOK()) {
-				handleMergeFailure(status);
+			} else {
+				status = performMerge(Policy.subMonitorFor(monitor, 90));
+				if (!status.isOK()) {
+					handleMergeFailure(status);
+				}
 			}
 		}
 		monitor.done();
