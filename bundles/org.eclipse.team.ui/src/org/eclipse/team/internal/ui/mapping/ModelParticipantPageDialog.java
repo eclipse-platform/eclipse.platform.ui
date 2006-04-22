@@ -59,7 +59,7 @@ public final class ModelParticipantPageDialog extends ParticipantPageDialog {
 	 */
 	public boolean close() {
 		boolean close = super.close();
-		if (super.close()) {
+		if (close) {
 			getInput().dispose();
 		}
 		return close;
