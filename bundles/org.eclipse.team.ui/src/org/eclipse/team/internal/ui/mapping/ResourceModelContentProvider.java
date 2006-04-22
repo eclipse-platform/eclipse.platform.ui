@@ -372,24 +372,13 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 
 	public TreePath[] getParents(Object element) {
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
-			IResource parent = resource.getParent();
-			IResource[] resourcePath = new IResource[parent.getFullPath().segmentCount()];
-			for (int i = resourcePath.length - 1; i >= 0; i--) {
-				resourcePath[i] = parent;
-				parent = parent.getParent();
-			}
-			TreePath treePath = TreePath.EMPTY;
-			for (int i = 0; i < resourcePath.length; i++) {
-				IResource r = resourcePath[i];
-				treePath = treePath.createChildPath(r);
-			}
-			return new TreePath[] { treePath };
+		TreePath path = getTraversalCalculator().getParentPath(getContext(), getModelProvider(), element);
+		if (path != null) {
+			return new TreePath[] { path };
 		}
-		return null;
+		return new TreePath[0];
 	}
-	
+
 	private Object internalGetElement(Object elementOrPath) {
 		if (elementOrPath instanceof TreePath) {
 			TreePath tp = (TreePath) elementOrPath;

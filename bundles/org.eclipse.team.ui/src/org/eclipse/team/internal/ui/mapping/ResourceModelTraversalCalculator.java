@@ -297,4 +297,45 @@ public class ResourceModelTraversalCalculator {
 		}
 		return false;
 	}
+	
+	public TreePath getParentPath(ISynchronizationContext context, ModelProvider provider, Object element) {
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			TreePath treePath = getProviderRootPath(context, provider);
+			if (resource.getType() == IResource.ROOT){
+				return null;
+			}
+			if (resource.getType() == IResource.PROJECT){
+				return treePath;
+			}
+			if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT)) {
+				return treePath.createChildPath(resource.getProject());
+			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FOLDER) {
+				return treePath.createChildPath(resource.getProject());
+			} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.FILE) {
+				if (resource.getParent().getType() == IResource.PROJECT)
+					return treePath.createChildPath(resource.getProject());
+				return treePath.createChildPath(resource.getProject()).createChildPath(resource.getParent());
+			}
+			IResource parent = resource.getParent();
+			IResource[] resourcePath = new IResource[parent.getFullPath().segmentCount()];
+			for (int i = resourcePath.length - 1; i >= 0; i--) {
+				resourcePath[i] = parent;
+				parent = parent.getParent();
+			}
+			for (int i = 0; i < resourcePath.length; i++) {
+				IResource r = resourcePath[i];
+				treePath = treePath.createChildPath(r);
+			}
+			return treePath;
+		}
+		return null;
+	}
+	
+	private TreePath getProviderRootPath(ISynchronizationContext context, ModelProvider provider) {
+		if (context == null)
+			return TreePath.EMPTY.createChildPath(provider);
+		return TreePath.EMPTY;
+	}
+	
 }

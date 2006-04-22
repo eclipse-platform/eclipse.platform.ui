@@ -11,12 +11,12 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -122,8 +122,36 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	}
 
 	protected void checkWorkingSetElements() {
-		// TODO Auto-generated method stub
-		
+		List allWorkingSetElements = new ArrayList();
+		IWorkingSet[] workingSets = getWorkingSets();
+		for (int i = 0; i < workingSets.length; i++) {
+			IWorkingSet set = workingSets[i];
+			allWorkingSetElements.addAll(computeSelectedResources(new StructuredSelection(set.getElements())));
+		}
+		getViewer().setCheckedElements(allWorkingSetElements.toArray());
+	}
+
+	private Collection computeSelectedResources(StructuredSelection selection) {
+		List result = new ArrayList();
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object element = iter.next();
+			ResourceMapping mapping = Utils.getResourceMapping(element);
+			if (mapping != null && scopeContainsMapping(mapping)) {
+				result.add(element);
+			}
+		}
+		return result;
+	}
+
+	private boolean scopeContainsMapping(ResourceMapping mapping) {
+		ResourceMapping[] mappings = manager.getScope().getMappings();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping m = mappings[i];
+			if (m.contains(mapping)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void onLoad(INavigatorContentExtension anExtension) {
