@@ -81,7 +81,8 @@
            <popupMenu
                 allowsPlatformContributions="false"
                 id="org.eclipse.team.cvs.ui.workspaceSynchronizationMenu">  
-             <insertionPoint name="file"/>  
+             <insertionPoint name="file"/>
+             <insertionPoint name="file-bottom"/>  
              <insertionPoint name="edit" separator="true"/>          
              <insertionPoint name="synchronize"/>
              <insertionPoint
@@ -153,7 +154,8 @@
           <popupMenu
                 allowsPlatformContributions="false"
                 id="org.eclipse.team.cvs.ui.compareSynchronizationMenu">
-             <insertionPoint name="file"/>  
+             <insertionPoint name="file"/>
+             <insertionPoint name="file-bottom"/>
              <insertionPoint name="edit"/>          
              <insertionPoint name="synchronize"/>
              <insertionPoint

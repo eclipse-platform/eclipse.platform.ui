@@ -289,7 +289,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 			if (getChangeSetCapability().enableCheckedInChangeSetsFor(getSynchronizePageConfiguration())) {
 				appendToGroup(
 						menu, 
-						ISynchronizePageConfiguration.FILE_GROUP, 
+						"file-bottom",  //$NON-NLS-1$
 						openCommitSet);
 				appendToGroup(menu, ISynchronizePageConfiguration.SORT_GROUP, sortByComment);
 			}

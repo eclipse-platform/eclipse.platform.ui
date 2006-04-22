@@ -430,7 +430,7 @@ public class CheckedInChangeSetCollector extends BatchingChangeSetManager implem
     
     private boolean requiresCustomSyncInfo(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
 		// Only interested in non-deletions
-		if (logEntry.isDeletion() || !(info instanceof CVSSyncInfo)) return false;
+		if (logEntry.isDeletion()) return false;
 		// Only require a custom sync info if the remote of the sync info
 		// differs from the remote in the log entry
 		IResourceVariant remote = info.getRemote();

@@ -20,18 +20,53 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	private Image changeSetImage;
 	private Font boldFont;
+	private CVSParticipantLabelDecorator decorator;
+
+	public void init(ICommonContentExtensionSite site) {
+		super.init(site);
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (isCompare(configuration)) {
+			decorator = new CVSParticipantLabelDecorator(configuration);
+		}
+	}
+
+	private ISynchronizePageConfiguration getConfiguration() {
+		return (ISynchronizePageConfiguration)getExtensionSite().getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+	}
+	
+	private boolean isCompare(ISynchronizePageConfiguration configuration) {
+		return configuration.getParticipant() instanceof ModelCompareParticipant;
+	}
+	
+	public String getText(Object element) {
+		String text = super.getText(element);
+		if (decorator != null && isChangeSetsEnabled())
+			text = decorator.decorateText(text, element);
+		return text;
+	}
+	
+	private boolean isChangeSetsEnabled() {
+		String id = (String)getConfiguration().getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+		return id.equals(ChangeSetModelProvider.ID);
+	}
 
 	protected String getDelegateText(Object elementOrPath) {
 		Object element = internalGetElement(elementOrPath);
@@ -65,6 +100,8 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 		}
 		if (boldFont != null)
 			boldFont.dispose();
+		if (decorator != null)
+			decorator.dispose();
 		super.dispose();
 	}
 	

@@ -19,16 +19,20 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant;
+import org.eclipse.team.internal.ccvs.ui.mappings.ModelCompareParticipant;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
+import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamUI;
@@ -52,14 +56,16 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 		TeamUI.addPropertyChangeListener(this);
 	}
 	
-	public String decorateText(String input, Object element) {
+	public String decorateText(String input, Object elementOrPath) {
+		if (!isEnabledFor(elementOrPath))
+			return input;
 		try {
 			String text = input;
-			IResource resource = getResource(element);
+			IResource resource = getResource(elementOrPath);
 			if (resource != null && resource.getType() != IResource.ROOT) {
 				// Prepare the decoration but substitute revision and hide dirty indicator
 				CVSDecoration decoration = getDecoration(resource);
-				decoration.setRevision(getRevisionNumber(element));
+				decoration.setRevision(getRevisionNumber(elementOrPath));
 				decoration.compute();
 				// Update label
 				StringBuffer output = new StringBuffer(25);
@@ -81,7 +87,7 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 	protected IResource getResource(Object element) {
 		if (element instanceof ISynchronizeModelElement)
 			return ((ISynchronizeModelElement) element).getResource();
-		return Utils.getResource(element);
+		return Utils.getResource(internalGetElement(element));
 	}
 
     protected CVSDecoration getDecoration(IResource resource) throws CoreException {
@@ -109,8 +115,8 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 		TeamUI.removePropertyChangeListener(this);
 	}
 	
-	protected String getRevisionNumber(Object element) {
-		IResource resource = getResource(element);
+	protected String getRevisionNumber(Object elementOrPath) {
+		IResource resource = getResource(elementOrPath);
 		if (resource != null && resource.getType() == IResource.FILE) {
 			IResourceVariant local;
 			try {
@@ -119,14 +125,11 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 				local = null;
 			}
 			if(local == null) {
-				local = getBase(element);
+				local = getBase(elementOrPath);
 			}
 			String localRevision = getRevisionString(local);
-			if (!isIncludeRemoteRevision()) {
-				return localRevision;
-			}
 			StringBuffer revisionString = new StringBuffer();
-			IResourceVariant remote = getRemote(element);
+			IResourceVariant remote = getRemote(elementOrPath);
 			String remoteRevision = getRevisionString(remote);
 			if(localRevision != null) {
 				revisionString.append(localRevision);
@@ -139,8 +142,13 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 		return null;
 	}
 
-	private boolean isIncludeRemoteRevision() {
-		return configuration.getParticipant() instanceof WorkspaceModelParticipant;
+	private boolean isEnabledFor(Object elementOrPath) {
+		return !isCompareWithChangeSets() || elementOrPath instanceof TreePath;
+	}
+
+	private boolean isCompareWithChangeSets() {
+		String id = (String)configuration.getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
+		return configuration.getParticipant() instanceof ModelCompareParticipant && id.equals(ChangeSetModelProvider.ID);
 	}
 
 	private SyncInfo getSyncInfo(Object element) {
@@ -169,6 +177,12 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 	}
 	
 	private IResourceVariant getBase(Object element) {
+		if (element instanceof TreePath) {
+			TreePath tp = (TreePath) element;
+			IDiff diff = getDiff(tp);
+			IFileRevision revision = Utils.getBase(diff);
+			return SyncInfoToDiffConverter.asResourceVariant(revision);
+		}
 		SyncInfo info = getSyncInfo(element);
 		if (info != null)
 			return info.getBase();
@@ -176,9 +190,26 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 	}
 	
 	private IResourceVariant getRemote(Object element) {
+		if (element instanceof TreePath) {
+			TreePath tp = (TreePath) element;
+			IDiff diff = getDiff(tp);
+			IFileRevision revision = Utils.getRemote(diff);
+			return SyncInfoToDiffConverter.asResourceVariant(revision);
+		}
 		SyncInfo info = getSyncInfo(element);
 		if (info != null)
 			return info.getRemote();
+		return null;
+	}
+
+	private IDiff getDiff(TreePath tp) {
+		Object first = tp.getFirstSegment();
+		Object last = tp.getLastSegment();
+		IResource resource = Utils.getResource(last);
+		if (first instanceof DiffChangeSet && resource != null) {
+			DiffChangeSet dcs = (DiffChangeSet) first;
+			return dcs.getDiffTree().getDiff(resource);
+		}
 		return null;
 	}
 
@@ -187,5 +218,13 @@ public class CVSParticipantLabelDecorator extends LabelProvider implements IProp
 			return ((RemoteFile)remoteFile).getRevision();
 		}
 		return null;
+	}
+	
+	private Object internalGetElement(Object elementOrPath) {
+		if (elementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) elementOrPath;
+			return tp.getLastSegment();
+		}
+		return elementOrPath;
 	}
 }
