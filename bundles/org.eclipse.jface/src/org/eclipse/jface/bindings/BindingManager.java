@@ -770,11 +770,11 @@ public final class BindingManager extends HandleObjectManager implements
 		 * or window, and the corresponding dialog or window context is not
 		 * active.
 		 */
-		try {
-			contextIdItr = contextIds.iterator();
-			while (contextIdItr.hasNext()) {
-				String contextId = (String) contextIdItr.next();
-				Context context = contextManager.getContext(contextId);
+		contextIdItr = contextIds.iterator();
+		while (contextIdItr.hasNext()) {
+			String contextId = (String) contextIdItr.next();
+			Context context = contextManager.getContext(contextId);
+			try {
 				String parentId = context.getParentId();
 				while (parentId != null) {
 					if (IContextIds.CONTEXT_ID_DIALOG.equals(parentId)) {
@@ -800,16 +800,21 @@ public final class BindingManager extends HandleObjectManager implements
 					context = contextManager.getContext(parentId);
 					parentId = context.getParentId();
 				}
-			}
-		} catch (NotDefinedException e) {
-			Policy.getLog().log(
-					new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
-							"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
-							e));
-			if (DEBUG) {
-				Tracing.printTrace("BINDINGS", "NotDefinedException('" //$NON-NLS-1$ //$NON-NLS-2$
-						+ e.getMessage()
-						+ "') while filtering dialog/window contexts"); //$NON-NLS-1$
+			} catch (NotDefinedException e) {
+				// since this context was part of an undefined hierarchy,
+				// I'm going to yank it out as a bad bet
+				contextIdItr.remove();
+				
+				// now log like you've never logged before!
+				Policy
+						.getLog()
+						.log(
+								new Status(
+										IStatus.ERROR,
+										Policy.JFACE,
+										IStatus.OK,
+										"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
+										e));
 			}
 		}
 
