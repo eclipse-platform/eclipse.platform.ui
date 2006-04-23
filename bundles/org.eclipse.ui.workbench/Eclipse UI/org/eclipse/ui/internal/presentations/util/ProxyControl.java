@@ -130,7 +130,7 @@ public class ProxyControl {
 	 * @since 3.2
 	 */
 	public void setVisible(boolean visible) {
-			this.visible = visible;
+//		this.visible = visible;
 	}
     
 	/**
