@@ -482,7 +482,7 @@ public abstract class Plugin implements BundleActivator {
 	 * must be specified relative to this plug-in's installation location.
 	 * Optionally, the path specified may contain $arg$ path elements that can 
 	 * be used as substitution arguments.  If this option is used then the $arg$ 
-	 * path elements are processed in the same way as {@link #find(Bundle, IPath, Map)}.
+	 * path elements are processed in the same way as {@link #find(IPath, Map)}.
 	 * <p>
 	 * The caller must close the returned stream when done.
 	 * </p>
