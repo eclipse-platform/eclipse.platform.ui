@@ -32,10 +32,13 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 
@@ -799,6 +802,10 @@ public final class BindingManager extends HandleObjectManager implements
 				}
 			}
 		} catch (NotDefinedException e) {
+			Policy.getLog().log(
+					new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
+							"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
+							e));
 			if (DEBUG) {
 				Tracing.printTrace("BINDINGS", "NotDefinedException('" //$NON-NLS-1$ //$NON-NLS-2$
 						+ e.getMessage()
@@ -1500,6 +1507,10 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 			try {
 				schemeId = getScheme(schemeId).getParentId();
 			} catch (final NotDefinedException e) {
+				Policy.getLog().log(
+						new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
+								"Failed ascending scheme parents", //$NON-NLS-1$
+								e));
 				return new String[0];
 			}
 		}
@@ -2152,7 +2163,8 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		}
 
 		if ((scheme == null) || (!scheme.isDefined())) {
-			throw new NotDefinedException("Cannot activate an undefined scheme"); //$NON-NLS-1$
+			throw new NotDefinedException("Cannot activate an undefined scheme. " //$NON-NLS-1$
+					+ scheme.getId());
 		}
 
 		if (Util.equals(activeScheme, scheme)) {

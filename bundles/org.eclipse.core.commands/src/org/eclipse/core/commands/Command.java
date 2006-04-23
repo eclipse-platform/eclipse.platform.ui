@@ -442,7 +442,8 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
-					"Trying to execute a command that is not defined"); //$NON-NLS-1$
+					"Trying to execute a command that is not defined. " //$NON-NLS-1$
+					+ id);
 			fireNotDefined(exception);
 			throw exception;
 		}
@@ -653,7 +654,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	public final Category getCategory() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
-					"Cannot get the category from an undefined command"); //$NON-NLS-1$
+					"Cannot get the category from an undefined command. " //$NON-NLS-1$
+					+ id);
 		}
 
 		return category;
@@ -699,7 +701,8 @@ public final class Command extends NamedHandleObjectWithState implements
 			throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
-					"Cannot get a parameter from an undefined command"); //$NON-NLS-1$
+					"Cannot get a parameter from an undefined command. " //$NON-NLS-1$
+					+ id);
 		}
 
 		if (parameters == null) {
@@ -728,7 +731,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	public final IParameter[] getParameters() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
-					"Cannot get the parameters from an undefined command"); //$NON-NLS-1$
+					"Cannot get the parameters from an undefined command. " //$NON-NLS-1$
+					+ id);
 		}
 
 		if ((parameters == null) || (parameters.length == 0)) {
@@ -780,7 +784,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	public final ParameterType getReturnType() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException(
-					"Cannot get the return type of an undefined command"); //$NON-NLS-1$
+					"Cannot get the return type of an undefined command. " //$NON-NLS-1$
+					+ id);
 		}
 
 		return returnType;

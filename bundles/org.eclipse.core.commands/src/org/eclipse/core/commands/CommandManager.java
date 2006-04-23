@@ -656,7 +656,8 @@ public final class CommandManager extends HandleObjectManager implements
 			throws NotDefinedException {
 		// Check if the command is defined.
 		if (!command.isDefined()) {
-			throw new NotDefinedException("The command is not defined"); //$NON-NLS-1$
+			throw new NotDefinedException("The command is not defined. " //$NON-NLS-1$
+					+ command.getId());
 		}
 
 		// Check the handler.

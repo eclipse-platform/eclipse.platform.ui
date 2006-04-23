@@ -205,7 +205,8 @@ public final class Scheme extends NamedHandleObject implements Comparable {
     public final String getParentId() throws NotDefinedException {
         if (!defined) {
             throw new NotDefinedException(
-                    "Cannot get the parent identifier from an undefined scheme."); //$NON-NLS-1$
+                    "Cannot get the parent identifier from an undefined scheme. "  //$NON-NLS-1$
+            		+ id);
         }
 
         return parentId;

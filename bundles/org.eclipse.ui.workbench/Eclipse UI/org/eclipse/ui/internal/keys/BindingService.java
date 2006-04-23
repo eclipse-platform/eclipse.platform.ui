@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -213,7 +214,8 @@ public final class BindingService implements IBindingService {
 		try {
 			bindingManager.setActiveScheme(activeScheme);
 		} catch (final NotDefinedException e) {
-			// The active scheme is not currently defined.
+			WorkbenchPlugin.log("The active scheme is not currently defined.",  //$NON-NLS-1$
+					WorkbenchPlugin.getStatus(e));
 		}
 		bindingManager.setBindings(bindings);
 	}
