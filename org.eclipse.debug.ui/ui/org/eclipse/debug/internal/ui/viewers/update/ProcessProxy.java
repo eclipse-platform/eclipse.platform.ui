@@ -43,6 +43,12 @@ public class ProcessProxy extends EventHandlerModelProxy {
         protected void handleCreate(DebugEvent event) {
         	// do nothing - Launch change notification handles this
         }
+
+		protected void handleTerminate(DebugEvent event) {
+			handleChange(event);
+		}
+        
+        
         
     };
 

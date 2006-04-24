@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor;
 import org.eclipse.jface.viewers.TreePath;
@@ -130,16 +131,30 @@ public class AsynchronousTreeModel extends AsynchronousModel {
         if (parentNode == null) {
             return;
         }
+        int index = -1;
         synchronized (this) {
+        	index = parentNode.getChildIndex(node);
             parentNode.removeChild(node);
             unmapNode(node);
             node.dispose();
+            if (DEBUG_MODEL) {
+            	DebugUIPlugin.debug("REMOVE: " + node);   //$NON-NLS-1$
+            	DebugUIPlugin.debug(toString());
+            }
         }
+        final int unmapFrom = index;
         final AsynchronousTreeViewer viewer = getTreeViewer();
         preservingSelection(new Runnable() {
 			public void run() {
-		        viewer.nodeDisposed(node);
-				viewer.nodeChildrenChanged(parentNode);
+				// unmap the removed node and all children that were shifted
+				viewer.unmapNode(node);
+				if (unmapFrom > -1) {
+					ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+					for (int i = unmapFrom; i < childrenNodes.length; i++) {
+						viewer.unmapNode(childrenNodes[i]);
+					}
+				}
+		        viewer.nodeChildRemoved(parentNode, unmapFrom);
 			}
 		});
     }
@@ -166,14 +181,17 @@ public class AsynchronousTreeModel extends AsynchronousModel {
             ModelNode node = new ModelNode(parent, element);
             parent.addChild(node);
             mapElement(element, node);
+            if (DEBUG_MODEL) {
+            	DebugUIPlugin.debug("ADD: (parent) " + parent + " (child) " + element);   //$NON-NLS-1$//$NON-NLS-2$
+            	DebugUIPlugin.debug(toString());
+            }
         }
         //TODO sort???
         // notify the viewer to update
         
-        // TODO: this could be more efficient by not refreshing all children
         preservingSelection(new Runnable() {
 			public void run() {
-				getTreeViewer().nodeChildrenChanged(parent);
+				getTreeViewer().nodeChildrenAdded(parent);
 			}
 		});
         		
@@ -240,12 +258,13 @@ public class AsynchronousTreeModel extends AsynchronousModel {
      * @param node
      * @param containsChildren
      */
-     void setIsContainer(ModelNode node, boolean containsChildren) {
-    	ModelNode[] prevChildren = null;
+     void setIsContainer(final ModelNode node, boolean containsChildren) {
+    	ModelNode[] unmapChildren = null;
     	synchronized (this) {
-			prevChildren = node.getChildrenNodes();
+    		ModelNode[] prevChildren = node.getChildrenNodes();
 			node.setIsContainer(containsChildren);
 			if (!containsChildren && prevChildren != null) {
+				unmapChildren = prevChildren;
                 for (int i = 0; i < prevChildren.length; i++) {
                     ModelNode child = prevChildren[i];
                     unmapNode(child);
@@ -253,22 +272,24 @@ public class AsynchronousTreeModel extends AsynchronousModel {
                 }
                 node.setChildren(null);
 			}
+			if (DEBUG_MODEL) {
+				DebugUIPlugin.debug("SET CONTAINER: " + node); //$NON-NLS-1$
+				DebugUIPlugin.debug(toString());
+			}
 		}
 //    	 update tree outside lock
-        AsynchronousTreeViewer viewer = getTreeViewer();
-		if (containsChildren) {
-            if (prevChildren == null) {
-                viewer.nodeChildrenChanged(node);
-                viewer.nodeContainerChanged(node);
-            } else {
-                viewer.nodeContainerChanged(node);
-            }
-        } else if (!containsChildren && prevChildren != null) {            
-            for (int i = 0; i < prevChildren.length; i++) {
-                ModelNode child = prevChildren[i];
-                viewer.nodeDisposed(child);
-            }            
-            viewer.nodeChildrenChanged(node);
-        }
+    	final ModelNode[] finalUnmap = unmapChildren;
+    	preservingSelection(new Runnable() {
+			public void run() {
+				if (finalUnmap != null) {
+					for (int i = 0; i < finalUnmap.length; i++) {
+						getViewer().unmapNode(finalUnmap[i]);
+					}
+				}
+		    	getTreeViewer().nodeContainerChanged(node);
+		    	getViewer().nodeChildrenChanged(node);
+			}
+		});
+    	
     }    
 }

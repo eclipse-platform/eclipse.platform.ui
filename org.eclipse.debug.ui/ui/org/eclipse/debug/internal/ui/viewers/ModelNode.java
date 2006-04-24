@@ -194,4 +194,16 @@ public class ModelNode {
         fIsContainer = container;
     }
     
+    public String toString() {
+    	StringBuffer buf = new StringBuffer();
+    	if (isDisposed()) {
+    		buf.append("[DISPOSED] "); //$NON-NLS-1$
+    	}
+    	if (isContainer()) {
+    		buf.append("[+] "); //$NON-NLS-1$
+    	}
+    	buf.append(getElement());
+    	return buf.toString();
+    }
+    
 }

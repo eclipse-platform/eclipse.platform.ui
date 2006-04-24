@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
@@ -41,6 +43,14 @@ public abstract class AsynchronousModel {
 	private Map fModelProxies = new HashMap(); // map of installed model proxies, by element
 	private AsynchronousViewer fViewer; // viewer this model works for
     private boolean fDisposed = false; // whether disposed
+    
+    // debug flags
+	public static boolean DEBUG_MODEL = false;
+	
+	static {
+		DEBUG_MODEL = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/model")); //$NON-NLS-1$
+	}    
 	
 	/**
 	 * List of requests currently being performed.
@@ -59,7 +69,15 @@ public abstract class AsynchronousModel {
 	 */
 	public AsynchronousModel(AsynchronousViewer viewer) {
 		fViewer = viewer;
-
+		if (DEBUG_MODEL) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("MODEL CREATED for: "); //$NON-NLS-1$
+			buffer.append(fViewer);
+			buffer.append(" ("); //$NON-NLS-1$
+			buffer.append(this);
+			buffer.append(")"); //$NON-NLS-1$
+			DebugUIPlugin.debug(buffer.toString());
+		}
 	}
 	
 	/**
@@ -83,6 +101,15 @@ public abstract class AsynchronousModel {
 	 * Disposes this model
 	 */
 	public synchronized void dispose() {
+		if (DEBUG_MODEL) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("MODEL DISPOSED for: "); //$NON-NLS-1$
+			buffer.append(fViewer);
+			buffer.append(" ("); //$NON-NLS-1$
+			buffer.append(this);
+			buffer.append(")"); //$NON-NLS-1$
+			DebugUIPlugin.debug(buffer.toString());
+		}
         fDisposed = true;
         cancelPendingUpdates();
 		disposeAllModelProxies();
@@ -475,6 +502,7 @@ public abstract class AsynchronousModel {
         
         ModelNode[] prevKids = null;
         ModelNode[] newChildren = null;
+        ModelNode[] unmap = null; 
         
         synchronized (this) {
         	if (isDisposed()) {
@@ -490,57 +518,80 @@ public abstract class AsynchronousModel {
     			}
             	parentNode.setChildren(newChildren);
             } else {
-    	        for (int i = 0; i < prevKids.length; i++) {
-    				ModelNode kid = prevKids[i];
-    				if (i >= children.length) {
-    					kid.dispose();
-    					unmapNode(kid);
-    				} else {
-    					ModelNode prevNode = prevKids[i];
-    					Object nextChild = children[i];
-    					if (!prevNode.getElement().equals(nextChild)) {
-    						unmapNode(prevNode);
-    					}
-    					mapElement(nextChild, prevNode);
-    				}
-    			}
-    			// create new children
-    	        if (children.length > prevKids.length) {
-    		        newChildren = new ModelNode[children.length];
-    		        System.arraycopy(prevKids, 0, newChildren, 0, prevKids.length);
-    		        for (int i = prevKids.length; i < children.length; i ++) {
-    		        	Object child = children[i];
-    					ModelNode childNode = new ModelNode(parentNode, child);
-    		        	mapElement(child, childNode);
-    		        	newChildren[i] = childNode;
-    		        }
-    		        parentNode.setChildren(newChildren);
-    	        }
-                if (children.length < prevKids.length) {
-                	newChildren = new ModelNode[children.length];
-                    System.arraycopy(prevKids, 0, newChildren, 0, children.length);
-                    parentNode.setChildren(newChildren);
-                }
-            }        	
+            	newChildren = new ModelNode[children.length];
+            	unmap = new ModelNode[prevKids.length];
+            	for (int i = 0; i < prevKids.length; i++) {
+					unmap[i] = prevKids[i];	
+				}
+            	for (int i = 0; i < children.length; i++) {
+					Object child = children[i];
+					boolean found = false;
+					for (int j = 0; j < prevKids.length; j++) {
+						ModelNode prevKid = prevKids[j];
+						if (prevKid != null && child.equals(prevKid.getElement())) {
+							newChildren[i] = prevKid;
+							prevKids[j] = null;
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						newChildren[i] = new ModelNode(parentNode, child);
+						mapElement(child, newChildren[i]);
+					}
+				}
+            	for (int i = 0; i < prevKids.length; i++) {
+            		ModelNode kid = prevKids[i];
+            		if (kid != null) {
+            			kid.dispose();
+            			unmapNode(kid);
+            		}
+            	}
+    	        parentNode.setChildren(newChildren);
+            }
+            if (DEBUG_MODEL) {
+            	DebugUIPlugin.debug("CHILDREN CHANGED: " + parentNode); //$NON-NLS-1$
+            	DebugUIPlugin.debug(toString());
+            }
         }
         
         //update viewer outside the lock
-    	final ModelNode[] finalPrevKids = prevKids; 
+    	final ModelNode[] finalUnmap = unmap; 
         preservingSelection(new Runnable() {
             public void run() {
-            	if (finalPrevKids != null) {
-	                for (int i = 0; i < finalPrevKids.length; i++) {
-	                    ModelNode kid = finalPrevKids[i];
-	                    if (i >= children.length) {
-	                        viewer.nodeDisposed(kid);
-	                    } else {
-	                        viewer.nodeChanged(kid);
-	                    }
-	                }
+            	if (finalUnmap != null) {
+	            	for (int i = 0; i < finalUnmap.length; i++) {
+						viewer.unmapNode(finalUnmap[i]);
+					}
             	}
-                viewer.nodeChildrenChanged(parentNode);
+            	viewer.nodeChildrenChanged(parentNode);
             }
         });        	        
 
+	}
+	
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		if (fRoot != null) {
+			buf.append("ROOT: "); //$NON-NLS-1$
+			append(buf, fRoot, 0);
+		} else {
+			buf.append("ROOT: null"); //$NON-NLS-1$
+		}
+		return buf.toString();
+	}
+	
+	private void append(StringBuffer buf, ModelNode node, int level) {
+		for (int i = 0; i < level; i++) {
+			buf.append('\t');
+		}
+		buf.append(node);
+		buf.append('\n');
+		ModelNode[] childrenNodes = node.getChildrenNodes();
+		if (childrenNodes != null) {
+			for (int i = 0; i < childrenNodes.length; i++) {
+				append(buf, childrenNodes[i], level + 1);
+			}
+		}
 	}
 }

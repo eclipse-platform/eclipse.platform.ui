@@ -151,13 +151,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static String ATTR_LAUNCHING_CONFIG_HANDLE= getUniqueIdentifier() + "launching_config_handle"; //$NON-NLS-1$
 	
 	/**
-	 * Flag indicating whether the debug UI is in trace
-	 * mode. When in trace mode, extra debug information
-	 * is produced.
-	 */
-	private boolean fTrace = false;	
-	
-	/**
 	 * Singleton console document manager
 	 */
 	private ProcessConsoleManager fProcessConsoleManager = null;
@@ -190,6 +183,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      */
     private ServiceTracker fServiceTracker;
     private PackageAdmin fPackageAdminService;
+    
+    public static boolean DEBUG = false;
 	
     /**
      * Dummy launch node representing a launch that is waiting
@@ -216,17 +211,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     }
 	
 	/**
-	 * Returns whether the debug UI plug-in is in trace
-	 * mode.
-	 * 
-	 * @return whether the debug UI plug-in is in trace
-	 *  mode
-	 */
-	public boolean isTraceMode() {
-		return fTrace;
-	}
-	
-	/**
 	 * Returns the bundle the given class originated from.
 	 * 
 	 * @param clazz a class
@@ -242,23 +226,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Logs the given message if in trace mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logTraceMessage(String message) {
-		if (getDefault().isTraceMode()) {
-			IStatus s = new Status(IStatus.WARNING, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, message, null);
-			getDefault().getLog().log(s);
-		}
-	}
-
-	/**
 	 * Constructs the debug UI plugin
 	 */
 	public DebugUIPlugin() {
 		super();
 		fgDebugUIPlugin= this;
+	}
+	
+	public static void debug(String message) {
+		if (DEBUG) {
+			System.out.println(message);
+		}
 	}
 		
 	/**
@@ -408,6 +386,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		
 		// make sure the perspective manager is created
 		// and be the first debug event listener

@@ -472,18 +472,23 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			}
 		}
 	}
-
-	public void nodeChanged(ModelNode node) {
-		Widget widget = findItem(node);
-		if (widget != null && !widget.isDisposed()) {
-			if (widget instanceof TableItem) {
-				clear(widget);
-				return;
-			}
-			widget.setData(node.getElement());
-			internalRefresh(node);
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChild(org.eclipse.swt.widgets.Widget, int)
+	 */
+	protected void clearChild(Widget parent, int childIndex) {
+		if (parent instanceof Table) {
+			fTable.clear(childIndex);
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChildren(org.eclipse.swt.widgets.Widget)
+	 */
+	protected void clearChildren(Widget item) {
+		if (item instanceof Table) {
+			fTable.clearAll();
+		}	
+	}
 	
 }

@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
@@ -113,16 +115,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 	protected static final String OLD_LABEL = "old_label"; //$NON-NLS-1$
 	protected static final String OLD_IMAGE = "old_image"; //$NON-NLS-1$
-
-    /**
-     * Map of parent nodes for which children were needed to "set data"
-     * in the virtual widget. A parent is added to this map when we try go
-     * get children but they aren't there yet. The children are retrieved
-     * asynchronously, and later put back into the widgetry.
-     * The value is an array of ints of the indicies of the children that 
-     * were requested. 
-     */	
-	private Map fParentsPendingChildren = new HashMap();
+	
+	   // debug flags
+	public static boolean DEBUG_VIEWER = false;
+	
+	static {
+		DEBUG_VIEWER = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/viewer")); //$NON-NLS-1$
+	}    	
 	
 	/**
 	 * Creates a new viewer 
@@ -238,7 +238,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected synchronized void inputChanged(Object input, Object oldInput) {
-		fParentsPendingChildren.clear();
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
             fUpdatePolicy.init(this);
@@ -832,35 +831,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected AsynchronousModel getModel() {
 		return fModel;
 	}	
-    
-    /**
-     * A node has been disposed from the model.
-     * 
-     * @param node
-     */
-    protected void nodeDisposed(ModelNode node) {
-    	Widget widget = findItem(node);
-    	if (widget != null) {
-    		unmapNode(node);
-    		widget.dispose();
-		}
-	}
-    
-	/**
-	 * Unmaps the node from its widget and all of its children nodes from
-	 * their widgets.
-	 * 
-	 * @param node
-	 */
-	protected void unmapNode(ModelNode node) {
-		unmapElement(node);
-		ModelNode[] childrenNodes = node.getChildrenNodes();
-		if (childrenNodes != null) {
-			for (int i = 0; i < childrenNodes.length; i++) {
-				unmapNode(childrenNodes[i]);
-			}
-		}
-	}    
 
 	/**
 	 * A node in the model has been updated
@@ -870,8 +840,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected void nodeChanged(ModelNode node) {
 		Widget widget = findItem(node);
 		if (widget != null) {
-			widget.setData(node.getElement());
-			internalRefresh(node);
+			clear(widget);
+			attemptPendingUpdates();
 		}
 	}
 
@@ -892,38 +862,26 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 
 	/**
-	 * Called when nodes are set in the model. The children may not have been
-	 * retrieved yet when the tree got the call to "set data".
+	 * Clears the given widget
 	 * 
-	 * @param parent
-	 * @param children
+	 * @param item
 	 */
-	protected void nodeChildrenSet(ModelNode parent, ModelNode[] children) {
-		int[] indicies = removePendingChildren(parent);
-		Widget widget = findItem(parent);
-		if (widget != null && !widget.isDisposed()) {
-			if (indicies != null) {
-				for (int i = 0; i < indicies.length; i++) {
-					int index = indicies[i];
-					Widget item = getChildWidget(widget, index);
-					if (item != null) {
-						if (index < children.length) {
-							ModelNode childNode = children[index];
-							mapElement(childNode, item);
-							item.setData(childNode.getElement());
-							internalRefresh(childNode);
-						}
-					}
-				}
-				setItemCount(widget, children.length);
-			} else {
-				setItemCount(widget, children.length);
-			}
-		}
-		attemptPendingUpdates();
-	}
-
     protected abstract void clear(Widget item);
+    
+    /**
+     * Clears the children of the widget.
+     * 
+     * @param item
+     */
+    protected abstract void clearChildren(Widget item);
+    
+    /**
+     * Clears the child at the given index.
+     * 
+     * @param parent
+     * @param childIndex
+     */
+    protected abstract void clearChild(Widget parent, int childIndex);
 
 	/**
 	 * Returns the child widet at the given index for the given parent or
@@ -949,22 +907,69 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     protected void attemptPendingUpdates() {
     	attemptSelection(false);
     }
-
+	
 	/**
-	 * The children of a node have changed.
+	 * Notification a node's children have changed.
+	 * Updates the child count for the parent's widget
+	 * and clears children to be updated.
 	 * 
-	 * @param parent
+	 * @param parentNode
 	 */
 	protected void nodeChildrenChanged(ModelNode parentNode) {
-		ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+		Widget widget = findItem(parentNode);
+		if (widget != null && !widget.isDisposed()) {
+			int childCount = parentNode.getChildCount();
+			setItemCount(widget, childCount);
+			clearChildren(widget);
+			attemptPendingUpdates();
+		}		
+	}
+	
+	/**
+	 * Notification children have been added to the end
+	 * of the given parent.
+	 * 
+	 * @param parentNode
+	 */
+	protected void nodeChildrenAdded(ModelNode parentNode) {
+		Widget widget = findItem(parentNode);
+		if (widget != null && !widget.isDisposed()) {
+			int childCount = parentNode.getChildCount();
+			setItemCount(widget, childCount);
+			attemptPendingUpdates();
+		}		
+	}
+	
+	/**
+	 * Notification children have been added to the end
+	 * of the given parent.
+	 * 
+	 * @param parentNode
+	 */
+	protected void nodeChildRemoved(ModelNode parentNode, int index) {
+		Widget widget = findItem(parentNode);
+		if (widget != null && !widget.isDisposed()) {
+			int childCount = parentNode.getChildCount();
+			setItemCount(widget, childCount);
+			for (int i = index; i < childCount; i ++) {
+				clearChild(widget, i);
+			}
+			attemptPendingUpdates();
+		}		
+	}	
+	
+	/**
+	 * Unmaps the node from its widget and all of its children nodes from
+	 * their widgets.
+	 * 
+	 * @param node
+	 */
+	protected void unmapNode(ModelNode node) {
+		unmapElement(node);
+		ModelNode[] childrenNodes = node.getChildrenNodes();
 		if (childrenNodes != null) {
-			nodeChildrenSet(parentNode, childrenNodes);
-		} else {
-			Widget widget = findItem(parentNode);
-			if (widget != null && !widget.isDisposed()) {
-				int childCount = parentNode.getChildCount();
-				setItemCount(widget, childCount);
-				attemptPendingUpdates();
+			for (int i = 0; i < childrenNodes.length; i++) {
+				unmapNode(childrenNodes[i]);
 			}
 		}
 	}
@@ -997,38 +1002,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     	return findItem((Object)node);
     }
 
-    /**
-     * Note that the child at the specified index was requested by a widget
-     * when revealed but that the data was not in the model yet. When the data
-     * becomes available, map it to its widget.
-     * 
-     * @param parent
-     * @param index
-     */
-	protected synchronized void addPendingChildIndex(ModelNode parent, int index) {
-	    int[] indicies = (int[]) fParentsPendingChildren.get(parent);
-	    if (indicies == null) {
-	        indicies = new int[]{index};
-	    } else {
-	        int[] next = new int[indicies.length + 1];
-	        System.arraycopy(indicies, 0, next, 0, indicies.length);
-	        next[indicies.length] = index;
-	        indicies = next;
-	    }
-	    fParentsPendingChildren.put(parent, indicies);    	
-	}
-	
-	/**
-	 * Removes and returns and children indicies that were pending for the given
-	 * parent node. May return <code>null</code>.
-	 * 
-	 * @param parent
-	 * @return indicies of children that data were requested for or <code>null</code>
-	 */
-	protected int[] removePendingChildren(ModelNode parent) {
-		return (int[]) fParentsPendingChildren.remove(parent);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1042,6 +1015,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 		Widget parentItem = getParentWidget(event.item);
 		int index = event.index;
+		if (DEBUG_VIEWER) {
+			DebugUIPlugin.debug("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		if (index == -1) {
+			return;
+		}
        
 		ModelNode[] nodes = getModel().getNodes(parentItem.getData());
 		if (nodes != null) {
@@ -1054,20 +1033,42 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		        		final ModelNode child = childrenNodes[index];
 		        		mapElement(child, event.item);
 		        		event.item.setData(child.getElement());
+		        		if (DEBUG_VIEWER) {
+		        			DebugUIPlugin.debug("\tPARENT: " + node); //$NON-NLS-1$
+		        			DebugUIPlugin.debug("\tMAPPED: " + child); //$NON-NLS-1$
+		        			Widget[] widgets = findItems(child);
+		        			if (widgets.length != 1) {
+		        				DebugUIPlugin.debug("\t\t*** NODE MAPPED > 1 ITEM ***"); //$NON-NLS-1$
+		        				for (int j = 0; j < widgets.length; j++) {
+									DebugUIPlugin.debug("\t\t\t" + widgets[j]); //$NON-NLS-1$
+								}
+		        			}
+		        		}
 		        		preservingSelection(new Runnable() {
 		        		    public void run() {
 		        		        internalRefresh(child);
 		        		    }
 		        		});
-		        	} else {
-		        		addPendingChildIndex(node, index);
-		            }
+		        	}
 		        	return;
+				} else {
+					if (DEBUG_VIEWER) {
+						Widget[] widgets = findItems(node);
+						DebugUIPlugin.debug("\tITEM NOT FOUND: " + node); //$NON-NLS-1$
+						DebugUIPlugin.debug("\tITEMS WERE: "); //$NON-NLS-1$
+						for (int j = 0; j < widgets.length; j++) {
+							DebugUIPlugin.debug("\t\t" + widgets[j]); //$NON-NLS-1$
+						}
+					}
 				}
 			}
+        } else {
+        	if (DEBUG_VIEWER) {
+        		DebugUIPlugin.debug("\tNOT FOUND IN MODEL: " + parentItem.getData()); //$NON-NLS-1$
+        	}
         }
-    }	
-
+    }
+	
 	protected abstract void restoreLabels(Item item);
 
 	/**
