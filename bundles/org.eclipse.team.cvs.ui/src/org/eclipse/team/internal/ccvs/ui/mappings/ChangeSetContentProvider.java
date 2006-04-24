@@ -205,8 +205,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 					ChangeSet set = removedSets[i];
 					handleSetRemoval(set);
 				}
-				for (int i = 0; i < visibleChangedSets.length; i++) {
-					ChangeSet set = visibleChangedSets[i];
+				for (int i = 0; i < changedSets.length; i++) {
+					ChangeSet set = changedSets[i];
 					IPath[] paths = event.getChangesFor(set);
 					if (event.getSource().contains(set)) {
 						handleSetChange(set, paths);
