@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de>
+ *     	 - Fix for Bug 109361 [Markers] Multiselection in problems view yields invalid status message
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -254,10 +256,11 @@ public class ProblemView extends MarkerView {
 						new Integer(visibleMarkers.getInfos()) });
 	}
 
-	private String getSummary(MarkerList markers, String messageKey) {
-		String message = NLS.bind(messageKey, new Object[] {
-				new Integer(markers.getItemCount()),
-				formatSummaryBreakDown(markers) });
+	private String getSummary(MarkerList markers) {
+		String message = MessageFormat.format(
+				MarkerMessages.marker_statusSummarySelected, new Object[] {
+						new Integer(markers.getItemCount()),
+						formatSummaryBreakDown(markers) });
 		return message;
 	}
 
@@ -283,8 +286,7 @@ public class ProblemView extends MarkerView {
 			}
 		}
 
-		return getSummary(new MarkerList(selectionList),
-				"problem.statusSummarySelected"); //$NON-NLS-1$
+		return getSummary(new MarkerList(selectionList));
 	}
 
 	/*
