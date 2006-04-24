@@ -12,14 +12,17 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 
-import com.ibm.icu.text.MessageFormat;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.CoreException;
@@ -115,6 +118,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
@@ -127,6 +132,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -177,7 +184,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		/*
 		 * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)
 		 */
-		protected boolean removeEldestEntry(Entry eldest) {
+		protected boolean removeEldestEntry(java.util.Map.Entry eldest) {
 			return size() > fMaxSize;
 		}
 	}
@@ -355,6 +362,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private String fCurrentDetailPaneOrientation = IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN;
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
 	private ConfigureColumnsAction fConfigureColumnsAction;
+    
+    protected static final String PREF_STATE_MEMENTO = "pref_state_memento"; //$NON-NLS-1$
 
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
@@ -584,6 +593,28 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+        
+        IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+        String string = store.getString(PREF_STATE_MEMENTO);
+        if(string.length() > 0) {
+        	ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes());
+        	InputStreamReader reader = new InputStreamReader(bin);
+        	try {
+        		XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
+        		setMemento(stateMemento);
+        	} catch (WorkbenchException e) {
+        	} finally {
+        		try {
+        			reader.close();
+        			bin.close();
+        		} catch (IOException e){}
+        	}
+        }
+        initSashWeights();
+    }
+    
+    protected void initSashWeights() {
+        IMemento memento = getMemento();
 		if (memento != null) {
 			Integer bigI = memento.getInteger(SASH_WEIGHTS+"-Length"); //$NON-NLS-1$
 			if (bigI == null) {
@@ -604,7 +635,30 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 	}
 	
-	/* (non-Javadoc)
+    
+    
+	public void partClosed(IWorkbenchPart part) {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(bout);
+        
+        try {
+            XMLMemento memento = XMLMemento.createWriteRoot("VariablesViewMemento"); //$NON-NLS-1$
+            saveState(memento);
+            memento.save(writer);            
+
+            IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+            String xmlString = bout.toString();
+            store.putValue(PREF_STATE_MEMENTO, xmlString);
+        } catch (IOException e) {
+        } finally {
+            try {
+                writer.close();
+                bout.close();
+            } catch (IOException e){}
+        }
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
