@@ -412,6 +412,8 @@ public class BuildFileCreator
                 if (!entry.startsWith("${") &&                                  // no variable ${var}/classes //$NON-NLS-1$
                     !projectName.equals(currentProject.getProject().getName())) // not main project 
                 {
+                    String currentProjectRoot= ExportUtil.getProjectRoot(currentProject);
+                    entry= ExportUtil.getRelativePath(entry, currentProjectRoot);
                     prefix = "${" + currentProject.getProject().getName() + ".location}/"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 Element pathElement = doc.createElement("pathelement"); //$NON-NLS-1$
