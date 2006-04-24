@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ui.*;
 public class ResourceModelTraversalCalculator {
 
 	public static final String PROP_TRAVERSAL_CALCULATOR = "org.eclipse.team.ui.resourceModelraversalCalculator"; //$NON-NLS-1$
+	private static ResourceModelTraversalCalculator instance;
 
 	public int getLayoutDepth(IResource resource, TreePath path) {
 		if (resource.getType() == IResource.PROJECT)
@@ -336,6 +337,12 @@ public class ResourceModelTraversalCalculator {
 		if (context == null)
 			return TreePath.EMPTY.createChildPath(provider);
 		return TreePath.EMPTY;
+	}
+
+	public synchronized static ResourceModelTraversalCalculator getDefault() {
+		if (instance == null)
+			instance = new ResourceModelTraversalCalculator();
+		return instance;
 	}
 	
 }

@@ -112,7 +112,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
-			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, new ResourceModelTraversalCalculator());
+			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, ResourceModelTraversalCalculator.getDefault());
 	}
 	
 	/* (non-Javadoc)
@@ -356,7 +356,10 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
-		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration == null)
+			return ResourceModelTraversalCalculator.getDefault();
+		return (ResourceModelTraversalCalculator)configuration.getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
 	}
 	
 	protected boolean isVisible(IDiff diff) {
