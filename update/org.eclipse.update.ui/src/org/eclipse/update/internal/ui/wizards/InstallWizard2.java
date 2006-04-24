@@ -469,10 +469,10 @@ public class InstallWizard2
                 
                 Job installJob = new Job(UpdateUIMessages.InstallWizard_jobName) { 
         			public IStatus run(IProgressMonitor monitor) {
-        				install(monitor);
+        				//install(monitor);
         				if (install(monitor)) {
         					return Status.OK_STATUS;
-        			} else {
+        				} else {
         					isRunning = false;
         					return Status.CANCEL_STATUS;
         				}
