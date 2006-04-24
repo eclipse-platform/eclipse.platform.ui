@@ -365,6 +365,9 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 										IContextActivation[] activations = new IContextActivation[ids.length];
 										for (int i = 0; i < ids.length; i++) {
 											Context context = contextServce.getContext(type + "." + ids[i]); //$NON-NLS-1$
+											if (!context.isDefined()) {
+												context.define(context.getId(), null, null);
+											}
 											IContextActivation activation = contextServce.activateContext(context.getId());
 											activations[i] = activation;
 										}
