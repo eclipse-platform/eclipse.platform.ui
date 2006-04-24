@@ -734,6 +734,13 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 		StyledText text= fTextViewer.getTextWidget();
 		int line= text.getLineIndex(y_coordinate);
+		
+		if (line == text.getLineCount() - 1) {
+			// check whether y_coordinate exceeds last line
+			if (y_coordinate > text.getLinePixel(line + 1))
+				return -1;
+		}
+		
 		return widgetLine2ModelLine(fTextViewer, line);
 	}
 
