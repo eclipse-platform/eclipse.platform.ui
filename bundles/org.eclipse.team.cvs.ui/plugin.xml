@@ -982,12 +982,6 @@
                id="org.eclipse.team.cvs.ui.cvsPerspective">
          </perspectiveShortcut>
          <view
-               relative="org.eclipse.ui.views.TaskList"
-               visible="false"
-               id="org.eclipse.team.ui.GenericHistoryView"
-               relationship="stack">
-         </view>
-         <view
                relative="org.eclipse.team.sync.views.SynchronizeView"
                visible="false"
                id="org.eclipse.team.ccvs.ui.RepositoriesView"
