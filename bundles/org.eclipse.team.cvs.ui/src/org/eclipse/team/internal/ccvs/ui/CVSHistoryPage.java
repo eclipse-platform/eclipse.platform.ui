@@ -851,7 +851,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			IResource workspaceFile = ResourcesPlugin.getWorkspace().getRoot().findMember(resource.getFullPath());
 			refreshCVSFileHistoryJob.setWorkspaceFile((IFile) workspaceFile);	
 		} 
-		
+		//if we need to refetch it's not a select only job and vice versa
+		refreshCVSFileHistoryJob.setSelectOnly(!refetch);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
@@ -1481,15 +1482,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (needRefresh){
 			cvsFileHistory = new CVSFileHistory(cvsFile);
 			//fetch both local and remote revisions the first time around
-			cvsFileHistory.includeLocalRevisions(true);
-			refreshCVSFileHistoryJob.setSelectOnly(false);
-			
+			cvsFileHistory.includeLocalRevisions(true);	
 			//blank current input only after we're sure that we have a file
 			//to fetch history for
 			this.treeViewer.setInput(null);
-		} else {
-			refreshCVSFileHistoryJob.setSelectOnly(true);
-		}
+		} 
 	
 		//always refresh the history if the input gets set
 		refreshHistory(needRefresh);
