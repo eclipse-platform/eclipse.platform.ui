@@ -278,7 +278,7 @@ public abstract class AsynchronousModel {
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
 	 */
-	public synchronized ModelNode[] getNodes(Object element) {
+	public ModelNode[] getNodes(Object element) {
 		return (ModelNode[]) fElementToNodes.get(element);
 	}
 	
