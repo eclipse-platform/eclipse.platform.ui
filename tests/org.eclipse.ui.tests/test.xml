@@ -109,6 +109,7 @@
       <property name="data-dir" value="${performance-workspace}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.ui.tests.performance.UIPerformanceTestSuite"/>
+  	  <property name="timeout" value="10800000"/>
     </ant>
   </target>
 
