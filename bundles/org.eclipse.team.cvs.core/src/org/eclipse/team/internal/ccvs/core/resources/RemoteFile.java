@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.*;
@@ -643,5 +644,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public boolean isExecutable() throws CVSException {
 		// return executable bit
 		return executable;
+	}
+	
+	public CachedResourceVariant getCachedHandle() {
+		return super.getCachedHandle();
 	}
 }

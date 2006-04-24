@@ -563,11 +563,11 @@ public class CVSProviderTest extends EclipseTest {
         IProject project = createProject(new String[] { "a.txt"});
         setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
         commitProject(project);
-        Date modDate = CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp();
         // set the contents to the same value but ensure the local timestamp is different
         setContentsAndEnsureModified(project.getFile("a.txt"), "contents");
         // Update and ensure file timestamp is what is was before out edit
         updateProject(project, null, false);
+        Date modDate = CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getSyncInfo().getTimeStamp();
         assertEquals("Timestamp was not properly reset", modDate, CVSWorkspaceRoot.getCVSFileFor(project.getFile("a.txt")).getTimeStamp());
         
     }

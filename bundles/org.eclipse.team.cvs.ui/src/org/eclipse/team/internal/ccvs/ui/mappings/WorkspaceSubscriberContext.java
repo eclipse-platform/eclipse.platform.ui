@@ -37,8 +37,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.*;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
@@ -169,14 +168,20 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 				SyncInfo info = getSyncInfo(resource);
 				ensureRemotesMatch(resource, diff, info);
 				IResourceVariant remote = info.getRemote();
+				RemoteFile file = (RemoteFile)remote;
+				if (file != null)
+					remote = file.getCachedHandle();
+				
 				if (info instanceof CVSSyncInfo) {
 					CVSSyncInfo cvsInfo = (CVSSyncInfo) info;		
 					cvsInfo.makeOutgoing(monitor);
 					if (resource.getType() == IResource.FILE && info.getRemote() != null) {
 						ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-						if (remote != null && remote instanceof RemoteFile)
+						if (remote != null && remote instanceof RemoteFile){
 							cvsFile.setExecutable(((RemoteFile)remote).isExecutable());
-						cvsFile.checkedIn(null, false /* not a commit */);
+							cvsFile.setTimeStamp(((RemoteFile) remote).getTimeStamp());
+						}
+						cvsFile.checkedIn(null , false /* not a commit */);
 					}
 				}
 			}
@@ -310,6 +315,8 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			monitor.beginTask(null, 50);
 			new CacheBaseContentsOperation(null, mappings, tree, true).run(Policy.subMonitorFor(monitor, 25));
 			new CacheRemoteContentsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
+			//run log and cache timestamps
+			new UpdateTimeStampsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {

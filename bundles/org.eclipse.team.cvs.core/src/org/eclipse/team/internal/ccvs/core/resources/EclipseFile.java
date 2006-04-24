@@ -456,29 +456,12 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		if (entryLine == null) {
 			// cvs commit: the file contents matched the server contents so no entry line was sent
 			if (oldInfo == null) return;
-			Date timeStamp = oldInfo.getTimeStamp();
-			if (timeStamp == null || oldInfo.isMergedWithConflicts()) {
-				// If the entry line has no timestamp, put the file timestamp in the entry line
-				if(! oldInfo.isAdded()) {
-					MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
-					mutable.setTimeStamp(getTimeStamp(), true /* clear merged */);
-					newInfo = mutable;
-				}
-			} else {
-				// reset the file timestamp to the one from the entry line
-			    boolean reset = false;
-			    if (isReadOnly()) {
-			        // We can only set the timestamp if the file is not read-only.
-			        // We will get a situation like this if the timestamp changes due to a time change (e.g. daylight savings)
-			        setReadOnly(false);
-			        reset = true;
-			    }
-				setTimeStamp(timeStamp);
-				if (reset) {
-				    // Make sure we set the file back to read-only
-				    setReadOnly(true);
-				}
-				// (newInfo = null) No need to set the newInfo as there is no sync info change
+			// We should never make the timestamp go backwards so we'll set
+			// the entry line timestamp to match that of the file
+			if(! oldInfo.isAdded()) {
+				MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
+				mutable.setTimeStamp(getTimeStamp(), true /* clear merged */);
+				newInfo = mutable;
 			}
 			// (modified = false) the file will be no longer modified
 		} else if (oldInfo == null) {
