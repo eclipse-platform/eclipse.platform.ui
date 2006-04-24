@@ -966,16 +966,23 @@ public class ReviewPage	extends BannerPage {
 			lastDisplayedStatus = null;
 			setErrorMessage(null);
 			setPageComplete(false);
-			validationStatus = null;
+			setValidationStatus(null);
 			problematicFeatures.clear();
 		}
-
-		statusButton.setEnabled(validationStatus != null);
 		treeViewer.setCheckedElements(jobsSelected);
 		//validateSelection();
         treeViewer.refresh();
         treeViewer.setCheckedElements(jobsSelected);
         updateItemCount();
+	}
+	
+	private void setValidationStatus(IStatus newValidationStatus) {
+		this.validationStatus = newValidationStatus;
+		statusButton.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				statusButton.setEnabled(validationStatus != null && validationStatus.getSeverity() != IStatus.OK);
+			}
+		});
 	}
 	
 	private void updateItemCount() {
@@ -1088,7 +1095,7 @@ public class ReviewPage	extends BannerPage {
 		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		RequiredFeaturesResult requiredFeaturesResult = ((OperationValidator)OperationsManager
 				.getValidator()).getRequiredFeatures(jobs);
-		validationStatus = requiredFeaturesResult.getStatus();
+		setValidationStatus(requiredFeaturesResult.getStatus());
 		Set requiredFeatures = requiredFeaturesResult.getRequiredFeatures();
 		problematicFeatures.clear();
 
@@ -1157,13 +1164,11 @@ public class ReviewPage	extends BannerPage {
 			}
 
 			setPageComplete(validationStatus == null
-					|| validationStatus.getCode() == IStatus.WARNING);
+					|| validationStatus.getSeverity() == IStatus.WARNING);
 
 			updateWizardMessage();
 			
 			treeViewer.update(getSelectedJobs(), null);
-			statusButton.setEnabled(validationStatus != null && validationStatus.getCode() != IStatus.OK);
-
 			return validationStatus;
 		}
 	}
@@ -1188,8 +1193,8 @@ public class ReviewPage	extends BannerPage {
 		});
 		if (monitor.isCanceled()) return;
 		jobs = bag[0];
-		validationStatus = OperationsManager.getValidator()
-				.validatePendingChanges(jobs);
+		setValidationStatus(OperationsManager.getValidator()
+				.validatePendingChanges(jobs));
 		problematicFeatures.clear();
 		if (monitor.isCanceled()) return;
 		if (validationStatus != null) {
@@ -1207,10 +1212,11 @@ public class ReviewPage	extends BannerPage {
 		treeViewer.getControl().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				setPageComplete(validationStatus == null
-						|| validationStatus.getCode() == IStatus.WARNING);
-
+						|| validationStatus.getSeverity() == IStatus.WARNING);
+/*
 				statusButton.setEnabled(validationStatus != null
-						&& validationStatus.getCode() != IStatus.OK);
+						&& validationStatus.getSeverity() != IStatus.OK);
+						*/
 
 				updateWizardMessage();
 			}
@@ -1256,7 +1262,7 @@ public class ReviewPage	extends BannerPage {
 		if (validationStatus == null) {
 			lastDisplayedStatus=null;
 			setErrorMessage(null);
-		} else if (validationStatus.getCode() == IStatus.WARNING) {
+		} else if (validationStatus.getSeverity() == IStatus.WARNING) {
 			lastDisplayedStatus=null;
 			setErrorMessage(null);
 			setMessage(validationStatus.getMessage(), IMessageProvider.WARNING);
