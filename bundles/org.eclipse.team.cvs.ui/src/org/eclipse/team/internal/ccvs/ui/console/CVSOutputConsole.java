@@ -15,8 +15,6 @@ import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.FontRegistry;
@@ -430,6 +428,9 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			else
 				consoleManager.showConsoleView(this);
 		}
-        
+    }
+    
+    public String getHelpContextId() {
+    	return IHelpContextIds.CONSOLE_VIEW;
     }
 }
