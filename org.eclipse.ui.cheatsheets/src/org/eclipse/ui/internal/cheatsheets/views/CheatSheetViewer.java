@@ -650,7 +650,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * @param dialog the dialog that was opened
 	 */
 	private void dialogOpened(TrayDialog dialog) {
-		if (isInDialogItem()) {
+		if (isActive() && isInDialogItem()) {
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {
 				tray = new HelpTray();
@@ -876,6 +876,21 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 	}
 
+	/**
+	 * Returns whether or not the cheat sheet viewer is currently active. This
+	 * means it is visible to the user and enabled.
+	 * 
+	 * @return whether or not this viewer is active
+	 */
+	private boolean isActive() {
+		Control control = getControl();
+		if (control != null && !control.isDisposed()) {
+			Control parent = control.getParent();
+			return (parent != null && !parent.isDisposed() && parent.isVisible() && parent.isEnabled());
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns whether or not the currently active item requires opening a
 	 * modal dialog.
