@@ -6,11 +6,14 @@
          <meta.schema plugin="org.eclipse.ui" id="menus" name="Menus"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
+&lt;p&gt;
 This extension point allows the plug-in developer to define menus, separators, logical groups and menu items -- appearing anywhere within the application, from status lines to context menus.  It also allows sets of such contributions to be defined (i.e., action sets); these action sets can be turned on or off by the end user.  In brief, the menus extension point contains all of the presentation elements (except the icons) for contributing to any menu or trim area in Eclipse.
 &lt;/p&gt;
 &lt;p&gt;
 Every element within this extension point is given a unique identifier.  This is so that these elements can be referred to elsewhere without having to restate the element.  For example, the identifier might be required for ordering or for defining an action set.  Also, this allows third-party plug-in developers to place these elements in new locations within the interface, as appropriate.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;b&gt;NOTE:&lt;/b&gt; For 3.2 the only part of this extension mechanism that has been implemented is that part associated with 'trim' contributions. Attempting to add menus, toolbars or status line entries will act as a NO-OP.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -181,8 +184,7 @@ A group can contain menus, items and other groups.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt;. Clients may choose to use the default implementation; &lt;code&gt;AbstractWorkbencTrimWidget&lt;/code&gt; if they choose. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
-
+                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt;. Clients may choose to use the default implementation; &lt;code&gt;AbstractWorkbenchTrimWidget&lt;/code&gt;. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.IWorkbenchWidget"/>
