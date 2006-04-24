@@ -299,9 +299,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		groupByDateMode = new Action(CVSUIMessages.CVSHistoryPage_GroupByDate, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY)){
 			public void run() {
 				groupingOn = !groupingOn;
-				compareModeAction.setChecked(groupingOn);
 				store.setValue(ICVSUIConstants.PREF_GROUPBYDATE_MODE, groupingOn);
-				refreshHistory(false);
+				refreshHistory(false, false);
 			}
 		};
 		groupingOn = store.getBoolean(ICVSUIConstants.PREF_GROUPBYDATE_MODE);
@@ -838,10 +837,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
 	public void refresh() {	
-		refreshHistory(true);
+		//refetch revisions, not a select only job
+		refreshHistory(true, false);
 	}
 
-	private void refreshHistory(boolean refetch) {
+	private void refreshHistory(boolean refetch, boolean selectOnly) {
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
 			refreshCVSFileHistoryJob.cancel();
 		}
@@ -852,7 +852,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshCVSFileHistoryJob.setWorkspaceFile((IFile) workspaceFile);	
 		} 
 		//if we need to refetch it's not a select only job and vice versa
-		refreshCVSFileHistoryJob.setSelectOnly(!refetch);
+		refreshCVSFileHistoryJob.setSelectOnly(selectOnly);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
@@ -1488,8 +1488,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			this.treeViewer.setInput(null);
 		} 
 	
-		//always refresh the history if the input gets set
-		refreshHistory(needRefresh);
+		//always refresh the history if the input gets set - in which
+		//case set the selectOnly to false
+		refreshHistory(needRefresh, !needRefresh);
 		return true;
 	}
 	
@@ -1562,8 +1563,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//the refresh job gets created once the input is set
 		//don't bother trying to refresh any history until the input has been set
 		if (refreshCVSFileHistoryJob != null){
-			refreshCVSFileHistoryJob.setSelectOnly(false);
-			refreshHistory(false);
+			//don't refetch, but not a select only job (ie. have to get the
+			//existing revisions corresponding to the mode change)
+			refreshHistory(false, false);
 		}
 	}
 
@@ -1611,6 +1613,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				break;
 		}
 		
-		refreshHistory(true);
+		//refetch revisions, not a select only job
+		refreshHistory(true, false);
 	}
 }
