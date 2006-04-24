@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -25,7 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * A variable containing a subset/range of values from an indexed value
  * (<code>IIndexedValue</code>).
  */
-public class IndexedVariablePartition implements IVariable {
+public class IndexedVariablePartition extends PlatformObject implements IVariable  {
 	
 	// the starting offset of this parition, into the associated collection
 	private int fOffset;
@@ -155,13 +156,6 @@ public class IndexedVariablePartition implements IVariable {
 	 */
 	public boolean verifyValue(IValue value) {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return fOriginalVariable.getAdapter(adapter);
 	}
 
 	/* (non-Javadoc)
