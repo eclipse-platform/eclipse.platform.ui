@@ -107,7 +107,9 @@ public class TestPersistence extends TestCase {
     	final String value1 = "13579";
     	final String value2 = "AB24";
     	createCompositeCheatSheet();
-    	// Start task with no memento
+    	// Start tasks with no memento
+    	task1.setState(ICompositeCheatSheetTask.COMPLETED);
+    	task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
     	editor1.setInput(task1, null);
     	editor2.setInput(task2, null);
     	assertEquals(MockTaskEditor.NO_MEMENTO, editor1.getValue());
@@ -116,6 +118,8 @@ public class TestPersistence extends TestCase {
     	// Set the values to save in the memento
     	editor1.setValue(value1);
     	editor2.setValue(value2);
+    	task1.setState(ICompositeCheatSheetTask.COMPLETED);
+    	task2.setState(ICompositeCheatSheetTask.IN_PROGRESS);
     	helper.saveCompositeState(model, null);
     	
     	createCompositeCheatSheet();

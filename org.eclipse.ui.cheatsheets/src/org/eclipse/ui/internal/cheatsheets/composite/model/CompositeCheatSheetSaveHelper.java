@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 /**
@@ -155,16 +156,19 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 		childMemento.putString(ICompositeCheatsheetTags.TASK_ID, task.getId());
 		childMemento.putString(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState())); 
 		
-		TaskEditor editor = getEditor(task);
-		if (editor != null) {
-			IMemento taskDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
-			editor.saveState(taskDataMemento);
-		} else {
-			// The task has not been started so save its previous state
-			IMemento taskData = getTaskMemento(task.getId());
-			if (taskData != null) {
-				IMemento previousDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
-				previousDataMemento.putMemento(taskData);
+		// If this is an editable task that has been started, completed or skipped save the editor state
+		if (task instanceof IEditableTask && task.getState() != ICompositeCheatSheetTask.NOT_STARTED) {
+			TaskEditor editor = getEditor(task);
+			if (editor != null) {
+				IMemento taskDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
+				editor.saveState(taskDataMemento);
+			} else {
+				// The editor has not been started so save its previously loaded state
+				IMemento taskData = getTaskMemento(task.getId());
+				if (taskData != null) {
+					IMemento previousDataMemento = childMemento.createChild(ICompositeCheatsheetTags.TASK_DATA);
+					previousDataMemento.putMemento(taskData);
+				}
 			}
 		}
 		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
