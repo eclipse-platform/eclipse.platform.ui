@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
 
 /**
- * Viewer to present the the context object of a {@linkplain org.eclipse.ltk.core.refactoring.RefactoringStatusEntry
+ * Viewer to present the context object of a {@linkplain org.eclipse.ltk.core.refactoring.RefactoringStatusEntry
  * refactoring status entry}.
  * <p>
  * Status context viewers are associated with a context object via the extension point <code>
