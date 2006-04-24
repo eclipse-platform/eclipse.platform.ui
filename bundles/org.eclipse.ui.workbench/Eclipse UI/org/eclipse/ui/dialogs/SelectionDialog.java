@@ -249,8 +249,8 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * 
 	 * @param strategy
 	 *            the integer constant specifying how the bounds are saved.
-	 *            Specified using <code>Dialog.DIALOG_PERSISTLOCATION</code>
-	 *            and <code>Dialog.DIALOG_PERSISTSIZE</code>.
+	 *            Specified using {@link Dialog#DIALOG_PERSISTLOCATION}
+	 *            and {@link Dialog#DIALOG_PERSISTSIZE}.
 	 * 
 	 * @since 3.2
 	 * 
@@ -264,7 +264,7 @@ public abstract class SelectionDialog extends TrayDialog {
 
 	/**
 	 * Gets the dialog settings that should be used for remembering the bounds
-	 * of of the dialog, according to the dialog bounds strategy. Overridden to
+	 * of the dialog, according to the dialog bounds strategy. Overridden to
 	 * provide the dialog settings that were set using
 	 * {@link #setDialogBoundsSettings(IDialogSettings, int)}.
 	 * 
