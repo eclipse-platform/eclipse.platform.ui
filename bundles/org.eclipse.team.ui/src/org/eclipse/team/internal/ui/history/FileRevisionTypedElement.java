@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
-import com.ibm.icu.text.DateFormat;
+import java.net.URI;
 import java.util.Date;
 
 import org.eclipse.compare.ITypedElement;
@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.StorageTypedElement;
+
+import com.ibm.icu.text.DateFormat;
 
 public class FileRevisionTypedElement extends StorageTypedElement {
 
@@ -101,6 +103,17 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 			return file;
 		
 		return fileRevision;
+	}
+	
+	public String getPath() {
+		if (file != null)
+			return file.getFullPath().toString();
+		if (fileRevision != null) {
+			URI uri = fileRevision.getURI();
+			if (uri != null)
+				return uri.getPath();
+		}
+		return getName();
 	}
 
 }

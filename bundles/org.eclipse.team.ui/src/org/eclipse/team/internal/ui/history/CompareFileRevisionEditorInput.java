@@ -153,8 +153,12 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		return null;
 	}
 
-	public String getTitleToolTip() {
-		return null;
+	public String getToolTipText() {
+		Object[] titleObject = new Object[3];
+		titleObject[0] = getLongName(left);
+		titleObject[1] = getContentIdentifier(left);
+		titleObject[2] = getContentIdentifier(right);
+		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
 	}
 
 	public void removePropertyListener(IPropertyListener listener) {
@@ -166,11 +170,9 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 	 */
 	public String getTitle() {
 		Object[] titleObject = new Object[3];
-		Object[] tempLeftTitle = calculateTitle(left);
-		Object[] tempRightTitle = calculateTitle(right);
-		titleObject[0] = tempLeftTitle[0];
-		titleObject[1] = tempLeftTitle[1];
-		titleObject[2] = tempRightTitle[1];
+		titleObject[0] = getShortName(left);
+		titleObject[1] = getContentIdentifier(left);
+		titleObject[2] = getContentIdentifier(right);
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
 	}
 	
@@ -183,36 +185,58 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		return super.getAdapter(adapter);
 	}
 	
+	private String getShortName(ITypedElement element) {
+		if (element instanceof FileRevisionTypedElement){
+			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
+			return fileRevisionElement.getName();
+		}
+		else if (element instanceof TypedBufferedContent){
+			TypedBufferedContent typedContent = (TypedBufferedContent) element;
+			return typedContent.getResource().getName();
+		}
+		return "";
+	}
 	
-	private Object[] calculateTitle(ITypedElement element){
+	private String getLongName(ITypedElement element) {
+		if (element instanceof FileRevisionTypedElement){
+			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
+			return fileRevisionElement.getPath();
+		}
+		else if (element instanceof TypedBufferedContent){
+			TypedBufferedContent typedContent = (TypedBufferedContent) element;
+			return typedContent.getResource().getFullPath().toString();
+		}
+		return "";
+	}
+	
+	private String getContentIdentifier(ITypedElement element){
 		if (element instanceof FileRevisionTypedElement){
 			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
 			Object fileObject = fileRevisionElement.getFileRevision();
-			Object[] title = null;
-			
 			if (fileObject instanceof LocalFileRevision){
 				try {
 					IStorage storage = ((LocalFileRevision) fileObject).getStorage(new NullProgressMonitor());
 					if (Utils.getAdapter(storage, IFileState.class) != null){
 						//local revision
-						title =  new Object[]{fileRevisionElement.getName(),TeamUIMessages.CompareFileRevisionEditorInput_0};
+						return TeamUIMessages.CompareFileRevisionEditorInput_0;
 					} else if (Utils.getAdapter(storage, IFile.class) != null) {
 						//current revision
-						title =  new Object[]{fileRevisionElement.getName(),TeamUIMessages.CompareFileRevisionEditorInput_1};
+						return TeamUIMessages.CompareFileRevisionEditorInput_1;
 					}
 				} catch (CoreException e) {
 				}
 			} else {
-				title = new Object[]{fileRevisionElement.getName(),fileRevisionElement.getContentIdentifier()};
+				return fileRevisionElement.getContentIdentifier();
 			}
-		
-			return title;
 		}
 		else if (element instanceof TypedBufferedContent){
-			TypedBufferedContent typedContent = (TypedBufferedContent) element;
-			return new Object[]{typedContent.getResource().getFullPath().toString(),TeamUIMessages.CompareFileRevisionEditorInput_2};
+			return TeamUIMessages.CompareFileRevisionEditorInput_2;
 		}
-		return new Object[0];
+		return "";
+	}
+
+	public String getTitleToolTip() {
+		return getTitleToolTip();
 	}
 
 }
