@@ -14,7 +14,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ui.history.IHistoryPageSite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
 
 public class WorkbenchHistoryPageSite implements IHistoryPageSite {
@@ -48,7 +48,7 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 	}
 
 	public void setFocus() {
-		part.getSite().getPage().activate(part);
+//		 Nothing to do
 	}
 	
 	public boolean isModal() {
