@@ -227,14 +227,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 		// add listener for selections
 		getSite().getPage().addSelectionListener(selectionListener);
-		
-	/*	// assign a number to this view instance
-		IPropertyChangeListener listener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				setPartName((String) event.getNewValue());
-			}
-		};
-		HistoryManagerInstanceManager.getManager().register(this, listener);*/
 	}
 
 	private void configureToolbars(IActionBars actionBars) {
@@ -371,27 +363,17 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			currentPageContainer.getSubBars().deactivate();
 			//give the current page a chance to dispose
 			currentPageContainer.getPage().dispose();
-			// remove our selection listener
-			/*            ISelectionProvider provider = ((PageSite) mapPageToSite.get(activeRec.page)).getSelectionProvider();
-			 if (provider != null)
-			 provider
-			 .removeSelectionChangedListener(selectionChangedListener);*/
 		}
 		// Show new page.
 		currentPageContainer = pageContainer;
-		//setContentDescription(((IHistoryPage)currentPageContainer.getPage()).getName());
+	
 		Control pageControl = currentPageContainer.getPage().getControl();
 		if (pageControl != null && !pageControl.isDisposed()) {
 			// Verify that the page control is not disposed
 			// If we are closing, it may have already been disposed
 			book.showPage(pageControl);
 			currentPageContainer.getSubBars().activate();
-			//refreshGlobalActionHandlers();
-			// add our selection listener
-			/*ISelectionProvider provider = ((PageSite) mapPageToSite
-			 .get(activeRec.page)).getSelectionProvider();
-			 if (provider != null)
-			 provider.addSelectionChangedListener(selectionChangedListener);*/
+			refreshGlobalActionHandlers();
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
 		}
@@ -681,8 +663,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().removeSelectionListener(selectionListener);
-		/*//Remove this history view instance from the multiple instance manager
-		HistoryManagerInstanceManager.getManager().deregister(this);*/
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {
