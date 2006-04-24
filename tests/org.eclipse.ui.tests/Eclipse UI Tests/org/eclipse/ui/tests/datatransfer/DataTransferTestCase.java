@@ -25,6 +25,11 @@ public abstract class DataTransferTestCase extends UITestCase {
 		                deleteDirectory(children[i]);
 		            }
 		            else{
+		            	// the first  two checks were added for bug 133541
+		            	if (!children[i].exists())
+		            		fail("Could not delete (file does not exist) " + children[i].getAbsolutePath());
+		            	if (!children[i].canWrite())
+		            		fail("Could not delete (cannot write to file) " + children[i].getAbsolutePath());
 		                if (!children[i].delete())
 		                	fail("Could not delete " + children[i].getAbsolutePath());
 		            }
