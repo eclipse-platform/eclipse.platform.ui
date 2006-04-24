@@ -11,25 +11,20 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -180,6 +175,22 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	}
 	
 	public void selectionChanged(final IAction action, ISelection selection) {
+		if (selection instanceof TextSelection) {
+			// Since we have a text selection, we will assume that the target is the active editor.
+			// Look for the active editor and see it adapts to ResourceMapping or IResource.
+			// See bug 132176
+			IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+			IEditorInput input = part.getEditorInput();
+			ResourceMapping mapping = Utils.getResourceMapping(input);
+			if (mapping != null) {
+				selection = new StructuredSelection(mapping);
+			} else {
+				IResource resource = Utils.getResource(input);
+				if (resource != null) {
+					selection = new StructuredSelection(resource);
+				}
+			}
+		}
 		super.selectionChanged(action, selection);
 		this.action = action;
 	}
