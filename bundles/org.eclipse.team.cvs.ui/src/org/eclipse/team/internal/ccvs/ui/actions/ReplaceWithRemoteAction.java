@@ -19,6 +19,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 
 public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
@@ -34,6 +35,7 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 							CVSUIMessages.ReplaceWithTagAction_2, 
 							CVSUIMessages.ReplaceWithTagAction_0, 
 							CVSUIMessages.ReplaceWithTagAction_1);
+					dialog.setHelpContextId(IHelpContextIds.REPLACE_OUTGOING_CHANGES_DIALOG);
 					int result = dialog.open();
 					keepGoing[0] = result == Window.OK;
 				}

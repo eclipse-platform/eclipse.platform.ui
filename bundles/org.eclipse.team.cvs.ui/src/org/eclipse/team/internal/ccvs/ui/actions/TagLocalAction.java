@@ -14,8 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
 
@@ -39,6 +38,7 @@ public class TagLocalAction extends TagAction {
 									CVSUIMessages.TagLocalAction_2, 
 									CVSUIMessages.TagLocalAction_0, 
 									CVSUIMessages.TagLocalAction_1);
+							dialog.setHelpContextId(IHelpContextIds.TAG_OUTGOING_CHANGES_DIALOG);
 							int result = dialog.open();
 							keepGoing[0] = result == Window.OK;
 						}

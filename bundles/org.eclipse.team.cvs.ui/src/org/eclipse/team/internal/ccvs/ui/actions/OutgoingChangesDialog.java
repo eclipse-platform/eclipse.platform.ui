@@ -38,6 +38,7 @@ public class OutgoingChangesDialog extends DetailsDialog {
 	private final String title;
 	private final String detailsMessage;
 	private final ISynchronizationScopeManager manager;
+	private String helpContextId;
 
 	public OutgoingChangesDialog(Shell parentShell, ISynchronizationScopeManager manager, String title, String message, String detailsMessage) {
 		super(parentShell, title);
@@ -139,4 +140,12 @@ public class OutgoingChangesDialog extends DetailsDialog {
     protected boolean includeErrorMessage() {
         return false;
     }
+
+	public void setHelpContextId(String helpContextId) {
+		this.helpContextId = helpContextId;	
+	}
+	
+	protected String getHelpContextId() {
+		return helpContextId;
+	}
 }

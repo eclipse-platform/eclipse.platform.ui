@@ -46,6 +46,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 							CVSUIMessages.ReplaceWithTagAction_2, 
 							CVSUIMessages.ReplaceWithTagAction_0, 
 							CVSUIMessages.ReplaceWithTagAction_1);
+					dialog.setHelpContextId(IHelpContextIds.REPLACE_OUTGOING_CHANGES_DIALOG);
 					int result = dialog.open();
 					keepGoing[0] = result == Window.OK;
 				}
@@ -85,40 +86,9 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		
 		if (tag[0] == null) return;
 		
-		// Peform the replace in the background
+		// Perform the replace in the background
 		replaceOperation.setTag(tag[0]);
 		replaceOperation.run();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.TagAction#performPrompting(org.eclipse.team.internal.ccvs.ui.operations.ITagOperation)
-	 */
-	protected boolean performPrompting(ITagOperation operation)  {
-		if (operation instanceof TagOperation) {
-			final TagOperation tagOperation = (TagOperation) operation;
-			try {
-				if (hasOutgoingChanges(tagOperation)) {
-					final boolean[] keepGoing = new boolean[] { true };
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), tagOperation.getScopeManager(), 
-									CVSUIMessages.TagLocalAction_2, 
-									CVSUIMessages.TagLocalAction_0, 
-									CVSUIMessages.TagLocalAction_1);
-							int result = dialog.open();
-							keepGoing[0] = result == Window.OK;
-						}
-					});
-					return keepGoing[0];
-				}
-				return true;
-			} catch (InterruptedException e) {
-				// Ignore
-			} catch (InvocationTargetException e) {
-				handle(e);
-			}
-		}
-		return false;
 	}
 	
 	/**
