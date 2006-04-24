@@ -110,7 +110,11 @@ public class ThreadEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleChange(DebugEvent event) {
-		fireDeltaUpdatingTopFrame((IThread) event.getSource(), IModelDelta.STATE);
+		if (event.getDetail() == DebugEvent.STATE) {
+			fireDeltaUpdatingThread((IThread) event.getSource(), IModelDelta.STATE);
+		} else {
+			fireDeltaUpdatingThread((IThread) event.getSource(), IModelDelta.CONTENT);
+		}
 	}
 
 	protected void handleLateSuspend(DebugEvent suspend, DebugEvent resume) {
@@ -137,7 +141,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		IThread thread = removeSuspendedThread(event);
 		if (event.isEvaluation() && event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
 			// don't collapse thread when waiting for implicit eval to complete
-			fireDeltaUpdatingThreadState(thread);
+			fireDeltaUpdatingThread(thread, IModelDelta.STATE);
 		} else {
 			fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
 		}
@@ -197,10 +201,10 @@ public class ThreadEventHandler extends DebugEventHandler {
     	fireDelta(delta);
 	}
 	
-	private void fireDeltaUpdatingThreadState(IThread thread) {
+	private void fireDeltaUpdatingThread(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
-	    node = node.addNode(thread, IModelDelta.STATE);
+	    node = node.addNode(thread, flags);
     	fireDelta(delta);
 	}	
 	
