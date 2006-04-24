@@ -557,8 +557,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 					if (historyPage != null){
 						Object input = historyPage.getInput();
 						if (input != null && input.equals(object)){
-							//this view alrady contains the file, so just reuse it
-							getSite().getPage().activate(historyView);
+							//this view already contains the file, so just reuse it
+							getSite().getPage().bringToTop(historyView);
 							return ((GenericHistoryView) historyView).itemDropped(object, refresh);
 						}
 					}
