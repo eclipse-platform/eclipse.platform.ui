@@ -193,6 +193,11 @@ public final class BindingManager extends HandleObjectManager implements
 	 * The number of bindings in the <code>bindings</code> array.
 	 */
 	private int bindingCount = 0;
+	
+	/**
+	 * A cache of context IDs that weren't defined.
+	 */
+	private Set bindingErrors = new HashSet();
 
 	/**
 	 * The array of all bindings currently handled by this manager. This array
@@ -804,17 +809,24 @@ public final class BindingManager extends HandleObjectManager implements
 				// since this context was part of an undefined hierarchy,
 				// I'm going to yank it out as a bad bet
 				contextIdItr.remove();
-				
-				// now log like you've never logged before!
-				Policy
-						.getLog()
-						.log(
-								new Status(
-										IStatus.ERROR,
-										Policy.JFACE,
-										IStatus.OK,
-										"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
-										e));
+
+				// This is a logging optimization, only log the error once.
+				if (context==null || !bindingErrors.contains(context.getId())) {
+					if (context!=null) {
+						bindingErrors.add(context.getId());
+					}
+					
+					// now log like you've never logged before!
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.ERROR,
+											Policy.JFACE,
+											IStatus.OK,
+											"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
+											e));
+				}
 			}
 		}
 
