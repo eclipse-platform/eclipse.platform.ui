@@ -420,7 +420,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		composite.setLayout(layout);
 		createDetailLabel(composite);
 		createSelectionLabel(composite);
-		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
 		fCommentField.setText(fControlConfiguration.getCommentCaption());
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.horizontalSpan= getDetailColumns();
