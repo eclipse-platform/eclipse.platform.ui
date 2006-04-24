@@ -145,6 +145,11 @@
    <extension
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
+            markertype="org.eclipse.core.resources.bookmark"
+            icon="icons/full/obj16/bkmrk_tsk.gif"
+            id="org.eclipse.ui.bookmarkProvider">
+      </imageprovider>
+      <imageprovider
             markertype="org.eclipse.core.resources.taskmarker"
             icon="icons/full/eview16/tasks_tsk.gif"
             id="org.eclipse.ui.taskMarkerProvider">
