@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.*;
 import java.util.*;
 
@@ -95,6 +96,29 @@ public class EclipseConnector {
 				} else {
 					return;
 				}
+			}
+			catch (Exception e) {
+				// if it's a wrapped exception, unwrap it
+				Throwable t = e;
+				if (t instanceof UndeclaredThrowableException && t.getCause() != null) {
+					t = t.getCause();
+				}
+
+				StringBuffer message = new StringBuffer();
+				message.append(errorPageBegin);
+				message.append("<p>"); //$NON-NLS-1$
+				message.append(ServletResources.getString(
+						"contentProducerException", //$NON-NLS-1$
+						req));
+				message.append("</p>"); //$NON-NLS-1$
+				message.append("<pre>"); //$NON-NLS-1$
+				Writer writer = new StringWriter();
+				t.printStackTrace(new PrintWriter(writer));
+				message.append(writer.toString());
+				message.append("</pre>"); //$NON-NLS-1$
+				message.append(errorPageEnd);
+				
+				is = new ByteArrayInputStream(message.toString().getBytes("UTF8")); //$NON-NLS-1$
 			}
 
 			OutputStream out = resp.getOutputStream();

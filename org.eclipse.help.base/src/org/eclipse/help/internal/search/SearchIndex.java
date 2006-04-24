@@ -225,6 +225,12 @@ public class SearchIndex implements ISearchIndex {
 							+ " to index " + indexDir.getAbsolutePath() + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					e);
 		}
+		catch (Exception e) {
+			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
+					"An unexpected internal error occurred while adding document " //$NON-NLS-1$
+							+ name + " to index " + indexDir.getAbsolutePath() //$NON-NLS-1$
+							+ ".", e); //$NON-NLS-1$
+		}
 	}
 
 	/**

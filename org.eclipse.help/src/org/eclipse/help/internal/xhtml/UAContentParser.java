@@ -11,6 +11,7 @@ package org.eclipse.help.internal.xhtml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
 import java.util.Hashtable;
 
@@ -24,7 +25,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 
 /**
@@ -74,18 +74,13 @@ public class UAContentParser {
 	 * file.
 	 */
 	public void parseDocument(Object content) {
-		try {
-			document = doParse(content);
-			if (document != null) {
-
-				Element rootElement = document.getDocumentElement();
-				// DocumentType docType = document.getDoctype();
-				if (rootElement.getTagName().equals(TAG_HTML)) {
-					hasXHTMLContent = true;
-				}
+		document = doParse(content);
+		if (document != null) {
+			Element rootElement = document.getDocumentElement();
+			// DocumentType docType = document.getDoctype();
+			if (rootElement.getTagName().equals(TAG_HTML)) {
+				hasXHTMLContent = true;
 			}
-		} catch (Exception e) {
-			HelpPlugin.logError("Could not load content file: " + content, e); //$NON-NLS-1$
 		}
 	}
 
@@ -124,39 +119,21 @@ public class UAContentParser {
 
 
 	private Document doParse(Object fileObject) {
-		Document document = null;
 		try {
 			DocumentBuilder parser = createParser();
 			if (fileObject instanceof String)
-				document = parser.parse((String) fileObject);
+				return parser.parse((String) fileObject);
 			else if (fileObject instanceof InputStream)
-				document = parser.parse((InputStream) fileObject);
-
-			return document;
-
-		} catch (SAXParseException spe) {
-			StringBuffer buffer = new StringBuffer("Parser error in line "); //$NON-NLS-1$
-			buffer.append(spe.getLineNumber());
-			buffer.append(", uri "); //$NON-NLS-1$
-			buffer.append(spe.getSystemId());
-			buffer.append("\n"); //$NON-NLS-1$   
-			buffer.append(spe.getMessage());
-
-			Exception x = spe;
-			if (spe.getException() != null)
-				x = spe.getException();
-			HelpPlugin.logError(buffer.toString(), x);
-
-		} catch (SAXException sxe) {
-			Exception x = sxe;
-			if (sxe.getException() != null)
-				x = sxe.getException();
-			HelpPlugin.logError(x.getMessage(), x);
-
-		} catch (IOException ioe) {
-			HelpPlugin.logError(ioe.getMessage(), ioe);
+				return parser.parse((InputStream) fileObject);
+			return null;
 		}
-		return null;
+		catch (Exception e) {
+			// log it
+			HelpPlugin.logError("An error occured while parsing: " + fileObject, e); //$NON-NLS-1$
+			// wrap it in an unchecked wrapper so that it finds its way
+			// to the error message
+			throw new UndeclaredThrowableException(e);
+		}
 	}
 
 	/**
