@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
@@ -28,6 +29,7 @@ import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.IProgressService;
 
 public class OpenRevisionAction extends BaseSelectionListenerAction {
@@ -60,9 +62,15 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 							try {
 								file = revision.getStorage(monitor);
 								String id = getEditorID(file.getName(), file.getContents());
-								FileRevisionEditorInput fileRevEditorInput = new FileRevisionEditorInput(revision); 
-								if (!editorAlreadyOpenOnContents(fileRevEditorInput))
-									page.getSite().getPage().openEditor(fileRevEditorInput, id);
+								
+								if (file instanceof IFile) {
+									//if this is the current workspace file, open it
+									IDE.openEditor(page.getSite().getPage(), (IFile) file);
+								} else {
+									FileRevisionEditorInput fileRevEditorInput = new FileRevisionEditorInput(revision); 
+									if (!editorAlreadyOpenOnContents(fileRevEditorInput))
+										page.getSite().getPage().openEditor(fileRevEditorInput, id);
+								}
 							} catch (CoreException e) {
 								throw new InvocationTargetException(e);
 							}

@@ -1471,10 +1471,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//files displayed in the history page
 		if (inputObj instanceof CVSLocalFileRevision){
 			refreshCVSFileHistoryJob.setLocalFileRevision((CVSLocalFileRevision) inputObj);
+		} else if (inputObj instanceof IFile) {
+			refreshCVSFileHistoryJob.setLocalFileRevision(new CVSLocalFileRevision((IFile) inputObj));
 		}
 		//let the refresh job know which flavour of select to use (ie. select CVSFileRevisions
 		//or CVSLocalFileRevision)
-		refreshCVSFileHistoryJob.setSelectLocal(inputObj instanceof CVSLocalFileRevision);
+		refreshCVSFileHistoryJob.setSelectLocal(inputObj instanceof CVSLocalFileRevision || inputObj instanceof IFile);
 		
 		
 		//If the file history doesn't need to be refreshed, we can just
