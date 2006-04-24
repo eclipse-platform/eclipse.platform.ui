@@ -284,9 +284,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		if (task==null || task != selectedTask) return;
 		if ( task instanceof EditableTask) {
 			EditableTask editable = (EditableTask)task;
-			if (editable.getState() == ICompositeCheatSheetTask.IN_PROGRESS ||
-				editable.isUnderReview()) {
+			if (editable.getState() == ICompositeCheatSheetTask.IN_PROGRESS) {
 				showEditor(editable);
+				return;
+			} else if (editable.isUnderReview()) {
+				if (editable.getState() == ICompositeCheatSheetTask.COMPLETED) {
+					showEditor(editable);
+				} else {
+					endReview(editable);
+				}
 				return;
 			}
 		} 
