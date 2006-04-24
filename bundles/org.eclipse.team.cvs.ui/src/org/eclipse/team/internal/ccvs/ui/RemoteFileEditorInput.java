@@ -16,8 +16,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSResourceVariantFileRevision;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
@@ -90,8 +92,11 @@ public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchA
 		if (adapter == IHistoryPageSource.class)
 			return file.getAdapter(IHistoryPageSource.class);
 		
-		if (adapter == ICVSFile.class)
+		if (adapter == ICVSFile.class || adapter == IResourceVariant.class)
 			return file;
+		
+		if (adapter == IFileRevision.class)
+			return new CVSResourceVariantFileRevision((IResourceVariant)file);
 		
 		return super.getAdapter(adapter);
 	}
