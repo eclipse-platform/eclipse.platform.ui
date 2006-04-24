@@ -125,7 +125,7 @@ public interface IUndoManager {
 	 * 
 	 * @param query a proceed query to decide how to proceed if the validation
 	 *  checking of the undo change to perform returns a non OK status and the
-	 *  status isn't a fatal error. If <code>null</code> is passed in the the 
+	 *  status isn't a fatal error. If <code>null</code> is passed in the 
 	 *  undo proceeds if the status is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
 	 *  the undo change
@@ -156,7 +156,7 @@ public interface IUndoManager {
 	 * 
 	 * @param query a proceed query to decide how to proceed if the validation
 	 *  checking of the redo change to perform returns a non OK status. If
-	 *  <code>null</code> is passed in the the undo proceeds if the status
+	 *  <code>null</code> is passed in the undo proceeds if the status
 	 *  is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
 	 *  the redo change

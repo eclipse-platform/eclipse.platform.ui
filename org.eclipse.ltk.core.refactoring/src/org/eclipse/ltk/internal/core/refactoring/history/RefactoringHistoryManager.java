@@ -719,7 +719,7 @@ public final class RefactoringHistoryManager {
 	private final IFileStore fHistoryStore;
 
 	/**
-	 * The the non-empty name of the managed project, or <code>null</code> for
+	 * The non-empty name of the managed project, or <code>null</code> for
 	 * the workspace
 	 */
 	private final String fProjectName;

@@ -31,7 +31,7 @@ public abstract class RefactoringStatusContext {
 	 * or <code>null</code> if there is no corresponding element.
 	 * <p>
 	 * For example, the corresponding element of a context for a problem 
-	 * detected in an <code>IResource</code> would the the resource itself.
+	 * detected in an <code>IResource</code> would be the resource itself.
 	 * <p>
 	 *
 	 * @return the corresponding element
