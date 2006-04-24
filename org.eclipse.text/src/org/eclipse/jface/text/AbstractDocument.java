@@ -1084,7 +1084,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
 	 */
 	public void replace(int pos, int length, String text) throws BadLocationException {
-		replace(pos, length, text, getNextModificationStamp());
+		if (length == 0 && (text == null || text.length() == 0))
+			replace(pos, length, text, getModificationStamp());
+		else
+			replace(pos, length, text, getNextModificationStamp());
 	}
 
 	/*
