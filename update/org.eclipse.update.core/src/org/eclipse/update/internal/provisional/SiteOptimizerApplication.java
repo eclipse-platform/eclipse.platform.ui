@@ -116,11 +116,11 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 				if (key.startsWith(SITE_XML)) {
 					// System.out.println(val.indexOf(":null"));
-					val = key.substring(key.indexOf("=") + 1);
+					val = key.substring(key.indexOf("=") + 1); //$NON-NLS-1$
 					// System.out.println(key + ":" + val);
 					cmds.put(SITE_XML, val);
 				} else if (key.startsWith(DIGEST_OUTPUT_DIR)) {
-					val = key.substring(key.indexOf("=") + 1);
+					val = key.substring(key.indexOf("=") + 1); //$NON-NLS-1$
 					// System.out.println(key + ":" + val);
 					cmds.put(DIGEST_OUTPUT_DIR, val);
 				} else {
@@ -182,7 +182,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		List featureList = getFeatureList(params);
 
 		if ((featureList == null) || featureList.isEmpty()) {
-			System.out.println("no features to process");
+			System.out.println("no features to process"); //$NON-NLS-1$
 			return false;
 		}
 		Map perFeatureLocales = new HashMap();
@@ -192,7 +192,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			openInputStremas(availableLocales);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			System.out.println("Can not create file in output direcotry");
+			System.out.println("Can not create file in output direcotry"); //$NON-NLS-1$
 			return false;
 		}
 
@@ -202,16 +202,16 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			String featureJarFileName = (String) featureIterator.next();
 			// System.out.println("i=" + i++);
 
-			if (featureJarFileName.endsWith("jar"))
-				System.out.println("Processing... " + featureJarFileName);
+			if (featureJarFileName.endsWith("jar")) //$NON-NLS-1$
+				System.out.println("Processing... " + featureJarFileName); //$NON-NLS-1$
 			else
-				System.out.println("Skipping... " + featureJarFileName);
+				System.out.println("Skipping... " + featureJarFileName); //$NON-NLS-1$
 
 			JarFile featureJar = null;
 			try {
 				featureJar = new JarFile(featureJarFileName);
 			} catch (IOException e) {
-				System.out.println("Problem with openning jar: "
+				System.out.println("Problem with openning jar: " //$NON-NLS-1$
 						+ featureJarFileName);
 				e.printStackTrace();
 				return false;
@@ -219,7 +219,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			FeatureModelFactory fmf = new FeatureModelFactory();
 
 			try {
-				ZipEntry featureXMLEntry = featureJar.getEntry("feature.xml");
+				ZipEntry featureXMLEntry = featureJar.getEntry("feature.xml"); //$NON-NLS-1$
 				Map featureProperties = loadProperties(featureJar,
 						featureJarFileName, perFeatureLocales);
 
@@ -250,7 +250,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		String outputDirectory = (String) params.get(DIGEST_OUTPUT_DIR);
 
 		outputDirectory = outputDirectory.substring(outputDirectory
-				.indexOf("=") + 1);
+				.indexOf("=") + 1); //$NON-NLS-1$
 		if (!outputDirectory.endsWith(File.separator)) {
 			outputDirectory = outputDirectory + File.separator;
 		}
@@ -259,13 +259,13 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				((AvailableLocale) availableLocalesIterator.next())
 						.finishDigest(outputDirectory);
 			} catch (IOException e) {
-				System.out.println("Can not write in digest output directory: "
+				System.out.println("Can not write in digest output directory: " //$NON-NLS-1$
 						+ outputDirectory);
 				e.printStackTrace();
 				return false;
 			}
 		}
-		System.out.println("Done");
+		System.out.println("Done"); //$NON-NLS-1$
 		return true;
 	}
 
@@ -287,8 +287,8 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					featureProperties.load(featureJar
 							.getInputStream(featurePropertiesEntry));
 					String localeString = null;
-					if (propertyFileName.endsWith("feature.properties")) {
-						localeString = "";
+					if (propertyFileName.endsWith("feature.properties")) { //$NON-NLS-1$
+						localeString = ""; //$NON-NLS-1$
 					} else {
 						localeString = propertyFileName.substring(8,
 								propertyFileName.indexOf('.'));
@@ -316,10 +316,10 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		while (features.hasNext()) {
 			String feature = (String) features.next();
 			try {
-				System.out.println("Extracting locales from " + feature);
+				System.out.println("Extracting locales from " + feature); //$NON-NLS-1$
 				processLocalesInJar(locales, feature, perFeatureLocales);
 			} catch (IOException e) {
-				System.out.println("Error while extracting locales from "
+				System.out.println("Error while extracting locales from " //$NON-NLS-1$
 						+ feature);
 				e.printStackTrace();
 				return null;
@@ -343,12 +343,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			String localeString = null;
 			String name = file.getName();
 			// System.out.println("processLocalesInJar:"+name);
-			if (name.startsWith("feature") && name.endsWith(".properties")) {
+			if (name.startsWith("feature") && name.endsWith(".properties")) { //$NON-NLS-1$ //$NON-NLS-2$
 				// System.out.println(name);
 				localesTemp.add(name);
 				// System.out.println(name);
-				if (name.endsWith("feature.properties")) {
-					localeString = "";
+				if (name.endsWith("feature.properties")) { //$NON-NLS-1$
+					localeString = ""; //$NON-NLS-1$
 				} else {
 					localeString = name.substring(8, name.indexOf('.'));
 				}
@@ -432,13 +432,13 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			// featuresURLs.size());
 			return featuresURLs;
 		} catch (FileNotFoundException e) {
-			System.out.println("File not found: " + e.getMessage());
+			System.out.println("File not found: " + e.getMessage()); //$NON-NLS-1$
 			e.printStackTrace();
 		} catch (SAXException e) {
-			System.out.println("Parsing problem: " + e.getMessage());
+			System.out.println("Parsing problem: " + e.getMessage()); //$NON-NLS-1$
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Problem while parsing: " + e.getMessage());
+			System.out.println("Problem while parsing: " + e.getMessage()); //$NON-NLS-1$
 			e.printStackTrace();
 		}
 		return null;
@@ -470,7 +470,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 	private class AvailableLocale {
 
-		private String PREFIX = "temp";
+		private String PREFIX = "temp"; //$NON-NLS-1$
 
 		private String locale;
 
@@ -487,12 +487,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		}
 
 		public void finishDigest(String outputDirectory) throws IOException {
-			localizedPrintStream.println("</digest>");
+			localizedPrintStream.println("</digest>"); //$NON-NLS-1$
 			if (localizedPrintStream != null) {
 				localizedPrintStream.close();
 			}
-			File digest = new File(outputDirectory + File.separator + "digest"
-					+ locale + ".zip");
+			File digest = new File(outputDirectory + File.separator + "digest" //$NON-NLS-1$
+					+ locale + ".zip"); //$NON-NLS-1$
 			System.out.println(digest.getAbsolutePath());
 			System.out.println(digest.getName());
 			if (digest.exists()) {
@@ -501,7 +501,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			digest.createNewFile();
 			OutputStream os = new FileOutputStream(digest);
 			JarOutputStream jos = new JarOutputStream(os);
-			jos.putNextEntry(new ZipEntry("digest.xml"));
+			jos.putNextEntry(new ZipEntry("digest.xml")); //$NON-NLS-1$
 			InputStream is = new FileInputStream(tempDigestDirectory);
 			byte[] b = new byte[4096];
 			int bytesRead = 0;
@@ -549,7 +549,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			FileOutputStream fstream = new FileOutputStream(tempDigestDirectory);
 			localizedPrintStream = new PrintStream(fstream);
 			localizedPrintStream
-					.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <digest>");
+					.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <digest>"); //$NON-NLS-1$
 			tempDigestDirectory.deleteOnExit();
 		}
 
@@ -577,20 +577,20 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		public void writeFeatureDigests(FeatureModel featureModel,
 				Map featureProperties) {
 
-			if (this.locale.equals("")) {
+			if (this.locale.equals("")) { //$NON-NLS-1$
 				writeFeatureDigest(localizedPrintStream, featureModel,
-						(Properties) featureProperties.get(""));
+						(Properties) featureProperties.get("")); //$NON-NLS-1$
 				return;
 			}
 			Properties temp = new Properties();
-			if (locale.indexOf("_") < 0) {
+			if (locale.indexOf("_") < 0) { //$NON-NLS-1$
 				temp = combineProperties(
-						(Properties) featureProperties.get(""),
+						(Properties) featureProperties.get(""), //$NON-NLS-1$
 						(Properties) featureProperties.get(locale), temp);
 				writeFeatureDigest(localizedPrintStream, featureModel, temp);
 			} else {
 				temp = combineProperties((Properties) featureProperties
-						.get(locale.substring(locale.indexOf("_") + 1)),
+						.get(locale.substring(locale.indexOf("_") + 1)), //$NON-NLS-1$
 						(Properties) featureProperties.get(locale), temp);
 				writeFeatureDigest(localizedPrintStream, featureModel, temp);
 			}
@@ -615,7 +615,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		String copyright = null;
 
 		if ((featureProperties != null)
-				&& featureModel.getLabel().startsWith("%")) {
+				&& featureModel.getLabel().startsWith("%")) { //$NON-NLS-1$
 			label = featureProperties.getProperty(featureModel.getLabel()
 					.substring(1));
 		} else {
@@ -624,7 +624,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		if ((featureProperties != null)
 				&& (featureModel.getDescriptionModel() != null)
 				&& featureModel.getDescriptionModel().getAnnotation()
-						.startsWith("%")) {
+						.startsWith("%")) { //$NON-NLS-1$
 			// System.out.println(featureProperties.getProperty(featureModel.getDescriptionModel().getAnnotation().substring(1)));
 			description = featureProperties.getProperty(featureModel
 					.getDescriptionModel().getAnnotation().substring(1));
@@ -632,7 +632,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			description = featureModel.getDescriptionModel().getAnnotation();
 		}
 		if ((featureProperties != null)
-				&& featureModel.getProvider().startsWith("%")) {
+				&& featureModel.getProvider().startsWith("%")) { //$NON-NLS-1$
 			provider = featureProperties.getProperty(featureModel.getProvider()
 					.substring(1));
 		} else {
@@ -641,7 +641,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		if (((featureProperties != null) && featureModel.getCopyrightModel() != null)
 				&& featureModel.getCopyrightModel().getAnnotation().startsWith(
-						"%")) {
+						"%")) { //$NON-NLS-1$
 			copyright = featureProperties.getProperty(featureModel
 					.getCopyrightModel().getAnnotation().substring(1));
 		} else {
@@ -655,28 +655,28 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		if ((featureProperties != null)
 				&& (featureModel.getLicenseModel() != null)
 				&& featureModel.getLicenseModel().getAnnotation().startsWith(
-						"%")) {
+						"%")) { //$NON-NLS-1$
 			license = featureProperties.getProperty(featureModel
 					.getLicenseModel().getAnnotation().substring(1));
 		} else {
 			license = featureModel.getLicenseModel().getAnnotation();
 		}
 
-		digest.print("<feature ");
-		digest.print("label=\"" + label + "\" ");
-		digest.print("provider-name=\"" + provider + "\" ");
-		digest.print("id=\"" + featureModel.getFeatureIdentifier() + "\" ");
-		digest.print("version=\"" + featureModel.getFeatureVersion() + "\" ");
+		digest.print("<feature "); //$NON-NLS-1$
+		digest.print("label=\"" + label + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+		digest.print("provider-name=\"" + provider + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		digest.print("id=\"" + featureModel.getFeatureIdentifier() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+		digest.print("version=\"" + featureModel.getFeatureVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (featureModel.getOS() != null)
-			digest.print("os=\"" + featureModel.getOS() + "\" ");
+			digest.print("os=\"" + featureModel.getOS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 		if (featureModel.getNL() != null)
-			digest.print("nl=\"" + featureModel.getNL() + "\" ");
+			digest.print("nl=\"" + featureModel.getNL() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 		if (featureModel.getWS() != null)
-			digest.print("ws=\"" + featureModel.getWS() + "\" ");
+			digest.print("ws=\"" + featureModel.getWS() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (featureModel.getOSArch() != null)
-			digest.print("arch=\"" + featureModel.getOSArch() + "\" ");
+			digest.print("arch=\"" + featureModel.getOSArch() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 		if (featureModel.isExclusive())
-			digest.print("exclusive=\"" + featureModel.isExclusive() + "\" ");
+			digest.print("exclusive=\"" + featureModel.isExclusive() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 
 		if (((featureModel.getImportModels() == null) || (featureModel
 				.getImportModels().length == 0))
@@ -689,32 +689,32 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				&& ((featureModel.getLicenseModel() == null)
 						|| (featureModel.getLicenseModel().getAnnotation() == null) || (featureModel
 						.getLicenseModel().getAnnotation().trim().length() == 0))) {
-			digest.println("/> ");
+			digest.println("/> "); //$NON-NLS-1$
 		} else {
-			digest.println("> ");
+			digest.println("> "); //$NON-NLS-1$
 			if (featureModel.getImportModels().length > 0) {
 
-				digest.println("\t<requires> ");
+				digest.println("\t<requires> "); //$NON-NLS-1$
 				ImportModel[] imports = featureModel.getImportModels();
 				for (int j = 0; j < imports.length; j++) {
-					digest.print("\t\t<import ");
+					digest.print("\t\t<import "); //$NON-NLS-1$
 					if (imports[j].isFeatureImport()) {
-						digest.print("feature=\"");
+						digest.print("feature=\""); //$NON-NLS-1$
 					} else {
-						digest.print("plugin=\"");
+						digest.print("plugin=\""); //$NON-NLS-1$
 					}
-					digest.print(imports[j].getIdentifier() + "\" ");
-					digest.print("version=\"");
-					digest.print(imports[j].getVersion() + "\" ");
-					digest.print("match=\"");
-					digest.print(imports[j].getMatchingRuleName() + "\" ");
+					digest.print(imports[j].getIdentifier() + "\" "); //$NON-NLS-1$
+					digest.print("version=\""); //$NON-NLS-1$
+					digest.print(imports[j].getVersion() + "\" "); //$NON-NLS-1$
+					digest.print("match=\""); //$NON-NLS-1$
+					digest.print(imports[j].getMatchingRuleName() + "\" "); //$NON-NLS-1$
 					if (imports[j].isPatch()) {
-						digest.print("patch=\"true\" ");
+						digest.print("patch=\"true\" "); //$NON-NLS-1$
 					}
-					digest.println(" />");
+					digest.println(" />"); //$NON-NLS-1$
 				}
 
-				digest.println("\t</requires>");
+				digest.println("\t</requires>"); //$NON-NLS-1$
 
 			}
 
@@ -722,9 +722,9 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					&& (featureModel.getDescriptionModel().getAnnotation() != null)
 					&& (featureModel.getDescriptionModel().getAnnotation()
 							.trim().length() != 0)) {
-				digest.println("\t<description>");
-				digest.println("\t\t" + description);
-				digest.println("\t</description>");
+				digest.println("\t<description>"); //$NON-NLS-1$
+				digest.println("\t\t" + description); //$NON-NLS-1$
+				digest.println("\t</description>"); //$NON-NLS-1$
 			}
 
 			if (featureModel.getCopyrightModel() != null) {
@@ -732,9 +732,9 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					// if
 					// (featureModel.getDescriptionModel().getAnnotation().length()
 					// != 0) {
-					digest.println("\t<copyright>");
-					digest.println("\t\t" + copyright);
-					digest.println("\t</copyright>");
+					digest.println("\t<copyright>"); //$NON-NLS-1$
+					digest.println("\t\t" + copyright); //$NON-NLS-1$
+					digest.println("\t</copyright>"); //$NON-NLS-1$
 					// }
 				}
 			}
@@ -743,43 +743,43 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					&& (featureModel.getLicenseModel().getAnnotation() != null)
 					&& (featureModel.getDescriptionModel().getAnnotation()
 							.trim().length() != 0)) {
-				digest.println("\t<license>");
-				digest.println("\t\t" + license);
-				digest.println("\t</license>");
+				digest.println("\t<license>"); //$NON-NLS-1$
+				digest.println("\t\t" + license); //$NON-NLS-1$
+				digest.println("\t</license>"); //$NON-NLS-1$
 			}
 
 			PluginEntryModel[] plugins = featureModel.getPluginEntryModels();
 			if ((plugins != null) && (plugins.length != 0)) {
 				for (int i = 0; i < plugins.length; i++) {
-					digest.print("\t<plugin ");
-					digest.print("id=\"" + plugins[i].getPluginIdentifier()
-							+ "\" ");
-					digest.print("version=\"" + plugins[i].getPluginVersion()
-							+ "\" ");
+					digest.print("\t<plugin "); //$NON-NLS-1$
+					digest.print("id=\"" + plugins[i].getPluginIdentifier() //$NON-NLS-1$
+							+ "\" "); //$NON-NLS-1$
+					digest.print("version=\"" + plugins[i].getPluginVersion() //$NON-NLS-1$
+							+ "\" "); //$NON-NLS-1$
 					if (plugins[i].getOS() != null)
-						digest.print("os=\"" + plugins[i].getOS() + "\" ");
+						digest.print("os=\"" + plugins[i].getOS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 					if (plugins[i].getNL() != null)
-						digest.print("nl=\"" + plugins[i].getNL() + "\" ");
+						digest.print("nl=\"" + plugins[i].getNL() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 					if (plugins[i].getWS() != null)
-						digest.print("ws=\"" + plugins[i].getWS() + "\" ");
+						digest.print("ws=\"" + plugins[i].getWS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 					if (plugins[i].getOSArch() != null)
 						digest
-								.print("arch=\"" + plugins[i].getOSArch()
-										+ "\" ");
+								.print("arch=\"" + plugins[i].getOSArch() //$NON-NLS-1$
+										+ "\" "); //$NON-NLS-1$
 					if (plugins[i].getDownloadSize() > 0)
-						digest.print("download-size=\""
-								+ plugins[i].getDownloadSize() + "\" ");
+						digest.print("download-size=\"" //$NON-NLS-1$
+								+ plugins[i].getDownloadSize() + "\" "); //$NON-NLS-1$
 					if (plugins[i].getInstallSize() > 0)
-						digest.print("install-size=\""
-								+ plugins[i].getInstallSize() + "\" ");
+						digest.print("install-size=\"" //$NON-NLS-1$
+								+ plugins[i].getInstallSize() + "\" "); //$NON-NLS-1$
 					if (!plugins[i].isUnpack())
-						digest.print("unpack=\"" + plugins[i].isUnpack()
-								+ "\" ");
+						digest.print("unpack=\"" + plugins[i].isUnpack() //$NON-NLS-1$
+								+ "\" "); //$NON-NLS-1$
 
-					digest.println("/> ");
+					digest.println("/> "); //$NON-NLS-1$
 				}
 			}
-			digest.println("</feature>");
+			digest.println("</feature>"); //$NON-NLS-1$
 		}
 	}
 
