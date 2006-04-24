@@ -87,7 +87,7 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 
 		/**
 		 * Creates a new Proposal Computer.
-		 * @param contents the contents of the the subject control
+		 * @param contents the contents of the subject control
 		 * @param position the cursor position
 		 */
 		public ProposalComputer(String contents, int position) {

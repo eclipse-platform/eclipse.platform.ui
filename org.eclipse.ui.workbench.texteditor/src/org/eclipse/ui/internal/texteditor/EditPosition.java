@@ -62,7 +62,7 @@ public final class EditPosition {
 	}
 
 	/**
-	 * Returns the the position.
+	 * Returns the position.
 	 *
 	 * @return the position
 	 */

@@ -53,7 +53,7 @@ public abstract class TextSearchScope {
 	
 	
 	/**
-	 * Returns the the resources that form the root. Roots can not contain each other. Root elements are only part of the
+	 * Returns the resources that form the root. Roots can not contain each other. Root elements are only part of the
 	 * scope if they are also accepted by {@link #contains(IResourceProxy)}.
 	 * 
 	 * @return returns the set of root resources. The default behavior is to return the workspace root.

@@ -122,7 +122,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	}
 
 	/**
-	 * Returns the distance of the given line to the the start line of the given position in the given document. The distance is
+	 * Returns the distance of the given line to the start line of the given position in the given document. The distance is
 	 * <code>-1</code> when the line is not included in the given position.
 	 *
 	 * @param annotation the annotation

@@ -69,7 +69,7 @@ public class DocumentUndoEvent {
 	/** Bit mask of event types describing the event */
 	private int fEventType;
 
-	/** The the source that triggered this event or <code>null</code> if unknown. */
+	/** The source that triggered this event or <code>null</code> if unknown. */
 	private Object fSource;
 
 	/**

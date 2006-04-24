@@ -495,7 +495,7 @@ public interface ITextViewer {
 	void revealRange(int offset, int length);
 
 	/**
-	 * Scrolls the widget so the the given index is the line
+	 * Scrolls the widget so that the given index is the line
 	 * with the smallest line number of all visible lines.
 	 *
 	 * @param index the line which should become the top most line

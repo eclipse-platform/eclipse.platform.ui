@@ -37,7 +37,7 @@ import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 /**
- * Action for changing the the encoding of the editor's
+ * Action for changing the encoding of the editor's
  * input element.
  * <p>
  * The following keys, prepended by the given option prefix,

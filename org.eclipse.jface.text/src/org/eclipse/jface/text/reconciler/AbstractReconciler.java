@@ -369,7 +369,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	/**
 	 * Tells the reconciler whether any of the available reconciling strategies
 	 * is interested in getting detailed dirty region information or just in the
-	 * fact the the document has been changed. In the second case, the reconciling
+	 * fact that the document has been changed. In the second case, the reconciling
 	 * can not incrementally be pursued.
 	 *
 	 * @param isIncremental indicates whether this reconciler will be configured with

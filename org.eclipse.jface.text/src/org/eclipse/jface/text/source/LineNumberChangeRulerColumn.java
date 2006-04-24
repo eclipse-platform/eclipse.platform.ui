@@ -102,7 +102,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 
 
 	/**
-	 * Sets the the display mode of the ruler. If character mode is set to <code>true</code>, diff
+	 * Sets the display mode of the ruler. If character mode is set to <code>true</code>, diff
 	 * information will be displayed textually on the line number ruler.
 	 *
 	 * @param characterMode <code>true</code> if diff information is to be displayed textually.

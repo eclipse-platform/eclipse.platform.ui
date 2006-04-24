@@ -77,7 +77,7 @@ public abstract class TextSearchEngine {
 	 * editor buffer is searched.
 
 	 * @param requestor the search requestor that gets the search results
-	 * @param scope the the files to search in
+	 * @param scope the files to search in
 	 * 	@param searchPattern The search pattern used to find matches in the file contents.
 	 * @param monitor the progress monitor to use
 	 * @return the status containing information about problems in resources searched.

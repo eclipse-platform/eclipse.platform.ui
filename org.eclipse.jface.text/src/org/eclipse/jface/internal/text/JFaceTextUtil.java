@@ -150,7 +150,7 @@ public final class JFaceTextUtil {
 	}
 	
 	/**
-	 * Returns the the last, possibly partially, visible line in the view port.
+	 * Returns the last, possibly partially, visible line in the view port.
 	 *
 	 * @param viewer the text viewer
 	 * @return the last, possibly partially, visible line in the view port
