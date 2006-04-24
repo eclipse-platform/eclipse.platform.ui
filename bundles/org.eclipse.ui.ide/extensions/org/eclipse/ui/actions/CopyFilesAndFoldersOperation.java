@@ -1374,10 +1374,6 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
 		}
-		String destinationMessage = validateDestinationLocation(destination);
-		if (destinationMessage != null) {
-			return destinationMessage;
-		}
 		IContainer firstParent = null;
 		URI destinationLocation = destination.getLocationURI();
 		for (int i = 0; i < sourceResources.length; i++) {
@@ -1426,32 +1422,6 @@ public class CopyFilesAndFoldersOperation {
 		return null;
 	}
 
-	/**
-	 * Validates whether the destination location exists. Linked resources
-	 * created on undefined path variables have an undefined location.
-	 * 
-	 * @param destination
-	 *            destination container
-	 * @return error message or null if destination location is valid (non-<code>null</code>)
-	 */
-	private String validateDestinationLocation(IContainer destination) {
-		IPath destinationLocation = destination.getLocation();
-
-		if (destinationLocation == null) {
-			if (destination.isLinked()) {
-				return NLS
-						.bind(
-								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_missingPathVariable,
-								destination.getName());
-			}
-			return NLS
-					.bind(
-							IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceDeleted,
-							destination.getName());
-
-		}
-		return null;
-	}
 
 	/**
 	 * Validates that the given source resources can be copied to the
@@ -1534,13 +1504,9 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private String validateImportDestinationInternal(IContainer destination,
 			IFileStore[] sourceStores) {
-		if (!isAccessible(destination)) {
+		if (!isAccessible(destination)) 
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
-		}
-		String destinationMessage = validateDestinationLocation(destination);
-		if (destinationMessage != null) {
-			return destinationMessage;
-		}
+		
 
 		IFileStore destinationStore;
 		try {
