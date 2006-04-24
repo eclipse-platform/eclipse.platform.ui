@@ -663,7 +663,13 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 			if (list.isEmpty())
 				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
 
-		} catch (BadPositionCategoryException x) {
+		} catch (BadPositionCategoryException ex) {
+			// Make sure we clear the cache
+			clearPositionCache();
+		} catch (RuntimeException ex) {
+			// Make sure we clear the cache
+			clearPositionCache();
+			throw ex;
 		}
 
 		TypedRegion[] result= new TypedRegion[list.size()];
