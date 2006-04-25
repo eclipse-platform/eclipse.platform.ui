@@ -24,6 +24,8 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,6 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -47,9 +50,9 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 
 	private DiffProject[] fDiffProjects;
 
-	private boolean fIsWorkspacePatch = false;
+	private boolean fIsWorkspacePatch= false;
 
-	//API for writing new multi-project patch format
+	// API for writing new multi-project patch format
 	public static final String MULTIPROJECTPATCH_HEADER= "### Eclipse Workspace Patch"; //$NON-NLS-1$
 	public static final String MULTIPROJECTPATCH_VERSION= "1.0"; //$NON-NLS-1$
 	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
@@ -91,25 +94,25 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 	//---- parsing patch files
 
 	public void parse(BufferedReader reader) throws IOException {
-		List diffs = new ArrayList();
-		HashMap diffProjects = new HashMap(4);
-		String line = null;
-		boolean reread = false;
-		String diffArgs = null;
-		String fileName = null;
-		//no project means this is a single patch,create a placeholder project for now
-		//which will be replaced by the target selected by the user in the preview pane
-		String project = ""; //$NON-NLS-1$
-		fIsWorkspacePatch = false;
+		List diffs= new ArrayList();
+		HashMap diffProjects= new HashMap(4);
+		String line= null;
+		boolean reread= false;
+		String diffArgs= null;
+		String fileName= null;
+		// no project means this is a single patch,create a placeholder project for now
+		// which will be replaced by the target selected by the user in the preview pane
+		String project= ""; //$NON-NLS-1$
+		fIsWorkspacePatch= false;
 
-		LineReader lr = new LineReader(reader);
+		LineReader lr= new LineReader(reader);
 		if (!"carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
 			lr.ignoreSingleCR();
 
 		// Test for our format
-		line = lr.readLine();
+		line= lr.readLine();
 		if (line.startsWith(MULTIPROJECTPATCH_HEADER)) {
-			fIsWorkspacePatch = true;
+			fIsWorkspacePatch= true;
 		} else {
 			parse(lr, line);
 			return;
@@ -118,58 +121,58 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		// read leading garbage
 		while (true) {
 			if (!reread)
-				line = lr.readLine();
-			reread = false;
+				line= lr.readLine();
+			reread= false;
 			if (line == null)
 				break;
 			if (line.length() < 4)
 				continue; // too short
 
 			if (line.startsWith(MULTIPROJECTPATCH_PROJECT)) {
-				project = line.substring(2).trim();
+				project= line.substring(2).trim();
 				continue;
 			}
 
 			if (line.startsWith("Index: ")) { //$NON-NLS-1$
-				fileName = line.substring(7).trim();
+				fileName= line.substring(7).trim();
 				continue;
 			}
 			if (line.startsWith("diff")) { //$NON-NLS-1$
-				diffArgs = line.substring(4).trim();
+				diffArgs= line.substring(4).trim();
 				continue;
 			}
 
 			if (line.startsWith("--- ")) { //$NON-NLS-1$
-				//if there is no current project or
-				//the current project doesn't equal the newly parsed project
-				//reset the current project to the newly parsed one, create a new DiffProject
-				//and add it to the array
+				// if there is no current project or
+				// the current project doesn't equal the newly parsed project
+				// reset the current project to the newly parsed one, create a new DiffProject
+				// and add it to the array
 				DiffProject diffProject;
 				if (!diffProjects.containsKey(project)) {
-					IProject iproject = ResourcesPlugin.getWorkspace().getRoot().getProject(project);
-					diffProject = new DiffProject(iproject);
+					IProject iproject= ResourcesPlugin.getWorkspace().getRoot().getProject(project);
+					diffProject= new DiffProject(iproject);
 					diffProjects.put(project, diffProject);
 				} else {
-					diffProject = (DiffProject) diffProjects.get(project);
+					diffProject= (DiffProject) diffProjects.get(project);
 				}
 
-				line = readUnifiedDiff(diffs, lr, line, diffArgs, fileName, diffProject);
-				diffArgs = fileName = null;
-				reread = true;
+				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName, diffProject);
+				diffArgs= fileName= null;
+				reread= true;
 			}
 		}
 
 		lr.close();
 
-		fDiffs = (Diff[]) diffs.toArray(new Diff[diffs.size()]);
-		fDiffProjects = (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
+		fDiffs= (Diff[]) diffs.toArray(new Diff[diffs.size()]);
+		fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
 	}
 
 	private String readUnifiedDiff(List diffs, LineReader lr, String line, String diffArgs, String fileName, DiffProject diffProject) throws IOException {
-		List newDiffs = new ArrayList();
-		String nextLine = readUnifiedDiff(newDiffs, lr, line, diffArgs, fileName);
-		for (Iterator iter = newDiffs.iterator(); iter.hasNext();) {
-			Diff diff = (Diff) iter.next();
+		List newDiffs= new ArrayList();
+		String nextLine= readUnifiedDiff(newDiffs, lr, line, diffArgs, fileName);
+		for (Iterator iter= newDiffs.iterator(); iter.hasNext();) {
+			Diff diff= (Diff) iter.next();
 			diff.setProject(diffProject);
 			diffs.add(diff);
 		}
@@ -180,43 +183,43 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		if (!fIsWorkspacePatch) {
 			super.applyAll(pm, shell, title);
 		} else {
-			final int WORK_UNIT = 10;
+			final int WORK_UNIT= 10;
 
 			// get all files to be modified in order to call validateEdit
-			List list = new ArrayList();
-			for (int j = 0; j < fDiffProjects.length; j++) {
-				DiffProject diffProject = fDiffProjects[j];
+			List list= new ArrayList();
+			for (int j= 0; j < fDiffProjects.length; j++) {
+				DiffProject diffProject= fDiffProjects[j];
 				list.addAll(Arrays.asList(diffProject.getTargetFiles()));
 			}
-			//validate the files for editing
+			// validate the files for editing
 			if (!Utilities.validateResources(list, shell, title))
 				return;
 
 			if (pm != null) {
-				String message = PatchMessages.Patcher_Task_message;
+				String message= PatchMessages.Patcher_Task_message;
 				pm.beginTask(message, fDiffs.length * WORK_UNIT);
 			}
 
-			for (int i = 0; i < fDiffs.length; i++) {
+			for (int i= 0; i < fDiffs.length; i++) {
 
-				int workTicks = WORK_UNIT;
+				int workTicks= WORK_UNIT;
 
-				Diff diff = fDiffs[i];
+				Diff diff= fDiffs[i];
 				if (diff.isEnabled()) {
-					IFile file = diff.getTargetFile();
-					IPath path = file.getProjectRelativePath();
+					IFile file= diff.getTargetFile();
+					IPath path= file.getProjectRelativePath();
 					if (pm != null)
 						pm.subTask(path.toString());
 					createPath(file.getProject(), path);
 
-					List failed = new ArrayList();
-					List result = null;
+					List failed= new ArrayList();
+					List result= null;
 
-					int type = diff.getType();
+					int type= diff.getType();
 					switch (type) {
 						case Differencer.ADDITION :
 							// patch it and collect rejected hunks
-							result = apply(diff, file, true, failed);
+							result= apply(diff, file, true, failed);
 							store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
@@ -226,24 +229,24 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 							break;
 						case Differencer.CHANGE :
 							// patch it and collect rejected hunks
-							result = apply(diff, file, false, failed);
+							result= apply(diff, file, false, failed);
 							store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 					}
 
 					if (failed.size() > 0) {
-						IPath pp = null;
+						IPath pp= null;
 						if (path.segmentCount() > 1) {
-							pp = path.removeLastSegments(1);
-							pp = pp.append(path.lastSegment() + REJECT_FILE_EXTENSION);
+							pp= path.removeLastSegments(1);
+							pp= pp.append(path.lastSegment() + REJECT_FILE_EXTENSION);
 						} else
-							pp = new Path(path.lastSegment() + REJECT_FILE_EXTENSION);
-						file = createPath(file.getProject(), pp);
+							pp= new Path(path.lastSegment() + REJECT_FILE_EXTENSION);
+						file= createPath(file.getProject(), pp);
 						if (file != null) {
 							store(getRejected(failed), file, pm);
 							try {
-								IMarker marker = file.createMarker(MARKER_TYPE);
+								IMarker marker= file.createMarker(MARKER_TYPE);
 								marker.setAttribute(IMarker.MESSAGE, PatchMessages.Patcher_Marker_message);
 								marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 							} catch (CoreException ex) {
@@ -264,25 +267,33 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 	}
 
 	public ISchedulingRule[] getTargetProjects() {
-		List projects = new ArrayList();
-		for (int i = 0; i < fDiffProjects.length; i++) {
-			DiffProject diffProject = fDiffProjects[i];
-			projects.add(diffProject.getProject());
+		List projects= new ArrayList();
+		IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
+		// Determine the appropriate scheduling rules 
+		for (int i= 0; i < fDiffProjects.length; i++) {
+			IProject tempProject= fDiffProjects[i].getProject();
+			// The goal here is to lock as little of the workspace as neccessary
+			// but still allow the patcher to obtain the locks it needs.
+			// As such, we need to get the modify rules from the rule factory for the .project file. A pessimistic
+			// rule factory will return the root, while others might return just the project. Combining
+			// this rule with the project will result in the smallest possible locking set.
+			ISchedulingRule scheduleRule= ruleFactory.modifyRule(tempProject.getFile(IProjectDescription.DESCRIPTION_FILE_NAME));
+			MultiRule multiRule= new MultiRule(new ISchedulingRule[] { scheduleRule, tempProject } );
+			projects.add(multiRule);
 		}
+	
 		return (ISchedulingRule[]) projects.toArray(new ISchedulingRule[projects.size()]);
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class)
 			return this;
-		}
 		return null;
 	}
 
 	public Object[] getChildren(Object o) {
-		if (fIsWorkspacePatch) {
+		if (fIsWorkspacePatch)
 			return fDiffProjects;
-		}
 		if (fDiffs != null)
 			return fDiffs;
 		return new Object[0];

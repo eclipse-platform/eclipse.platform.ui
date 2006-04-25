@@ -17,6 +17,7 @@ import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.patch.CompareWithPatchAction.PatchWizardDialog;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -103,11 +104,12 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			// create scheduling rule based on the type of patch - single or workspace
 			ISchedulingRule scheduleRule= null;
 			if (fPatcher.isWorkspacePatch()) {
-				// workspace patch
+				// workspace patch 
 				scheduleRule= new MultiRule(fPatcher.getTargetProjects());
 			} else {
 				// single patch
-				scheduleRule= getTarget();
+				IResource resource= getTarget();
+				scheduleRule= ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
 			}
 
 			WorkspaceModifyOperation op= new WorkspaceModifyOperation(scheduleRule) {
