@@ -394,6 +394,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @param event the mouse move event
 	 */
 	private void handleMouseMove(MouseEvent event) {
+		fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		if (fCachedTextViewer != null) {
 			int line= toDocumentLineNumber(event.y);
 			Cursor cursor= (hasAnnotation(line) ? fHitDetectionCursor : null);
