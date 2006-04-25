@@ -1531,6 +1531,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private boolean isSameRemote(ICVSFile file, ICVSFile previousFile) throws CVSException {
 		String path = file.getRepositoryRelativePath();
 		String previousPath = previousFile.getRepositoryRelativePath();
+		
+		//Could be comparing two local files with no remotes
+		if (path == null && previousPath == null)
+			return true;
+		
 		return (path != null && previousPath != null && path.equals(previousPath));
 	}
 

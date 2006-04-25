@@ -13,15 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.HistoryPageSaveablePart;
@@ -32,44 +29,13 @@ import org.eclipse.team.ui.history.IHistoryPage;
  * other revisions and merge changes from other revisions into the workspace copy.
  */
 public class CompareWithRevisionAction extends WorkspaceAction {
-	
-	/**
-	 * Returns the selected remote file
-	 */
-	protected ICVSRemoteFile getSelectedRemoteFile() {
-		IResource[] resources = getSelectedResources();
-		if (resources.length != 1) return null;
-		if (!(resources[0] instanceof IFile)) return null;
-		IFile file = (IFile)resources[0];
-		try {
-			return (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
-		} catch (TeamException e) {
-			handle(e, null, null);
-			return null;
-		}
-	}
 
+	
 	/*
 	 * @see CVSAction#execute(IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		
-		// Setup holders
-		final ICVSRemoteFile[] file = new ICVSRemoteFile[] { null };
-		
-		// Get the selected file
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				file[0] = getSelectedRemoteFile();
-			}
-		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
-		
-		if (file[0] == null) {
-			// No revisions for selected file
-			MessageDialog.openWarning(getShell(), CVSUIMessages.CompareWithRevisionAction_noRevisions, CVSUIMessages.CompareWithRevisionAction_noRevisionsLong); // 
-			return;
-		}
-			
+					
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
