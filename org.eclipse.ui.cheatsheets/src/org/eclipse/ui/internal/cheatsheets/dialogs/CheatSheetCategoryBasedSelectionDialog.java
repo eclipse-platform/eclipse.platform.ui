@@ -65,6 +65,8 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  */
 public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		implements ISelectionChangedListener {
+	private static final String CHEAT_SHEET_SELECTION_HELP_ID = "org.eclipse.ui.cheatsheets.cheatSheetSelection"; //$NON-NLS-1$
+
 	private IDialogSettings settings;
 
 	private CheatSheetCollectionElement cheatsheetCategories;
@@ -212,6 +214,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		// top level group
 		Composite outerContainer = (Composite) super.createDialogArea(parent);
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, CHEAT_SHEET_SELECTION_HELP_ID);
 		GridLayout gridLayout = new GridLayout();
 		outerContainer.setLayout(gridLayout);
 		outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
