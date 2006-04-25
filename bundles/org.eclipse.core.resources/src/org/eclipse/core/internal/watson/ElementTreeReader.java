@@ -70,12 +70,9 @@ public class ElementTreeReader {
 	 * Returns the appropriate reader for the given version.
 	 */
 	public ElementTreeReader getReader(int formatVersion) throws IOException {
-		switch (formatVersion) {
-			case 1 :
-				return new ElementTreeReaderImpl_1(elementInfoFlattener);
-			default :
-				throw new IOException(Messages.watson_unknown);
-		}
+		if (formatVersion == 1)
+			return new ElementTreeReaderImpl_1(elementInfoFlattener);
+		throw new IOException(Messages.watson_unknown);
 	}
 
 	/**
