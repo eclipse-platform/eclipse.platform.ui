@@ -14,7 +14,6 @@ package org.eclipse.compare.internal.patch;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +49,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -77,6 +77,8 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.views.navigator.ResourceSorter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Shows the parsed patch file and any mismatches
@@ -284,7 +286,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL|GridData.HORIZONTAL_ALIGN_FILL));
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_PREVIEW_WIZARD_PAGE);
-
+		
 		setControl(composite);
 
 		initializeDialogUnits(parent);
@@ -372,6 +374,25 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			}
 		});
 
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection selection= event.getSelection();
+				if (selection instanceof TreeSelection) {
+					TreeSelection treeSel= (TreeSelection) selection;
+					Object res= treeSel.getFirstElement();
+					if (res != null) {
+						if (res instanceof DiffProject || res instanceof Diff) {
+							if (fTreeViewer.getExpandedState(res))
+								fTreeViewer.collapseToLevel(res, 1);
+							else
+								fTreeViewer.expandToLevel(res, 1);
+						}
+					}
+				}
+			}
+		});
+		
+		
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -382,7 +403,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 					PreviewPatchPage.this.fHunkViewer.setInput(createInput((Hunk) obj));
 				} else
 					PreviewPatchPage.this.fHunkViewer.setInput(null);
-
+				
 				fMatchProject.setEnabled(false);
 				//See if we need to enable match project button
 				if (fPatchWizard.getPatcher().isWorkspacePatch()&&obj instanceof DiffProject) {
@@ -392,6 +413,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			}
 
 		});
+		
 		fTreeViewer.setInput(null);
 	}
 
