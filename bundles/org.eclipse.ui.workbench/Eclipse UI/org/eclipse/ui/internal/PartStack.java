@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -1288,6 +1289,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         	return;
         }
 
+        if (!(part instanceof PartPane)) {
+			WorkbenchPlugin.log(NLS.bind(
+					WorkbenchMessages.PartStack_incorrectPartInFolder, part
+							.getID()));
+			return;
+		}
+        
         PartPane pane = (PartPane)part;
         
         PresentablePart presentablePart = new PresentablePart(pane, getControl().getParent());

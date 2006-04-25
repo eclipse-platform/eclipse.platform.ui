@@ -707,7 +707,7 @@ public class PageLayout implements IPageLayout {
         // If the ref part is in the page layout then create
         // a new folder and add the new view.
         LayoutPart refPart = getRefPart(refId);
-        if (refPart != null) {
+        if (refPart != null && (refPart instanceof PartPane || refPart instanceof PartPlaceholder)) {
             ViewStack newFolder = new ViewStack(rootLayoutContainer.page);
             rootLayoutContainer.replace(refPart, newFolder);
             newFolder.add(refPart);

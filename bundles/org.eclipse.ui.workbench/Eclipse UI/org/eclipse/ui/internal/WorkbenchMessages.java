@@ -675,6 +675,7 @@ public class WorkbenchMessages extends NLS {
 	public static String Perspective_unableToRestorePerspective;
 	public static String PageLayout_missingRefPart;
 	public static String PageLayout_duplicateRefPart;
+	public static String PartStack_incorrectPartInFolder;
 
 
 	// ==============================================================================
