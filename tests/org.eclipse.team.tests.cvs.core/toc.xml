@@ -79,10 +79,28 @@
             <topic label="Importing a zip over a shared project" href="html/00030.html">
             </topic>
         </topic>
-        <topic label="Resource History" href="html/00014.html">
+        <topic label="History View" href="html/00014.html">
             <topic label="Editor Linking" href="html/00018.html">
             </topic>
-            <topic label="Annotate" href="html/00024.html">
+            <topic label="Common Toolbar Buttons" href="html/toolbarButtonsUMFile00001.html">
+            </topic>
+            <topic label="Group Revisions by Date" href="html/groupByDateUMFile00001.html">
+            </topic>
+            <topic label="Local History for Unshared Files" href="html/localHistoryUnsharedFiles00001.html">
+                <topic label="Drag and Drop Unmapped File" href="html/DNDUMFile00001.html">
+                </topic>
+                <topic label="Show History Unmapped File" href="html/showHistoryUMFile00001.html">
+                </topic>
+            </topic>
+            <topic label="CVS History" href="html/cvsHistory00001.html">
+                <topic label="Drag and Drop CVS File" href="html/DNDCFile00001.html">
+                </topic>
+                <topic label="Annotate" href="html/00024.html">
+                </topic>
+            </topic>
+            <topic label="Pin History View" href="html/pinHistoryView00001.html">
+            </topic>
+            <topic label="Refresh" href="html/refreshHistory00002.html">
             </topic>
         </topic>
         <topic label="Concurrency" href="html/00020.html">
