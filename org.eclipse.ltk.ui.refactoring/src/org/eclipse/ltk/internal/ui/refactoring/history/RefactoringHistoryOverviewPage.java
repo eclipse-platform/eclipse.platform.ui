@@ -90,7 +90,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		initializeDialogUnits(parent);
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fHistoryControl= new BrowseRefactoringHistoryControl(composite, fControlConfiguration) {
 
 			protected void createBottomButtonBar(final Composite control) {
@@ -106,6 +106,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 			fHistoryControl.sortByProjects();
 		else
 			fHistoryControl.sortByDate();
+		fHistoryControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_HISTORY_WIZARD_PAGE);

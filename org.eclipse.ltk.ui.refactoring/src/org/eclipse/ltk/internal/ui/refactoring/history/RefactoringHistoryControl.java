@@ -383,7 +383,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		};
 		addMouseListener(listener);
 		fHistoryPane.getTopLeft().addMouseListener(listener);
-		fSplitterControl.setWeights(new int[] { 70, 30});
+		fSplitterControl.setWeights(new int[] { 65, 35});
 		createBottomButtonBar(this);
 		Dialog.applyDialogFont(this);
 	}
