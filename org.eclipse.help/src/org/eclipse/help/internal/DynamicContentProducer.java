@@ -77,7 +77,9 @@ public class DynamicContentProducer implements IHelpContentProducer {
 		InputStream in = null;
 		try {
 			in = openXHTMLFromPluginRaw(pluginID, file, locale.toString());
-			return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
+			if (in != null) {
+				return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
+			}
 		}
 		catch (Exception e) {
 			HelpPlugin.logError("An error occured in DynamicContentProducer while trying to determine the content type", e); //$NON-NLS-1$
