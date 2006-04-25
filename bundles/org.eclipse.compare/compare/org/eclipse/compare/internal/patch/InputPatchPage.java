@@ -154,13 +154,15 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		
 		buildPatchFileGroup(composite);
 		
-		// see if there are any better options presently selected
-		if (!adjustToCurrentTarget()) {
-			// get the persisted values
-			restoreWidgetValues();
-		}
+		// by default, whatever was used last was selected or 
+		// default to File if nothing has been selected
+		restoreWidgetValues();
 		
-		//No error for dialog opening
+		// see if there are any better options presently selected (i.e workspace
+		// or clipboard)
+		adjustToCurrentTarget();
+		
+		// No error for dialog opening
 		fShowError= false;
 		clearErrorMessage();
 		updateWidgetEnablements();
