@@ -295,6 +295,10 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			Point relativePosition= text.toControl(absolutePosition);
 
 			int widgetOffset= text.getOffsetAtLocation(relativePosition);
+			Point p= text.getLocationAtOffset(widgetOffset);
+			if (p.x > relativePosition.x)
+				widgetOffset--;
+			
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);

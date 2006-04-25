@@ -247,6 +247,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 
 			StyledText styledText= fTextViewer.getTextWidget();
 			int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
+			Point p= styledText.getLocationAtOffset(widgetOffset);
+			if (p.x > x)
+				widgetOffset--;
 
 			if (fTextViewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
