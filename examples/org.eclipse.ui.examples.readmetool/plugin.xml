@@ -24,7 +24,7 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="%ActionSet.name"
-            visible="true"
+            visible="false"
             id="org_eclipse_ui_examples_readmetool_actionSet">
          <menu
                label="%ActionSet.menu"
@@ -366,6 +366,12 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.ui.examples.readmetool.ReadmePreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation targetID="org_eclipse_ui_examples_readmetool_actionSet">
+         <part id="org.eclipse.ui.examples.readmetool.ReadmeEditor"/>
+      </actionSetPartAssociation>
    </extension>
 
 </plugin>
