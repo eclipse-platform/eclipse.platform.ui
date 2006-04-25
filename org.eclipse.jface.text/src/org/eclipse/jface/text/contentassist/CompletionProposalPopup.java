@@ -22,6 +22,9 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -45,8 +48,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -59,6 +60,10 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
+
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 
 /**
@@ -183,6 +188,22 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
+	private final class CommandKeyListener extends KeyAdapter {
+		public void keyPressed(KeyEvent e) {
+			if (!Helper.okToUse(fProposalShell))
+				return;
+			
+			int accelerator= SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
+			KeySequence sequence= KeySequence.getInstance(SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
+			if (sequence.equals(fCommandSequence))
+				if (fContentAssistant.isPrefixCompletionEnabled())
+					incrementalComplete();
+				else
+					showProposals(false);
+			
+		}
+	}
+	
 	/** The associated text viewer. */
 	private ITextViewer fViewer;
 	/** The associated content assistant. */
@@ -321,6 +342,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.2
 	 */
 	private String fEmptyMessage= null;
+	/**
+	 * The invoking command sequence, possibly <code>null</code>.
+	 *
+	 * @since 3.2
+	 */
+	private KeySequence fCommandSequence= KeySequence.getInstance();
 
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -549,7 +576,38 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
+		
+		addCommandSupport(fProposalTable);
 	}
+
+	/**
+	 * Adds command support to the given control.
+	 * 
+	 * @param control the control to watch for focus
+	 * @since 3.2
+	 */
+    private void addCommandSupport(final Control control) {
+    	fCommandSequence= fContentAssistant.getTriggerSequence();
+    	if (!fCommandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
+    		control.addFocusListener(new FocusListener() {
+    			private CommandKeyListener fCommandKeyListener;
+    			public void focusGained(FocusEvent e) {
+    				if (Helper.okToUse(control)) {
+    					if (fCommandKeyListener == null) {
+    						fCommandKeyListener= new CommandKeyListener();
+    						fProposalTable.addKeyListener(fCommandKeyListener);
+    					}
+    				}
+    			}
+    			public void focusLost(FocusEvent e) {
+    				if (fCommandKeyListener != null) {
+    					control.removeKeyListener(fCommandKeyListener);
+    					fCommandKeyListener= null;
+    				}
+    			}
+    		});
+    	}
+    }
 
 	/**
 	 * Returns the background color to use.

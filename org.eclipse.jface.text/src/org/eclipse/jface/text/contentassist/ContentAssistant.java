@@ -58,6 +58,7 @@ import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.TextUtilities;
 
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -66,7 +67,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  * The standard implementation of the <code>IContentAssistant</code> interface. Usually, clients
  * instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
 	/**
 	 * A generic closer class used to monitor various interface events in order to determine whether
@@ -805,6 +806,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	private long fLastAutoActivation= Long.MIN_VALUE;
+	/**
+	 * The iteration key sequence to listen for, or <code>null</code>.
+	 *
+	 * @since 3.2
+	 */
+	private KeySequence fTriggerSequence= KeySequence.getInstance();
 
 
 	/**
@@ -1933,6 +1940,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void enablePrefixCompletion(boolean enabled) {
 		fIsPrefixCompletionEnabled= enabled;
 	}
+	
+	/**
+	 * Returns the prefix completion state.
+	 * 
+     * @return <code>true</code> if prefix completion is enabled, <code>false</code> otherwise
+     * @since 3.2
+     */
+    boolean isPrefixCompletionEnabled() {
+	    return fIsPrefixCompletionEnabled;
+    }
 
 	/**
 	 * Returns whether the content assistant proposal popup has the focus.
@@ -2098,5 +2115,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			ICompletionListener listener= (ICompletionListener) it.next();
 			listener.selectionChanged(proposal, smartToggle);
 		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension3#setInvocationTrigger(org.eclipse.jface.bindings.keys.KeySequence)
+	 * @since 3.2
+	 */
+	public void setRepeatedInvocationTrigger(KeySequence sequence) {
+		Assert.isNotNull(sequence);
+		fTriggerSequence= sequence;
+	}
+
+	/**
+	 * Returns the repeated invocation key sequence.
+	 * @return the repeated invocation key sequence
+	 * @since 3.2
+	 */
+	KeySequence getTriggerSequence() {
+		return fTriggerSequence;
 	}
 }

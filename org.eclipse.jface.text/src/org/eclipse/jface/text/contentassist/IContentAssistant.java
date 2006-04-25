@@ -49,6 +49,12 @@ import org.eclipse.jface.text.ITextViewer;
  *				<li>control over the behavior when no proposals are available</li>
  *			</ul>
  * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension3} since version 3.2 introducing
+ *		the following function:
+ *			<ul>
+ *				<li>a key-sequence to listen for in repeated invocation mode</li>
+ *			</ul>
+ * </li>
  * </ul>
  * </p>
  * <p>
