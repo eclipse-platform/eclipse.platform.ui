@@ -285,22 +285,22 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 	
 	// Test methods that integrate the eventLayout and everything else --------
 	
-	public void testFindAllDayCalendarable_ForwardNoSelection() throws Exception {
+	public void testFindAllDayCalendarable_ForwardNoData() throws Exception {
 		String[][] data = new String[][] {
-				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+				{"5", "5", "2", "3", "5", "5"}
 		};
 		setupModel(data);
 		Calendarable result = cm.findAllDayCalendarable(0, true, null);
 		assertNull("No calendarables forward", result);
 	}
 
-	public void testFindAllDayCalendarable_BackwardNoSelection() throws Exception {
+	public void testFindAllDayCalendarable_BackwardNoData() throws Exception {
 		String[][] data = new String[][] {
-				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
+				{"5", "5", "2", "3", "5", "5"}
 		};
 		Calendarable[] allDayEvents = getAllDayEvents(data);
 		Calendarable result = cm.findAllDayCalendarable(0, false, null);
-		assertEquals("Should find the last event", allDayEvents[allDayEvents.length-1], result);
+		assertNull("No calendarables forward", result);
 	}
 	
 	public void testFindAllDayCalendarable_BackwardButAtFirst() throws Exception {

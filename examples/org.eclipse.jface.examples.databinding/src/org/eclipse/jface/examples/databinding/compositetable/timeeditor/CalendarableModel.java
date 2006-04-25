@@ -471,6 +471,9 @@ public class CalendarableModel {
 	public Calendarable findAllDayCalendarable(int day, boolean forward, Calendarable selection) {
 		Calendarable[] calendarables = getAllDayCalendarables(day);
 		if (forward) {
+			if (calendarables.length < 1) {
+				return null;
+			}
 			if (selection == null) {
 				return null;
 			} else if (selection == calendarables[calendarables.length-1]) {
@@ -482,6 +485,9 @@ public class CalendarableModel {
 				}
 			}
 		} else {
+			if (calendarables.length < 1) {
+				return null;
+			}
 			if (selection == null) {
 				return calendarables[calendarables.length-1];
 			} else if (selection == calendarables[0]) {
@@ -493,17 +499,18 @@ public class CalendarableModel {
 				}
 			}
 		}
-		return calendarables[3];
+		return null;
 	}
 	
 	/**
 	 * @param day The day to search
 	 * @param currentRow The first row to search
+	 * @param stopPosition The row to stop searching on or -1 to search to the first/last element 
 	 * @param forward true if we're going forward; false if we're searching backward
-	 * @param selection The currently selected Calendarable or null if none
+	 * @param selection The Calendarable associated with currentRow or null if none
 	 * @return The next Calendarable in the specified direction where result != selection; null if none
 	 */
-	public Calendarable findTimedCalendarable(int day, int currentRow, boolean forward, Calendarable selection) {
+	public Calendarable findTimedCalendarable(int day, int currentRow, int stopPosition, boolean forward, Calendarable selection) {
 		Calendarable[][] eventLayoutForDay = getEventLayout(day);
 		if (eventLayoutForDay == null) {
 			throw new IllegalArgumentException("Day " + day + " has no event data!!!");
@@ -519,7 +526,10 @@ public class CalendarableModel {
 		
 		int currentColumn = startColumn;
 		if (forward) {
-			for (int row = currentRow; row < eventLayoutForDay[0].length; row++) {
+			if (stopPosition == -1) {
+				stopPosition = eventLayoutForDay[0].length;
+			}
+			for (int row = currentRow; row < stopPosition; row++) {
 				while (true) {
 					Calendarable candidate = eventLayoutForDay[currentColumn][row];
 					if (candidate != null && candidate != selection) {
@@ -538,14 +548,27 @@ public class CalendarableModel {
 				}
 			}
 		} else {
-			for (int row = currentRow; row >= 0; --row) {
+			if (stopPosition == -1) {
+				stopPosition = 0;
+			}
+			for (int row = currentRow; row >= stopPosition; --row) {
 				while (true) {
 					Calendarable candidate = eventLayoutForDay[currentColumn][row];
-					if (candidate != null && candidate != selection) {
+					if (candidate != null && candidate != selection && candidate.getUpperLeftPositionInDayRowCoordinates().y == row) {
 						if (selection == null || 
 							candidate.getStartTime().before(selection.getStartTime()) || 
 							(currentColumn < startColumn && !candidate.getStartTime().after(selection.getStartTime()))) 
 						{
+							if (selection == null && currentColumn > 0) {
+								// The candidate could have an earlier start time
+								// than some other column
+								for (int earlierColumn = currentColumn-1; earlierColumn >= 0; --earlierColumn) {
+									Calendarable newCandidate = eventLayoutForDay[earlierColumn][row];
+									if (newCandidate.getStartTime().after(candidate.getStartTime())) {
+										candidate = newCandidate;
+									}
+								}
+							}
 							return candidate;
 						}
 					}
@@ -583,11 +606,11 @@ public class CalendarableModel {
 			result = findAllDayCalendarable(selectedDay, true, selection);
 			if (result != null)
 				return result;
-			result = findTimedCalendarable(selectedDay, 0, true, null);
+			result = findTimedCalendarable(selectedDay, 0, -1, true, null);
 			if (result != null)
 				return result;
 		} else {
-			result = findTimedCalendarable(selectedDay, selectedRow, true, selection);
+			result = findTimedCalendarable(selectedDay, selectedRow, -1, true, selection);
 			if (result != null) {
 				return result;
 			}
@@ -603,7 +626,7 @@ public class CalendarableModel {
 			}
 			
 			// Nope, search for the first timed event
-			result = findTimedCalendarable(currentDay, 0, true, null);
+			result = findTimedCalendarable(currentDay, 0, -1, true, null);
 			if (result != null) {
 				return result;
 			}
@@ -623,7 +646,7 @@ public class CalendarableModel {
 		}
 		
 		// Search the last of the timed-events
-		result = findTimedCalendarable(selectedDay, 0, true, selection);
+		result = findTimedCalendarable(selectedDay, 0, selectedRow-1, true, selection);
 		if (result != null) {
 			return result;
 		}
@@ -649,20 +672,61 @@ public class CalendarableModel {
 	 */
 	public Calendarable findPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection, boolean isAllDayEventRow) {
 		Calendarable result = null;
+		
+		// Search to the beginning of the current day
 		if (!isAllDayEventRow) {
 			// search timed events to the beginning of the day
-			result = findTimedCalendarable(selectedDay, selectedRow, false, selection);
+			result = findTimedCalendarable(selectedDay, selectedRow, -1, false, selection);
+			if (result != null)
+				return result;
 			
 			// Search all-day events
 			result = findAllDayCalendarable(selectedDay, false, null);
 			if (result != null)
 				return result;
 		} else {
-			
+			result = findAllDayCalendarable(selectedDay, false, selection);
+			if (result != null)
+				return result;
 		}
 		
+		// Search all days other than selectedDay
+		int currentDay = previousDay(selectedDay);
+		while (currentDay != selectedDay) {
+			// Nope, search for the first timed event
+			result = findTimedCalendarable(currentDay, 
+					getEventLayout(selectedDay)[0].length-1, 
+					-1, false, null);
+			if (result != null) {
+				return result;
+			}
+			
+			// Is there an all-day event to select?
+			Calendarable[] allDayCalendarables = getAllDayCalendarables(currentDay);
+			if (allDayCalendarables.length > 0) {
+				return allDayCalendarables[allDayCalendarables.length-1];
+			}
+			
+			currentDay = previousDay(currentDay);
+		}
 		
+		// Search from the end of the current day to the current time
+		result = findTimedCalendarable(currentDay, 
+				getEventLayout(selectedDay)[0].length-1, 
+				selectedRow+1, false, null);
+		if (result != null) {
+			return result;
+		}
+
 		return null;
+	}
+
+	private int previousDay(int selectedDay) {
+		--selectedDay;
+		if (selectedDay < 0) {
+			selectedDay = numberOfDays-1;
+		}
+		return selectedDay;
 	}
 }
 
