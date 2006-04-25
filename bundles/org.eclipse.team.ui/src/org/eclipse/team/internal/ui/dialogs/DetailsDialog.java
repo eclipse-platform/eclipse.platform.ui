@@ -97,6 +97,10 @@ abstract public class DetailsDialog extends TrayDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(title);
+        String helpContextId = getHelpContextId();
+        if (helpContextId != null) {
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, helpContextId);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -199,7 +203,7 @@ abstract public class DetailsDialog extends TrayDialog {
 	
     /**
      * Return the help context id to be used for the dialog.
-     * This context Id will be registed by this class.
+     * This context Id will be registered by this class.
      * By default, this method returns <code>null</code>.
      * @return the help context id to be used for the dialog.
      */
@@ -209,7 +213,7 @@ abstract public class DetailsDialog extends TrayDialog {
 
     /**
 	 * Return whether the main area should grab excess vertical space.
-	 * The default is <code>true</code> but sublcasses can override
+	 * The default is <code>true</code> but subclasses can override
 	 * in cases where the main is more or less fixed but the details
 	 * needs to grab.
      * @return whether the main area should grab excess vertical space
