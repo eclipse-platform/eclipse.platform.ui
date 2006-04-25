@@ -212,7 +212,7 @@ public class SchedulerStartup implements IStartup {
 			// automatically start another job
 			if (jobListener != null)
 				Platform.getJobManager().removeJobChangeListener(jobListener);
-			Platform.getJobManager().cancel(job);
+			Platform.getJobManager().cancel(automaticJobFamily);
 		}
 		if (jobListener == null) {
 			// using reflection to avoid premature class loading
