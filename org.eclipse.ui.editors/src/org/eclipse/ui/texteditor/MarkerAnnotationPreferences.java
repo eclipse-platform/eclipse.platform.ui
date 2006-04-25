@@ -22,6 +22,7 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
@@ -554,12 +555,12 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private ImageDescriptor getImageDescriptor(String iconPath, IConfigurationElement element) {
-		String pluginId= element.getNamespace();
+		String pluginId= element.getContributor().getName();
 		Bundle bundle= Platform.getBundle(pluginId);
 		if (bundle == null)
 			return null;
 
-		URL url= Platform.find(bundle, new Path(iconPath));
+		URL url= FileLocator.find(bundle, new Path(iconPath), null);
 		if (url != null)
 			return ImageDescriptor.createFromURL(url);
 		

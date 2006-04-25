@@ -109,7 +109,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 		for (int i= 0; i < extensions.length; i++) {
 			// TODO create half-order over contributions
 			if (extensions[i].getName().equals(CONTEXT_TYPE)) {
-				String id= extensions[i].getAttributeAsIs(ID);
+				String id= extensions[i].getAttribute(ID);
 				if (contextTypeId.equals(id))
 					return createContextType(extensions[i]);
 			}
@@ -132,7 +132,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 		List resolvers= new ArrayList();
 		for (int i= 0; i < extensions.length; i++) {
 			if (extensions[i].getName().equals(RESOLVER)) {
-				String declaredId= extensions[i].getAttributeAsIs(CONTEXT_TYPE_ID);
+				String declaredId= extensions[i].getAttribute(CONTEXT_TYPE_ID);
 				if (contextTypeId.equals(declaredId)) {
 					try {
 						TemplateVariableResolver resolver= createResolver(extensions[i]);
@@ -154,7 +154,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	}
 
 	private static TemplateContextType createContextType(IConfigurationElement element) throws CoreException {
-		String id= element.getAttributeAsIs(ID);
+		String id= element.getAttribute(ID);
 		try {
 			TemplateContextType contextType= (TemplateContextType) element.createExecutableExtension(CLASS);
 			String name= element.getAttribute(NAME);
@@ -172,7 +172,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 
 	private static TemplateVariableResolver createResolver(IConfigurationElement element) throws CoreException {
 		try {
-			String type= element.getAttributeAsIs(TYPE);
+			String type= element.getAttribute(TYPE);
 			if (type != null) {
 
 				TemplateVariableResolver resolver= (TemplateVariableResolver) element.createExecutableExtension(CLASS);

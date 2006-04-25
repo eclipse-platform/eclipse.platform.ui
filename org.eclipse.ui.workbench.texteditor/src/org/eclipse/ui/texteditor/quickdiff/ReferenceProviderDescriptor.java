@@ -109,7 +109,7 @@ public class ReferenceProviderDescriptor {
 	 */
 	public boolean isPluginLoaded() {
 		if (fBundle == null)
-			fBundle= Platform.getBundle(fConfiguration.getNamespace());
+			fBundle= Platform.getBundle(fConfiguration.getContributor().getName());
 		return (fBundle != null && fBundle.getState() == Bundle.ACTIVE);
 	}
 

@@ -133,7 +133,7 @@ public abstract class ConfigurationElementSorter {
 
 			for (int i= 0; i < length; i++) {
 			    IConfigurationElement configElement= getConfigurationElement(elements[i]);
-				Bundle bundle= Platform.getBundle(configElement.getNamespace());
+				Bundle bundle= Platform.getBundle(configElement.getContributor().getName());
 				fDescriptorMapping.put(elements[i], bundle.getSymbolicName());
 				fBundleSet.add(bundle);
 			}

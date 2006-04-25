@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -118,18 +119,18 @@ public class ContributionTemplateStore extends TemplateStore {
 	}
 
 	private void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
-		String file= element.getAttributeAsIs(FILE);
+		String file= element.getAttribute(FILE);
 		if (file != null) {
-			Bundle plugin = Platform.getBundle(element.getNamespace());
-			URL url= Platform.find(plugin, Path.fromOSString(file));
+			Bundle plugin = Platform.getBundle(element.getContributor().getName());
+			URL url= FileLocator.find(plugin, Path.fromOSString(file), null);
 			if (url != null) {
 				ResourceBundle bundle= null;
 				InputStream bundleStream= null;
 				InputStream stream= null;
 				try {
-					String translations= element.getAttributeAsIs(TRANSLATIONS);
+					String translations= element.getAttribute(TRANSLATIONS);
 					if (translations != null) {
-						URL bundleURL= Platform.find(plugin, Path.fromOSString(translations));
+						URL bundleURL= FileLocator.find(plugin, Path.fromOSString(translations), null);
 						if (bundleURL != null) {
 							bundleStream= bundleURL.openStream();
 							bundle= new PropertyResourceBundle(bundleStream);
@@ -213,10 +214,10 @@ public class ContributionTemplateStore extends TemplateStore {
 	}
 
 	private void createTemplate(Collection map, IConfigurationElement element) {
-		String contextTypeId= element.getAttributeAsIs(CONTEXT_TYPE_ID);
+		String contextTypeId= element.getAttribute(CONTEXT_TYPE_ID);
 		// log failures since extension point id and name are mandatory
 		if (contextExists(contextTypeId)) {
-			String id= element.getAttributeAsIs(ID);
+			String id= element.getAttribute(ID);
 			if (isValidTemplateId(id)) {
 
 				String name= element.getAttribute(NAME);

@@ -112,7 +112,7 @@ public class SpellingEngineDescriptor {
 	 */
 	private boolean hasPreferences() {
 		if (fHasPreferences == null)
-			if (fConfiguration.getAttributeAsIs(PREFERENCES_CLASS_ATTRIBUTE) == null)
+			if (fConfiguration.getAttribute(PREFERENCES_CLASS_ATTRIBUTE) == null)
 				fHasPreferences= Boolean.FALSE;
 			else
 				fHasPreferences= Boolean.TRUE;
@@ -138,7 +138,7 @@ public class SpellingEngineDescriptor {
 	 */
 	public boolean isPluginLoaded() {
 		if (fBundle == null)
-			fBundle= Platform.getBundle(fConfiguration.getNamespace());
+			fBundle= Platform.getBundle(fConfiguration.getContributor().getName());
 		return (fBundle != null && fBundle.getState() == Bundle.ACTIVE);
 	}
 
