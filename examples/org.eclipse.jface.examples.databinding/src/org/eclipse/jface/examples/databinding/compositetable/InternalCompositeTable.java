@@ -761,11 +761,18 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 *            the row to select
 	 */
 	public void setSelection(int column, int row) {
-		if (row == currentRow)
-			internalSetSelection(column, row, false);
-		else {
-			if (fireRequestRowChangeEvent())
-				internalSetSelection(column, row, true);
+		int topRowDelta = computeTopRowDelta(row);
+		if (topRowDelta != 0) {
+			setTopRow(topRow + topRowDelta);
+			row += -1 * topRowDelta;
+			internalSetSelection(column, row, true);
+		} else {
+			if (row == currentRow)
+				internalSetSelection(column, row, false);
+			else {
+				if (fireRequestRowChangeEvent())
+					internalSetSelection(column, row, true);
+			}
 		}
 	}
 
@@ -1175,12 +1182,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @return true if the display needed to be scrolled; false otherwise
 	 */
 	public boolean makeFocusedRowVisible() {
-		int topRowDelta = topRow - slider.getSelection();
-		if (currentRow < 0) {
-			topRowDelta = currentRow;
-		} else if (currentRow >= getNumRowsVisible()) {
-			topRowDelta = currentRow - getNumRowsVisible() + 1;
-		} else {
+		int topRowDelta = computeTopRowDelta(currentRow);
+		if (topRowDelta == 0) {
 			return false;
 		}
 		currentRow += -1 * topRowDelta;
@@ -1189,7 +1192,19 @@ public class InternalCompositeTable extends Composite implements Listener {
 		getControl(currentColumn, currentRow).setFocus(); // ?? Can I get away with avoiding asyncExec here ??
 		return true;
 	}
-
+	
+	private int computeTopRowDelta(int row) {
+		int topRowDelta;
+		if (row < 0) {
+			topRowDelta = row;
+		} else if (row >= getNumRowsVisible()) {
+			topRowDelta = row - getNumRowsVisible() + 1;
+		} else {
+			return 0;
+		}
+		return topRowDelta;
+	}
+	
 	/**
 	 * The SelectionListener for the table's slider control.
 	 */
