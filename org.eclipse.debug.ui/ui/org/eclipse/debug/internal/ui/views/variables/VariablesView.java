@@ -113,8 +113,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -141,7 +144,8 @@ import com.ibm.icu.text.MessageFormat;
 public class VariablesView extends AbstractDebugView implements IDebugContextListener,
 																	IPropertyChangeListener,
 																	IValueDetailListener,
-																	IDebugExceptionHandler {
+																	IDebugExceptionHandler,
+																	IPerspectiveListener {
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -363,7 +367,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
 	private ConfigureColumnsAction fConfigureColumnsAction;
     
-    protected static final String PREF_STATE_MEMENTO = "pref_state_memento"; //$NON-NLS-1$
+    protected String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
 
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
@@ -371,7 +375,17 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".Detail"; //$NON-NLS-1$
 
 	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
-	protected static final String SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + ".variablesView.SASH_WEIGHTS"; //$NON-NLS-1$
+	
+	/**
+	 * the pref name for the view part of the sashform
+	 * @since 3.2 
+	 */
+	protected static final String SASH_VIEW_PART = DebugUIPlugin.getUniqueIdentifier() + ".SASH_VIEW_PART"; //$NON-NLS-1$
+	/**
+	 * thepref name for the details part of the sashform
+	 * @since 3.2
+	 */
+	protected static final String SASH_DETAILS_PART = DebugUIPlugin.getUniqueIdentifier() + ".SASH_DETAILS_PART"; //$NON-NLS-1$
 	
 	/**
 	 * Key for "Find..." action.
@@ -411,7 +425,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void dispose() {
 		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
 		DebugContextManager.getDefault().removeDebugContextListener(this, getSite().getWorkbenchWindow());
-		//getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
 		Viewer viewer = getViewer();
@@ -572,7 +586,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				});
 		
 		createDetailsViewer();
-		getSashForm().setMaximizedControl(variablesViewer.getControl());
+		fSashForm.setMaximizedControl(variablesViewer.getControl());
 
 		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -593,7 +607,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-        
+		PREF_STATE_MEMENTO = PREF_STATE_MEMENTO + site.getId();
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         String string = store.getString(PREF_STATE_MEMENTO);
         if(string.length() > 0) {
@@ -610,33 +624,22 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
         		} catch (IOException e){}
         	}
         }
-        initSashWeights();
-    }
-    
-    protected void initSashWeights() {
-        IMemento memento = getMemento();
-		if (memento != null) {
-			Integer bigI = memento.getInteger(SASH_WEIGHTS+"-Length"); //$NON-NLS-1$
-			if (bigI == null) {
-				return;
+        IMemento mem = getMemento();
+		if (mem != null) {
+			Integer sw = mem.getInteger(SASH_VIEW_PART);
+			if(sw != null) {
+				setLastSashWeights(new int[] {sw.intValue(), mem.getInteger(SASH_DETAILS_PART).intValue()});
 			}
-			int numWeights = bigI.intValue();
-			int[] weights = new int[numWeights];
-			for (int i = 0; i < numWeights; i++) {
-				bigI = memento.getInteger(SASH_WEIGHTS+"-"+i); //$NON-NLS-1$
-				if (bigI == null) {
-					return;
-				}
-				weights[i] = bigI.intValue();
-			}
-			if (weights.length > 0){
-				setLastSashWeights(weights);
+			else {
+				setLastSashWeights(DEFAULT_SASH_WEIGHTS);
 			}
 		}
-	}
-	
+		site.getWorkbenchWindow().addPerspectiveListener(this);
+    }
     
-    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#partClosed(org.eclipse.ui.IWorkbenchPart)
+	 */
 	public void partClosed(IWorkbenchPart part) {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(bout);
@@ -663,13 +666,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		SashForm sashForm = getSashForm();
-		if (sashForm != null) {
-	        int[] weights = sashForm.getWeights();
-			memento.putInteger(SASH_WEIGHTS+"-Length", weights.length); //$NON-NLS-1$
-			for (int i = 0; i < weights.length; i++) {
-				memento.putInteger(SASH_WEIGHTS+"-"+i, weights[i]); //$NON-NLS-1$
-			}
+		if (fSashForm != null) {
+	        int[] weights = fSashForm.getWeights();
+			memento.putInteger(SASH_VIEW_PART, weights[0]);
+			memento.putInteger(SASH_DETAILS_PART, weights[1]);
 		}
 		getVariablesViewer().saveState(memento);
 	}
@@ -685,11 +685,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fModelPresentation = new VariablesViewModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
+		
 		// create the sash form that will contain the tree viewer & text viewer
-		setSashForm(new SashForm(parent, SWT.NONE));
+		fSashForm = new SashForm(parent, SWT.NONE);
 
 		// add tree viewer
-		final VariablesViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
+		final VariablesViewer variablesViewer = new VariablesViewer(fSashForm, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)
@@ -716,7 +717,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void createDetailsViewer() {
 		// Create & configure a SourceViewer
-		SourceViewer detailsViewer= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
+		SourceViewer detailsViewer= new SourceViewer(fSashForm, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		fDetailViewer = detailsViewer;
 		detailsViewer.setDocument(getDetailDocument());
 		detailsViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
@@ -768,7 +769,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			hideDetailPane();
 		} else {
 			int vertOrHoriz = orientation.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
-			getSashForm().setOrientation(vertOrHoriz);	
+			fSashForm.setOrientation(vertOrHoriz);	
 			if (IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN.equals(fCurrentDetailPaneOrientation)) {
 				showDetailPane();	
 			}
@@ -779,14 +780,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	
 	private void hideDetailPane() {
 		if (fToggledDetailOnce) {
-			setLastSashWeights(getSashForm().getWeights());
+			setLastSashWeights(fSashForm.getWeights());
 		}
-		getSashForm().setMaximizedControl(getViewer().getControl());		
+		fSashForm.setMaximizedControl(getViewer().getControl());		
 	}
 	
 	private void showDetailPane() {
-		getSashForm().setMaximizedControl(null);
-		getSashForm().setWeights(getLastSashWeights());
+		fSashForm.setMaximizedControl(null);
+		fSashForm.setWeights(getLastSashWeights());
 		populateDetailPane();
 		revealTreeSelection();
 		fToggledDetailOnce = true;		
@@ -1086,7 +1087,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
                         clearStatusLine();
                         getVariablesViewSelectionProvider().fireSelectionChanged(event);				
                         // if the detail pane is not visible, don't waste time retrieving details
-                        if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
+                        if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
                             return;
                         }	
                         
@@ -1113,8 +1114,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * 
 	 * @param event
 	 */
-	protected void treeSelectionChanged(SelectionChangedEvent event) {
-	}
+	protected void treeSelectionChanged(SelectionChangedEvent event) {}
 	
 	/**
 	 * Ask the variables tree for its current selection, and use this to populate
@@ -1317,12 +1317,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return fDetailViewer;
 	}
 	
+	/**
+	 * Returns the sashform
+	 * @return the current sashform
+	 */
 	protected SashForm getSashForm() {
 		return fSashForm;
-	}
-	
-	private void setSashForm(SashForm sashForm) {
-		fSashForm = sashForm;
 	}
 	
 	/* (non-Javadoc)
@@ -1410,7 +1410,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getDefaultControl()
 	 */
 	protected Control getDefaultControl() {
-		return getSashForm();
+		return fSashForm;
 	}	
 	
 	/**
@@ -1511,7 +1511,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @see org.eclipse.debug.ui.IDetailSite#getDetailViewerParent()
 	 */
 	public Composite getDetailViewerParent() {
-		return getSashForm();
+		return fSashForm;
 	}
 
 	/* (non-Javadoc)
@@ -1650,5 +1650,20 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager(); 
 		manager.setErrorMessage(null);
 		manager.setMessage(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
+	 */
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
+	 */
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+		if(changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
+			setLastSashWeights(DEFAULT_SASH_WEIGHTS);
+			fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+		}
 	}	
 }

@@ -27,7 +27,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
  
@@ -91,15 +90,6 @@ public class ExpressionView extends VariablesView {
 		// update actions
 		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
-	
-	/**
-	 * Do nothing - the input to this view never changes - 
-	 * it is always the expression manager.
-	 * 
-	 * @see VariablesView#setViewerInput(IStructuredSelection)
-	 */
-	protected void setViewerInput(Object obj) {
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#treeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
@@ -149,12 +139,6 @@ public class ExpressionView extends VariablesView {
     	if (fState != null) {
     		fState.restoreState(getVariablesViewer());
     	}
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-     */
-    public void saveState(IMemento memento) {
     }
     
 	/* (non-Javadoc)
