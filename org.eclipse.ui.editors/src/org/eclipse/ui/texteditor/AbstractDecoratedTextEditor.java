@@ -252,6 +252,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private boolean fIsRevisionInformationShown;
+	/**
+	 * The revision information displayed on the ruler, possibly <code>null</code>.
+	 * @since 3.2
+	 */
+	private RevisionInformation fRevisionInfo;
 
 	/**
 	 * Creates a new text editor.
@@ -475,6 +480,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			return;
 		
 		revisionColumn.setRevisionInformation(info);
+		fRevisionInfo= info;
 		fIsRevisionInformationShown= true;
 	}
 	
@@ -490,6 +496,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			((IRevisionRulerColumn) fLineNumberRulerColumn).setRevisionInformation(null);
 		
 		fIsRevisionInformationShown= false;
+		fRevisionInfo= null;
 	}
 	
 	/**
@@ -711,9 +718,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IVerticalRuler v= getVerticalRuler();
 		if (v instanceof CompositeRuler) {
 			CompositeRuler c= (CompositeRuler) v;
-			if (show && fChangeRulerColumn == null)
+			if (show && fChangeRulerColumn == null) {
 				c.addDecorator(1, createChangeRulerColumn());
-			else if (!show && fChangeRulerColumn != null) {
+				if (fIsRevisionInformationShown) {
+					IRevisionRulerColumn column= getRevisionColumn();
+					column.setRevisionInformation(fRevisionInfo);
+				}
+			} else if (!show && fChangeRulerColumn != null) {
 				c.removeDecorator(fChangeRulerColumn);
 				fChangeRulerColumn= null;
 			}
@@ -731,6 +742,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				CompositeRuler c= (CompositeRuler) v;
 				c.addDecorator(1, createLineNumberRulerColumn());
 			}
+		}
+
+		if (fIsRevisionInformationShown) {
+			IRevisionRulerColumn column= getRevisionColumn();
+			column.setRevisionInformation(fRevisionInfo);
 		}
 	}
 
@@ -1488,6 +1504,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				showChangeInformation(false);
 		}
 		
+		if (fIsRevisionInformationShown)
+			hideRevisionInformation();
+			
 		super.doSetInput(input);
 
 		if (isPrefQuickDiffAlwaysOn())
