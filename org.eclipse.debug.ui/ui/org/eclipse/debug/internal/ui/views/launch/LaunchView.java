@@ -280,7 +280,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	protected Viewer createViewer(Composite parent) {
 		AsynchronousTreeViewer viewer = new LaunchViewer(parent, this);
 		viewer.setContext(new PresentationContext(this));
-        viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
         
         viewer.addSelectionChangedListener(this);
         viewer.getControl().addKeyListener(new KeyAdapter() {

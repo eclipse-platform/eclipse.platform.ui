@@ -17,7 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
@@ -150,12 +154,21 @@ public abstract class AsynchronousModel {
 		if (!fModelProxies.containsKey(element)) {
 			IModelProxyFactoryAdapter modelProxyFactory = getModelProxyFactoryAdapter(element);
 			if (modelProxyFactory != null) {
-				IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+				final IModelProxy proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
 				if (proxy != null) {
-					proxy.init(getPresentationContext());
 					fModelProxies.put(element, proxy);
-					getViewer().modelProxyAdded(proxy);
-					proxy.installed();
+					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
+						protected IStatus run(IProgressMonitor monitor) {
+							if (!monitor.isCanceled()) {
+								proxy.init(getPresentationContext());
+								getViewer().modelProxyAdded(proxy);
+								proxy.installed();
+							}
+							return Status.OK_STATUS;
+						} 
+					};
+					job.setSystem(true);
+					job.schedule();
 				}
 			}
 		}
@@ -278,7 +291,7 @@ public abstract class AsynchronousModel {
 	 * @param element model element
 	 * @return associated nodes or <code>null</code>
 	 */
-	public ModelNode[] getNodes(Object element) {
+	public synchronized ModelNode[] getNodes(Object element) {
 		return (ModelNode[]) fElementToNodes.get(element);
 	}
 	
