@@ -362,11 +362,9 @@ class ResourceTree implements IResourceTree {
 			IResource child = members[i];
 			switch (child.getType()) {
 				case IResource.FILE :
-					if (child.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-						// ignore the .project file for now and delete it last
-					} else {
+					// ignore the .project file for now and delete it last
+					if (!IProjectDescription.DESCRIPTION_FILE_NAME.equals(child.getName()))
 						deletedChildren &= internalDeleteFile((IFile) child, flags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
-					}
 					break;
 				case IResource.FOLDER :
 					deletedChildren &= internalDeleteFolder((IFolder) child, flags, Policy.subMonitorFor(monitor, Policy.totalWork / members.length));
