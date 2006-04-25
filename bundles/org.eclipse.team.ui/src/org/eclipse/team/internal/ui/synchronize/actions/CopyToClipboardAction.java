@@ -116,7 +116,7 @@ class CopyToClipboardAction extends SelectionListenerAction {
 			ILabelProvider provider = service.createCommonLabelProvider();
 			if (provider instanceof ITreePathLabelProvider) {
 				ITreePathLabelProvider tplp = (ITreePathLabelProvider) provider;
-				ViewerLabel viewerLabel = new ViewerLabel(null, null);
+				ViewerLabel viewerLabel = new ViewerLabel("", null); //$NON-NLS-1$
 				tplp.updateLabel(viewerLabel, path);
 				return viewerLabel.getText();
 			}
