@@ -48,7 +48,12 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 				return columns;
 			}
 		}
-		return super.getLabels(element, context);
+		String[] labels = super.getLabels(element, context);
+		String[] escaped = new String[labels.length];
+		for (int i = 0; i < escaped.length; i++) {
+			escaped[i] = escapeSpecialChars(labels[i]);
+		}
+		return escaped;
 	}
 	
 	/**
@@ -116,7 +121,7 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 	 * @throws CoreException
 	 */
 	protected String getValueText(IVariable variable, IValue value, IPresentationContext context) throws CoreException {
-		return value.getValueString();
+		return escapeSpecialChars(value.getValueString());
 	}	
 	
 	/* (non-Javadoc)
@@ -158,7 +163,33 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
         return super.getBackgrounds(element, context);
 	}
 	
-	
+	protected String escapeSpecialChars(String label) {
+		StringBuffer escaped = new StringBuffer();
+		for (int i = 0; i < label.length(); i++) {
+			char c = label.charAt(i);
+			switch (c) {
+				case '\b':
+					escaped.append("\\b"); //$NON-NLS-1$
+					break;
+				case '\f':
+					escaped.append("\\f"); //$NON-NLS-1$
+					break;					
+				case '\n':
+					escaped.append("\\n"); //$NON-NLS-1$
+					break;
+				case '\r':
+					escaped.append("\\r"); //$NON-NLS-1$
+					break;
+				case '\t':
+					escaped.append("\\t"); //$NON-NLS-1$
+					break;
+				default:
+					escaped.append(c);
+					break;
+			}
+		}
+		return escaped.toString();
+	}
 
 	
 }
