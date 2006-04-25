@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Point;
  * 
  * @since 3.2
  */
-public class DayModel {
+public class EventLayoutComputer {
 	
 	private static final int START = 0;
 	private static final int END = 1;
@@ -38,7 +38,7 @@ public class DayModel {
 	 * 
 	 * @param numberOfDivisionsInHour 
 	 */
-	public DayModel(int numberOfDivisionsInHour) {
+	public EventLayoutComputer(int numberOfDivisionsInHour) {
 		this.numberOfDivisionsInHour = numberOfDivisionsInHour;
 	}
 	

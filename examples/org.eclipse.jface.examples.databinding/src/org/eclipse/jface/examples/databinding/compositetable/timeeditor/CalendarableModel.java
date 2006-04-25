@@ -255,7 +255,7 @@ public class CalendarableModel {
 	public Date calculateDate(Date startDate, int numberOfDaysFromStartDate) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(startDate);
-		gc.roll(Calendar.DATE, numberOfDaysFromStartDate);
+		gc.add(Calendar.DATE, numberOfDaysFromStartDate);
 		return gc.getTime();
 	}
 
@@ -498,35 +498,172 @@ public class CalendarableModel {
 	
 	/**
 	 * @param day The day to search
-	 * @param startingAtRow The first row to search
+	 * @param currentRow The first row to search
 	 * @param forward true if we're going forward; false if we're searching backward
 	 * @param selection The currently selected Calendarable or null if none
 	 * @return The next Calendarable in the specified direction where result != selection; null if none
 	 */
-	public Calendarable findTimedCalendarable(int day, int startingAtRow, boolean forward, Calendarable selection) {
+	public Calendarable findTimedCalendarable(int day, int currentRow, boolean forward, Calendarable selection) {
+		Calendarable[][] eventLayoutForDay = getEventLayout(day);
+		if (eventLayoutForDay == null) {
+			throw new IllegalArgumentException("Day " + day + " has no event data!!!");
+		}
+		
+		int startColumn = 0;
+		if (selection != null) {
+			startColumn = findCalendarable(selection, currentRow, eventLayoutForDay);
+			if (startColumn == -1) {
+				throw new IllegalArgumentException("day " + day + ", row " + currentRow + " does not contain the specified Calendarable");
+			}
+		}
+		
+		int currentColumn = startColumn;
+		if (forward) {
+			for (int row = currentRow; row < eventLayoutForDay[0].length; row++) {
+				while (true) {
+					Calendarable candidate = eventLayoutForDay[currentColumn][row];
+					if (candidate != null && candidate != selection) {
+						if (selection == null || 
+							candidate.getStartTime().after(selection.getStartTime()) || 
+							(currentColumn > startColumn && !candidate.getStartTime().before(selection.getStartTime()))) 
+						{
+							return candidate;
+						}
+					}
+					++currentColumn;
+					if (currentColumn >= eventLayoutForDay.length) {
+						currentColumn = 0;
+						break;
+					}
+				}
+			}
+		} else {
+			for (int row = currentRow; row >= 0; --row) {
+				while (true) {
+					Calendarable candidate = eventLayoutForDay[currentColumn][row];
+					if (candidate != null && candidate != selection) {
+						if (selection == null || 
+							candidate.getStartTime().before(selection.getStartTime()) || 
+							(currentColumn < startColumn && !candidate.getStartTime().after(selection.getStartTime()))) 
+						{
+							return candidate;
+						}
+					}
+					--currentColumn;
+					if (currentColumn < 0) {
+						currentColumn = eventLayoutForDay.length-1;
+						break;
+					}
+				}
+			}
+		}
 		return null;
 	}
-	
-	/**
-	 * @param selectedDay
-	 * @param selectedRow
-	 * @param selection
-	 * @return
-	 */
-	public Object[] findNextCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
-		// TODO Auto-generated method stub
-		return null;
+
+	private int findCalendarable(Calendarable selection, int currentRow, Calendarable[][] eventLayoutForDay) {
+		for (int column = 0; column < eventLayoutForDay.length; column++) {
+			if (eventLayoutForDay[column][currentRow] == selection) {
+				return column;
+			}
+		}
+		return -1;
 	}
 
 	/**
 	 * @param selectedDay
 	 * @param selectedRow
 	 * @param selection
+	 * @param isAllDayEventRow
 	 * @return
 	 */
-	public Object[] findPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
-		// TODO Auto-generated method stub
+	public Calendarable findNextCalendarable(int selectedDay, int selectedRow, Calendarable selection, boolean isAllDayEventRow) {
+		// Search the rest of the selectedDay starting at selectedRow
+		Calendarable result = null;
+		if (isAllDayEventRow) {
+			result = findAllDayCalendarable(selectedDay, true, selection);
+			if (result != null)
+				return result;
+			result = findTimedCalendarable(selectedDay, 0, true, null);
+			if (result != null)
+				return result;
+		} else {
+			result = findTimedCalendarable(selectedDay, selectedRow, true, selection);
+			if (result != null) {
+				return result;
+			}
+		}
+		
+		// Search all days other than selectedDay
+		int currentDay = nextDay(selectedDay);
+		while (currentDay != selectedDay) {
+			// Is there an all-day event to select?
+			Calendarable[] allDayCalendarables = getAllDayCalendarables(currentDay);
+			if (allDayCalendarables.length > 0) {
+				return allDayCalendarables[0];
+			}
+			
+			// Nope, search for the first timed event
+			result = findTimedCalendarable(currentDay, 0, true, null);
+			if (result != null) {
+				return result;
+			}
+			
+			currentDay = nextDay(currentDay);
+		}
+		
+		// Search selectedDay from 0 to selectedRow
+		Calendarable[] allDayCalendarables = getAllDayCalendarables(selectedDay);
+		if (allDayCalendarables.length > 0) {
+			return allDayCalendarables[0];
+		}
+		
+		// If we started in an all-day event row, we're done searching.
+		if (isAllDayEventRow) {
+			return null;
+		}
+		
+		// Search the last of the timed-events
+		result = findTimedCalendarable(selectedDay, 0, true, selection);
+		if (result != null) {
+			return result;
+		}
+		
+		// Nothing more to search; give up.
 		return null;
 	}
 
+	private int nextDay(int selectedDay) {
+		++selectedDay;
+		if (selectedDay >= numberOfDays) {
+			selectedDay = 0;
+		}
+		return selectedDay;
+	}
+
+	/**
+	 * @param selectedDay
+	 * @param selectedRow
+	 * @param selection
+	 * @param isAllDayEventRow 
+	 * @return
+	 */
+	public Calendarable findPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection, boolean isAllDayEventRow) {
+		Calendarable result = null;
+		if (!isAllDayEventRow) {
+			// search timed events to the beginning of the day
+			result = findTimedCalendarable(selectedDay, selectedRow, false, selection);
+			
+			// Search all-day events
+			result = findAllDayCalendarable(selectedDay, false, null);
+			if (result != null)
+				return result;
+		} else {
+			
+		}
+		
+		
+		return null;
+	}
 }
+
+

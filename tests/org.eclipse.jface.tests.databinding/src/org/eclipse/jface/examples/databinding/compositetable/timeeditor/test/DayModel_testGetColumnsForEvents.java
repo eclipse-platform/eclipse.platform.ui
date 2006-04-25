@@ -19,7 +19,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.graphics.Point;
@@ -101,13 +101,13 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	private static final int DIVISIONS_IN_HOUR = 2;
 	
 	private IEventEditor eventEditor;
-	private DayModel dayModel;
+	private EventLayoutComputer dayModel;
 	private List expectedEvents;
 	private Calendarable[][] eventLayout; 
 		
 	protected void setUp() throws Exception {
 		super.setUp();
-		dayModel = new DayModel(DIVISIONS_IN_HOUR);
+		dayModel = new EventLayoutComputer(DIVISIONS_IN_HOUR);
 		expectedEvents = new ArrayList();
 	}
 

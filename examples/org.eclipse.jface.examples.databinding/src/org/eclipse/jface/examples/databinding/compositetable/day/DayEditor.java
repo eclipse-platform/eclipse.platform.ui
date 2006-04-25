@@ -24,7 +24,7 @@ import org.eclipse.jface.examples.databinding.compositetable.RowConstructionList
 import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayModel;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlot;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
@@ -149,6 +149,10 @@ public class DayEditor extends Composite implements IEventEditor {
 			Calendarable selection = selectedCalendarable;
 			int selectedRow;
 			int selectedDay;
+			boolean allDayEventRowSelected = false;
+			if (compositeTable.getSelection().y < numberOfAllDayEventRows) {
+				allDayEventRowSelected = true;
+			}
 			
 			if (selection == null) {
 				selectedRow = convertViewportRowToDayRow(compositeTable.getCurrentRow());
@@ -161,30 +165,13 @@ public class DayEditor extends Composite implements IEventEditor {
 			switch (e.character) {
 			case SWT.TAB:
 				if ((e.stateMask & SWT.SHIFT) != 0) {
-					selectNextCalendarable(selectedDay, selectedRow, selection);
+					setSelection(model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected));
 				} else {
-					selectPreviousCalendarable(selectedDay, selectedRow, selection);
+					setSelection(model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected));
 				}
 			}
 		}
 	};
-	
-	private void selectNextCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
-		Object[] newSelection = model.findNextCalendarable(selectedDay, selectedRow, selection);
-		setCompositeSelection(newSelection);
-	}
-
-	private void selectPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection) {
-		Object[] newSelection = model.findPreviousCalendarable(selectedDay, selectedRow, selection);
-		setCompositeSelection(newSelection);
-	}
-
-	private void setCompositeSelection(Object[] newSelection) {
-		int day = ((Integer)newSelection[0]).intValue();
-		int row = ((Integer)newSelection[1]).intValue();
-		Calendarable aboutToSelect = (Calendarable) newSelection[2];
-		setSelectionByDayAndRow(day, row, aboutToSelect);
-	}
 	
 	private boolean selectCalendarableControlOnSetFocus = true;
 	
@@ -616,7 +603,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 	
 	private void findEventRowsForNewDays(Date startDate) {
-		DayModel dayModel = new DayModel(model.getNumberOfDivisionsInHour());
+		EventLayoutComputer dayModel = new EventLayoutComputer(model.getNumberOfDivisionsInHour());
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
 			if (model.getNumberOfColumnsWithinDay(day) == -1) {
 				List events = model.getCalendarableEvents(day);
