@@ -148,7 +148,6 @@ public class LocalHistoryPage extends HistoryPage {
 		groupByDateMode = new Action(TeamUIMessages.LocalHistoryPage_GroupRevisionsByDateAction, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY)){
 			public void run() {
 				groupingOn = !groupingOn;
-				compareModeAction.setChecked(groupingOn);
 				store.setValue(IPreferenceIds.PREF_GROUPBYDATE_MODE, groupingOn);
 				refreshHistory(false);
 			}
