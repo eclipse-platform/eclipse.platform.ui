@@ -29,6 +29,8 @@ public class ActionMessages extends NLS {
 
     public static String CollapseAllAction_0;
 
+	public static String CopyToClipboardActionDelegate_0;
+
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
