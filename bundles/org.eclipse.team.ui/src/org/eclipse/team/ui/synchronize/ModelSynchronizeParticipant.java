@@ -353,12 +353,12 @@ public class ModelSynchronizeParticipant extends
             mappings = getContext().getScope().getMappings();
         }
         int mappingCount = mappings.length;
+        if (mappingCount == getContext().getScope().getMappings().length) {
+        	// Assume we are refreshing everything and only use the input mapping count
+        	mappingCount = getContext().getScope().getInputMappings().length;
+        }
         if (mappingCount == 1) {
             return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), Utils.getLabel(mappings[0]) }); 
-        }
-        if (mappingCount == getContext().getScope().getMappings().length) {
-            // Assume we are refreshing everything and only use the input mapping count
-            mappingCount = getContext().getScope().getInputMappings().length;
         }
         return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(mappingCount) }); 
     }
