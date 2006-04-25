@@ -171,8 +171,10 @@
 	            path="navigate">
 				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
 				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
-	         	<separator name="contextMenuActionsGroup"/>
-				<separator name="internalOccurrencesGroup"/> <!-- not to be used by clients  -->
+				<separator name="fileSearchContextMenuActionsGroup"/> <!-- to be used by clients      -->
+	         	<separator name="contextMenuActionsGroup"/> <!-- to be used by clients -->
+	         	<separator name="occurencesActionsGroup"/> <!-- to be used by clients -->
+	         	<separator name="extraSearchGroup"/> <!-- to be used by clients -->
 	      	</menu>
 	      	
 	      	<!-- dialog group  -->
@@ -197,7 +199,7 @@
             <!-- Various actions for the text search in a sub menu -->
   		    <menu id="textSearchSubMenu"
 		        label="%textSearchSubMenu.label"
-        		path="org.eclipse.search.menu/contextMenuActionsGroup">
+        		path="org.eclipse.search.menu/fileSearchContextMenuActionsGroup">
         		<groupMarker name="group1"/>
         		<groupMarker name="additions"/>
         		<groupMarker name="group2"/>
