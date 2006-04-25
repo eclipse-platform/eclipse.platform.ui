@@ -546,13 +546,11 @@ public class AliasManager implements IManager, ILifecycleListener {
 		 * resource with a matching location.  All matches are then added to the
 		 * "aliases" set.
 		 */
-		for (;;) {
+		do {
 			locationsMap.matchingResourcesDo(searchLocation, findAliases);
 			suffix = new Path(searchLocation.getName()).append(suffix);
 			searchLocation = searchLocation.getParent();
-			if (searchLocation == null)
-				break;
-		}
+		} while (searchLocation != null);
 	}
 
 	private void removeFromLocationsMap(IProject project) {
