@@ -14,8 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -980,7 +982,8 @@ public class ReviewPage	extends BannerPage {
 		this.validationStatus = newValidationStatus;
 		statusButton.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				statusButton.setEnabled(validationStatus != null && validationStatus.getSeverity() != IStatus.OK);
+				boolean newState = validationStatus != null && validationStatus.getSeverity() != IStatus.OK;
+				statusButton.setEnabled(newState);
 			}
 		});
 	}
@@ -988,11 +991,23 @@ public class ReviewPage	extends BannerPage {
 	private void updateItemCount() {
 		updateItemCount(-1, -1);
 	}
+	
+	private int getSelectedJobsUniqueCount() {
+		Object[] checkedElements = getSelectedJobs();
+		Set set = new HashSet();
+		for (int i=0; i<checkedElements.length; i++) {
+			IInstallFeatureOperation job = (IInstallFeatureOperation)checkedElements[i];
+			IFeature feature = job.getFeature();
+			if (set.contains(feature))
+				continue;
+			set.add(feature);
+		}
+		return set.size();
+	}
 
 	private void updateItemCount(int checkedCount, int totalCount) {
 		if (checkedCount == -1) {
-			Object[] checkedElements = getSelectedJobs();
-			checkedCount = checkedElements.length;
+			checkedCount = getSelectedJobsUniqueCount();
 		}
 		if (totalCount == -1) {
 			totalCount = jobs.size();
@@ -1181,7 +1196,7 @@ public class ReviewPage	extends BannerPage {
                 selectedJobs.add(selected[i]);
         return (IInstallFeatureOperation[])selectedJobs.toArray(new IInstallFeatureOperation[selectedJobs.size()]);
 	}
-
+	
 	public void validateSelection(IProgressMonitor monitor) {
 		IInstallFeatureOperation[] jobs;
 
@@ -1259,6 +1274,7 @@ public class ReviewPage	extends BannerPage {
 	 * Update status in the wizard status area
 	 */
 	private void updateWizardMessage() {
+		if (true) return;
 		if (validationStatus == null) {
 			lastDisplayedStatus=null;
 			setErrorMessage(null);
