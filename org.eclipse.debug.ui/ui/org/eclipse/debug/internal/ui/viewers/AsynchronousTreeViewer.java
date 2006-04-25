@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
@@ -1506,47 +1507,6 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		}
 		return bool.booleanValue();
 	}
-	 
-	/**
-	 * Forces labels to be computed for expanded elements.
-	 */
-	public void forceLabelPopulation() {
-		TreeItem[] items = fTree.getItems();
-		for (int i = 0; i < items.length; i++) {
-			forceLabels(fTree, items[i], i);
-		}
-	}
-	
-	private void forceLabels(Widget parent, TreeItem item, int index) {
-		if (item.getText().length() == 0) {
-			ModelNode[] nodes = getModel().getNodes(parent.getData());
-			if (nodes != null) {
-				for (int i = 0; i < nodes.length; i++) {
-					ModelNode node = nodes[i];
-					Widget widget = findItem(node);
-					if (widget == parent) {
-			        	ModelNode[] childrenNodes = node.getChildrenNodes();
-			        	if (childrenNodes != null && index < childrenNodes.length) {
-			        		final ModelNode child = childrenNodes[index];
-			        		mapElement(child, item);
-			        		item.setData(child.getElement());
-			        		preservingSelection(new Runnable() {
-			        		    public void run() {
-			        		        internalRefresh(child);
-			        		    }
-			        		});
-			        	}
-					}
-				}
-	        }
-		}
-		if (item.getExpanded()) {
-			TreeItem[] items = item.getItems();
-			for (int i = 0; i < items.length; i++) {
-				forceLabels(item, items[i], i);
-			}
-		}
-	}
 	
 	/**
 	 * Notification the container status of a node has changed/been computed.
@@ -1568,5 +1528,63 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 			}
 		}			
 	}
+	
+	/**
+	 * Collects label results.
+	 * 
+	 * @param monitor progress monitor
+	 * @param element element to start collecting at, including all children
+	 * @param taskName label for prorgress monitor main task
+	 * 
+	 * @return results or <code>null</code> if cancelled
+	 */
+	public List buildLabels(IProgressMonitor monitor, Object element, String taskName) {
+		ModelNode[] theNodes = getModel().getNodes(element);
+		List results = new ArrayList();
+		if (theNodes != null && theNodes.length > 0) {
+			ModelNode root = theNodes[0];
+			List nodes = new ArrayList(); 
+			collectNodes(nodes, root);
+			monitor.beginTask(taskName, nodes.size());
+			Iterator iterator = nodes.iterator();
+			while (iterator.hasNext()) {
+				ModelNode node = (ModelNode) iterator.next();
+				IAsynchronousLabelAdapter labelAdapter = getModel().getLabelAdapter(node.getElement());
+				if (labelAdapter != null) {
+					LabelResult result = new LabelResult(node, getModel());
+					labelAdapter.retrieveLabel(node.getElement(), getPresentationContext(), result);
+					synchronized (result) { 
+						if (!result.isDone()) {
+							try {
+								result.wait();
+							} catch (InterruptedException e) {
+								monitor.setCanceled(true);
+								return null;
+							}
+						}
+					}
+					IStatus status = result.getStatus();
+					if (status == null || status.isOK()) {
+						results.add(result);
+					}
+				}
+				monitor.worked(1);
+			}
+		}
+		monitor.done();
+		return results;
+	}
+	
+	private void collectNodes(List nodes, ModelNode node) {
+		if (node.getParentNode() != null) {
+			nodes.add(node);
+		}
+		ModelNode[] childrenNodes = node.getChildrenNodes();
+		if (childrenNodes != null) {
+			for (int i = 0; i < childrenNodes.length; i++) {
+				collectNodes(nodes, childrenNodes[i]);
+			}
+		}
+	}	
 
 }

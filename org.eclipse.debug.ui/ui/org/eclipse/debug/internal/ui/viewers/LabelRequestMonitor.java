@@ -56,7 +56,7 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
-	LabelRequestMonitor(ModelNode node, AsynchronousModel model) {
+	public LabelRequestMonitor(ModelNode node, AsynchronousModel model) {
 		super(node, model);
 	}
 
@@ -127,6 +127,26 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 	 */
 	public void setBackgrounds(RGB[] background) {
 		fBackgrounds = background;
+	}
+	
+	protected RGB[] getBackgrounds() {
+		return fBackgrounds;
+	}
+	
+	protected RGB[] getForegrounds() {
+		return fForegrounds;
+	}
+	
+	protected FontData[] getFontDatas() {
+		return fFontDatas;
+	}
+	
+	protected String[] getLabels() {
+		return fLabels;
+	}
+	
+	protected ImageDescriptor[] getImageDescriptors() {
+		return fImageDescriptors;
 	}
 
 }

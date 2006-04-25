@@ -42,4 +42,11 @@ public interface IAsynchronousRequestMonitor extends IProgressMonitor {
      * @param status request status
      */
     public void setStatus(IStatus status);
+    
+    /**
+     * Returns the status of this request, or <code>null</code>.
+     * 
+     * @return request status or <code>null</code>
+     */
+    public IStatus getStatus();
 }

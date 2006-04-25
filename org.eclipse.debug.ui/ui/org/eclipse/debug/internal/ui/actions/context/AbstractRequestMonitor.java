@@ -75,12 +75,10 @@ public abstract class AbstractRequestMonitor implements IAsynchronousRequestMoni
 	public void worked(int work) {
 	}
 
-	/**
-	 * Returns the status of the request or <code>null</code>.
-	 * 
-	 * @return status or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor#getStatus()
 	 */
-	protected IStatus getStatus() {
+	public IStatus getStatus() {
 		return fStatus;
 	}
 }

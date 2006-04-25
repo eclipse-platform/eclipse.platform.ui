@@ -11,11 +11,10 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
@@ -28,20 +27,15 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog {
 	
-	private AsynchronousTreeNavigationModel fLabelProvider = null;
-	private AsynchronousTreeViewer fViewer = null;
-	
 	/**
 	 * Constructs a dialog to navigate to an element in the given viewer.
 	 * 
 	 * @param viewer
 	 * @param provider
 	 */
-	public AsynchronousTreeNavigationDialog(AsynchronousTreeNavigationModel provider) {
-		super(provider.getViewer().getControl().getShell(), provider);
-		fLabelProvider = provider;
-		fViewer = provider.getViewer();
-		setElements(fLabelProvider.getElements());
+	public AsynchronousTreeNavigationDialog(Shell shell, ILabelProvider provider, Object[] elements) {
+		super(shell, provider);
+		setElements(elements);
 		setMultipleSelection(false);
 	}
 
@@ -53,23 +47,5 @@ public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.FIND_ELEMENT_DIALOG);
 		return comp;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-	 */
-	protected void okPressed() {
-		Object[] elements = getSelectedElements();
-		if (elements.length == 1) {
-			TreeItem item = fLabelProvider.getItem(elements[0]);
-			TreePath treePath = fViewer.getTreePath(item);
-			if (treePath != null) {
-				fViewer.setSelection(new TreeSelection(treePath), true, true);
-			}
-		}
-		super.okPressed();
-	}
-	
-	
-
 	
 }

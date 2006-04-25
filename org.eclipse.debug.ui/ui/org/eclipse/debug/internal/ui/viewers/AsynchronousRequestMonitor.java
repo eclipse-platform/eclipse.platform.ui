@@ -130,11 +130,20 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
     public final void done() {
-    	fDone = true;
-		if (!isCanceled()) {
-			fViewerUpdateJob.schedule();
+    	synchronized (this) {
+    		fDone = true;
 		}
+		scheduleViewerUpdate(0L);
 	}
+    
+    /**
+     * Returns whether this request is done yet.
+     * 
+     * @return
+     */
+    protected synchronized boolean isDone() {
+    	return fDone;
+    }
 
     protected void scheduleViewerUpdate(long ms) {
         if(!isCanceled()) 

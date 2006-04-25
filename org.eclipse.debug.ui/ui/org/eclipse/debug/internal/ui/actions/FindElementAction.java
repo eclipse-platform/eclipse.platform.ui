@@ -10,20 +10,28 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationDialog;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.ILabelResult;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
@@ -34,6 +42,37 @@ public class FindElementAction extends Action implements IUpdate {
 	
 	private AsynchronousTreeViewer fViewer;
 	private IViewPart fView;
+	private List fLabelResults;
+	private Map fElementToResult = new HashMap();
+	
+	class FindLabelProvider extends LabelProvider {
+		
+		public FindLabelProvider() {
+		}
+
+		public Image getImage(Object element) {
+			ILabelResult result = (ILabelResult) fElementToResult.get(element);
+			if (result != null) {
+				Image[] images = result.getImages();
+				if (images != null && images.length > 0) {
+					return images[0];
+				}
+			}
+			return null;
+		}
+
+		public String getText(Object element) {
+			ILabelResult result = (ILabelResult) fElementToResult.get(element);
+			if (result != null) {
+				String[] labels = result.getLabels();
+				if (labels != null && labels.length > 0) {
+					return labels[0];
+				}
+			}
+			return ""; //$NON-NLS-1$
+		}
+		
+	}
 
 	public FindElementAction(IViewPart view, AsynchronousTreeViewer viewer) {
 		setText(ActionMessages.FindAction_0);
@@ -45,50 +84,53 @@ public class FindElementAction extends Action implements IUpdate {
 	}
 
 	public void run() {
-		fViewer.forceLabelPopulation();
-		Job labelUpdate = new Job("Generate Labels") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				int i = 0;
-				while (fViewer.hasPendingUpdates() && i < 30) {
-					try {
-						Thread.sleep(100);
-						i++;
-					} catch (InterruptedException e) {
-					}
+		final Object element = fViewer.getControl().getData();
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				fLabelResults = fViewer.buildLabels(monitor, element, DebugUIPlugin.removeAccelerators(ActionMessages.FindAction_0));
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
 				}
-				Job findJob = new UIJob("Find") { //$NON-NLS-1$
-					public IStatus runInUIThread(IProgressMonitor m) {
-						performFind();
-						return Status.OK_STATUS;
-					}
-				
-				};
-				findJob.setSystem(true);
-				findJob.setPriority(Job.INTERACTIVE);
-				findJob.schedule();
-				return Status.OK_STATUS;
 			}
 		};
-		labelUpdate.setSystem(true);
-		IWorkbenchSiteProgressService ps = (IWorkbenchSiteProgressService) fView.getSite().getAdapter(IWorkbenchSiteProgressService.class);
-		if (ps == null) {
-			labelUpdate.schedule();
-		} else {
-			ps.schedule(labelUpdate);
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(fView.getSite().getShell());
+		dialog.setCancelable(true);
+		try {
+			dialog.run(true, true, runnable);
+		} catch (InvocationTargetException e) {
+			DebugUIPlugin.log(e);
+			return;
+		} catch (InterruptedException e) {
+			return;
+		}
+		Iterator iter = fLabelResults.iterator();
+		while (iter.hasNext()) {
+			ILabelResult result = (ILabelResult) iter.next();
+			fElementToResult.put(result.getElement(), result);
 		}		
+		performFind();
+		fElementToResult.clear();
+		fLabelResults.clear();
 	}
 
 	protected void performFind() {
-		AsynchronousTreeNavigationModel model = new AsynchronousTreeNavigationModel(fViewer);
-		AsynchronousTreeNavigationDialog dialog = new AsynchronousTreeNavigationDialog(model); 
+		AsynchronousTreeNavigationDialog dialog = new AsynchronousTreeNavigationDialog(fView.getSite().getShell(), new FindLabelProvider(), fElementToResult.keySet().toArray()); 
 		dialog.setTitle(ActionMessages.FindDialog_3);
 		dialog.setMessage(ActionMessages.FindDialog_1);
-		dialog.open();
-		model.dispose();
+		if (dialog.open() == Window.OK) {
+			Object[] elements = dialog.getResult();
+			if (elements.length == 1) {
+				ILabelResult result = (ILabelResult) fElementToResult.get(elements[0]);
+				TreePath treePath = result.getTreePath();
+				if (treePath != null) {
+					fViewer.setSelection(new TreeSelection(treePath), true, true);
+				}
+			}
+		}
 	}
 	
 	public void update() {
 		setEnabled(fViewer.getInput() != null);
-	}
+	}	
 	
 }
