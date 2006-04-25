@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
 	private ContentViewer fViewer;
@@ -90,7 +92,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			for (int i = 0; i < count; i++) {
 				text = item.getText(i);
 				if(text.trim().equals(EMPTY_STRING)) {
-					text = "<no "+item.getParent().getColumn(i).getText().toLowerCase()+">"; //$NON-NLS-1$ //$NON-NLS-2$
+					text = MessageFormat.format(ActionMessages.CopyToClipboardActionDelegate_0, new Object[] {item.getParent().getColumn(i).getText().toLowerCase()});
 				}
 				buffer.append(text+TAB);
 			}
