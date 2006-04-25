@@ -161,8 +161,11 @@ public class BundleUtil {
                 Log.warning(msg);
                 return resource;
             }
+            /*
             localLocation = FileLocator.toFileURL(localLocation);
             return localLocation.toExternalForm();
+            */
+            return toExternalForm(localLocation);
         } catch (Exception e) {
             String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
                 resource, " from ", getBundleHeader(bundle, //$NON-NLS-1$
@@ -170,6 +173,25 @@ public class BundleUtil {
             Log.error(msg, e);
             return resource;
         }
+    }
+    
+    private static String toExternalForm(URL localURL) {
+    	try {
+    		localURL = FileLocator.toFileURL(localURL);
+    		String result = localURL.toExternalForm();
+    		if (result.startsWith("file:/")) { //$NON-NLS-1$
+    			if (result.startsWith("file:///")==false) { //$NON-NLS-1$
+    				result = "file:///"+result.substring(6); //$NON-NLS-1$
+    			}
+    		}
+    		return result;
+    	}
+    	catch (IOException e) {
+            String msg = "Failed to resolve URL: " //$NON-NLS-1$
+                    + localURL.toString();
+                Log.error(msg, e);
+                return localURL.toString();
+    	}
     }
 
 
@@ -202,17 +224,20 @@ public class BundleUtil {
             URL bundleLocation = bundle.getEntry(""); //$NON-NLS-1$
             if (bundleLocation == null)
                 return null;
+            /*
             bundleLocation = FileLocator.toFileURL(bundleLocation);
             return bundleLocation.toExternalForm();
+            */
+            return toExternalForm(bundleLocation);
         } catch (IllegalStateException e) {
             Log.error("Failed to access bundle: " //$NON-NLS-1$
                     + bundle.getSymbolicName(), e);
             return null;
-        } catch (IOException e) {
+        } /* catch (IOException e) {
             Log.error("Failed to resolve URL path for bundle: " //$NON-NLS-1$
                     + bundle.getSymbolicName(), e);
             return null;
-        }
+        } */
     }
 
     /**
