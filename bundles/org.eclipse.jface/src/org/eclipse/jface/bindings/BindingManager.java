@@ -74,6 +74,11 @@ public final class BindingManager extends HandleObjectManager implements
 	 * The separator character used in locales.
 	 */
 	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+	
+	/**
+	 * Returned for optimized lookup.
+	 */
+	private static final TriggerSequence[] EMPTY_TRIGGER_SEQUENCE = new TriggerSequence[0];
 
 	/**
 	 * </p>
@@ -861,7 +866,7 @@ public final class BindingManager extends HandleObjectManager implements
 
 	/**
 	 * <p>
-	 * Returns the active bindings.
+	 * Returns the active bindings. The caller must not modify the returned map.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
@@ -879,12 +884,13 @@ public final class BindingManager extends HandleObjectManager implements
 			recomputeBindings();
 		}
 
-		return Collections.unmodifiableMap(activeBindings);
+		return activeBindings;
 	}
 
 	/**
 	 * <p>
 	 * Returns the active bindings indexed by command identifier.
+	 * The caller must not modify the returned map.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
@@ -902,8 +908,7 @@ public final class BindingManager extends HandleObjectManager implements
 			recomputeBindings();
 		}
 
-		return Collections
-				.unmodifiableMap(activeBindingsByParameterizedCommand);
+		return activeBindingsByParameterizedCommand;
 	}
 
 	/**
@@ -1023,7 +1028,7 @@ public final class BindingManager extends HandleObjectManager implements
 				triggersByParameterizedCommand);
 		existingCache.setBindingsByTrigger(commandIdsByTrigger);
 		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
-		System.out.println(triggersByParameterizedCommand);
+
 		return Collections.unmodifiableMap(triggersByParameterizedCommand);
 	}
 
@@ -1088,7 +1093,7 @@ public final class BindingManager extends HandleObjectManager implements
 					.toArray(new TriggerSequence[collection.size()]);
 		}
 
-		return new TriggerSequence[0];
+		return EMPTY_TRIGGER_SEQUENCE;
 	}
 
 	/**
@@ -1119,7 +1124,7 @@ public final class BindingManager extends HandleObjectManager implements
 					.toArray(new TriggerSequence[collection.size()]);
 		}
 
-		return new TriggerSequence[0];
+		return EMPTY_TRIGGER_SEQUENCE;
 	}
 
 	/**
@@ -1152,13 +1157,13 @@ public final class BindingManager extends HandleObjectManager implements
 					.toArray(new TriggerSequence[collection.size()]);
 		}
 
-		return new TriggerSequence[0];
+		return EMPTY_TRIGGER_SEQUENCE;
 	}
 
 	/**
 	 * A variation on {@link BindingManager#getActiveBindingsFor(String)} that
 	 * returns an array of bindings, rather than trigger sequences. This method
-	 * is needed for doing "best" calculationgs on the active bindings.
+	 * is needed for doing "best" calculations on the active bindings.
 	 * 
 	 * @param commandId
 	 *            The identifier of the command for which the active bindings
@@ -1452,7 +1457,7 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 
 	/**
 	 * <p>
-	 * Returns the prefix table.
+	 * Returns the prefix table.  The caller must not modify the returned map.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
@@ -1471,7 +1476,7 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 			recomputeBindings();
 		}
 
-		return Collections.unmodifiableMap(prefixTable);
+		return prefixTable;
 	}
 
 	/**
