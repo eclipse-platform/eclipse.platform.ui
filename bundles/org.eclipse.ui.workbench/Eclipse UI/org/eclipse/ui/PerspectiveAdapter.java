@@ -90,8 +90,6 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 	 * 
 	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage,
 	 *      org.eclipse.ui.IPerspectiveDescriptor)
-	 *      
-	 * @since 3.2
 	 */
 	public void perspectiveDeactivated(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
@@ -111,11 +109,9 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPerspectiveListener4#perspectivePreDeactivate(org.eclipse.ui.IWorkbenchPage,
-	 *      org.eclipse.ui.IPerspectiveDescriptor)
+	/**
+     * {@inheritDoc}
+	 * @since 3.2
 	 */
 	public void perspectivePreDeactivate(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective) {
