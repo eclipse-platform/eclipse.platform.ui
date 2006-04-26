@@ -34,7 +34,6 @@ public class TaskChoiceCompletionStrategy implements TaskGroup.CompletionStrateg
 				   noChildrenStarted = false;
 				   break;
 			   case ICompositeCheatSheetTask.SKIPPED:
-				   break;
 			   case ICompositeCheatSheetTask.COMPLETED:
 				   noChildrenStarted = false;
 				   atLeastOneChildCompleted = true;

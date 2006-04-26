@@ -78,12 +78,15 @@ public class TestTaskGroups extends TestCase {
 	public void testSequencePartiallyComplete() {
 		assertEquals(IN_PROGRESS, getGroupState(ITaskGroup.SEQUENCE, new int[] {COMPLETED, NOT_STARTED}));
 	}
-	
+
 	public void testSequenceCompleted() {
 		assertEquals(COMPLETED, getGroupState(ITaskGroup.SEQUENCE, new int[] {COMPLETED, SKIPPED}));
 	}
 	
-
+	public void testSequenceSkipped() {
+		assertEquals(COMPLETED, getGroupState(ITaskGroup.SEQUENCE, new int[] {SKIPPED, SKIPPED}));
+	}
+	
 	public void testEmptyChoice() {
 		assertEquals(COMPLETED, getGroupState(ITaskGroup.CHOICE, new int[0]));
 	}
@@ -105,7 +108,7 @@ public class TestTaskGroups extends TestCase {
 	}
 	
 	public void testChoiceSkipped() {
-		assertEquals(NOT_STARTED, getGroupState(ITaskGroup.CHOICE, new int[] {NOT_STARTED, SKIPPED}));
+		assertEquals(COMPLETED, getGroupState(ITaskGroup.CHOICE, new int[] {NOT_STARTED, SKIPPED}));
 	}
 
 }
