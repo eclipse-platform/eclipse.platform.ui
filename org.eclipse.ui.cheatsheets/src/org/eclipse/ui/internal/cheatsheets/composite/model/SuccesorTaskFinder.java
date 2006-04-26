@@ -94,12 +94,17 @@ public class SuccesorTaskFinder {
 	private void searchRunnableChildren(ICompositeCheatSheetTask task) {
 		// Don't search completed tasks or their children
 		// and stop searching if we've already found the best successor
+		if (bestLaterTask != null) {
+			return;
+		}
 		if (task == currentTask) {
 			seenThisTask = true;
 		}
 		if (task.getState() == ICompositeCheatSheetTask.COMPLETED || 
-			task.getState() == ICompositeCheatSheetTask.SKIPPED ||
-		     bestLaterTask != null) {
+			task.getState() == ICompositeCheatSheetTask.SKIPPED ) {
+			if (isTaskAncestor(task, currentTask)) {
+				seenThisTask = true;
+			}
 			return;
 		}
 		
@@ -120,5 +125,16 @@ public class SuccesorTaskFinder {
 			searchRunnableChildren(subtasks[i]);
 		}	
 
+	}
+
+	private boolean isTaskAncestor(ICompositeCheatSheetTask ancestorCandididate, ICompositeCheatSheetTask task) {
+		ICompositeCheatSheetTask nextTask = task;
+		while (nextTask != null) {
+			if (nextTask == ancestorCandididate) {
+				return true;
+			}
+			nextTask = nextTask.getParent();
+		}
+		return false;
 	}
 }
