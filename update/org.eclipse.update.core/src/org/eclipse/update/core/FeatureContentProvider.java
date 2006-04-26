@@ -34,6 +34,7 @@ import org.eclipse.update.core.model.ContentEntryModel;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.internal.core.FatalIOException;
 import org.eclipse.update.internal.core.FeatureDownloadException;
 import org.eclipse.update.internal.core.FileFragment;
 import org.eclipse.update.internal.core.InternalSiteManager;
@@ -180,10 +181,7 @@ public abstract class FeatureContentProvider
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public ContentReference asLocalReference(
-		ContentReference ref,
-		InstallMonitor monitor)
-		throws IOException, CoreException {
+	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws IOException, CoreException {
 
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
@@ -202,13 +200,18 @@ public abstract class FeatureContentProvider
 			if (localFile != null) {
 				// check if the cached file is still valid (no newer version on
 				// server)
+				try {
 				if (UpdateManagerUtils.isSameTimestamp(ref.asURL(), localFile.lastModified()))
 					return ref.createContentReference(ref.getIdentifier(), localFile);
+				} catch(FatalIOException e) {
+					throw e;
+				} catch(IOException e) {
+					throw new FeatureDownloadException(NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] {getURL().toExternalForm()})), e);
+				}
 			}
 
 			if (localFile == null) {
-				localFileFragment =
-					UpdateManagerUtils.lookupLocalFileFragment(key);
+				localFileFragment = UpdateManagerUtils.lookupLocalFileFragment(key);
 			}
 			// 
 			// download the referenced file into local temporary area
@@ -219,30 +222,33 @@ public abstract class FeatureContentProvider
 			boolean success = false;
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName(
-					Messages.FeatureContentProvider_Downloading); 
+				monitor.setTaskName(Messages.FeatureContentProvider_Downloading);
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
-				monitor.setTotalCount(ref.getInputSize());
+				try {
+					monitor.setTotalCount(ref.getInputSize());
+				} catch (FatalIOException e) {
+					throw e;
+				} catch (IOException e) {
+					throw new FeatureDownloadException(NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] {getURL().toExternalForm()})), e);
+				}
 				monitor.showCopyDetails(true);
 			}
 
 			try {
 				//long startTime = System.nanoTime();
-				if (localFileFragment != null
-					&& "http".equals(ref.asURL().getProtocol())) { //$NON-NLS-1$
+				if (localFileFragment != null && "http".equals(ref.asURL().getProtocol())) { //$NON-NLS-1$
 					localFile = localFileFragment.getFile();
 					try {
 						// get partial input stream
-						is =
-							ref.getPartialInputStream(
-								localFileFragment.getSize());
-						inputLength = ref.getInputSize()-localFileFragment.getSize(); 
+						is = ref.getPartialInputStream(localFileFragment.getSize());
+						inputLength = ref.getInputSize() - localFileFragment.getSize();
 						// get output stream to append to file fragment
-						os =
-							new BufferedOutputStream(
-								// PAL foundation
+						os = new BufferedOutputStream(
+						// PAL foundation
 								//new FileOutputStream(localFile, true));
 								new FileOutputStream(localFile.getPath(), true));
+					} catch (FatalIOException e) {
+						throw e;
 					} catch (IOException e) {
 						try {
 							if (is != null)
@@ -252,29 +258,25 @@ public abstract class FeatureContentProvider
 						is = null;
 						os = null;
 						localFileFragment = null;
+						throw new FeatureDownloadException(NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] {getURL().toExternalForm()})), e);
 					}
 				}
 				if (is == null) {
 					// must download from scratch
-					localFile =
-						Utilities.createLocalFile(getWorkingDirectory(), null);
+					localFile = Utilities.createLocalFile(getWorkingDirectory(), null);
 					try {
 						is = ref.getInputStream();
-						inputLength = ref.getInputSize(); 
+						inputLength = ref.getInputSize();
+					} catch (FatalIOException e) {
+						throw Utilities.newCoreException(NLS.bind(Messages.FeatureContentProvider_UnableToRetrieve, (new Object[] {ref})), e);
 					} catch (IOException e) {
-						throw Utilities.newCoreException(
-							NLS.bind(Messages.FeatureContentProvider_UnableToRetrieve, (new Object[] { ref })),
-							e);
+						throw new FeatureDownloadException(NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] {getURL().toExternalForm()})), e);
 					}
 
 					try {
-						os =
-							new BufferedOutputStream(
-								new FileOutputStream(localFile));
+						os = new BufferedOutputStream(new FileOutputStream(localFile));
 					} catch (FileNotFoundException e) {
-						throw Utilities.newCoreException(
-							NLS.bind(Messages.FeatureContentProvider_UnableToCreate, (new Object[] { localFile })),
-							e);
+						throw Utilities.newCoreException(NLS.bind(Messages.FeatureContentProvider_UnableToCreate, (new Object[] {localFile})), e);
 					}
 				}
 
@@ -292,17 +294,13 @@ public abstract class FeatureContentProvider
 					bytesCopied += offset;
 					if (bytesCopied > 0) {
 						// preserve partially downloaded file
-						UpdateManagerUtils.mapLocalFileFragment(
-								key,
-								new FileFragment(localFile, bytesCopied));
+						UpdateManagerUtils.mapLocalFileFragment(key, new FileFragment(localFile, bytesCopied));
 					}
 					if (monitor.isCanceled()) {
-						String msg = Messages.Feature_InstallationCancelled; 
+						String msg = Messages.Feature_InstallationCancelled;
 						throw new InstallAbortedException(msg, null);
 					} else {
-						throw new FeatureDownloadException(
-							NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] { getURL().toExternalForm()})),
-							new IOException());
+						throw new FeatureDownloadException(NLS.bind(Messages.FeatureContentProvider_ExceptionDownloading, (new Object[] {getURL().toExternalForm()})), new IOException());
 					}
 				} else {
 					UpdateManagerUtils.unMapLocalFileFragment(key);
@@ -375,8 +373,7 @@ public abstract class FeatureContentProvider
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public File asLocalFile(ContentReference ref, InstallMonitor monitor)
-		throws IOException, CoreException {
+	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException, CoreException {
 		File file = ref.asFile();
 		if (file != null && !SWITCH_COPY_LOCAL)
 			return file;
@@ -405,14 +402,11 @@ public abstract class FeatureContentProvider
 	 * @see IFeatureContentProvider#getDownloadSizeFor(IPluginEntry[],
 	 *      INonPluginEntry[])
 	 */
-	public long getDownloadSizeFor(
-		IPluginEntry[] pluginEntries,
-		INonPluginEntry[] nonPluginEntries) {
+	public long getDownloadSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
 		// if both are null or empty, return UNKNOWN size
-		if ((pluginEntries == null || pluginEntries.length == 0)
-			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -430,9 +424,7 @@ public abstract class FeatureContentProvider
 		// loop on non plugin entries
 		if (nonPluginEntries != null)
 			for (int i = 0; i < nonPluginEntries.length; i++) {
-				size =
-					((NonPluginEntryModel) nonPluginEntries[i])
-						.getDownloadSize();
+				size = ((NonPluginEntryModel) nonPluginEntries[i]).getDownloadSize();
 				if (size == ContentEntryModel.UNKNOWN_SIZE) {
 					return ContentEntryModel.UNKNOWN_SIZE;
 				}
@@ -449,14 +441,11 @@ public abstract class FeatureContentProvider
 	 * @see IFeatureContentProvider#getInstallSizeFor(IPluginEntry[],
 	 *      INonPluginEntry[])
 	 */
-	public long getInstallSizeFor(
-		IPluginEntry[] pluginEntries,
-		INonPluginEntry[] nonPluginEntries) {
+	public long getInstallSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
 		// if both are null or empty, return UNKNOWN size
-		if ((pluginEntries == null || pluginEntries.length == 0)
-			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -474,9 +463,7 @@ public abstract class FeatureContentProvider
 		// loop on non plugin entries
 		if (nonPluginEntries != null)
 			for (int i = 0; i < nonPluginEntries.length; i++) {
-				size =
-					((NonPluginEntryModel) nonPluginEntries[i])
-						.getInstallSize();
+				size = ((NonPluginEntryModel) nonPluginEntries[i]).getInstallSize();
 				if (size == ContentEntryModel.UNKNOWN_SIZE) {
 					return ContentEntryModel.UNKNOWN_SIZE;
 				}
@@ -492,9 +479,7 @@ public abstract class FeatureContentProvider
 	 * @return the path identifier
 	 */
 	protected String getPathID(IPluginEntry entry) {
-		return Site.DEFAULT_PLUGIN_PATH
-			+ entry.getVersionedIdentifier().toString()
-			+ JAR_EXTENSION;
+		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
 	}
 
 	/**
@@ -503,10 +488,7 @@ public abstract class FeatureContentProvider
 	 * @return the path identifier
 	 */
 	protected String getPathID(INonPluginEntry entry) {
-		String nonPluginBaseID =
-			Site.DEFAULT_FEATURE_PATH
-				+ feature.getVersionedIdentifier().toString()
-				+ "/"; //$NON-NLS-1$
+		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString() + "/"; //$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier();
 	}
 
@@ -581,8 +563,15 @@ public abstract class FeatureContentProvider
 			return result;
 
 		Properties prop = new Properties();
+		InputStream propertyStream = null;
 		try {
-			prop.load(permissionReference.getInputStream());
+			try {
+				propertyStream = permissionReference.getInputStream();
+				prop.load(propertyStream);
+			} finally {
+				if (propertyStream != null)
+					propertyStream.close();
+			}
 		} catch (IOException e) {
 			UpdateCore.warn("", e); //$NON-NLS-1$
 		}
@@ -592,8 +581,7 @@ public abstract class FeatureContentProvider
 			return result;
 
 		StringTokenizer tokenizer = new StringTokenizer(executables, ","); //$NON-NLS-1$
-		Integer defaultExecutablePermission =
-			new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
+		Integer defaultExecutablePermission = new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
 		while (tokenizer.hasMoreTokens()) {
 			FileFilter filter = new FileFilter(tokenizer.nextToken());
 			result.put(filter, defaultExecutablePermission);

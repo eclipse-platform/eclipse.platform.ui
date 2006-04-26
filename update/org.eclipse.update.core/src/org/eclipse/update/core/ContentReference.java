@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.internal.core.FatalIOException;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -155,7 +156,7 @@ public class ContentReference {
 			length=response.getContentLength();
 			return is;
 		} else
-			throw new IOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
+			throw new FatalIOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
 	}
 	/**
 	 * Creates an input stream for the reference.
@@ -175,7 +176,7 @@ public class ContentReference {
 			length=offset + response.getContentLength();
 			return is;
 		} else
-			throw new IOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
+			throw new FatalIOException(NLS.bind(Messages.ContentReference_UnableToCreateInputStream, (new String[] { this.toString() })));
 	}
 	
 	/**
@@ -262,7 +263,7 @@ public class ContentReference {
 		if (file != null)
 			return file.toURL();
 
-		throw new IOException(NLS.bind(Messages.ContentReference_UnableToReturnReferenceAsURL, (new String[] { this.toString() })));
+		throw new FatalIOException(NLS.bind(Messages.ContentReference_UnableToReturnReferenceAsURL, (new String[] { this.toString() })));
 	}
 
 	/**
@@ -273,9 +274,9 @@ public class ContentReference {
 	 */
 	public String toString() {
 		if (file != null)
-			return file.getAbsolutePath();
+			return file.getAbsolutePath() + '(' + id + ')';
 		else
-			return url.toExternalForm();
+			return url.toExternalForm() + '(' + id + ')';
 	}
 	/**
 	 * Returns the permission for this file.

@@ -551,12 +551,12 @@ public class UpdateManagerUtils {
 	 */
 	public static void checkConnectionResult(IResponse response,URL url) throws IOException {
 		// did the server return an error code ?
-			int result = response.getStatusCode();
+		int result = response.getStatusCode();
 
-			if (result != IStatusCodes.HTTP_OK) {
-				String serverMsg = response.getStatusMessage();
-				throw new IOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
-			}
+		if (result != IStatusCodes.HTTP_OK) { 
+			String serverMsg = response.getStatusMessage();
+			throw new FatalIOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
+		}
 	}
 
 	public static class StreamConsumer extends Thread {
