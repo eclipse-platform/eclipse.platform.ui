@@ -363,6 +363,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			currentPageContainer.getSubBars().deactivate();
 			//give the current page a chance to dispose
 			currentPageContainer.getPage().dispose();
+			currentPageContainer.getSubBars().dispose();
 		}
 		// Show new page.
 		currentPageContainer = pageContainer;
