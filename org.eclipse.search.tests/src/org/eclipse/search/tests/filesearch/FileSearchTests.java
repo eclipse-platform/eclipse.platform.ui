@@ -351,6 +351,14 @@ public class FileSearchTests extends TestCase {
 		fileNamePatterns= new String[] { "*", "!*.*" };
 		results= performSearch(fileNamePatterns, searchPattern);
 		assertEquals("Number of total results", 0, results.length);
+		
+		fileNamePatterns= new String[] { "*.x", "*.y*", "!*.y" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 2, results.length);
+		
+		fileNamePatterns= new String[] { "file*", "!*.x*", "!*.y" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 1, results.length);
 	}
 	
 	private TestResult[] performSearch(String[] fileNamePatterns, Pattern searchPattern) {
