@@ -1547,7 +1547,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 			collectNodes(nodes, root);
 			monitor.beginTask(taskName, nodes.size());
 			Iterator iterator = nodes.iterator();
-			while (iterator.hasNext()) {
+			while (!monitor.isCanceled() && iterator.hasNext()) {
 				ModelNode node = (ModelNode) iterator.next();
 				IAsynchronousLabelAdapter labelAdapter = getModel().getLabelAdapter(node.getElement());
 				if (labelAdapter != null) {
