@@ -220,7 +220,14 @@ public class Utilities {
 			}
 			status = new Status(IStatus.ERROR, id, code, completeString.toString(), e);
 		}
-		return new CoreException(status); 
+		CoreException ce = new CoreException(status);
+		if ( e instanceof CoreException) {
+			ce.initCause(e.getCause());
+		} else {
+			ce.initCause(e);
+		}
+		e.setStackTrace(e.getStackTrace());
+		return ce; 
 	}
 
 	/**

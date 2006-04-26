@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.update.standalone;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.mirror.*;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.mirror.MirrorCommand;
 
 /**
  * This class parses the command line arguments for update standalone commands
@@ -47,9 +49,11 @@ public class CmdLineArgs {
 					return;
 				}
 			}
+
 			if (isValidParam(args[i])) {
 				options.put(args[i], args[i + 1]);
 				i++;
+
 			}
 			// -to should specify a directory
 			// if -to specifies file URL, change it to a directory
@@ -71,7 +75,8 @@ public class CmdLineArgs {
 			|| param.equals("-from") //$NON-NLS-1$
 			|| param.equals("-featureId") //$NON-NLS-1$
 			|| param.equals("-verifyOnly") //$NON-NLS-1$
-			|| param.equals("-mirrorURL"); //$NON-NLS-1$
+			|| param.equals("-mirrorURL") //$NON-NLS-1$
+		    || param.equals("-ignoreMissingPlugins"); //$NON-NLS-1$
 	}
 
 	private boolean isValidCommand(String cmd) {
@@ -127,7 +132,8 @@ public class CmdLineArgs {
 					(String) options.get("-version"), //$NON-NLS-1$
 					(String) options.get("-from"), //$NON-NLS-1$
 					(String) options.get("-to"), //$NON-NLS-1$
-					(String) options.get("-mirrorURL")); //$NON-NLS-1$
+					(String) options.get("-mirrorURL"), //$NON-NLS-1$
+					(String) options.get("-ignoreMissingPlugins")); //$NON-NLS-1$
 			else if (cmd.equals("uninstall")) //$NON-NLS-1$
 				return new UninstallCommand(
 					(String) options.get("-featureId"), //$NON-NLS-1$

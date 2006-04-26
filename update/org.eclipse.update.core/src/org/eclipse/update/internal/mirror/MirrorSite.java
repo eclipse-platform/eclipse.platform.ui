@@ -10,19 +10,45 @@
  *******************************************************************************/
 package org.eclipse.update.internal.mirror;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.standalone.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureContentProvider;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.Site;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.model.CategoryModel;
+import org.eclipse.update.core.model.SiteModelFactory;
+import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.FatalIOException;
+import org.eclipse.update.internal.core.ISiteContentConsumer;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.standalone.StandaloneUpdateApplication;
 
 /**
  * Local mirror site.  Read/Write
@@ -35,6 +61,7 @@ public class MirrorSite extends Site {
 	 */
 	private Collection downloadedPluginEntries = new ArrayList();
 	private Collection downloadedFeatureReferenceModels = new ArrayList();
+	private boolean ignoreNonPresentPlugins;
 	public MirrorSite(SiteModelFactory factory) {
 		this.factory = factory;
 	}
@@ -216,7 +243,15 @@ public class MirrorSite extends Site {
 				+ " ..."); //$NON-NLS-1$
 		// download plugin archives
 		for (int i = 0; i < pluginsToInstall.length; i++) {
-			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
+			try {
+				provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
+			} catch (CoreException ce) {
+				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
+					System.out.println("Could not mirror plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");
+				} else {
+					throw ce;
+				}
+			}
 		}
 
 		System.out.println(
@@ -253,12 +288,18 @@ public class MirrorSite extends Site {
 				+ " ..."); //$NON-NLS-1$
 		// store plugins' archives
 		for (int i = 0; i < pluginsToInstall.length; i++) {
-			ContentReference[] references =
-				provider.getPluginEntryArchiveReferences(
-					pluginsToInstall[i],
-					null);
-			storePluginArchive(references[0]);
-			addDownloadedPluginEntry(pluginsToInstall[i]);
+			try {
+				ContentReference[] references = provider.getPluginEntryArchiveReferences( pluginsToInstall[i], null);
+				storePluginArchive(references[0]);
+				addDownloadedPluginEntry(pluginsToInstall[i]);
+			} catch (CoreException ce) {
+				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
+					System.out.println("Could not write plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");
+				} else {
+					System.out.println("ignoreNonPresentPlugins:"+ignoreNonPresentPlugins);
+					throw ce;
+				}
+			}
 		}
 
 		System.out.println(
@@ -751,5 +792,10 @@ public class MirrorSite extends Site {
 			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println(" />"); //$NON-NLS-1$
 		}
+	}
+
+	public void setIgnoreNonPresentPlugins(boolean ignoreNonPresentPlugins) {
+		this.ignoreNonPresentPlugins = ignoreNonPresentPlugins;
+		
 	}
 }

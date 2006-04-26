@@ -10,16 +10,28 @@
  *******************************************************************************/
 package org.eclipse.update.internal.mirror;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.standalone.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.SiteFeatureReference;
+import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.standalone.ScriptedCommand;
+import org.eclipse.update.standalone.StandaloneUpdateApplication;
 
 /**
  * Mirrors a remote site locally.
@@ -31,6 +43,7 @@ public class MirrorCommand extends ScriptedCommand {
 	private String fromSiteUrl;
 	private String toSiteDir;
 	private String mirrorURL;
+	private boolean ignoreNonPresentPlugins = false;
 	private MirrorSite mirrorSite;
 
 	public MirrorCommand(
@@ -38,12 +51,14 @@ public class MirrorCommand extends ScriptedCommand {
 		String featureVersion,
 		String fromSiteUrl,
 		String toSiteDir,
-		String mirrorUrl) {
+		String mirrorUrl, 
+		String ignoreNonPresentPlugins) {
 		this.featureId = featureId;
 		this.featureVersion = featureVersion;
 		this.fromSiteUrl = fromSiteUrl;
 		this.toSiteDir = toSiteDir;
 		this.mirrorURL = mirrorUrl;
+		this.ignoreNonPresentPlugins = (ignoreNonPresentPlugins != null) && (ignoreNonPresentPlugins.equals("true"));
 	}
 
 	/**
@@ -124,6 +139,7 @@ public class MirrorCommand extends ScriptedCommand {
 				try {
 					mirrorSite =
 						(MirrorSite) factory.createSite(new File(toSiteDir));
+					mirrorSite.setIgnoreNonPresentPlugins(ignoreNonPresentPlugins);
 				} catch (InvalidSiteTypeException iste) {
 				}
 				System.out.println("  Done."); //$NON-NLS-1$
