@@ -121,6 +121,7 @@
          </action>
       </objectContribution>
       <objectContribution
+            adaptable="true"
             id="org.eclipse.team.ui.UnmanagedFileContributions"
             objectClass="org.eclipse.core.resources.IFile">
          <action
