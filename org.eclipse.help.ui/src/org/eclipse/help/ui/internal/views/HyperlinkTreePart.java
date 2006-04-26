@@ -259,7 +259,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	protected void handleSelectionChanged(IStructuredSelection sel) {
 		Object obj = sel.getFirstElement();
-		if (lastItem != null) {
+		if (lastItem != null && !lastItem.isDisposed()) {
 			Object lastObj = lastItem.getData();
 			if (lastObj==obj)
 				lastItem.setForeground(container.getDisplay()
