@@ -174,13 +174,43 @@ public class DayEditor extends Composite implements IEventEditor {
 			switch (e.character) {
 			case SWT.TAB:
 				if ((e.stateMask & SWT.SHIFT) != 0) {
-					setSelection(model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected));
+					Calendarable newSelection = model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
+					if (newTopRow != compositeTable.getTopRow()) {
+						compositeTable.setTopRow(newTopRow);
+					}
+					setSelection(newSelection);
 				} else {
-					setSelection(model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected));
+					Calendarable newSelection = model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
+					if (newTopRow != compositeTable.getTopRow()) {
+						compositeTable.setTopRow(newTopRow);
+					}
+					setSelection(newSelection);
 				}
 			}
 		}
 	};
+	
+	private int computeNewTopRowBasedOnSelection(Calendarable newSelection) {
+		int topRow = compositeTable.getTopRow();
+		int numberOfRowsInDisplay = compositeTable.getNumRowsVisible();
+		int newTopRow = topRow;
+		
+		Point endRowPoint = newSelection.getLowerRightPositionInDayRowCoordinates();
+		if (endRowPoint != null) {
+			int endRow = convertDayRowToViewportCoordinates(endRowPoint.y);
+			if (endRow >= newTopRow + numberOfRowsInDisplay) {
+				newTopRow += (endRow - (newTopRow + numberOfRowsInDisplay)) + 1;
+			}
+			int startRow = newSelection.getUpperLeftPositionInDayRowCoordinates().y;
+			startRow = convertDayRowToViewportCoordinates(startRow);
+			if (startRow < newTopRow) {
+				newTopRow = startRow;
+			}
+		}
+		return newTopRow;
+	}
 	
 	private boolean selectCalendarableControlOnSetFocus = true;
 	
