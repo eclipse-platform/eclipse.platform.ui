@@ -1339,7 +1339,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		if (text.getSelectedLinkHref() != null) {
 			manager.add(new Separator());
 			manager.add(bookmarkAction);
-			bookmarkAction.setTarget(text);
+			bookmarkAction.setTarget(getResource(text));
 		}
 		return true;
 	}
@@ -1431,7 +1431,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	private void doBookmark(Object target) {
-		IHelpResource res = getResource(target);
+		IHelpResource res = null;
+		if (target instanceof IHelpResource) {
+			res = (IHelpResource)target;
+		}
+		else {
+			res = getResource(target);
+		}
 		if (res != null) {
 			BaseHelpSystem.getBookmarkManager().addBookmark(res.getHref(),
 					res.getLabel());
