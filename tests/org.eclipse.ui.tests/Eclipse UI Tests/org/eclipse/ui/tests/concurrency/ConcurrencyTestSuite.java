@@ -35,6 +35,7 @@ public final class ConcurrencyTestSuite extends TestSuite {
         addTestSuite(NestedSyncExecDeadlockTest.class);
         addTestSuite(TestBug98621.class);
         addTestSuite(TestBug108162.class);
+        addTestSuite(TestBug138695.class);
         addTestSuite(TransferRuleTest.class);
     }
 }
