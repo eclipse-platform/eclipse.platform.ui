@@ -86,15 +86,7 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 			private String getTextFor(String modelProviderId) {
 				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(modelProviderId);
 				if (desc != null) {
-					// Only do this for the resource model since we don;t want to 
-					// load all model providers (see bug 133604)
-					if (desc.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID))
-						try {
-							return Utils.getLabel(desc.getModelProvider());
-						} catch (CoreException e) {
-							TeamUIPlugin.log(e);
-						}
-					return desc.getLabel();
+					return getLabel(desc);
 				}
 				return modelProviderId;
 			}
@@ -131,7 +123,7 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 				    IModelProviderDescriptor md1 = ModelProvider.getModelProviderDescriptor(d1.getModelProviderId());
 				    IModelProviderDescriptor md2 = ModelProvider.getModelProviderDescriptor(d2.getModelProviderId());
 				    if (md1 != null && md2 != null)
-				    	return md1.getLabel().compareTo(md2.getLabel());
+				    	return getLabel(md1).compareTo(getLabel(md2));
 				}
 				return super.compare(viewer, e1, e2);
 			}
@@ -189,6 +181,18 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 
 	public void init(IWorkbench workbench) {
 		// ignore
+	}
+
+	private String getLabel(IModelProviderDescriptor desc) {
+		// Only do this for the resource model since we don;t want to 
+		// load all model providers (see bug 133604)
+		if (desc.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID))
+			try {
+				return Utils.getLabel(desc.getModelProvider());
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		return desc.getLabel();
 	}
 
 }
