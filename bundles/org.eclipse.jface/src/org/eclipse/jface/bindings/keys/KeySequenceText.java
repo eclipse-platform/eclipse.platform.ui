@@ -776,9 +776,8 @@ public final class KeySequenceText {
 		if (index == -1) {
 			index = 0;
 		}
-		final KeyStroke[] strokes = (deletedKeyStrokes[0] == null) ? new KeyStroke[0]
-				: deletedKeyStrokes[0];
-		final KeyStroke[] keyStrokes = insertStrokeAt(strokes, stroke, index);
+
+		final KeyStroke[] keyStrokes = insertStrokeAt(newKeyStrokes, stroke, index);
 		keyFilter.clearInsertionIndex();
 		setKeySequence(KeySequence.getInstance(keyStrokes));
 	}
@@ -817,7 +816,7 @@ public final class KeySequenceText {
 		newKeyStrokes[index] = stroke;
 		if (index < keyStrokesLength) {
 			System.arraycopy(keyStrokes, index, newKeyStrokes, index + 1,
-					keyStrokesLength);
+					keyStrokesLength-index);
 		}
 		return newKeyStrokes;
 	}
