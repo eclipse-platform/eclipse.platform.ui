@@ -84,7 +84,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
      * @return rule or <code>null</code>
      */
     protected ISchedulingRule getUpdateSchedulingRule() {
-    	return null;
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(getModel().getViewer());
     }
     
     /**
