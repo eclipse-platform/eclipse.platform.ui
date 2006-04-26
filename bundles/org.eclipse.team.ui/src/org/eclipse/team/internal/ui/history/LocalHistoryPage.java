@@ -43,6 +43,7 @@ import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 
 import com.ibm.icu.util.Calendar;
@@ -254,7 +255,7 @@ public class LocalHistoryPage extends HistoryPage {
 		
 		//Don't add the object contribution menu items if this page is hosted in a dialog
 		IHistoryPageSite parentSite = getHistoryPageSite();
-		/*if (!parentSite.isModal()) {
+		if (!parentSite.isModal()) {
 			IWorkbenchPart part = parentSite.getPart();
 			if (part != null) {
 				IWorkbenchPartSite workbenchPartSite = part.getSite();
@@ -266,17 +267,11 @@ public class LocalHistoryPage extends HistoryPage {
 				// Contribute toggle text visible to the toolbar drop-down
 				IMenuManager actionBarsMenu = actionBars.getMenuManager();
 				if (actionBarsMenu != null){
-					actionBarsMenu.add(toggleTextWrapAction);
-					actionBarsMenu.add(new Separator());
-					actionBarsMenu.add(toggleTextAction);
-					actionBarsMenu.add(toggleListAction);
-					actionBarsMenu.add(new Separator());
-					actionBarsMenu.add(cvsHistoryFilter);
-					actionBarsMenu.add(toggleFilterAction);
+					actionBarsMenu.removeAll();
 				}
 				actionBars.updateActionBars();
 			}
-		}*/
+		}
 
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
