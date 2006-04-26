@@ -96,6 +96,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String LocalHistoryPage_FetchLocalHistoryMessage;
 
+	public static String LocalHistoryPage_GetContents;
+
 	public static String LocalHistoryPage_GroupRevisionsByDateAction;
 
 	public static String LocalHistoryPage_GroupRevisionsByDateTip;
@@ -103,6 +105,10 @@ public class TeamUIMessages extends NLS {
 	public static String LocalHistoryPage_NoRevisionsFound;
 
 	public static String LocalHistoryPage_OpenAction;
+
+	public static String LocalHistoryPage_OverwriteMessage;
+
+	public static String LocalHistoryPage_OverwriteTitle;
 
 	public static String MergeAllActionHandler_0;
 

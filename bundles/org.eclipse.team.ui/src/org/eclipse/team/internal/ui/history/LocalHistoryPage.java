@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,6 +19,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
@@ -27,8 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.core.*;
 import org.eclipse.team.core.history.IFileHistory;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileHistory;
@@ -68,10 +72,13 @@ public class LocalHistoryPage extends HistoryPage {
 	private Action groupByDateMode;
 	private Action collapseAll;
 	private Action compareModeAction;
+	private Action getContentsAction;
 	private CompareRevisionAction compareAction;
 	private OpenRevisionAction openAction;
 	
 	private HistoryResourceListener resourceListener;
+	
+	private IFileRevision currentSelection;
 	
 	public boolean inputSet() {
 		currentFileRevision = null;
@@ -180,6 +187,25 @@ public class LocalHistoryPage extends HistoryPage {
 		compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
 		compareModeAction.setChecked(false);
 		
+		getContentsAction = getContextMenuAction(TeamUIMessages.LocalHistoryPage_GetContents, true /* needs progress */, new IWorkspaceRunnable() { 
+			public void run(IProgressMonitor monitor) throws CoreException {
+				monitor.beginTask(null, 100);
+				try {
+					if(confirmOverwrite()) {
+						IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
+						InputStream in = currentStorage.getContents();
+						(file).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+					}
+				} catch (TeamException e) {
+					throw new CoreException(e.getStatus());
+				} finally {
+					monitor.done();
+				}
+			}
+		});
+		//TODO: Doc help
+        //PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, );	
+
 		// Click Compare action
 		compareAction = new CompareRevisionAction(TeamUIMessages.LocalHistoryPage_CompareAction);
 		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
@@ -282,6 +308,8 @@ public class LocalHistoryPage extends HistoryPage {
 		if (file != null && !parentSite.isModal()){
 			manager.add(openAction);
 			manager.add(compareAction);
+			manager.add(new Separator());
+			manager.add(getContentsAction);
 		}
 	}
 
@@ -577,6 +605,76 @@ public class LocalHistoryPage extends HistoryPage {
 			}
 		}
 	}
+	
+	private Action getContextMenuAction(String title, final boolean needsProgressDialog, final IWorkspaceRunnable action) {
+		return new Action(title) {
+			public void run() {
+				try {
+					if (file == null) return;
+					ISelection selection = treeViewer.getSelection();
+					if (!(selection instanceof IStructuredSelection)) return;
+					IStructuredSelection ss = (IStructuredSelection)selection;
+					Object o = ss.getFirstElement();
+					
+					if (o instanceof AbstractHistoryCategory)
+						return;
+					
+					currentSelection = (IFileRevision)o;
+					if(needsProgressDialog) {
+						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {				
+									action.run(monitor);
+								} catch (CoreException e) {
+									throw new InvocationTargetException(e);
+								}
+							}
+						});
+					} else {
+						try {				
+							action.run(null);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
+					}							
+				} catch (InvocationTargetException e) {
+					IHistoryPageSite parentSite = getHistoryPageSite();
+					Utils.handleError(parentSite.getShell(), e, null, null);
+				} catch (InterruptedException e) {
+					// Do nothing
+				}
+			}
+			
+			public boolean isEnabled() {
+				ISelection selection = treeViewer.getSelection();
+				if (!(selection instanceof IStructuredSelection)) return false;
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if(ss.size() != 1) return false;
+				return true;
+			}
+		};
+	}
+
+	private boolean confirmOverwrite() {
+		if (file != null && file.exists()) {
+			String title = TeamUIMessages.LocalHistoryPage_OverwriteTitle;
+			String msg = TeamUIMessages.LocalHistoryPage_OverwriteMessage;
+			IHistoryPageSite parentSite = getHistoryPageSite();
+			final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+			final int[] result = new int[1];
+			parentSite.getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					result[0] = dialog.open();
+				}
+			});
+			if (result[0] != 0) {
+				// cancel
+				return false;
+			}
+		}
+		return true;
+	}
+
 	
 	
 }
