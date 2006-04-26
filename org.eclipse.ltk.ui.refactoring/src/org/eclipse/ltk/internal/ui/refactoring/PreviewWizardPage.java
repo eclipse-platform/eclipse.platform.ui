@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import java.text.Collator;
+import com.ibm.icu.text.Collator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -189,11 +190,11 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public void initialize(Collection groupCategories) {
 			List list= new ArrayList(groupCategories);
 			Collections.sort(list, new Comparator() {
-			
+				private Collator fCollator= Collator.getInstance();
 				public final int compare(final Object first, final Object second) {
 					final GroupCategory left= (GroupCategory) first;
 					final GroupCategory right= (GroupCategory) second;
-					return Collator.getInstance().compare(left.getName(), right.getName());
+					return fCollator.compare(left.getName(), right.getName());
 				}
 			});
 			fShowAllAction= new ShowAllAction(this);
