@@ -669,6 +669,10 @@ public abstract class Plugin implements BundleActivator {
 	 * Note 4: The supplied bundle context represents the plug-in to the OSGi framework.
 	 * For security reasons, it is strongly recommended that this object should not be divulged.
 	 * </p>
+	 * <p>
+	 * Note 5: This method and the {@link #stop(BundleContext)} may be called from separate threads,
+	 * but the OSGi framework ensures that both methods will not be called simultaneously.
+	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
 	 *
 	 * @param context the bundle context for this plug-in
@@ -735,6 +739,10 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * Note 3: The supplied bundle context represents the plug-in to the OSGi framework.
 	 * For security reasons, it is strongly recommended that this object should not be divulged.
+	 * </p>
+	 * <p>
+	 * Note 4: This method and the {@link #start(BundleContext)} may be called from separate threads,
+	 * but the OSGi framework ensures that both methods will not be called simultaneously.
 	 * </p>
 	 * <b>Clients must never explicitly call this method.</b>
 	 * 
