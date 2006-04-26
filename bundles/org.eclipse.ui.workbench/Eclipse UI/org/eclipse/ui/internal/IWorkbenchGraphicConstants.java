@@ -50,7 +50,11 @@ public interface IWorkbenchGraphicConstants {
     
     public final static String IMG_ETOOL_HELP_SEARCH = "IMG_ETOOL_HELP_SEARCH"; //$NON-NLS-1$
     
+    
+    //Fast view enabled and disabled icons
     public final static String IMG_ETOOL_NEW_FASTVIEW = "IMG_ETOOL_NEW_FASTVIEW"; //$NON-NLS-1$
+    
+    public final static String IMG_DTOOL_NEW_FASTVIEW = "IMG_DTOOL_NEW_FASTVIEW"; //$NON-NLS-1$
 
     // local toolbars
     
