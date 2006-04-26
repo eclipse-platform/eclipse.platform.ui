@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,6 +30,7 @@ import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRender
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
 import org.eclipse.debug.internal.ui.viewers.ModelNode;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 
 
@@ -275,13 +277,13 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		
 		MemoryByte[] bytes = convertSegmentsToBytes((MemorySegment[])segments.toArray(new MemorySegment[0]));
 		
-		int bytesPerLine = -1;
-		int numAddressableUnitPerLine = -1;
-		bytesPerLine = rendering.getBytesPerLine();
-		numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
+		int bytesPerLine = rendering.getBytesPerLine();
+		int numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
+		
+		int addressableSize = rendering.getAddressableSize();
 		
 		clearCache();
-		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine);
+		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize);
 		for (int i=0; i<newSegments.length; i++)
 		{
 			cache(newSegments[i].getAddress(), newSegments[i]);
@@ -309,18 +311,17 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		
 		MemoryByte[] bytes = convertSegmentsToBytes((MemorySegment[])segments.toArray(new MemorySegment[segments.size()]));
 		
-		int bytesPerLine = -1;
-		int numAddressableUnitPerLine = -1;
-		
-		bytesPerLine = rendering.getBytesPerLine();
-		numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
-		
+		int bytesPerLine = rendering.getBytesPerLine();
+		int numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
 		BigInteger address = (BigInteger)getKey(0);
+
+		int addressableSize = rendering.getAddressableSize();
 		
-		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine);
+		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize);
 		remove(getElements());
 		add(newSegments);
 	}
+
 	
 	private MemoryByte[] convertSegmentsToBytes(MemorySegment[] segments)
 	{
@@ -336,10 +337,41 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		return (MemoryByte[])toReturn.toArray(new MemoryByte[0]);
 	}
 	
-	private MemorySegment[] convertMemoryBytesToSegments(BigInteger address, MemoryByte[] bytes, int bytesPerLine, int numAddressableUnitPerLine) {
+	private MemorySegment[] convertMemoryBytesToSegments(BigInteger address, MemoryByte[] bytes, int bytesPerLine, int numAddressableUnitPerLine, int addressableSize) {
+		
+		Assert.isTrue(bytesPerLine > 0);
+		Assert.isTrue(numAddressableUnitPerLine > 0);
 		
 		ArrayList segments = new ArrayList();
 		MemoryByte[] temp = bytes;
+		
+		BigInteger alignedAddress = MemoryViewUtil.alignToBoundary(address, numAddressableUnitPerLine);
+		
+		// also check that the address is properly aligned and prepend bytes if need to
+		if (!address.subtract(alignedAddress).equals(BigInteger.ZERO))
+		{
+			BigInteger unitsToSetBack = address.subtract(alignedAddress);
+			BigInteger tempAddress = address.subtract(unitsToSetBack);
+			// only do this if the resulted address >= 0
+			// do not want to have negative addresses
+			if (tempAddress.compareTo(BigInteger.ZERO) >= 0)
+			{
+				address = alignedAddress;
+				int numBytesNeeded = unitsToSetBack.intValue() * addressableSize;
+				temp = new MemoryByte[bytes.length + numBytesNeeded];
+				
+				for (int i=0; i<numBytesNeeded; i++)
+				{
+					temp[i] = new MemoryByte();
+					temp[i].setReadable(false);
+					temp[i].setWritable(false);
+					temp[i].setEndianessKnown(false);	
+				}	
+				
+				System.arraycopy(bytes, 0, temp, numBytesNeeded, bytes.length);
+				bytes = temp;
+			}
+		}
 		
 		if (bytes.length % bytesPerLine != 0)
 		{
@@ -357,22 +389,19 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 			bytes = temp;
 		}
 		
-		if (bytesPerLine > 0 && numAddressableUnitPerLine > 0)
+		int idx = 0;
+		while (idx < bytes.length && (idx + bytesPerLine)<= bytes.length)
 		{
-			int idx = 0;
+			MemoryByte[] newBytes = new MemoryByte[bytesPerLine];
+			System.arraycopy(bytes, idx, newBytes, 0, bytesPerLine);
 			
-			while (idx < bytes.length && (idx + bytesPerLine)<= bytes.length)
-			{
-				MemoryByte[] newBytes = new MemoryByte[bytesPerLine];
-				System.arraycopy(bytes, idx, newBytes, 0, bytesPerLine);
-				
-				MemorySegment segment = new MemorySegment(address, newBytes, numAddressableUnitPerLine);
-				segments.add(segment);
-				
-				address = address.add(BigInteger.valueOf(bytesPerLine));
-				idx += bytesPerLine;
-			}
+			MemorySegment segment = new MemorySegment(address, newBytes, numAddressableUnitPerLine);
+			segments.add(segment);
+			
+			address = address.add(BigInteger.valueOf(numAddressableUnitPerLine));
+			idx += bytesPerLine;
 		}
+		
 		return (MemorySegment[])segments.toArray(new MemorySegment[segments.size()]);
 	}
 	

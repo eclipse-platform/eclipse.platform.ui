@@ -2728,14 +2728,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			else
 			{
 				// otherwise, use default
-				if (fColumnSize >= 4)
+				int addressableUnit = getAddressableUnitPerColumn();
+				if (addressableUnit >= 4)
 				{
-					columns[i].setText(Integer.toHexString(j*fColumnSize).toUpperCase() + 
-							" - " + Integer.toHexString(j*fColumnSize+fColumnSize-1).toUpperCase()); //$NON-NLS-1$
+					columns[i].setText(Integer.toHexString(j*addressableUnit).toUpperCase() + 
+							" - " + Integer.toHexString(j*addressableUnit+addressableUnit-1).toUpperCase()); //$NON-NLS-1$
 				}
 				else
 				{
-					columns[i].setText(Integer.toHexString(j*fColumnSize).toUpperCase());
+					columns[i].setText(Integer.toHexString(j*addressableUnit).toUpperCase());
 				}
 				j++;
 			}
