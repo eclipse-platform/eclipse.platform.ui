@@ -28,8 +28,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.DocumentRewriteSessionEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IDocumentRewriteSessionListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
@@ -195,6 +198,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * <code>false</code> if not.
 	 */
 	private boolean fIgnoreDocumentEvents= true;
+	/**
+	 * The listener for document rewrite sessions.
+	 * @since 3.2
+	 */
+	private final IDocumentRewriteSessionListener fSessionListener= new IDocumentRewriteSessionListener() {
+		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
+			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType()))
+				suspend();
+			else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
+				resume();
+		}
+	};
 
 	/**
 	 * Creates a new differ.
@@ -1336,6 +1351,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fOpenConnections == 1) {
 			fRightDocument= document;
 			fRightDocument.addDocumentListener(this);
+			if (document instanceof IDocumentExtension4) {
+	            IDocumentExtension4 ext= (IDocumentExtension4) document;
+	            ext.addDocumentRewriteSessionListener(fSessionListener);
+            }
 			initialize();
 		}
 	}
@@ -1370,8 +1389,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fLeftDocument= null;
 			fLeftEquivalent= null;
 
-			if (fRightDocument != null)
+			if (fRightDocument != null) {
 				fRightDocument.removeDocumentListener(this);
+				if (fRightDocument instanceof IDocumentExtension4) {
+		            IDocumentExtension4 ext= (IDocumentExtension4) fRightDocument;
+		            ext.removeDocumentRewriteSessionListener(fSessionListener);
+	            }
+			}
 			fRightDocument= null;
 			fRightEquivalent= null;
 			
