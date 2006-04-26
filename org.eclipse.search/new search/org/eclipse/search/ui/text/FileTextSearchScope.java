@@ -122,8 +122,8 @@ public final class FileTextSearchScope extends TextSearchScope {
 	private final String fDescription;
 	private final IResource[] fRootElements;
 	private final String[] fFileNamePatterns;
-	private Matcher fPositiveFileNameMatcher;
-	private Matcher fNegativeFileNameMatcher;
+	private final Matcher fPositiveFileNameMatcher;
+	private final Matcher fNegativeFileNameMatcher;
 	
 	private boolean fVisitDerived;
 	private IWorkingSet[] fWorkingSets;
@@ -132,10 +132,10 @@ public final class FileTextSearchScope extends TextSearchScope {
 		fDescription= description;
 		fRootElements= resources;
 		fFileNamePatterns= fileNamePatterns;
-		fPositiveFileNameMatcher= null;
-		fNegativeFileNameMatcher= null;
 		fVisitDerived= visitDerived;
 		fWorkingSets= workingSets;
+		fPositiveFileNameMatcher= createMatcher(fileNamePatterns, false);
+		fNegativeFileNameMatcher= createMatcher(fileNamePatterns, true);
 	}
 	
 	/**
@@ -229,46 +229,37 @@ public final class FileTextSearchScope extends TextSearchScope {
 	}
 	
 	private boolean matchesFileName(String fileName) {
-		if (fPositiveFileNameMatcher == null) {
-			computeFileNameMatcher();
+		if (fPositiveFileNameMatcher != null && !fPositiveFileNameMatcher.reset(fileName).matches()) {
+			return false;
 		}
- 		return fPositiveFileNameMatcher.reset(fileName).matches() &&
- 			(fNegativeFileNameMatcher == null || ! fNegativeFileNameMatcher.reset(fileName).matches());
+		if (fNegativeFileNameMatcher != null && fNegativeFileNameMatcher.reset(fileName).matches()) {
+			return false;
+		}
+		return true;
 	}
 	
-	private void computeFileNameMatcher() {
-		fPositiveFileNameMatcher= null;
-		fNegativeFileNameMatcher= null;
-		
-		// split patterns in positive and negative ones.
-		final int size= fFileNamePatterns == null ? 0 : fFileNamePatterns.length;
-		ArrayList positivePatterns= new ArrayList(size);
-		ArrayList negativePatterns= new ArrayList(size);
-		for (int i= 0; i < size; i++) {
+	private Matcher createMatcher(String[] fileNamePatterns, boolean negativeMatcher) {
+		if (fileNamePatterns == null || fileNamePatterns.length == 0) {
+			return null;
+		}
+		ArrayList patterns= new ArrayList();
+		for (int i= 0; i < fileNamePatterns.length; i++) {
 			String pattern= fFileNamePatterns[i];
-			if (pattern.startsWith(FileTypeEditor.FILE_PATTERN_NEGATOR)) {
-				pattern= pattern.substring(FileTypeEditor.FILE_PATTERN_NEGATOR.length()).trim();
+			if (negativeMatcher == pattern.startsWith(FileTypeEditor.FILE_PATTERN_NEGATOR)) {
+				if (negativeMatcher) {
+					pattern= pattern.substring(FileTypeEditor.FILE_PATTERN_NEGATOR.length()).trim();
+				}
 				if (pattern.length() > 0) {
-					negativePatterns.add(pattern);
+					patterns.add(pattern);
 				}
 			}
-			else {
-				positivePatterns.add(pattern);
-			}
 		}
-		
-		if (positivePatterns.isEmpty()) {
-			positivePatterns.add("*"); //$NON-NLS-1$
-		} 
-		fPositiveFileNameMatcher= createMatcher((String[]) positivePatterns.toArray(new String[positivePatterns.size()]));
-		if (!negativePatterns.isEmpty()) {
-			fNegativeFileNameMatcher= createMatcher((String[]) negativePatterns.toArray(new String[negativePatterns.size()]));
+		if (!patterns.isEmpty()) {
+			String[] patternArray= (String[]) patterns.toArray(new String[patterns.size()]);
+			Pattern pattern= PatternConstructor.createPattern(patternArray, IS_CASE_SENSITIVE_FILESYSTEM);
+			return pattern.matcher(""); //$NON-NLS-1$
 		}
-	}
-	
-	private Matcher createMatcher(String[] patterns) {
-		Pattern pattern= PatternConstructor.createPattern(patterns, IS_CASE_SENSITIVE_FILESYSTEM);
-		return pattern.matcher(""); //$NON-NLS-1$
+		return null;
 	}
 	
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {

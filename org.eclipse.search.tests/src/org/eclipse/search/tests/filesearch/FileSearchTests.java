@@ -28,8 +28,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.search.ui.text.FileTextSearchScope;
+
 import org.eclipse.search.internal.core.text.PatternConstructor;
-import org.eclipse.search.internal.core.text.FileNamePatternSearchScope;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 import org.eclipse.search.core.text.TextSearchEngine;
@@ -104,61 +105,6 @@ public class FileSearchTests extends TestCase {
 	}
 	
 	
-	/*
-	private void createFile(File file, String contents) throws IOException {
-		FileWriter fs= new FileWriter(file);
-		try {
-			fs.write(contents);
-			System.out.println(fs.getEncoding());
-		} finally {
-			fs.close();
-		}
-	}
-	
-	public void testFileNIOTest1() throws Exception {
-		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038
-		StringBuffer buf= new StringBuffer();
-		buf.append("File1\n");
-		buf.append("hello\n");
-		buf.append("more hello\n");
-		buf.append("world\n");
-		
-
-		File file1= File.createTempFile("test", "txt");
-		createFile(file1, buf.toString());
-		
-		File file2= File.createTempFile("test", "txt");
-		createFile(file2, buf.toString());
-		assertTrue(file2.delete());
-		
-		
-		InputStream stream= null;
-		try {
-			stream= new FileInputStream(file1);
-			if (stream instanceof FileInputStream) {
-				FileChannel channel= ((FileInputStream) stream).getChannel();
-				try {
-					MappedByteBuffer mappedBuffer= channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-					
-					Charset charset= Charset.forName("Cp1252");
-					CharsetDecoder decoder = charset.newDecoder();
-					
-					CharSequence searchInput= decoder.decode(mappedBuffer);
-
-					int len= Math.min(searchInput.length(), 5);
-					CharSequence sequence= searchInput.subSequence(0, len);
-					System.out.println(sequence.toString());
-				} finally {
-					channel.close();
-				}
-			}
-		} finally {
-			stream.close();
-		}
-		assertTrue(file1.delete());
-	}
-	*/
-	
 	public void testSimpleFiles() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		buf.append("File1\n");
@@ -172,7 +118,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -196,7 +142,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mor*", false, false);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -217,7 +163,7 @@ public class FileSearchTests extends TestCase {
 		TestResultCollector collector= new TestResultCollector();
 		Pattern searchPattern= PatternConstructor.createPattern("mo?e", false, false);
 		
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] { fProject }, false);
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
 		TextSearchEngine.create().search(scope, collector, searchPattern, null);
 		
 		TestResult[] results= collector.getResults();
@@ -246,7 +192,7 @@ public class FileSearchTests extends TestCase {
 
 			// search in Junit sources
 
-			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {project}, false);
+			FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {project}, (String[]) null, false);
 			TextSearchEngine.create().search(scope, collector, searchPattern, null);
 
 			TestResult[] results= collector.getResults();
@@ -277,7 +223,7 @@ public class FileSearchTests extends TestCase {
 			TestResultCollector collector= new TestResultCollector();
 			Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 
-			FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("test-project", new IResource[] {fProject}, false);
+			FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, (String[]) null, false);
 			TextSearchEngine.create().search(scope, collector, searchPattern, null);
 
 			TestResult[] results= collector.getResults();
@@ -368,6 +314,54 @@ public class FileSearchTests extends TestCase {
 		}
 	}
 
+	
+	public void testFileNamePatterns() throws Exception {
+		IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+		ResourceHelper.createFile(folder, "file1.x", "Test");
+		ResourceHelper.createFile(folder, "file2.x", "Test");
+		ResourceHelper.createFile(folder, "file2.y", "Test");
+		ResourceHelper.createFile(folder, "file2.z", "Test");
+
+		Pattern searchPattern= PatternConstructor.createPattern("Test", false, false);
+		String[] fileNamePatterns= { "*" };
+				
+		TestResult[] results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 4, results.length);
+		
+		fileNamePatterns= new String[] { "*.x" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 2, results.length);
+		
+		fileNamePatterns= new String[] { "*.x", "*.y*" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 3, results.length);
+		
+		fileNamePatterns= new String[] { "!*.x" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 2, results.length);
+		
+		fileNamePatterns= new String[] { "!*.x", "!*.y" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 1, results.length);
+		
+		fileNamePatterns= new String[] { "*", "!*.y" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 3, results.length);
+		
+		fileNamePatterns= new String[] { "*", "!*.*" };
+		results= performSearch(fileNamePatterns, searchPattern);
+		assertEquals("Number of total results", 0, results.length);
+	}
+	
+	private TestResult[] performSearch(String[] fileNamePatterns, Pattern searchPattern) {
+		TestResultCollector collector= new TestResultCollector();
+		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] {fProject}, fileNamePatterns, false);
+		TextSearchEngine.create().search(scope, collector, searchPattern, null);
+		
+		return collector.getResults();
+
+	}
+	
 
 
 	private void assertMatches(TestResult[] results, int expectedCount, IFile file, String fileContent, String string) {
