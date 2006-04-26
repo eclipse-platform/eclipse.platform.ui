@@ -24,12 +24,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
-public class ImportOperationTest extends DataTransferTestCase implements IOverwriteQuery {
+public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 
     private String localDirectory;
 
@@ -102,7 +104,7 @@ public class ImportOperationTest extends DataTransferTestCase implements IOverwr
         try {
             project.delete(true, true, null);
             File topDirectory = new File(localDirectory);
-            deleteDirectory(topDirectory);
+            FileSystemHelper.clear(topDirectory);
         } catch (CoreException e) {
             fail(e.toString());
         }

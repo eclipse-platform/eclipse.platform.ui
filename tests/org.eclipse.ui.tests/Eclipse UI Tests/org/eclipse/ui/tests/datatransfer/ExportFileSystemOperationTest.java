@@ -16,8 +16,9 @@ import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
-public class ExportFileSystemOperationTest extends DataTransferTestCase implements
+public class ExportFileSystemOperationTest extends UITestCase implements
 		IOverwriteQuery {
 
     private String localDirectory;
@@ -72,7 +73,7 @@ public class ExportFileSystemOperationTest extends DataTransferTestCase implemen
         // delete exported data
         File root = new File(localDirectory);
         if (root.exists()){
-        	deleteDirectory(root);
+        	FileSystemHelper.clear(root);
         }
         try {
             project.delete(true, true, null);

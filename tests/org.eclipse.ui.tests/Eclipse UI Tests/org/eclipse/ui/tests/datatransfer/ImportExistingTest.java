@@ -48,8 +48,9 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileTool;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
-public class ImportExistingTest extends DataTransferTestCase {
+public class ImportExistingTest extends UITestCase {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_PREFIX = "data/workspaces";
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
@@ -95,7 +96,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 		if (dataLocation != null){
 			File root = new File(dataLocation);
 			if (root.exists()){
-				deleteDirectory(root);
+				FileSystemHelper.clear(root);
 			}
 		}
 		dataLocation = null;	// reset for next test
@@ -105,7 +106,7 @@ public class ImportExistingTest extends DataTransferTestCase {
 			File root = new File(zipLocation);
 			if (root.exists()){
 				// zipLocation is the zip file, not the temp directory it was copied to
-				deleteDirectory(root.getParentFile());
+				FileSystemHelper.clear(root.getParentFile());
 			}
 		}
 		zipLocation = null;	// reset for next test
