@@ -24,7 +24,7 @@ This paragraph, which has filter attribute "plugin!=my.invalid.plugin.id.012345"
 </p>
 
 <p>
-   <filter name="plugin" value="!my.invalid.plugin.id.012345" />
+   <filter name="plugin" value="!my.invalid.plugin.id.012345"/>
    This paragraph, which has filter element name="plugin", value="!my.invalid.plugin.id.012345",
    should never be filtered out.
 </p>

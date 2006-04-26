@@ -23,10 +23,23 @@ public class XHTMLUtil {
 	 */
 	public static String removeEnvironmentSpecificContent(String xhtml) {
 		/*
+		 * Remove the space between the last attribute value of a tag and
+		 * the closing part "/>". The Sun 1.5 JDK's XML DOM serializer will
+		 * always remove it, and 1.4 will always add it, so need to pick one
+		 * and adapt all documents to it.
+		 * 
+		 * For example:
+		 * <myElement myAttribute="myValue" />
+		 * becomes:
+		 * <myElement myAttribute="myValue"/>
+		 */
+		xhtml = xhtml.replaceAll(" />", "/>");
+
+		/*
 		 * The base tag is added before showing in browser. It contains an
 		 * absolute path in filesystem.
 		 */
-		xhtml = xhtml.replaceAll("<base href=\".*\" />", "");
+		xhtml = xhtml.replaceAll("<base href=\".*\"/>", "");
 
 		/*
 		 * The order of the params for the meta tag comes out differently on
