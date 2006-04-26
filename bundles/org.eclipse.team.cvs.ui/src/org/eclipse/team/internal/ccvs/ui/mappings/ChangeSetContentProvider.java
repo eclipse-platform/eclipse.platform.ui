@@ -183,14 +183,20 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			if (visibleAddedSets.length > 0 || visibleRemovedSets.length > 0 || visibleChangedSets.length > 0) {
 				Utils.syncExec(new Runnable() {
 					public void run() {
-						if (visibleAddedSets.length > 0) {
-							Object input = getViewer().getInput();
-							((AbstractTreeViewer)getViewer()).add(input, visibleAddedSets);
-						}
-						if (visibleRemovedSets.length > 0)
-							((AbstractTreeViewer)getViewer()).remove(visibleRemovedSets);
-						if (visibleChangedSets.length > 0) {
-							((AbstractTreeViewer)getViewer()).refresh(visibleChangedSets, true);
+						try {
+							getViewer().getControl().setRedraw(false);
+							if (visibleAddedSets.length > 0) {
+								Object input = getViewer().getInput();
+								((AbstractTreeViewer)getViewer()).add(input, visibleAddedSets);
+							}
+							if (visibleRemovedSets.length > 0)
+								((AbstractTreeViewer)getViewer()).remove(visibleRemovedSets);
+							for (int i = 0; i < visibleChangedSets.length; i++) {
+								ChangeSet set = visibleChangedSets[i];
+								((AbstractTreeViewer)getViewer()).refresh(set, true);		
+							}
+						} finally {
+							getViewer().getControl().setRedraw(true);
 						}
 					}
 				}, (StructuredViewer)getViewer());
