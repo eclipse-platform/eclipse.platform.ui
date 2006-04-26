@@ -578,19 +578,20 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
 		if (tbm != null) {
+			String fileNameQualifier = getFileNameQualifier();
 			//Add groups
-			tbm.add(new Separator("grouping"));	//$NON-NLS-1$
-			tbm.appendToGroup("grouping", groupByDateMode); //$NON-NLS-1$
-			tbm.add(new Separator("modes"));	//$NON-NLS-1$
-			tbm.appendToGroup("modes", remoteLocalMode); //$NON-NLS-1$
-			tbm.appendToGroup("modes", localMode); //$NON-NLS-1$
-			tbm.appendToGroup("modes", remoteMode); //$NON-NLS-1$
-			tbm.add(new Separator("collapse")); //$NON-NLS-1$
-			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
+			tbm.add(new Separator(fileNameQualifier + "grouping"));	//$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"grouping", groupByDateMode); //$NON-NLS-1$
+			tbm.add(new Separator(fileNameQualifier+"modes"));	//$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"modes", remoteLocalMode); //$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"modes", localMode); //$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"modes", remoteMode); //$NON-NLS-1$
+			tbm.add(new Separator(fileNameQualifier+"collapse")); //$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"collapse", collapseAll); //$NON-NLS-1$
 			if (!parentSite.isModal()) {
 				//don't bother adding the compare mode toolbar button if in 
 				//a dialog; you can only compare from dialogs
-				tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
+				tbm.appendToGroup(fileNameQualifier+"collapse", compareModeAction);  //$NON-NLS-1$
 			}
 			tbm.update(false);
 		}
@@ -605,6 +606,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		StyledText text = textViewer.getTextWidget();
 		menu = menuMgr.createContextMenu(text);
 		text.setMenu(menu);
+	}
+
+	private String getFileNameQualifier() {
+		IResource resource = file.getIResource();
+		if (resource != null)
+			return resource.getFullPath().toString();
+	
+		try {
+			return file.getRepositoryRelativePath();
+		} catch (CVSException e) {
+		}
+		
+		return file.getName();
 	}
 
 	private boolean isLocalHistoryFilteredOut() {

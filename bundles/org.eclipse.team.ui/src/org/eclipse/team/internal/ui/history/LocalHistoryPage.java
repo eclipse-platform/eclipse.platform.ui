@@ -255,16 +255,23 @@ public class LocalHistoryPage extends HistoryPage {
 		//Create the local tool bar
 		IToolBarManager tbm = parentSite.getToolBarManager();
 		if (tbm != null) {
+			String fileNameQualifier = getFileNameQualifier();
 			//Add groups
-			tbm.add(new Separator("grouping"));	//$NON-NLS-1$
-			tbm.appendToGroup("grouping", groupByDateMode); //$NON-NLS-1$
-			tbm.add(new Separator("modes"));	//$NON-NLS-1$
-			tbm.add(new Separator("collapse")); //$NON-NLS-1$
-			tbm.appendToGroup("collapse", collapseAll); //$NON-NLS-1$
-			tbm.appendToGroup("collapse", compareModeAction);  //$NON-NLS-1$
+			tbm.add(new Separator(fileNameQualifier+"grouping"));	//$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"grouping", groupByDateMode); //$NON-NLS-1$
+			tbm.add(new Separator(fileNameQualifier+"collapse")); //$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"collapse", collapseAll); //$NON-NLS-1$
+			tbm.appendToGroup(fileNameQualifier+"collapse", compareModeAction);  //$NON-NLS-1$
 			tbm.update(false);
 		}
 		
+	}
+
+	private String getFileNameQualifier() {
+		if (file != null)
+			return file.getFullPath().toString();
+		
+		return ""; //$NON-NLS-1$
 	}
 
 	protected void fillTableMenu(IMenuManager manager) {
