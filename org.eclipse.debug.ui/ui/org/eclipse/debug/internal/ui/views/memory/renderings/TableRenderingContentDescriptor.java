@@ -30,6 +30,8 @@ public class TableRenderingContentDescriptor{
 	private int fAddressSize = -1;
 	private int fAddressableSize = -1;
 	
+	private boolean fAlignAddress = true;
+	
 	private boolean fIsDynamicLoad;
 	
 	public TableRenderingContentDescriptor(AbstractBaseTableRendering rendering)
@@ -195,6 +197,16 @@ public class TableRenderingContentDescriptor{
 	public boolean isMemoryBlockBaseAddressInitialized()
 	{
 		return (fMemoryBlockBaseAddress != null);
+	}
+	
+	public boolean isAlignAddressToBoundary()
+	{
+		return fAlignAddress;
+	}
+	
+	public void setAlignAddressToBoundary(boolean align)
+	{
+		fAlignAddress = align;
 	}
 
 }

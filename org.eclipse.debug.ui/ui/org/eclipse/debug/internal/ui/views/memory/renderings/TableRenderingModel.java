@@ -283,7 +283,15 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		int addressableSize = rendering.getAddressableSize();
 		
 		clearCache();
-		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize);
+		
+		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
+		boolean alignAddress = true;
+		if (descriptor != null && !descriptor.isAlignAddressToBoundary())
+		{
+			alignAddress = descriptor.isAlignAddressToBoundary();
+		}
+		
+		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize, alignAddress);
 		for (int i=0; i<newSegments.length; i++)
 		{
 			cache(newSegments[i].getAddress(), newSegments[i]);
@@ -317,7 +325,14 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 
 		int addressableSize = rendering.getAddressableSize();
 		
-		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize);
+		TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
+		boolean alignAddress = true;
+		if (descriptor != null && !descriptor.isAlignAddressToBoundary())
+		{
+			alignAddress = descriptor.isAlignAddressToBoundary();
+		}
+		
+		MemorySegment[] newSegments = convertMemoryBytesToSegments(address, bytes, bytesPerLine, numAddressableUnitPerLine, addressableSize, alignAddress);
 		remove(getElements());
 		add(newSegments);
 	}
@@ -337,7 +352,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		return (MemoryByte[])toReturn.toArray(new MemoryByte[0]);
 	}
 	
-	private MemorySegment[] convertMemoryBytesToSegments(BigInteger address, MemoryByte[] bytes, int bytesPerLine, int numAddressableUnitPerLine, int addressableSize) {
+	private MemorySegment[] convertMemoryBytesToSegments(BigInteger address, MemoryByte[] bytes, int bytesPerLine, int numAddressableUnitPerLine, int addressableSize, boolean alignAddress) {
 		
 		Assert.isTrue(bytesPerLine > 0);
 		Assert.isTrue(numAddressableUnitPerLine > 0);
@@ -345,31 +360,34 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel
 		ArrayList segments = new ArrayList();
 		MemoryByte[] temp = bytes;
 		
-		BigInteger alignedAddress = MemoryViewUtil.alignToBoundary(address, numAddressableUnitPerLine);
-		
-		// also check that the address is properly aligned and prepend bytes if need to
-		if (!address.subtract(alignedAddress).equals(BigInteger.ZERO))
+		if (alignAddress)
 		{
-			BigInteger unitsToSetBack = address.subtract(alignedAddress);
-			BigInteger tempAddress = address.subtract(unitsToSetBack);
-			// only do this if the resulted address >= 0
-			// do not want to have negative addresses
-			if (tempAddress.compareTo(BigInteger.ZERO) >= 0)
+			BigInteger alignedAddress = MemoryViewUtil.alignToBoundary(address, numAddressableUnitPerLine);
+			
+			// also check that the address is properly aligned and prepend bytes if need to
+			if (!address.subtract(alignedAddress).equals(BigInteger.ZERO))
 			{
-				address = alignedAddress;
-				int numBytesNeeded = unitsToSetBack.intValue() * addressableSize;
-				temp = new MemoryByte[bytes.length + numBytesNeeded];
-				
-				for (int i=0; i<numBytesNeeded; i++)
+				BigInteger unitsToSetBack = address.subtract(alignedAddress);
+				BigInteger tempAddress = address.subtract(unitsToSetBack);
+				// only do this if the resulted address >= 0
+				// do not want to have negative addresses
+				if (tempAddress.compareTo(BigInteger.ZERO) >= 0)
 				{
-					temp[i] = new MemoryByte();
-					temp[i].setReadable(false);
-					temp[i].setWritable(false);
-					temp[i].setEndianessKnown(false);	
-				}	
-				
-				System.arraycopy(bytes, 0, temp, numBytesNeeded, bytes.length);
-				bytes = temp;
+					address = alignedAddress;
+					int numBytesNeeded = unitsToSetBack.intValue() * addressableSize;
+					temp = new MemoryByte[bytes.length + numBytesNeeded];
+					
+					for (int i=0; i<numBytesNeeded; i++)
+					{
+						temp[i] = new MemoryByte();
+						temp[i].setReadable(false);
+						temp[i].setWritable(false);
+						temp[i].setEndianessKnown(false);	
+					}	
+					
+					System.arraycopy(bytes, 0, temp, numBytesNeeded, bytes.length);
+					bytes = temp;
+				}
 			}
 		}
 		

@@ -229,7 +229,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		String adjustedAddress = startAddress.toString(16);
 
 		// align to the closest boundary based on addressable size per line
-		if ( descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
+		if (descriptor.isAlignAddressToBoundary() &&  descriptor.getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			startAddress = MemoryViewUtil.alignToBoundary(startAddress, tableRendering.getAddressableUnitPerLine());
 		}
