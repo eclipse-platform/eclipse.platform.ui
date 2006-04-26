@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.ui.IWorkbenchPart;
@@ -44,9 +45,20 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 		};
 		job.setSystem(true);
-		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context));
+		job.setRule(getRetrieveChildrenRule(parent, context));
 		job.schedule();
 	}
+    
+    /**
+     * Returns the scheduling rule for jobs retrieving children.
+     * 
+     * @param parent
+     * @param context
+     * @return scheduling rule or <code>null</code>
+     */
+    protected ISchedulingRule getRetrieveChildrenRule(Object parent, IPresentationContext context) {
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    }
     
 
     /*
@@ -63,9 +75,20 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 		};
 		job.setSystem(true);
-		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context));
+		job.setRule(getIsContainerRule(element, context));
 		job.schedule();
 	}
+    
+    /**
+     * Returns the scheduling rule for jobs determingin if an element is a container.
+     * 
+     * @param parent
+     * @param context
+     * @return scheduling rule or <code>null</code>
+     */
+    protected ISchedulingRule getIsContainerRule(Object parent, IPresentationContext context) {
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    }
     
     /**
      * Computes the children for the given parent in the specified context.

@@ -106,6 +106,6 @@ public class AsynchronousSchedulingRuleFactory {
 	 * @return scheduling rule
 	 */
 	public ISchedulingRule newSerialPerPartRule(IPresentationContext context) {
-		return new SerialPerObjectRule(context.getPart());
+		return newSerialPerObjectRule(context.getPart());
 	}
 }

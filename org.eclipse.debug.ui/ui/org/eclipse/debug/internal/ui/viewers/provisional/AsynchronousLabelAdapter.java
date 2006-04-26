@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
@@ -53,9 +54,20 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 			};
 		}
 		job.setSystem(true);
-		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context));
+		job.setRule(getLabelRule(element, context));
 		job.schedule();
 	}
+	
+    /**
+     * Returns the scheduling rule for label jobs.
+     * 
+     * @param element
+     * @param context
+     * @return scheduling rule or <code>null</code>
+     */
+    protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    }
 	
 	/**
 	 * Returns whether this label adapter requires to be run in the UI thread.

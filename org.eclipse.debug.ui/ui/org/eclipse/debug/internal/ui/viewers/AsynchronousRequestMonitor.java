@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.ui.actions.context.AbstractRequestMonitor;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -73,8 +74,17 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
         fNode = node;
         fModel = model;
         // serialize updates per viewer
-        fViewerUpdateJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(getModel().getViewer()));
+        fViewerUpdateJob.setRule(getUpdateSchedulingRule());
         fViewerUpdateJob.setSystem(true);
+    }
+    
+    /**
+     * Returns the scheduling rule for viewer update job.
+     * 
+     * @return rule or <code>null</code>
+     */
+    protected ISchedulingRule getUpdateSchedulingRule() {
+    	return null;
     }
     
     /**
