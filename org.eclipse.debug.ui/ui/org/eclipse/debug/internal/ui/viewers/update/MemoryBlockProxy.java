@@ -38,7 +38,6 @@ public class MemoryBlockProxy extends EventHandlerModelProxy  {
 		protected void handleChange(DebugEvent event) {
 			if (event.getDetail() == DebugEvent.STATE)
 			{	
-				// TODO:  test state change
 				ModelDelta delta = new ModelDelta(fMemoryBlock, IModelDelta.STATE);
 				fireModelChanged(delta);
 			}

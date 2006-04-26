@@ -63,19 +63,22 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 						computer.cache(model.getElements());
 					}
 				}
+
+				// update policy figured out what's changed in the memory block
+				// and will tell rendering to update accordinly.
+				// Updating the rendering indirectly update the table viewer
+				notifyRendering(node);
+				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
+				return;
 				
-				// override handling of content node
-				// let the super class deals with the rest of the changes
-				if (node.getElement() instanceof IMemoryBlock)
-				{
-					// update policy figured out what's changed in the memory block
-					// and will tell rendering to update accordinly.
-					// Updating the rendering indirectly update the table viewer
-					notifyRendering(node);
-					handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
-					return;
-				}
 			}
+			else if (node.getElement() instanceof IMemoryBlock && (node.getFlags() & IModelDelta.STATE) != 0)
+			{
+				// override handling of state change event
+				// let the super class deals with the rest of the changes
+				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
+				return;				
+			}				
 		}
 		
 		super.modelChanged(node);
@@ -107,32 +110,39 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 				final AbstractAsyncTableRendering rendering = getTableRendering(context);
 				if (rendering != null)
 				{
-					TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
-					
-					if (descriptor != null)
+					if ((delta.getFlags() & IModelDelta.CONTENT) != 0)
 					{
-						final BigInteger address = getMemoryBlockBaseAddress(mb);
-						if (!descriptor.isMemoryBlockBaseAddressInitialized() || !address.equals(descriptor.getContentBaseAddress()))
+						TableRenderingContentDescriptor descriptor = (TableRenderingContentDescriptor)rendering.getAdapter(TableRenderingContentDescriptor.class);
+						
+						if (descriptor != null)
 						{
-							descriptor.updateContentBaseAddress();
-							UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
-		
-								public IStatus runInUIThread(IProgressMonitor monitor) {
-									try {
-										rendering.goToAddress(address);
-									} catch (DebugException e) {
-										if (getTableViewer() != null)
-											getTableViewer().handlePresentationFailure(null, e.getStatus());
-									}
-									return Status.OK_STATUS;
-								}};
-							job.setSystem(true);
-							job.schedule();
+							final BigInteger address = getMemoryBlockBaseAddress(mb);
+							if (!descriptor.isMemoryBlockBaseAddressInitialized() || !address.equals(descriptor.getContentBaseAddress()))
+							{
+								descriptor.updateContentBaseAddress();
+								UIJob job = new UIJob("go to address"){ //$NON-NLS-1$
+			
+									public IStatus runInUIThread(IProgressMonitor monitor) {
+										try {
+											rendering.goToAddress(address);
+										} catch (DebugException e) {
+											if (getTableViewer() != null)
+												getTableViewer().handlePresentationFailure(null, e.getStatus());
+										}
+										return Status.OK_STATUS;
+									}};
+								job.setSystem(true);
+								job.schedule();
+							}
+							else
+							{
+								rendering.refresh();
+							}
 						}
-						else
-						{
-							rendering.refresh();
-						}
+					}
+					else
+					{
+						rendering.updateLabels();
 					}
 				}
 			}

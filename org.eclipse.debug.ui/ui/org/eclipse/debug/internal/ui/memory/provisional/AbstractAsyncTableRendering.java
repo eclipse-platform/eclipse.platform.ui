@@ -198,7 +198,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private boolean fActivated = false;
 	
-//	TODO:  linux - cannot resize columns to preferred size
 //	TODO:  review use of MemorySegment, need to be careful to ensure flexible hierarchy
 	
 	private class ToggleAddressColumnAction extends Action {
@@ -2001,17 +2000,29 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void updateLabels()
 	{
-		// update tab labels
-		updateRenderingLabel(true);
-		
-		if (fTableViewer != null)
-		{
-			// update column labels
-			setColumnHeadings();
-			
-			// rebuild cache and force labels to be refreshed
-			fTableViewer.formatViewer();
-		}
+		UIJob job = new UIJob("updateLabels"){ //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				// do not handle if the rendering is already disposed
+				if (fPageBook.isDisposed())
+					return Status.OK_STATUS;
+				
+				// update tab labels
+				updateRenderingLabel(true);
+				
+				if (fTableViewer != null)
+				{
+					// update column labels
+					setColumnHeadings();
+					
+					// rebuild cache and force labels to be refreshed
+					fTableViewer.formatViewer();
+				}
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
 	}
 	
 	/**
