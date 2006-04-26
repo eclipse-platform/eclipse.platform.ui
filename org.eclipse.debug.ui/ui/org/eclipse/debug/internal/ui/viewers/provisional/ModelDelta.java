@@ -178,4 +178,53 @@ public class ModelDelta implements IModelDelta {
 			fNodes = nodes;
 		}
 	}
+	
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("Model Delta Start\n"); //$NON-NLS-1$
+		appendDetail(buf, this);
+		buf.append("Model Delta End\n"); //$NON-NLS-1$
+		return buf.toString();
+	}
+	
+	private void appendDetail(StringBuffer buf, ModelDelta delta) {
+		buf.append("\tElement: "); //$NON-NLS-1$
+		buf.append(delta.fElement);
+		buf.append('\n');
+		buf.append("\tFlags: "); //$NON-NLS-1$
+		int flags = delta.getFlags();
+		if (flags == 0) {
+			buf.append("NO_CHANGE"); //$NON-NLS-1$
+		} else {
+			if ((flags & IModelDelta.ADDED) > 0) {
+				buf.append("ADDED | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.CONTENT) > 0) {
+				buf.append("CONTENT | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.EXPAND) > 0) {
+				buf.append("EXPAND | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.INSERTED) > 0) {
+				buf.append("INSERTED | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.REMOVED) > 0) {
+				buf.append("REMOVED | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.REPLACED) > 0) {
+				buf.append("REPLACED | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.SELECT) > 0) {
+				buf.append("SELECT | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.STATE) > 0) {
+				buf.append("STATE | "); //$NON-NLS-1$
+			}
+		}
+		buf.append('\n');
+		ModelDelta[] nodes = delta.getNodes();
+		for (int i = 0; i < nodes.length; i++) {
+			appendDetail(buf, nodes[i]);
+		}
+	}
 }
