@@ -238,7 +238,7 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 		return checked.toArray(new Object[checked.size()]);
 	}
 	
-	private void initializeScopingHint() {
+	protected void initializeScopingHint() {
 		String working_sets = settings.get(STORE_WORKING_SETS);
 		if (working_sets == null) {
 			participantScope.setSelection(true);

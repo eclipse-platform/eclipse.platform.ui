@@ -166,6 +166,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 				service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
 				service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
 				fViewer.setInput(manager.getScope());
+				initializeScopingHint();
 			}
 		}
 	}
