@@ -39,6 +39,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -159,7 +160,10 @@ public class TextViewer extends Viewer implements
 	 * Calls the double click strategy when the mouse has been double clicked
 	 * inside the text editor.
 	 */
-	class TextDoubleClickStrategyConnector extends MouseAdapter {
+	class TextDoubleClickStrategyConnector extends MouseAdapter implements MouseMoveListener {
+
+		/** Internal flag to remember the last double-click selection. */
+		private Point fDoubleClickSelection;
 
 		/**
 		 * Creates a new text double click strategy adapter.
@@ -176,13 +180,35 @@ public class TextViewer extends Viewer implements
 				StyledText textWidget= getTextWidget();
 				Point oldSelection= textWidget.getSelection();
 				s.doubleClicked(TextViewer.this);
-				Point newSelection= textWidget.getSelection();
-				if (newSelection.y > 0 && !oldSelection.equals(newSelection))
+				fDoubleClickSelection= textWidget.getSelection(); 
+				if (fDoubleClickSelection.y > 0 && !oldSelection.equals(fDoubleClickSelection))
 					textWidget.copy(DND.SELECTION_CLIPBOARD);
 			}
 		}
+		
+		/*
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 * @since 3.2
+		 */
+		public void mouseUp(MouseEvent e) {
+			fDoubleClickSelection= null;
+		}
+
+		/*
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+		 * @since 3.2
+		 */
+		public void mouseMove(MouseEvent e) {
+			if (fDoubleClickSelection != null) {
+				StyledText textWidget= getTextWidget();
+				Point newSelection= textWidget.getSelection();
+				if (newSelection.x == fDoubleClickSelection.x && newSelection.y < fDoubleClickSelection.y) {
+					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
+					textWidget.copy(DND.SELECTION_CLIPBOARD);
+				}
+			}
+		}			
 	}
-	
 
 	/**
 	 * Monitors the area of the viewer's document that is visible in the viewer.
@@ -1466,7 +1492,7 @@ public class TextViewer extends Viewer implements
 		fTextWidget.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
-					e.doit = false;
+					e.doit= false;
 			}
 		});
 
@@ -1506,6 +1532,7 @@ public class TextViewer extends Viewer implements
 		if (fDoubleClickStrategies != null && !fDoubleClickStrategies.isEmpty() && fDoubleClickStrategyConnector == null) {
 			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
+			fTextWidget.addMouseMoveListener(fDoubleClickStrategyConnector);
 		}
 
 		ensureHoverControlManagerInstalled();
