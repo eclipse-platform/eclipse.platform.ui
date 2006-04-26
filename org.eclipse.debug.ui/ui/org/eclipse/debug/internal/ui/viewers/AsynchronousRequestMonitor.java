@@ -72,6 +72,8 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     public AsynchronousRequestMonitor(ModelNode node, AsynchronousModel model) {
         fNode = node;
         fModel = model;
+        // serialize updates per viewer
+        fViewerUpdateJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(getModel().getViewer()));
         fViewerUpdateJob.setSystem(true);
     }
     

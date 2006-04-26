@@ -27,7 +27,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
+public class DisconnectAdapter extends StandardActionAdapter implements IAsynchronousDisconnectAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousDisconnectAdapter#canDisconnect(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
@@ -45,6 +45,7 @@ public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -55,12 +56,9 @@ public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
 		Job job = new Job("isDisconnected") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IDisconnect disconnect = getTarget(element);
-				if (disconnect != null)
-				{
+				if (disconnect != null) {
 					requestMonitor.setResult(disconnect.isDisconnected());
-				}
-				else
-				{
+				} else {
 					requestMonitor.setResult(false);
 				}
 				requestMonitor.done();
@@ -68,6 +66,7 @@ public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -78,16 +77,11 @@ public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
 		Job job = new Job("isDisconnected") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IDisconnect disconnect = getTarget(element);
-				
-				if (disconnect == null)
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to IDisconnect", //$NON-NLS-1$
-                			null));
-				}
-				else
-				{
+
+				if (disconnect == null) {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IDisconnect", //$NON-NLS-1$
+							null));
+				} else {
 					try {
 						disconnect.disconnect();
 					} catch (DebugException e) {
@@ -101,15 +95,14 @@ public class DisconnectAdapter implements IAsynchronousDisconnectAdapter {
 		job.setSystem(true);
 		job.schedule();
 	}
-	
-	private IDisconnect getTarget(Object element)
-	{
-        if (element instanceof IDisconnect) {
+
+	private IDisconnect getTarget(Object element) {
+		if (element instanceof IDisconnect) {
 			return (IDisconnect) element;
 		} else if (element instanceof IAdaptable) {
-			return (IDisconnect) ((IAdaptable)element).getAdapter(IDisconnect.class);
+			return (IDisconnect) ((IAdaptable) element).getAdapter(IDisconnect.class);
 		}
-        return null;
+		return null;
 	}
 
 }

@@ -26,7 +26,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
+public class StepFiltersAdapter extends StandardActionAdapter implements IAsynchronousStepFiltersAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter#supportsStepFilters(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
@@ -35,7 +35,7 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 		Job job = new Job("supportsStepFilters") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStepFilters filters = getTarget(element);
-				
+
 				if (filters != null)
 					requestMonitor.setResult(filters.supportsStepFilters());
 				else
@@ -45,6 +45,7 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -55,11 +56,10 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 		Job job = new Job("isStepFiltersEnabled") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStepFilters filters = getTarget(element);
-				
+
 				if (filters != null)
 					requestMonitor.setResult(filters.isStepFiltersEnabled());
-				else
-				{
+				else {
 					requestMonitor.setResult(false);
 				}
 				requestMonitor.done();
@@ -67,6 +67,7 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -77,15 +78,12 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 		Job job = new Job("setStepFiltersEnabled") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStepFilters filters = getTarget(element);
-				
+
 				if (filters != null)
 					filters.setStepFiltersEnabled(enabled);
-				else
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to IStepFilters", //$NON-NLS-1$
-                			null));
+				else {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IStepFilters", //$NON-NLS-1$
+							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -94,15 +92,14 @@ public class StepFiltersAdapter implements IAsynchronousStepFiltersAdapter {
 		job.setSystem(true);
 		job.schedule();
 	}
-	
-	private IStepFilters getTarget(Object element)
-	{
-		 if (element instanceof IStepFilters) {
+
+	private IStepFilters getTarget(Object element) {
+		if (element instanceof IStepFilters) {
 			return (IStepFilters) element;
 		} else if (element instanceof IAdaptable) {
-			return (IStepFilters) ((IAdaptable)element).getAdapter(IStepFilters.class);
+			return (IStepFilters) ((IAdaptable) element).getAdapter(IStepFilters.class);
 		}
-        return null;
+		return null;
 	}
 
 }

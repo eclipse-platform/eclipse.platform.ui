@@ -23,62 +23,59 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class DropToFrameAdapter implements IAsynchronousDropToFrameAdapter {
+public class DropToFrameAdapter extends StandardActionAdapter implements IAsynchronousDropToFrameAdapter {
 
-	    public void canDropToFrame(final Object element, final IBooleanRequestMonitor monitor) {
-	        Job job = new Job("canDropToFrame") { //$NON-NLS-1$
-	            protected IStatus run(IProgressMonitor pm) {
-	                if (!pm.isCanceled()) {
-	                    IDropToFrame dropToFrame = getTarget(element);
-	                    if (dropToFrame != null) {
-	                    	monitor.setResult(dropToFrame.canDropToFrame());
-	                    } else {
-	                    	monitor.setResult(false);
-	                    }
-	                    monitor.done();
-	                }
-	                return Status.OK_STATUS;
-	            }
-	        };
-	        job.setSystem(true);
-	        job.schedule();
-	    }
+	public void canDropToFrame(final Object element, final IBooleanRequestMonitor monitor) {
+		Job job = new Job("canDropToFrame") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor pm) {
+				if (!pm.isCanceled()) {
+					IDropToFrame dropToFrame = getTarget(element);
+					if (dropToFrame != null) {
+						monitor.setResult(dropToFrame.canDropToFrame());
+					} else {
+						monitor.setResult(false);
+					}
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
+		job.schedule();
+	}
 
-    public void dropToFrame(final Object element, final IAsynchronousRequestMonitor monitor) {
-        Job job = new Job("dropToFrame") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor pm) {
-                if (!pm.isCanceled()) {
-                    IDropToFrame dropToFrame = getTarget(element);
-                    if (dropToFrame != null) {
-	                    try {
-	                        dropToFrame.dropToFrame();
-	                    } catch (DebugException e) {
-	                        monitor.setStatus(e.getStatus());
-	                    }
-                    }
-                    else
-                    {
-                    	monitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                    			IDebugUIConstants.INTERNAL_ERROR,
-                    			"element must be an instance of or adapt to IDropToFrame", //$NON-NLS-1$
-                    			null));
-                    }
-                    monitor.done();
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.schedule();
-    }
-    
-    private IDropToFrame getTarget(Object element) {
-        if (element instanceof IDropToFrame) {
+	public void dropToFrame(final Object element, final IAsynchronousRequestMonitor monitor) {
+		Job job = new Job("dropToFrame") { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor pm) {
+				if (!pm.isCanceled()) {
+					IDropToFrame dropToFrame = getTarget(element);
+					if (dropToFrame != null) {
+						try {
+							dropToFrame.dropToFrame();
+						} catch (DebugException e) {
+							monitor.setStatus(e.getStatus());
+						}
+					} else {
+						monitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IDropToFrame", //$NON-NLS-1$
+								null));
+					}
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+	}
+
+	private IDropToFrame getTarget(Object element) {
+		if (element instanceof IDropToFrame) {
 			return (IDropToFrame) element;
 		} else if (element instanceof IAdaptable) {
-			return (IDropToFrame) ((IAdaptable)element).getAdapter(IDropToFrame.class);
+			return (IDropToFrame) ((IAdaptable) element).getAdapter(IDropToFrame.class);
 		}
-        return null;
-    }
+		return null;
+	}
 
 }

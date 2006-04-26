@@ -32,7 +32,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class TerminateAdapter implements IAsynchronousTerminateAdapter {
+public class TerminateAdapter extends StandardActionAdapter implements IAsynchronousTerminateAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter#canTerminate(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
@@ -50,6 +50,7 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -69,6 +70,7 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -79,23 +81,18 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 		Job job = new Job("terminate") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				ITerminate terminate = getTarget(element);
-				if (terminate != null)
-				{
+				if (terminate != null) {
 					try {
-	                    if (element instanceof IProcess) {
-	                        killTargets((IProcess) element);
-	                    }
-	                    ((ITerminate) element).terminate();
+						if (element instanceof IProcess) {
+							killTargets((IProcess) element);
+						}
+						((ITerminate) element).terminate();
 					} catch (DebugException e) {
 						requestMonitor.setStatus(e.getStatus());
 					}
-				}
-				else
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to ITerminate", //$NON-NLS-1$
-                			null));
+				} else {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to ITerminate", //$NON-NLS-1$
+							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -105,38 +102,37 @@ public class TerminateAdapter implements IAsynchronousTerminateAdapter {
 		job.schedule();
 	}
 
-    private void killTargets(IProcess process) throws DebugException {
-        ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-        ILaunch[] launches = launchManager.getLaunches();
+	private void killTargets(IProcess process) throws DebugException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
 
-        for (int i = 0; i < launches.length; i++) {
-            ILaunch launch = launches[i];
-            IProcess[] processes = launch.getProcesses();
-            for (int j = 0; j < processes.length; j++) {
-                IProcess process2 = processes[j];
-                if (process2.equals(process)) {
-                    IDebugTarget[] debugTargets = launch.getDebugTargets();
-                    for (int k = 0; k < debugTargets.length; k++) {
-                        IDebugTarget target = debugTargets[k];
-                        if (target.canTerminate()) {
-                            target.terminate();
-                        }
-                    }
-                    return; // all possible targets have been terminated for the
-                            // launch.
-                }
-            }
-        }
-    }
-    
-    private ITerminate getTarget(Object element)
-    {
-    	 if (element instanceof ITerminate) {
- 			return (ITerminate) element;
- 		} else if (element instanceof IAdaptable) {
- 			return (ITerminate) ((IAdaptable)element).getAdapter(ITerminate.class);
- 		}
-         return null;
-    }
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			IProcess[] processes = launch.getProcesses();
+			for (int j = 0; j < processes.length; j++) {
+				IProcess process2 = processes[j];
+				if (process2.equals(process)) {
+					IDebugTarget[] debugTargets = launch.getDebugTargets();
+					for (int k = 0; k < debugTargets.length; k++) {
+						IDebugTarget target = debugTargets[k];
+						if (target.canTerminate()) {
+							target.terminate();
+						}
+					}
+					return; // all possible targets have been terminated for the
+					// launch.
+				}
+			}
+		}
+	}
+
+	private ITerminate getTarget(Object element) {
+		if (element instanceof ITerminate) {
+			return (ITerminate) element;
+		} else if (element instanceof IAdaptable) {
+			return (ITerminate) ((IAdaptable) element).getAdapter(ITerminate.class);
+		}
+		return null;
+	}
 
 }

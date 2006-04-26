@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -43,6 +44,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 		};
 		job.setSystem(true);
+		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context));
 		job.schedule();
 	}
     
@@ -61,6 +63,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 			}
 		};
 		job.setSystem(true);
+		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context));
 		job.schedule();
 	}
     

@@ -27,7 +27,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class StepAdapter implements IAsynchronousStepAdapter {
+public class StepAdapter extends StandardActionAdapter implements IAsynchronousStepAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepAdapter#canStepInto(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
@@ -45,6 +45,7 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -64,6 +65,7 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -83,6 +85,7 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());		
 		job.schedule();
 	}
 
@@ -102,6 +105,7 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 			}
 		};
 		job.setSystem(true);
+		job.setRule(createUpdateSchedulingRule());
 		job.schedule();
 	}
 
@@ -112,20 +116,15 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 		Job job = new Job("stepInto") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStep step = getTarget(element);
-				if (step != null)
-				{
+				if (step != null) {
 					try {
 						step.stepInto();
 					} catch (DebugException e) {
 						requestMonitor.setStatus(e.getStatus());
 					}
-				}
-				else
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to IStep", //$NON-NLS-1$
-                			null));
+				} else {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IStep", //$NON-NLS-1$
+							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -142,20 +141,15 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 		Job job = new Job("stepOver") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStep step = getTarget(element);
-				if (step != null)
-				{
+				if (step != null) {
 					try {
 						step.stepOver();
 					} catch (DebugException e) {
 						requestMonitor.setStatus(e.getStatus());
 					}
-				}
-				else
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to IStep", //$NON-NLS-1$
-                			null));
+				} else {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IStep", //$NON-NLS-1$
+							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -172,20 +166,15 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 		Job job = new Job("stepReturn") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				IStep step = getTarget(element);
-				if (step != null)
-				{
+				if (step != null) {
 					try {
 						step.stepReturn();
 					} catch (DebugException e) {
 						requestMonitor.setStatus(e.getStatus());
 					}
-				}
-				else
-				{
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID,
-                			IDebugUIConstants.INTERNAL_ERROR,
-                			"element must be an instance of or adapt to IStep", //$NON-NLS-1$
-                			null));
+				} else {
+					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element must be an instance of or adapt to IStep", //$NON-NLS-1$
+							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;
@@ -196,14 +185,13 @@ public class StepAdapter implements IAsynchronousStepAdapter {
 
 	}
 	
-	private IStep getTarget(Object element)
-	{
-		 if (element instanceof IStep) {
-				return (IStep) element;
-			} else if (element instanceof IAdaptable) {
-				return (IStep) ((IAdaptable)element).getAdapter(IStep.class);
-			}
-	        return null;		
+	private IStep getTarget(Object element) {
+		if (element instanceof IStep) {
+			return (IStep) element;
+		} else if (element instanceof IAdaptable) {
+			return (IStep) ((IAdaptable) element).getAdapter(IStep.class);
+		}
+		return null;
 	}
 
 }
