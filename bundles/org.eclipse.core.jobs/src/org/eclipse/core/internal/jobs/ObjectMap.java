@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,8 @@ public class ObjectMap implements Map {
 	 *                  The initial number of elements that will fit in the map.
 	 */
 	public ObjectMap(int initialCapacity) {
-		elements = new Object[Math.max(initialCapacity * 2, 0)];
+		if (initialCapacity > 0)
+			elements = new Object[Math.max(initialCapacity * 2, 0)];
 	}
 
 	/**
