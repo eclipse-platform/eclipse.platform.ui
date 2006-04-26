@@ -93,7 +93,7 @@ public class TrimCommonUIHandle extends Composite {
     private Listener dragListener = new Listener() {
         public void handleEvent(Event event) {
         	// Only allow 'left mouse' drags...
-        	if (event.button == 1) {
+        	if (event.button != 3) {
 	            Point position = DragUtil.getEventLoc(event);
 	            startDraggingTrim(position);
         	}
