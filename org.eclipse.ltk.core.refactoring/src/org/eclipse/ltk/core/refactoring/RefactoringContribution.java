@@ -17,11 +17,41 @@ import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescr
 
 /**
  * Partial implementation of refactoring contribution objects which are capable
- * of creating a specific refactoring instance and associated refactoring
- * descriptors or arguments. Refactoring contributions are stateless objects.
- * They are instantiated on demand by the refactoring framework. It is not
- * guaranteed that the same refactoring contribution object will be used to
- * create the arguments for a refactoring and to create the refactoring itself.
+ * of creating refactoring descriptors or refactoring arguments.
+ * <p>
+ * Clients which would like to add refactoring history and refactoring scripting
+ * support to a refactoring are required to register a subclass of
+ * {@link RefactoringContribution} with the extension point
+ * <code>org.eclipse.ltk.core.refactoring.refactoringContributions</code> to
+ * participate in the refactoring services. Refactoring contributions are
+ * stateless objects. They are instantiated on demand by the refactoring
+ * framework in the following cases:
+ * <ul>
+ * <li> When a refactoring script is executed, the refactoring framework
+ * retrieves a corresponding refactoring contribution for each refactoring
+ * persisted in the script and calls
+ * {@link #createDescriptor(String, String, String, String, Map, int)} with the
+ * appropriate arguments read from the refactoring script to obtain a
+ * language-specific refactoring descriptor. This refactoring descriptor is then
+ * used to dynamically construct the corresponding refactoring object and to
+ * initialize the refactoring object afterwards. The returned refactoring object
+ * is completely initialized and ready to be executed, ie. by
+ * {@link PerformRefactoringOperation}. </li>
+ * <li> After a refactoring has been executed, the refactoring framework stores
+ * the returned refactoring descriptor into the global refactoring history.
+ * During serialization of the descriptor, the refactoring framework calls
+ * {@link #retrieveArgumentMap(RefactoringDescriptor)} of the refactoring
+ * contribution associated with the executed refactoring to obtain a neutral
+ * key-value representation of the state of the language-specific refactoring
+ * descriptor. </li>
+ * </ul>
+ * </p>
+ * <p>
+ * Note: Clients which extend this class are required to reimplement the method
+ * {@link #retrieveArgumentMap(RefactoringDescriptor)} in subclasses to capture
+ * the state of a language-specific refactoring descriptor in a neutral
+ * key-value representation used by the refactoring framework.
+ * </p>
  * 
  * @since 3.2
  */
@@ -32,8 +62,11 @@ public abstract class RefactoringContribution {
 	 * <p>
 	 * This method is used by the refactoring framework to create a
 	 * language-specific refactoring descriptor representing the refactoring
-	 * instance corresponding to the argument map. Implementations of this
-	 * method must never return <code>null</code>.
+	 * instance corresponding to the specified arguments. Implementations of
+	 * this method must never return <code>null</code>. The refactoring
+	 * framework guarantees that this method is only called with <code>id</code>
+	 * values for which the refactoring contribution has been registered with
+	 * the extension point.
 	 * </p>
 	 * 
 	 * @param id
@@ -86,6 +119,9 @@ public abstract class RefactoringContribution {
 	 * implementation in order to let the refactoring framework retrieve the
 	 * argument map from language-specific refactoring descriptors.
 	 * Implementations of this method must never return <code>null</code>.
+	 * The refactoring framework guarantees that this method is only called for
+	 * refactoring descriptors which have been obtained by a previous call to
+	 * {@link #createDescriptor(String, String, String, String, Map, int)}.
 	 * </p>
 	 * 
 	 * @param descriptor
