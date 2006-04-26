@@ -24,7 +24,6 @@ public class CheatSheetExpandRestoreAction extends Action {
 	private boolean collapsed = false;
 
 	private ImageDescriptor collapseImage;
-	private ImageDescriptor expandImage;
 	private ImageDescriptor disabledImage;
 
 	public CheatSheetExpandRestoreAction(String title, boolean initValue, CheatSheetViewer viewer) {
@@ -35,9 +34,8 @@ public class CheatSheetExpandRestoreAction extends Action {
 		collapseImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 		path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_DLCL).append("collapse_expand_all.gif");//$NON-NLS-1$
 		disabledImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
-		path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("expandall.gif");//$NON-NLS-1$
-		expandImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 		setDisabledImageDescriptor(disabledImage);
+		setImageDescriptor(collapseImage);
 		setCollapsed(initValue);
 	}
 	
@@ -57,10 +55,8 @@ public class CheatSheetExpandRestoreAction extends Action {
 		collapsed = value;
 		if(value) {
 			setToolTipText(Messages.RESTORE_ALL_TOOLTIP);
-			setImageDescriptor(expandImage);
 		} else {
 			setToolTipText(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP);
-			setImageDescriptor(collapseImage);
 		}
 	}
 }
