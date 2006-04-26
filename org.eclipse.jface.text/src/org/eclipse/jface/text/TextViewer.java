@@ -178,20 +178,22 @@ public class TextViewer extends Viewer implements
 			ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
 			if (s != null) {
 				StyledText textWidget= getTextWidget();
-				Point oldSelection= textWidget.getSelection();
 				s.doubleClicked(TextViewer.this);
 				fDoubleClickSelection= textWidget.getSelection(); 
-				if (fDoubleClickSelection.y > 0 && !oldSelection.equals(fDoubleClickSelection))
-					textWidget.copy(DND.SELECTION_CLIPBOARD);
 			}
 		}
-		
+
 		/*
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 * @since 3.2
 		 */
 		public void mouseUp(MouseEvent e) {
-			fDoubleClickSelection= null;
+			try {
+				if (fDoubleClickSelection != null)
+					getTextWidget().copy(DND.SELECTION_CLIPBOARD);
+			} finally {
+				fDoubleClickSelection= null;
+			}
 		}
 
 		/*
@@ -202,12 +204,14 @@ public class TextViewer extends Viewer implements
 			if (fDoubleClickSelection != null) {
 				StyledText textWidget= getTextWidget();
 				Point newSelection= textWidget.getSelection();
-				if (newSelection.x == fDoubleClickSelection.x && newSelection.y < fDoubleClickSelection.y) {
+				if (newSelection.x == fDoubleClickSelection.x && newSelection.y <= fDoubleClickSelection.y) {
 					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
-					textWidget.copy(DND.SELECTION_CLIPBOARD);
-				}
+				} else if (newSelection.x >= fDoubleClickSelection.x && newSelection.y == fDoubleClickSelection.y && textWidget.getCaretOffset() == newSelection.x) {
+					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
+				} else if (newSelection.y <= fDoubleClickSelection.x && textWidget.getCaretOffset() == newSelection.x)
+					textWidget.setSelection(fDoubleClickSelection.y, newSelection.x);
 			}
-		}			
+		}
 	}
 
 	/**
