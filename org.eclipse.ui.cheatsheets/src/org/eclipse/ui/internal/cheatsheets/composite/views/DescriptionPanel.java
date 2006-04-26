@@ -61,6 +61,7 @@ public class DescriptionPanel {
 	private Composite control;
 	private FormText upperText;
 	private FormText lowerText;
+	private ScrolledForm form;
 	protected DescriptionPanel() {}
 	
 	public DescriptionPanel(ManagedForm mform, Composite parent) {
@@ -71,7 +72,7 @@ public class DescriptionPanel {
 		controlLayout.marginHeight = 0;
 		controlLayout.marginWidth = 0;
 		control.setLayout(controlLayout);
-		ScrolledForm form = toolkit.createScrolledForm(control);
+		form = toolkit.createScrolledForm(control);
 		panel = form.getBody();
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 		toolkit.adapt(panel);
@@ -186,7 +187,7 @@ public class DescriptionPanel {
 
 		lowerText.setText(buf.toString(), true, false);
 		getControl().setData(ICompositeCheatsheetTags.TASK, task);
-		panel.layout();
+		form.reflow(true);
 	}
 
 	/*
