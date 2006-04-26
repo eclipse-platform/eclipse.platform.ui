@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.text.Collator; // can't use ICU, public API
-import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.text.Collator;
+
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +59,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
@@ -70,10 +71,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	
 	public static class DecoratorIgnoringViewerSorter extends ViewerSorter {
 		private final ILabelProvider fLabelProvider;
-
+		private Collator fNewCollator;
+		
 		public DecoratorIgnoringViewerSorter(ILabelProvider labelProvider) {
 			super(null); // lazy initialization
 			fLabelProvider= labelProvider;
+			fNewCollator= null;
 		}
 		
 		/* (non-Javadoc)
@@ -100,17 +103,25 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	            name1 = "";//$NON-NLS-1$
 	        if (name2 == null)
 	            name2 = "";//$NON-NLS-1$
-	        return getCollator().compare(name1, name2);
+	        return getNewCollator().compare(name1, name2);
 	    }
 	    
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#getCollator()
 		 */
-		public final Collator getCollator() {
+		public final java.text.Collator getCollator() {
+			// kept in for API compatibility
 			if (collator == null) {
-				collator= Collator.getInstance();
+				collator= java.text.Collator.getInstance();
 			}
 			return collator;
+		}
+		
+		private final Collator getNewCollator() {
+			if (fNewCollator == null) {
+				fNewCollator= Collator.getInstance();
+			}
+			return fNewCollator;
 		}
 	}
 	
@@ -320,7 +331,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				int fileCount= getInput().getElements().length;
 				if (itemCount < fileCount) {
 					String format= SearchMessages.FileSearchPage_limited_format; 
-					return MessageFormat.format(format, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
+					return Messages.format(format, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
 				}
 			}
 		}
