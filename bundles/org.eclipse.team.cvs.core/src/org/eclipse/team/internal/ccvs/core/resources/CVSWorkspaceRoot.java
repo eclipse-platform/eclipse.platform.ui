@@ -137,10 +137,6 @@ public class CVSWorkspaceRoot {
 		}
 		return remote;
 	}
-
-	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		return getRemoteTree(resource, tag, false /* cache file contents hint */, progress);
-	}
 	
 	/**
 	 * Return the remote tree that corresponds to the given local resource. Return
@@ -150,11 +146,12 @@ public class CVSWorkspaceRoot {
 	 * @param resource the local resource
 	 * @param tag the tag to be queried remotely
 	 * @param cacheFileContentsHint hint which indicates whether file contents will be required
+	 * @param depth the depth
 	 * @param progress
 	 * @return the remote tree or <code>null</code>
 	 * @throws TeamException
 	 */
-	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, boolean cacheFileContentsHint, IProgressMonitor progress) throws TeamException {
+	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, boolean cacheFileContentsHint, int depth, IProgressMonitor progress) throws TeamException {
 		ICVSResource managed = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(resource);
 		if (remote == null) {
@@ -169,14 +166,14 @@ public class CVSWorkspaceRoot {
 		} else if(resource.getType() == IResource.FILE) {
 			ICVSRepositoryLocation location = remote.getRepository();
 			if (cacheFileContentsHint) {
-				remote = FileContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
+				remote = UpdateContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
 			} else {
 				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)managed, tag, progress);
 			}
 		} else {
 			ICVSRepositoryLocation location = remote.getRepository();
 			if (cacheFileContentsHint) {
-				remote = FileContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+				remote = UpdateContentCachingService.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, depth, progress);
 			} else {
 				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 			}	

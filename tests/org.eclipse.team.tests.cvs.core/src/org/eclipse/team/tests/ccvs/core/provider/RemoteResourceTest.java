@@ -97,7 +97,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 */
 	public void testGetBase() throws TeamException, CoreException, IOException {
 		IProject project = createProject("testGetBase", new String[] { "file1.txt", "file2.txt", "folder1/a.txt", "folder2/folder3/b.txt"});
-		RemoteFolderTree tree = RemoteFolderTreeBuilder.buildBaseTree(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project), CVSTag.DEFAULT, DEFAULT_MONITOR);
+		RemoteFolder tree = RemoteFolderTreeBuilder.buildBaseTree(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project), CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertRemoteMatchesLocal("testGetBase", tree, project);
 	}
 	
@@ -178,7 +178,7 @@ public class RemoteResourceTest extends EclipseTest {
 		commitResources(new IResource[] {project}, IResource.DEPTH_INFINITE);
 		
 		// Fetch the remote tree for the version
-		ICVSRemoteResource tree = CVSWorkspaceRoot.getRemoteTree(project, v1Tag, DEFAULT_MONITOR);
+		ICVSRemoteResource tree = getRemoteTree(project, v1Tag, DEFAULT_MONITOR);
 
 		// Check out the project version
 		project = checkoutCopy(project, v1Tag);
@@ -254,12 +254,12 @@ public class RemoteResourceTest extends EclipseTest {
 		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
 		tagRemoteResource(remote, tag, false);
-		ICVSRemoteFolder v1 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag, DEFAULT_MONITOR);
+		ICVSRemoteFolder v1 = (ICVSRemoteFolder)getRemoteTree(project, tag, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v1, false);
 		
 		CVSTag tag2 = new CVSTag("v2", CVSTag.VERSION);
 		tagRemoteResource(v1, tag2, false);
-		ICVSRemoteFolder v2 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag2, DEFAULT_MONITOR);
+		ICVSRemoteFolder v2 = (ICVSRemoteFolder)getRemoteTree(project, tag2, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v2, false);
 		
 		// Test tag with existing
@@ -267,7 +267,7 @@ public class RemoteResourceTest extends EclipseTest {
 		commitProject(project);
 		remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		tagRemoteResource(remote, tag, true /* force */);
-		v1 = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteTree(project, tag, DEFAULT_MONITOR);
+		v1 = (ICVSRemoteFolder)getRemoteTree(project, tag, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, remote, v1, false);
 		
 		// Test local tag with existing.

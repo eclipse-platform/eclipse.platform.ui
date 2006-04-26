@@ -86,6 +86,10 @@ public class EclipseTest extends ResourceTest {
 		if (eol == null) eol = "\n";
 	}
 
+	public ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		return CVSWorkspaceRoot.getRemoteTree(resource, tag, false /* cache file contents hint */, IResource.DEPTH_INFINITE, progress);
+	}
+	
 	/*
 	 * Get the resources for the given resource names
 	 */

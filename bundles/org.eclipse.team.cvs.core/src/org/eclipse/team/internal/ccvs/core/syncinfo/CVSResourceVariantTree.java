@@ -79,9 +79,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * @see org.eclipse.team.core.subscribers.RefreshOperation#buildRemoteTree(org.eclipse.core.resources.IResource, int, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResourceVariant fetchVariant(IResource resource, int depth, IProgressMonitor monitor) throws TeamException {
-		// TODO: we are currently ignoring the depth parameter because the build remote tree is
-		// by default deep!
-		return (IResourceVariant)CVSWorkspaceRoot.getRemoteTree(resource, getTag(resource), cacheFileContentsHint, monitor);
+		return (IResourceVariant)CVSWorkspaceRoot.getRemoteTree(resource, getTag(resource), isCacheFileContentsHint(), depth, monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -392,5 +390,9 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			remote.setChildren((ICVSRemoteResource[])children.toArray(new ICVSRemoteResource[children.size()]));
 			return remote;
 		}
+	}
+
+	public boolean isCacheFileContentsHint() {
+		return cacheFileContentsHint;
 	}
 }

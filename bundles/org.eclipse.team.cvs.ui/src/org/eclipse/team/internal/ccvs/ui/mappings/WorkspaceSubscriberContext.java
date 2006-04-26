@@ -39,6 +39,8 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.core.mapping.GroupProgressMonitor;
+import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 
 public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 
@@ -72,13 +74,13 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	}
 	
 	public static WorkspaceSubscriberContext createContext(ISynchronizationScopeManager manager, int type) {
-		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		CVSWorkspaceSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		WorkspaceSubscriberContext mergeContext = new WorkspaceSubscriberContext(subscriber, manager, type);
 		mergeContext.initialize();
 		return mergeContext;
 	}
 	
-	protected WorkspaceSubscriberContext(Subscriber subscriber, ISynchronizationScopeManager manager, int type) {
+	protected WorkspaceSubscriberContext(CVSWorkspaceSubscriber subscriber, ISynchronizationScopeManager manager, int type) {
 		super(subscriber, manager);
 		this.type = type;
 	}
@@ -294,18 +296,48 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 	 * @see org.eclipse.team.core.subscribers.SubscriberMergeContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void refresh(final ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(null, 50);
-		super.refresh(traversals, flags, Policy.subMonitorFor(monitor, 50));
-		runInBackground(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				cacheContents(traversals, getDiffTree(), monitor);
-			}
-		});
-		
-		monitor.done();
+		SubscriberDiffTreeEventHandler handler = getHandler();
+		if (handler != null) {
+			GroupProgressMonitor group = getGroup(monitor);
+			if (group != null)
+				handler.setProgressGroupHint(group.getGroup(), group.getTicks());
+			handler.initializeIfNeeded();
+			runInBackground(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					cacheContents(traversals, getDiffTree(), true, monitor);
+				}
+			});
+			((CVSWorkspaceSubscriber)getSubscriber()).refreshWithContentFetch(traversals, monitor);
+		} else {
+			super.refresh(traversals, flags, monitor);
+			runInBackground(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					cacheContents(traversals, getDiffTree(), false, monitor);
+				}
+			});
+		}
 	}
 	
-	protected void cacheContents(final ResourceTraversal[] traversals, IResourceDiffTree tree, IProgressMonitor monitor) throws CVSException {
+	private SubscriberDiffTreeEventHandler getHandler() {
+		Object o = getAdapter(SubscriberDiffTreeEventHandler.class);
+		if (o instanceof SubscriberDiffTreeEventHandler) {
+			return (SubscriberDiffTreeEventHandler) o;
+		}
+		return null;
+	}
+
+	private GroupProgressMonitor getGroup(IProgressMonitor monitor) {
+		if (monitor instanceof GroupProgressMonitor) {
+			return (GroupProgressMonitor) monitor;
+		}
+		if (monitor instanceof ProgressMonitorWrapper) {
+			ProgressMonitorWrapper wrapper = (ProgressMonitorWrapper) monitor;
+			return getGroup(wrapper.getWrappedProgressMonitor());
+		}
+		return null;
+	}
+	
+	protected void cacheContents(final ResourceTraversal[] traversals, IResourceDiffTree tree, boolean baseOnly, IProgressMonitor monitor) throws CVSException {
 		// cache the base and remote contents
 		// TODO: Refreshing and caching now takes 3 round trips.
 		// OPTIMIZE: remote state and contents could be obtained in 1
@@ -330,9 +362,9 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		try {
 			monitor.beginTask(null, 50);
 			new CacheBaseContentsOperation(null, mappings, tree, true).run(Policy.subMonitorFor(monitor, 25));
-			new CacheRemoteContentsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
-			//run log and cache timestamps
-			new UpdateTimeStampsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
+			if (!baseOnly) {
+				new CacheRemoteContentsOperation(null, mappings, tree).run(Policy.subMonitorFor(monitor, 25));
+			}
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
@@ -349,7 +381,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			String taskName = getMergeTaskName(deltas, force);
 			monitor.beginTask(taskName, 100);
 			monitor.setTaskName(taskName);
-			cacheContents(getTraversals(deltas), getDiffTree(deltas), Policy.subMonitorFor(monitor, 30));
+			cacheContents(getTraversals(deltas), getDiffTree(deltas), false, Policy.subMonitorFor(monitor, 30));
 			return super.merge(deltas, force, Policy.subMonitorFor(monitor, 70));
 		} finally {
 			monitor.done();
