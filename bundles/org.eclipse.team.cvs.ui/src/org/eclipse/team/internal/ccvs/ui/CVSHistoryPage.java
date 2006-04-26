@@ -609,16 +609,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	private String getFileNameQualifier() {
-		IResource resource = file.getIResource();
-		if (resource != null)
-			return resource.getFullPath().toString();
-	
-		try {
-			return file.getRepositoryRelativePath();
-		} catch (CVSException e) {
-		}
-		
-		return file.getName();
+		//Just append the current system time to generate a unique group name
+		return Long.toString(System.currentTimeMillis());
 	}
 
 	private boolean isLocalHistoryFilteredOut() {
