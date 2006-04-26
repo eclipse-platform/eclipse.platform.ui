@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -55,6 +56,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
@@ -124,6 +126,10 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		
+        setTitleImage(JFaceResources.getResources().createImageWithDefault(
+				IDEInternalWorkbenchImages.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG)));
+        
 		Composite mainArea = (Composite) super.createDialogArea(parent);
 
 		// Create a new composite as there is the title bar seperator
@@ -522,13 +528,13 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 			public String getColumnText(Object element, int columnIndex) {
 				if (columnIndex == 0)
 					return Util.getResourceName((IMarker) element);
-				int line = ((IMarker) element).getAttribute(IMarker.LINE_NUMBER, -1);
+				int line = ((IMarker) element).getAttribute(
+						IMarker.LINE_NUMBER, -1);
 				if (line < 0) {
 					return MarkerMessages.Unknown;
-				}	    	   
-    	        return NLS.bind(
-    	        		MarkerMessages.label_lineNumber,
-    	        		Integer.toString(line));
+				}
+				return NLS.bind(MarkerMessages.label_lineNumber, Integer
+						.toString(line));
 			}
 
 			/*
@@ -605,7 +611,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		TableColumn tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
 		tc.setResizable(true);
 
-		//Line column
+		// Line column
 		layout.addColumnData(new ColumnPixelData(50, true, true));
 		tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
 		tc.setResizable(true);

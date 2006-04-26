@@ -26,6 +26,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -48,6 +49,10 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 			ISelectionProvider provider) {
 		super(provider, MarkerMessages.resolveMarkerAction_title);
 		setEnabled(false);
+		setImageDescriptor(IDEInternalWorkbenchImages
+				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED));
+		setDisabledImageDescriptor(IDEInternalWorkbenchImages
+				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED));
 		view = markerView;
 	}
 
@@ -92,7 +97,7 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 		}
 
 		Dialog dialog = new MarkerResolutionDialog(view.getSite().getShell(),
-				getSelectedMarker(), (IMarkerResolution[]) resolutions[0],view);
+				getSelectedMarker(), (IMarkerResolution[]) resolutions[0], view);
 		dialog.open();
 
 	}
@@ -105,7 +110,8 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 	private void handleException(Exception exception) {
 		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
 		ErrorDialog.openError(view.getSite().getShell(), MarkerMessages.Error,
-				NLS.bind(MarkerMessages.MarkerResolutionDialog_CannotFixMessage,
+				NLS.bind(
+						MarkerMessages.MarkerResolutionDialog_CannotFixMessage,
 						getMarkerDescription()), Util.errorStatus(exception));
 	}
 

@@ -528,6 +528,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled  toolbar icons.//$NON-NLS-1$
+		final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled  toolbar icons.//$NON-NLS-1$
 		final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar icons.//$NON-NLS-1$
 		final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar icons.//$NON-NLS-1$
 		final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object icons//$NON-NLS-1$
@@ -594,6 +595,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN
 						+ "saveas_wiz.png", false); //$NON-NLS-1$
+		
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG, PATH_WIZBAN
+						+ "quick_fix.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
 				PATH_OBJECT + "prj_obj.gif", true); //$NON-NLS-1$
@@ -602,6 +607,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						+ "cprj_obj.gif", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
 				PATH_ELOCALTOOL + "gotoobj_tsk.gif", true); //$NON-NLS-1$
+		
+		declareWorkbenchImage(ideBundle, IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
+				PATH_ELOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
+		
+		declareWorkbenchImage(ideBundle, IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
+				PATH_DLOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
 
 		// task objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_HPRIO_TSK,
