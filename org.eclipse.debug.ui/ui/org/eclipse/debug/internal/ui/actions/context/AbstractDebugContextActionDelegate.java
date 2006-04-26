@@ -121,5 +121,10 @@ public abstract class AbstractDebugContextActionDelegate implements IWorkbenchWi
         fWindowAction.setEnabled(enabled);
     }
     
+    protected IAction getWindowAction()
+    {
+    	return fWindowAction;
+    }
+    
     
 }

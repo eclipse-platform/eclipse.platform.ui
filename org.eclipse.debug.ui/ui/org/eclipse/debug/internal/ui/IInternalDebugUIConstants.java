@@ -70,6 +70,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_DLCL_TERMINATE_AND_REMOVE = "IMG_DLCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_ALL = "IMG_DLCL_TERMINATE_ALL"; //$NON-NLS-1$
     public static final String IMG_DLCL_TERMINATE_AND_RELAUNCH = "IMG_DLCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
+    public static final String IMG_DLCL_TOGGLE_STEP_FILTERS = "IMG_DLCL_TOGGLE_STEP_FILTERS"; //$NON-NLS-1$
     
     //TODO: Move this IDebugUIConstants. Created too late in 3.2 cycle to add API.
     //The enabled icon is already API.
@@ -109,6 +110,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_TERMINATE_AND_REMOVE = "IMG_ELCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
     public static final String IMG_ELCL_TERMINATE_ALL = "IMG_ELCL_TERMINATE_ALL"; //$NON-NLS-1$
     public static final String IMG_ELCL_TERMINATE_AND_RELAUNCH = "IMG_ELCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
+    public static final String IMG_ELCL_TOGGLE_STEP_FILTERS = "IMG_ELCL_TOGGLE_STEP_FILTERS"; //$NON-NLS-1$
     
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$

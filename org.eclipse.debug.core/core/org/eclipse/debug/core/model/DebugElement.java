@@ -63,8 +63,11 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 		if (adapter == IDebugElement.class) {
 			return this;
 		}
+		
+		// a debug target may not implement IStepFilters
 		if (adapter == IStepFilters.class) {
-			return getDebugTarget();
+			if (getDebugTarget() instanceof IStepFilters)
+				return getDebugTarget();
 		}
 		if (adapter == IDebugTarget.class) {
 			return getDebugTarget();

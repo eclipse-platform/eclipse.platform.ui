@@ -174,7 +174,7 @@
          <action
                id="org.eclipse.debug.ui.actions.ToggleStepFilters"
                hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
                disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
                icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
@@ -543,17 +543,11 @@
                label="%RemoveAllTerminatedAction.label"
                tooltip="%RemoveAllTerminatedAction.tooltip">
          </action>
-
-
-
-
-
-
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
                toolbarPath="renderGroup"
                hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
                disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
                icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
                label="%StepWithFiltersAction.label"
@@ -986,12 +980,12 @@
                icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
                helpContextId="step_with_filters_action_context"
                definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
-               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
                menubarPath="renderGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
                style="toggle"
                state="false">
-         </action>         
+         </action>
       </viewerContribution>
 <!-- Contributions to Breakpoints View Popup Menu -->
       <viewerContribution

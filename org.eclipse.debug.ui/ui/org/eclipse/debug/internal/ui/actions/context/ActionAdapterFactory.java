@@ -11,10 +11,12 @@
 package org.eclipse.debug.internal.ui.actions.context;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IDropToFrame;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStep;
-import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousDisconnectAdapter;
@@ -59,7 +61,9 @@ public class ActionAdapterFactory implements IAdapterFactory {
 			}
 		}		
 		if (IAsynchronousStepFiltersAdapter.class.equals(adapterType)) {
-			if (adaptableObject instanceof IStepFilters) {
+			if (adaptableObject instanceof IDebugElement ||
+				adaptableObject instanceof ILaunch || 
+				adaptableObject instanceof IProcess) {
 				return fgStepFiltersAdapter;
 			}
 		}

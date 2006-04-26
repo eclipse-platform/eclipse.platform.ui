@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IStepFilters;
+import org.eclipse.debug.internal.ui.actions.context.ActionRequestMonitor;
+import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter;
 
 /**
  * As targets are launched, this manager sets its step filter
@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IStepFilters;
  * @since 3.0
  */
 public class StepFilterManager implements ILaunchListener {
-
+	
 	/**
 	 * The step filter manager is instantiated by the debug UI plug-in,
 	 * and should be accessed from the <code>DebugUIPlugin</code> class.
@@ -50,15 +50,10 @@ public class StepFilterManager implements ILaunchListener {
 	 */
 	public void launchChanged(ILaunch launch) {
 		boolean useStepFilters = isUseStepFilters();
-		IDebugTarget[] targets = launch.getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget target = targets[i];
-			if (target instanceof IStepFilters) {
-				IStepFilters filters = (IStepFilters) target;
-				if (filters.isStepFiltersEnabled() != useStepFilters) {
-					filters.setStepFiltersEnabled(useStepFilters);
-				}
-			}
+		IAsynchronousStepFiltersAdapter stepFilterAdapter = (IAsynchronousStepFiltersAdapter)launch.getAdapter(IAsynchronousStepFiltersAdapter.class);
+		if (stepFilterAdapter != null)
+		{
+			stepFilterAdapter.setStepFiltersEnabled(launch, useStepFilters, new ActionRequestMonitor());
 		}
 	}
 	
