@@ -69,7 +69,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * Turns assertions on/off. Don't make this a a debug option for performance reasons - this way
 	 * the compiler can optimize the asserts away.
 	 */
-	private static final boolean ASSERT= true;
+	private static final boolean ASSERT= false;
 	
 	/**
 	 * The empty delimiter of the last line. The last line and only the last line must have this
