@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPageSource;
 import org.eclipse.team.internal.ccvs.ui.CVSTeamStateProvider;
+import org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetCompareAdapter;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
@@ -35,6 +36,7 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	// Property cache
 	private Object cachedPropertyObject = null;
 	private Object cachedPropertyValue = null;
+	private ChangeSetCompareAdapter compareAdapter;
 
 	/** (Non-javadoc)
 	 * Method declared on IAdapterFactory.
@@ -66,6 +68,12 @@ public class CVSAdapterFactory implements IAdapterFactory {
 					teamStateProvider = new CVSTeamStateProvider(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
 			}
 			return teamStateProvider;
+		}
+		
+		if (ISynchronizationCompareAdapter.class == adapterType) {
+			if (compareAdapter == null)
+				compareAdapter = new ChangeSetCompareAdapter();
+			return compareAdapter;
 		}
 		
 		return null;
