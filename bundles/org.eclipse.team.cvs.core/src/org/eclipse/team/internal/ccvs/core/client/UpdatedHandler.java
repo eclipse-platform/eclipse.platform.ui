@@ -46,10 +46,10 @@ public class UpdatedHandler extends ResponseHandler {
 	
 	private int handlerType;
 	
-	protected static final int HANDLE_UPDATED = ICVSFile.UPDATED;
-	protected static final int HANDLE_MERGED = ICVSFile.MERGED;
-	protected static final int HANDLE_UPDATE_EXISTING = ICVSFile.UPDATE_EXISTING;
-	protected static final int HANDLE_CREATED = ICVSFile.CREATED;
+	public static final int HANDLE_UPDATED = ICVSFile.UPDATED;
+	public static final int HANDLE_MERGED = ICVSFile.MERGED;
+	public static final int HANDLE_UPDATE_EXISTING = ICVSFile.UPDATE_EXISTING;
+	public static final int HANDLE_CREATED = ICVSFile.CREATED;
 	
 	private static final String READ_ONLY_FLAG = "u=rw"; //$NON-NLS-1$
 	private static final String EXECUTE_FLAG = "x"; //$NON-NLS-1$
@@ -144,6 +144,10 @@ public class UpdatedHandler extends ResponseHandler {
             // Just log and keep going
             CVSProviderPlugin.log(e);
         }
+	}
+
+	public int getHandlerType() {
+		return handlerType;
 	}
 	
 }

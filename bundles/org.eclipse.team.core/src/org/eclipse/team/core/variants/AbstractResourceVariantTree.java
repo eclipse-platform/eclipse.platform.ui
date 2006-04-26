@@ -56,7 +56,6 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 			changedResources.addAll(Arrays.asList(changed));
 		}
 		monitor.done();
-		if (changedResources == null) return new IResource[0];
 		return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
 	}
 

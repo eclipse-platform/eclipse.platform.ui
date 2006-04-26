@@ -636,6 +636,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public void setExecutable(boolean executable) throws CVSException {
 		// store executable bit;
 		this.executable = executable;
+		RemoteFile file = (RemoteFile)getCachedHandle();
+		if (file != this) {
+			file.setExecutable(executable);
+		}
 	}
 
 	/* (non-Javadoc)

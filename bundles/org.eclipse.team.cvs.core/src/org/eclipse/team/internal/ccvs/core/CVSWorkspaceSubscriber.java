@@ -37,10 +37,12 @@ import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IResourceStateChangeListener {
 	
 	private CVSResourceVariantTree baseTree, remoteTree;
-	
+
 	// qualified name for remote sync info
 	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key"; //$NON-NLS-1$
 
+	private boolean contentFetch;
+	
 	CVSWorkspaceSubscriber(QualifiedName id, String name) {
 		super(id, name);
 		
@@ -60,7 +62,11 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		CVSDescendantResourceVariantByteStore remoteSynchronizer = new CVSDescendantResourceVariantByteStore(
 				baseSynchronizer, 
 				new PersistantResourceVariantByteStore(new QualifiedName(SYNC_KEY_QUALIFIER, REMOTE_RESOURCE_KEY)));
-		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, null, getCacheFileContentsHint());
+		remoteTree = new CVSResourceVariantTree(remoteSynchronizer, null, getCacheFileContentsHint()) {
+			public boolean isCacheFileContentsHint() {
+				return getCacheFileContentsHint();
+			}
+		};
 		
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
@@ -420,5 +426,18 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			return CVSProviderPlugin.getPlugin().getChangeSetManager();
 		}
 		return super.getAdapter(adapter);
+	}
+
+	public void refreshWithContentFetch(ResourceTraversal[] traversals, IProgressMonitor monitor) throws TeamException {
+		try {
+			contentFetch = true;
+			refresh(traversals, monitor);
+		} finally {
+			contentFetch = false;
+		}
+	}
+	
+	protected boolean getCacheFileContentsHint() {
+		return contentFetch;
 	}
 }

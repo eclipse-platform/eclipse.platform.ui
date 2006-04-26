@@ -121,7 +121,7 @@ public class RemoteFolderTreeBuilder {
 		return (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 	}
 	
-	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor progress) throws CVSException {
+	public static RemoteFolder buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor progress) throws CVSException {
 		try {
 			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
 			progress.beginTask(null, 100);
@@ -363,14 +363,14 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * Does 1 work for each managed file and folder
 	 */
-	private RemoteFolderTree buildBaseTree(RemoteFolderTree parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
+	RemoteFolder buildBaseTree(RemoteFolder parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
 		
 		Policy.checkCanceled(monitor);
 					
 		// Create a remote folder tree corresponding to the local resource
 		FolderSyncInfo folderSyncInfo = local.getFolderSyncInfo();
 		if (folderSyncInfo == null) return null;
-        RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, folderSyncInfo.getRepository(), folderSyncInfo.getTag());
+        RemoteFolder remote = createRemoteFolder(local, parent, folderSyncInfo);
 
 		// Create a List to contain the created children
 		List children = new ArrayList();
@@ -381,7 +381,7 @@ public class RemoteFolderTreeBuilder {
 			ICVSFolder folder = (ICVSFolder)folders[i];
 			if (folder.isManaged() && folder.isCVSFolder()) {
 				monitor.worked(1);
-				RemoteFolderTree tree = buildBaseTree(remote, folder, monitor);
+				RemoteFolder tree = buildBaseTree(remote, folder, monitor);
 				if (tree != null)
 				    children.add(tree);
 			}
@@ -402,7 +402,7 @@ public class RemoteFolderTreeBuilder {
 			if (ResourceSyncInfo.isDeletion(syncBytes)) {
 				syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
 			}
-			children.add(new RemoteFile(remote, syncBytes));
+			children.add(createRemoteFile(remote, syncBytes));
 			monitor.worked(1);
 		}
 
@@ -410,6 +410,14 @@ public class RemoteFolderTreeBuilder {
 		remote.setChildren((ICVSRemoteResource[])children.toArray(new ICVSRemoteResource[children.size()]));
 		
 		return remote;
+	}
+
+	protected RemoteFile createRemoteFile(RemoteFolder remote, byte[] syncBytes) throws CVSException {
+		return new RemoteFile(remote, syncBytes);
+	}
+
+	protected RemoteFolder createRemoteFolder(ICVSFolder local, RemoteFolder parent, FolderSyncInfo folderSyncInfo) {
+		return new RemoteFolderTree(parent, local.getName(), repository, folderSyncInfo.getRepository(), folderSyncInfo.getTag());
 	}
 	
 	/*

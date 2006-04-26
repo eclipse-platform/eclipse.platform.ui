@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 /**
  * This specialized remote folder supports the creation of a cached sandbox.
@@ -30,6 +28,11 @@ public class RemoteFolderSandbox extends RemoteFolder {
 
 	public RemoteFolderSandbox(RemoteFolder parent, ICVSRepositoryLocation repository, String repositoryRelativePath, CVSTag tag) {
 		super(parent, repository, repositoryRelativePath, tag);
+		setChildren(new ICVSRemoteResource[0]);
+	}
+
+	public RemoteFolderSandbox(RemoteFolder parent, String name, CVSRepositoryLocation repository, String repositoryRelativePath, CVSEntryLineTag tag, boolean isStatic) {
+		super(parent, name, repository, repositoryRelativePath, tag, isStatic);
 		setChildren(new ICVSRemoteResource[0]);
 	}
 
@@ -98,4 +101,25 @@ public class RemoteFolderSandbox extends RemoteFolder {
 		return getChildren();
 	}
 
+	/*
+	 * @see ICVSFolder#acceptChildren(ICVSResourceVisitor)
+	 */
+	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException {
+		ICVSRemoteResource[] children = getChildren();
+		if (children == null) return;
+		for (int i=0; i<children.length; i++) {
+			((ICVSResource)children[i]).accept(visitor);
+		}
+	}
+
+	public void remove(RemoteFile file) {
+		ICVSRemoteResource[] children = getChildren();
+		ArrayList results = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] != file){
+				results.add(children[i]);
+			}
+		}
+		setChildren((ICVSRemoteResource[]) results.toArray(new ICVSRemoteResource[results.size()]));		
+	}
 }
