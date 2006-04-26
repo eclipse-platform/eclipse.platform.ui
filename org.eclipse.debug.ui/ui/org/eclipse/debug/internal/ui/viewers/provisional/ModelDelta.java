@@ -191,7 +191,7 @@ public class ModelDelta implements IModelDelta {
 		buf.append("\tElement: "); //$NON-NLS-1$
 		buf.append(delta.fElement);
 		buf.append('\n');
-		buf.append("\tFlags: "); //$NON-NLS-1$
+		buf.append("\t\tFlags: "); //$NON-NLS-1$
 		int flags = delta.getFlags();
 		if (flags == 0) {
 			buf.append("NO_CHANGE"); //$NON-NLS-1$
