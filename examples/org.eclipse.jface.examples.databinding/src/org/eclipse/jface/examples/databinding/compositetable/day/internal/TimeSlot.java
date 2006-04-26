@@ -78,7 +78,7 @@ public class TimeSlot extends Canvas {
 		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
 
 		// Bluish color scheme by default; change as necessary.
-		CELL_BACKGROUND_LIGHT = new Color(display, 250, 250, 255);
+		CELL_BACKGROUND_LIGHT = new Color(display, 247, 247, 250);
 		CELL_BACKGROUND_WHITE = new Color(display, 255, 255, 255);
 		CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
 		CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
