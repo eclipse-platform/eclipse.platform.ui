@@ -997,6 +997,7 @@ public class AntModel implements IAntModel {
             int lastCharColumn= getLastCharColumn(line);
             offset= computeOffsetUsingPrefix(line, offset, prefix, lastCharColumn);
         } else {
+            column= column -1;
             offset= getOffset(line, column);
             offset= computeOffsetUsingPrefix(line, offset, prefix, column);
         }
