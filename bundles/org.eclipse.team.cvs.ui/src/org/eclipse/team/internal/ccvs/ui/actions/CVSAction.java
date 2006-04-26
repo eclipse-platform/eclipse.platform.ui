@@ -180,14 +180,16 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 			// Look for the active editor and see it adapts to ResourceMapping or IResource.
 			// See bug 132176
 			IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-			IEditorInput input = part.getEditorInput();
-			ResourceMapping mapping = Utils.getResourceMapping(input);
-			if (mapping != null) {
-				selection = new StructuredSelection(mapping);
-			} else {
-				IResource resource = Utils.getResource(input);
-				if (resource != null) {
-					selection = new StructuredSelection(resource);
+			if (part != null) {
+				IEditorInput input = part.getEditorInput();
+				ResourceMapping mapping = Utils.getResourceMapping(input);
+				if (mapping != null) {
+					selection = new StructuredSelection(mapping);
+				} else {
+					IResource resource = Utils.getResource(input);
+					if (resource != null) {
+						selection = new StructuredSelection(resource);
+					}
 				}
 			}
 		}
