@@ -248,11 +248,15 @@ public class FastViewPane {
 
                 Point loc = DragUtil.getEventLoc(event);
 
-                Rectangle bounds = DragUtil.getDisplayBounds(clientComposite);
+            	// 'Extrude' the rect -before- converting to Display coords
+            	// to avoid Right-to-Left issues
+                Rectangle bounds = clientComposite.getBounds();
                 if (site.getState() != IStackPresentationSite.STATE_MAXIMIZED) {
-                    bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE,
-                            side);
+                    bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE, side);
                 }
+                
+                // Now map the bounds to display coords
+                bounds = clientComposite.getDisplay().map(clientComposite, null, bounds);
 
                 if (!bounds.contains(loc)) {
                     site.setState(IStackPresentationSite.STATE_MINIMIZED);
