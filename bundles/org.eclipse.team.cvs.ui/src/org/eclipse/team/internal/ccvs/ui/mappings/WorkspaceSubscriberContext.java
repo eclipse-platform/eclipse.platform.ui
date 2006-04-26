@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.diff.provider.DiffTree;
@@ -180,6 +181,7 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 						if (remote != null && remote instanceof RemoteFile){
 							cvsFile.setExecutable(((RemoteFile)remote).isExecutable());
 							cvsFile.setTimeStamp(((RemoteFile) remote).getTimeStamp());
+							cvsFile.setReadOnly(getReadOnly(cvsFile));
 						}
 						cvsFile.checkedIn(null , false /* not a commit */);
 					}
@@ -188,6 +190,20 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}, getMergeRule(diff), IResource.NONE, monitor);
 	}
 	
+	protected boolean getReadOnly(ICVSFile cvsFile) {
+		IResource resource = cvsFile.getIResource();
+		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+		if (provider instanceof CVSTeamProvider) {
+			CVSTeamProvider ctp = (CVSTeamProvider) provider;
+			try {
+				return ctp.isWatchEditEnabled();
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+		return false;
+	}
+
 	protected void ensureRemotesMatch(IResource resource, IDiff node, SyncInfo info) throws CVSException {
 		IResourceVariant variant = info.getRemote();
 		IFileRevision remote = getRemote(node);
