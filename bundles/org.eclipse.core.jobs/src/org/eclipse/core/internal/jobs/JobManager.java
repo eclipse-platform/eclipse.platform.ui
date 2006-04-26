@@ -264,7 +264,7 @@ public class JobManager implements IJobManager {
 	 * necessary queues or sets.
 	 */
 	private void changeState(InternalJob job, int newState) {
-		int blockedJobCount = 0;
+		boolean blockedJobs = false;
 		synchronized (lock) {
 			int oldState = job.internalGetState();
 			switch (oldState) {
@@ -295,10 +295,10 @@ public class JobManager implements IJobManager {
 					//add any blocked jobs back to the wait queue
 					InternalJob blocked = job.previous();
 					job.remove();
+					blockedJobs = blocked != null;
 					while (blocked != null) {
 						InternalJob previous = blocked.previous();
 						changeState(blocked, Job.WAITING);
-						blockedJobCount++;
 						blocked = previous;
 					}
 					break;
@@ -333,7 +333,7 @@ public class JobManager implements IJobManager {
 			}
 		}
 		//notify queue outside sync block
-		for (int i = 0; i < blockedJobCount ; i++)
+		if (blockedJobs)
 			pool.jobQueued();
 	}
 
@@ -518,7 +518,6 @@ public class JobManager implements IJobManager {
 	 * about allocating objects.
 	 */
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
-		int blockedJobCount = 0;
 		long rescheduleDelay = InternalJob.T_NONE;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
@@ -535,9 +534,6 @@ public class JobManager implements IJobManager {
 			rescheduleDelay = job.getStartTime();
 			changeState(job, Job.NONE);
 		}
-		//notify queue outside sync block
-		for (int i = 0; i < blockedJobCount; i++)
-			pool.jobQueued();
 		//notify listeners outside sync block
 		final boolean reschedule = active && rescheduleDelay > InternalJob.T_NONE && job.shouldSchedule();
 		if (notify)
