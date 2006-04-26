@@ -18,8 +18,34 @@
           <property
                 name="startupProgressRect"
                 value="0,280,455,15"/>
+         <property
+          		name="introTitle"
+          		value="%productIntroTitle"/>
+          <property
+          		name="introBrandingImage"
+          		value="product:intro-eclipse.png"/>
+          <property
+          		name="introBrandingImageText"
+          		value="%productIntroBrandingText"/>
+		  <property
+				name="introDescription-overview"
+				value="%introDescription-overview"/>
+		  <property
+				name="introDescription-tutorials"
+				value="%introDescription-tutorials"/>
+		  <property
+				name="introDescription-samples"
+				value="%introDescription-samples"/>                
       </product> 
    </extension> 
+   
+   	<extension
+		point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal"
+            productId="org.eclipse.platform.ide">
+      </introProductBinding>
+    </extension>
 
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">

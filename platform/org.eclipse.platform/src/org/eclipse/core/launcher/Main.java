@@ -417,7 +417,7 @@ public class Main {
             byte b = encodedBytes[i];
             if (b == '%') {
             	if(i+2 >= encodedLength)
-            		throw new IllegalArgumentException("Malformed URL (\""+urlString+"\"): % must be followed by 2 digits.");
+            		throw new IllegalArgumentException("Malformed URL (\""+urlString+"\"): % must be followed by 2 digits.");  //$NON-NLS-1$//$NON-NLS-2$
                 byte enc1 = encodedBytes[++i];
                 byte enc2 = encodedBytes[++i];
                 b = (byte) ((hexToByte(enc1) << 4) + hexToByte(enc2));
