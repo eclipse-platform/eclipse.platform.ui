@@ -18,6 +18,8 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -48,7 +50,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			// We only react here for active change sets.
 			// Checked-in change set changes are batched
 			if (set instanceof ActiveChangeSet) {
-				if (isVisible(set)) {
+				if (isVisibleInMode(set)) {
 					Utils.syncExec(new Runnable() {
 						public void run() {
 							Object input = getViewer().getInput();
@@ -77,7 +79,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#defaultSetChanged(org.eclipse.team.internal.core.subscribers.ChangeSet, org.eclipse.team.internal.core.subscribers.ChangeSet)
 		 */
 		public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
-			if (isVisible(set) || isVisible(previousDefault)) {
+			if (isVisibleInMode(set) || isVisibleInMode(previousDefault)) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
 						((AbstractTreeViewer)getViewer()).update(new Object[] {previousDefault, set}, null);
@@ -93,7 +95,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			// We only react here for active change sets.
 			// Checked-in change set changes are batched
 			if (set instanceof ActiveChangeSet) {
-				if (isVisible(set)) {
+				if (isVisibleInMode(set)) {
 					Utils.syncExec(new Runnable() {
 						public void run() {
 							((AbstractTreeViewer)getViewer()).remove(TreePath.EMPTY.createChildPath(set));
@@ -123,7 +125,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		 * @see org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener#nameChanged(org.eclipse.team.internal.core.subscribers.ChangeSet)
 		 */
 		public void nameChanged(final ChangeSet set) {
-			if (isVisible(set)) {
+			if (isVisibleInMode(set)) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
 						((AbstractTreeViewer)getViewer()).update(set, null);
@@ -139,10 +141,16 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			// We only react here for active change sets.
 			// Checked-in change set changes are batched
 			if (set instanceof ActiveChangeSet) {
-				if (isVisible(set)) {
+				if (isVisibleInMode(set)) {
 					Utils.syncExec(new Runnable() {
 						public void run() {
-							((AbstractTreeViewer)getViewer()).refresh(set, true);
+							if (hasChildrenInContext(set))
+								if (getVisibleSetsInViewer().contains(set))
+									((AbstractTreeViewer)getViewer()).refresh(set, true);
+								else
+									((AbstractTreeViewer)getViewer()).add(getViewer().getInput(), set);
+							else 
+								((AbstractTreeViewer)getViewer()).remove(set);
 						}
 					}, (StructuredViewer)getViewer());
 				}
@@ -239,7 +247,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			List result = new ArrayList(sets.length);
 			for (int i = 0; i < sets.length; i++) {
 				ChangeSet set = sets[i];
-				if (isVisible(set)) {
+				if (isVisibleInMode(set)) {
 					result.add(set);
 				}
 			}
@@ -271,7 +279,6 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			if (input instanceof ChangeSetModelProvider && event.getTree() == theRest) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
-						// TODO: Need to be a bit more precise
 						((AbstractTreeViewer)getViewer()).refresh();
 					}
 				}, (StructuredViewer)getViewer());
@@ -289,15 +296,13 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return ChangeSetModelProvider.ID;
 	}
 	
-	protected boolean isVisible(ChangeSet set) {
+	/* package */ boolean isVisibleInMode(ChangeSet set) {
 		final Object input = getViewer().getInput();
 		if (input instanceof ChangeSetModelProvider) {
 			if (set instanceof ActiveChangeSet) {
-				// TODO: may need to be more precise that this
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
 			}
 			if (set instanceof DiffChangeSet) {
-				// TODO: may need to be more precise that this
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.OUTGOING_MODE;
 			}
 		}
@@ -755,5 +760,21 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
         }
         return null;
     }
+	
+	private Set getVisibleSetsInViewer() {
+		TreeViewer viewer = (TreeViewer)getViewer();
+		Tree tree = viewer.getTree();
+		TreeItem[] children = tree.getItems();
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			TreeItem control = children[i];
+			Object data = control.getData();
+			if (data instanceof ChangeSet) {
+				ChangeSet set = (ChangeSet) data;
+				result.add(set);
+			}
+		}
+		return result;
+	}
 
 }
