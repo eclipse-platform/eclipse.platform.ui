@@ -260,6 +260,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (isValid()) {
 				fDocumentUndoManager.fireDocumentUndo(fStart, fPreservedText, fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, false);
 				undoTextChange();
+				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(fStart, fPreservedText, fText, uiInfo, DocumentUndoEvent.UNDONE, false);
 				return Status.OK_STATUS;
 			}
@@ -289,8 +290,8 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 */
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
-				fDocumentUndoManager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, false);
 				redoTextChange();
+				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.REDONE, false);
 				return Status.OK_STATUS;
 			}
@@ -334,6 +335,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				updateTextChange();
 				fDocumentUndoManager.fCurrent= createCurrent();
 			}
+			fDocumentUndoManager.resetProcessChangeState();
 		}
 
 		/**
@@ -464,6 +466,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 					c= (UndoableTextChange) fChanges.get(i);
 					c.undoTextChange();
 				}
+				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo,
 						DocumentUndoEvent.UNDONE, true);
 			}
@@ -486,6 +489,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 					c= (UndoableTextChange) fChanges.get(i);
 					c.redoTextChange();
 				}
+				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo,
 						DocumentUndoEvent.REDONE, true);
 			}
@@ -534,8 +538,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (fStart > -1)
 				updateTextChange();
 			fDocumentUndoManager.fCurrent= createCurrent();
+			fDocumentUndoManager.resetProcessChangeState();
 		}
-
+		
 		/*
 		 * @see org.eclipse.text.undo.UndoableTextChange#isValid()
 		 */
@@ -803,11 +808,6 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * @see org.eclipse.jface.text.IDocumentUndoManager#commit()
 	 */
 	public void commit() {
-
-		fInserting= false;
-		fOverwriting= false;
-		fPreviousDelete.reinitialize();
-
 		// if fCurrent has never been placed on the history, do so now.
 		// this can happen when there are multiple programmatically commits in a
 		// single document change.
@@ -1198,6 +1198,17 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		fPreservedTextBuffer= new StringBuffer();
 
 		addListeners();
+	}
+	
+	/**
+	 * Reset processChange state.
+	 *   
+	 * @since 3.2
+	 */
+	private void resetProcessChangeState() {
+		fInserting= false;
+		fOverwriting= false;
+		fPreviousDelete.reinitialize();
 	}
 
 	/**

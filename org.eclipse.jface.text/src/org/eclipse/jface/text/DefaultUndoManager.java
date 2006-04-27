@@ -261,11 +261,12 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			if (isValid()) {
 				undoTextChange();
 				selectAndReveal(fStart, fPreservedText == null ? 0 : fPreservedText.length());
+				resetProcessChangeSate();
 				return Status.OK_STATUS;
 			}
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
-
+		
 		/**
 		 * Re-applies the change described by this command.
 		 *
@@ -293,6 +294,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
 				redoTextChange();
+				resetProcessChangeSate();
 				selectAndReveal(fStart, fText == null ? 0 : fText.length());
 				return Status.OK_STATUS;
 			}
@@ -326,7 +328,6 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * Commits the current change into this command.
 		 */
 		protected void commit() {
-
 			if (fStart < 0) {
 				if (fFoldingIntoCompoundChange) {
 					fCurrent= createCurrent();
@@ -337,6 +338,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				updateCommand();
 				fCurrent= createCurrent();
 			}
+			resetProcessChangeSate();
 		}
 
 		/**
@@ -463,6 +465,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#undo()
 		 */
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
+			resetProcessChangeSate();
+			
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
 				extension= (ITextViewerExtension) fTextViewer;
@@ -497,14 +501,15 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#redo()
 		 */
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
-
+			resetProcessChangeSate();
+			
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
 				extension= (ITextViewerExtension) fTextViewer;
 
 			if (extension != null)
 				extension.setRedraw(false);
-
+			
 			try {
 
 				int size= fCommands.size();
@@ -571,6 +576,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			if (fStart > -1)
 				updateCommand();
 			fCurrent= createCurrent();
+			resetProcessChangeSate();
 		}
 
 		/**
@@ -996,11 +1002,6 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * Closes the current editing command and opens a new one.
 	 */
 	private void commit() {
-
-		fInserting= false;
-		fOverwriting= false;
-		fPreviousDelete.reinitialize();
-
 		// if fCurrent has never been placed on the command stack, do so now.
 		// this can happen when there are multiple programmatically commits in a single
 		// document change.
@@ -1010,6 +1011,17 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				addToCommandStack(fCurrent);
 		}
 		fCurrent.commit();
+	}
+	
+	/**
+	 * Reset processChange state.
+	 *   
+	 * @since 3.2
+	 */
+	private void resetProcessChangeSate() {
+		fInserting= false;
+		fOverwriting= false;
+		fPreviousDelete.reinitialize();
 	}
 
 	/**
