@@ -115,22 +115,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		}
 	}
 
-	/**
-	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
-	 * IWorkbenchWindowActionDelegate delegates.
-	 * </p>
-	 * <ul>
-	 * <li>IViewActionDelegate delegate: getView() != null</li>
-	 * <li>IWorkbenchWindowActionDelegate: getView == null</li>
-	 * </ul>
-	 * <p>
-	 * Only want to call update(action, selection) for IViewActionDelegates.
-	 * An initialize call to update(action, selection) is made for all flavors to set the initial
-	 * enabled state of the underlying action.
-	 * IWorkbenchWindowActionDelegate's listen to selection changes
-	 * in the debug view only.
-	 * </p>
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
