@@ -516,6 +516,7 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_unableToOpenEditors;
 	public static String EditorManager_operationFailed;
 	public static String EditorManager_saveChangesQuestion;
+	public static String EditorManager_closeWithoutPromptingOption;
 	public static String EditorManager_saveChangesOptionallyQuestion;
     public static String EditorManager_missing_editor_descriptor;
     public static String EditorManager_no_in_place_support;

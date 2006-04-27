@@ -74,6 +74,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         }
     };
 
+	private Button dontPromptIfStillOpenElsewhere;
+
     protected Control createContents(Composite parent) {
         Composite composite = createComposite(parent);
 
@@ -81,6 +83,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
+        createDontPromptIfStillOpenElsewherePref(composite);
         createEditorReuseGroup(composite);
 
         updateValidState();
@@ -109,6 +112,15 @@ public class EditorsPreferencePage extends PreferencePage implements
         setButtonLayoutData(showMultipleEditorTabs);
     }
 
+    protected void createDontPromptIfStillOpenElsewherePref(Composite composite) {
+    	dontPromptIfStillOpenElsewhere = new Button(composite, SWT.CHECK);
+    	dontPromptIfStillOpenElsewhere.setText(WorkbenchMessages.EditorManager_closeWithoutPromptingOption);
+    	dontPromptIfStillOpenElsewhere.setFont(composite.getFont());
+    	dontPromptIfStillOpenElsewhere.setSelection(getPreferenceStore().getBoolean(
+    			IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN));
+    	setButtonLayoutData(dontPromptIfStillOpenElsewhere);
+    }
+    
     protected Composite createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -130,6 +142,9 @@ public class EditorsPreferencePage extends PreferencePage implements
         showMultipleEditorTabs
                 .setSelection(store
                         .getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+        dontPromptIfStillOpenElsewhere
+		        .setSelection(store
+		        		.getDefaultBoolean(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN));
         reuseEditors.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
         dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -151,6 +166,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         IPreferenceStore store = getPreferenceStore();
         store.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
+        store.setValue(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN,
+        		dontPromptIfStillOpenElsewhere.getSelection());
         
         // store the reuse editors setting
         store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, reuseEditors

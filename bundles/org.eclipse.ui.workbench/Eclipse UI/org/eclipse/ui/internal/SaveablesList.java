@@ -28,13 +28,22 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
@@ -47,6 +56,7 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
@@ -332,9 +342,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window,
 			Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
-		// TODO prompt for saving of dirty modelsDecrementing but not closing
-		// (changes
-		// won't be lost)
 		List modelsToOptionallySave = new ArrayList();
 		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
 			Saveable modelDecrementing = (Saveable) it.next();
@@ -382,27 +389,86 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return true if the user canceled
 	 */
 	private boolean promptForSaving(List modelsToSave,
-			final IWorkbenchWindow window, boolean canCancel, boolean stillOpenElsewhere) {
+			final IWorkbenchWindow window, final boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
-			if (modelsToSave.size() == 1) {
-				Saveable model = (Saveable) modelsToSave.get(0);
-				String message = NLS
-						.bind(
-								stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveChangesOptionallyQuestion
-										: WorkbenchMessages.EditorManager_saveChangesQuestion,
-								model.getName());
-				// Show a dialog.
-				String[] buttons = new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL };
-				MessageDialog d = new MessageDialog(window.getShell(),
-						WorkbenchMessages.Save_Resource, null, message,
-						MessageDialog.QUESTION, buttons, 0);
 
-				int choice = SaveableHelper.testGetAutomatedResponse();
+			IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
+			boolean dontPrompt = stillOpenElsewhere && internalStore.getBoolean(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN);
+
+			if (dontPrompt) {
+				modelsToSave.clear();
+				return false;
+			} else if (modelsToSave.size() == 1) {
+				Saveable model = (Saveable) modelsToSave.get(0);
+				// Show a dialog.
+				String[] buttons;
+				if(canCancel) {
+					buttons = new String[] { IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL };
+				} else {
+					buttons = new String[] { IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL};
+				}
+
+				// don't save if we don't prompt
+				int choice = ISaveablePart2.NO;
+				
+				MessageDialog dialog;
+				if (stillOpenElsewhere) {
+					String message = NLS
+							.bind(
+									WorkbenchMessages.EditorManager_saveChangesOptionallyQuestion,
+									model.getName());
+					MessageDialogWithToggle dialogWithToggle = new MessageDialogWithToggle(window.getShell(),
+							WorkbenchMessages.Save_Resource, null, message,
+							MessageDialog.QUESTION, buttons, 0, WorkbenchMessages.EditorManager_closeWithoutPromptingOption, false) {
+						protected int getShellStyle() {
+							return (canCancel ? SWT.CLOSE : SWT.NONE) | SWT.MIN
+									| SWT.MAX | SWT.RESIZE;
+						}
+					};
+					dialog = dialogWithToggle;
+				} else {
+					String message = NLS
+							.bind(
+									WorkbenchMessages.EditorManager_saveChangesQuestion,
+									model.getName());
+					dialog = new MessageDialog(window.getShell(),
+							WorkbenchMessages.Save_Resource, null, message,
+							MessageDialog.QUESTION, buttons, 0) {
+						protected int getShellStyle() {
+							return (canCancel ? SWT.CLOSE : SWT.NONE) | SWT.MIN
+									| SWT.MAX | SWT.RESIZE;
+						}
+					};
+				}
+
+				choice = SaveableHelper.testGetAutomatedResponse();
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
-					choice = d.open();
+					choice = dialog.open();
+					
+					if(stillOpenElsewhere) {
+						// map value of choice back to ISaveablePart2 values
+						switch (choice) {
+						case IDialogConstants.YES_ID:
+							choice = ISaveablePart2.YES;
+							break;
+						case IDialogConstants.NO_ID:
+							choice = ISaveablePart2.NO;
+							break;
+						case IDialogConstants.CANCEL_ID:
+							choice = ISaveablePart2.CANCEL;
+							break;
+						default:
+							break;
+						}
+						MessageDialogWithToggle dialogWithToggle = (MessageDialogWithToggle) dialog;
+						if (dialogWithToggle.getToggleState()) {
+							internalStore.setValue(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN, true);
+						}
+					}
 				}
 
 				// Branch on the user choice.
@@ -419,14 +485,14 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					return true;
 				}
 			} else {
-				ListSelectionDialog dlg = new MyListSelectionDialog(
+				MyListSelectionDialog dlg = new MyListSelectionDialog(
 						window.getShell(),
 						modelsToSave,
 						new ArrayContentProvider(),
 						new WorkbenchPartLabelProvider(),
 						stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
 								: WorkbenchMessages.EditorManager_saveResourcesMessage,
-						canCancel);
+						canCancel, stillOpenElsewhere);
 				dlg.setInitialSelections(modelsToSave.toArray());
 				dlg.setTitle(EditorManager.SAVE_RESOURCES_TITLE);
 
@@ -437,6 +503,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					if (result == IDialogConstants.CANCEL_ID)
 						return true;
 
+					if (dlg.getDontPromptSelection()) {
+						internalStore.setValue(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN, true);
+					}
+					
 					modelsToSave = Arrays.asList(dlg.getResult());
 				}
 			}
@@ -497,6 +567,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			IWorkbenchPart part = (IWorkbenchPart) it.next();
 			Set saveables = (Set) modelMap.get(part);
 			if (saveables != null) {
+				// make a copy to avoid a ConcurrentModificationException - we
+				// will remove from this set as we iterate
+				saveables = new HashSet(saveables);
 				for (Iterator it2 = saveables.iterator(); it2.hasNext();) {
 					Saveable saveable = (Saveable) it2.next();
 					if (removeModel(part, saveable)) {
@@ -571,17 +644,28 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private static final class MyListSelectionDialog extends
 			ListSelectionDialog {
 		private final boolean canCancel;
+		private Button checkbox;
+		private boolean dontPromptSelection;
+		private boolean stillOpenElsewhere;
 
 		private MyListSelectionDialog(Shell shell, Object input,
 				IStructuredContentProvider contentprovider,
-				ILabelProvider labelProvider, String message, boolean canCancel) {
+				ILabelProvider labelProvider, String message, boolean canCancel, boolean stillOpenElsewhere) {
 			super(shell, input, contentprovider, labelProvider, message);
 			this.canCancel = canCancel;
+			this.stillOpenElsewhere = stillOpenElsewhere;
 			if (!canCancel) {
 				int shellStyle = getShellStyle();
 				shellStyle &= ~SWT.CLOSE;
 				setShellStyle(shellStyle);
 			}
+		}
+
+		/**
+		 * @return
+		 */
+		public boolean getDontPromptSelection() {
+			return dontPromptSelection;
 		}
 
 		protected void createButtonsForButtonBar(Composite parent) {
@@ -591,6 +675,33 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				createButton(parent, IDialogConstants.CANCEL_ID,
 						IDialogConstants.CANCEL_LABEL, false);
 			}
+		}
+		
+		protected Control createDialogArea(Composite parent) {
+			 Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
+			 
+			 if (stillOpenElsewhere) {
+				 Composite checkboxComposite = new Composite(dialogAreaComposite, SWT.NONE);
+				 checkboxComposite.setLayout(new GridLayout(2, false));
+				 
+				 checkbox = new Button(checkboxComposite, SWT.CHECK);
+				 checkbox.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						dontPromptSelection = checkbox.getSelection();
+					}
+				 });
+				 GridData gd = new GridData();
+				 gd.horizontalAlignment = SWT.BEGINNING;
+				 checkbox.setLayoutData(gd);
+				 
+				 Label label = new Label(checkboxComposite, SWT.NONE);
+				 label.setText(WorkbenchMessages.EditorManager_closeWithoutPromptingOption);
+				 gd = new GridData();
+				 gd.grabExcessHorizontalSpace = true;
+				 gd.horizontalAlignment = SWT.BEGINNING;
+			 }
+			 
+			 return dialogAreaComposite;
 		}
 	}
 
