@@ -98,7 +98,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 			}
 		};
 		fHistoryControl.createControl();
-		boolean sortProjects= true;
+		boolean sortProjects= false;
 		final IDialogSettings settings= getWizard().getDialogSettings();
 		if (settings != null)
 			sortProjects= settings.getBoolean(SETTING_SORT);
