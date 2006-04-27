@@ -1,0 +1,93 @@
+Retrieving differences between the last submission and HEAD...
+  org.eclipse.core.commands (last version was 'I20060427-0800')
+  org.eclipse.jface (last version was 'I20060427-0800')
+  org.eclipse.jface.databinding (last version was 'I20060412-0800')
+  org.eclipse.jface.examples.databinding (last version was 'I20060412-0800')
+  org.eclipse.jface.tests.databinding (last version was 'I20060412-0800')
+  org.eclipse.ui (last version was 'I20060427-0800')
+  org.eclipse.ui.carbon (last version was 'I20060207-0800')
+  org.eclipse.ui.examples.fieldassist (last version was 'I20060321-0800')
+  org.eclipse.ui.examples.multipageeditor (last version was 'I20060214-1600')
+  org.eclipse.ui.examples.navigator (last version was '')
+  org.eclipse.ui.examples.propertysheet (last version was 'I20060214-1600')
+  org.eclipse.ui.examples.readmetool (last version was 'I20060215-0010')
+  org.eclipse.ui.examples.undo (last version was 'I20060307-0800')
+  org.eclipse.ui.examples.views.properties.tabbed (last version was '')
+  org.eclipse.ui.ide (last version was 'I20060427-0800a')
+  org.eclipse.ui.navigator (last version was 'I20060427-0800')
+  org.eclipse.ui.navigator.resources (last version was 'I20060427-0800')
+  org.eclipse.ui.presentations.r21 (last version was 'I20060412-0800')
+  org.eclipse.ui.tests (last version was 'I20060427-0800')
+  org.eclipse.ui.tests.harness (last version was 'I20060412-1200')
+  org.eclipse.ui.tests.navigator (last version was 'I20060427-0800')
+  org.eclipse.ui.tests.performance (last version was 'I20060427-0800')
+  org.eclipse.ui.tests.rcp (last version was 'I20060307-0800')
+  org.eclipse.ui.tests.views.properties.tabbed (last version was 'I20060427-0800')
+  org.eclipse.ui.views (last version was 'I20060413-1200')
+  org.eclipse.ui.views.properties.tabbed (last version was 'I20060427-0800')
+  org.eclipse.ui.win32 (last version was 'I20060412-0800')
+  org.eclipse.ui.workbench (last version was 'I20060427-0800a')
+  org.eclipse.ui.workbench.compatibility (last version was 'I20060207-0800')
+DONE
+
+Finding potential bug numbers...
+  Retrieving log for org.eclipse.ui.ide/src/org/eclipse/ui/views/markers/internal/ActionResolveMarker.java between I20060427-0800a and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.navigator/plugin.xml between I20060427-0800 and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.navigator/src/org/eclipse/ui/internal/navigator/NavigatorSaveablesService.java between I20060427-0800 and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.navigator/src/org/eclipse/ui/navigator/INavigatorSaveablesService.java between I20060427-0800 and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.navigator/src/org/eclipse/ui/navigator/SaveablesProvider.java between I20060427-0800 and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.tests/Eclipse UI Tests/org/eclipse/ui/tests/concurrency/ConcurrencyTestSuite.java between I20060427-0800 and HEAD
+done retrieving
+  Retrieving log for org.eclipse.ui.workbench/Eclipse UI/org/eclipse/ui/internal/WorkbenchPage.java between I20060427-0800a and HEAD
+done retrieving
+DONE
+
+Retrieving bug descriptions...
+  Bug 138404.  [Problems] quick fix wizard opened with no options
+  Bug 138695.  [Jobs] UI jobs with &quot;serial&quot; scheduling rule creates many threads
+  Bug 138785.  [Workbench] ArrayIndexOutOfBounds in WorkbenchPage.ActivationList#bringToTop
+  Bug 138824.  [CommonNavigator] Remove obsolete API
+DONE
+
+
+
+<p>Integration Build (April 27, 2006, 12:00 p.m.)</p>
+  <p>Problem reports fixed</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138404">Bug 138404</a>. [Problems] quick fix wizard opened with no options<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138695">Bug 138695</a>. [Jobs] UI jobs with &quot;serial&quot; scheduling rule creates many threads<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138785">Bug 138785</a>. [Workbench] ArrayIndexOutOfBounds in WorkbenchPage.ActivationList#bringToTop<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138824">Bug 138824</a>. [CommonNavigator] Remove obsolete API<br>
+  </p>
+
+
+
+
+
+The map file has been updated for I20060427-1200.  The following fixes are included:
++ Bug 138404. [Problems] quick fix wizard opened with no options
++ Bug 138695. [Jobs] UI jobs with &quot;serial&quot; scheduling rule creates many threads
++ Bug 138785. [Workbench] ArrayIndexOutOfBounds in WorkbenchPage.ActivationList#bringToTop
++ Bug 138824. [CommonNavigator] Remove obsolete API
+
+
+The following projects have changed:
++ org.eclipse.ui.ide
++ org.eclipse.ui.navigator
++ org.eclipse.ui.tests
++ org.eclipse.ui.workbench
+
+
+
+cheers,
+tod
+
+
+
+
+
