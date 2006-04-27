@@ -3811,11 +3811,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             ILayoutContainer targetContainer = getContainer(ref);
             
             int newIndex = lastIndexOfContainer(targetContainer);
-            if (ref == parts.get(newIndex)) {
+            
+            //New index can be -1 if there is no last index
+            if (newIndex >= 0 && ref == parts.get(newIndex)) 
 				return;
-			}
+			
             parts.remove(ref);
-            parts.add(newIndex, ref);
+            if(newIndex >= 0)
+            	parts.add(newIndex, ref);
+            else
+            	parts.add(ref);
         }
         
         /*
