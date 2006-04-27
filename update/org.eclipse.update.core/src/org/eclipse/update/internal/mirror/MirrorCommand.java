@@ -58,7 +58,7 @@ public class MirrorCommand extends ScriptedCommand {
 		this.fromSiteUrl = fromSiteUrl;
 		this.toSiteDir = toSiteDir;
 		this.mirrorURL = mirrorUrl;
-		this.ignoreNonPresentPlugins = (ignoreNonPresentPlugins != null) && (ignoreNonPresentPlugins.equals("true"));
+		this.ignoreNonPresentPlugins = (ignoreNonPresentPlugins != null) && (ignoreNonPresentPlugins.equals("true")); //$NON-NLS-1$
 	}
 
 	/**

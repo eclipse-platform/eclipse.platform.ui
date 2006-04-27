@@ -247,7 +247,7 @@ public class MirrorSite extends Site {
 				provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
 			} catch (CoreException ce) {
 				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
-					System.out.println("Could not mirror plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");
+					System.out.println("Could not mirror plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");  //$NON-NLS-1$//$NON-NLS-2$
 				} else {
 					throw ce;
 				}
@@ -294,9 +294,9 @@ public class MirrorSite extends Site {
 				addDownloadedPluginEntry(pluginsToInstall[i]);
 			} catch (CoreException ce) {
 				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
-					System.out.println("Could not write plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");
+					System.out.println("Could not write plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					System.out.println("ignoreNonPresentPlugins:"+ignoreNonPresentPlugins);
+					//System.out.println("ignoreNonPresentPlugins:"+ignoreNonPresentPlugins); //$NON-NLS-1$
 					throw ce;
 				}
 			}

@@ -430,7 +430,7 @@ public class ReviewPage	extends BannerPage {
 					continue;
 				if (!feature.getVersionedIdentifier().getIdentifier().equals(candidate.getVersionedIdentifier().getIdentifier()))
 					continue;
-				if (!feature.getVersionedIdentifier().getVersion().isGreaterThan(candidate.getVersionedIdentifier().getVersion()))
+				if (!feature.getVersionedIdentifier().getVersion().isGreaterOrEqualTo(candidate.getVersionedIdentifier().getVersion()))
 					return false;
 			}
 			return true;
