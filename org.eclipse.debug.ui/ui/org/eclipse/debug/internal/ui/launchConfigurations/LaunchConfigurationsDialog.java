@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids - Bug 137923
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
