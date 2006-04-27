@@ -55,7 +55,6 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 		createSpace(composite);
 		createShowMultipleEditorTabsPref(composite);
-		createDontPromptIfStillOpenElsewherePref(composite);
 		createEditorReuseGroup(composite);
 
 		applyDialogFont(composite);

@@ -50,6 +50,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
@@ -393,8 +394,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
 
-			IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
-			boolean dontPrompt = stillOpenElsewhere && internalStore.getBoolean(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN);
+			IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+			boolean dontPrompt = stillOpenElsewhere && !apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN);
 
 			if (dontPrompt) {
 				modelsToSave.clear();
@@ -465,8 +466,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 							break;
 						}
 						MessageDialogWithToggle dialogWithToggle = (MessageDialogWithToggle) dialog;
-						if (dialogWithToggle.getToggleState()) {
-							internalStore.setValue(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN, true);
+						if (choice != ISaveablePart2.CANCEL && dialogWithToggle.getToggleState()) {
+							apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN, false);
 						}
 					}
 				}
@@ -504,7 +505,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						return true;
 
 					if (dlg.getDontPromptSelection()) {
-						internalStore.setValue(IPreferenceConstants.DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN, true);
+						apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN, false);
 					}
 					
 					modelsToSave = Arrays.asList(dlg.getResult());
@@ -568,7 +569,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			Set saveables = (Set) modelMap.get(part);
 			if (saveables != null) {
 				// make a copy to avoid a ConcurrentModificationException - we
-				// will remove from this set as we iterate
+				// will remove from the original set as we iterate
 				saveables = new HashSet(saveables);
 				for (Iterator it2 = saveables.iterator(); it2.hasNext();) {
 					Saveable saveable = (Saveable) it2.next();

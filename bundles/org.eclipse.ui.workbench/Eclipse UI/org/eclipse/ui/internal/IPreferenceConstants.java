@@ -215,16 +215,4 @@ public interface IPreferenceConstants {
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
-    /**
-     * Workbench preference id for determining whether the user will not be prompted
-     * when a part is closed and Saveable objects are still held onto by other
-     * parts. If false (default), the user will be prompted. If true, there will be
-     * no prompt.
-     * <p>
-     * The default value for this preference is: <code>false</code> (prompt)
-     * </p>
-     * 
-     * @since 3.2
-     */
-    public static final String DONT_PROMPT_WHEN_SAVEABLE_STILL_OPEN = "dontPromptWhenSaveableStillOpen"; //$NON-NLS-1$
 }

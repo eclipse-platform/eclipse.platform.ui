@@ -397,6 +397,18 @@ public interface IWorkbenchPreferenceConstants {
 	public static final String ENABLE_DETACHED_VIEWS = "ENABLE_DETACHED_VIEWS"; //$NON-NLS-1$
 
 	/**
+	 * Stores whether or not the workbench prompts for saving when a dirty
+	 * editor or view is closed, but the Saveable objects are still open in
+	 * other parts. If
+	 * <code>true<code> (default), the user will be prompted. If <code>false</code>, there will be
+	 * no prompt.
+	 * 
+	 * @see Saveable
+	 * @since 3.2
+	 */
+	public static final String PROMPT_WHEN_SAVEABLE_STILL_OPEN = "PROMPT_WHEN_SAVEABLE_STILL_OPEN"; //$NON-NLS-1$
+	
+	/**
 	 * Lists the extra perspectives to show in the perspective bar.
 	 * The value is a comma-separated list of perspective ids.
 	 * The default is the empty string.
