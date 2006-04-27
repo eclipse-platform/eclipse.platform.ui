@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -96,9 +97,21 @@ public class ActionResolveMarker extends MarkerSelectionProviderAction {
 			return;
 		}
 
-		Dialog dialog = new MarkerResolutionDialog(view.getSite().getShell(),
-				getSelectedMarker(), (IMarkerResolution[]) resolutions[0], view);
-		dialog.open();
+		IMarkerResolution[] foundResolutions = (IMarkerResolution[]) resolutions[0];
+		if (foundResolutions.length == 0)
+			MessageDialog
+					.openInformation(
+							view.getSite().getShell(),
+							MarkerMessages.MarkerResolutionDialog_CannotFixTitle,
+							NLS
+									.bind(
+											MarkerMessages.MarkerResolutionDialog_CannotFixMessage,
+											getMarkerDescription()));
+		else {
+			Dialog dialog = new MarkerResolutionDialog(view.getSite()
+					.getShell(), getSelectedMarker(), foundResolutions, view);
+			dialog.open();
+		}
 
 	}
 
