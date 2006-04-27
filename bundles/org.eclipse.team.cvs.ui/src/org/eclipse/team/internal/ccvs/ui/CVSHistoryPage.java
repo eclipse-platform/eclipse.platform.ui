@@ -895,6 +895,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			treeViewer.getTree().setRedraw(false);
 			treeViewer.setSelection(selection, true);
 			treeViewer.getTree().setRedraw(true);
+		} else {
+			//nothing to select so clear selection
+			treeViewer.getTree().deselectAll();
 		}
 	}
 	
@@ -926,6 +929,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			treeViewer.getTree().setRedraw(false);
 			treeViewer.setSelection(selection, true);
 			treeViewer.getTree().setRedraw(true);
+		} else {
+			//nothing to select so clear selection
+			treeViewer.getTree().deselectAll();
 		}
 	}
 	
