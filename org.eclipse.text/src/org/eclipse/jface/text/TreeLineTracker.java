@@ -157,15 +157,15 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * threading.
 	 */
 	/**
-	 * The line offset of the line last queried with {@link #nodeByOffset(int)}.
+	 * The line offset of the line last queried with {@link #nodeByOffset(int, int[])}.
 	 */
-	private int lineHint;
+//	private int lineHint;
 	/**
-	 * The character offset of the line last queried with  {@link #nodeByOffset(int)} or
-	 * {@link #nodeByLine(int)}.
+	 * The character offset of the line last queried with  {@link #nodeByOffset(int, int[])} or
+	 * {@link #nodeByLine(int, int[])}.
 	 */
-	private int offsetHint;
-
+//	private int offsetHint;
+	
 	/**
 	 * Creates a new line tracker.
 	 */
@@ -207,8 +207,8 @@ abstract class TreeLineTracker implements ILineTracker {
     }
 
 	/**
-	 * Returns the node (line) including a certain offset. {@link #offsetHint} is set to the offset
-	 * and {@link #lineHint} to the line number of the returned line. If the offset is between two
+	 * Returns the node (line) including a certain offset. <code>hints[0]</code> is set to the offset
+	 * and <code>hints[1]</code> to the line number of the returned line. If the offset is between two
 	 * lines, the line starting at <code>offset</code> is returned.
 	 * <p>
 	 * This means that for offsets smaller than the length, the following holds:
@@ -224,10 +224,11 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * </p>
 	 * 
 	 * @param offset a document offset
+	 * @param hints the hint array with offset and line number
 	 * @return the line starting at or containing <code>offset</code>
 	 * @throws BadLocationException if the offset is invalid
 	 */
-	private Node nodeByOffset(final int offset) throws BadLocationException {
+	private Node nodeByOffset(final int offset, int[] hints) throws BadLocationException {
 		/*
 		 * Works for any binary search tree.
 		 */
@@ -246,8 +247,8 @@ abstract class TreeLineTracker implements ILineTracker {
 				line+= node.line;
 				if (remaining < node.length
 						|| remaining == node.length && node.right == null) { // last line
-					offsetHint= offset - remaining;
-					lineHint= line;
+					hints[0]= offset - remaining;
+					hints[1]= line;
 					return node;
 				}
 				remaining -= node.length;
@@ -256,17 +257,64 @@ abstract class TreeLineTracker implements ILineTracker {
 			}
 		}
 	}
+	/**
+	 * Returns the line number for the given offset. If the offset is between
+	 * two lines, the line starting at <code>offset</code> is returned.
+	 * <p>
+	 * This means that for offsets smaller than the length, the following holds:
+	 * </p>
+	 * <p>
+	 * <code>line.offset <= offset < line.offset + offset.length</code>.
+	 * </p>
+	 * <p>
+	 * If <code>offset</code> is the document length, then this is true:
+	 * </p>
+	 * <p>
+	 * <code>offset= line.offset + line.length</code>.
+	 * </p>
+	 * 
+	 * @param offset a document offset
+	 * @return the line number starting at or containing <code>offset</code>
+	 * @throws BadLocationException if the offset is invalid
+	 */
+	private int lineOfOffset(final int offset) throws BadLocationException {
+		/*
+		 * Works for any binary search tree.
+		 */
+		int remaining= offset;
+		Node node= fRoot;
+		int line= 0;
+		
+		while (true) {
+			if (node == null)
+				fail(offset);
+			
+			if (remaining < node.offset) {
+				node= node.left;
+			} else {
+				remaining -= node.offset;
+				line+= node.line;
+				if (remaining < node.length	|| remaining == node.length && node.right == null) // last line
+					return  line;
+
+				remaining -= node.length;
+				line ++;
+				node= node.right;
+			}
+		}
+	}
 	
 	/**
-	 * Returns the node (line) with the given line number. {@link #offsetHint} is set to the offset
+	 * Returns the node (line) with the given line number. <code>hints[0]</code> is set to the offset
 	 * of the returned line. Note that the last line is always incomplete, i.e. has the
 	 * {@link #NO_DELIM} delimiter.
 	 * 
 	 * @param line a line number
+	 * @param offsetHint the offset hint array
 	 * @return the line with the given line number
 	 * @throws BadLocationException if the line is invalid
 	 */
-	private Node nodeByLine(final int line) throws BadLocationException {
+	private Node nodeByLine(final int line, int[] offsetHint) throws BadLocationException {
 		/*
 		 * Works for any binary search tree.
 		 */
@@ -279,9 +327,43 @@ abstract class TreeLineTracker implements ILineTracker {
 				fail(line);
 			
 			if (remaining == node.line) {
-				offsetHint= offset + node.offset;
+				if (offsetHint != null)
+					offsetHint[0]= offset + node.offset;
 				return node;
 			}
+			if (remaining < node.line) {
+				node= node.left;
+			} else {
+				remaining -= node.line + 1;
+				offset += node.offset + node.length;
+				node= node.right;
+			}
+		}
+	}
+	
+	/**
+	 * Returns the offset for the given line number. Note that the
+	 * last line is always incomplete, i.e. has the {@link #NO_DELIM} delimiter.
+	 * 
+	 * @param line a line number
+	 * @return the line offset with the given line number
+	 * @throws BadLocationException if the line is invalid
+	 */
+	private int offsetByLine(final int line) throws BadLocationException {
+		/*
+		 * Works for any binary search tree.
+		 */
+		int remaining= line;
+		int offset= 0;
+		Node node= fRoot;
+		
+		while (true) {
+			if (node == null)
+				fail(line);
+			
+			if (remaining == node.line)
+				return offset + node.offset;
+
 			if (remaining < node.line) {
 				node= node.left;
 			} else {
@@ -545,15 +627,16 @@ abstract class TreeLineTracker implements ILineTracker {
 	public final void replace(int offset, int length, String text) throws BadLocationException {
 		if (ASSERT) checkTree();
 		
-		Node first= nodeByOffset(offset);
+		int[] hints= new int[2];
+		Node first= nodeByOffset(offset, hints);
 		if (ASSERT) Assert.isTrue(first != null);
-		int firstNodeOffset= offsetHint;
+		int firstNodeOffset= hints[0];
 		
 		Node last;
 		if (offset + length < firstNodeOffset + first.length)
 			last= first;
 		else
-			last= nodeByOffset(offset + length);
+			last= nodeByOffset(offset + length, hints);
 		if (ASSERT) Assert.isTrue(last != null);
 		
 		int firstLineDelta= firstNodeOffset + first.length - offset;
@@ -1003,7 +1086,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
 	 */
 	public final String getLineDelimiter(int line) throws BadLocationException {
-		Node node= nodeByLine(line);
+		Node node= nodeByLine(line, null);
 		return node.delimiter == NO_DELIM ? null : node.delimiter;
 	}
 
@@ -1042,10 +1125,10 @@ abstract class TreeLineTracker implements ILineTracker {
 	public final int getNumberOfLines(int offset, int length) throws BadLocationException {
 		if (length == 0)
 			return 1;
-		nodeByOffset(offset);
-		int startLine= lineHint;
-		nodeByOffset(offset + length);
-		int endLine= lineHint;
+
+		int startLine= lineOfOffset(offset);
+		int endLine= lineOfOffset(offset + length);
+		
 		return endLine - startLine + 1;
 	}
 
@@ -1053,15 +1136,14 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineOffset(int)
 	 */
 	public final int getLineOffset(int line) throws BadLocationException {
-		nodeByLine(line);
-		return offsetHint;
+		return offsetByLine(line);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineLength(int)
 	 */
 	public final int getLineLength(int line) throws BadLocationException {
-		Node node= nodeByLine(line);
+		Node node= nodeByLine(line, null);
 		return node.length;
 	}
 
@@ -1069,25 +1151,26 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public final int getLineNumberOfOffset(int offset) throws BadLocationException {
-		nodeByOffset(offset);
-		return lineHint;
+		return lineOfOffset(offset);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
 	 */
 	public final IRegion getLineInformationOfOffset(int offset) throws BadLocationException {
-		Node node= nodeByOffset(offset);
-		return new Region(offsetHint, node.pureLength());
+		int[] hints= new int[2];
+		Node node= nodeByOffset(offset, hints);
+		return new Region(hints[0], node.pureLength());
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
 	 */
 	public final IRegion getLineInformation(int line) throws BadLocationException {
+		int[] offsetHint= new int[1];
 		try {
-			Node node= nodeByLine(line);
-			return new Region(offsetHint, node.pureLength());
+			Node node= nodeByLine(line, offsetHint);
+			return new Region(offsetHint[0], node.pureLength());
 		} catch (BadLocationException x) {
 			/*
 			 * FIXME: this really strange behavior is mandated by the previous line tracker
@@ -1095,9 +1178,9 @@ abstract class TreeLineTracker implements ILineTracker {
 			 * LineTrackerTest3#testFunnyLastLineCompatibility().
 			 */
 			if (line > 0 && line == getNumberOfLines()) {
-				Node last= nodeByLine(line - 1);
+				Node last= nodeByLine(line - 1, offsetHint);
 				if (last.length > 0)
-					return new Region(offsetHint + last.length, 0);
+					return new Region(offsetHint[0] + last.length, 0);
 			}
 			throw x;
 		}
@@ -1191,7 +1274,7 @@ abstract class TreeLineTracker implements ILineTracker {
 		checkTreeStructure(fRoot);
 		
 		try {
-			checkTreeOffsets(nodeByOffset(0), new int[] {0, 0}, null);
+			checkTreeOffsets(nodeByOffset(0, new int[2]), new int[] {0, 0}, null);
 		} catch (BadLocationException x) {
 			throw new AssertionError();
 		}
