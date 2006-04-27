@@ -423,4 +423,21 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 		}
 		return tree;
 	}
+	
+	protected void performReplace(IDiff diff, IProgressMonitor monitor) throws CoreException {
+		IResource resource = ResourceDiffTree.getResourceFor(diff);
+		if (resource.getType() == IResource.FILE){
+			IFile file = (IFile) resource;
+			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(file);
+			try {
+	            // The file may have been set as read-only by a previous checkout/update
+	            if (mFile.isReadOnly()) mFile.setReadOnly(false);
+	        } catch (CVSException e) {
+	            // Just log and keep going
+	            CVSProviderPlugin.log(e);
+	        }
+		}
+		super.performReplace(diff, monitor);
+
+	}
 }
