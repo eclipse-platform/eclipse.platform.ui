@@ -1052,18 +1052,7 @@ public class RefactoringHistoryWizard extends Wizard {
 				}
 
 				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state) throws CoreException {
-					final Refactoring[] result= { null};
-					SafeRunner.run(new ISafeRunnable() {
-
-						public void handleException(final Throwable exception) {
-							RefactoringUIPlugin.log(exception);
-						}
-
-						public final void run() throws Exception {
-							result[0]= RefactoringHistoryWizard.this.createRefactoring(descriptor, state);
-						}
-					});
-					return result[0];
+					return RefactoringHistoryWizard.this.createRefactoring(descriptor, state);
 				}
 
 				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
@@ -1120,12 +1109,12 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final RefactoringStatus result= operation.getExecutionStatus();
 			if (!result.isOK()) {
-				fErrorPage.setStatus(status);
+				fErrorPage.setStatus(result);
 				fErrorPage.setNextPageDisabled(true);
 				fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_finish_error_title);
 				fErrorPage.setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_finish_error_description);
 				wizard.showPage(fErrorPage);
-				return true;
+				return false;
 			}
 		}
 		return true;
