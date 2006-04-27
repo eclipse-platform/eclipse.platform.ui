@@ -614,21 +614,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			}
 		});
 		
-		/*
-		 * org.eclipse.help.ui is an optional dependency; only perform this
-		 * step is this plugin is present.
-		 */
-		if (!inDialog && (Platform.getBundle("org.eclipse.help.ui") != null)) { //$NON-NLS-1$
-			listener = new Listener() {
-				public void handleEvent(Event event) {
-					if (isTrayDialog(event.widget)) {
-						dialogOpened((TrayDialog)((Shell)event.widget).getData());
-					}
-				}
-			};
-			Display.getCurrent().addFilter(SWT.Show, listener);
-		}
-
 		howToBegin = new Label(control, SWT.WRAP);
 		howToBegin.setText(Messages.INITIAL_VIEW_DIRECTIONS);
 		howToBegin.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -650,7 +635,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * @param dialog the dialog that was opened
 	 */
 	private void dialogOpened(TrayDialog dialog) {
-		if (isActive() && isInDialogItem()) {
+		if (isActive()) {
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {
 				tray = new HelpTray();
@@ -693,9 +678,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * Disposes of this cheat sheet viewer.
 	 */
 	private void dispose() {
-		if (listener != null) {
-			Display.getCurrent().removeFilter(SWT.Show, listener);
-		}
 		internalDispose();
 		if (busyCursor != null)
 			busyCursor.dispose();
@@ -777,6 +759,41 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 */
 	public boolean hasFocusControl(Control control) {
 		return (control == this.control) || (currentPage.getControl() == control);
+	}
+	
+	/**
+	 * If in a dialog-opening step, will add the appropriate listener for
+	 * the cheatsheet to jump into the dialog's tray once opened.
+	 * 
+	 * Should be called before executing any action.
+	 */
+	private void hookDialogListener() {
+		/*
+		 * org.eclipse.help.ui is an optional dependency; only perform this
+		 * step is this plugin is present.
+		 */
+		if (!inDialog && isInDialogItem() && (Platform.getBundle("org.eclipse.help.ui") != null)) { //$NON-NLS-1$
+			listener = new Listener() {
+				public void handleEvent(Event event) {
+					if (isTrayDialog(event.widget)) {
+						dialogOpened((TrayDialog)((Shell)event.widget).getData());
+					}
+				}
+			};
+			Display.getCurrent().addFilter(SWT.Show, listener);
+		}
+	}
+	
+	/**
+	 * Removes the dialog-opening listener, if it was added.
+	 * 
+	 * Should be called after executing any action.
+	 */
+	private void unhookDialogListener() {
+		if (listener != null) {
+			Display.getCurrent().removeFilter(SWT.Show, listener);
+			listener = null;
+		}
 	}
 	
 	private void initCheatSheetView() {
@@ -965,16 +982,22 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		CoreItem coreItem = (CoreItem) currentItem;
 
 		if (coreItem != null) {
-			IStatus status = coreItem.runExecutable(getManager());
-			if ( status.isOK() && !coreItem.hasConfirm()) {					
-				coreItem.setRestartImage();
-				//set that item as complete.
-				advanceItem(link, true);
-				saveCurrentSheet();
+			try {
+				hookDialogListener();
+				IStatus status = coreItem.runExecutable(getManager());
+				if ( status.isOK() && !coreItem.hasConfirm()) {					
+					coreItem.setRestartImage();
+					//set that item as complete.
+					advanceItem(link, true);
+					saveCurrentSheet();
+				}
+				if ( status.getSeverity() == IStatus.ERROR) {
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+				    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
+				}
 			}
-			if ( status.getSeverity() == IStatus.ERROR) {
-				CheatSheetPlugin.getPlugin().getLog().log(status);
-			    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
+			finally {
+				unhookDialogListener();
 			}
 		}
 
@@ -989,6 +1012,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		try {
 			if (coreItem != null) {
+				hookDialogListener();
 				if (coreItem.runSubItemExecutable(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm(subItemIndex)) {
 					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
 					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
@@ -1003,6 +1027,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);
 		} finally {
+			unhookDialogListener();
 			link.setCursor(null);
 		}
 	}
