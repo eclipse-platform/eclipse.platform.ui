@@ -106,8 +106,8 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 				handleLocationChanged();
 			}
 		};
-		fLocationControl.loadHistory();
 		setPageComplete(false);
+		fLocationControl.loadHistory();
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
@@ -211,5 +211,12 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			}
 		}
 		super.setVisible(visible);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean canFlipToNextPage() {
+		return super.canFlipToNextPage();
 	}
 }
