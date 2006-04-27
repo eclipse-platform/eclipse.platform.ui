@@ -13,11 +13,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -37,7 +33,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, IActionDelegate2, ISelectionListener, INullSelectionListener {
 	
@@ -68,105 +63,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected IWorkbenchWindow fWindow;
 	
 	/**
-	 * Background job for this action, or <code>null</code> if none.
-	 */
-	private DebugRequestJob fBackgroundJob = null;
-	
-	/**
-	 * Background job to update enablement. 
-	 */
-	private UpdateEnablementJob fUpdateEnablementJob = new UpdateEnablementJob(); 
-	
-	/**
-	 * Used to schedule jobs, or <code>null</code> if none
-	 */
-	private IWorkbenchSiteProgressService fProgressService = null;
-	
-	class UpdateEnablementJob extends Job {
-		
-		IAction targetAction = null;
-		ISelection targetSelection = null;
-		
-		public UpdateEnablementJob() {
-			super(ActionMessages.AbstractDebugActionDelegate_1);
-			setPriority(Job.INTERACTIVE);
-			setSystem(true);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		protected IStatus run(IProgressMonitor monitor) {
-			IAction action = null;
-			ISelection selection = null;
-			synchronized (this) {
-				action = targetAction;
-				selection = targetSelection; 
-			}
-			update(action, selection);
-			return Status.OK_STATUS;
-		}
-		
-		public synchronized void setTargets(IAction action, ISelection selection) {
-			targetAction = action;
-			targetSelection = selection;
-		}
-	}
-	
-	class DebugRequestJob extends Job {
-	    
-	    private Object[] fElements = null;
-
-	    /** 
-	     * Constructs a new job to perform a debug request (for example, step)
-	     * in the background.
-	     * 
-	     * @param name job name
-	     */
-	    public DebugRequestJob(String name) {
-	        super(name);
-	        setPriority(Job.INTERACTIVE);
-	        setSystem(true);
-	    }
-	    
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
-        protected IStatus run(IProgressMonitor monitor) {
-		    MultiStatus status= 
-				new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
-		    Object[] targets = null;
-		    synchronized (this) {
-		    	targets = fElements;
-		    	fElements = null;
-			}
-		    for (int i = 0; i < targets.length; i++) {
-				Object element= targets[i];
-				try {
-					// Action's enablement could have been changed since
-					// it was last enabled.  Check that the action is still
-					// enabled before running the action.
-					if (isEnabledFor(element))
-						doAction(element);
-				} catch (DebugException e) {
-					status.merge(e.getStatus());
-				}
-			}
-			return status;
-        }
-        
-        /**
-         * Sets the selection to operate on.
-         * 
-         * @param elements
-         */
-        public synchronized void setTargets(Object[] elements) {
-            fElements = elements;
-        }
-	    
-	}
-	
-	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
@@ -181,7 +77,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		if (getWindow() != null) {
 			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
-		fBackgroundJob = null;
         fSelection= null;
 	}
 
@@ -203,23 +98,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			// disable the action so it cannot be run again until an event or selection change
 			// updates the enablement
 			action.setEnabled(false);
-			if (isRunInBackground()) {
-				runInBackground(action, selection);
-			} else {
-				runInForeground(selection);
-			}
+			runInForeground(selection);
 	    }
-	}
-	
-	/**
-	 * Runs this action in a background job.
-	 */
-	private void runInBackground(IAction action, IStructuredSelection selection) {
-	    if (fBackgroundJob == null) {
-			fBackgroundJob = new DebugRequestJob(DebugUIPlugin.removeAccelerators(action.getText()));
-	    }
-	    fBackgroundJob.setTargets(selection.toArray());
-	    schedule(fBackgroundJob);
 	}
 	
 	/**
@@ -260,15 +140,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 
 	/**
-	 * Returns whether or not this action should be run in the background.
-	 * Subclasses may override.
-	 * @return whether or not this action should be run in the background
-	 */
-	protected boolean isRunInBackground() {
-		return false;
-	}
-
-	/**
 	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
 	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
@@ -290,12 +161,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
 			if (getView() != null) {
-				if (isRunInBackground()) {
-					fUpdateEnablementJob.setTargets(action, s);
-					schedule(fUpdateEnablementJob);
-				} else {
-					update(action, s);
-				}
+				update(action, s);
 			}
 		}
 	}
@@ -340,7 +206,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	public void init(IViewPart view) {
 		fViewPart = view;
-		fProgressService = (IWorkbenchSiteProgressService) view.getAdapter(IWorkbenchSiteProgressService.class);
 	}
 	
 	/**
@@ -404,12 +269,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (isRunInBackground()) {
-			fUpdateEnablementJob.setTargets(getAction(), selection);
-			schedule(fUpdateEnablementJob);
-		} else {
-			update(getAction(), selection);
-		}
+		update(getAction(), selection);
 	}
 	
 	protected void setAction(IAction action) {
@@ -470,17 +330,5 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void init(IAction action) {
 		fAction = action;
 	}
-	
-	/**
-	 * Schedules the given job with this action's progress service
-	 * 
-	 * @param job
-	 */
-	private void schedule(Job job) {
-		if (fProgressService == null) {
-			job.schedule();
-		} else {
-			fProgressService.schedule(job);
-		}
-	}
+
 }
