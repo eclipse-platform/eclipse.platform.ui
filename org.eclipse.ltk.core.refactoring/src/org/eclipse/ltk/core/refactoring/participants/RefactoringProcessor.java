@@ -46,7 +46,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * </p>
  * <p>
  * This class should be subclassed by clients wishing to provide special refactoring 
- * processor.
+ * processors.
  * </p>
  * 
  * @since 3.0
