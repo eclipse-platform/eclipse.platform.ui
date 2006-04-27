@@ -32,7 +32,7 @@ public class RadioGroup {
     * Interface IRadioButton.  A duck interface that is used internally by RadioGroup
     * and by RadioGroup's unit tests.
     */
-   static interface IRadioButton {
+   public static interface IRadioButton {
       void setData(String string, Object object);
       void addSelectionListener(SelectionListener selectionListener);
       void setSelection(boolean b);
