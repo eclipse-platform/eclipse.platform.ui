@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorSaveablesService;
-import org.eclipse.ui.navigator.ISaveablesSourceHelper;
 import org.eclipse.ui.navigator.SaveablesProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
@@ -65,19 +64,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	 */
 	public NavigatorSaveablesService(NavigatorContentService contentService) {
 		this.contentService = contentService;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.navigator.INavigatorSaveablesService#createHelper(org.eclipse.ui.ISaveablesSource,
-	 *      org.eclipse.jface.viewers.StructuredViewer,
-	 *      org.eclipse.ui.ISaveablesLifecycleListener)
-	 */
-	public ISaveablesSourceHelper createHelper(ISaveablesSource source,
-			StructuredViewer viewer, ISaveablesLifecycleListener listener) {
-		SaveablesSourceHelper saveablesSourceHelper = new SaveablesSourceHelper();
-		return saveablesSourceHelper;
 	}
 
 	private static void addInstance(NavigatorSaveablesService saveablesService) {

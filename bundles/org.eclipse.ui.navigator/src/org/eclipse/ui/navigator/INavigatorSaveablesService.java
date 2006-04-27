@@ -26,17 +26,6 @@ import org.eclipse.ui.Saveable;
 public interface INavigatorSaveablesService {
 
 	/**
-	 * @param source
-	 * @param viewer
-	 * @param listener
-	 * @return the helper
-	 * 
-	 * @deprecated use the methods on this interface instead
-	 */
-	public ISaveablesSourceHelper createHelper(ISaveablesSource source,
-			StructuredViewer viewer, ISaveablesLifecycleListener listener);
-
-	/**
 	 * Initializes this service. Must be called on the UI thread, and may only
 	 * be called once. The given viewer's control must not be disposed.
 	 * <p>

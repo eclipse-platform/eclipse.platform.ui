@@ -34,17 +34,6 @@ public abstract class SaveablesProvider implements IDisposable {
 	private ISaveablesLifecycleListener listener;
 
 	/**
-	 * Creates a new saveable model provider using the given listener. May only
-	 * be called by subclasses.
-	 * 
-	 * @deprecated use the no-arg constructor instead. This constructor will be
-	 *             removed after 3.2RC1.
-	 */
-	protected SaveablesProvider(ISaveablesLifecycleListener listener) {
-		this.listener = listener;
-	}
-
-	/**
 	 * Creates a new saveable model provider. May only be called by subclasses.
 	 * 
 	 */
