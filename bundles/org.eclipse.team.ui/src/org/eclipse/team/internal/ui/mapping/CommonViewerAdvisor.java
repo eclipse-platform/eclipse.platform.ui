@@ -459,11 +459,20 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			emptyTreeListener.notEmpty(viewer);
 	}
 
-	public void propertyChange(PropertyChangeEvent event) {
+	public void propertyChange(final PropertyChangeEvent event) {
 		if (event.getProperty().equals(ITeamContentProviderManager.PROP_ENABLED_MODEL_PROVIDERS)) {
 			enableContentProviders((CommonViewer)getViewer(), getConfiguration());
 		} else if (event.getProperty().equals(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER)) {
 			enableContentProviders((CommonViewer)getViewer(), getConfiguration());
+			final Viewer viewer = getViewer();
+			Utils.syncExec(new Runnable() {
+				public void run() {
+					Object viewerInput = ModelSynchronizePage.getViewerInput(getConfiguration(), (String)event.getNewValue());
+					if (viewer != null && viewerInput != null) {
+						viewer.setInput(viewerInput);
+					}
+				}
+			}, (StructuredViewer)viewer);
 		}
 	}
 	

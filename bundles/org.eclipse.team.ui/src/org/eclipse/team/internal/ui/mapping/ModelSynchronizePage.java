@@ -14,7 +14,6 @@ import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -110,29 +109,22 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 			if (currentSetting != null && currentSetting.equals(newValue))
 				return false;
 			
-			Object input = null;
-			if (!newValue.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
-				ModelProvider provider = getModelProvider((String)newValue);
-				if (provider != null) {
-					input = provider;
-					configuration.setProperty(
-							ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
-							NLS.bind(TeamUIMessages.ShowModelProviderAction_0, new String[] {Utils.getLabel(provider), Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, configuration.getParticipant().getName()) }));
-				}	
-			} else {
-				input = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+			Object input = getViewerInput(configuration,(String) newValue);
+			if (input instanceof ModelProvider) {
+				ModelProvider provider = (ModelProvider) input;
+				configuration.setProperty(
+						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
+						NLS.bind(TeamUIMessages.ShowModelProviderAction_0, new String[] {Utils.getLabel(provider), Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, configuration.getParticipant().getName()) }));
+			} else if (input != null) {
 				configuration.setProperty(
 						ISynchronizePageConfiguration.P_PAGE_DESCRIPTION,
 						Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, configuration.getParticipant().getName()));
-				IDialogSettings pageSettings = configuration.getSite().getPageSettings();
-				if(pageSettings != null) {
-					pageSettings.put(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, (String)newValue);
-				}
 			}
 			if (input != null) {
-				Viewer viewer = getViewer();
-				if (viewer != null)
-					viewer.setInput(input);
+				IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+				if(pageSettings != null) {
+					pageSettings.put(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, (String) newValue);
+				}
 				return true;
 			}
 			return false;
@@ -140,7 +132,26 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 		return super.aboutToChangeProperty(configuration, key, newValue);
 	}
 
-	private ModelProvider getModelProvider(String id) {
+	/**
+	 * Return the input for the viewer.
+	 * @param configuration the page configuration
+	 * @param providerId the provider id or ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE
+	 * @return the input for the viewer.
+	 */
+	public static Object getViewerInput(ISynchronizePageConfiguration configuration, String providerId) {
+		Object input = null;
+		if (!providerId.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
+			ModelProvider provider = getModelProvider(providerId);
+			if (provider != null) {
+				input = provider;
+			}	
+		} else {
+			input = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+		}
+		return input;
+	}
+
+	private static ModelProvider getModelProvider(String id) {
 		try {
 			IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor((String)id);
 			if (desc != null) {
