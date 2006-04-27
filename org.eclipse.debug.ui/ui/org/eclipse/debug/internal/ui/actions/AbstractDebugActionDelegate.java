@@ -16,7 +16,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,16 +24,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
-import org.eclipse.ui.INullSelectionListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, IActionDelegate2, ISelectionListener, INullSelectionListener {
+public abstract class AbstractDebugActionDelegate implements IViewActionDelegate, IActionDelegate2 {
 	
 	/**
 	 * The underlying action for this delegate
@@ -57,12 +51,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private boolean fInitialized = false;
 	
 	/**
-	 * The window associated with this action delegate
-	 * May be <code>null</code>
-	 */
-	protected IWorkbenchWindow fWindow;
-	
-	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
@@ -74,19 +62,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
-		if (getWindow() != null) {
-			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		}
         fSelection= null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window){
-		// listen to selection changes in the debug view
-		setWindow(window);
-		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
 	/* (non-Javadoc)
@@ -230,16 +206,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
 			setAction(action);
-			if (getView() == null) {
-				//update on the selection in the debug view
-				IWorkbenchWindow window= getWindow();
-				if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-					IWorkbenchPage page= window.getActivePage();
-					if (page != null) {
-						selection= page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-					}
-				}
-			}
 			update(action, selection);
 			setInitialized(true);
 			return true;
@@ -264,13 +230,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
 	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		update(getAction(), selection);
-	}
 	
 	protected void setAction(IAction action) {
 		fAction = action;
@@ -286,14 +245,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected void setInitialized(boolean initialized) {
 		fInitialized = initialized;
-	}
-
-	protected IWorkbenchWindow getWindow() {
-		return fWindow;
-	}
-
-	protected void setWindow(IWorkbenchWindow window) {
-		fWindow = window;
 	}
 	
 	/**
