@@ -95,7 +95,7 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 			}
 		}
 		
-		if (windowShell!=null) {
+		if (windowShell != null && windowShell != display.getActiveShell()) {
 			windowShell.forceActive();
 			if (Platform.getWS().equals(Platform.WS_WIN32)) {
 				// feature in Windows. Without this code,
