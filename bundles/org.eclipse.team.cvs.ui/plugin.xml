@@ -728,7 +728,7 @@
       <objectContribution
             adaptable="false"
             id="org.eclipse.team.ui.FileRevisionsContribution"
-            objectClass="org.eclipse.team.core.history.IFileRevision">
+            objectClass="org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision">
          <action
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
