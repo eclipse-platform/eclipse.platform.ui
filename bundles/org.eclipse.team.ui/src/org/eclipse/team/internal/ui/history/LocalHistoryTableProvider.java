@@ -51,12 +51,12 @@ public class LocalHistoryTableProvider {
 		
 		public void dispose() {
 			if (dateImage != null){
-				JFaceResources.getResources().destroyImage(dateDesc);
+				dateImage.dispose();
 				dateImage = null;
 			}
 			
 			if (localRevImage != null) {
-				JFaceResources.getResources().destroyImage(localRevDesc);
+				localRevImage.dispose();
 				localRevImage = null;
 			}
 					
@@ -70,7 +70,6 @@ public class LocalHistoryTableProvider {
 				if (dateImage == null) {
 					dateDesc = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_DATES_CATEGORY);
 					dateImage = dateDesc.createImage();
-					return dateImage;
 				}
 				return dateImage;
 			}
@@ -79,7 +78,6 @@ public class LocalHistoryTableProvider {
 				if (localRevImage == null) {
 					localRevDesc = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LOCALREVISION_TABLE);
 					localRevImage = localRevDesc.createImage();
-					return localRevDesc.createImage();
 				}
 				return localRevImage;
 			}

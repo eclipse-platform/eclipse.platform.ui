@@ -83,17 +83,17 @@ public class CVSHistoryTableProvider {
 		
 		public void dispose() {
 			if (dateImage != null){
-				JFaceResources.getResources().destroyImage(dateDesc);
+				dateImage.dispose();
 				dateImage = null;
 			}
 			
 			if (localRevImage != null) {
-				JFaceResources.getResources().destroyImage(localRevDesc);
+				localRevImage.dispose();
 				localRevImage = null;
 			}
 			
 			if (remoteRevImage != null) {
-				JFaceResources.getResources().destroyImage(remoteRevDesc);
+				remoteRevImage.dispose();
 				remoteRevImage = null;
 			}
 			
@@ -108,7 +108,6 @@ public class CVSHistoryTableProvider {
 				if (dateImage == null){
 					dateDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATES_CATEGORY);
 					dateImage = dateDesc.createImage();
-					return dateImage;
 				} 
 				return dateImage;
 			}
@@ -118,7 +117,6 @@ public class CVSHistoryTableProvider {
 				if (localRevImage == null){
 					localRevDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_LOCALREVISION_TABLE);
 					localRevImage = localRevDesc.createImage();
-					return localRevDesc.createImage();
 				}
 				return localRevImage;
 			}
@@ -128,7 +126,6 @@ public class CVSHistoryTableProvider {
 				if (remoteRevImage == null){
 					remoteRevDesc = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REMOTEREVISION_TABLE);
 					remoteRevImage = remoteRevDesc.createImage();
-					return remoteRevDesc.createImage();
 				}
 				return remoteRevImage;
 			}
