@@ -1312,6 +1312,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					line= MarkerUtilities.getLineNumber(marker);
 					// Marker line numbers are 1-based
 					-- line;
+					start= document.getLineOffset(line);
 				}
 				end= start + document.getLineLength(line) - 1;
 			} catch (BadLocationException e) {
