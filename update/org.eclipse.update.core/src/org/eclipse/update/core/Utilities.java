@@ -226,7 +226,8 @@ public class Utilities {
 		} else {
 			ce.initCause(e);
 		}
-		e.setStackTrace(e.getStackTrace());
+		if (e != null)
+			ce.setStackTrace(e.getStackTrace());
 		return ce; 
 	}
 
