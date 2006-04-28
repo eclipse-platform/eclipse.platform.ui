@@ -192,9 +192,13 @@ public class CVSTestSetup extends TestSetup {
 			} catch (CVSCommunicationException e) {
 				// Try once more, just in case it is a transient server problem
 				repository.validateConnection(new NullProgressMonitor());
+			} catch (OperationCanceledException e) {
+				// This can occur if authentication fails
+				throw new CVSException(new CVSStatus(IStatus.ERROR, "The connection was canceled, possibly due to an authentication failure."));
 			}
 		} catch (CVSException e) {
 			System.out.println("Unable to connect to remote repository: " + repository.toString());
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
