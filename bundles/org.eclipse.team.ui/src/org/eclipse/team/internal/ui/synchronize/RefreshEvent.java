@@ -26,6 +26,7 @@ public class RefreshEvent implements IRefreshEvent {
 	IStatus status;
 	private final ISynchronizeParticipant participant;
 	private final IChangeDescription description;
+	private boolean isLink;
 	
 	public RefreshEvent(int type, ISynchronizeParticipant participant, IChangeDescription description) {
 		this.type = type;
@@ -67,5 +68,13 @@ public class RefreshEvent implements IRefreshEvent {
 
 	public IChangeDescription getChangeDescription() {
 		return description;
+	}
+
+	public boolean isLink() {
+		return isLink;
+	}
+
+	public void setIsLink(boolean isLink) {
+		this.isLink = isLink;
 	}
 }

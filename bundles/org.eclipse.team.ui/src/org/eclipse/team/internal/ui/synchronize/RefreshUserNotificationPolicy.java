@@ -60,7 +60,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
 		// Ensure that this event was generated for this participant
 		if (event.getParticipant() != participant) return null;
-		// If the event is for a cancelled operation, there's nothing to do
+		// If the event is for a canceled operation, there's nothing to do
 		int severity = event.getStatus().getSeverity();
 		if(severity == IStatus.CANCEL || severity == IStatus.ERROR) return null;
 		// Decide on what action to take after the refresh is completed
@@ -75,10 +75,12 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 					notifyIfNeededModal(event);
 				}
 				setToolTipText(getToolTipText());
-				// Go to the sync view
-				ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
-				if (view != null) {
-					view.display(participant);
+				if (event.isLink()) {
+					// Go to the sync view
+					ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+					if (view != null) {
+						view.display(participant);
+					}
 				}
 			}
 			

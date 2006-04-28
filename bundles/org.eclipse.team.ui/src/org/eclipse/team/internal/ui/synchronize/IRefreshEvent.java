@@ -91,9 +91,21 @@ public interface IRefreshEvent {
 	
 	/**
 	 * Returns the status of the refresh operation. This can be used to determine if the
-	 * refresh completed successfuly, with an error, or was cancelled.
+	 * refresh completed successfully, with an error, or was canceled.
 	 * 
 	 * @return the status of the refresh operation.
 	 */
 	public IStatus getStatus();
+
+	/**
+	 * Set whether this event is being presented in a progress view link
+	 * @param isLink 
+	 */
+	public void setIsLink(boolean isLink);
+	
+	/**
+	 * Return whether this event is being displayed in a link.
+	 * @return whether this event is being displayed in a link
+	 */
+	public boolean isLink();
 }

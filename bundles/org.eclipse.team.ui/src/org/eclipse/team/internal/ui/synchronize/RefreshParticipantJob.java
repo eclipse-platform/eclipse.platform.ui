@@ -427,6 +427,7 @@ public abstract class RefreshParticipantJob extends Job {
 			public ActionFactory.IWorkbenchAction refreshDone(IRefreshEvent event) {
 				if(listener != null) {
 					boolean isModal = isJobModal();
+					event.setIsLink(!isModal);
 					final ActionFactory.IWorkbenchAction runnable = listener.refreshDone(event);
 					if(runnable != null) {
 						// If the job is being run modally then simply prompt the user immediately
