@@ -21,6 +21,7 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.ImageManager;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -45,7 +46,7 @@ public class ResourceModelLabelProvider extends
 	
 	private ILabelProvider provider = new WorkbenchLabelProvider();
 	private ResourceModelContentProvider contentProvider;
-	private Image compressedFolderImage;
+	private ImageManager localImageManager;
 
 	public void init(ICommonContentExtensionSite site) {
 		ITreeContentProvider aContentProvider = site.getExtension().getContentProvider();
@@ -58,8 +59,8 @@ public class ResourceModelLabelProvider extends
 	
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		if (compressedFolderImage != null)
-			compressedFolderImage.dispose();
+		if (localImageManager != null)
+			localImageManager.dispose();
 		super.dispose();
 	}
 
@@ -186,9 +187,7 @@ public class ResourceModelLabelProvider extends
 	
 	protected Image getDelegateImage(Object elementOrPath) {
 		if (getConfiguration() != null && getTraversalCalculator().isCompressedFolder(elementOrPath)) {
-			if (compressedFolderImage == null)
-				compressedFolderImage = TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER).createImage();
-			return compressedFolderImage;
+			return getImageManager().getImage(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPRESSED_FOLDER));
 		}
 		return super.getDelegateImage(internalGetElement(elementOrPath));
 	}
@@ -216,4 +215,16 @@ public class ResourceModelLabelProvider extends
 		if (f != null)
 			label.setFont(f);
 	}
+	
+	protected ImageManager getImageManager() {
+		ISynchronizationContext context = getContext();
+		if (context != null) {
+			return ImageManager.getImageManager(context);
+		}
+		if (localImageManager == null) {
+			localImageManager = new ImageManager();
+		}
+		return localImageManager;
+	}
+
 }

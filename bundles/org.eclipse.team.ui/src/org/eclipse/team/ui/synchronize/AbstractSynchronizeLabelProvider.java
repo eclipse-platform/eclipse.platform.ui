@@ -11,10 +11,7 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
@@ -26,16 +23,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.ImageManager;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
-import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
+import org.eclipse.team.ui.mapping.*;
 
 /**
  * A label provider wrapper that adds synchronization image and/or text decorations
@@ -45,14 +42,7 @@ import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
  */
 public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider {
 	
-	// Cache for images that have been overlayed
-	private Map fgImageCache = new HashMap(10);
-	
-	// Font used to display busy elements
-	private Font busyFont;
-	
-	// Contains direction images
-	private CompareConfiguration compareConfig = new CompareConfiguration();
+	private ImageManager localImageManager;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
@@ -102,14 +92,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 		Image base = modelLabelProvider.getImage(internalGetElement(element));
 		if (base == null && element instanceof ModelProvider) {
 			ModelProvider mp = (ModelProvider) element;
-			base = (Image)fgImageCache.get(mp);
-			if (base == null) {
-				ImageDescriptor desc = getImageDescriptor(mp);
-				if (desc != null) {
-					base = desc.createImage();
-					fgImageCache.put(mp, base);
-				}
-			}
+			base = getImageManager().getImage(getImageDescriptor(mp));
 		}
 		return base;
 	}
@@ -158,7 +141,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 				}
 			}
 		}	
-		return compareConfig.getImage(base, compareKind);
+		return getImageManager().getImage(base, compareKind);
 	}
 	
 	/* (non-Javadoc)
@@ -220,17 +203,8 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		compareConfig.dispose();
-		if(busyFont != null) {
-			busyFont.dispose();
-		}
-		if (fgImageCache != null) {
-			Iterator it = fgImageCache.values().iterator();
-			while (it.hasNext()) {
-				Image element = (Image) it.next();
-				element.dispose();
-			}
-		}
+		if (localImageManager != null)
+			localImageManager.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -320,12 +294,7 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 				locationInts[i] = ((Integer) locations.get(i)).intValue();
 			}
 			ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
-			Image conflictDecoratedImage = (Image) fgImageCache.get(overlay);
-			if (conflictDecoratedImage == null) {
-				conflictDecoratedImage = overlay.createImage();
-				fgImageCache.put(overlay, conflictDecoratedImage);
-			}
-			return conflictDecoratedImage;
+			return getImageManager().getImage(overlay);
 		}
 		return base;
 	}
@@ -424,15 +393,26 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 */
 	public Font getFont(Object element) {
 		if(isBusy(internalGetElement(element))) {
-			if (busyFont == null) {
-				Font defaultFont = JFaceResources.getDefaultFont();
-				FontData[] data = defaultFont.getFontData();
-				for (int i = 0; i < data.length; i++) {
-					data[i].setStyle(SWT.ITALIC);
-				}				
-				busyFont = new Font(TeamUIPlugin.getStandardDisplay(), data);
-			}
-			return busyFont;
+			return JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT);
+		}
+		return null;
+	}
+	
+	private ImageManager getImageManager() {
+		ISynchronizationContext context = getContext();
+		if (context != null) {
+			return ImageManager.getImageManager(context);
+		}
+		if (localImageManager == null) {
+			localImageManager = new ImageManager();
+		}
+		return localImageManager;
+	}
+
+	private ISynchronizationContext getContext() {
+		if (this instanceof SynchronizationLabelProvider) {
+			SynchronizationLabelProvider slp = (SynchronizationLabelProvider) this;
+			return slp.getContext();
 		}
 		return null;
 	}

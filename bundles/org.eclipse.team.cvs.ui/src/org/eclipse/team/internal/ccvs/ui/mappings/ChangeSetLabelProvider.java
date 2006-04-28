@@ -15,18 +15,16 @@ import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.core.subscribers.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
@@ -36,8 +34,6 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 
-	private Image changeSetImage;
-	private Font boldFont;
 	private CVSParticipantLabelDecorator decorator;
 
 	public void init(ICommonContentExtensionSite site) {
@@ -86,20 +82,10 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 	}
 
 	private Image getChangeSetImage() {
-		if (changeSetImage == null) {
-			ImageDescriptor imageDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG);
-			if (imageDescriptor != null)
-				changeSetImage = imageDescriptor.createImage();
-		}
-		return changeSetImage;
+		return getImageManager().getImage(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG));
 	}
 	
 	public void dispose() {
-		if (changeSetImage != null) {
-			changeSetImage.dispose();
-		}
-		if (boldFont != null)
-			boldFont.dispose();
 		if (decorator != null)
 			decorator.dispose();
 		super.dispose();
@@ -217,15 +203,7 @@ public class ChangeSetLabelProvider extends ResourceModelLabelProvider {
 	public Font getFont(Object element) {
 		element = internalGetElement(element);
 	    if (element instanceof ActiveChangeSet && isDefaultActiveSet((ActiveChangeSet)element)) {
-	    	if (boldFont == null) {
-				Font defaultFont = JFaceResources.getDefaultFont();
-				FontData[] data = defaultFont.getFontData();
-				for (int i = 0; i < data.length; i++) {
-					data[i].setStyle(SWT.BOLD);
-				}				
-				boldFont = new Font(TeamUIPlugin.getStandardDisplay(), data);
-			}
-			return boldFont;
+			return JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
 	    }
 		return super.getFont(element);
 	}
