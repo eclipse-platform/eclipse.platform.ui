@@ -112,7 +112,7 @@ public abstract class AbstractAntUITest extends TestCase {
         return getReaderContentAsString(tempBufferedReader);
     }
     
-    protected String getReaderContentAsString(BufferedReader bufferedReader) {
+    protected String getReaderContentAsStringNew(BufferedReader bufferedReader) {
         StringBuffer result = new StringBuffer();
         try {
             char[] readBuffer= new char[2048];
@@ -120,6 +120,26 @@ public abstract class AbstractAntUITest extends TestCase {
             while (n > 0) {
                 result.append(readBuffer, 0, n);
                 n= bufferedReader.read(readBuffer);
+            }
+        } catch (IOException e) {
+            AntUIPlugin.log(e);
+            return null;
+        }
+
+        return result.toString();
+    }
+    
+    protected String getReaderContentAsString(BufferedReader bufferedReader) {
+        StringBuffer result = new StringBuffer();
+        try {
+            String line= bufferedReader.readLine();
+
+            while(line != null) {
+                if(result.length() != 0) {
+                    result.append(System.getProperty("line.separator")); //$NON-NLS-1$
+                }
+                result.append(line);
+                line = bufferedReader.readLine();
             }
         } catch (IOException e) {
             AntUIPlugin.log(e);
