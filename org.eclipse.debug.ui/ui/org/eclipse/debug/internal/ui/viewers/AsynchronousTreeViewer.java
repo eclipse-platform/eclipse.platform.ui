@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
@@ -832,6 +833,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
      */
     protected void clear(Widget widget) {
+        if (DEBUG_VIEWER) {
+            DebugUIPlugin.debug("CLEAR [" + widget + "]");  //$NON-NLS-1$//$NON-NLS-2$
+        }
+
     	if (widget instanceof TreeItem && !widget.isDisposed()) {
     		TreeItem item = (TreeItem) widget;
     		TreeItem parentItem = item.getParentItem();
@@ -854,6 +859,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChildren(org.eclipse.swt.widgets.Widget)
      */
     protected void clearChildren(Widget widget) {
+        if (DEBUG_VIEWER) {
+            DebugUIPlugin.debug("CLEAR_CHILDREN [" + widget + "]");  //$NON-NLS-1$//$NON-NLS-2$
+        }
+
     	if (widget instanceof TreeItem && !widget.isDisposed()) {
 			TreeItem item = (TreeItem) widget;
 			item.clearAll(true);
@@ -866,6 +875,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChild(org.eclipse.swt.widgets.Widget, int)
      */
     protected void clearChild(Widget parent, int childIndex) {
+        if (DEBUG_VIEWER) {
+            DebugUIPlugin.debug("CLEAR_CHILD [" + parent + "]: " + childIndex);  //$NON-NLS-1$//$NON-NLS-2$
+        }
+  
        	if (parent instanceof TreeItem && !parent.isDisposed()) {
     		TreeItem item = (TreeItem) parent;
     		item.clear(childIndex, true);
