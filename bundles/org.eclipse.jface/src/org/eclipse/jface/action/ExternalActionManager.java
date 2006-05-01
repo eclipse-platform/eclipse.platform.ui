@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,6 @@ import org.eclipse.jface.util.Util;
  * </p>
  * <p>
  * This class is not intended to be called or extended by any external clients.
- * This API is still under flux, and is expected to change in 3.1.
  * </p>
  * 
  * @since 3.0
@@ -277,10 +276,10 @@ public final class ExternalActionManager {
 		}
 
 		/**
+		 * {@inheritDoc}
+		 * 
 		 * Calling this method with an undefined command id will generate a log
 		 * message.
-		 * 
-		 * @see org.eclipse.jface.action.ExternalActionManager.ICallback#isActive(String)
 		 */
 		public final boolean isActive(final String commandId) {
 			if (commandId != null) {
@@ -412,7 +411,7 @@ public final class ExternalActionManager {
 		 * <p>
 		 * A single instance of the listener may only ever be associated with
 		 * one identifier. Attempts to add the listener twice (without a removal
-		 * inbetween) has undefined behaviour.
+		 * in between) has undefined behaviour.
 		 * </p>
 		 * 
 		 * @param identifier
