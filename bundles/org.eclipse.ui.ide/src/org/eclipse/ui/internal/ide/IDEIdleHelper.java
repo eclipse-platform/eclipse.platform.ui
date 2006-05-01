@@ -95,38 +95,11 @@ class IDEIdleHelper {
 	 */
 	private int nextGCInterval = DEFAULT_GC_INTERVAL;
 	
-	private Job gcJob = new Job(IDEWorkbenchMessages.IDEIdleHelper_backgroundGC) {
-		protected IStatus run(IProgressMonitor monitor) {
-			final Display display = configurer.getWorkbench().getDisplay();
-			if (display != null && !display.isDisposed()) {
-				final long start = System.currentTimeMillis();
-				System.gc();
-				System.runFinalization();
-				lastGC = start;
-				final int duration = (int) (System.currentTimeMillis() - start);
-				if (Policy.DEBUG_GC) {
-					System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
-				}
-				if (duration > maxGC) {
-					if (Policy.DEBUG_GC) {
-						System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
-					}
-					shutdown();
-				} else {
-					//if the gc took a long time, ensure the next gc doesn't happen for awhile
-					nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
-					if (Policy.DEBUG_GC) {
-						System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
-					}
-				}
-			}
-			return Status.OK_STATUS;
-		}
-	};
+	private Job gcJob;
 
-
-
-	private Runnable handler;	/**
+	private Runnable handler;	
+	
+	/**
 	 * Creates and initializes the idle handler
 	 * @param aConfigurer The workbench configurer.
 	 */
@@ -152,6 +125,8 @@ class IDEIdleHelper {
 		if (prop != null) {
 			maxGC = prop.intValue();
 		}
+		
+		createGarbageCollectionJob();
 
 		//hook idle handler
 		final Display display = configurer.getWorkbench().getDisplay();
@@ -181,6 +156,41 @@ class IDEIdleHelper {
 		};
 		display.addFilter(SWT.KeyUp, idleListener);
 		display.addFilter(SWT.MouseUp, idleListener);
+	}
+
+	/**
+	 * Creates the job that performs garbage collection
+	 */
+	private void createGarbageCollectionJob() {
+		gcJob = new Job(IDEWorkbenchMessages.IDEIdleHelper_backgroundGC) {
+			protected IStatus run(IProgressMonitor monitor) {
+				final Display display = configurer.getWorkbench().getDisplay();
+				if (display != null && !display.isDisposed()) {
+					final long start = System.currentTimeMillis();
+					System.gc();
+					System.runFinalization();
+					lastGC = start;
+					final int duration = (int) (System.currentTimeMillis() - start);
+					if (Policy.DEBUG_GC) {
+						System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
+					}
+					if (duration > maxGC) {
+						if (Policy.DEBUG_GC) {
+							System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
+						}
+						shutdown();
+					} else {
+						//if the gc took a long time, ensure the next gc doesn't happen for awhile
+						nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
+						if (Policy.DEBUG_GC) {
+							System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
+						}
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		gcJob.setSystem(true);
 	}
 
 	/**
