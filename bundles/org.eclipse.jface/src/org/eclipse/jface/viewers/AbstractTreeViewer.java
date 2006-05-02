@@ -236,16 +236,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         if (childElements.length > 0) {
         	// TODO: Add filtering back?
             Object[] filtered = filter(parentElementOrTreePath, childElements);
-			ViewerSorter sorter = getSorter();
-			if(sorter != null) {
-				if (sorter instanceof TreePathViewerSorter) {
-					TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+			ViewerComparator comparator = getComparator();
+			if(comparator != null) {
+				if (comparator instanceof TreePathViewerSorter) {
+					TreePathViewerSorter tpvs = (TreePathViewerSorter) comparator;
 					if (path == null) {
-						path = internalGetSorterParentPath(widget, sorter);
+						path = internalGetSorterParentPath(widget, comparator);
 					}
 					tpvs.sort(this, path, filtered);
 				} else {
-					sorter.sort(this,filtered);
+					comparator.sort(this,filtered);
 				}
 			}
             createAddedElements(widget, filtered);
@@ -293,8 +293,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 		}
 		
-		ViewerSorter sorter = getSorter ();
-		TreePath parentPath = internalGetSorterParentPath(widget, sorter);
+		ViewerComparator comparator = getComparator();
+		TreePath parentPath = internalGetSorterParentPath(widget, comparator);
 		Item[] items = getChildren(widget);
 		
 		//As the items are sorted already we optimize for a 
@@ -313,7 +313,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			boolean newItem = true;
 			Object element = elements[i];
 			int index;
-			if(sorter == null){
+			if(comparator == null){
 				if(itemExists(items,element)){
 					refresh(element);
 					newItem = false;
@@ -321,12 +321,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				index = -1;
 			}
 			else{
-				lastInsertion = insertionPosition(items,sorter,lastInsertion, element, parentPath);
+				lastInsertion = insertionPosition(items,comparator,lastInsertion, element, parentPath);
 				//As we are only searching the original array we keep track of those positions only
 				if(lastInsertion == items.length) {
 					index = -1;
 				} else{//See if we should just refresh
-					while(lastInsertion < items.length && internalCompare(sorter,parentPath,element,items[lastInsertion].getData()) == 0){
+					while(lastInsertion < items.length && internalCompare(comparator,parentPath,element,items[lastInsertion].getData()) == 0){
 						//As we cannot assume the sorter is consistent with equals() - therefore we can
 						// just check against the item prior to this index (if any)
 						if (items[lastInsertion].getData().equals(element)) {
@@ -389,10 +389,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * 
      */
 	
-	private int insertionPosition(Item[] items,  ViewerSorter sorter, int lastInsertion, Object element, TreePath parentPath) {
+	private int insertionPosition(Item[] items,  ViewerComparator comparator, int lastInsertion, Object element, TreePath parentPath) {
 		
 		int size = items.length;
-		if (sorter == null) {
+		if (comparator == null) {
 			return size;
 		}
 	    int min = lastInsertion, max = size - 1;
@@ -400,7 +400,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		while (min <= max) {
             int mid = (min + max) / 2;
             Object data = items[mid].getData();
-            int compare = internalCompare(sorter, parentPath, data, element);
+            int compare = internalCompare(comparator, parentPath, data, element);
             if (compare == 0) {
                 return mid;//Return if we already match
             }
@@ -444,13 +444,13 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @return int
      */
     protected int indexForElement(Widget parent, Object element) {
-        ViewerSorter sorter = getSorter();
-        TreePath parentPath = internalGetSorterParentPath(parent, sorter);
+        ViewerComparator comparator = getComparator();
+        TreePath parentPath = internalGetSorterParentPath(parent, comparator);
 		
 		Item[] items = getChildren(parent);
 		int count = items.length;
 
-        if (sorter == null) {
+        if (comparator == null) {
 			return count;
 		}
         int min = 0, max = count - 1;
@@ -458,7 +458,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         while (min <= max) {
             int mid = (min + max) / 2;
             Object data = items[mid].getData();
-            int compare = internalCompare(sorter, parentPath, data, element);
+            int compare = internalCompare(comparator, parentPath, data, element);
             if (compare == 0) {
                 // find first item > element
                 while (compare == 0) {
@@ -467,7 +467,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                         break;
                     }
                     data = items[mid].getData();
-                    compare = internalCompare(sorter, parentPath, data, element);
+                    compare = internalCompare(comparator, parentPath, data, element);
                 }
                 return mid;
             }
@@ -491,9 +491,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @return the tree path that should be used as the parent path for the
      * given widget and sorter
      */
-	private TreePath internalGetSorterParentPath(Widget parent, ViewerSorter sorter) {
+	private TreePath internalGetSorterParentPath(Widget parent, ViewerComparator comparator) {
 		TreePath path;
-		if (sorter instanceof TreePathViewerSorter && parent instanceof Item) {
+		if (comparator instanceof TreePathViewerSorter && parent instanceof Item) {
 			Item item = (Item) parent;
 			path = getTreePathFromItem(item);
 		} else {
@@ -513,12 +513,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @param e2 the seocnd element
 	 * @return the result of comparing the two elements
 	 */
-	private int internalCompare(ViewerSorter sorter, TreePath parentPath, Object e1, Object e2) {
-		if (sorter instanceof TreePathViewerSorter) {
-			TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+	private int internalCompare(ViewerComparator comparator, TreePath parentPath, Object e1, Object e2) {
+		if (comparator instanceof TreePathViewerSorter) {
+			TreePathViewerSorter tpvs = (TreePathViewerSorter) comparator;
 			return tpvs.compare(this, parentPath, e1, e2);
 		}
-		return sorter.compare(this, e1, e2);
+		return comparator.compare(this, e1, e2);
 	}
 	
 	/* (non-Javadoc)
@@ -526,9 +526,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
 		Object[] result =  getFilteredChildren(parentElementOrTreePath);
-		ViewerSorter sorter = getSorter();
-		if (parentElementOrTreePath!=null && sorter instanceof TreePathViewerSorter) {
-			TreePathViewerSorter tpvs = (TreePathViewerSorter) sorter;
+		ViewerComparator comparator = getComparator();
+		if (parentElementOrTreePath!=null && comparator instanceof TreePathViewerSorter) {
+			TreePathViewerSorter tpvs = (TreePathViewerSorter) comparator;
 			
 			// be sure we're not modifying the original array from the model
 			result = (Object[]) result.clone();
@@ -540,14 +540,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				Object parent = parentElementOrTreePath;
 				Widget w = internalGetWidgetToSelect(parent);
 				if (w != null) {
-					path = internalGetSorterParentPath(w, sorter);
+					path = internalGetSorterParentPath(w, comparator);
 				}
 			}
 	    	tpvs.sort(this, path, result);
-		} else if (sorter != null) {
+		} else if (comparator != null) {
 			// be sure we're not modifying the original array from the model
 			result = (Object[]) result.clone();
-			sorter.sort(this, result);
+			comparator.sort(this, result);
 		}
 		return result;
 	}
@@ -2622,7 +2622,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Assert.isNotNull(parentElementOrTreePath);
 		Assert.isNotNull(element);
 
-		if (getSorter() != null || hasFilters()) {
+		if (getComparator() != null || hasFilters()) {
 			add(parentElementOrTreePath, new Object[] { element });
 			return;
 		}

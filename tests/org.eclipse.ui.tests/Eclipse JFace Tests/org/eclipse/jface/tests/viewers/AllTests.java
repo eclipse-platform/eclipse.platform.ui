@@ -42,5 +42,8 @@ public class AllTests extends TestSuite {
 		addTestSuite(CheckboxTableViewerTest.class);
 		addTestSuite(CheckboxTreeViewerTest.class);
 		addTestSuite(ComboViewerTest.class);
+		addTestSuite(TreeViewerComparatorTest.class);
+		addTestSuite(ListViewerComparatorTest.class);
+		addTestSuite(TableViewerComparatorTest.class);
 	}
 }

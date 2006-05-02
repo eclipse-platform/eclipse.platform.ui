@@ -681,8 +681,8 @@ public class TableViewer extends StructuredViewer {
 	 * Returns the index where the item should be inserted.
 	 */
 	protected int indexForElement(Object element) {
-		ViewerSorter sorter = getSorter();
-		if (sorter == null) {
+		ViewerComparator comparator = getComparator();
+		if (comparator == null) {
 			return table.getItemCount();
 		}
 		int count = table.getItemCount();
@@ -690,7 +690,7 @@ public class TableViewer extends StructuredViewer {
 		while (min <= max) {
 			int mid = (min + max) / 2;
 			Object data = table.getItem(mid).getData();
-			int compare = sorter.compare(this, data, element);
+			int compare = comparator.compare(this, data, element);
 			if (compare == 0) {
 				// find first item > element
 				while (compare == 0) {
@@ -699,7 +699,7 @@ public class TableViewer extends StructuredViewer {
 						break;
 					}
 					data = table.getItem(mid).getData();
-					compare = sorter.compare(this, data, element);
+					compare = comparator.compare(this, data, element);
 				}
 				return mid;
 			}
@@ -788,7 +788,7 @@ public class TableViewer extends StructuredViewer {
 	 */
 	public void insert(Object element, int position) {
 		tableViewerImpl.applyEditorValue();
-		if (getSorter() != null || hasFilters()) {
+		if (getComparator() != null || hasFilters()) {
 			add(element);
 			return;
 		}
