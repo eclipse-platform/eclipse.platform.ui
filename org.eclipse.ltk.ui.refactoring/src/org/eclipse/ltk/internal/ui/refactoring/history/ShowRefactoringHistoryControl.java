@@ -31,7 +31,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
- * Refactoring history control to show the workspace refactoring history.
+ * Control which is capable of displaying and editing the global workspace
+ * refactoring history.
  * 
  * @since 3.2
  */
