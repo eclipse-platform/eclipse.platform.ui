@@ -38,7 +38,7 @@ public class ActionExpression {
 		 * marked as invalid when one of the values on which it is based
 		 * changes.
 		 */
-		protected transient int hashCode = HASH_CODE_NOT_COMPUTED;
+		protected transient int expressionHashCode = HASH_CODE_NOT_COMPUTED;
 
 		/**
 		 * Extract the object class tests from the expression. This allows
@@ -210,13 +210,13 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(list);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(list);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 
 		/*
@@ -376,15 +376,15 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR
 						+ Util.hashCode(className);
-				hashCode = hashCode * HASH_FACTOR + Util.hashCode(extracted);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(extracted);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 
 		/*
@@ -487,14 +487,14 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
-				hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 
 		/*
@@ -645,14 +645,14 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
-				hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 
 		/*
@@ -744,13 +744,13 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(child);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(child);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 
 		/*
@@ -834,14 +834,14 @@ public class ActionExpression {
 		 * @return The hash code for this object.
 		 */
 		public final int hashCode() {
-			if (hashCode == HASH_CODE_NOT_COMPUTED) {
-				hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
-				hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-				if (hashCode == HASH_CODE_NOT_COMPUTED) {
-					hashCode++;
+			if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+				expressionHashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(name);
+				expressionHashCode = expressionHashCode * HASH_FACTOR + Util.hashCode(value);
+				if (expressionHashCode == HASH_CODE_NOT_COMPUTED) {
+					expressionHashCode++;
 				}
 			}
-			return hashCode;
+			return expressionHashCode;
 		}
 	}
 

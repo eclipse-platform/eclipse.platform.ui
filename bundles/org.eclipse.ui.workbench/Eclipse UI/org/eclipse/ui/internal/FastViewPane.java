@@ -95,12 +95,12 @@ public class FastViewPane {
             case IStackPresentationSite.STATE_MAXIMIZED:
                 pane.setZoomed(true);
                 sash.setVisible(false);
-                getPresentation().setBounds(getBounds());
+                this.getPresentation().setBounds(getBounds());
                 break;
             case IStackPresentationSite.STATE_RESTORED:
                 pane.setZoomed(false);
                 sash.setVisible(true);
-                getPresentation().setBounds(getBounds());
+                this.getPresentation().setBounds(getBounds());
                 break;
             default:
             }
@@ -144,7 +144,7 @@ public class FastViewPane {
 
             PartPane pane = currentPane.getPane();
 
-            Control control = getPresentation().getControl();
+            Control control = this.getPresentation().getControl();
 
             Rectangle bounds = Geometry.toDisplay(clientComposite, control
                     .getBounds());

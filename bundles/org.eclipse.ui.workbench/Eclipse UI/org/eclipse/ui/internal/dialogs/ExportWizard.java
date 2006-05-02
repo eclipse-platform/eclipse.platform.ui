@@ -33,7 +33,7 @@ import org.eclipse.ui.wizards.IWizardCategory;
  * The set of available wizards comes from the export wizard extension point.
  */
 public class ExportWizard extends Wizard {
-    private IWorkbench workbench;
+    private IWorkbench theWorkbench;
 
     private IStructuredSelection selection;
 
@@ -63,7 +63,7 @@ public class ExportWizard extends Wizard {
      * Creates the wizard's pages lazily.
      */
     public void addPages() {
-        addPage(new SelectionPage(this.workbench, this.selection,
+        addPage(new SelectionPage(this.theWorkbench, this.selection,
                 getAvailableExportWizards(), WorkbenchMessages.ExportWizard_selectDestination));
     }
 
@@ -92,7 +92,7 @@ public class ExportWizard extends Wizard {
      */
     public void init(IWorkbench aWorkbench,
             IStructuredSelection currentSelection) {
-        this.workbench = aWorkbench;
+        this.theWorkbench = aWorkbench;
         this.selection = currentSelection;
 
         setWindowTitle(WorkbenchMessages.ExportWizard_title); 
