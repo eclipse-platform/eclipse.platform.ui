@@ -83,7 +83,6 @@ Platforms</font></b> </div>
 </table>
 <h2>Tests</h2>
 <!-- KEEP END -->
-
 <ul>
 <li><a href="#00004.html">Repositories View</a>
 <ul>
@@ -162,7 +161,7 @@ Platforms</font></b> </div>
 <li><a href="#00049.html">Decorations</a>
 <ul>
 </ul>
-<li><a href="#commit_stes00001.html">Commit Sets Layout</a>
+<li><a href="#change_sets00001.html">Change Sets</a>
 <ul>
 </ul>
 <li><a href="#sync00001.html">Scenarios</a>
@@ -202,12 +201,42 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 </ul>
-<li><a href="#00014.html">Resource History</a>
+<li><a href="#00014.html">History View</a>
 <ul>
 <li><a href="#00018.html">Editor Linking</a>
 <ul>
 </ul>
+<li><a href="#toolbarButtonsUMFile00001.html">Common Toolbar Buttons</a>
+<ul>
+</ul>
+<li><a href="#groupByDateUMFile00001.html">Group Revisions by Date</a>
+<ul>
+</ul>
+<li><a href="#localHistoryUnsharedFiles00001.html">Local History for Unshared Files</a>
+<ul>
+<li><a href="#DNDUMFile00001.html">Drag and Drop Unmapped File</a>
+<ul>
+</ul>
+<li><a href="#showHistoryUMFile00001.html">Show History Unmapped File</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#cvsHistory00001.html">CVS History</a>
+<ul>
+<li><a href="#DNDCFile00001.html">Drag and Drop CVS File</a>
+<ul>
+</ul>
 <li><a href="#00024.html">Annotate</a>
+<ul>
+</ul>
+<li><a href="#modeSwitching00001.html">Mode Switching</a>
+<ul>
+</ul>
+</ul>
+<li><a href="#pinHistoryView00001.html">Pin History View</a>
+<ul>
+</ul>
+<li><a href="#refreshHistory00002.html">Refresh</a>
 <ul>
 </ul>
 </ul>
@@ -336,7 +365,7 @@ Platforms</font></b> </div>
 <a name="repoview_basics00001.html">
 <h2>Basics</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/05/10 18:44:21 $</p>
 
 <h3>Adding and Discarding Locations</h3>
 
@@ -346,6 +375,8 @@ try the failures cases from <a href="connections00001.html">Connections</a>.
 Things to try:
 <ul>
 <li>Create repo locations for different connection types: ext, pserver, extssh.
+<li>Create a repo location ny pasting a location string into the host field (e.g. 
+:pserver:anonymous@dev.eclipse.org:/home/eclipse).
 <li>Expanding project nodes should process the children in the background and the 
 view should remain responsive while this is happening. When children nodes are added to the 
 tree the tree shouldn't be too jumpy.
@@ -375,7 +406,7 @@ Ensure that the sharing information for any projects mapped to the location are 
 <a name="00007.html">
 <h2>Check Out - prompts</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 <h3>Scenario 1</h3>
 <ol>
@@ -430,7 +461,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 
 <h2>Checkout Wizard</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p><body>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p><body>
 
 <p>The checkout wizard should be available from the following parts of the workbench: 
 import, new project, empty workspace CVS synchronize action, toolbar in CVS perspective.
@@ -461,7 +492,7 @@ does not contain a .project file.
 <a name="datetags_repoview00001.html">
 <h2>Tags</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p><body>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p><body>
 
 <h3>Refresh Branches and Versions</h3>
 <ol>
@@ -502,7 +533,7 @@ The ability to create Date tags should be available from the following locations
 <a name="00027.html">
 <h2>Sharing as a subfolder</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p>
 
 <p>Perform the following steps:</p>
 <ol>
@@ -517,7 +548,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="sharingbasics00001.html">
 <h2>Basics</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 <p>Single select a project and select share.</p>
 <ul>
@@ -531,7 +562,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00028.html">
 <h2>Reconnecting an existing project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <p>
 The following scenario represents how a user would reconnect a project that does
 not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
@@ -580,7 +611,7 @@ the remote may have been modified since then.
 <a name="00050.html">
 <h2>Sharing a new project</h2>
 <p>Since: 3.0 M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Scenario 1: Existing location using project name</h3>
 <p>Perform the following steps:</p>
@@ -612,7 +643,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="project_sets00001.html">
 <h2>Project Sets</h2>
 <p>Since: 2.1 <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ul>
 <li>Create a project set from a workspace with multiple projects shared with CVS. The shared projects in the workspace should include projects shared with the following: branch, version, date, and HEAD.
@@ -626,7 +657,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00045.html">
 <h2>With latest</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Ensure that replace srubs the local resources leaving to outgoing changes. And verify the following:
 <ul>
@@ -637,7 +668,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00046.html">
 <h2>With another branch of version</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
 <p>Check the following for all cases of replace:
 <ul>
@@ -653,7 +684,7 @@ Also ensure that the tag filtering in the dialog works properly.
 <a name="00047.html">
 <h2>With file revision</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ul>
 <li>If the file isn't managed the action should no appear.
@@ -669,7 +700,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="update_command00001.html">
 <h2>Updating</h2>
 <p>Since: 2.0 <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>You can run an update and open the console to see the files that are being updated.</p>
 <p>You can run the update and switch to another branch, this should keep your outgoing changes and update all other non-changed files.</p>
@@ -679,7 +710,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00009.html">
 <h2>Remote resources</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <h4>Compare With... in Repositories view </h4>
 <p>Perform the following steps:</p>
 <ol>
@@ -713,7 +744,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00039.html">
 <h2>Compare with another branch or version</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 <p>
 You should be able to select a project/folder/resource and compare againts
 another branch or version. Multi-select should work across projects in 
@@ -750,7 +781,7 @@ be made to the following cases:
 <a name="00040.html">
 <h2>Reverting deleted resources</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 You should be able to restore a deleted revision from the CVS server Team>Restore from Repository
 
@@ -759,7 +790,7 @@ You should be able to restore a deleted revision from the CVS server Team>Restor
 
 <h2>Quick Diff</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Enable CVS quick diff for text and java files via the Workbench > Editors > QuickDiff preference. Then try the following
 scenarios.</p>
@@ -786,8 +817,8 @@ annotations are removed and the file is clean.
 <h1>Synchronizing</h1>
 <a name="00048.html">
 <h2>Performing a Synchronize</h2>
-<p>Since: M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+<p>Since: 3.0<br>
+Last Modified: $Date: 2006/04/25 17:34:55 $</p>
 
 <p>
 Synchronizing means to compare your local workspace contents with the contents 
@@ -803,7 +834,7 @@ synchronize along with the expected initial selection.
 <ul>
 <li><b>Using the global synchronize action (via toolbar or keybinding)</b>: The 
 selection should be obtained from the active view. If no view is active, all
-prjects should be selected.
+projects should be selected.
 <li><b>Using the Synchronize button in toolbar of the Synchronize view</b>: 
 All projects should be selected.
 <li><b>Selecting Synchronize from the context menu of resources in the synchronize view</b>:
@@ -837,52 +868,85 @@ each case. One for Team > Sync and another for refresh from the sync view.
 
 <a name="00011.html">
 <h2>Synchronize View</h2>
-<p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+<p>Since: 3.0<br>
+Last Modified: $Date: 2006/04/25 17:34:55 $</p>
 
 <h3>Synchronize View Modes</h3>
 
-Ensure that choosing modes 
+<p>
+Ensure that choosing direction modes result in proper filtering.
 <ul>
-<li>result in proper filtering 
-<li>updates status bar properly 
+<li>Incoming mode contains incoming changes and conflicts.</li>
+<li>Outgoing mode contains outgoing changes and conflicts.</li>
+<li>Both mode contains all change types.</li>
+<li>Conflict mode contains only conflicts.</li>
 </ul>
+</p>
+<p>
+Also ensure that there are no empty containers (e.g folders or projects)
+in any of the modes.</p>
+
+<h3>Synchronize View Models</h3>
+
+<p>
+Ensure that each model contains the appropriate output. Models to test include:
+<ul>
+	<li>All Models: Projects should contain content from the highest level model 
+	(e.g. Java projects contains Java content like packages while non-Java projects
+	contains folders).</li>
+	<li>Workspace: All projects are shown and contain folders. For this model, also test
+	the presentation types (Flat, Hierarchical and Compressed Folders).</li>
+	<li>Java: Only Java projects are present and contain Jva content (e.g. packages). Also
+	ensure that any resource content is present (e.g. non-source folders).</li>
+	<li>Change Sets: All changes are grouped by change set.</li>
+</ul>
+</p>
+<p>
+Also ensure that mode switching works properly for each model type.
+</p>
 
 <h3>Synchronize View Operations</h3>
 <p>Ensure Commit and Update buttons:</p>
 <ul>
-  <li>operate on all applicable visible changes</li>
-  <li>exclude filtered changes</li>
-  <li>exclude conflicts</li>
+  <li>operate on all applicable changes</li>
+  <li>prompt in some form before executing</li>
 </ul>
 <p>Ensure Update menu action:</p>
 <ul>
   <li>is enabled when selection contains incoming or conflicting changes</li>
   <li>operates only on selected changes</li>
   <li>silently handles mergable conflicts</li>
-  <li>will prompt if conflicts are no mergable</li>
+  <li>will prompt if conflicts are not mergable</li>
 </ul>
 <p>Ensure Commit menu action</p>
 <ul>
-  <li>is enable only when selection contains outgoing changes</li>
-  <li>prompts form unadded resources</li>
+  <li>is enable when selection contains outgoing changes</li>
+  <li>prompts for unadded resources</li>
   <li>operates only on selected changes</li>
 </ul>
-<p>Ensure Override and Commit and Override and Update</p>
+<p>Ensure Override and Update</p>
 <ul>
-  <li>are only enabled for conflicts or changes in the opposite direction</li>
+  <li>is enabled for outgoing and conflicting changes</li>
+  <li>prompts to confirm</li>
   <li>operates only on selected changes</li>
 </ul>
+<p>Ensure Override and Update</p>
+<ul>
+  <li>is enabled for outgoing and conflicting changes</li>
+  <li>prompts to confirm</li>
+  <li>operates only on selected changes</li>
+</ul>
+<p>Ensure Mark as Merged</p>
+<ul>
+  <li>is enabled for incoming and conflicting changes</li>
+  <li>operates only on selected changes</li>
+</ul>
+
 <p>Ensure Refresh button refreshes all projects regardless of mode, selection 
   or working set.</p>
 <p>Ensure Refresh menu action refreshes only the selection</p>
-<h4>Modes and Working Sets</h4>
-<p>Ensure that choosing modes and working sets </p>
-<ul>
-  <li>result in proper filtering</li>
-  <li>updates status bar properly</li>
-</ul>
-<p>All actions on large sets (Mark as Merged as well)</p>
+
+<p>All actions on large sets</p>
 
 The following table can be used to determine what operations are appropriate and what result to expect.
 
@@ -901,9 +965,8 @@ The following table can be used to determine what operations are appropriate and
     </tr>
     <tr>
       <td width="25%"><b>Incoming File Change</b></td>
-      <td width="25%">Override and Commit</td>
-      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
- aborts, OK commits local file to server.</td>
+      <td width="25%">Mark as Merged</td>
+      <td width="50%">File becomes an outgoing change.</td>
     </tr>
     <tr>
       <td width="25%"><b>Incoming File Addition</b></td>
@@ -913,9 +976,8 @@ The following table can be used to determine what operations are appropriate and
     </tr>
     <tr>
       <td width="25%"><b>Incoming File Addition</b></td>
-      <td width="25%">Override and Commit</td>
-      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
- aborts, OK commits deletion to server.</td>
+      <td width="25%">Mark as Merged</td>
+      <td width="50%">File becomes an outgoing deletion.</td>
     </tr>
     <tr>
       <td width="25%"><b>Incoming File Deletion</b></td>
@@ -924,9 +986,8 @@ The following table can be used to determine what operations are appropriate and
     </tr>
     <tr>
       <td width="25%"><b>Incoming File Deletion</b></td>
-      <td width="25%">Override and Commit</td>
-      <td width="50%">Only in Both mode. Prompt for release comment. Cancel
- aborts, OK commits local file to server.</td>
+      <td width="25%">Mark as Merged</td>
+      <td width="50%">File bcomes an outgoing addition.</td>
     </tr>
     <tr>
       <td width="25%"><b>Outgoing File Change</b></td>
@@ -937,7 +998,7 @@ The following table can be used to determine what operations are appropriate and
     <tr>
       <td width="25%"><b>Outgoing File Change</b></td>
       <td width="25%">Override and Update</td>
-      <td width="50%">Only in Both mode. Remote contents become local. Try
+      <td width="50%">Remote contents become local. Try
  with both Text and Binary files.</td>
     </tr>
     <tr>
@@ -956,14 +1017,14 @@ The following table can be used to determine what operations are appropriate and
     <tr>
       <td width="25%"><b>Outgoing File Addition</b></td>
       <td width="25%">Commit</td>
-      <td width="50%">Commit is only enabled on an outgoing addition if it
- has first been added to version control. Prompt for release comment. Cancel
+      <td width="50%">Prompt for release comment shoudl also include prompt for file
+      type if the type of the new file is not known. Cancel
  aborts, OK commits local file to server.</td>
     </tr>
     <tr>
       <td width="25%"><b>Outgoing File Addition</b></td>
       <td width="25%">Override and Update</td>
-      <td width="50%">Only in Both mode. Local file is deleted.</td>
+      <td width="50%">Local file is deleted.</td>
     </tr>
     <tr>
       <td width="25%"><b>Outgoing File Deletion</b></td>
@@ -974,29 +1035,23 @@ The following table can be used to determine what operations are appropriate and
     <tr>
       <td width="25%"><b>Outgoing File Deletion</b></td>
       <td width="25%">Override and Update</td>
-      <td width="50%">Only in Both mode. File is re-created, remote contents
+      <td width="50%">File is re-created, remote contents
  become local.</td>
+    </tr>
+        <tr>
+      <td width="25%"><b>Conflicting File Change</b></td>
+      <td width="25%">Update</td>
+      <td width="50%">If the change is auto-mergable, the file becomes
+      an outgoing change and includes the remote changes and the local changes.
+      Otherwise, the user is prompted to indicate that a merge was not possible.</td>
     </tr>
     <tr>
       <td width="25%"><b>Conflicting File Change</b></td>
-      <td width="25%">Override and Commit</td>
-      <td width="50%">Prompt for release comment. Cancel aborts, OK commits
- local file to server. Applies to both auto-mergeable and non-mergeable conflicts.</td>
+      <td width="25%">Mark As Merged</td>
+      <td width="50%">File becomes an outgoing change.</td>
     </tr>
     <tr>
-      <td width="25%"><b>Auto-mergeable Conflicting File Change</b></td>
-      <td width="25%">Override and Update</td>
-      <td width="50%">Auto-mergeable conflicts have a two-way red/green arrow.
- Dialog prompts user to either auto-merge or replace. If user chooses auto-merge,
- then remote changes are merged in with local changes. File should still
-be  dirty, local changes should still be present, CVS markup should not be
-present,  and no .# files should have been created. If user chooses replace,
-then local  changes are discarded and remote contents replace local. No .#
-files created,  no CVS markup, and the file is not dirty as a result. If
-the user chooses  cancel nothing happens.</td>
-    </tr>
-    <tr>
-      <td width="25%"><b>Non-mergeable Conflicting File Change</b></td>
+      <td width="25%"><b>Conflicting File Change</b></td>
       <td width="25%">Override and Update</td>
       <td width="50%">Dialog prompts user to replace local changes. If user
  cancels nothing happens. If user chooses OK, then local changes are discarded
@@ -1005,17 +1060,8 @@ the user chooses  cancel nothing happens.</td>
     </tr>
     <tr>
       <td width="25%"><b>Conflicting File Addition</b></td>
-      <td width="25%">Add to Version Control</td>
-      <td width="50%">Adds the file to version control. The icon should change
- in the sync view, and Override and Commit should now be enabled.</td>
-    </tr>
-    <tr>
-      <td width="25%"><b>Conflicting File Addition</b></td>
-      <td width="25%">Override and Commit</td>
-      <td width="50%">Override and Commit is only enabled on an outgoing addition
-if it has first been added to version control. Prompt to warn of conflicting
-changes. If OK, prompt for release comment. Cancel aborts either dialog.
-OK commits local file to server.</td>
+      <td width="25%">Mark as Merged</td>
+      <td width="50%">File becomes an outgoing change.</td>
     </tr>
     <tr>
       <td width="25%"><b>Conflicting File Addition</b></td>
@@ -1029,7 +1075,7 @@ OK commits local file to server.</td>
 <a name="00049.html">
 <h2>Decorations</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 There are many standard decorations in the sync view. Most significant are the propagated flags.
 
@@ -1051,10 +1097,10 @@ from the sync view the branch name should appear.
 </p>
 
 
-<a name="commit_stes00001.html">
+<a name="change_sets00001.html">
 <h2>Change Sets Layout</h2>
 <p>Since: 3.1 M2<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date$</p>
 
 <h3>Change Sets for incoming changes</h3>
 
@@ -1119,7 +1165,7 @@ dialog that is primed with the comment from the set.
 <a name="sync00001.html">
 <h2>Scenarios</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 <h3>Making Manual Changes</h3>
 <p>Create a conflicting file change. Manually edit the left source pane in
@@ -1157,7 +1203,7 @@ the incoming  change.</p>
 <a name="commit00002.html">
 <h2>Committing Changes</h2>
 <p>Since: 3.1 M4<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
 
 <h3>Commiting changes to existing files</h3>
 <ol>
@@ -1199,7 +1245,7 @@ Some things to try:
 <a name="tags00002.html">
 <h2>Tag Selection in Dialogs</h2>
 <p>Since: 3.1 M4<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
 
 Tag lists appear in many dialogs:
 <ul>
@@ -1227,7 +1273,7 @@ The option to Refresh and Configure tags should also be present. Refreshing beha
 <a name="tags00003.html">
 <h2>Tag Caching</h2>
 <p>Since: 3.1 M4<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
 
 Discovered tags are cached locally to improve performance. Caching is done in the following ways:
 
@@ -1249,7 +1295,7 @@ but subsequent times, the tags should be cached.
 <a name="00022.html">
 <h2>Performing a Merge</h2>
 <p>Since: 3.1<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
 
 <h3>Scenario 1: One Time Merge</h3>
@@ -1287,7 +1333,7 @@ case with a base tag and without it.
 <a name="00013.html">
 <h2>Synchronize View</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 <ul>
 <li>Same scenarios as <a href="00011.html">CVS Synchronize View</a> except you can't commit.
 <li>Test mark as merged (ensure that it can work on large data sets)
@@ -1296,7 +1342,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="branch00001.html">
 <h2>Branching</h2>
 <p>Since: 3.1 M4<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/02/04 21:58:25 $</p>
 
 <ol>
 <li>Choose Team>Branch from the context menu of the Navigator.
@@ -1319,7 +1365,7 @@ Some things to try:
 <a name="00030.html">
 <h2>Importing a zip over a shared project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>This scenario captures one means of patching. It assumes that a zip file contains 
 a previous version of a project that has been modified in some way and added to
@@ -1342,11 +1388,11 @@ a zip archive (without CVS directories).</p>
 </ol>
 
 
-<h1>Resource History</h1>
+<h1>History View</h1>
 <a name="00018.html">
 <h2>Editor Linking</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <ol>
   <li>Open the Resource History view and enable editor linking</li>
@@ -1360,10 +1406,120 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
   history is fetched (i.e. no jobs appear in progress view).</p>
 
 
+<a name="toolbarButtonsUMFile00001.html">
+<h2>Common Toolbar Buttons</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the functionality of the various buttons common to both the Local File History page and the CVS History page</p>
+
+Note: Even though the functionality is the same for both pages, the tests should be conducted on both an unmanaged file and a CVS file as each history page has its own respective implementation for the following actions.
+<hr></hr>
+<h3>Compare Mode</h3>
+<p>
+<ol>
+  <li>With a file history in the History View and the Compare Mode button <b>off</b>, click on any revision and
+  verify that it opens that revision.</li>
+  <li>Click the Compare Mode button <b>on</b> and verify that clicking on any local file revision will now bring up the compare editor.</li>
+  <li>Verify that turning the Compare Mode button off again switches back to Open mode.</li>
+</ol>
+</p>
+<hr></hr>
+<h3>Collapse All</h3>
+<p>
+<ol>
+  <li>With a file history in the History View, and the Group by Date button <b>on</b>, click the Collapse All button.</li>
+  <li>Verify that all of the items in the tree are collapsed.</li>
+</ol>
+</p>
+<hr></hr>
+<h3>Group Revisions By Date</h3>
+<p>See <a href="groupByDateUMFile00001.html">Group Revisions By Date</a></p>
+<hr></hr>
+<h3>Pin History View</h3>
+<p>See <a href="pinHistoryView00001.html">Pin History View</a></p>
+<hr></hr>
+<h3>Link With Editor</h3>
+<p>See <a href="00018.html">Link With Editor</a></p>
+<hr></hr>
+<h3>Refresh</h3>
+<p>See <a href="refreshHistory00002.html">Refresh</a></p>
+
+<a name="groupByDateUMFile00001.html">
+<h2>Group Revisions by Date</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the group by date mechanism for both local history and cvs history.</p>
+
+<ol>
+  <li>Open the History view.</li>
+  <li>Roll back your system clock 1 day, make a change to your local unmapped file and save it.</li>
+  <li>Roll back your system clock to the beginning of the month and make some changes to the local unmapped file and save it.</li>
+  <li>Roll back your system clock to anywhere before the beginning of the current month, make a change to the local unmapped file and save it.</li>
+  <li>Reset your clock to the current date and show the file's history (DND or [Team>Show Local History]/[Team>Show History] for local and CVS files respectively).</li>
+  <li>Verify that the revisions appear in the appropriate categories: Today, Yesterday, This Month and Previous.</li>
+  <li>Click the Group by Revisions Date button and make sure that the categories toggle on and off.</li>
+</ol>
+
+<p>The above should be tested with history from both an unmanaged file and a CVS file.</p>
+
+<h1>Local History for Unshared Files</h1>
+<a name="DNDUMFile00001.html">
+<h2>Drag and Drop Unmapped File</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the DND mechanism for unmapped files.</p>
+
+<ol>
+  <li>Open the History view.</li>
+  <li>Drag the local file over to it.</li>
+  <li>Ensure the the history view shows the appropriate history (i.e. all revisions
+  present and proper filename in the title bar).</li>
+</ol>
+<p>Drag another file over to the History View from a project that is <i>shared with a CVS repository.</i> Repeat the above
+and make sure that the View updates.</p>
+
+
+<a name="showHistoryUMFile00001.html">
+<h2>Show History Unmapped File</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the page activation mechanism for unmapped files.</p>
+
+<ol>
+  <li>Open the History view.</li>
+  <li>Select the local file,  right click and select Team>Show Local History.</li>
+  <li>Ensure the the history view shows the appropriate history (i.e. all revisions
+  present and proper filename in the title bar).</li>
+</ol>
+<p>Populate the History View with another file from a project that is <i>shared with a CVS repository.</i> Repeat the above
+and make sure that the View updates.</p>
+
+
+<h1>CVS History</h1>
+<a name="DNDCFile00001.html">
+<h2>Drag and Drop CVS File</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the DND mechanism for CVS files.</p>
+
+<ol>
+  <li>Open the History view.</li>
+  <li>Drag the CVS file over to it.</li>
+  <li>Ensure the the history view shows the appropriate history (i.e. all revisions
+  present and proper filename in the title bar).</li>
+</ol>
+<p>Drag another file over to the History View from a project that is <b>not</b> shared with a CVS repository. Repeat the above
+and make sure that the View updates.</p>
+
 <a name="00024.html">
 <h2>Annotate</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Annotate action should be available from</h4>
 <ul>
@@ -1398,11 +1554,102 @@ of the currently selected change in the annotate view.
 </ul>
 
 
+<a name="modeSwitching00001.html">
+<h2>Mode Switching</h2>
+<p>Since: 3.2 RC2 <br>
+Last Modified: $Date: 2006/04/25 21:31:43 $</p>
+
+<p><b>Purpose:</b> Test the mode switching for the CVS History Page.</p>
+
+<h3>Basic Mode Testing</h3>
+<p>
+<ol>
+  <li>Open the History view.</li>
+  <li>Open any file that is being managed by CVS.</li>
+  <li>Edit the file and save.</li>
+  <li>Show the history for the file.</li>
+  <li>Click on the Local and Remote Revisions button. Verify that you can see both remote revisions and local revisions.</li>
+  <li>Click on the Local Revisions button. Verify that you can see only local revisions. Note: <i>No background fetching should occur when you switch modes!</i></li>
+  <li>Click on the Remote Revisions button. Verify that you can see only remote revisions.  Note: <i>No background fetching should occur when you switch modes!</i></li></li>
+</ol>
+</p>
+
+<h3>Mode Persistence Testing</h3>
+<p>
+<ol>
+  <li>Open the History view.</li>
+  <li>Show the history for the file.</li>
+  <li>Click on one of the modes, remember it and close the history view.</li>
+  <li>Show the history for a file again and verify that it is in fact the same mode that you had set prior to closing the history view.</li>
+</ol>
+</p>
+
+
+<a name="pinHistoryView00001.html">
+<h2>Pin History View</h2>
+<p>Since: 3.2 RC2<br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the pinning behaviour of the history view.</p>
+
+<h3>Simple Pinning</h3>
+<p>
+<ol>
+  <li>With a file history in the History View, hit the Pin button.</li>
+  <li>DND a file onto the pinned history view.</li>
+  <li>Verify that a new history view instance opens with the history of the new file displayed.</li>
+  <li>Drag another file onto the pinned instance and verify that it too goes to the new unpinned view.</li>
+</ol>
+Repeat the above using both a CVS file and an unmanaged file.
+</p>
+
+<h3>More Pinning</h3>
+<p>If a one of the views already contains a file, that file should always update the pinned 
+view.
+<ol>
+  <li>With a file history in the History View, hit the Pin button.</li>
+  <li>DND a file onto the pinned history view.</li>
+  <li>Verify that a new history view instance opens with the history of the new file displayed.</li>
+  <li>Now show the history for the original file in the pinned view. The pin view should come to the fore front.</li>
+</ol>
+</p>
+
+<a name="refreshHistory00002.html">
+<h2>Refresh</h2>
+<p>Since: 3.2 RC2<br>
+Last Modified: $Date: 2006/04/25 20:40:39 $</p>
+
+<p><b>Purpose:</b> Test the two types of refresh behaviour available in the history view</p>
+
+
+<h3>Automatic Refresh</h3>
+<p> When a local file is modified and saved, a refresh event is sent out and the history view should show the newest revision. This 
+will work for both local history and CVS history files. (CVS files need to have the history view in the appropriate viewing mode: either 
+"Remote and Local Revisions" or "Local Revisions".)
+<ol>
+  <li>With a file history in the History View, and the viewer in an appropriate mode if a CVS file, open an editor on the workspace
+  copy of the file in the history view.</li>
+  <li>Edit the file and save.</li>
+  <li>Verify that a new local revision gets added to the history view which reflects your change.</li>
+</ol>
+</p>
+
+<h3>Manual Refresh</h3>
+<p> There is also a Refresh button on the toolbar. This is mainly useful for CVS file histories if you want to check if any revisions have been committed.
+Note that its not really of any use for local revisions as they are updated automatically.
+<ol>
+  <li>With a CVS file history in the History View, make a change to the file and save. (You should see the local version updated in the history view.)</li>
+  <li>Commit the file.</li>
+  <li>Hit the Refresh toolbar button and verify that the new revision gets displayed in the history view,</li>
+</ol>
+</p>
+
+
 <h1>Concurrency</h1>
 <a name="00021.html">
 <h2>Close and disconnect</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Background refresh and disconnect</h4>
 <ol>
@@ -1449,7 +1696,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00019.html">
 <h2>Crash Recovery</h2>
 <p>Since: 3.0 M5<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <p>Scenario 1</p>
 <ol>
@@ -1477,7 +1724,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00025.html">
 <h2>Synchronize View Settings</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h4>Saved between sessions</h4>
 <p>The following GUI preferences in the Synchronize View are persisted between workbench 
@@ -1494,7 +1741,7 @@ should be maintained for each participant. The persisted settings are:</p>
 <a name="00029a.html">
 <h2>Server version compatibiliity</h2>
 <p>Since: M6<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This test is to ensure that the ssh2 connection method properly delagates to ssh1
 when the server only supports ssh1. 
@@ -1503,7 +1750,7 @@ when the server only supports ssh1.
 <a name="00030a.html">
 <h2>Proxies</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 Using HTTP and SOCKS5 proxies.
 
@@ -1511,7 +1758,7 @@ Using HTTP and SOCKS5 proxies.
 <a name="00031.html">
 <h2>Key Generation</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 You should be able to generate private/public keys in the SSH2 preference
 page. Here are some scenarios for testing:
@@ -1524,7 +1771,7 @@ page. Here are some scenarios for testing:
 <a name="00032.html">
 <h2>General use</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This tests the prompting and usage of the SSH2 connection method:
 <ul>
@@ -1538,7 +1785,7 @@ your known_hosts file.
 <a name="00034.html">
 <h2>Show Annotation Action</h2>
 <p>Since: 3.0 M3<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <p>Annotate a non-managed file, binary file, plugin.xml file... Be creative.</p>
 <p>Ensure that the annotate view, editor, and history view stay synched.</p>
@@ -1548,7 +1795,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00036.html">
 <h2>Enablement at startup</h2>
 <p>Since: 3.0 M7<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 
 <p>The CVS decorators should not be enabled at start-up. Verify the label decorator preference page.</p>
 <p>When sharing or checking out a project, the decorators will be enabled automatically.</p>
@@ -1558,7 +1805,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="00037.html">
 <h2>Customizations</h2>
 <p>Since: 3.1 <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2005/05/10 16:16:42 $</p>
 
 <p>You can customize the label decorations via the preference page. 
 The customizations will
@@ -1573,7 +1820,7 @@ general colors and fonts preference page.
 <a name="00038.html">
 <h2>Decorations in the Synchronize pages</h2>
 <p>Since: 3.0 M8<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/02 18:01:36 $</p>
 <p>
 CVS text label decorations should be visible in the CVS synchronize participants. We don't bother to show
 the images because the sync view already shows the state images. The labels should also update if the
@@ -1590,7 +1837,7 @@ Ensure that when the local tag changes the decorators in the sync view and navig
 <a name="watch_edit_basic00001.html">
 <h2>Basic scenarios</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/02 16:07:33 $</p>
 
 <p>To setup, goto the CVS preference page and enable watch edit for all projects checked out from CVS. And then set the prompt option to always prompt.</p>
 <ol>
@@ -1630,14 +1877,14 @@ editor pane showing the exception that occured.
 <a name="watch_edit_editorsview00001.html">
 <h2>Editors View</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 <p>Test that you can properly show the editors on a file.</p>
 
 <h1>Performance</h1>
 <a name="perf00002.html">
 <h2>Timings</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This section contains various timing results and comparisons.
 
@@ -1753,7 +2000,7 @@ in 393 incoming changes.
 <a name="perf00004.html">
 <h2>Resource Data Structures</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 This section contains results on memory footprint of CVS in the Core resource
 plugin data structures. More specifically, CVS uses the session and persistant property
@@ -1847,7 +2094,7 @@ should be in the synchronizer.
 <a name="perf00005.html">
 <h2>Looking For Leaks</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Removing synchronize view entries</h3>
 
@@ -1880,7 +2127,7 @@ of ISynchronizeView remain.
 <a name="perf00006.html">
 <h2>Team Data Structures</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 The Team component provides several data strucutures that can be used to 
 cache resource synchronization state and resource variants for improved 
@@ -1908,7 +2155,7 @@ size of these caches as well.
 <a name="perf00007.html">
 <h2>Scalability</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/04 19:44:24 $</p>
 
 The following scenario can be used to test a large number of incoming additions.
 
@@ -1924,7 +2171,7 @@ The following scenario can be used to test a large number of incoming additions.
 <a name="connections00001.html">
 <h2>Connections</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 
 <p>Test that authentication, connection errors result in appropriate error messages and that these don't pollute the log file or console. to setup for these tests
 ensure there are a couple of shared projects in your workspace.</p>
@@ -1943,7 +2190,7 @@ others failed. But the user should no that the operation did complete and skippe
 <a name="auth_problems00001.html">
 <h2>Authentication Problems</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 20:28:37 $</p>
 
 <p>
 
@@ -1957,7 +2204,7 @@ tried with each CVS connection method: pserver, extssh, ext.
 <a name="00042.html">
 <h2>CVS Console</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 There are a couple of preferences that controls the behavior and presentation of the console. These are:
 <ul>
@@ -1968,7 +2215,7 @@ There are a couple of preferences that controls the behavior and presentation of
 <a name="encoding00001.html">
 <h2>Encoding Support</h2>
 <p>Since: 3.0 M9<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 Answer comes here.
 
@@ -1976,7 +2223,7 @@ Answer comes here.
 <a name="passwords00001.html">
 <h2>Password Management</h2>
 <p>Since: 3.0 M9<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Password Management</h3>
 
@@ -1984,7 +2231,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="ext_connection_method00001.html">
 <h2>EXT</h2>
 <p>Since: 2.0 <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/01 15:23:56 $</p>
 
 <h3>Ext connection method</h3>
 
@@ -1992,7 +2239,7 @@ Last Modified: $Date: 2005/05/10 17:06:23 $</p>
 <a name="keys00001.html">
 <h2>Key Bindings</h2>
 <p>Since: 3.1<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date$</p>
 
 <p>Activate the CVS menu and assign keybindings to the various CVS commands.
 Ensure that they work as expected.
@@ -2002,7 +2249,7 @@ Ensure that they work as expected.
 <a name="validate_edit_editing_files00001.html">
 <h2>Editing Files</h2>
 <p>Since: <br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date: 2004/06/14 20:44:55 $</p>
 <p>
 These tests are to sanity check editors behavior relating to calling validateEdit. The tests will
 try to cover all cases where files are changed by the validateEdit handler and changes are made
@@ -2215,7 +2462,7 @@ should translate them to a set of scenarios that make sense for the tool.
 <a name="logical00002.html">
 <h2>Java Packages</h2>
 <p>Since: 3.1<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date$</p>
 
 <p>Ensure that CVS operations such as Update and Commit are performed only
 on the files in a Java package and not on the subpackages when the operations
@@ -2225,7 +2472,7 @@ are launched from the Java Packages Explorer.
 <a name="logical00003.html">
 <h2>Working Sets</h2>
 <p>Since: 3.1<br>
-Last Modified: $Date: 2005/05/10 17:06:23 $</p>
+Last Modified: $Date$</p>
 
 <p>
 Configure the Java Packages Explorer to show Working Sets. Populate the
