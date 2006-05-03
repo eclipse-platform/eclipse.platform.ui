@@ -421,7 +421,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		Button button = createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), false);
+		Button button = createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true);
         button.setEnabled(false);
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);  
 	}
