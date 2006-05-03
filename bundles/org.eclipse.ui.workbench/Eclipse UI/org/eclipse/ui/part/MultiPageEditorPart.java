@@ -806,8 +806,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 */
 	public Object getAdapter(Class adapter) {
 		Object result = super.getAdapter(adapter);
-		if (result == null && getActiveEditor() != null) {
-			result = getActiveEditor().getAdapter(adapter);
+		if (result == null) {
+			IEditorPart innerEditor = getActiveEditor();
+			// see bug 138823 - this is a hack
+			if (innerEditor != null && innerEditor != this) {
+				result = innerEditor.getAdapter(adapter);
+			}
 		}
 		return result;
 	}
