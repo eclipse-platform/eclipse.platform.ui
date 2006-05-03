@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.BaseSiteFactory;
 import org.eclipse.update.core.ContentReference;
@@ -128,14 +130,30 @@ public class SiteFileFactory extends BaseSiteFactory {
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
 
 		//PACKAGED
-		parsePackagedFeature(directory); // in case it contains JAR files
+		try {
+			parsePackagedFeature(directory); // in case it contains JAR files
+		} catch (EmptyDirectoryException ede) {
+			UpdateCore.log(ede.getStatus());
+		}
 
-		parsePackagedPlugins(pluginPath);
+		try {
+			parsePackagedPlugins(pluginPath);
+		} catch (EmptyDirectoryException ede) {
+			UpdateCore.log(ede.getStatus());
+		}
 
-		// INSTALLED	
-		parseInstalledFeature(directory);
+		// INSTALLED
+		try {
+			parseInstalledFeature(directory);
+		} catch (EmptyDirectoryException ede) {
+			UpdateCore.log(ede.getStatus());
+		}
 
-		parseInstalledPlugins(pluginPath);
+		try {
+			parseInstalledPlugins(pluginPath);
+		} catch (EmptyDirectoryException ede) {
+			UpdateCore.log(ede.getStatus());
+		}
 
 		return site;
 
@@ -157,7 +175,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			try {
 				// handle the installed featuresConfigured under featuresConfigured subdirectory
-				dir = featureDir.list();
+				dir = featureDir.list();				
+				if (dir == null) {
+					throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
+				}
 				for (int index = 0; index < dir.length; index++) {
 
 					// the URL must ends with '/' for the bundle to be resolved
@@ -202,6 +223,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 			try {
 				// only list JAR files
 				dir = featureDir.list(FeaturePackagedContentProvider.filter);
+				if (dir == null) {
+					throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
+				}
+				
 				for (int index = 0; index < dir.length; index++) {
 
 					// check if the JAR file contains a feature.xml
@@ -250,6 +275,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 		});
 		DefaultPluginParser parser = new DefaultPluginParser();
+		
+		if (dirs == null) {
+			throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginsDir.getName() + File.separator + pluginsDir.getName() + "directory is empty", null)); //$NON-NLS-1$
+		}
 		for (int i = 0; i < dirs.length; i++) {
 			File pluginFile = new File(dirs[i], "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			InputStream in = null;
@@ -336,6 +365,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 			return;
 		}
 		String[] dir = pluginDir.list(FeaturePackagedContentProvider.filter);
+		
+		if (dir == null) {
+			throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginDir.getName() + File.separator + pluginDir.getName() + "directory is empty", null)); //$NON-NLS-1$
+		}
 		for (int i = 0; i < dir.length; i++) {
 			ContentReference ref = null;
 			String refString = null;
