@@ -299,20 +299,48 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
 	 */
-	public void updateLabel(ViewerLabel label, TreePath elementPath) {
-		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(elementPath.getLastSegment());
-		for (int i = 0; i < labelProviders.length && (!label.hasNewText() && label.getText() != null); i++) {
-			ILabelProvider labelProvider = labelProviders[i];
-			if (labelProvider instanceof ITreePathLabelProvider) {
-				ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
-				tplp.updateLabel(label, elementPath);
-			} else {
-				label.setImage(getImage(elementPath.getLastSegment()));
-				label.setText(getText(elementPath.getLastSegment()));
-			}
+	public void updateLabel(ViewerLabel label, TreePath elementPath) { 
+		
+
+		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(elementPath.getLastSegment());
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && (!label.hasNewText() && label.getText() != null); ) {			 
+			findUpdateLabel((NavigatorContentExtension)itr.next(), label, elementPath);			 
 		}
 		if(label.getText() == null)
 			label.setText(""); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Search for text label and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 */
+	private String findUpdateLabel(NavigatorContentExtension foundExtension, ViewerLabel label, TreePath elementPath) {
+		String text = null;  
+		
+		ILabelProvider labelProvider = foundExtension.getLabelProvider();
+		if (labelProvider instanceof ITreePathLabelProvider) {
+			ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
+			tplp.updateLabel(label, elementPath);
+		} else {
+			label.setImage(labelProvider.getImage(elementPath.getLastSegment()));
+			label.setText(labelProvider.getText(elementPath.getLastSegment()));
+		}		
+		 
+		if(shouldContinue(label, foundExtension)) {
+			return findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor().getOverriddenDescriptor()), label, elementPath);
+		}  
+		return text;
+	}
+ 
+	private boolean shouldContinue(ViewerLabel label, NavigatorContentExtension foundExtension) {
+
+		if(foundExtension.getDescriptor().getOverriddenDescriptor() != null) {
+			if(label.getText() == null || label.getText().length() == 0)
+				return true;
+			else if(label.hasNewText())
+				return false;
+		}
+		return false;
 	}
 
 }

@@ -44,7 +44,7 @@ public class NavigatorContentDescriptorManager {
 
 	private static final NavigatorContentDescriptorManager INSTANCE = new NavigatorContentDescriptorManager();
  
-	private final Map firstClassDescriptors = new HashMap();
+	private final Map firstClassDescriptorsMap = new HashMap();
 
 	private final Map allDescriptors = new HashMap();
 
@@ -161,7 +161,7 @@ public class NavigatorContentDescriptorManager {
 		Set descriptors = new TreeSet(ExtensionPriorityComparator.INSTANCE);
 
 	 	/* Find other ContentProviders which enable for this object */
-		for (Iterator contentDescriptorsItr = firstClassDescriptors.values()
+		for (Iterator contentDescriptorsItr = firstClassDescriptorsMap.values()
 				.iterator(); contentDescriptorsItr.hasNext();) {
 			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
@@ -236,7 +236,7 @@ public class NavigatorContentDescriptorManager {
 
 			NavigatorContentDescriptor descriptor;
 			/* Find other ContentProviders which enable for this object */
-			for (Iterator contentDescriptorsItr = firstClassDescriptorsSet.iterator(); contentDescriptorsItr
+			for (Iterator contentDescriptorsItr = allDescriptors.values().iterator(); contentDescriptorsItr
 					.hasNext();) {
 				descriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 						.next();
@@ -358,15 +358,15 @@ public class NavigatorContentDescriptorManager {
 		if (desc == null) {
 			return;
 		}
-		synchronized (firstClassDescriptors) {
-			if (firstClassDescriptors.containsKey(desc.getId())) {
+		synchronized (firstClassDescriptorsMap) {
+			if (firstClassDescriptorsMap.containsKey(desc.getId())) {
 				NavigatorPlugin
 						.logError(
 								0,
 								"An extension already exists with id \"" + desc.getId() + "\".", null); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				if (desc.getSuppressedExtensionId() == null) {
-					firstClassDescriptors.put(desc.getId(), desc);
+					firstClassDescriptorsMap.put(desc.getId(), desc);
 					firstClassDescriptorsSet.add(desc);
 				} else {
 					overridingDescriptors.add(desc);
@@ -406,8 +406,9 @@ public class NavigatorContentDescriptorManager {
 					 * extension
 					 */
 					if (descriptor.getOverridePolicy() == OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt) {
-						firstClassDescriptors.put(descriptor.getId(),
+						firstClassDescriptorsMap.put(descriptor.getId(),
 								descriptor);
+						firstClassDescriptorsSet.add(descriptor);
 					}
 
 				} else {

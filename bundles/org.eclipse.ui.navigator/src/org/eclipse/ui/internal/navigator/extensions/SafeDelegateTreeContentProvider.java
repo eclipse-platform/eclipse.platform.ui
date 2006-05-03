@@ -32,6 +32,8 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 public class SafeDelegateTreeContentProvider implements
 		IPipelinedTreeContentProvider, ITreePathContentProvider {
 
+	private static final TreePath[] NO_PATHS = new TreePath[0];
+
 	private final ITreeContentProvider contentProvider;
 
 	private NavigatorContentService contentService;
@@ -274,17 +276,13 @@ public class SafeDelegateTreeContentProvider implements
 		do {
 			parent = contentProvider.getParent(parent);
 			if (parent != null && parent != viewer.getInput())
-				segments.add(parent);
+				segments.add(0, parent);
 		} while (parent != null && parent != viewer.getInput());
 		if (!segments.isEmpty()) {
-			// Loop backwards over the array to create the path.
-			TreePath path = TreePath.EMPTY;
-			for (int j = segments.size() - 1; j >=0; j--) {
-				path = path.createChildPath(segments.get(j));
-			}
-			return new TreePath[] { path };
+			// Loop backwards over the array to create the path.			
+			return new TreePath[] { new TreePath(segments.toArray()) };
 		}
-		return new TreePath[0];
+		return NO_PATHS;
 	}
 
 }

@@ -57,10 +57,18 @@ public class StructuredViewerManager {
 				try {
 					if (viewer.getControl().isDisposed()) {
 						return Status.OK_STATUS;
-					}
+					}					
+	
+					
 					Display display = viewer.getControl().getDisplay();
 					if (!display.isDisposed() && viewer != null) {
-						viewer.refresh();
+						try {
+							viewer.getControl().setRedraw(false);
+							viewer.refresh();
+						} finally {
+							viewer.getControl().setRedraw(true);
+						}
+						 
 					}
 				} catch (RuntimeException e) {
 					NavigatorPlugin.logError(0, e.toString(), e);

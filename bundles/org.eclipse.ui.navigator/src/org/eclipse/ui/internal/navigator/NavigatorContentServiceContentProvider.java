@@ -11,10 +11,10 @@
 package org.eclipse.ui.internal.navigator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -147,7 +147,7 @@ public class NavigatorContentServiceContentProvider implements
 			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
+				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
 						rootContentExtensions)) {
 
 					contributedChildren = foundExtension.internalGetContentProvider()
@@ -236,7 +236,7 @@ public class NavigatorContentServiceContentProvider implements
 			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
+				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
 						enabledExtensions)) {
 
 					contributedChildren = foundExtension.internalGetContentProvider()
@@ -379,7 +379,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @return True if the results should be pipelined through the downstream
 	 *         extensions.
 	 */
-	private boolean shouldDeferToOverridePath(
+	private boolean isOverridingExtensionInSet(
 			INavigatorContentDescriptor aDescriptor, Set theEnabledExtensions) {
 
 		if (aDescriptor.getSuppressedExtensionId() != null /*
@@ -400,6 +400,41 @@ public class NavigatorContentServiceContentProvider implements
 		}
 		return false;
 	}
+	
+	/**
+	 * Currently this method only checks one level deep. If the suppressed
+	 * extension of the given descriptor is contained lower in the tree, then
+	 * the extension could still be invoked twice.
+	 * 
+	 * @param aDescriptor
+	 *            The descriptor which may be overriding other extensions.
+	 * @param theEnabledDescriptors
+	 *            The other available descriptors.
+	 * @return True if the results should be pipelined through the downstream
+	 *         extensions.
+	 */
+	private boolean isOverridingDescriptorInSet(
+			INavigatorContentDescriptor aDescriptor, Set theEnabledDescriptors) {
+
+		if (aDescriptor.getSuppressedExtensionId() != null /*
+															 * The descriptor is
+															 * an override
+															 * descriptor
+															 */
+				&& aDescriptor.getOverridePolicy() == OverridePolicy.InvokeAlwaysRegardlessOfSuppressedExt) {
+			/*
+			 * if the policy is set as such, it can lead to this extension being
+			 * invoked twice; once as a first class extension, and once an
+			 * overriding extension.
+			 */
+			if (theEnabledDescriptors.contains(aDescriptor.getOverriddenDescriptor())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 
 	/**
 	 * <p>
@@ -431,7 +466,7 @@ public class NavigatorContentServiceContentProvider implements
 			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
+				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
 						extensions)) {
 
 					parent = foundExtension.internalGetContentProvider().getParent(
@@ -630,47 +665,166 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getParents(java.lang.Object)
 	 */
 	public TreePath[] getParents(Object anElement) {
-		Set extensions = contentService
-			.findContentExtensionsWithPossibleChild(anElement);
+		
+		List paths = new ArrayList();
+		TreePathCompiler compiler = new TreePathCompiler(anElement); 
+		Set compilers = findPaths(compiler);
+		for (Iterator iter = compilers.iterator(); iter.hasNext();) {
+			TreePathCompiler c = (TreePathCompiler) iter.next();
+			paths.add(c.createParentPath());
+			
+		}
+		return (TreePath[]) paths.toArray(new TreePath[paths.size()]);
+		 
+	}
+  
 
-		Set result = new HashSet();
-		NavigatorContentExtension foundExtension;
-		NavigatorContentExtension[] overridingExtensions;
-		for (Iterator itr = extensions.iterator(); itr.hasNext();) {
-			foundExtension = (NavigatorContentExtension) itr.next();
+	/**
+	 * Get the element from an element or tree path argument.
+	 * @param parentElementOrPath the element or tree path
+	 * @return the element
+	 */
+	private Object internalAsElement(Object parentElementOrPath) {
+		if (parentElementOrPath instanceof TreePath) {
+			TreePath tp = (TreePath) parentElementOrPath;
+			if (tp.getSegmentCount() > 0) {
+				return tp.getLastSegment();
+			}
+			// If the path is empty, the parent element is the root
+			return viewer.getInput();
+		}
+		return parentElementOrPath;
+	} 
+	 
+	
+	class TreePathCompiler  {
+		
+		private final LinkedList segments = new LinkedList();
+		
+		
+		public TreePathCompiler(Object segment) {
+			segments.add(segment);
+		}
+		
+		
+		public TreePathCompiler(TreePathCompiler aCompiler) {
+			segments.addAll(aCompiler.segments);
+		}
+		
+		public TreePathCompiler(TreePath aPath) {
+			for(int i=0; i<aPath.getSegmentCount(); i++) {
+				segments.addLast(aPath.getSegment(i));
+			}
+		}
+		
+		public void addParent(Object segment) {
+			segments.addFirst(segment);
+		}
+		
+
+		public void addChild(Object segment) {
+			segments.addLast(segment);
+		}
+		
+		/**
+		 * Create the full tree path. 
+		 * @return A TreePath with all segments from the compiler.
+		 */
+		public TreePath createPath() {
+			return new TreePath(segments.toArray());
+		}
+		
+		/**
+		 * Create parent tree path. 
+		 * @return A TreePath with all segments but the last from the compiler
+		 */
+		public TreePath createParentPath() {
+			LinkedList parentSegments = new LinkedList(segments);
+			parentSegments.removeLast();
+			return new TreePath(parentSegments.toArray());
+		}
+		
+		public Object getLastSegment() {
+			return segments.getLast();
+		}
+		
+		public Object getFirstSegment() {
+			return segments.getFirst();
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+		
+			StringBuffer buffer = new StringBuffer();
+			for (Iterator iter = segments.iterator(); iter.hasNext();) {
+				Object segment = iter.next();
+				buffer.append(segment).append("::"); //$NON-NLS-1$  
+			}
+			return buffer.toString();
+		}
+			
+	
+	}
+	
+ 
+	private Set findPaths(TreePathCompiler aPathCompiler) {				
+
+		Set/*<Object>*/ parents = findParents(aPathCompiler.getFirstSegment());
+		Set/*<TreePathCompiler>*/ parentPaths = new HashSet();
+		Set/*<TreePathCompiler>*/ foundPaths = Collections.EMPTY_SET;
+		if(parents.size() > 0) {
+			for (Iterator parentIter = parents.iterator(); parentIter.hasNext();) {
+				Object parent = (Object) parentIter.next();				
+				TreePathCompiler c = new TreePathCompiler(aPathCompiler);
+				c.addParent(parent);
+				foundPaths = findPaths(c);
+				if(foundPaths.isEmpty())
+					parentPaths.add(c);
+				else 
+					parentPaths.addAll(foundPaths);				
+			}			
+		}
+		return parentPaths;
+		
+	}
+	
+	private Set findParents(Object anElement) {
+		
+
+		Set descriptors = contentService.findDescriptorsWithPossibleChild(anElement, false); 
+		Set parents = new HashSet();
+		NavigatorContentDescriptor foundDescriptor;
+		NavigatorContentExtension foundExtension; 
+		Object parent = null;
+		for (Iterator itr = descriptors.iterator(); itr.hasNext();) {
+			foundDescriptor = (NavigatorContentDescriptor) itr.next();  
+ 			foundExtension = contentService.getExtension(foundDescriptor);
 			try {
-		
-				if (!shouldDeferToOverridePath(foundExtension.getDescriptor(),
-						extensions)) {
-		
-					// We know the content provider is a SafeDelegateTreeContentProvider
-					// which implements ITreePathContentProvider
-					ITreeContentProvider tcp = foundExtension.getContentProvider();
-					if (tcp instanceof ITreePathContentProvider) {
-						ITreePathContentProvider tpcp = (ITreePathContentProvider) tcp;
-						TreePath[] parents = tpcp.getParents(anElement);
-						Set parentPaths = asSet(parents);
-						overridingExtensions = foundExtension
-								.getOverridingExtensionsForPossibleChild(anElement);
-						if (overridingExtensions.length > 0) {
-							parentPaths = pipelineParents(anElement,
-									overridingExtensions, parentPaths);
-						}
-						result.addAll(parentPaths);
+
+				if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
+					
+					/* internalGetContentProvider returns the real delegate */
+					if(foundExtension.getContentProvider() instanceof ITreePathContentProvider) {
+						/* but we use the safe version to automatically handle errors */
+						TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension.internalGetContentProvider()).getParents(anElement);
+					
+						for (int i = 0; i < parentTreePaths.length; i++) {
+	
+							parent = parentTreePaths[i].getLastSegment();
+							if( (parent = findParent(foundExtension, anElement, parent)) != null)
+								parents.add(parent);  
+						} 
+						
 					} else {
-						List segments = new ArrayList();
-						Object parent = findParent(foundExtension, anElement);
-						Object lastParent = null;
-						while(parent != null && parent != viewer.getInput() && parent != lastParent) {
-							lastParent = parent;
-							segments.add(0, parent);
-							parent = findParent(foundExtension, parent);
-							
-						}
-						result.add(new TreePath(segments.toArray()));
+						
+						parent = foundExtension.internalGetContentProvider().getParent(anElement);
+						if( (parent = findParent(foundExtension, anElement, parent)) != null)
+							parents.add(parent);   
 					}
-					 
 				}
+				 
 			} catch (RuntimeException re) {
 				NavigatorPlugin
 						.logError(
@@ -692,146 +846,36 @@ public class NavigatorContentServiceContentProvider implements
 														.getDescriptor()
 														.getId() }), e);
 		
-			}
+			} 
 		}
 		
-		return (TreePath[]) result.toArray(new TreePath[result.size()]);
+		return parents;
+		
 	}
-
-	/**
-	 * Search for parents and take overrides into account. 
-	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
-	 */
-	private Object findParent(NavigatorContentExtension foundExtension, Object anElement) { 
-		Object parent = null; 
-		INavigatorContentDescriptor foundDescriptor;  
-		parent = foundExtension.getContentProvider().getParent(anElement); 
-		if(parent == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findParent(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
-		}  
-		return parent;
-	}
-
-	/**
-	 * Return the objects as a set.
-	 * @param objects the objects
-	 * @return a set that contains the objects
-	 */
-	private Set asSet(Object[] objects) {
-		Set parentPaths = new HashSet();
-		parentPaths.addAll(Arrays.asList(objects));
-		return parentPaths;
-	}
+	 
 	
-	/**
-	 * Query each of <code>theOverridingExtensions</code> for in order
-	 * to adjust the parent paths of the contributor of the element.
-	 * 
-	 * TODO: This method would be cleaner if TreePaths were added to the pipeline API.
-	 * 
-	 * @param anInputElement
-	 *            The input element in the tree
-	 * @param theOverridingExtensions
-	 *            The set of overriding extensions that should participate in
-	 *            the pipeline chain
-	 * @param theParentPaths
-	 *            The current elements to return to the viewer (should be
-	 *            modifiable)
-	 * @return The set of elements to return to the viewer
-	 */
-	private Set pipelineParents(Object anInputElement,
-			NavigatorContentExtension[] theOverridingExtensions,
-			Set theParentPaths) {
-		IPipelinedTreeContentProvider pipelinedContentProvider;
-		NavigatorContentExtension[] overridingExtensions;
-		for (int i = 0; i < theOverridingExtensions.length; i++) {
-
-			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
-				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
-						.getContentProvider();
-
-				Set adjustedParentPaths = new HashSet();
-				if (theParentPaths.isEmpty()) {
-					// Need to handle the case where the content provider doesn't
-					// known the parent but the pipeline does
-					Object aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
-							anInputElement, null);
-					if (aSuggestedParent != null) {
-						Collection newPaths = getPathsForElement(pipelinedContentProvider, aSuggestedParent);
-						adjustedParentPaths.add(newPaths);
-					}
-				} else {
-					Set pipedParents = new HashSet();
-					for (Iterator iter = theParentPaths.iterator(); iter.hasNext();) {
-						TreePath parentPath = (TreePath) iter.next();
-						Object parentElement = internalAsElement(parentPath);
-						
-						// We only want to pipe a parent once even if it is the tail of multiple paths
-						if (!pipedParents.contains(parentElement)) {
-							pipedParents.add(parentElement);
-							// Push the parent through the pipeline
-							Object aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
-									anInputElement, parentElement);
-							// If the parent was modified, get the new path
-							if (aSuggestedParent != parentElement) {
-								Collection newPaths = getPathsForElement(pipelinedContentProvider, aSuggestedParent);
-								adjustedParentPaths.add(newPaths);
-							} else {
-								adjustedParentPaths.add(parentPath);
-							}
-						}
-					}
-				}
-				overridingExtensions = theOverridingExtensions[i]
-				                                               .getOverridingExtensionsForTriggerPoint(anInputElement);
-				if (overridingExtensions.length > 0)
-					adjustedParentPaths = pipelineParents(anInputElement,
-							overridingExtensions, adjustedParentPaths);
-				theParentPaths = adjustedParentPaths;
+	private Object findParent(NavigatorContentExtension anExtension, Object anElement, Object aSuggestedParent) {
+		
+		/* the last valid (non-null) parent for the anElement */
+		Object lastValidParent = aSuggestedParent;
+		/* used to keep track of new suggestions */
+		Object suggestedOverriddenParent = null;
+		IPipelinedTreeContentProvider piplineContentProvider; 
+		NavigatorContentExtension[] overridingExtensions = anExtension.getOverridingExtensionsForPossibleChild(anElement); 
+		for (int i = 0; i < overridingExtensions.length; i++) {
+			if(overridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				piplineContentProvider = (IPipelinedTreeContentProvider) overridingExtensions[i].getContentProvider(); 
+				suggestedOverriddenParent = piplineContentProvider.getPipelinedParent(anElement, lastValidParent);
+				
+				if(suggestedOverriddenParent != null)
+					lastValidParent = suggestedOverriddenParent; 
+				
+				// should never return null 
+				lastValidParent = findParent(overridingExtensions[i], anElement, lastValidParent);
 			}
-		}
-		return theParentPaths;
-	}
-	
-	/**
-	 * Return all the potential paths for the given element from the given
-	 * content provider. This is done by getting the parent paths of
-	 * the element and then appending he element to these paths.
-	 * @param aContentProvider the content povider
-	 * @param anElement the element
-	 * @return the tree path fo the given element
-	 */
-	private Collection getPathsForElement(ITreeContentProvider aContentProvider, Object anElement) {
-		List result = new ArrayList();
-		if (aContentProvider instanceof ITreePathContentProvider) {
-			ITreePathContentProvider tpcp = (ITreePathContentProvider) aContentProvider;
-			TreePath[] paths = tpcp.getParents(anElement);
-			for (int i = 0; i < paths.length; i++) {
-				TreePath path = paths[i];
-				result.add(path.createChildPath(anElement));
-			}
-		} else {
-			// We should never get here since SafeDelegateTreeContentProvider is an ITreePathContentProvider
-			result.add(TreePath.EMPTY.createChildPath(anElement));
-		}
-		return result;
-	}
-
-	/**
-	 * Get the element from an element or tree path argument.
-	 * @param parentElementOrPath the element or tree path
-	 * @return the element
-	 */
-	private Object internalAsElement(Object parentElementOrPath) {
-		if (parentElementOrPath instanceof TreePath) {
-			TreePath tp = (TreePath) parentElementOrPath;
-			if (tp.getSegmentCount() > 0) {
-				return tp.getLastSegment();
-			}
-			// If the path is empty, the parent element is the root
-			return viewer.getInput();
-		}
-		return parentElementOrPath;
+				
+		} 
+		return lastValidParent;
 	}
 
 }

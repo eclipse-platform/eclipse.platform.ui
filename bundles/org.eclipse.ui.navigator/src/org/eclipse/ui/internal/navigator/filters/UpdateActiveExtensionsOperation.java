@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -80,9 +82,15 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
 		// we sort the array in order to use Array.binarySearch();
 		Arrays.sort(contentExtensionsToActivate);
-
+		
+		IStructuredSelection ssel = null;
+	
 		try {
 			commonViewer.getControl().setRedraw(false);
+			
+			ISelection selection = commonViewer.getSelection();
+			if(selection instanceof IStructuredSelection)
+				ssel = (IStructuredSelection) selection;
 
 			INavigatorContentDescriptor[] visibleContentDescriptors = contentService
 					.getVisibleExtensions();
@@ -107,21 +115,31 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
 			/* If so, update */
 			if (updateExtensionActivation) {
+				 
 				contentService.getActivationService().activateExtensions(
 						contentExtensionsToActivate, true);
 				contentService.getActivationService()
 						.persistExtensionActivations();
+				
 
-				// automatically calls viewer.refresh()
+				Object[] expandedElements = commonViewer.getExpandedElements();
+
 				contentService.update();
-				// the action providers may no longer be enabled, so we reset
-				// the selection.
-				commonViewer.setSelection(StructuredSelection.EMPTY);
+
+				commonViewer.refresh();
+				
+				Object[] originalObjects = ssel.toArray(); 
+				
+				commonViewer.setExpandedElements(expandedElements);
+
+				IStructuredSelection newSelection = new StructuredSelection(originalObjects);
+				commonViewer.setSelection(newSelection, true); 				
 			}
 
 		} finally {
 			commonViewer.getControl().setRedraw(true);
-		}
+		} 
+
 		return Status.OK_STATUS;
 	}
 

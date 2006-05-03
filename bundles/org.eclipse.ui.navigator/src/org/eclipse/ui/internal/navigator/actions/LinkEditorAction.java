@@ -184,7 +184,7 @@ public class LinkEditorAction extends Action implements
 	public void dispose() {
 		commonNavigator.removePropertyListener(this);
 		if (isChecked()) {
-			commonViewer.removeSelectionChangedListener(this);
+			commonViewer.removePostSelectionChangedListener(this);
 			commonNavigator.getSite().getPage()
 					.removePartListener(partListener);
 		}
@@ -201,7 +201,7 @@ public class LinkEditorAction extends Action implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedList 
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (commonNavigator.isLinkingEnabled()) {
@@ -248,10 +248,10 @@ public class LinkEditorAction extends Action implements
 			
 			updateSelectionJob.schedule(BRIEF_DELAY);
 
-			commonViewer.addSelectionChangedListener(this);
+			commonViewer.addPostSelectionChangedListener(this);
 			commonNavigator.getSite().getPage().addPartListener(partListener);
 		} else {
-			commonViewer.removeSelectionChangedListener(this);
+			commonViewer.removePostSelectionChangedListener(this);
 			commonNavigator.getSite().getPage()
 					.removePartListener(partListener);
 		}
@@ -269,7 +269,6 @@ public class LinkEditorAction extends Action implements
 			newItems.addAll(aSelectionToAppend.toList());
 			return new StructuredSelection(newItems);
 		}
-	}
- 
+	} 
 
 }

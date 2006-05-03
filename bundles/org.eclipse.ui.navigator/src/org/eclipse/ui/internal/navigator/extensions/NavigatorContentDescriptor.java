@@ -51,6 +51,7 @@ import org.eclipse.ui.navigator.Priority;
 public final class NavigatorContentDescriptor implements
 		INavigatorContentDescriptor, INavigatorContentExtPtConstants {
 
+	private static final int HASH_CODE_NOT_COMPUTED = -1;
 	private String id;
 
 	private String name;
@@ -77,7 +78,7 @@ public final class NavigatorContentDescriptor implements
 
 	private INavigatorContentDescriptor overriddenDescriptor;
 
-	private int hashCode;
+	private int hashCode = HASH_CODE_NOT_COMPUTED;
 
 	private boolean providesSaveables;
 
@@ -429,9 +430,11 @@ public final class NavigatorContentDescriptor implements
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if(hashCode == -1) {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			String hashCodeString = configElement.getNamespaceIdentifier() + getId();
 			hashCode = hashCodeString.hashCode();
+			if (hashCode == HASH_CODE_NOT_COMPUTED)
+				hashCode++;
 		}
 		return hashCode;
 	}
