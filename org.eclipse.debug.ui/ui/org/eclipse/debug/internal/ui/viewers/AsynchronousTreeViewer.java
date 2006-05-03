@@ -609,6 +609,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 				TreeColumn column = new TreeColumn(tree, SWT.LEFT, i);
 				column.setMoveable(true);
 				column.setText(header);
+				column.setWidth(1);
 				ImageDescriptor image = presentation.getImageDescriptor(id);
 				if (image != null) {
 					column.setImage(getImage(image));
