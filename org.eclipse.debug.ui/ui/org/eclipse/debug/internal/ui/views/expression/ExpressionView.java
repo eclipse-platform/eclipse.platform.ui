@@ -19,6 +19,7 @@ import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -27,6 +28,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
  
@@ -167,5 +170,11 @@ public class ExpressionView extends VariablesView {
 		restoreState();
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createVariablesViewer(org.eclipse.swt.widgets.Composite)
+	 */
+	protected VariablesViewer createVariablesViewer(Composite parent) {
+		return new VariablesViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
+	}	
     
 }

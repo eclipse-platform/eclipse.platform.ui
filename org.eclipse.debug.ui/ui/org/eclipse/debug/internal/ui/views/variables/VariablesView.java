@@ -690,7 +690,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fSashForm = new SashForm(parent, SWT.NONE);
 
 		// add tree viewer
-		final VariablesViewer variablesViewer = new VariablesViewer(fSashForm, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
+		final VariablesViewer variablesViewer = createVariablesViewer(fSashForm);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)
@@ -710,6 +710,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		// listen to debug context
 		DebugContextManager.getDefault().addDebugContextListener(this, getSite().getWorkbenchWindow());
 		return variablesViewer;
+	}
+	
+	/**
+	 * Creates and returns a variables viewer in the given composite.
+	 * 
+	 * @param parent
+	 * @return variables viewer
+	 */
+	protected VariablesViewer createVariablesViewer(Composite parent) {
+		return new VariablesViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, this);
 	}
 	
 	/**
