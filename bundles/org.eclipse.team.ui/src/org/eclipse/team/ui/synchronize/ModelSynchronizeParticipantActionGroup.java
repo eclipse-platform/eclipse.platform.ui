@@ -123,7 +123,7 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 			addMergeActions(cmm);
 		}
 		Object[] elements = ((IStructuredSelection)getContext().getSelection()).toArray();
-    	if (elements.length == 1) {
+    	if (elements.length == 1 && openInCompareAction != null) {
     		IContributionItem fileGroup = findGroup(menu, ISynchronizePageConfiguration.FILE_GROUP);
     		if (fileGroup != null) {
 	    		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
