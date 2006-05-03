@@ -632,8 +632,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
             tree.addPaintListener(new PaintListener() {
                 public void paintControl(PaintEvent e) {
                     Tree tree2 = getTree();
-                    int avg1 = tree2.getSize().x / getVisibleColumns().length;
-                    initColumns(avg1);
+                    String[] visibleColumns = getVisibleColumns();
+                    if (visibleColumns != null) {
+						int avg1 = tree2.getSize().x / visibleColumns.length;
+	                    initColumns(avg1);
+                    }
                     tree2.removePaintListener(this);
                 }
             });
