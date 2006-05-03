@@ -298,17 +298,21 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 	}
 
 	public Object remove(int index) {
-		Object oldObject = wrappedList.remove(index);
+		if (index < 0 || index >= wrappedList.size()) {
+			throw new IllegalArgumentException("Request to remove a nonexistant list element"); //$NON-NLS-1$
+		}
+		Object oldObject = null;
+		oldObject = wrappedList.remove(index);
 		elementsAsSet.remove(oldObject);
 		removeFromViewer(oldObject);
-		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
-				false, oldObject)));
-		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, Collections
-				.singleton(oldObject)));
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
+				index, false, oldObject)));
+		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
+				Collections.singleton(oldObject)));
 		return oldObject;
 	}
 
-	public void add(int index, Object element) {
+	 public void add(int index, Object element) {
 		if (elementsAsSet.add(element)) {
 			wrappedList.add(index, element);
 			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
