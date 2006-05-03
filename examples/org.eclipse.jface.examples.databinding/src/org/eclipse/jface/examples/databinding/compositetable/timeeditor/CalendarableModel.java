@@ -125,8 +125,8 @@ public class CalendarableModel {
 	public List setStartDate(Date startDate) {
 		// If there's no overlap between the old and new date ranges
 		if (this.startDate == null || 
-				startDate.after(calculateDate(this.startDate, numberOfDays)) ||
-				calculateDate(startDate, numberOfDays).before(this.startDate))
+				startDate.after(calculateDate(this.startDate, numberOfDays-1)) ||
+				calculateDate(startDate, numberOfDays-1).before(this.startDate))
 		{
 			this.startDate = startDate;
 			eventLayout = new Calendarable[numberOfDays][][];
