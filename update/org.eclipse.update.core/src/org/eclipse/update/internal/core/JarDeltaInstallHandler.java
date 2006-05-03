@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
@@ -90,15 +89,42 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 			newJarFile.delete();
 			
 			newJarFile.createNewFile();
-			
-			FileChannel in = new FileInputStream(tempFile).getChannel();
-			FileChannel out = new FileOutputStream(newJarFile).getChannel();
-			in.transferTo( 0, in.size(), out);
-			
-			in.close();
-			out.close();
+
+			copyFile(tempFile, newJarFile);
 	}
 	
+	static boolean useNioCopy = true;
+	public static void copyFile(File src, File dst) throws IOException {
+		if (useNioCopy) {
+			try {
+				NioHelper.copyFile(src, dst);
+				return;
+			} catch (NoSuchMethodError e) {
+				// fall through
+			} catch (NoClassDefFoundError e) {
+				// fall through
+			}
+			useNioCopy = false;
+		}
+		
+		FileInputStream in=null;
+		FileOutputStream out=null;
+		try {
+			in = new FileInputStream(src);
+			out = new FileOutputStream(dst);		
+			byte[] buffer = new byte[4096];
+			int len;
+			while ((len=in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+		} finally {
+			if (in != null)
+				in.close();
+			if (out != null)
+				out.close();
+		}
+	}
+
 	public static void addToJar(JarOutputStream jos, JarFile jf) throws IOException {
 		Enumeration e = jf.entries();
 		
