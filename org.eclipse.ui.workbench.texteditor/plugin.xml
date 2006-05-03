@@ -532,6 +532,29 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
+	        commandId="org.eclipse.ui.edit.text.select.lineEnd"
+	        sequence="M2+END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="M2+END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.select.lineEnd"
+            platform="carbon"
+	        sequence="M1+M2+ARROW_RIGHT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.select.textEnd"
+            platform="carbon"
+	        sequence="M2+END"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
 	        commandId="org.eclipse.ui.edit.text.goto.textEnd"
 	        sequence="M1+END"
 	        contextId="org.eclipse.ui.textEditorScope"
@@ -574,6 +597,29 @@
 	        commandId="org.eclipse.ui.edit.text.goto.lineStart"
             platform="carbon"
 	        sequence="M1+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.select.lineStart"
+	        sequence="M2+HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId=""
+            platform="carbon"
+	        sequence="M2+HOME"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.select.lineStart"
+            platform="carbon"
+	        sequence="M1+M2+ARROW_LEFT"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.select.textStart"
+            platform="carbon"
+	        sequence="M2+HOME"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	  <key
