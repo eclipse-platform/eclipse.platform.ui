@@ -109,6 +109,16 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	private ISelection fCurrentSelection;
 	
 	/**
+	 * Array used to store indicies of the path to an item in the viewer being mapped
+	 * by a 'set data' callback. Indicies are bottom up. For example when 'set data' for 
+	 * the 3rd child of the 4th child of the 2nd root element were being asked for,
+	 * the first 3 indicies would look like: [3, 4, 2, ....]. We re-use an array to avoid
+	 * creating a new one all the time. The array grows as needed to accomodate deep
+	 * elements.
+	 */
+	private int[] fSetDataIndicies = new int[5];
+	
+	/**
 	 * The update policy for this viewer.
 	 */
 	private AbstractUpdatePolicy fUpdatePolicy;
@@ -1012,65 +1022,136 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	public void handleEvent(final Event event) {		
 		Item item = (Item) event.item;
 		restoreLabels(item);
-
+		int level = 0;
+		
 		Widget parentItem = getParentWidget(event.item);
-		int index = event.index;
 		if (DEBUG_VIEWER) {
-			DebugUIPlugin.debug("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
+			DebugUIPlugin.debug("SET DATA [" + event.index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		if (index == -1) {
-			return;
-		}
-       
-		ModelNode[] nodes = getModel().getNodes(parentItem.getData());
-		if (nodes != null) {
-			for (int i = 0; i < nodes.length; i++) {
-				ModelNode node = nodes[i];
-				Widget widget = findItem(node);
-				if (widget == parentItem) {
-		        	ModelNode[] childrenNodes = node.getChildrenNodes();
-		        	if (childrenNodes != null && index < childrenNodes.length) {
-		        		final ModelNode child = childrenNodes[index];
-		        		mapElement(child, event.item);
-		        		event.item.setData(child.getElement());
-		        		if (DEBUG_VIEWER) {
-		        			DebugUIPlugin.debug("\tPARENT: " + node); //$NON-NLS-1$
-		        			DebugUIPlugin.debug("\tMAPPED: " + child); //$NON-NLS-1$
-		        			Widget[] widgets = findItems(child);
-		        			if (widgets.length != 1) {
-		        				DebugUIPlugin.debug("\t\t*** NODE MAPPED > 1 ITEM ***"); //$NON-NLS-1$
-		        				for (int j = 0; j < widgets.length; j++) {
-									DebugUIPlugin.debug("\t\t\t" + widgets[j]); //$NON-NLS-1$
-								}
-		        			}
-		        		}
-		        		preservingSelection(new Runnable() {
-		        		    public void run() {
-		        		        internalRefresh(child);
-		        		    }
-		        		});
-		        	}
-		        	return;
-				} else {
-					if (DEBUG_VIEWER) {
-						Widget[] widgets = findItems(node);
-						DebugUIPlugin.debug("\tITEM NOT FOUND: " + node); //$NON-NLS-1$
-						DebugUIPlugin.debug("\tITEMS WERE: "); //$NON-NLS-1$
-						for (int j = 0; j < widgets.length; j++) {
-							DebugUIPlugin.debug("\t\t" + widgets[j]); //$NON-NLS-1$
-						}
+		ModelNode node = null;
+		// first, see if the parent element is in the model
+		// and look directly for the child
+		if (parentItem != null) {
+			ModelNode[] nodes = getModel().getNodes(parentItem.getData());
+			if (nodes != null) {
+				for (int i = 0; i < nodes.length; i++) {
+					ModelNode parentNode = nodes[i];
+					Widget parentWidget = findItem(parentNode);
+					if (parentWidget == parentItem) {
+			        	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
+			        	if (childrenNodes != null && event.index < childrenNodes.length) {
+			        		node = childrenNodes[event.index];
+			        	}
 					}
 				}
 			}
-        } else {
-        	if (DEBUG_VIEWER) {
-        		DebugUIPlugin.debug("\tNOT FOUND IN MODEL: " + parentItem.getData()); //$NON-NLS-1$
-        	}
-        }
+		}
+
+		// otherwise, build a path to the model node
+		if (node == null) {
+			setNodeIndex(event.index, level);
+			while (parentItem instanceof Item) {
+				level++;
+				Widget parent = getParentWidget(parentItem);
+				int index = indexOf(parent, parentItem);
+				if (index < 0) {
+					return;
+				}
+				setNodeIndex(index, level);
+				parentItem = parent;
+			}
+			
+			node = getModel().getRootNode();
+			if (node == null) {
+				if (DEBUG_VIEWER) {
+					DebugUIPlugin.debug("\tFAILED - root model node is null"); //$NON-NLS-1$
+				}
+				return;
+			}
+			for (int i = level; i >= 0; i--) {
+				ModelNode[] childrenNodes = node.getChildrenNodes();
+				if (childrenNodes == null) {
+					if (DEBUG_VIEWER) {
+						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
+					}
+					return;
+				}
+				int index = getNodeIndex(i);
+				if (index < childrenNodes.length) {
+					node = childrenNodes[index];
+				} else {
+					if (DEBUG_VIEWER) {
+						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
+					}
+					return;
+				}
+			}
+		}
+		
+		
+		// map the node to the element and refresh it
+		if (node != null) {
+			mapElement(node, event.item);
+    		event.item.setData(node.getElement());
+    		if (DEBUG_VIEWER) {
+				DebugUIPlugin.debug("\titem mapped: " + node); //$NON-NLS-1$
+    		}
+    		
+    		if (preserveSelectionForSetData()) {
+    			final ModelNode child = node;
+	    		preservingSelection(new Runnable() {
+	    		    public void run() {
+	    		        internalRefresh(child);
+	    		    }
+	    		});
+    		}
+    		else {
+    			internalRefresh(node);
+    		}
+		} else {
+			if (DEBUG_VIEWER) {
+				DebugUIPlugin.debug("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
+			}
+		}
     }
 	
+	/**
+	 * Sets the index of a child node being mapped at the given expansion level
+	 * in the tree.
+	 * 
+	 * @param nodeIndex
+	 * @param level
+	 */
+	private void setNodeIndex(int nodeIndex, int level) {
+		if (level > (fSetDataIndicies.length - 1)) {
+			// grow the array
+			int[] next = new int[level+5];
+			System.arraycopy(fSetDataIndicies, 0, next, 0, fSetDataIndicies.length);
+			fSetDataIndicies = next;
+		}
+		fSetDataIndicies[level] = nodeIndex;
+	}
+	
+	/**
+	 * Returns the index of a child node being mapped at the given expansion level in
+	 * the tree.
+	 * 
+	 * @param level
+	 * @return
+	 */
+	private int getNodeIndex(int level) {
+		return fSetDataIndicies[level];
+	}
+	
+	protected boolean preserveSelectionForSetData()
+	{
+		return true;
+	}
+	
+	protected abstract int indexOf(Widget parent, Widget child);
+	
 	protected abstract void restoreLabels(Item item);
-
+	
 	/**
 	 * Returns the parent widget for the given widget or <code>null</code>
 	 * 

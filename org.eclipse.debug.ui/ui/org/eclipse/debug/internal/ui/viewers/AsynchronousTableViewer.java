@@ -490,5 +490,15 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 			fTable.clearAll();
 		}	
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#indexOf(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Widget)
+	 */
+	protected int indexOf(Widget parent, Widget child) {
+		if (parent instanceof Table) {
+			return ((Table)parent).indexOf((TableItem)child);
+		}
+		return -1;
+	}
 	
 }

@@ -1601,6 +1601,19 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 				collectNodes(nodes, childrenNodes[i]);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#indexOf(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Widget)
+	 */
+	protected int indexOf(Widget parent, Widget child) {
+		if (parent instanceof Tree) {
+			return ((Tree)parent).indexOf((TreeItem)child);
+		} else {
+			return ((TreeItem)parent).indexOf((TreeItem)child);
+		}
 	}	
+	
+	
 
 }
