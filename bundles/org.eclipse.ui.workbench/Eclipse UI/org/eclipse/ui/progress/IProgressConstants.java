@@ -57,7 +57,7 @@ public interface IProgressConstants {
      * </p>
      * <p>
      * Please note that other Jobs of the same family are only removed if they have finished.
-     * Non finshed jobs of the same family are left alone.
+     * Non finished jobs of the same family are left alone.
      * </p>
      **/
     public static final QualifiedName KEEPONE_PROPERTY = new QualifiedName(
@@ -107,7 +107,9 @@ public interface IProgressConstants {
      * The value is set to <code>true</code> when the job starts and set to 
      * <code>false</code> if the user subsequently decides to complete the job in the 
      * background.
+     * <p>
      * This property is not intended to be set by clients.
+     * </p>
      * @see org.eclipse.core.runtime.jobs.Job#isUser()
      */
     public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
@@ -115,7 +117,7 @@ public interface IProgressConstants {
     
     /**
      * This property provides a hint to the progress UI to not prompt on errors
-     * immediatly but instead make the errors available through the progress UI.
+     * immediately but instead make the errors available through the progress UI.
      * <p>
      * The property must be of type <code>Boolean</code> and the hint is used
      * if its value is <code>true</code>.
