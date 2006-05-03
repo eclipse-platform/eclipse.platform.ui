@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -25,6 +20,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
@@ -504,7 +504,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	private Point computeTrueShellSize(Shell shell) {
 		Point size= shell.getSize();
-		if (Platform.WS_GTK.equals(Platform.getWS())) {
+		if ("gtk".equals(SWT.getPlatform())) {
 			/* XXX bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=136332: on GTK, getSize does not include the trim */
 			Rectangle trim= shell.computeTrim(0, 0, 0, 0);
 			size.x += trim.width;

@@ -14,8 +14,6 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlEvent;
@@ -48,6 +46,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -60,10 +62,6 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
-
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 
 /**
@@ -82,7 +80,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * 		More details see also: https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c36
 	 * @since 3.1
 	 */
-	private static final boolean USE_VIRTUAL= !Platform.WS_MOTIF.equals(Platform.getWS());
+	private static final boolean USE_VIRTUAL= !"motif".equals(SWT.getPlatform()); //$NON-NLS-1$
 	
 	/**
 	 * The empty proposal displayed if there is nothing else to show.
