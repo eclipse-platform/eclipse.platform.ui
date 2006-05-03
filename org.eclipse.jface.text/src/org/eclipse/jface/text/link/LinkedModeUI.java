@@ -1151,9 +1151,6 @@ public class LinkedModeUI {
 		}
 
 
-		if (fExitPosition != null)
-			fExitPosition.getDocument().removePosition(fExitPosition);
-
 		if ((flags & ILinkedModeListener.UPDATE_CARET) != 0 && fExitPosition != null && fFramePosition != fExitPosition && !fExitPosition.isDeleted())
 			switchPosition(fExitPosition, true, false);
 
@@ -1168,6 +1165,9 @@ public class LinkedModeUI {
 
 		Runnable runnable= new Runnable() {
 			public void run() {
+				if (fExitPosition != null)
+					fExitPosition.getDocument().removePosition(fExitPosition);
+
 				for (Iterator iter = docs.iterator(); iter.hasNext(); ) {
 					IDocument doc= (IDocument) iter.next();
 					doc.removePositionUpdater(fPositionUpdater);
