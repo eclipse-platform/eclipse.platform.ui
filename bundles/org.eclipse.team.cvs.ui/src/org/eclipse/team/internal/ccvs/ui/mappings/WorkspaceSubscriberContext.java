@@ -302,12 +302,12 @@ public class WorkspaceSubscriberContext extends CVSSubscriberMergeContext {
 			if (group != null)
 				handler.setProgressGroupHint(group.getGroup(), group.getTicks());
 			handler.initializeIfNeeded();
+			((CVSWorkspaceSubscriber)getSubscriber()).refreshWithContentFetch(traversals, monitor);
 			runInBackground(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					cacheContents(traversals, getDiffTree(), true, monitor);
 				}
 			});
-			((CVSWorkspaceSubscriber)getSubscriber()).refreshWithContentFetch(traversals, monitor);
 		} else {
 			super.refresh(traversals, flags, monitor);
 			runInBackground(new IWorkspaceRunnable() {
