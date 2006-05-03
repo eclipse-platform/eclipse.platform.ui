@@ -405,6 +405,10 @@ public class RemoteFolderTreeBuilder {
 			children.add(createRemoteFile(remote, syncBytes));
 			monitor.worked(1);
 		}
+		
+		// Remove any folders that are phantoms locally if they have no children
+		if (children.isEmpty() && isPruneEmptyDirectories() && !local.exists())
+			return null;
 
 		// Add the children to the remote folder tree
 		remote.setChildren((ICVSRemoteResource[])children.toArray(new ICVSRemoteResource[children.size()]));
@@ -544,7 +548,7 @@ public class RemoteFolderTreeBuilder {
 					localFolder = local.getFolder(name);
 				buildRemoteTree(session, localFolder, remoteFolder, Util.appendPath(localPath, name), monitor);
 				// Record any children that are empty
-				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
+				if (isPruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
 					// Prune if the local folder is also empty.
 					if (localFolder == null || (localFolder.members(ICVSFolder.ALL_EXISTING_MEMBERS).length == 0))
 						emptyChildren.add(remoteFolder);
@@ -559,7 +563,7 @@ public class RemoteFolderTreeBuilder {
 		}
 		
 		// Prune any empty child folders
-		if (pruneEmptyDirectories() && !emptyChildren.isEmpty()) {
+		if (isPruneEmptyDirectories() && !emptyChildren.isEmpty()) {
 			List newChildren = new ArrayList();
 			newChildren.addAll(Arrays.asList(remote.getChildren()));
 			newChildren.removeAll(emptyChildren);
@@ -743,7 +747,7 @@ public class RemoteFolderTreeBuilder {
 		}
 	}
 
-	private boolean pruneEmptyDirectories() {
+	protected boolean isPruneEmptyDirectories() {
 		return false;
 	}
 	/*

@@ -127,12 +127,23 @@ public class UpdateContentCachingService {
 						}
 					};
 				}
+				protected boolean isPruneEmptyDirectories() {
+					return true;
+				}
 			};
 			progress.beginTask(null, 100);
 			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 100);
 			subProgress.beginTask(null, 512);  
 			subProgress.subTask(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_buildingBase, new String[] { root.getName() })); 
-	 		return builder.buildBaseTree(null, root, subProgress);
+	 		RemoteFolder tree = builder.buildBaseTree(null, root, subProgress);
+	 		if (tree == null) {
+	 			// The local tree is empty and was pruned.
+	 			// Return the root folder so that the operation can proceed
+	 			FolderSyncInfo folderSyncInfo = root.getFolderSyncInfo();
+	 			if (folderSyncInfo == null) return null;
+	 			return new RemoteFolderSandbox(null, root.getName(), repository, folderSyncInfo.getRepository(), folderSyncInfo.getTag(), folderSyncInfo.getIsStatic());
+	 		}
+			return tree;
 		} finally {
 			progress.done();
 		}
