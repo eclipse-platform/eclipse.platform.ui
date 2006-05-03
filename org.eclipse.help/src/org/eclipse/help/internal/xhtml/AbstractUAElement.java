@@ -9,6 +9,7 @@
 
 package org.eclipse.help.internal.xhtml;
 
+import org.eclipse.help.internal.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -57,7 +58,7 @@ public abstract class AbstractUAElement {
 	 */
 	protected String[] getAttributeList(Element element, String att) {
 		if (element.hasAttribute(att))
-			return element.getAttribute(att).split(","); //$NON-NLS-1$
+			return StringUtil.split(element.getAttribute(att), ","); //$NON-NLS-1$
 		return null;
 	}
 

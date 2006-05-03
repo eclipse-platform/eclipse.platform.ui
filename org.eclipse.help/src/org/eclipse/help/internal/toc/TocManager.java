@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -173,10 +172,8 @@ public class TocManager {
 	private List orderTocs(List unorderedTocs) {
 		try {
 			// first categorize the TOCs
-			Map categorized = categorizeTocs(unorderedTocs);
-			
-			// get the toc hrefs / category ids to be ordered
-			List itemsToOrder = new ArrayList(categorized.keySet());
+			List itemsToOrder = new ArrayList();
+			Map categorized = categorizeTocs(unorderedTocs, itemsToOrder);
 			
 			// order them
 			List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
@@ -276,12 +273,16 @@ public class TocManager {
 	 * represents either the TOC href or the category id, to the Toc or TocCategory,
 	 * respectively.
 	 * 
-	 * @param tocs the collection of Tocs to categorize
+	 * In order to preserve the order of the original tocs and not have "random"
+	 * ordering by hashing, the order of resulting categories is returned via the
+	 * order parameter.
+	 * 
+	 * @param tocs the list of Tocs to categorize
+	 * @param tocOrder an empty list to return the tocs/categories in their preferred order
 	 * @return a mapping of category id/toc href to TocCategory/Toc
 	 */
-	private Map categorizeTocs(Collection tocs) {
-		// guarantees iteration order is same as order of things added
-		Map categorized = new LinkedHashMap();
+	private Map categorizeTocs(List tocs, List tocOrder) {
+		Map categorized = new HashMap();
 		Iterator iter = tocs.iterator();
 		while (iter.hasNext()) {
 			Toc toc = (Toc)iter.next();
@@ -293,12 +294,14 @@ public class TocManager {
 					// create categories as needed
 					category = new TocCategory(categoryId);
 					categorized.put(categoryId, category);
+					tocOrder.add(categoryId);
 				}
 				category.add(toc);
 			}
 			else {
 				// doesn't have a category; insert the TOC directly
 				categorized.put(toc.getHref(), toc);
+				tocOrder.add(toc.getHref());
 			}
 		}
 		return categorized;

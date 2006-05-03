@@ -13,6 +13,7 @@ package org.eclipse.help.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.help.internal.util.StringUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -91,7 +92,7 @@ public abstract class FilterableUAElement {
 	public void addFilter(String nameAndValue) {
 		boolean isPositive = (nameAndValue.indexOf("!=") == -1); //$NON-NLS-1$
 		// split at "=" or "!="
-		String[] tokens = nameAndValue.split("!?="); //$NON-NLS-1$
+		String[] tokens = StringUtil.split(nameAndValue, "!?="); //$NON-NLS-1$
     	String name = tokens[0];
     	String value = tokens[1];
     	if (!isPositive) {

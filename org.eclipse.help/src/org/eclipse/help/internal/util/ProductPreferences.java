@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -154,7 +153,7 @@ public class ProductPreferences {
 	 */
 	public static List getOrderedList(List items, List primary, List[] secondary) {
 		List orderedList = new ArrayList();
-		Set itemsRemaining = new LinkedHashSet(items);
+		Set itemsRemaining = new HashSet(items);
 					
 		// satisfy the primary ordering first, if there is one
 		if (primary != null) {
@@ -184,8 +183,14 @@ public class ProductPreferences {
 					}
 				}
 			}
-			// add the rest at the end
-			orderedList.addAll(itemsRemaining);
+			// add the rest at the end, in the original order
+			Iterator iter = items.iterator();
+			while (iter.hasNext()) {
+				Object item = iter.next();
+				if (itemsRemaining.contains(item)) {
+					orderedList.add(item);
+				}
+			}
 		}
 		return orderedList;
 	}

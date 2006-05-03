@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.FilterableUAElement;
+import org.eclipse.help.internal.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -150,7 +151,7 @@ public class UAContentFilterProcessor {
 		String[] parsedFilterString = null;
 		boolean isPositive = (filterAttribute.indexOf("!=") == -1); //$NON-NLS-1$
 		// split at "=" or "!="
-		parsedFilterString = filterAttribute.split("!?="); //$NON-NLS-1$
+		parsedFilterString = StringUtil.split(filterAttribute, "!?="); //$NON-NLS-1$
 		String filter = parsedFilterString[0];
 		String value = parsedFilterString[1];
 		return isFilteredIn(filter, value, isPositive);
