@@ -91,7 +91,7 @@ public class PackStep extends CommandStep {
 		String[] cmd = null;
 		String arguments = getOptions().getProperty(input.getName() + ".pack.args"); //$NON-NLS-1$
 		if (arguments != null) {
-			String[] args = arguments.split(",\\s*"); //$NON-NLS-1$
+			String[] args = Utils.toStringArray(arguments, ","); //$NON-NLS-1$
 			cmd = new String[3 + args.length];
 			cmd[0] = packCommand;
 			System.arraycopy(args, 0, cmd, 1, args.length);

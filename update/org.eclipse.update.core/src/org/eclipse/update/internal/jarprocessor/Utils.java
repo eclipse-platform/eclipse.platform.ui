@@ -151,7 +151,7 @@ public class Utils {
 
 		String packExcludes = properties.getProperty("pack.excludes"); //$NON-NLS-1$
 		if (packExcludes != null) {
-			String[] excludes = packExcludes.split(",\\s*"); //$NON-NLS-1$
+			String[] excludes = toStringArray(packExcludes, ","); //$NON-NLS-1$
 			Set packExclusions = new HashSet();
 			for (int i = 0; i < excludes.length; i++) {
 				packExclusions.add(excludes[i]);
@@ -166,7 +166,7 @@ public class Utils {
 			return Collections.EMPTY_SET;
 		String signExcludes = properties.getProperty("sign.excludes"); //$NON-NLS-1$
 		if (signExcludes != null) {
-			String[] excludes = signExcludes.split(",\\s*"); //$NON-NLS-1$
+			String[] excludes = toStringArray(signExcludes, ","); //$NON-NLS-1$
 			Set signExclusions = new HashSet();
 			for (int i = 0; i < excludes.length; i++) {
 				signExclusions.add(excludes[i]);
@@ -184,5 +184,15 @@ public class Utils {
 			buffer.append(array[i]);
 		}
 		return buffer.toString();
+	}
+
+	public static String[] toStringArray(String input, String separator) {
+		StringTokenizer tokenizer = new StringTokenizer(input, separator);
+		int count = tokenizer.countTokens();
+		String[] result = new String[count];
+		for (int i = 0; i < count; i++) {
+			result[i] = tokenizer.nextToken();
+		}
+		return result;
 	}
 }
