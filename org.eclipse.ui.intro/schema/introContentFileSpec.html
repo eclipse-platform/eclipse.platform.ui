@@ -206,7 +206,7 @@ will process the message parameter as "This is a message". <br>
 <p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(inline|embed) <p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;<p class=code id=dtdAttlist>encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
-direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering.
+direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
 <br>
 Embedding allows for a fully defined html file to be embedded within the dynamic page's content.  An HTML <b>object</b> element is created that references the html file. 
 <br>
@@ -214,7 +214,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>id</b> - unique identifier of this HTML element</li>
-<li><b>src</b> - relative or absolute URL to a file containing HTML</li>
+<li><b>src</b> - relative or absolute URL to a file containing HTML. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.</li>
 <li><b>type</b> - if 'embed', a valid (full) HTML document will be embedded using HTML 'OBJECT' tag. If 'inline', value of 'src' will be treated as a snippet of HTML to emit 'in-place'. (if type is not specified, this html object is ignored by the intro configuration).</li>
 <li><b>style-id</b> - A means to classify this HTML element into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
@@ -281,11 +281,11 @@ expands an element targeted by the given path and optional configId attributes. 
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Direct HTML to include in a page's HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java 
-scripts or extra styles sheets.
+scripts or extra styles sheets. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
 This markup is only to be used with an HTML based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared across all pages).</p>
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
-<li><b>src</b> - relative or absolute URL to a file containing HTML to include directly into the HTML head section.</li>
+<li><b>src</b> - relative or absolute URL to a file containing HTML to include directly into the HTML head section. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.</li>
 <li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file containing the head snippet. Default is UTF-8. Since 3.0.1</li>
 </ul>
 <h2><code>img</code></h2>

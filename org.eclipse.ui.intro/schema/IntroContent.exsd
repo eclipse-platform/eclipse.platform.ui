@@ -202,7 +202,7 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
    <element name="head">
       <annotation>
          <documentation>
-            Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets.
+            Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
 This markup is only to be used with an HTML based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared across all pages).
          </documentation>
       </annotation>
@@ -210,7 +210,7 @@ This markup is only to be used with an HTML based intro part implementation. It 
          <attribute name="src" type="string" use="required">
             <annotation>
                <documentation>
-                  relative or absolute URL to a file containing HTML to include directly into the HTML head section.
+                  relative or absolute URL to a file containing HTML to include directly into the HTML head section. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
                </documentation>
             </annotation>
          </attribute>
@@ -497,7 +497,7 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
    <element name="html">
       <annotation>
          <documentation>
-            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering.
+            direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
 &lt;br&gt;
 Embedding allows for a fully defined html file to be embedded within the dynamic page&apos;s content.  An HTML &lt;b&gt;object&lt;/b&gt; element is created that references the html file. 
 &lt;br&gt;
@@ -519,7 +519,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          <attribute name="src" type="string" use="required">
             <annotation>
                <documentation>
-                  relative or absolute URL to a file containing HTML
+                  relative or absolute URL to a file containing HTML. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.
                </documentation>
             </annotation>
          </attribute>
