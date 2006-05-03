@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -409,7 +410,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     public AbstractIntroElement findTarget(AbstractIntroContainer container,
             String path) {
         // extract path segments. Get first segment to start search.
-        String[] pathSegments = path.split("/"); //$NON-NLS-1$
+        String[] pathSegments = StringUtil.split(path, "/"); //$NON-NLS-1$
         if (container == null)
             return null;
         

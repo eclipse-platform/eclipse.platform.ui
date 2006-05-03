@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.internal.FilterableUAElement;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -276,7 +277,7 @@ public abstract class AbstractIntroElement extends FilterableUAElement implement
             	IntroModelRoot root = getModelRoot();
             	if (root!=null)
             		value = root.resolveVariables(value);
-            	return value.split(","); //$NON-NLS-1$
+            	return StringUtil.split(value, ","); //$NON-NLS-1$
             }
         }
         /*

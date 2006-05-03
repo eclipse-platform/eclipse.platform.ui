@@ -576,7 +576,7 @@ public class IntroURL implements IIntroURL {
                     // we are told to decode the parameters of the url through
                     // the decode parameter. Assume that parameters are
                     // UTF-8 encoded.
-                    return URLDecoder.decode(value, "UTF-8"); //$NON-NLS-1$
+                    return StringUtil.decode(value, "UTF-8"); //$NON-NLS-1$
                 return value;
             } catch (Exception e) {
                 // should never be here.

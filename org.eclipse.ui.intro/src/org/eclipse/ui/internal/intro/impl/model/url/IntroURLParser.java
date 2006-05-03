@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 
 /**
  * A parser that knows how to parser OOBE action URLs. If URL is a valid intro
@@ -164,12 +165,12 @@ public class IntroURLParser {
             return properties;
 
         // now extract the key/value pairs from the query.
-        String[] params = query.split("&"); //$NON-NLS-1$
+        String[] params = StringUtil.split(query, "&"); //$NON-NLS-1$
         for (int i = 0; i < params.length; i++) {
             // for every parameter, ie: key=value pair, create a property
             // entry. we know we have the key as the first string in the array,
             // and the value as the second array.
-            String[] keyValuePair = params[i].split("="); //$NON-NLS-1$
+            String[] keyValuePair = StringUtil.split(params[i], "="); //$NON-NLS-1$
             if (keyValuePair.length != 2) {
                 Log.warning("Ignoring the following Intro URL parameter: " //$NON-NLS-1$
                         + params[i]);

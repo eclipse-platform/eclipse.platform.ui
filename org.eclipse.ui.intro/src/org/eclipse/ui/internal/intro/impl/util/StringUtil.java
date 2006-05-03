@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 
 
 public class StringUtil {
@@ -44,6 +50,33 @@ public class StringUtil {
         return buffer;
     }
 
+    /*
+     * Helper method for String#split to handle the case where we
+     * might be running on Foundation class libraries instead of 1.4.
+     */
+    public static String[] split(String string, String delimiters) {
+    	try {
+    		return string.split(delimiters);
+    	} catch (NoSuchMethodError e) {
+    		// not running 1.4 so try a string tokenizer
+    		List result = new ArrayList();
+    		for (StringTokenizer tokenizer = new StringTokenizer(string, delimiters); tokenizer.hasMoreTokens(); )
+    			result.add(tokenizer.nextToken());
+    		return (String[]) result.toArray(new String[result.size()]);
+    	}
+    }
 
+    /*
+     * Helper method for URLDecoder#decode to handle the case where we
+     * might be running on Foundation class libraries instead of 1.4.
+     */
+	public static String decode(String s, String enc) throws UnsupportedEncodingException {
+		try {
+			return URLDecoder.decode(s, enc);
+		} catch (NoSuchMethodError e) {
+			// not running 1.4 so try the old method without an encoding
+			return URLDecoder.decode(s);
+		}
+	}
 
 }

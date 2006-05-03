@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplemen
 import org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.TextIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.intro.IIntroPart;
 
 /**
@@ -345,7 +346,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	 * 
 	 */
 	private boolean listValueHasValue(String stringValue, String value) {
-		String[] attributeValues = stringValue.split(","); //$NON-NLS-1$
+		String[] attributeValues = StringUtil.split(stringValue, ","); //$NON-NLS-1$
 		for (int i = 0; i < attributeValues.length; i++) {
 			if (attributeValues[i].equalsIgnoreCase(value))
 				return true;
