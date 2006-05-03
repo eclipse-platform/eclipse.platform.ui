@@ -168,7 +168,7 @@ public class FormHeading extends Canvas {
 					disposeMinimizeImages();
 				}
 			});
-			setLayout(new Layout() {
+			super.setLayout(new Layout() {
 				public void layout(Composite parent, boolean changed) {
 					Rectangle carea = getClientArea();
 					if (minimized) {
