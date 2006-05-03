@@ -154,6 +154,10 @@ public class UpdateContentCachingService {
 		try {
 			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, file.getParent(), tag);
 			RemoteFile remote =  builder.buildTree(file, Policy.subMonitorFor(monitor, 10));
+			
+			if (remote == null)
+				return null;
+			
 			byte[] syncBytes = remote.getSyncBytes();
 			if (builder.getFileDiffs().length > 0) {
 				// Getting the storage of the file will cache the contents
