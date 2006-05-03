@@ -387,7 +387,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 				String adapter = (String) it.next();				
 				contributors.addAll(getAdaptableContributors(adapter));
 			}
-    	}    		
+    	}
         return contributors;
     }
     
@@ -614,7 +614,23 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
                 contributors.addAll(getAdaptableContributors(adapter));
             }
         }
-        return contributors;
+    	
+    	// Final 'cull' to ensure no dups
+		List culledContributors = contributors;
+    	Set uniqueContribs = new HashSet(contributors);
+    	
+    	// Are there dups?
+		if (uniqueContribs.size() < contributors.size()) {
+			// NOTE: We have to filter out the extras but
+			// -must- maintain the element order to preserve menu order
+			culledContributors = new ArrayList(uniqueContribs.size());
+			for (Iterator iter = contributors.iterator(); iter.hasNext();) {
+				Object element = iter.next();
+				if (!culledContributors.contains(element))
+					culledContributors.add(element);
+			}
+		}
+        return culledContributors;
     }
 
     /**
