@@ -57,9 +57,17 @@ public class TestMarkupParser extends TestCase {
 	public void testParseNestedTags() {
 		assertEquals("<p>a<b>c</b>d</p>", parse("<root><p>a<b>c</b>d</p></root>"));
 	}
-	
+
 	public void testEscape() {
 		assertEquals("a&lt;b&gt;c", parse("<root>a&lt;b&gt;c</root>"));
+	}
+	
+	public void testEscapeAmpersand() {
+		assertEquals("a&amp;c", parse("<root>a&amp;c</root>"));
+	}
+	
+	public void testNoEscapeQuotes() {
+		assertEquals("a'b'\"c\"", parse("<root>a'b'\"c\"</root>"));
 	}
 
 }

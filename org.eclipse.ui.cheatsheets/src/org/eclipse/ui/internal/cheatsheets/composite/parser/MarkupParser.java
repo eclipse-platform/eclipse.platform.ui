@@ -40,9 +40,35 @@ public class MarkupParser {
 		return text.toString();
 	}
 
-	private static String escapeText(String nodeValue) {
-		String temp = nodeValue.replaceAll(">", "&gt;");  //$NON-NLS-1$//$NON-NLS-2$
-		return temp.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static String escapeText(String input) {
+		StringBuffer result = new StringBuffer(input.length() + 10);
+		for (int i = 0; i < input.length(); ++i)
+			appendEscapedChar(result, input.charAt(i));
+		return result.toString();
+	}
+
+	private static void appendEscapedChar(StringBuffer buffer, char c) {
+		String replacement = getReplacement(c);
+		if (replacement != null) {
+			buffer.append('&');
+			buffer.append(replacement);
+			buffer.append(';');
+		} else {
+			buffer.append(c);
+		}
+	}
+
+	private static String getReplacement(char c) {
+		// Encode characters which need to be escaped for use in form text
+		switch (c) {
+			case '<' :
+				return "lt"; //$NON-NLS-1$
+			case '>' :
+				return "gt"; //$NON-NLS-1$
+			case '&' :
+				return "amp"; //$NON-NLS-1$
+		}
+		return null;
 	}
 
 }
