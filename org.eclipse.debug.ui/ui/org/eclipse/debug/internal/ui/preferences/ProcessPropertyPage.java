@@ -93,7 +93,10 @@ public class ProcessPropertyPage extends PropertyPage {
 		gd.horizontalIndent = 10;
 		text.setLayoutData(gd);
 		text.setFont(font);
-		text.setText(getCommandLineText(proc));	
+		String commandLineText = getCommandLineText(proc);
+		if (commandLineText != null) {
+			text.setText(commandLineText);
+		}
 		
 		setTitle(DebugPreferencesMessages.ProcessPropertyPage_2);
 		return parent;
