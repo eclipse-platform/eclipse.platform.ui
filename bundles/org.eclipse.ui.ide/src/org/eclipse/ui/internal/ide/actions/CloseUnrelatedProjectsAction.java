@@ -8,13 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.ui.internal.ide.actions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
@@ -29,6 +26,7 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.misc.DisjointSet;
 
 /**
  * This action closes all projects that are unrelated to the selected projects. A
@@ -55,6 +53,37 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	private List oldSelection = Collections.EMPTY_LIST;
 
 	/**
+	 * Builds the connected component set for the input projects.
+	 * The result is a DisjointSet where all related projects belong
+	 * to the same set.
+	 */
+	static DisjointSet buildConnectedComponents(IProject[] projects) {
+		//initially each vertex is in a set by itself
+		DisjointSet set = new DisjointSet();
+		for (int i = 0; i < projects.length; i++) {
+			set.makeSet(projects[i]);
+		}
+		for (int i = 0; i < projects.length; i++) {
+			try {
+				IProject[] references = projects[i].getReferencedProjects();
+				//each reference represents an edge in the project reference
+				//digraph from projects[i] -> references[j]
+				for (int j = 0; j < references.length; j++) {
+					Object setOne = set.findSet(projects[i]);
+					//note that referenced projects may not exist in the workspace
+					Object setTwo = set.findSet(references[j]);
+					//these two projects are related, so join their sets
+					if (setOne != null && setTwo != null && setOne != setTwo)
+						set.union(setOne, setTwo);
+				}
+			} catch (CoreException e) {
+				//assume inaccessible projects have no references
+			}
+		}
+		return set;
+	}
+
+	/**
 	 * Creates this action.
 	 * 
 	 * @param shell
@@ -66,31 +95,6 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
-	}
-
-	/**
-	 * Adds the given project, and all related projects, to the given set.
-	 * 
-	 * @param relatedProjects
-	 * @param project
-	 */
-	private void addRelatedProjects(HashSet relatedProjects, IProject project) {
-		if (project == null || relatedProjects.contains(project)) {
-			return;
-		}
-		relatedProjects.add(project);
-		try {
-			IProject[] related = project.getReferencedProjects();
-			for (int i = 0; i < related.length; i++) {
-				addRelatedProjects(relatedProjects, related[i]);
-			}
-			related = project.getReferencingProjects();
-			for (int i = 0; i < related.length; i++) {
-				addRelatedProjects(relatedProjects, related[i]);
-			}
-		} catch (CoreException e) {
-			// ignore project for which we can't compute related projects
-		}
 	}
 
 	/*
@@ -108,18 +112,14 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * Computes the related projects of the selection.
 	 */
 	private void computeRelated(List selection) {
-		HashSet relatedProjects = new HashSet();
-		for (Iterator it = selection.iterator(); it.hasNext();) {
-			Object next = it.next();
-			if (next instanceof IProject) {
-				addRelatedProjects(relatedProjects, (IProject) next);
-			}
-		}
-		HashSet unrelated = new HashSet();
-		unrelated.addAll(Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects()));
-		unrelated.removeAll(relatedProjects);
+		//build the connected component set for all projects in the workspace
+		DisjointSet set = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+		//remove the connected components that the selected projects are in
+		for (Iterator it = selection.iterator(); it.hasNext();)
+			set.removeSet(it.next());
+		//the remainder of the projects in the disjoint set are unrelated to the selection
 		projectsToClose.clear();
-		projectsToClose.addAll(unrelated);
+		set.toList(projectsToClose);
 	}
 
 	/*
@@ -138,31 +138,29 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 		}
 		return projectsToClose;
 	}
-	
-    /**
-     * Handles a resource changed event by updating the enablement
-     * when projects change.
-     * <p>
-     * This method overrides the super-type implementation to update
-     * the selection when the open state or description of any project changes.
-     */
-    public void resourceChanged(IResourceChangeEvent event) {
-        // don't bother looking at delta if selection not applicable
-        if (selectionIsOfType(IResource.PROJECT)) {
-            IResourceDelta delta = event.getDelta();
-            if (delta != null) {
-                IResourceDelta[] projDeltas = delta
-                        .getAffectedChildren(IResourceDelta.CHANGED);
-                for (int i = 0; i < projDeltas.length; ++i) {
-                    IResourceDelta projDelta = projDeltas[i];
-                    //changing either the description or the open state can affect enablement
-                    if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
-                        selectionChanged(getStructuredSelection());
-                        return;
-                    }
-                }
-            }
-        }
-    }
 
+	/**
+	 * Handles a resource changed event by updating the enablement
+	 * when projects change.
+	 * <p>
+	 * This method overrides the super-type implementation to update
+	 * the selection when the open state or description of any project changes.
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		// don't bother looking at delta if selection not applicable
+		if (selectionIsOfType(IResource.PROJECT)) {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
+				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
+				for (int i = 0; i < projDeltas.length; ++i) {
+					IResourceDelta projDelta = projDeltas[i];
+					//changing either the description or the open state can affect enablement
+					if ((projDelta.getFlags() & (IResourceDelta.OPEN | IResourceDelta.DESCRIPTION)) != 0) {
+						selectionChanged(getStructuredSelection());
+						return;
+					}
+				}
+			}
+		}
+	}
 }
