@@ -63,7 +63,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			}
 			
 		if (policy == null)
-			policy = new SitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
+			policy = new SitePolicy(PlatformConfiguration.getDefaultPolicy(), DEFAULT_POLICY_LIST);
 
 		if (url.getProtocol().equals("file")) { //$NON-NLS-1$
 			try {

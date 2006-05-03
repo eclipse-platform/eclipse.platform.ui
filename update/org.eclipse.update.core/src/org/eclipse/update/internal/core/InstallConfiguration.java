@@ -136,7 +136,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * Returns the default site policy
 	 */
 	private int getDefaultPolicy() {
-		return IConfigurationConstants.DEFAULT_POLICY_TYPE;
+		return PlatformConfiguration.getDefaultPolicy();
 	}
 
 	/**

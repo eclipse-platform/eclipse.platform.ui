@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISitePolicy;
 import org.w3c.dom.*;
 
 /**
@@ -63,6 +64,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	//PAL nio optional
 	//private FileLock lock;
 	private Locker lock = null;
+	private static int defaultPolicy = DEFAULT_POLICY_TYPE;
 	private static boolean checkNio = false;
 	private static boolean useNio;
 
@@ -90,6 +92,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		
 		// initialize configuration
 		initializeCurrent(platformConfigLocation);
+		if(config != null)
+			setDefaultPolicy();
 
 		// Detect external links. These are "soft link" to additional sites. The link
 		// files are usually provided by external installation programs. They are located
@@ -116,6 +120,23 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	PlatformConfiguration(URL url) throws Exception {
 		this.externalLinkSites = new HashMap();
 		initialize(url);
+	}
+
+	private void setDefaultPolicy() {
+		// Assumption: If the configuration that we initialize with 
+		// has a MANAGED_ONLY policy, then all sites should have default policy 
+		// of MANAGED_ONLY.  
+		ISiteEntry[] sentries = getConfiguredSites();
+		if(sentries != null && sentries.length >0){
+			int policyType = sentries[0].getSitePolicy().getType();
+			if(policyType == ISitePolicy.MANAGED_ONLY){
+				defaultPolicy = policyType;
+			}
+		}
+	}
+
+	public static int getDefaultPolicy(){
+		return defaultPolicy;
 	}
 
 	/*
@@ -760,7 +781,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 	private ISiteEntry getRootSite() {
 		// create default site entry for the root
-		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
+		ISitePolicy defaultPolicy = createSitePolicy(getDefaultPolicy(), DEFAULT_POLICY_LIST);
 		URL siteURL = null;
 		try {
 			siteURL = new URL("platform:/base/"); //$NON-NLS-1$  // try using platform-relative URL
@@ -939,7 +960,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry linkSite = (SiteEntry) externalLinkSites.get(siteURL);
 		if (linkSite == null) {
 			// this is a link to a new target so create site for it
-			ISitePolicy linkSitePolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
+			ISitePolicy linkSitePolicy = createSitePolicy(getDefaultPolicy(), DEFAULT_POLICY_LIST);
 			linkSite = (SiteEntry) createSiteEntry(siteURL, linkSitePolicy);
 		}
 		// update site entry if needed

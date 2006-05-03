@@ -164,7 +164,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		String[] policyList = null;
 		String typeString = attributes.getValue(CFG_POLICY); 
 		if (typeString == null) {
-			policyType = DEFAULT_POLICY_TYPE;
+			policyType = PlatformConfiguration.getDefaultPolicy();
 			policyList = DEFAULT_POLICY_LIST;
 		} else {
 			int i;
@@ -174,7 +174,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				}
 			}
 			if (i >= CFG_POLICY_TYPE.length) {
-				policyType = DEFAULT_POLICY_TYPE;
+				policyType = PlatformConfiguration.getDefaultPolicy();
 				policyList = DEFAULT_POLICY_LIST;
 			} else {
 				policyType = i;
