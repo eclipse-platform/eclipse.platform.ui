@@ -257,8 +257,10 @@ public class CVSFileHistory extends FileHistory {
 		} catch (CVSException e) {
 		}
 
+		IFile localFile = (IFile) cvsFile.getIResource();
+		boolean localFileExists = (localFile != null && localFile.exists());
 		int arrayLength = 0;
-		if (modified)
+		if (modified && localFileExists)
 			arrayLength++;
 
 		arrayLength += localRevisions.length;
@@ -270,9 +272,7 @@ public class CVSFileHistory extends FileHistory {
 			fileRevisions[i] = localRevision;
 		}
 
-		if (modified) {
-			//local file exists
-			IFile localFile = (IFile) cvsFile.getIResource();
+		if (modified && localFileExists) {
 			CVSLocalFileRevision currentFile = new CVSLocalFileRevision(localFile);
 			CVSFileHistoryProvider provider = new CVSFileHistoryProvider();
 			currentFile.setBaseRevision(provider.getWorkspaceFileRevision(localFile));
