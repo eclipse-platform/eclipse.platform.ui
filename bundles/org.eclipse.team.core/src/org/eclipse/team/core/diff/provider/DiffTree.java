@@ -403,6 +403,7 @@ public class DiffTree implements IDiffTree {
 	 */
 	public void clearBusy(IProgressMonitor monitor) {
 		try {
+			beginInput();
 			IPath[] paths = pathTree.getPaths();
 			for (int i = 0; i < paths.length; i++) {
 				IPath path = paths[i];
