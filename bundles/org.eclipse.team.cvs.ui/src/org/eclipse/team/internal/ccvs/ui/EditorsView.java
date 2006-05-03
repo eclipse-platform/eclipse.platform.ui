@@ -189,7 +189,10 @@ public class EditorsView extends ViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
+		if (table != null)
+			table.setFocus();
 	}
+	
 	/**
 	 * Method getTable.
 	 */
