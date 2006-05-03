@@ -11,11 +11,8 @@
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

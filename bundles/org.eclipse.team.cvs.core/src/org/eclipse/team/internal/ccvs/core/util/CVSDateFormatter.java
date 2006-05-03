@@ -12,10 +12,10 @@ package org.eclipse.team.internal.ccvs.core.util;
 
 
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import com.ibm.icu.util.TimeZone;
+import java.util.TimeZone;
 
 /**
  * Utility class for converting timestamps used in Entry file lines. The format
