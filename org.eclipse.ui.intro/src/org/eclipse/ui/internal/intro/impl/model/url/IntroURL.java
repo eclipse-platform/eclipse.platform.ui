@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.intro.impl.model.url;
 
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
