@@ -10,7 +10,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.ActionContext;
@@ -253,14 +255,56 @@ public class CommonActionDescriptorManager {
 				if (enablement.length == 1) {
 					defaultEnablement = enablement[0];
 				}
-				for (int i = 0; i < actionProviders.length; i++) {
-					addActionDescriptor(new CommonActionProviderDescriptor(
-							actionProviders[i], defaultEnablement, anElement
-									.getAttribute(ATT_ID), true));
+				if(defaultEnablement == null) {
+					NavigatorPlugin.logError(0, 
+						"An actionProvider has been defined as the child " + //$NON-NLS-1$
+						"of a navigatorContent extension that does not specify " + //$NON-NLS-1$
+						"an <enablement/> or <possibleChildren /> expression. Please " + //$NON-NLS-1$
+						"review the documenation and correct this error.", null); //$NON-NLS-1$
+				}
+				for (int i = 0; i < actionProviders.length; i++) { 
+					if(defaultEnablement == null) { 
+						NavigatorPlugin.logError(0, "Disabling actionProvider: " + actionProviders[i].getAttribute(ATT_ID), null); //$NON-NLS-1$
+					} else {
+						SafeRunner.run(new AddProviderSafeRunner(actionProviders[i], defaultEnablement, anElement));
+					}
 				}
 				return true;
 			}
 			return super.readElement(anElement);
 		}
+	
+		private class AddProviderSafeRunner implements ISafeRunnable {
+			
+			private IConfigurationElement parentElement;
+			private IConfigurationElement defaultEnablement;
+			private IConfigurationElement actionProvider;
+
+			protected AddProviderSafeRunner(IConfigurationElement actionProvider, IConfigurationElement defaultEnablement, IConfigurationElement parentElement) {
+				this.actionProvider = actionProvider;
+				this.defaultEnablement = defaultEnablement;
+				this.parentElement = parentElement;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+			 */
+			public void run() throws Exception { 
+				addActionDescriptor(new CommonActionProviderDescriptor(
+							actionProvider, defaultEnablement, parentElement
+									.getAttribute(ATT_ID), true));
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+			 */
+			public void handleException(Throwable t) {
+				NavigatorPlugin.logError(0, "Recovering from error while parsing actionProviders.", t); //$NON-NLS-1$ 
+			}
+			
+			
+		}
 	}
+
+
 }
