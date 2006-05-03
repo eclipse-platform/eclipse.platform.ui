@@ -103,13 +103,13 @@ public abstract class StatusDialog extends TrayDialog {
 				String message = status.getMessage();
 				if (message != null && message.length() > 0) {
 					setText(message);
-					setImage(findImage(status));
+					StatusDialog.this.setImage(findImage(status));
 					setBackground(JFaceColors.getErrorBackground(getDisplay()));
 					return;
 				}
 			}
 			setText(""); //$NON-NLS-1$	
-			setImage(null);
+			StatusDialog.this.setImage(null);
 			setBackground(fNormalMsgAreaBackground);
 		}
 	}
