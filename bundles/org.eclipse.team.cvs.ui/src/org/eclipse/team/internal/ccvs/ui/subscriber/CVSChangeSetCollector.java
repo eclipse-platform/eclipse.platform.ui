@@ -449,4 +449,8 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
             return logEntryCache.getImmediatePredecessor(file);
         return null;
     }
+
+	protected void initializeSets() {
+		// Nothing to do
+	}
 }

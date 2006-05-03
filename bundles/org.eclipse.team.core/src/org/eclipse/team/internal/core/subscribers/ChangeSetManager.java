@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 
@@ -21,7 +20,8 @@ import org.eclipse.core.runtime.*;
 public abstract class ChangeSetManager {
 
     private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
-    private Set sets = new HashSet();
+    private Set sets;
+	private boolean initializing;
     
     /**
      * Return the list of listeners registered with this change set manager.
@@ -37,6 +37,8 @@ public abstract class ChangeSetManager {
      * @param set the set whose title has changed
      */
     protected void fireNameChangedEvent(final ChangeSet set) {
+    	if (initializing)
+    		return;
         if (contains(set)) {
             Object[] listeners = getListeners();
             for (int i = 0; i < listeners.length; i++) {
@@ -60,6 +62,8 @@ public abstract class ChangeSetManager {
      * @param defaultSet the new default
      */
     protected void fireDefaultChangedEvent(final ChangeSet oldSet, final ChangeSet defaultSet) {
+    	if (initializing)
+    		return;
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
@@ -80,7 +84,7 @@ public abstract class ChangeSetManager {
      */
     public void add(final ChangeSet set) {
         if (!contains(set)) {
-            sets.add(set);
+        	internalGetSets().add(set);
             handleSetAdded(set);
         }
     }
@@ -90,6 +94,8 @@ public abstract class ChangeSetManager {
      * @param set the added set
      */
 	protected void handleSetAdded(final ChangeSet set) {
+    	if (initializing)
+    		return;
 		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 		    final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
@@ -110,7 +116,7 @@ public abstract class ChangeSetManager {
      */
     public void remove(final ChangeSet set) {
         if (contains(set)) {
-            sets.remove(set);
+        	internalGetSets().remove(set);
             handleSetRemoved(set);
         }
     }
@@ -120,6 +126,8 @@ public abstract class ChangeSetManager {
      * @param set the removed set
      */
 	protected void handleSetRemoved(final ChangeSet set) {
+    	if (initializing)
+    		return;
 		Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 		    final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
@@ -140,7 +148,7 @@ public abstract class ChangeSetManager {
      * @return whether the set is contained in the manager's list of active sets
      */
     public boolean contains(ChangeSet set) {
-        return sets.contains(set);
+        return internalGetSets().contains(set);
     }
 
     /**
@@ -164,7 +172,8 @@ public abstract class ChangeSetManager {
      * @return the list of active commit sets
      */
     public ChangeSet[] getSets() {
-        return (ChangeSet[]) sets.toArray(new ChangeSet[sets.size()]);
+        Set sets = internalGetSets();
+		return (ChangeSet[]) sets.toArray(new ChangeSet[sets.size()]);
     }
     
     /**
@@ -180,6 +189,8 @@ public abstract class ChangeSetManager {
      * @param allAffectedResources
      */
     protected void fireResourcesChangedEvent(final ChangeSet changeSet, final IPath[] allAffectedResources) {
+    	if (initializing)
+    		return;
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IChangeSetChangeListener listener = (IChangeSetChangeListener)listeners[i];
@@ -193,4 +204,23 @@ public abstract class ChangeSetManager {
             });
         }
     }
+    
+    private Set internalGetSets() {
+    	if (sets == null) {
+    		sets = Collections.synchronizedSet(new HashSet());
+    		try {
+    			initializing = true;
+    			initializeSets();
+    		} finally {
+    			initializing = false;
+    		}
+    	}
+    	return sets;
+    }
+
+    /**
+     * Initialize the sets contained in this manager.
+     * This method is called the first time the sets are accessed.
+     */
+	protected abstract void initializeSets();
 }

@@ -165,4 +165,8 @@ public class BatchingChangeSetManager extends ChangeSetManager {
     		endInput(null);
     	}
     }
+    
+    protected void initializeSets() {
+    	// Nothing to do
+    }
 }

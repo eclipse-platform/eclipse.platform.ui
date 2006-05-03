@@ -268,8 +268,14 @@ public class SubscriberChangeSetManager extends ActiveChangeSetManager {
     
     public SubscriberChangeSetManager(Subscriber subscriber) {
         collector = new ResourceCollector(subscriber);
-        load(getPreferences());
         handler = new EventHandler(NLS.bind(Messages.SubscriberChangeSetCollector_1, new String[] { subscriber.getName() }), NLS.bind(Messages.SubscriberChangeSetCollector_2, new String[] { subscriber.getName() })); // 
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.subscribers.ChangeSetManager#initializeSets()
+     */
+    protected void initializeSets() {
+    	load(getPreferences());
     }
     
     public boolean hasMembers(IResource resource) {
