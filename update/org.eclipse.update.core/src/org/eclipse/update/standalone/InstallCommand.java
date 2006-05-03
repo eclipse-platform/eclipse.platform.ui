@@ -30,6 +30,7 @@ import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.configurator.UpdateURLDecoder;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.search.SiteSearchCategory;
@@ -214,9 +215,9 @@ public class InstallCommand extends ScriptedCommand {
 
 		for (int i = 0; i < configuredSites.length; i++) {
 			IConfiguredSite csite = configuredSites[i];
-			if (csite.getSite().getURL().sameFile(sitePath.toURL())) 
+			if (UpdateManagerUtils.sameURL(csite.getSite().getURL(),sitePath.toURL()))
 				return csite;
-			else if (secondaryPath != null && csite.getSite().getURL().sameFile(secondaryPath.toURL())) 
+			else if (secondaryPath != null && UpdateManagerUtils.sameURL(csite.getSite().getURL(),secondaryPath.toURL()))
 				return csite;
 		}
 
