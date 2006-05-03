@@ -72,7 +72,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
-	private static final String MARKER_CATEGORY = "markerCategory";//$NON-NLS-1$
+	private static final String MARKER_CATEGORY = "markerTypeCategory";//$NON-NLS-1$
 
 	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
 
