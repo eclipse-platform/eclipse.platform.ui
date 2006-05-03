@@ -657,7 +657,8 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
 	    if (remoteResources.length > 0) {
 			RemoteLogOperation logOperation = new RemoteLogOperation(getConfiguration().getSite().getPart(), remoteResources, localTag, remoteTag, logEntriesCache);
 			logOperation.execute(monitor);
-	    }    
+	    }
+	    collectedInfos.addAll(set);
 	}
 	
 	private ICVSRemoteResource[] getRemotesToFetch(SyncInfo[] infos) {
