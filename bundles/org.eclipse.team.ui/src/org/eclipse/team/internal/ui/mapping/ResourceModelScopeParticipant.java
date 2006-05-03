@@ -63,6 +63,11 @@ public class ResourceModelScopeParticipant implements
 				if (resource.getType() == IResource.ROOT) {
 					return true;
 				}
+			} else if (modelObject instanceof ModelProvider) {
+				ModelProvider provider = (ModelProvider) modelObject;
+				if (provider.getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
+					return true;
+				}
 			}
 		}
 		return false;
