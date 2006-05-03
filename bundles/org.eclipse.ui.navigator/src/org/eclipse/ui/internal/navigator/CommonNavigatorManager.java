@@ -115,10 +115,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 			}
 		});
 		
-		// should be delayed until the view has focus 
-		
-		actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));		
-		actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
+		if(commonViewer.getInput() != null) {
+			actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));		
+			actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
+		}
 	}
 
 	/**
