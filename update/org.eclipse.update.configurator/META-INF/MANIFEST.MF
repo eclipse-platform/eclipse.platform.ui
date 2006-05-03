@@ -12,3 +12,10 @@ Export-Package: org.eclipse.update.configurator,
 Eclipse-AutoStart: true
 Require-Bundle: org.eclipse.equinox.common,
  org.eclipse.osgi
+Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+ CDC-1.0/Foundation-1.0,
+ J2SE-1.3
+Import-Package: javax.xml.parsers,
+ org.w3c.dom,
+ org.xml.sax,
+ org.xml.sax.helpers
