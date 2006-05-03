@@ -475,7 +475,9 @@ public class DayEditor extends Composite implements IEventEditor {
 		refreshColumnHeaders(daysHeader.getColumns());
 		updateVisibleRows();
 		freeObsoleteCalendarableEventControls(removedDays);
-		layoutEventControls();
+		if (compositeTable.getNumRowsVisible() > 0) {
+			layoutEventControls();
+		}
 	}
 	
 	/* (non-Javadoc)
