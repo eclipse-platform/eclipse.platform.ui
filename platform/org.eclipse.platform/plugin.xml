@@ -79,6 +79,9 @@
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="intro/whatsnewEx2.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/whatsnewEx3.xml"/>
    </extension>
 
    <extension

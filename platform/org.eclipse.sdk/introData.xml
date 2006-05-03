@@ -21,7 +21,7 @@
          <extension id="org.eclipse.ui.workbench.news" importance="low"/>
          <extension id="org.eclipse.jdt" importance="low"/>
          <extension id="org.eclipse.pde.changes" importance="low"/>
-         <extension id="org.eclipse.pde.migration" importance="callout"/>
+         <extension id="org.eclipse.ui.workbench.migration" importance="callout"/>
       </group>
       <group path="page-content/top-right">
          <extension id="org.eclipse.ui.workbench" importance="low"/>
