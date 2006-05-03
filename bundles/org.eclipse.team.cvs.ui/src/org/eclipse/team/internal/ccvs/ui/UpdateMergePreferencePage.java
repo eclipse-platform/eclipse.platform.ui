@@ -18,8 +18,7 @@ public class UpdateMergePreferencePage extends CVSFieldEditorPreferencePage {
 	private RadioGroupFieldEditor updatePreviewStyle;
 
 	protected String getPageHelpContextId() {
-		// TODO Auto-generated method stub
-		return null;
+		return IHelpContextIds.UPDATE_MERGE_PREFERENCE_PAGE; 
 	}
 
 	protected String getPageDescription() {

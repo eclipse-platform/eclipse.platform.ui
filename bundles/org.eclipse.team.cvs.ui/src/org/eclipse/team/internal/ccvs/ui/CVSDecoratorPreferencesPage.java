@@ -130,6 +130,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 					contentsProvider,
 					labelProvider,
 					CVSUIMessages.CVSDecoratorPreferencesPage_0); 
+			dialog.setHelpAvailable(false);
 			dialog.setTitle(CVSUIMessages.CVSDecoratorPreferencesPage_1);  
 			if (dialog.open() != Window.OK)
 				return;

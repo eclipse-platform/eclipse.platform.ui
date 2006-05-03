@@ -110,6 +110,8 @@ public interface IHelpContextIds {
 	public static final String PASSWORD_MANAGEMENT_PAGE = PREFIX + "password_management_preference_page_context"; //$NON-NLS-1$
 	public static final String COMPARE_PREFERENCE_PAGE = PREFIX + "cvs_compare_preference_page_context"; //$NON-NLS-1$
     public static final String PROXY_PREFERENCE_PAGE = PREFIX + "proxy_preference_page_context"; //$NON-NLS-1$
+    public static final String COMMENT_TEMPLATE_PREFERENCE_PAGE = PREFIX + "comment_template_preference_page_context"; //$NON-NLS-1$
+    public static final String UPDATE_MERGE_PREFERENCE_PAGE = PREFIX + "update_merge_preference_page_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$

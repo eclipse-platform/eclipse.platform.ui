@@ -37,8 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 
 public class CommentTemplatesPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage, ISelectionChangedListener {
@@ -67,6 +66,7 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		preview.setLayoutData(gd);
 		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.COMMENT_TEMPLATE_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(ancestor);
 		
 		return parent;
