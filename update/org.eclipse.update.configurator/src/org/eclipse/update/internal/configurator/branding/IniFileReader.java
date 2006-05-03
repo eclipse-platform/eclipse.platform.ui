@@ -96,13 +96,7 @@ public class IniFileReader {
 		// Determine the ini file location
 		URL iniURL = null;
 		IOException ioe = null;
-		try {
-			iniURL = FileLocator.find(bundle, new Path(NLS_TAG).append(iniFilename), null);
-			if (iniURL != null)
-				iniURL = FileLocator.resolve(iniURL);
-		} catch (IOException e) {
-			ioe = e;
-		}
+		iniURL = FileLocator.find(bundle, new Path(NLS_TAG).append(iniFilename), null);
 		if (iniURL == null) {
 			String message = NLS.bind(Messages.IniFileReader_OpenINIError, (new String[] { iniFilename }));
 			return new Status(IStatus.ERROR, PID, 0, message, ioe);
@@ -111,27 +105,13 @@ public class IniFileReader {
 		// Determine the properties file location
 		URL propertiesURL = null;
 		if (propertiesFilename != null & propertiesFilename.length() > 0) {
-			try {
-				propertiesURL = FileLocator.find(bundle, new Path(NLS_TAG).append(propertiesFilename), null);
-				if (propertiesURL != null)
-					propertiesURL = FileLocator.resolve(propertiesURL);
-			} catch (IOException e) {
-				String message = NLS.bind(Messages.IniFileReader_OpenPropError, (new String[] { propertiesFilename }));
-				return new Status(IStatus.ERROR, PID, 0, message, e);
-			}
+			propertiesURL = FileLocator.find(bundle, new Path(NLS_TAG).append(propertiesFilename), null);
 		}
 
 		// Determine the mappings file location
 		URL mappingsURL = null;
 		if (mappingsFilename != null && mappingsFilename.length() > 0) {
-			try {
-				mappingsURL = FileLocator.find(bundle, new Path(NLS_TAG).append(mappingsFilename), null);
-				if (mappingsURL != null)
-					mappingsURL = FileLocator.resolve(mappingsURL);
-			} catch (IOException e) {
-				String message = NLS.bind(Messages.IniFileReader_OpenMapError, (new String[] { mappingsFilename }));
-				return new Status(IStatus.ERROR, PID, 0, message, e);
-			}
+			mappingsURL = FileLocator.find(bundle, new Path(NLS_TAG).append(mappingsFilename), null);
 		}
 
 		// OK to pass null properties and/or mapping file
