@@ -99,7 +99,7 @@ public class SpinnerObservableValue extends AbstractObservableValue {
 	}
 
 	public Object getValueType() {
-		return Integer.class;
+		return Integer.TYPE;
 	}
 
 }

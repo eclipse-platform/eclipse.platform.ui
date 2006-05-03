@@ -12,9 +12,9 @@
 package org.eclipse.jface.internal.databinding.provisional.validation;
 
 /**
- * IntegerValidator.  Validate String to Double data input
+ * IntegerValidator.  Validate String to Integer data input
  */
-public class String2DoubleValidator extends String2DoublePrimativeValidator {
+public class String2IntegerValidator extends String2IntegerPrimativeValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
@@ -22,7 +22,8 @@ public class String2DoubleValidator extends String2DoublePrimativeValidator {
     public ValidationError isValid(Object value) {
        if ("".equals(value)) { //$NON-NLS-1$
           return null;
+       } else {
+          return super.isValid(value);
        }
-       return super.isValid(value);
     }
 }

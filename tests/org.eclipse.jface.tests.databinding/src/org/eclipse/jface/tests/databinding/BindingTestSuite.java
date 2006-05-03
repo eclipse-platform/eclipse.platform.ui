@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 public class BindingTestSuite extends TestSuite {
@@ -33,6 +34,7 @@ public class BindingTestSuite extends TestSuite {
 		// addTestSuite(ObservableCollectionTest.class);
 		addTestSuite(SelectionAwareObservableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());
+		addTestSuite(DefaultBindSupportFactoryTest.class);
 	}
 
 	/**

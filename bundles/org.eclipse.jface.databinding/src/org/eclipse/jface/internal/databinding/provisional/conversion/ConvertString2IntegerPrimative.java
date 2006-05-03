@@ -15,24 +15,27 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 
 /**
- * ConvertString2Long.
+ * ConvertString2IntegerPrimative.
  */
-public class ConvertString2Long extends ConvertString2LongPrimative {
+public class ConvertString2IntegerPrimative implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-		String sourceString = (String) source;
-		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
-			return null;
-		} else {
-			return super.convert(source);
+        try {
+            return new Integer(Integer.parseInt((String) source));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("String2Int: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
         }
 	}
 
+	public Object getFromType() {
+		return String.class;
+	}
+
 	public Object getToType() {
-		return Long.class;
+		return Integer.TYPE;
 	}
 
 }
