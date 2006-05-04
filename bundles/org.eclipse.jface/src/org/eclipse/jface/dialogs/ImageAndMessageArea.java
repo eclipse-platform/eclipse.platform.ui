@@ -151,7 +151,7 @@ public class ImageAndMessageArea extends Composite {
 	 */
 	public void setImage(Image image) {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
-		registry.registerFieldDecoration("messageImage", "", image);  //$NON-NLS-1$//$NON-NLS-2$
+		registry.registerFieldDecoration("messageImage", null, image);  //$NON-NLS-1$
 		messageField.addFieldDecoration(registry.getFieldDecoration("messageImage"), //$NON-NLS-1$
 										SWT.LEFT | SWT.TOP, false);
 	}
