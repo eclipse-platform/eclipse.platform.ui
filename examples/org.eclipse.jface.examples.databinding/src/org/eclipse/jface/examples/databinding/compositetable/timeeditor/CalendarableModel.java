@@ -119,16 +119,18 @@ public class CalendarableModel {
 	private Date startDate = null;
 	
 	/**
-	 * @param startDate The starting date to display
+	 * @param newStartDate The starting date to display
 	 * @return The obsolete Calendarable objects
 	 */
-	public List setStartDate(Date startDate) {
+	public List setStartDate(Date newStartDate) {
+		System.out.println("old start date = " + this.startDate);
+		System.out.println("new start date = " + newStartDate);
 		// If there's no overlap between the old and new date ranges
 		if (this.startDate == null || 
-				startDate.after(calculateDate(this.startDate, numberOfDays-1)) ||
-				calculateDate(startDate, numberOfDays-1).before(this.startDate))
+				newStartDate.after(calculateDate(this.startDate, numberOfDays-1)) ||
+				calculateDate(newStartDate, numberOfDays-1).before(this.startDate))
 		{
-			this.startDate = startDate;
+			this.startDate = newStartDate;
 			eventLayout = new Calendarable[numberOfDays][][];
 			return refresh();
 		}
@@ -138,10 +140,10 @@ public class CalendarableModel {
 		int overlap = -1;
 		
 		// If we're scrolling viewport to the left
-		if (startDate.before(this.startDate)) {
+		if (newStartDate.before(this.startDate)) {
 			// Calculate the overlap
 			for (int day=0; day < numberOfDays; ++day) {
-				Date candidate = calculateDate(startDate, day);
+				Date candidate = calculateDate(newStartDate, day);
 				if (candidate.equals(this.startDate))
 					overlap = day;
 			}
@@ -161,14 +163,14 @@ public class CalendarableModel {
 					// Recalculate new columns
 					dayColumns[day] = new ArrayList();
 					eventLayout[day] = null;
-					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
+					refresh(calculateDate(newStartDate, day), day, obsoleteCalendarables);
 				}
 			}
 		} else {
 			// We're scrolling the viewport to the right
 			for (int day=0; day < numberOfDays; ++day) {
 				Date candidate = calculateDate(this.startDate, day);
-				if (candidate.equals(startDate))
+				if (candidate.equals(newStartDate))
 					overlap = day;
 			}
 			for (int day=0; day < numberOfDays; ++day) {
@@ -187,11 +189,11 @@ public class CalendarableModel {
 					// Recalculate new columns
 					dayColumns[day] = new ArrayList();
 					eventLayout[day] = null;
-					refresh(calculateDate(startDate, day), day, obsoleteCalendarables);
+					refresh(calculateDate(newStartDate, day), day, obsoleteCalendarables);
 				}
 			}
 		}
-		this.startDate = startDate;
+		this.startDate = newStartDate;
 		return obsoleteCalendarables;
 	}
 
