@@ -13,11 +13,11 @@ package org.eclipse.update.internal.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -64,6 +64,8 @@ import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.Utilities;
@@ -1113,7 +1115,7 @@ public class ReviewPage	extends BannerPage {
 		setValidationStatus(requiredFeaturesResult.getStatus());
 		Set requiredFeatures = requiredFeaturesResult.getRequiredFeatures();
 		problematicFeatures.clear();
-
+		
 		Iterator requiredFeaturesIterator = requiredFeatures.iterator();
 		ArrayList toBeInstalled = new ArrayList();
 		
@@ -1161,7 +1163,8 @@ public class ReviewPage	extends BannerPage {
 		if (!toBeInstalled.isEmpty()) {
 			Iterator toBeInstalledIterator = toBeInstalled.iterator();
 			while (toBeInstalledIterator.hasNext()) {
-				treeViewer.setChecked(toBeInstalledIterator.next(), true);			
+				IInstallFeatureOperation current = (IInstallFeatureOperation)toBeInstalledIterator.next();
+				treeViewer.setChecked(current, true);			
 			}
 			return selectRequiredFeatures();
 		} else {
@@ -1274,7 +1277,7 @@ public class ReviewPage	extends BannerPage {
 	 * Update status in the wizard status area
 	 */
 	private void updateWizardMessage() {
-		if (true) return;
+		
 		if (validationStatus == null) {
 			lastDisplayedStatus=null;
 			setErrorMessage(null);
@@ -1448,43 +1451,143 @@ public class ReviewPage	extends BannerPage {
 			}
 	}
 
-	public boolean isFeatureGood(IImport requiredFeature,
-			IInstallFeatureOperation feature) {
+	
+	public boolean isFeatureGood(IImport requiredFeature, IFeature feature) {
+		return isFeatureGood(requiredFeature, feature, new ArrayList());
+	}
+	
+	public boolean isFeatureGood(IImport requiredFeature, IFeature feature, List visitedFeatures) {
 
-		if (!requiredFeature.getVersionedIdentifier().getIdentifier().equals(
-				feature.getFeature().getVersionedIdentifier().getIdentifier())) {
+		if (requiredFeature.getKind() == IImport.KIND_FEATURE) { 
+			if ((!requiredFeature.getVersionedIdentifier().getIdentifier().equals(
+					feature.getVersionedIdentifier().getIdentifier()))) {
+				IIncludedFeatureReference[] iifr = null;
+				try {
+					iifr = feature.getIncludedFeatureReferences();
+				} catch (CoreException e) {
+					UpdateUI.logException(e);
+					//	if we can not get included features then they can not satisfy requirement, so just ignore them
+					return false;
+				}
+				if (iifr == null) {
+					return false;
+				}
+				
+				for(int i = 0; i < iifr.length; i++) {
+					IFeature current;
+					try {
+						current = iifr[i].getFeature(new NullProgressMonitor());
+					} catch (CoreException e) {
+						// if we can not get feature then it can not satisfy requirement, so just ignore it
+						UpdateUI.logException(e);
+						continue;
+					}
+					if (!visitedFeatures.contains(current)) {
+						visitedFeatures.add(current);
+						if (isFeatureGood(requiredFeature, current, visitedFeatures)) {
+							return true;
+						}
+					}
+				}
+				
+				return false;
+			}
+
+			int rule = (requiredFeature.getRule() != IImport.RULE_NONE) ? requiredFeature.getRule() : IImport.RULE_COMPATIBLE;
+
+			switch (rule) {
+			case IImport.RULE_PERFECT: return feature.getVersionedIdentifier().getVersion().isPerfect(
+								requiredFeature.getVersionedIdentifier()
+								.getVersion());
+			case IImport.RULE_EQUIVALENT:
+						return feature.getVersionedIdentifier().getVersion()
+						.isEquivalentTo(
+								requiredFeature.getVersionedIdentifier()
+								.getVersion());
+			case IImport.RULE_COMPATIBLE:
+				return feature.getVersionedIdentifier().getVersion()
+						.isCompatibleWith(
+								requiredFeature.getVersionedIdentifier()
+								.getVersion());
+			case IImport.RULE_GREATER_OR_EQUAL:
+						return feature.getVersionedIdentifier().getVersion()
+						.isGreaterOrEqualTo(
+								requiredFeature.getVersionedIdentifier()
+								.getVersion());
+			}
+
+			return false;
+		} else {
+			if ((requiredFeature.getKind() == IImport.KIND_PLUGIN)) { 
+				return checkIfFeatureHasPlugin( requiredFeature, feature);
+			}
 			return false;
 		}
-
-		int rule = (requiredFeature.getRule() != IImport.RULE_NONE) ? requiredFeature
-				.getRule()
-				: IImport.RULE_COMPATIBLE;
-
-		switch (rule) {
-		case IImport.RULE_PERFECT:
-			return feature.getFeature().getVersionedIdentifier().getVersion()
-					.isPerfect(
-							requiredFeature.getVersionedIdentifier()
-									.getVersion());
-		case IImport.RULE_EQUIVALENT:
-			return feature.getFeature().getVersionedIdentifier().getVersion()
-					.isEquivalentTo(
-							requiredFeature.getVersionedIdentifier()
-									.getVersion());
-		case IImport.RULE_COMPATIBLE:
-			return feature.getFeature().getVersionedIdentifier().getVersion()
-					.isCompatibleWith(
-							requiredFeature.getVersionedIdentifier()
-									.getVersion());
-		case IImport.RULE_GREATER_OR_EQUAL:
-			return feature.getFeature().getVersionedIdentifier().getVersion()
-					.isGreaterOrEqualTo(
-							requiredFeature.getVersionedIdentifier()
-									.getVersion());
+	}
+	
+	private boolean checkIfFeatureHasPlugin(IImport requiredFeature, IFeature feature)  {
+		
+		IPluginEntry[] plugins = feature.getPluginEntries();
+		try {			
+			List includedPlugins = getPluginEntriesFromIncludedFeatures(feature, new ArrayList(), new ArrayList());
+			includedPlugins.addAll(Arrays.asList(plugins));
+			plugins = (IPluginEntry[])includedPlugins.toArray( new IPluginEntry[includedPlugins.size()]);
+		} catch( CoreException ce) {
+			UpdateUI.logException(ce);
+			// ignore this plugins can not sutisfy requirement anyways
 		}
-
+		if (plugins == null) {
+			return false;
+		}
+		
+		for(int i = 0; i < plugins.length; i++) {
+			if (isMatch(plugins[i].getVersionedIdentifier(), requiredFeature.getVersionedIdentifier(), requiredFeature.getIdRule())) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
+
+	private List getPluginEntriesFromIncludedFeatures(IFeature feature, List plugins, List visitedFeatures) throws CoreException {
+		IIncludedFeatureReference[] iifr = feature.getIncludedFeatureReferences();
+		for(int i = 0; i < iifr.length; i++) {
+			IFeature current = iifr[i].getFeature(new NullProgressMonitor());
+			if (!visitedFeatures.contains(current)) {
+				IPluginEntry[] pluginEntries = current.getPluginEntries();
+				plugins.addAll(Arrays.asList(pluginEntries));
+				visitedFeatures.add(current);
+				getPluginEntriesFromIncludedFeatures(current, plugins, visitedFeatures);
+			}
+		}
+		
+		return plugins;
+	}
+
+	// vid1 = feature
+	// vid2 = requiredFeature
+	private boolean isMatch( VersionedIdentifier vid1, VersionedIdentifier vid2, int rule) {
+		
+		if (!vid1.getIdentifier().equals(vid2.getIdentifier())) {
+			return false;
+		}
+		if ( vid2.getVersion().getMajorComponent() == 0 && vid2.getVersion().getMinorComponent() == 0 && vid2.getVersion().getServiceComponent() == 0 ) {
+			//version is ignored
+			return true;
+		}
+		switch (rule) {
+		case IImport.RULE_PERFECT:
+			return vid2.getVersion().isPerfect(vid1.getVersion());
+		case IImport.RULE_EQUIVALENT:
+			return vid2.getVersion().isEquivalentTo(vid1.getVersion());
+		case IImport.RULE_COMPATIBLE:
+			return vid2.getVersion().isCompatibleWith(vid1.getVersion());
+		case IImport.RULE_GREATER_OR_EQUAL:
+			return vid2.getVersion().isGreaterOrEqualTo(vid1.getVersion());
+		}
+		return false;
+	}
+
 
 	public boolean isFeatureBetter(IInstallFeatureOperation feature,
 			IInstallFeatureOperation currentFeatureSelected) {
@@ -1502,9 +1605,8 @@ public class ReviewPage	extends BannerPage {
 			IImport requiredFeature, IInstallFeatureOperation feature,
 			IInstallFeatureOperation currentFeatureSelected) {
 
-		if (isFeatureGood(requiredFeature, feature)
-				&& isFeatureBetter(feature, currentFeatureSelected)) {
-			return feature;
+		if (isFeatureGood(requiredFeature, feature.getFeature()) && isFeatureBetter(feature, currentFeatureSelected)) {
+				return feature;
 		} else {
 			return currentFeatureSelected;
 		}

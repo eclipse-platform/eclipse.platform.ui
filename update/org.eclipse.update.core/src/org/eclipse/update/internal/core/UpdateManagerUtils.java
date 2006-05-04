@@ -621,7 +621,7 @@ public class UpdateManagerUtils {
 	 */
 	public static int getMatchingRule(String rule) {
 		if (rule == null)
-			return IImport.RULE_PERFECT;
+			return IImport.RULE_COMPATIBLE;
 		int ruleInt = ((Integer) table.get(rule)).intValue();
 		if (ruleInt == IImport.RULE_NONE)
 			return IImport.RULE_PERFECT;
@@ -635,6 +635,9 @@ public class UpdateManagerUtils {
 	 * @since 2.0.2
 	 */
 	public static int getMatchingIdRule(String rule) {
+		
+		if (rule == null)
+			return IImport.RULE_COMPATIBLE;
 		if (rule!=null && rule.equalsIgnoreCase("prefix")) //$NON-NLS-1$
 			return IImport.RULE_PREFIX;
 		return IImport.RULE_PERFECT;

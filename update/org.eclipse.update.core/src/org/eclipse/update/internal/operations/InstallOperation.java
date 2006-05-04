@@ -26,6 +26,26 @@ import org.eclipse.update.operations.*;
 public class InstallOperation
 	extends FeatureOperation
 	implements IInstallFeatureOperation {
+	
+	public boolean equals(Object arg) {
+		if (arg == null) {
+			return false;
+		}
+		
+		if (!(arg instanceof InstallOperation)) {
+			return false;
+		}
+		
+		InstallOperation io = (InstallOperation)arg;
+		
+		return io.getFeature().getVersionedIdentifier().equals(this.getFeature().getVersionedIdentifier());
+	}
+
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.getFeature().hashCode();
+	}
+
 	private IFeatureReference[] optionalFeatures;
 	private IFeature[] unconfiguredOptionalFeatures;
 	private IVerificationListener verifier;
