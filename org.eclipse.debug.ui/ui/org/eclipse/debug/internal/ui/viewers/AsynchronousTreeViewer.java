@@ -1312,6 +1312,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	}
 	
 	/**
+	 * Resets any persisted column size for the given columns
+	 */
+	public void resetColumnSizes(String[] columnIds) {
+		for (int i = 0; i < columnIds.length; i++) {
+			fColumnSizes.remove(columnIds[i]);
+		}
+	}
+	
+	/**
 	 * Initializes veiwer state from the memento
 	 * 
 	 * @param memento
