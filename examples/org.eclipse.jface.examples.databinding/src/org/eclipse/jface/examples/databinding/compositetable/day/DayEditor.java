@@ -62,17 +62,29 @@ public class DayEditor extends Composite implements IEventEditor {
 	private CompositeTable compositeTable = null;
 	private CalendarableModel model = new CalendarableModel();
 	private List spareCalendarableEventControls = new LinkedList();
-	protected TimeSlice daysHeader;
-
+	protected TimeSlice daysHeader = null;
+	private final boolean headerDisabled;
+	
+	/**
+	 * NO_HEADER constant.  A style bit constant to indicate that no header
+	 * should be displayed at the top of the editor window.
+	 */
+	public static final int NO_HEADER=SWT.NO_TRIM;
+	
 	/**
 	 * Constructor DayEditor.  Constructs a calendar control that can display
 	 * events on one or more days.
 	 * 
 	 * @param parent
-	 * @param style
+	 * @param style  DayEditor.NO_HEADER or SWT.NO_TRIM means not to display a header.
 	 */
 	public DayEditor(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NULL);
+		if ((style & NO_HEADER) != 0) {
+			headerDisabled = true;
+		} else {
+			headerDisabled = false;
+		}
 		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 	}
 	
@@ -98,7 +110,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	private void createCompositeTable(final int numberOfDays,
 			final int numberOfDivisionsInHour) {
 		compositeTable = new CompositeTable(this, SWT.NONE);
-		new TimeSlice(compositeTable, SWT.BORDER);		// The prototype header
+		if (!headerDisabled) {
+			new TimeSlice(compositeTable, SWT.BORDER);		// The prototype header
+		}
 		new TimeSlice(compositeTable, SWT.NONE); // The prototype row
 		
 		compositeTable.setNumRowsInCollection(computeNumRowsInCollection(numberOfDivisionsInHour));
@@ -472,7 +486,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setStartDate(Date startDate) {
 		List removedDays = model.setStartDate(startDate);
 		findEventRowsForNewDays(startDate);
-		refreshColumnHeaders(daysHeader.getColumns());
+		if (daysHeader != null) {
+			refreshColumnHeaders(daysHeader.getColumns());
+		}
 		updateVisibleRows();
 		freeObsoleteCalendarableEventControls(removedDays);
 		if (compositeTable.getNumRowsVisible() > 0) {
