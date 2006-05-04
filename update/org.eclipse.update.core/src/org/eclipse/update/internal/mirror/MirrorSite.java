@@ -46,6 +46,7 @@ import org.eclipse.update.core.model.SiteModelFactory;
 import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.internal.core.CoreExceptionWithRootCause;
 import org.eclipse.update.internal.core.FatalIOException;
+import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
 import org.eclipse.update.internal.core.ISiteContentConsumer;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -190,6 +191,13 @@ public class MirrorSite extends Site {
 
 		final IFeatureContentProvider provider =
 			sourceFeature.getFeatureContentProvider();
+		
+		// TODO: passing command options could be made more general in future, so this 
+		// cast is not needed. 
+		if (provider instanceof FeaturePackagedContentProvider) {
+			((FeaturePackagedContentProvider) provider).setContinueOnError(ignoreNonPresentPlugins);
+		}
+		
 		System.out.println(
 			tab
 				+ "Getting plugin entries for " //$NON-NLS-1$
@@ -452,7 +460,10 @@ public class MirrorSite extends Site {
 			URL newURL = new URL(getURL(), contentReference.getIdentifier());
 			pluginPath = newURL.getFile();
 			inStream = contentReference.getInputStream();
-			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
+			// added null check here,  since contentReference can, in theory, return null for input stream. 
+			if (inStream != null) {
+				UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
+			}
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 			"Error occurred while creating "+ pluginPath+" file.", //$NON-NLS-1$ //$NON-NLS-2$
@@ -704,7 +715,13 @@ public class MirrorSite extends Site {
 			URLEntryModel newUrlEntryModel = new URLEntryModel();
 			URL url = urlEntry.getURL();
 			newUrlEntryModel.setAnnotation(urlEntry.getAnnotation());
-			newUrlEntryModel.setURLString(url.toExternalForm());
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=136249
+			// URL is not required, so might be null
+			// The null case is (already) handled correctly in
+			// writeDescription
+			if (url != null) {
+				newUrlEntryModel.setURLString(url.toExternalForm());
+			}
 			this.setDescriptionModel(newUrlEntryModel);
 		}
 	}

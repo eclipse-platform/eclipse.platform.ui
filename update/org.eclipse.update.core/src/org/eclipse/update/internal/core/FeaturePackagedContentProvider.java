@@ -9,10 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.*;
@@ -30,6 +33,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	private ContentReference[] localFeatureFiles = new ContentReference[0];
 	private IVerifier jarVerifier = null;
 	private ExtendedSite siteModel = null;
+	private boolean continueOnError;
 	/*
 	 * filter for file with .jar
 	 */
@@ -40,7 +44,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	};
 
 	/*
-	 * Constructor 
+	 * Constructor
 	 */
 	public FeaturePackagedContentProvider(URL url, ISite site) {
 		super(url);
@@ -48,7 +52,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			this.siteModel = (ExtendedSite) site;
 		}
 	}
-
+	
 	/*
 	 * Returns a new verifier for each top-level install
 	 * (if the verifier has a parent, return the verifier
@@ -86,7 +90,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			// we need to unpack archive locally for UI browser references to be resolved correctly
 			localFeatureFiles = featureJarReference.unpack(getWorkingDirectory(), null, monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, e); // 
+			throw errorRetrieving(Feature.FEATURE_XML, featureJarReference, e); 
 		}
 
 		// find the manifest in the unpacked feature files
@@ -153,8 +157,8 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, e); 
-		}
+			references[0] = continueOnErrorOrRethrow(archiveID, e); 
+		}		
 		return references;
 	}
 
@@ -174,7 +178,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		try {
 			references[0] = retrieveLocalJar(new JarContentReference(archiveID, url), monitor);
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, references[0], e);
+			references[0] = continueOnErrorOrRethrow(archiveID, e);
 		}
 		return references;
 	}
@@ -182,7 +186,20 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	private ContentReference retrieveLocalJar(JarContentReference reference, InstallMonitor monitor) throws IOException, CoreException {
 		//If the site does not support pack200, just get the jar as normal
 		if(siteModel == null || !siteModel.supportsPack200() || !JarProcessor.canPerformUnpack()) {
-			return asLocalReference(reference, monitor);
+			ContentReference contentReference = null;
+			try {
+				contentReference = asLocalReference(reference, monitor);
+			}
+			catch (FileNotFoundException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (IOException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (CoreException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			return contentReference;
 		}
 		
 		ContentReference packedRef = null;
@@ -247,6 +264,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		}
 		return packedRef;
 	}
+
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
@@ -269,11 +287,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			references[0] = currentReference;
 
 		} catch (IOException e) {
-			throw errorRetrieving(archiveID, currentReference, e);
+			references[0] = continueOnErrorOrRethrow(archiveID, e);
 		}
 
 		return references;
 	}
+
 
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryContentReferences()
@@ -347,6 +366,60 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 
 		return Utilities.newCoreException(NLS.bind(Messages.FeaturePackagedContentProvider_ErrorRetrieving, values), e);	 	
 
+	}
+
+
+	public void setContinueOnError(boolean continueOnError) {
+		this.continueOnError = continueOnError;
+	}
+	
+	/** 
+	 * This method is used for when a core exception is detected, so, if its decided to rethrow, then 
+	 * a core exception odes not have to be recreated. 
+	 * 
+	 * @param archiveID id of the archive file
+	 * @param CoreException 
+	 * @return NullReference if its decided not to continue
+	 * @throws CoreException
+	 */
+	private ContentReference continueOrErrorOrRethrow(String archiveID, CoreException coreException) throws CoreException {
+		ContentReference reference = null;
+
+		if (continueOnError) {
+			// this ContentReference without a file or URL is purely a
+			// "missing jar" reference.
+			reference = new NullContentReference(archiveID);
+
+			String msg = "    ContinueOnError: The following ID was not found, so was skipped, and is not on miror site: " + archiveID; //$NON-NLS-1$
+			String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
+			IStatus status = new Status(IStatus.WARNING, id , 0, msg, null);
+			UpdateCore.log(status);
+			
+		}
+		else {
+			throw coreException;
+		}
+		return reference;
+	}
+	
+	private ContentReference continueOnErrorOrRethrow(String archiveID, Exception e) throws CoreException {
+		ContentReference reference = null;
+
+		if (continueOnError) { 
+			// this ContentReference without a file or URL is purely a
+			// "missing jar" reference.
+			reference = new NullContentReference(archiveID);
+			
+			String msg = "    ContinueOnError: The following ID was not found, so was skipped, and is not on miror site: " + archiveID; //$NON-NLS-1$
+			String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
+			IStatus status = new Status(IStatus.WARNING, id , 0, msg, null);
+			UpdateCore.log(status);	
+			
+		}
+		else {
+			throw errorRetrieving(archiveID, reference, e);
+		}
+		return reference;
 	}
 
 }
