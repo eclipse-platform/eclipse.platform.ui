@@ -637,36 +637,35 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		site.getWorkbenchWindow().addPerspectiveListener(this);
     }
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        OutputStreamWriter writer = new OutputStreamWriter(bout);
-        
-        try {
-            XMLMemento memento = XMLMemento.createWriteRoot("VariablesViewMemento"); //$NON-NLS-1$
-            saveState(memento);
-            memento.save(writer);            
+	
+    public void partDeactivated(IWorkbenchPart part) {
+		String id = part.getSite().getId();
+		if (id.equals(getSite().getId())) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter(bout);
 
-            IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-            String xmlString = bout.toString();
-            store.putValue(PREF_STATE_MEMENTO, xmlString);
-        } catch (IOException e) {
-        } finally {
-            try {
-                writer.close();
-                bout.close();
-            } catch (IOException e){}
-        }
-    }
+			try {
+				XMLMemento memento = XMLMemento.createWriteRoot("VariablesViewMemento"); //$NON-NLS-1$
+				saveViewerState(memento);
+				memento.save(writer);
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		super.saveState(memento);
-		if (fSashForm != null) {
+				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+				String xmlString = bout.toString();
+				store.putValue(PREF_STATE_MEMENTO, xmlString);
+			} catch (IOException e) {
+			} finally {
+				try {
+					writer.close();
+					bout.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		super.partDeactivated(part);
+	}
+
+	public void saveViewerState(IMemento memento) {
+		if (fSashForm != null && !fSashForm.isDisposed()) {
 	        int[] weights = fSashForm.getWeights();
 			memento.putInteger(SASH_VIEW_PART, weights[0]);
 			memento.putInteger(SASH_DETAILS_PART, weights[1]);
