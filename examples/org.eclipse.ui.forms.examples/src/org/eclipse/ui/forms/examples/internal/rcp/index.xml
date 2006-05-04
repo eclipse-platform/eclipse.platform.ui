@@ -13,7 +13,7 @@ image here. Just
  larger than the regular text.
 </p>
 <p>New addition: controls in the text</p>
-<p><control fill="true" href="control1"/></p>
+<p><control href="control1" width="300"/></p>
 <p>Now we will show an image link: <a href="action1"><img href="image1"/></a></p>
 <p>And this is image and text as a link: <a href="action1"><img href="image1"/>Some link text</a></p>
 <li style="text" value="1.">To check for updates for features you have installed, 
