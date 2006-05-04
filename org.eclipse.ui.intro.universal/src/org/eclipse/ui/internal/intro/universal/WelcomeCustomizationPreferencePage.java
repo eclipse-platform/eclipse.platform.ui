@@ -148,6 +148,14 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			this.id = id;
 			this.name = name;
 		}
+		
+		public String getRawName() {
+			return name;
+		}
+
+		public String getName() {
+			return stripMnemonic(name);
+		}
 
 		public boolean equals(Object obj) {
 			if (obj == this)
@@ -163,6 +171,17 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public String toString() {
 			return name;
+		}
+		
+		private String stripMnemonic(String src) {
+			if (src==null)
+				return ""; //$NON-NLS-1$
+			int loc = src.indexOf('&');
+			if (loc!=-1) {
+				return src.substring(0,loc)+src.substring(loc+1);
+			}
+			else
+				return src;
 		}
 	}
 
@@ -288,7 +307,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public String getText(Object obj) {
 			if (obj instanceof RootPage) {
-				return ((RootPage) obj).name;
+				return ((RootPage) obj).getName();
 			}
 			if (obj instanceof ExtensionData) {
 				ExtensionData ed = (ExtensionData) obj;
@@ -306,7 +325,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 			return super.getText(obj);
 		}
-
+		
 		public Image getImage(Object obj) {
 			if (obj instanceof ExtensionData) {
 				ExtensionData ed = (ExtensionData) obj;
@@ -431,6 +450,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		themeImage = ImageUtil.createImage("full/obj16/image_obj.gif"); //$NON-NLS-1$
 		addPages();
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(container);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.ui.intro.universal.universalWelcomePreference"); //$NON-NLS-1$
 		return container;
 	}
 
@@ -763,19 +783,27 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private void addHomePage() {
 		TabItem item = new TabItem(tabFolder, SWT.NULL);
-		item.setText("Home"); //$NON-NLS-1$
+		item.setText(Messages.WelcomeCustomizationPreferencePage_home);
 		Composite container = new Composite(tabFolder, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		Label label = new Label(container, SWT.NULL);
-		label.setText(Messages.WelcomeCustomizationPreferencePage_background);
+		Composite leftColumn = new Composite(container, SWT.NULL);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		leftColumn.setLayout(layout);
+		leftColumn.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite rightColumn = new Composite(container, SWT.NULL);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		rightColumn.setLayout(layout);
+		rightColumn.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Label themeLabel = new Label(leftColumn, SWT.NULL);
+		themeLabel.setText(Messages.WelcomeCustomizationPreferencePage_background);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		//gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		label = new Label(container, SWT.NULL);
-		label.setText(Messages.WelcomeCustomizationPreferencePage_preview);
-		themes = new TableViewer(container, SWT.BORDER);
+		themeLabel.setLayoutData(gd);
+		themes = new TableViewer(leftColumn, SWT.BORDER);
 		themes.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		themes.setContentProvider(contentProvider);
 		themes.setLabelProvider(labelProvider);
@@ -787,19 +815,9 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			}
 		});
 		loadThemes();
-		/*
-		Button browse = new Button(container, SWT.PUSH);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		browse.setLayoutData(gd);
-		browse.setText(Messages.WelcomeCustomizationPreferencePage_browse);
-		browse.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				doBrowseBackground();
-			}
-		});
-		*/
-		themePreview = new Canvas(container, SWT.NULL);
+		Label previewLabel = new Label(rightColumn, SWT.NULL);
+		previewLabel.setText(Messages.WelcomeCustomizationPreferencePage_preview);
+		themePreview = new Canvas(rightColumn, SWT.NULL);
 		gd = new GridData();
 		gd.widthHint = 160+20;
 		gd.heightHint = 120+20;
@@ -817,7 +835,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 				e.gc.drawImage(bgImage, 0, 0, ibounds.width, ibounds.height, 10, 10, 160, 120);
 			}
 		});
-		label = new Label(container, SWT.NULL);
+		Label label = new Label(container, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_rootpages);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -885,7 +903,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private String getRootPageName(String id) {
 		for (int i = 0; i < ROOT_PAGE_TABLE.length; i++) {
 			if (ROOT_PAGE_TABLE[i].id.equals(id))
-				return ROOT_PAGE_TABLE[i].name;
+				return ROOT_PAGE_TABLE[i].getRawName();
 		}
 		return "?"; //$NON-NLS-1$
 	}

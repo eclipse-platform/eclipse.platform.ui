@@ -53,6 +53,7 @@ public class Messages extends NLS {
 	public static String SharedIntroConfigurer_migrate_nav;
 	public static String SharedIntroConfigurer_webresources_nav;
 	public static String WelcomeCustomizationPreferencePage_available;
+	public static String WelcomeCustomizationPreferencePage_home;
 	public static String WelcomeCustomizationPreferencePage_left;
 	public static String WelcomeCustomizationPreferencePage_right;
 	public static String WelcomeCustomizationPreferencePage_background;
