@@ -36,6 +36,7 @@ public class AllTeamTests extends ResourceTest {
 		TestSuite suite = new TestSuite();
 		suite.addTest(RepositoryProviderTests.suite());
 		suite.addTest(StreamTests.suite());
+		suite.addTest(StorageMergerTests.suite());
 		return suite;
 	}
 }

@@ -75,4 +75,21 @@
             id="org.eclipse.team.tests.ui.views.ContentProviderTestView">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
+            class="org.eclipse.team.tests.core.TestStorageMerger"
+            extensions="blah"
+            id="org.eclipse.team.tests.core.storageMerger1"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.team.tests.core.content-type1"
+            storageMergerId="org.eclipse.team.tests.core.storageMerger1"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.contentTypes">
+      <content-type
+            id="org.eclipse.team.tests.core.content-type1"
+            name="org.eclipse.team.tests.core.content-type1"
+            priority="normal"/>
+   </extension>
 </plugin>
