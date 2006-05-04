@@ -102,4 +102,13 @@ public class ToggleStepFiltersAction extends AbstractDebugContextAction {
         }
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction#getInitialEnablement()
+	 */
+	protected boolean getInitialEnablement() {
+		return true;
+	}
+	
+	
+
 }

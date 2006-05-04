@@ -139,8 +139,18 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         if (activeContext != null) {
             contextActivated(activeContext, null);
         } else {
-        	setEnabled(false);
+        	setEnabled(getInitialEnablement());
         }
+    }
+    
+    /**
+     * Returns whether this action should be enabled when initialized
+     * and there is no active debug context.
+     * 
+     * @return false, by default
+     */
+    protected boolean getInitialEnablement() {
+    	return false;
     }
 
     protected void setWindow(IWorkbenchWindow window) {
