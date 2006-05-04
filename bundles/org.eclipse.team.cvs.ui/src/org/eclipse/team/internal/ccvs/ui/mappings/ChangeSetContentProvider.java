@@ -518,13 +518,13 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 				List result = new ArrayList();
 				for (int i = 0; i < sets.length; i++) {
 					DiffChangeSet set = sets[i];
-					TreePath path = getPathForElement(set, resource);
+					TreePath path = getPathForElement(set, resource.getParent());
 					if (path != null)
 						result.add(path);
 				}
 				return (TreePath[]) result.toArray(new TreePath[result.size()]);
 			} else {
-				TreePath path = getPathForElement(getTheRest(), resource);
+				TreePath path = getPathForElement(getTheRest(), resource.getParent());
 				if (path != null)
 					return new TreePath[] { path };
 			}
@@ -587,6 +587,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 	
 	private List getPath(IResourceDiffTree tree, IResource resource) {
+		if (resource == null)
+			return null;
 		boolean hasDiff = tree.getDiff(resource) == null;
 		if (hasDiff && tree.members(resource).length == 0)
 			return null;
