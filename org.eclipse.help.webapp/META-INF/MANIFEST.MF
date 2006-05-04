@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.help.base;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.help.internal.webapp;x-friends:="org.eclipse.ua.tests"
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
