@@ -674,6 +674,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private Runnable refreshEventControlPositions = new Runnable() {
 		public void run() {
+			if (DayEditor.this.isDisposed()) {
+				return;
+			}
+			
 			Control[] gridRows = compositeTable.getRowControls();
 			
 			for (int day=0; day < model.getNumberOfDays(); ++day) {
