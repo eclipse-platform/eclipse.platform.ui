@@ -221,13 +221,19 @@ public class Utilities {
 			status = new Status(IStatus.ERROR, id, code, completeString.toString(), e);
 		}
 		CoreException ce = new CoreException(status);
-		if ( e instanceof CoreException) {
+		
+		if ( e instanceof FatalIOException) {
+			ce = new CoreExceptionWithRootCause(status);
+			((CoreExceptionWithRootCause)ce).setRootException(e);
+		}
+		/* for when we move to 1.5
+		 if ( e instanceof CoreException) {
 			ce.initCause(e.getCause());
 		} else {
 			ce.initCause(e);
 		}
 		if (e != null)
-			ce.setStackTrace(e.getStackTrace());
+			ce.setStackTrace(e.getStackTrace());*/
 		return ce; 
 	}
 

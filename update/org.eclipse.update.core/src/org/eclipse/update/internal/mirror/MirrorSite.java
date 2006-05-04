@@ -44,6 +44,7 @@ import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.core.model.CategoryModel;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.CoreExceptionWithRootCause;
 import org.eclipse.update.internal.core.FatalIOException;
 import org.eclipse.update.internal.core.ISiteContentConsumer;
 import org.eclipse.update.internal.core.UpdateCore;
@@ -246,7 +247,10 @@ public class MirrorSite extends Site {
 			try {
 				provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
 			} catch (CoreException ce) {
-				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
+				if ( ignoreNonPresentPlugins && 
+						(ce instanceof CoreExceptionWithRootCause) &&
+						(((CoreExceptionWithRootCause)ce).getRootException() != null) && 
+						(((CoreExceptionWithRootCause)ce).getRootException() instanceof FatalIOException) ) {
 					System.out.println("Could not mirror plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site");  //$NON-NLS-1$//$NON-NLS-2$
 				} else {
 					throw ce;
@@ -293,7 +297,10 @@ public class MirrorSite extends Site {
 				storePluginArchive(references[0]);
 				addDownloadedPluginEntry(pluginsToInstall[i]);
 			} catch (CoreException ce) {
-				if ( ignoreNonPresentPlugins && (ce.getCause() != null) && (ce.getCause() instanceof FatalIOException) ) {
+				if ( ignoreNonPresentPlugins && 
+						(ce instanceof CoreExceptionWithRootCause) &&
+						(((CoreExceptionWithRootCause)ce).getRootException() != null) && 
+						(((CoreExceptionWithRootCause)ce).getRootException() instanceof FatalIOException) ) {
 					System.out.println("Could not write plug-in " + pluginsToInstall[i].getVersionedIdentifier().toString() + ". It does not exist on the given site"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					//System.out.println("ignoreNonPresentPlugins:"+ignoreNonPresentPlugins); //$NON-NLS-1$

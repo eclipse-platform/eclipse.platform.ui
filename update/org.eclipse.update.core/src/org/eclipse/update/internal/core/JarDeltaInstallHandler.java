@@ -11,13 +11,16 @@
 
 package org.eclipse.update.internal.core;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
@@ -48,27 +51,27 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 			
 			ContentReference[] oldReferences = oldFeature.getFeatureContentProvider().getPluginEntryContentReferences(oldPlugin, null);
 			ContentReference[] newReferences = feature.getFeatureContentProvider().getPluginEntryContentReferences(newPlugin, null);
-			
-			URI oldURI = null;
+
+			URL oldURI = null;
 			try {
-				oldURI = new URI(consumer.getFeature().getSite().getURL().getPath() + 
+				oldURI = new URL(consumer.getFeature().getSite().getURL().getPath() + 
 									 Site.DEFAULT_PLUGIN_PATH + 
 									 oldPlugin.getVersionedIdentifier().toString());
-			} catch (URISyntaxException e) {
+			} catch (MalformedURLException e) {
 				throw new IOException(e.getMessage());
 			}
-			File oldJarFile = new File(oldURI);
+			File oldJarFile = new File(oldURI.toExternalForm());
 			JarFile oldJar = new JarFile(oldJarFile);
 			
-			URI newURI = null;
+			URL newURI = null;
 			try {
-				newURI = new URI(consumer.getFeature().getSite().getURL().getPath() + 
+				newURI = new URL(consumer.getFeature().getSite().getURL().getPath() + 
 								 Site.DEFAULT_PLUGIN_PATH + 
 								 newPlugin.getVersionedIdentifier().toString());
-			} catch (URISyntaxException e) {
+			} catch (MalformedURLException e) {
 				throw new IOException(e.getMessage());
 			}
-			File newJarFile = new File(newURI);
+			File newJarFile = new File(newURI.toExternalForm());
 			JarFile newJar = new JarFile(newJarFile);
 
 			String tempFileName = oldURI + "-" + (new Date()).getTime(); //$NON-NLS-1$
@@ -85,7 +88,7 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 			newJar.close();
 			oldJar.close();
 			
-			newJarFile = new File(newURI);
+			newJarFile = new File(newURI.toExternalForm());
 			newJarFile.delete();
 			
 			newJarFile.createNewFile();
@@ -93,25 +96,12 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 			copyFile(tempFile, newJarFile);
 	}
 	
-	static boolean useNioCopy = true;
 	public static void copyFile(File src, File dst) throws IOException {
-		if (useNioCopy) {
-			try {
-				NioHelper.copyFile(src, dst);
-				return;
-			} catch (NoSuchMethodError e) {
-				// fall through
-			} catch (NoClassDefFoundError e) {
-				// fall through
-			}
-			useNioCopy = false;
-		}
-		
-		FileInputStream in=null;
-		FileOutputStream out=null;
+		InputStream in=null;
+		OutputStream out=null;
 		try {
-			in = new FileInputStream(src);
-			out = new FileOutputStream(dst);		
+			in = new BufferedInputStream(new FileInputStream(src));
+			out = new BufferedOutputStream(new FileOutputStream(dst));		
 			byte[] buffer = new byte[4096];
 			int len;
 			while ((len=in.read(buffer)) != -1) {
@@ -119,9 +109,15 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 			}
 		} finally {
 			if (in != null)
-				in.close();
+				try {
+					in.close();
+				} catch (IOException e) {
+				}
 			if (out != null)
-				out.close();
+				try {
+					out.close();
+				} catch (IOException e) {
+				}
 		}
 	}
 
