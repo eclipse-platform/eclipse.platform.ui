@@ -164,6 +164,9 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 	}
 	
 	protected String escapeSpecialChars(String label) {
+		if (label == null) {
+			return null;
+		}
 		StringBuffer escaped = new StringBuffer();
 		for (int i = 0; i < label.length(); i++) {
 			char c = label.charAt(i);
