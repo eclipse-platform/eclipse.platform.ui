@@ -504,7 +504,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	private Point computeTrueShellSize(Shell shell) {
 		Point size= shell.getSize();
-		if ("gtk".equals(SWT.getPlatform())) {
+		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
 			/* XXX bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=136332: on GTK, getSize does not include the trim */
 			Rectangle trim= shell.computeTrim(0, 0, 0, 0);
 			size.x += trim.width;
