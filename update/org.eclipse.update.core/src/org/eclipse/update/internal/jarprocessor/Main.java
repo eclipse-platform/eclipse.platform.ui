@@ -26,12 +26,15 @@ public class Main {
 		public boolean repack = false;
 		public boolean unpack = false;
 		public boolean verbose = false;
+		public boolean processAll = false;
 		public File input = null;
 	}
 
 	private static void printUsage() {
 		System.out.println("[-option ...]... input"); //$NON-NLS-1$
 		System.out.println("The following options are supported:"); //$NON-NLS-1$
+		System.out.println("-processAll     process all jars, regardless of whether they were previously normalized"); //$NON-NLS-1$
+		System.out.println("                By default only normalized jars will be processed."); //$NON-NLS-1$
 		System.out.println("-repack         normalize jars "); //$NON-NLS-1$
 		System.out.println("-sign <command> sign jars using <command>"); //$NON-NLS-1$
 		System.out.println("-pack           pack the jars.  pack and repack are redundant unless"); //$NON-NLS-1$
@@ -72,7 +75,9 @@ public class Main {
 				options.outputDir = args[++i];
 			} else if (args[i].equals("-verbose")) { //$NON-NLS-1$
 				options.verbose = true;
-			}
+			}  else if (args[i].equals("-processAll")) { //$NON-NLS-1$
+				options.processAll = true;
+			} 
 		}
 
 		options.input = new File(args[i]);
@@ -113,6 +118,7 @@ public class Main {
 			processor.setRepack(options.repack || (options.pack && options.signCommand != null));
 			processor.setUnpack(options.unpack);
 			processor.setVerbose(options.verbose);
+			processor.setProcessAll(options.processAll);
 			try {
 				processor.processZip(options.input);
 			} catch (ZipException e) {
@@ -125,6 +131,7 @@ public class Main {
 		} else {
 			JarProcessor processor = new JarProcessor();
 			processor.setWorkingDirectory(options.outputDir);
+			processor.setProcessAll(options.processAll);
 			processor.setVerbose(options.verbose);
 
 			if (options.repack || (options.pack && options.signCommand != null))

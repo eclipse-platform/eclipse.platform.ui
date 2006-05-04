@@ -81,6 +81,8 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 	public final static String JAR_PROCESSOR_REPACK = "-repack"; //$NON-NLS-1$
 
 	public final static String JAR_PROCESSOR_SIGN = "-sign"; //$NON-NLS-1$
+	
+	public final static String JAR_PROCESSOR_PROCESS_ALL = "-processAll"; //$NON-NLS-1$
 
 	public final static String SITE_XML = "-siteXML"; //$NON-NLS-1$
 
@@ -138,6 +140,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		options.pack = params.containsKey(JAR_PROCESSOR_PACK);
 		options.unpack = params.containsKey(JAR_PROCESSOR_UNPACK);
 		options.repack = params.containsKey(JAR_PROCESSOR_REPACK);
+		options.processAll = params.containsKey(JAR_PROCESSOR_PROCESS_ALL);
 		options.verbose = params.containsKey(VERBOSE);
 		options.signCommand = (String) params.get(JAR_PROCESSOR_SIGN);
 		options.outputDir = (String) params.get(OUTPUT_DIR);

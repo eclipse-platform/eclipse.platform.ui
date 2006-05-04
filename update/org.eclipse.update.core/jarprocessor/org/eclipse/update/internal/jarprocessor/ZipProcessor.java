@@ -35,6 +35,7 @@ public class ZipProcessor {
 	private boolean repacking = false;
 	private boolean unpacking = false;
 	private boolean verbose = false;
+	private boolean processAll = false;
 
 	public void setWorkingDirectory(String dir) {
 		workingDirectory = dir;
@@ -67,6 +68,10 @@ public class ZipProcessor {
 		this.verbose = verbose;
 	}
 
+	public void setProcessAll(boolean all) {
+		this.processAll = all;
+	}
+
 	public void processZip(File zipFile) throws ZipException, IOException {
 		if (verbose)
 			System.out.println("Processing " + zipFile.getPath()); //$NON-NLS-1$
@@ -77,6 +82,7 @@ public class ZipProcessor {
 		File tempDir = new File(getWorkingDirectory(), "temp_" + zipFile.getName()); //$NON-NLS-1$
 		JarProcessor processor = new JarProcessor();
 		processor.setVerbose(verbose);
+		processor.setProcessAll(processAll);
 		processor.setWorkingDirectory(tempDir.getCanonicalPath());
 		if (unpacking) {
 			processor.addProcessStep(unpackStep);
@@ -110,36 +116,44 @@ public class ZipProcessor {
 					FileOutputStream extracted = new FileOutputStream(extractedFile);
 					Utils.transferStreams(entryStream, extracted, true);
 
-					if (unpacking) {
-						processor.processJar(extractedFile);
-						name = name.substring(0, name.length() - Utils.PACKED_SUFFIX.length());
-						extractedFile = new File(tempDir, name);
+					boolean skip = !processAll && Utils.isUnmarkedJar(extractedFile);
+					if (skip) {
+						//skipping this file 
+						entryStream = new FileInputStream(extractedFile);
+						if (verbose)
+							System.out.println(entry.getName() + " is not marked, skipping."); //$NON-NLS-1$
 					} else {
-						processor.clearProcessSteps();
-						if (repack)
-							processor.addProcessStep(packUnpackStep);
-						if (sign)
-							processor.addProcessStep(signStep);
-						processor.processJar(extractedFile);
-						extractedFile = new File(tempDir, extractedFile.getName());
-						if (pack) {
-							processor.clearProcessSteps();
-							processor.addProcessStep(packStep);
+						if (unpacking) {
 							processor.processJar(extractedFile);
+							name = name.substring(0, name.length() - Utils.PACKED_SUFFIX.length());
+							extractedFile = new File(tempDir, name);
+						} else {
+							processor.clearProcessSteps();
+							if (repack)
+								processor.addProcessStep(packUnpackStep);
+							if (sign)
+								processor.addProcessStep(signStep);
+							processor.processJar(extractedFile);
+							extractedFile = new File(tempDir, extractedFile.getName());
+							if (pack) {
+								processor.clearProcessSteps();
+								processor.addProcessStep(packStep);
+								processor.processJar(extractedFile);
 
-							File modifiedFile = new File(tempDir, extractedFile.getName() + Utils.PACKED_SUFFIX);
-							ZipEntry zipEntry = new ZipEntry(name + Utils.PACKED_SUFFIX);
-							entryStream = new FileInputStream(modifiedFile);
-							zipOut.putNextEntry(zipEntry);
-							Utils.transferStreams(entryStream, zipOut, false);
-							entryStream.close();
-							Utils.clear(modifiedFile);
+								File modifiedFile = new File(tempDir, extractedFile.getName() + Utils.PACKED_SUFFIX);
+								ZipEntry zipEntry = new ZipEntry(name + Utils.PACKED_SUFFIX);
+								entryStream = new FileInputStream(modifiedFile);
+								zipOut.putNextEntry(zipEntry);
+								Utils.transferStreams(entryStream, zipOut, false);
+								entryStream.close();
+								Utils.clear(modifiedFile);
+							}
 						}
-					}
-					entryStream = new FileInputStream(extractedFile);
-					if (verbose) {
-						System.out.println("Adding " + entry.getName() + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
-						System.out.println();
+						entryStream = new FileInputStream(extractedFile);
+						if (verbose) {
+							System.out.println("Adding " + entry.getName() + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+							System.out.println();
+						}
 					}
 				}
 				ZipEntry newEntry = new ZipEntry(name);

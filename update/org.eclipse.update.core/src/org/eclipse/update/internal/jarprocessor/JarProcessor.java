@@ -23,6 +23,8 @@ public class JarProcessor {
 	private String workingDirectory = ""; //$NON-NLS-1$
 	private int depth = -1;
 	private boolean verbose = false;
+	private boolean processAll = false;
+	private boolean shouldMarkJars = false;
 
 	static public JarProcessor getUnpackProcessor(Properties properties) {
 		if (!canPerformUnpack())
@@ -59,13 +61,20 @@ public class JarProcessor {
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
+	
+	public void setProcessAll(boolean all){
+		this.processAll = all;
+	}
 
 	public void addProcessStep(IProcessStep step) {
 		steps.add(step);
+		if(step instanceof PackUnpackStep)
+			shouldMarkJars = true;
 	}
 
 	public void clearProcessSteps() {
 		steps.clear();
+		shouldMarkJars = false;
 	}
 
 	public void process(File input, FileFilter filter) throws FileNotFoundException {
@@ -107,6 +116,7 @@ public class JarProcessor {
 	 */
 	private void recreateJar(JarFile jar, JarOutputStream outputJar, Map replacements, File directory) throws IOException {
 		InputStream in = null;
+		boolean marked = false;
 		try {
 			Enumeration entries = jar.entries();
 			for (JarEntry entry = (JarEntry) entries.nextElement(); entry != null; entry = entries.hasMoreElements() ? (JarEntry) entries.nextElement() : null) {
@@ -123,7 +133,17 @@ public class JarProcessor {
 				}
 				newEntry.setTime(entry.getTime());
 				outputJar.putNextEntry(newEntry);
-				Utils.transferStreams(in, outputJar, false);
+				if (shouldMarkJars && entry.getName().equals(Utils.MARK_FILE_NAME)) {
+					Properties props = new Properties();
+					props.load(in);
+					String val = props.getProperty(Utils.MARK_PROPERTY);
+					if(val == null || !Boolean.valueOf(val).booleanValue())
+						props.setProperty(Utils.MARK_PROPERTY, "true"); //$NON-NLS-1$
+					props.store(outputJar, null);
+					marked = true;
+				} else {
+					Utils.transferStreams(in, outputJar, false);
+				}
 				outputJar.closeEntry();
 				in.close();
 
@@ -131,6 +151,14 @@ public class JarProcessor {
 				if (replacement != null) {
 					replacement.delete();
 				}
+			}
+			if (shouldMarkJars && !marked) {
+				JarEntry entry = new JarEntry(Utils.MARK_FILE_NAME);
+				Properties props = new Properties();
+				props.setProperty(Utils.MARK_PROPERTY, "true"); //$NON-NLS-1$
+				outputJar.putNextEntry(entry);
+				props.store(outputJar, null);
+				outputJar.closeEntry();
 			}
 		} finally {
 			Utils.close(outputJar);
@@ -225,14 +253,26 @@ public class JarProcessor {
 		if (!workingDir.exists())
 			workingDir.mkdirs();
 
-		if(depth == 0 && verbose) {
-			System.out.print("Running "); //$NON-NLS-1$ 
-			for (Iterator iter = steps.iterator(); iter.hasNext();) {
-				IProcessStep step = (IProcessStep) iter.next();
-				System.out.print(step.getStepName() + " "); //$NON-NLS-1$
+		boolean skip = !processAll && Utils.isUnmarkedJar(input);
+		if (depth == 0 && verbose) {
+			if (skip)
+				System.out.println("Skipping " + input.getPath()); //$NON-NLS-1$
+			else {
+				System.out.print("Running "); //$NON-NLS-1$ 
+				for (Iterator iter = steps.iterator(); iter.hasNext();) {
+					IProcessStep step = (IProcessStep) iter.next();
+					System.out.print(step.getStepName() + " "); //$NON-NLS-1$
+				}
+				System.out.println("on " + input.getPath()); //$NON-NLS-1$
 			}
-			System.out.println("on " + input.getPath()); //$NON-NLS-1$
 		}
+
+		if (skip) {
+			//This jar was not marked as conditioned, and we are only processing conditioned jars, so do nothing
+			--depth;
+			return;
+		}
+
 		//pre
 		File workingFile = preProcess(input, workingDir);
 

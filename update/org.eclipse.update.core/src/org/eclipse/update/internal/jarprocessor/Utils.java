@@ -12,13 +12,15 @@ package org.eclipse.update.internal.jarprocessor;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.JarFile;
+import java.util.jar.*;
 
 /**
  * @author aniefer
  *
  */
 public class Utils {
+	public static final String MARK_FILE_NAME = "META-INF/eclipse.inf"; //$NON-NLS-1$
+	public static final String MARK_PROPERTY = "pack200.conditioned"; //$NON-NLS-1$
 	public static final String PACK200_PROPERTY = "org.eclipse.update.jarprocessor.pack200"; //$NON-NLS-1$
 	public static final String JRE = "@jre"; //$NON-NLS-1$
 	public static final String PATH = "@path"; //$NON-NLS-1$
@@ -192,6 +194,38 @@ public class Utils {
 		String[] result = new String[count];
 		for (int i = 0; i < count; i++) {
 			result[i] = tokenizer.nextToken();
+		}
+		return result;
+	}
+
+	public static boolean isUnmarkedJar(File jarFile) {
+		if(jarFile == null || !jarFile.exists())
+			return false;
+		
+		boolean result = true;
+		JarFile jar = null;
+
+		try {
+			jar = new JarFile(jarFile, false);
+		} catch (IOException e1) {
+			//not a jar
+			return false;
+		}
+
+		try {
+			JarEntry mark = jar.getJarEntry(MARK_FILE_NAME);
+			if (mark != null) {
+				InputStream in = jar.getInputStream(mark);
+				Properties props = new Properties();
+				props.load(in);
+				in.close();
+				String value = props.getProperty(MARK_PROPERTY);
+				result = !Boolean.valueOf(value).booleanValue();
+			}
+		} catch (IOException e) {
+			return false;
+		} finally {
+			close(jar);
 		}
 		return result;
 	}
