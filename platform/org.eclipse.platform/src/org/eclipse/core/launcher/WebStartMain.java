@@ -187,7 +187,7 @@ public class WebStartMain extends Main {
 				int versionIdPosition = bundleId.lastIndexOf('_');
 				if (versionIdPosition == -1)
 					continue;
-				bundleURLs = (ArrayList) bundleList.get(bundleId.subSequence(0, versionIdPosition));
+				bundleURLs = (ArrayList) bundleList.get(bundleId.substring(0, versionIdPosition));
 				if (bundleURLs == null)
 					continue;
 			}

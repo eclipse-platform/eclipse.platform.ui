@@ -2069,6 +2069,19 @@ public class Main {
         }
     }
 
+    /*
+     * NOTE: It is ok here for EclipsePolicy to use 1.4 methods because the methods
+     * that it calls them from don't exist in Foundation so they will never be called. A more
+     * detailed explanation from Tom:
+     * 
+     * They will never get called because in a pre 1.4 VM the methods 
+     * getPermissions(CodeSource) and implies(ProtectionDomain, Permission) are 
+     * undefined on the Policy class which is what EclipsePolicy extends.  EclipsePolicy 
+     * implements these two methods so it can proxy them to the parent Policy.  
+     * But since these methods are not actually defined on Policy in a pre-1.4 VM 
+     * nobody will actually call them (unless they casted the policy to EclipsePolicy and 
+     * called our methods)
+     */
     private class EclipsePolicy extends Policy {
         // The policy that this EclipsePolicy is replacing
         private Policy policy;
