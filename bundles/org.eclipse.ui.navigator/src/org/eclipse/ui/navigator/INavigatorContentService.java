@@ -277,6 +277,7 @@ public interface INavigatorContentService {
 			boolean isRoot);
 
 	/**
+	 * Restore the state associated with the memento.
 	 * 
 	 * @param aMemento
 	 *            The memento for extensions to use when restoring previous
@@ -285,6 +286,7 @@ public interface INavigatorContentService {
 	void restoreState(IMemento aMemento);
 
 	/**
+	 * Persist any session-to-session state with the memento.
 	 * 
 	 * @param aMemento
 	 *            The memento for extensions to use when persisting previous
@@ -422,5 +424,14 @@ public interface INavigatorContentService {
 	 * @return the {@link INavigatorSaveablesService} for this content service.
 	 */
 	INavigatorSaveablesService getSaveablesService();
+	
+	/** 
+	 * Return the content extension for the given id. 
+	 * 
+	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
+	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
+	 */
+	public INavigatorContentExtension getContentExtensionById(String anExtensionId);
+
 
 }

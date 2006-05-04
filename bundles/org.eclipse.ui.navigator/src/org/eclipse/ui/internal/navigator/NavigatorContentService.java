@@ -541,8 +541,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	
 	/** 
 	 * 
-	 * @param anExtensionId
-	 * @return An instance of the content extension for the given extension id. 
+	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
+	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
 	 */
 	public INavigatorContentExtension getContentExtensionById(String anExtensionId) {
 		NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId);
