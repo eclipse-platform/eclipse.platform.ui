@@ -101,6 +101,12 @@ public interface INavigatorContentExtPtConstants {
 	
 	/** */
 	String ATT_SUPPRESSED_EXT_ID = "suppressedExtensionId"; //$NON-NLS-1$  
+	
+	/** */
+	String ATT_MENU_GROUP_ID = "menuGroupId"; //$NON-NLS-1$
+	
+	/** */
+	String ATT_ASSOCIATED_EXTENSION_ID = "associatedExtensionId"; //$NON-NLS-1$
 
 
 }

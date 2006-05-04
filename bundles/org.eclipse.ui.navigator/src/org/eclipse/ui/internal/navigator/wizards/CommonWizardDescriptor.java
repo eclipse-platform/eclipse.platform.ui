@@ -38,11 +38,15 @@ import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConsta
  * @since 3.2
  */
 public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
-
+	
+	/** The default menu group id for commonWizards without a menuGroupId attribute. */
+	public static final String DEFAULT_MENU_GROUP_ID = "all-uncategorized"; //$NON-NLS-1$
 
 	private String id;
 	
 	private String wizardId;
+	
+	private String menuGroupId; 
 
 	private String type;
 
@@ -147,6 +151,24 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
 	void init() throws WorkbenchException { 
 		wizardId = configElement.getAttribute(ATT_WIZARD_ID);
 		type = configElement.getAttribute(ATT_TYPE);
+		
+		menuGroupId = configElement.getAttribute(ATT_MENU_GROUP_ID);
+		if(menuGroupId == null) {
+			menuGroupId = DEFAULT_MENU_GROUP_ID;
+		}
+		
+		/* 
+		 * The id defaults to the id of the enclosing navigatorContent extension, if any
+		 * If not enclosed, this can be null initially, so it will default to the 
+		 * value of the associatedExtensionId
+		 *  
+		 * Code elsewhere anticipates that this attribute may be null, so there is 
+		 * no need to set it to a default non-null value. Indeed, this will cause
+		 * incorrect behavior. 
+		 * */
+		if(id == null) {
+			id = configElement.getAttribute(ATT_ASSOCIATED_EXTENSION_ID);
+		}
 
 		if (wizardId == null || wizardId.length() == 0) {
 			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
@@ -205,6 +227,17 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
 	public String getId() {
 		return id;
 	}
+	
+
+	/**
+	 * 
+	 * @return A developer-defined logical group that this wizard menu option and 
+	 * 	others like it should be rendered in a localized manner.
+	 */
+	public String getMenuGroupId() {
+		return menuGroupId;
+	}
+
 	
 	public String toString() {
 		return "CommonWizardDescriptor["+getId()+", wizardId="+getWizardId()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

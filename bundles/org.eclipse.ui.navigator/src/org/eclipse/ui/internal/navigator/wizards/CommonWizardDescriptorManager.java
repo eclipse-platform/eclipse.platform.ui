@@ -40,8 +40,10 @@ public class CommonWizardDescriptorManager {
 
 	private static boolean isInitialized = false;
 
-	private static final String[] NO_DESCRIPTORS = new String[0];
+	private static final String[] NO_DESCRIPTOR_IDS = new String[0];
 
+	private static final CommonWizardDescriptor[] NO_DESCRIPTORS = new CommonWizardDescriptor[0];
+	
 	/**
 	 * Find wizards of type 'new'.
 	 */
@@ -98,14 +100,14 @@ public class CommonWizardDescriptorManager {
 	 *            'export' etc).
 	 * @param aContentService 
 	 * 			 The content service to use when deciding visibility.   
-	 * @return the best content descriptor for the given element.
+	 * @return The set of commonWizard ids for the given element
 	 */
 	public String[] getEnabledCommonWizardDescriptorIds(Object anElement,
 			String aType, INavigatorContentService aContentService) {
 
 		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
 		if (commonDescriptors == null) {
-			return NO_DESCRIPTORS;
+			return NO_DESCRIPTOR_IDS;
 		}
 		/* Find other Common Wizard providers which enable for this object */
 		List descriptorIds = new ArrayList();
@@ -120,13 +122,50 @@ public class CommonWizardDescriptorManager {
 			}
 		}
 		String[] wizardIds = new String[descriptorIds.size()];
-		return (String[]) descriptorIds.toArray(wizardIds); // Collections.unmodifiableList(descriptors);
+		return (String[]) descriptorIds.toArray(wizardIds); 
+	}
+	
+
+	/**
+	 * 
+	 * Returns all wizard descriptor(s) which enable for the given element.
+	 * 
+	 * @param anElement
+	 *            the element to return the best content descriptor for
+	 * @param aType
+	 *            The type of wizards to locate (e.g. 'new', 'import', or
+	 *            'export' etc).
+	 * @param aContentService 
+	 * 			 The content service to use when deciding visibility.   
+	 * @return The set of commonWizard descriptors for the element
+	 */
+	public CommonWizardDescriptor[] getEnabledCommonWizardDescriptors(Object anElement,
+			String aType, INavigatorContentService aContentService) {
+
+		Set commonDescriptors = (Set) commonWizardDescriptors.get(aType);
+		if (commonDescriptors == null) {
+			return NO_DESCRIPTORS;
+		}
+		/* Find other Common Wizard providers which enable for this object */
+		List descriptors = new ArrayList();
+		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
+				.hasNext();) {
+			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
+					.next();
+
+			if (isVisible(aContentService, descriptor)
+						&& descriptor.isEnabledFor(anElement)) {
+				descriptors.add(descriptor);
+			}
+		}
+		CommonWizardDescriptor[] enabledDescriptors = new CommonWizardDescriptor[descriptors.size()];
+		return (CommonWizardDescriptor[]) descriptors.toArray(enabledDescriptors);  
 	}
 
 	/**
 	 * @param aContentService
 	 * @param descriptor
-	 * @return
+	 * @return True if the descriptor is visible to the given content service.
 	 */
 	private boolean isVisible(INavigatorContentService aContentService, CommonWizardDescriptor descriptor) {
 		return (aContentService == null || 

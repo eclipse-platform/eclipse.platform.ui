@@ -343,6 +343,23 @@ If the required action provider is disabled or unbound to the current viewer, th
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="menuGroupId" type="string">
+            <annotation>
+               <documentation>
+                  Indicates a user-defined logical grouping id. &lt;b&gt;commonWizard&lt;/b&gt; extensions with matching &lt;i&gt;menuGroupId&lt;/i&gt;s will be indicated as related items when rendered as menu options to endusers. How the grouping will be done is not guaranteed. In particular, clients should never anticipate a menu separator or group marker of the given name to be present in the menu. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="associatedExtensionId" type="string">
+            <annotation>
+               <documentation>
+                  A &lt;b&gt;commonWizard&lt;/b&gt; may be defined as the nested child of a &lt;b&gt;navigatorContent&lt;/b&gt; extension point, in which case the &lt;i&gt;associatedExtensionId&lt;/i&gt; is automatically set to the id of its enclosing &lt;b&gt;naviagatorContent&lt;/b&gt; element. However, when specified as a top-level extension, a &lt;b&gt;commonWizard&lt;/b&gt; may indicate an content extension that it should be associated with explicitly. When a &lt;b&gt;commonWizard&lt;/b&gt; is associated with a content extension, it will inherit the &lt;i&gt;visibility&lt;/i&gt; and the &lt;i&gt;activation&lt;/i&gt; of that content extension. 
+&lt;br&gt;&lt;br&gt;
+That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt;) and the user has the content extension &lt;i&gt;activated&lt;/i&gt; either by default or through the &quot;Available Extensions&quot; dialog, then the &lt;b&gt;commonWizard&lt;/b&gt; menu option would appear. However, when the user &lt;i&gt;deactivates&lt;/i&gt; that content extension, the &lt;b&gt;commonWizard&lt;/b&gt; menu option would no longer be shown in the menu.
+&lt;br&gt;&lt;br&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

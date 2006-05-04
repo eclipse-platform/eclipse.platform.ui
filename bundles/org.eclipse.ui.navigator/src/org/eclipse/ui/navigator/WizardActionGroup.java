@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
@@ -29,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.internal.navigator.wizards.CommonWizardDescriptor;
 import org.eclipse.ui.internal.navigator.wizards.CommonWizardDescriptorManager;
 import org.eclipse.ui.internal.navigator.wizards.WizardShortcutAction;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -93,7 +95,11 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	public static final String TYPE_EXPORT = "export"; //$NON-NLS-1$
 
-	private static final String[] NO_IDS = new String[0];
+	private static final CommonWizardDescriptor[] NO_DESCRIPTORS = new CommonWizardDescriptor[0];
+	
+	private static final String[] NO_IDS = new String[0];  
+	
+	private CommonWizardDescriptor[] descriptors;
 
 	/* a map of (id, IAction)-pairs. */
 	private Map actions;
@@ -105,9 +111,7 @@ public final class WizardActionGroup extends ActionGroup {
 	private IWorkbenchWindow window;
 
 	/* the correct wizard registry for this action group (getRegistry()) */
-	private IWizardRegistry wizardRegistry;
-
-	private String[] wizardActionIds;
+	private IWizardRegistry wizardRegistry; 
 
 	private boolean disposed = false;
 
@@ -188,10 +192,10 @@ public final class WizardActionGroup extends ActionGroup {
 				element = Collections.EMPTY_LIST;
 			}
 			// null should be okay here
-			setWizardActionIds(CommonWizardDescriptorManager.getInstance()
-					.getEnabledCommonWizardDescriptorIds(element, type, contentService));
+			setWizardActionDescriptors(CommonWizardDescriptorManager.getInstance()
+					.getEnabledCommonWizardDescriptors(element, type, contentService));
 		} else {
-			setWizardActionIds(NO_IDS);
+			setWizardActionDescriptors(NO_DESCRIPTORS);
 		}
 	}
 
@@ -202,28 +206,50 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		Assert.isTrue(!disposed);
-
-		IAction action = null;
-		if (wizardActionIds != null) {
-			SortedSet sortedWizards = new TreeSet(ActionComparator.INSTANCE); 
-			for (int i = 0; i < wizardActionIds.length; i++) {
-				if ((action = getAction(wizardActionIds[i])) != null) {
-					sortedWizards.add(action);
+ 
+		if (descriptors != null) { 
+			Map groups = findGroups(); 
+			SortedSet sortedWizards = null;
+			String menuGroupId = null;
+			for (Iterator menuGroupItr = groups.keySet().iterator(); menuGroupItr.hasNext();) {
+				menuGroupId = (String) menuGroupItr.next();
+				sortedWizards = (SortedSet) groups.get(menuGroupId); 
+				menu.add(new Separator(menuGroupId));
+				for (Iterator wizardItr = sortedWizards.iterator(); wizardItr.hasNext();) {
+					menu.add((IAction) wizardItr.next());				
 				}
-			}
-			for (Iterator iter = sortedWizards.iterator(); iter.hasNext();) {
-				menu.add((IAction) iter.next());				
-			}
-
-		}
-
+			} 
+		} 
 	}
+
+	/**
+	 * @return A Map of menuGroupIds to SortedSets of IActions. 
+	 */
+	private synchronized Map/*<String, SortedSet<IAction>>*/  findGroups() {  
+		IAction action = null;
+		Map groups = new TreeMap();
+		SortedSet sortedWizards = null;
+		String menuGroupId = null;
+		for (int i = 0; i < descriptors.length; i++) {
+			menuGroupId = descriptors[i].getMenuGroupId() != null ? 
+							descriptors[i].getMenuGroupId() : CommonWizardDescriptor.DEFAULT_MENU_GROUP_ID;
+			sortedWizards = (SortedSet) groups.get(menuGroupId);
+			if(sortedWizards == null) {
+				groups.put(descriptors[i].getMenuGroupId(), sortedWizards = new TreeSet(ActionComparator.INSTANCE));
+			}  
+			if ((action = getAction(descriptors[i].getWizardId())) != null) {
+				sortedWizards.add(action); 
+			}			
+		}
+		return groups;
+	}
+
 
 	public void dispose() {
 		super.dispose();
 		actions = null;
 		window = null;
-		wizardActionIds = null;
+		descriptors = null;
 		wizardRegistry = null;
 		disposed = true;
 	}
@@ -264,20 +290,26 @@ public final class WizardActionGroup extends ActionGroup {
 	/**
 	 * @return Returns the wizardActionIds.
 	 */
-	public String[] getWizardActionIds() {
-		return wizardActionIds;
+	public synchronized String[] getWizardActionIds() { 
+		if(descriptors != null && descriptors.length > 0) { 
+			String[] wizardActionIds = new String[descriptors.length]; 
+			for (int i = 0; i < descriptors.length; i++) {
+				wizardActionIds[i] = descriptors[i].getWizardId();
+			}
+			return wizardActionIds;
+		}
+		return NO_IDS;
 	}
 
 	/**
-	 * @param theWizardActionIds
+	 * @param theWizardDescriptors
 	 *            The wizard action ids to set. These should be defined through
 	 *            <b>org.eclipse.ui.xxxWizards</b>
 	 */
-	protected void setWizardActionIds(String[] theWizardActionIds) {
-		Arrays.sort(theWizardActionIds);
-		wizardActionIds = theWizardActionIds;
+	protected synchronized void setWizardActionDescriptors(CommonWizardDescriptor[] theWizardDescriptors) { 
+		descriptors = theWizardDescriptors;
 	}
-
+	  
 	private static class ActionComparator implements Comparator {
 		
 		private static final ActionComparator INSTANCE = new ActionComparator();
@@ -287,5 +319,5 @@ public final class WizardActionGroup extends ActionGroup {
 		public int compare(Object arg0, Object arg1) {
 			return ((IAction)arg0).getText().compareTo(((IAction)arg1).getText());
 		}
-	}
+	} 
 }
