@@ -38,16 +38,12 @@ public class IdentityConverter implements IConverter {
 		this.fromType = fromType;
 		this.toType = toType;
 	}
-	
+
 	private Class[][] primitiveMap = new Class[][] {
-			{Integer.TYPE, Integer.class},
-			{Short.TYPE, Short.class},
-			{Long.TYPE, Long.class},
-			{Double.TYPE, Double.class},
-			{Byte.TYPE, Byte.class},
-			{Float.TYPE, Float.class},
-			{Boolean.TYPE, Boolean.class},
-	};
+			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
+			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
+			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },
+			{ Boolean.TYPE, Boolean.class }, };
 
 	/*
 	 * (non-Javadoc)
@@ -60,31 +56,40 @@ public class IdentityConverter implements IConverter {
 				throw new BindingException("Cannot convert null to a primitive"); //$NON-NLS-1$
 			}
 		}
-		Class sourceClass = source.getClass();
-		if (toType.isPrimitive() || sourceClass.isPrimitive()) {
-			if (sourceClass.equals(toType) || isPrimitiveTypeMatchedWithBoxed(sourceClass, toType)) {
-				return source;
+		if (source != null) {
+			Class sourceClass = source.getClass();
+			if (toType.isPrimitive() || sourceClass.isPrimitive()) {
+				if (sourceClass.equals(toType)
+						|| isPrimitiveTypeMatchedWithBoxed(sourceClass, toType)) {
+					return source;
+				}
+				throw new BindingException(
+						"Boxed and unboxed types do not match"); //$NON-NLS-1$
 			}
-			throw new BindingException("Boxed and unboxed types do not match"); //$NON-NLS-1$
-		}
-		if (!toType.isAssignableFrom(sourceClass)) {
-			throw new BindingException(sourceClass.getName() + " is not assignable to " + toType.getName()); //$NON-NLS-1$
+			if (!toType.isAssignableFrom(sourceClass)) {
+				throw new BindingException(sourceClass.getName()
+						+ " is not assignable to " + toType.getName()); //$NON-NLS-1$
+			}
 		}
 		return source;
 	}
 
 	/**
 	 * (Non-API) isPrimitiveTypeMatchedWithBoxed.
+	 * 
 	 * @param sourceClass
-	 * @param toClass 
+	 * @param toClass
 	 * @return true if sourceClass and toType are matched primitive/boxed types
 	 */
-	public boolean isPrimitiveTypeMatchedWithBoxed(Class sourceClass, Class toClass) {
+	public boolean isPrimitiveTypeMatchedWithBoxed(Class sourceClass,
+			Class toClass) {
 		for (int i = 0; i < primitiveMap.length; i++) {
-			if (toClass.equals(primitiveMap[i][0]) && sourceClass.equals(primitiveMap[i][1])) {
+			if (toClass.equals(primitiveMap[i][0])
+					&& sourceClass.equals(primitiveMap[i][1])) {
 				return true;
 			}
-			if (sourceClass.equals(primitiveMap[i][0]) && toClass.equals(primitiveMap[i][1])) {
+			if (sourceClass.equals(primitiveMap[i][0])
+					&& toClass.equals(primitiveMap[i][1])) {
 				return true;
 			}
 		}

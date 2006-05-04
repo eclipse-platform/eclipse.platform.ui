@@ -238,7 +238,7 @@ public class ValueBinding extends Binding {
 	}
 
 	public void updateTargetFromModel() {
-		doUpdateTargetFromModel(null);
+		doUpdateTargetFromModel(Diffs.createValueDiff(null, model.getValue()));
 	}
 
 	/**
@@ -268,6 +268,7 @@ public class ValueBinding extends Binding {
 				return;
 			}
 
+			//FIXME ValueBinding Needs Separate modelValidator to perform model to target validation.
 			doValidate(target.getValue());
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
 			fireBindingEvent(e);

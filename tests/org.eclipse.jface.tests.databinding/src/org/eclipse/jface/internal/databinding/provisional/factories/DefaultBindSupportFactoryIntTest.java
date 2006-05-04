@@ -14,7 +14,6 @@ package org.eclipse.jface.internal.databinding.provisional.factories;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.model.ModelObject;
-import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
@@ -23,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBinding
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.widgets.Widget;
 
-public class DefaultBindSupportFactoryTest extends TestCase {
+public class DefaultBindSupportFactoryIntTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
@@ -52,9 +51,14 @@ public class DefaultBindSupportFactoryTest extends TestCase {
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertEquals("String value does not match", "", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
+
+		dataObject.setStringVal(null);
+		assertEquals("Int value does not match", 910, dataObject.getIntVal());
+		assertNull("String value does not match", dataObject.getStringVal());
+		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 
-	public void testIntToIntegerConverter() {
+	public void testIntegerToIntConverter() {
 		ctx.bind(new Property(dataObject, "integerVal"), new Property(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
@@ -64,7 +68,7 @@ public class DefaultBindSupportFactoryTest extends TestCase {
 		
 		dataObject.setIntegerVal(new Integer(910));
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
-		assertEquals("String value does not match", new Integer(910), dataObject.getIntegerVal());
+		assertEquals("Integer value does not match", new Integer(910), dataObject.getIntegerVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setIntegerVal(null);
@@ -73,12 +77,29 @@ public class DefaultBindSupportFactoryTest extends TestCase {
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 	}
 	
-	public void testIntToObjectConverter() {
-			try {
-				ctx.bind(new Property(dataObject, "integerVal"), new Property(dataObject, "intVal"), null);
-				fail("Illegal binding from Integer to int");
-			} catch (BindingException be) {
-			}
+	public void testObjectToIntegerConverter() {
+		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "intVal"), null);
+		
+		dataObject.setIntVal(789);
+		assertEquals("Int value does not match", 789, dataObject.getIntVal());
+		assertEquals("Object value does not match", new Integer(789), dataObject.getObjectVal());
+		assertNull("No errors should be found.", ctx.getValidationError().getValue());
+		
+		dataObject.setObjectVal(new Integer(910));
+		assertEquals("Int value does not match", 910, dataObject.getIntVal());
+		assertEquals("Object value does not match", new Integer(910), dataObject.getObjectVal());
+		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
+
+		dataObject.setObjectVal(null);
+		assertEquals("Int value does not match", 910, dataObject.getIntVal());
+		assertNull("Object value does not match", dataObject.getObjectVal());
+		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
+
+		Object object = new Object();
+		dataObject.setObjectVal(object);
+		assertEquals("Int value does not match", 910, dataObject.getIntVal());
+		assertSame("Object value does not match", object, dataObject.getObjectVal());
+		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 	
 	public class TestDataObject extends ModelObject {
@@ -91,7 +112,7 @@ public class DefaultBindSupportFactoryTest extends TestCase {
 			return integerVal;
 		}
 		public void setIntegerVal(Integer integerVal) {
-			Object oldVal = integerVal;
+			Object oldVal = this.integerVal;
 			this.integerVal = integerVal;
 			firePropertyChange("integerVal", oldVal, this.integerVal);
 		}

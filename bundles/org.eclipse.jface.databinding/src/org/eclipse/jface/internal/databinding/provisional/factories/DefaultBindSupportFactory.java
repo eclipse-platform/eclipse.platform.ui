@@ -24,6 +24,7 @@ import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityCon
 import org.eclipse.jface.internal.databinding.provisional.conversion.ToStringConverter;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimativeValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ReadOnlyValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2BigDecimalValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2BytePrimativeValidator;
@@ -223,36 +224,36 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 					.put(
 							new Pair(
 									"java.lang.String", INTEGER_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2IntegerPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									INTEGER_TYPE, "java.lang.Integer"), new IdentityConverter(Integer.TYPE, Integer.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									INTEGER_TYPE, "java.lang.Integer"), new IdentityConverter(Integer.TYPE, Integer.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									INTEGER_TYPE, "java.lang.String"), new ToStringConverter(Integer.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									INTEGER_TYPE, "java.lang.Object"), new IdentityConverter(Integer.TYPE, Object.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									INTEGER_TYPE, "java.lang.Object"), new IdentityConverter(Integer.TYPE, Object.class)); //$NON-NLS-1$
 
 			// Byte.TYPE
 			converterMap
 					.put(
 							new Pair(
 									"java.lang.String", BYTE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BytePrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									BYTE_TYPE, "java.lang.Byte"), new IdentityConverter(Byte.TYPE, Byte.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									BYTE_TYPE, "java.lang.Byte"), new IdentityConverter(Byte.TYPE, Byte.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									BYTE_TYPE, "java.lang.String"), new ToStringConverter(Byte.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									BYTE_TYPE, "java.lang.Object"), new IdentityConverter(Byte.TYPE, Object.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									BYTE_TYPE, "java.lang.Object"), new IdentityConverter(Byte.TYPE, Object.class)); //$NON-NLS-1$
 
 
 			// Double.TYPE
@@ -260,54 +261,54 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 					.put(
 							new Pair(
 									"java.lang.String", DOUBLE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2DoublePrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									DOUBLE_TYPE, "java.lang.Double"), new IdentityConverter(Double.TYPE, Double.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									DOUBLE_TYPE, "java.lang.Double"), new IdentityConverter(Double.TYPE, Double.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									DOUBLE_TYPE, "java.lang.String"), new ToStringConverter(Double.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									DOUBLE_TYPE, "java.lang.Object"), new IdentityConverter(Double.TYPE, Object.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									DOUBLE_TYPE, "java.lang.Object"), new IdentityConverter(Double.TYPE, Object.class)); //$NON-NLS-1$
 			
 			// Boolean.TYPE
 			converterMap
 					.put(
 							new Pair(
 									"java.lang.String", BOOLEAN_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BooleanPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									BOOLEAN_TYPE, "java.lang.Boolean"), new IdentityConverter(Boolean.TYPE, Boolean.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									BOOLEAN_TYPE, "java.lang.Boolean"), new IdentityConverter(Boolean.TYPE, Boolean.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									BOOLEAN_TYPE, "java.lang.String"), new ToStringConverter(Boolean.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									BOOLEAN_TYPE, "java.lang.Object"), new IdentityConverter(Boolean.TYPE, Object.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									BOOLEAN_TYPE, "java.lang.Object"), new IdentityConverter(Boolean.TYPE, Object.class)); //$NON-NLS-1$
 
 			// Float.TYPE
 			converterMap
 					.put(
 							new Pair(
 									"java.lang.String", FLOAT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2FloatPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									FLOAT_TYPE, "java.lang.Float"), new IdentityConverter(Float.TYPE, Float.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									FLOAT_TYPE, "java.lang.Float"), new IdentityConverter(Float.TYPE, Float.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									FLOAT_TYPE, "java.lang.String"), new ToStringConverter(Float.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									FLOAT_TYPE, "java.lang.Object"), new IdentityConverter(Float.TYPE, Object.class)); //$NON-NLS-1$		
+			converterMap
+					.put(
+							new Pair(
+									FLOAT_TYPE, "java.lang.Object"), new IdentityConverter(Float.TYPE, Object.class)); //$NON-NLS-1$		
 
 		
 			// Short.TYPE
@@ -315,18 +316,18 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 					.put(
 							new Pair(
 									"java.lang.String", SHORT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2ShortPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									SHORT_TYPE, "java.lang.Short"), new IdentityConverter(Short.TYPE, Short.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									SHORT_TYPE, "java.lang.Short"), new IdentityConverter(Short.TYPE, Short.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									SHORT_TYPE, "java.lang.String"), new ToStringConverter(Short.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									SHORT_TYPE, "java.lang.Object"), new IdentityConverter(Short.TYPE, Object.class)); //$NON-NLS-1$		
+			converterMap
+					.put(
+							new Pair(
+									SHORT_TYPE, "java.lang.Object"), new IdentityConverter(Short.TYPE, Object.class)); //$NON-NLS-1$		
 
 		
 			// Long.TYPE
@@ -334,18 +335,18 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 					.put(
 							new Pair(
 									"java.lang.String", LONG_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2LongPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
-//			converterMap
-//					.put(
-//							new Pair(
-//									LONG_TYPE, "java.lang.Long"), new IdentityConverter(Long.TYPE, Long.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(
+									LONG_TYPE, "java.lang.Long"), new IdentityConverter(Long.TYPE, Long.class)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(
 									LONG_TYPE, "java.lang.String"), new ToStringConverter(Long.TYPE)); //$NON-NLS-1$
-//			converterMap
-//					.put(
-//							new Pair(
-//									LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		
+			converterMap
+					.put(
+							new Pair(
+									LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		
 		
 		}
 			
@@ -596,6 +597,23 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 
 			associate(String.class, BigDecimal.class,
 					new String2BigDecimalValidator());
+
+
+			associate(Integer.class, Integer.TYPE, new ObjectToPrimativeValidator(Integer.TYPE));
+			associate(Byte.class, Byte.TYPE, new ObjectToPrimativeValidator(Byte.TYPE));
+			associate(Short.class, Short.TYPE, new ObjectToPrimativeValidator(Short.TYPE));
+			associate(Long.class, Long.TYPE, new ObjectToPrimativeValidator(Long.TYPE));
+			associate(Float.class, Float.TYPE, new ObjectToPrimativeValidator(Float.TYPE));
+			associate(Double.class, Double.TYPE, new ObjectToPrimativeValidator(Double.TYPE));
+			associate(Boolean.class, Boolean.TYPE, new ObjectToPrimativeValidator(Boolean.TYPE));
+			
+			associate(Object.class, Integer.TYPE, new ObjectToPrimativeValidator(Integer.TYPE));
+			associate(Object.class, Byte.TYPE, new ObjectToPrimativeValidator(Byte.TYPE));
+			associate(Object.class, Short.TYPE, new ObjectToPrimativeValidator(Short.TYPE));
+			associate(Object.class, Long.TYPE, new ObjectToPrimativeValidator(Long.TYPE));
+			associate(Object.class, Float.TYPE, new ObjectToPrimativeValidator(Float.TYPE));
+			associate(Object.class, Double.TYPE, new ObjectToPrimativeValidator(Double.TYPE));
+			associate(Object.class, Boolean.TYPE, new ObjectToPrimativeValidator(Boolean.TYPE));
 
 			// Regex-implemented validators here...
 			// associate(String.class, Character.TYPE, new RegexStringValidator(
