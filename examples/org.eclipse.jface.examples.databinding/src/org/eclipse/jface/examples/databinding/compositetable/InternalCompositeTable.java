@@ -233,10 +233,15 @@ public class InternalCompositeTable extends Composite implements Listener {
 		Display.getCurrent().addFilter(SWT.KeyDown, displayKeyDownFilter);
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
-				sliderHolder.getParent().layout(true);
-				sliderHolder.layout(true);
-				Point sliderHolderSize = sliderHolder.getSize();
-				slider.setBounds(0, 0, sliderHolderSize.x, sliderHolderSize.y);
+				if (!InternalCompositeTable.this.isDisposed() &&
+						!sliderHolder.isDisposed() &&
+						!sliderHolder.getParent().isDisposed()) 
+				{
+					sliderHolder.getParent().layout(true);
+					sliderHolder.layout(true);
+					Point sliderHolderSize = sliderHolder.getSize();
+					slider.setBounds(0, 0, sliderHolderSize.x, sliderHolderSize.y);
+				}
 			}
 		});
 	}
