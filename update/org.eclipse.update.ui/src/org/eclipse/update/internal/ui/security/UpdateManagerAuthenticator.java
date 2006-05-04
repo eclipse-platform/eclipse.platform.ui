@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,15 +23,16 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	 */
 	protected PasswordAuthentication getPasswordAuthentication() {
 		// String protocol = getRequestingProtocol();
-		String host = getRequestingHost(); // can be null;
 		InetAddress address = getRequestingSite(); // can be null;
 		// int port = getRequestingPort();
 		String prompt = getRequestingPrompt(); // realm or message, not documented that can be null
 		// String scheme = getRequestingScheme(); // not documented that can be null
 
-		String hostString = host;
-		if (hostString == null && address != null) {
-			address.getHostName();
+		 // get the host name from the address since #getRequestingHost
+		 // is not available in the foundation 1.0 class libraries
+		String hostString = null;
+		if (address != null) {
+			hostString = address.getHostName();
 		}
 		if (hostString == null) {
 			hostString = ""; //$NON-NLS-1$

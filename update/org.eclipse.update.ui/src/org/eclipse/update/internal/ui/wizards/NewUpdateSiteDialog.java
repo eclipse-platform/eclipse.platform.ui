@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.update.internal.ui.wizards;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.update.internal.ui.URLCoder;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
@@ -155,7 +155,7 @@ public class NewUpdateSiteDialog extends StatusDialog {
 		}
 	
 		try {
-			URL newURL = new URL(URLDecoder.decode(url.getText().trim(), "UTF-8")); //$NON-NLS-1$
+			URL newURL = new URL(URLCoder.decode(url.getText().trim()));
 			if (url.getEditable()) {
 				okButton.setEnabled(!newURL.getProtocol().equals("file")); //$NON-NLS-1$
 				if (newURL.getProtocol().equals("file")) { //$NON-NLS-1$

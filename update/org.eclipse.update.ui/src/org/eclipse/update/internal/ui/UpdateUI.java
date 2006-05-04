@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.*;
 import java.net.*;
-import java.net.URLEncoder;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
@@ -334,7 +333,7 @@ public class UpdateUI extends AbstractUIPlugin {
 					+ WEB_APP_ID
 					+ "/install"; //$NON-NLS-1$
 			try {
-				value = URLEncoder.encode(value, "UTF-8"); //$NON-NLS-1$
+				value = URLCoder.encode(value);
 			} catch (UnsupportedEncodingException e) {
 			}
 			return value;
