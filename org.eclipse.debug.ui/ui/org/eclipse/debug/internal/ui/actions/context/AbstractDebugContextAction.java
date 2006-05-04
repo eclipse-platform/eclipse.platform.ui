@@ -138,13 +138,8 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         ISelection activeContext = manager.getActiveContext(window);
         if (activeContext != null) {
             contextActivated(activeContext, null);
-            // the window action is not instantiated until invoked the first
-            // time must wait for enablement update or action will not run the first
-            // time it is invoked, when it might be pending enablement
-//            try {
-//                fUpdateJob.join();
-//            } catch (InterruptedException e) {
-//            }
+        } else {
+        	setEnabled(false);
         }
     }
 
