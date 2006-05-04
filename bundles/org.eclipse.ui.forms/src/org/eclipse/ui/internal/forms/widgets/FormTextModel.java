@@ -293,6 +293,23 @@ public class FormTextModel {
 			boolean doFill = value.equalsIgnoreCase("true"); //$NON-NLS-1$
 			segment.setFill(doFill);
 		}
+		try {
+			Node width = control.getAttributes().getNamedItem("width"); //$NON-NLS-1$
+			if (width!=null) {
+				String value = width.getNodeValue();
+				int doWidth = Integer.parseInt(value);
+				segment.setWidth(doWidth);
+			}
+			Node height = control.getAttributes().getNamedItem("height"); //$NON-NLS-1$
+			if (height!=null) {
+				String value = height.getNodeValue();
+				int doHeight = Integer.parseInt(value);
+				segment.setHeight(doHeight);
+			}
+		}
+		catch (NumberFormatException e) {
+			// ignore invalid width or height
+		}
 		return segment;
 	}
 

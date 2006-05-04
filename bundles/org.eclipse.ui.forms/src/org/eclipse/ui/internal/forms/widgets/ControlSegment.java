@@ -21,12 +21,22 @@ import org.eclipse.swt.widgets.Control;
 
 public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	private boolean fill;
+	private int width = SWT.DEFAULT;
+	private int height = SWT.DEFAULT;
 	
 	public ControlSegment() {
 	}
 	
 	public void setFill(boolean fill) {
 		this.fill = fill;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	public void setHeight(int height) {
+		this.height = height;
 	}
 	
 	public Control getControl(Hashtable resourceTable) {
@@ -47,6 +57,10 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		Point size = control.computeSize(realWhint, SWT.DEFAULT);
 		if (wHint!=SWT.DEFAULT && fill)
 			size.x = Math.max(size.x, wHint);
+		if (width !=SWT.DEFAULT)
+			size.x = width;
+		if (height != SWT.DEFAULT)
+			size.y = height;
 		return size;
 	}
 	
