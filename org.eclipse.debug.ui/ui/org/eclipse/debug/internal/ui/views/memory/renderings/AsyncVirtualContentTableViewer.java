@@ -124,19 +124,23 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						Table table = getTable();
-						// if table size is zero, the rendering has not been made visible
-						// cannot pack until the rendering is visible
-						if (table.getSize().x > 0)
+						
+						if (!table.isDisposed())
 						{
-							TableColumn[] columns = table.getColumns();
-							for (int i=0 ;i<columns.length-1; i++)
-							{	
-								columns[i].pack();
-							}	
-						}
-						else
-						{
-							fPendingResizeColumns = true;
+							// if table size is zero, the rendering has not been made visible
+							// cannot pack until the rendering is visible
+							if (table.getSize().x > 0)
+							{
+								TableColumn[] columns = table.getColumns();
+								for (int i=0 ;i<columns.length-1; i++)
+								{	
+									columns[i].pack();
+								}	
+							}
+							else
+							{
+								fPendingResizeColumns = true;
+							}
 						}
 						return Status.OK_STATUS;
 					}};

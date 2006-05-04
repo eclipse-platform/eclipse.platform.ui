@@ -225,7 +225,10 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     public void showColumnHeader(final boolean showHeaders) {
         WorkbenchJob job = new WorkbenchJob("Set Header Visibility") { //$NON-NLS-1$
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                fTable.setHeaderVisible(showHeaders);
+            	if (!fTable.isDisposed())
+            	{
+            		fTable.setHeaderVisible(showHeaders);
+            	}
                 return Status.OK_STATUS;
             }
         };
