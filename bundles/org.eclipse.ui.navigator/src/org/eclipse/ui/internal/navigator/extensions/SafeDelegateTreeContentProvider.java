@@ -13,12 +13,15 @@ package org.eclipse.ui.internal.navigator.extensions;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonContentProvider;
 import org.eclipse.ui.navigator.IMementoAware;
@@ -55,7 +58,20 @@ public class SafeDelegateTreeContentProvider implements
 	 * 
 	 */
 	public void dispose() {
-		contentProvider.dispose();
+		SafeRunner.run(new ISafeRunnable() {
+
+			public void handleException(Throwable exception) { 
+				String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;
+				NavigatorPlugin.logError(0, msg, exception);
+				
+			}
+
+			public void run() throws Exception {
+				contentProvider.dispose(); 
+			}
+			
+		});
+		
 	}
 
 	/*
@@ -100,9 +116,22 @@ public class SafeDelegateTreeContentProvider implements
 		return contentProvider.hashCode();
 	}
 
-	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
+	public void inputChanged(final Viewer aViewer, final Object anOldInput, final Object aNewInput) {
 		viewer = aViewer;
-		contentProvider.inputChanged(aViewer, anOldInput, aNewInput);
+		
+		SafeRunner.run(new ISafeRunnable() {
+
+			public void handleException(Throwable exception) { 
+				String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;
+				NavigatorPlugin.logError(0, msg, exception);
+				
+			}
+
+			public void run() throws Exception {
+				contentProvider.inputChanged(aViewer, anOldInput, aNewInput);
+			}
+			
+		});
 	}
 
 	/*

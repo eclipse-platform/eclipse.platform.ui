@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
@@ -205,24 +207,42 @@ public class NavigatorContentExtension implements IMementoAware,
 	 */
 	public void dispose() {
 		try {
-			synchronized (this) { 
-				try {
-					if (contentProvider != null) {
-						contentProvider.dispose();
-					} 
-				} catch (Throwable t) {
-					String msg = t.getMessage() != null ? t.getMessage() : t.toString() ;
-					NavigatorPlugin.logError(0, msg, t);
-				}	
+			synchronized (this) {  
+					
+				SafeRunner.run(new ISafeRunnable() {
 
-				try {
-					if (labelProvider != null) {
-						labelProvider.dispose();
-					}	  
-				} catch (Throwable t) {
-					String msg = t.getMessage() != null ? t.getMessage() : t.toString() ;
-					NavigatorPlugin.logError(0, msg, t);
-				}			
+					public void handleException(Throwable exception) { 
+						String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;							
+						NavigatorPlugin.logError(0, msg, exception);
+						
+					}
+
+					public void run() throws Exception {
+						if (contentProvider != null) {
+							contentProvider.dispose();
+						} 
+
+					}
+					
+				}); 
+				
+				SafeRunner.run(new ISafeRunnable() {
+
+					public void handleException(Throwable exception) { 
+						String msg = exception.getMessage() != null ? exception.getMessage() : exception.toString() ;							
+						NavigatorPlugin.logError(0, msg, exception);
+						
+					}
+
+					public void run() throws Exception {
+						if (labelProvider != null) {
+							labelProvider.dispose();
+						}
+
+					}
+					
+				});				
+ 	
 			}
 		} finally {
 			isDisposed = true;
