@@ -64,7 +64,7 @@ public interface IRefactoringCoreStatusCodes {
 	public static final int UNSUPPORTED_REFACTORING_HISTORY_VERSION= 10005;
 
 	/**
-	 * Status code (value 10006) indicating that a general error has occured
+	 * Status code (value 10006) indicating that a general error has occurred
 	 * during I/O of a refactoring history.
 	 * 
 	 * @since 3.2
