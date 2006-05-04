@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,11 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A table of label providers keyed by debug model identifiers.
 	 */
 	private HashMap fLabelProviders= new HashMap(5);
+	
+	/**
+	 * Whether the image registry has been initialized.
+	 */
+	private boolean fInitialized = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
@@ -135,6 +140,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
+		initImageRegistries();
 		// Attempt to delegate
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
 		if (lp != null) {
@@ -452,4 +458,16 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 		return false;
 	}
+	
+	/**
+	 * Initialize image registries that this model presentation references to
+	 */
+	private synchronized void initImageRegistries() {
+		// if not initialized and this is called on the UI thread
+		if (!fInitialized && Thread.currentThread().equals(DebugUIPlugin.getStandardDisplay().getThread())) {
+			// force image registries to be created on the UI thread
+			DebugUIPlugin.getDefault().getImageRegistry();
+			fInitialized = true;
+		}
+	}	
 }
