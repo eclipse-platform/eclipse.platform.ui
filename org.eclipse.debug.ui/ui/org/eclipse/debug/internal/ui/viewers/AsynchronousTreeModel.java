@@ -100,23 +100,24 @@ public class AsynchronousTreeModel extends AsynchronousModel {
                     }
                 }
             }
-            // refresh the parent, if present
-            element = treePath.getSegment(treePath.getSegmentCount() - 2);
-            nodes  = getNodes(element);
-            if (nodes != null) {
-                // find the right node
-                for (int i = 0; i < nodes.length; i++) {
-                    final ModelNode node = nodes[i];
-                    if (treePath.startsWith(node.getTreePath(), null)) {
-                    	Runnable runnable = new Runnable() {
-							public void run() {
-								getViewer().nodeChanged(node);
-							}
-						};
-                        getViewer().getControl().getDisplay().asyncExec(runnable);
-                        return;
-                    }
-                }
+            // find the first parent present, and update its children
+            // to avoid a pending add in the subtree adding something
+            // that has been removed
+            int index = treePath.getSegmentCount() - 2;
+            while (index > 0) {
+	            element = treePath.getSegment(index);
+	            nodes  = getNodes(element);
+	            if (nodes != null) {
+	                // find the right node
+	                for (int i = 0; i < nodes.length; i++) {
+	                    ModelNode node = nodes[i];
+	                    if (treePath.startsWith(node.getTreePath(), null)) {
+	                    	updateChildren(node);
+	                        return;
+	                    }
+	                }
+	            }
+	            index--;
             }
         }
     }	
