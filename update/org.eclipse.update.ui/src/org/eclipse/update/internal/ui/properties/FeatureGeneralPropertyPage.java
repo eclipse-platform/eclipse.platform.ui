@@ -164,7 +164,7 @@ public class FeatureGeneralPropertyPage
 		for (int i = 0; i < value.length(); ++i) {
 			char c = value.charAt(i);
 			if ('&' == c) {
-				result.append("&&");
+				result.append("&&"); //$NON-NLS-1$
 			} else {
 				result.append(c);
 			}
