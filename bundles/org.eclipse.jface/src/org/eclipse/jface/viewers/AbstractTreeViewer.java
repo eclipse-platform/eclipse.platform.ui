@@ -2207,11 +2207,21 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         int size = v.size();
         List newSelection = new ArrayList(size);
         for (int i = 0; i < size; ++i) {
-            // Use internalExpand since item may not yet be created. See
+            Object elementOrTreePath = v.get(i);
+			// Use internalExpand since item may not yet be created. See
             // 1G6B1AR.
-            Widget w = internalExpand(v.get(i), false);
+        	Widget w = internalExpand(elementOrTreePath, false);
             if (w instanceof Item) {
                 newSelection.add(w);
+            } else if (w == null && elementOrTreePath instanceof TreePath) {
+            	TreePath treePath = (TreePath) elementOrTreePath;
+				Object element = treePath.getLastSegment();
+				if (element != null) {
+					w = internalExpand(element, false);
+					if (w instanceof Item) {
+						newSelection.add(w);
+					}
+				}
             }
         }
         setSelection(newSelection);
