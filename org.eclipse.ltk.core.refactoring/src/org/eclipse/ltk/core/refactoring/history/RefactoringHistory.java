@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 /**
- * Object which represents a sequence of executed refactorings with time
+ * Object which represents a sequence of executed refactorings with optional time
  * information.
  * <p>
  * Refactoring histories are exposed by the refactoring history service as
