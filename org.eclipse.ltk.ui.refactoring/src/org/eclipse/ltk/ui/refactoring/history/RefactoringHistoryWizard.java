@@ -1274,7 +1274,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Hook method which is called for each change before it is displayed in a
 	 * preview page. The default implementation returns <code>true</code>.
 	 * <p>
-	 * Note: This API must not be used from outside the refactoring framework.
+	 * Subclasses may reimplement this method to perform any special filtering
+	 * of preview changes.
 	 * </p>
 	 * 
 	 * @param change
@@ -1290,7 +1291,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * Hook method which is called for each status entry before it is displayed
 	 * in a wizard page. The default implementation returns <code>true</code>.
 	 * <p>
-	 * Note: This API must not be used from outside the refactoring framework.
+	 * Subclasses may reimplement this method to perform any special filtering
+	 * of status entries on error pages.
 	 * </p>
 	 * 
 	 * @param entry
