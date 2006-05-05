@@ -168,8 +168,8 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	public boolean equals(Object obj) {
 		if (obj instanceof TreeSelection) {
 			TreeSelection selection = (TreeSelection) obj;
-			int size = size();
-			if (selection.size() == size) {
+			int size = getPaths().length;
+			if (selection.getPaths().length == size) {
 				if (size > 0) {
 					for (int i = 0; i < paths.length; i++) {
 						if (!paths[i].equals(selection.paths[i])) {
