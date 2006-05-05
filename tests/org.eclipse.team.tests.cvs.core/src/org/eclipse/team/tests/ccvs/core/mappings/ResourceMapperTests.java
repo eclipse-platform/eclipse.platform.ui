@@ -679,4 +679,34 @@ public class ResourceMapperTests extends EclipseTest {
 		}
 	}
     
+	public void testBug134517() throws Exception {
+        IProject project = createProject("testBug134517", new String[] { "file1.txt", "file2.txt"});
+        IProject copy = checkoutCopy(project, "-copy");
+        addResources(copy, new String[] { "file0.txt", 
+        		"new_folder1/", "new_folder1/file2.txt", "new_folder1/new_folder2/", 
+        		"new_folder1/new_folder2/new_folder3/", "new_folder1/new_folder2/new_folder3/file3.txt"  }, true);
+        IResource[] resources = new IResource[] {
+        		project.getFile("file0.txt"),
+        		project.getFile("file1.txt"),
+        		project.getFile("new_folder1/file2.txt"),
+        		project.getFile("new_folder1/new_folder2/new_folder3/file3.txt")
+        };
+        update(asResourceMapping(resources, IResource.DEPTH_ZERO), null);
+        assertEquals(project, copy);
+	}
+	
+	public void testDeepNewFolder() throws Exception {
+        IProject project = createProject("testBug134517", new String[] { "file1.txt", "file2.txt"});
+        IProject copy = checkoutCopy(project, "-copy");
+        addResources(copy, new String[] {
+        		"new_folder1/", 
+        		"new_folder1/new_folder2/", 
+        		"new_folder1/new_folder2/new_folder3/", 
+        		"new_folder1/new_folder2/new_folder3/file3.txt"  }, true);
+        IResource[] resources = new IResource[] {
+        		project.getFolder("new_folder1/new_folder2/new_folder3/")
+        };
+        update(asResourceMapping(resources, IResource.DEPTH_INFINITE), null);
+        assertEquals(project, copy);
+	}
 }
