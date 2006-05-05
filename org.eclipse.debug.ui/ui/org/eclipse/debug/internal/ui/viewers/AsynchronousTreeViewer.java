@@ -721,7 +721,14 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
         while (parent != null && !parent.isDisposed()) {
             Object parentElement = parent.getData();
             if (parentElement == null) {
-            	return null;
+            	// this is a fix for bug 139859:
+            	// on Mac, an item gets a 'selection' event before 'set data' when 
+            	// scrolling with arrow keys. so this forces the item to get a
+            	// 'set data' callback
+                parent.getItemCount(); 
+                parentElement = parent.getData();
+                if (parentElement == null)
+                    return null;
             }
 			path.add(0, parentElement);
             parent = parent.getParentItem();
