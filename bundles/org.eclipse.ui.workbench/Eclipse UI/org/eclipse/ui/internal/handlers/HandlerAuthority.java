@@ -412,6 +412,27 @@ final class HandlerAuthority extends ExpressionAuthority {
 									changedCommandIds.add(activation
 											.getCommandId());
 								}
+							} else {
+								while (activationItr.hasNext()) {
+									activation = (IHandlerActivation) activationItr
+											.next();
+									// if for some reason another activation
+									// doesn't match the new result, update and
+									// mark as changed. It's not as expensive
+									// as it looks :-)
+									if (newActive != evaluate(activation)) {
+										// TODO After 3.2, consider making this
+										// API.
+										if (activation instanceof EvaluationResultCache) {
+											((EvaluationResultCache) activation)
+													.setResult(newActive);
+										} else {
+											activation.clearResult();
+										}
+										changedCommandIds.add(activation
+												.getCommandId());
+									}
+								}
 							}
 						}
 					}
