@@ -22,7 +22,9 @@ import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 /*
@@ -588,6 +590,26 @@ public class CVSProviderTest extends EclipseTest {
     	} finally {
     		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
     	}
+    }
+    
+    public void testDeletedPhantom139250() throws CoreException {
+    	IProject project = createProject(new String[] { "a.txt"});
+    	// Create a phantom folder that is mapped to a remote folder
+    	// but for which no remote exists
+    	ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("phantom"));
+    	ICVSFolder projectFolder = CVSWorkspaceRoot.getCVSFolderFor(project);
+    	FolderSyncInfo projectInfo = projectFolder.getFolderSyncInfo();
+    	String repo = Util.appendPath(projectInfo.getRepository(), "phantom");
+    	FolderSyncInfo info = new FolderSyncInfo(repo, projectInfo.getRoot(), projectInfo.getTag(), false);
+    	folder.setFolderSyncInfo(info);
+    	updateProject(project, null, false);
+    }
+    
+    public void testUpdateOfDeletedFile140007() throws CoreException {
+    	IProject project = createProject(new String[] { "a.txt"});
+    	IProject copy = checkoutCopy(project, "-copy");
+    	deleteResources(copy, new String[] { "a.txt"}, true);
+    	updateResources(project, new String[] { "a.txt"}, false);
     }
 }
 
