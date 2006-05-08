@@ -252,7 +252,8 @@ public class FieldDecorationRegistry {
 	 * @param id
 	 *            the String id used to identify and access the decoration.
 	 * @param description
-	 *            the String description to be used in the decoration.
+	 *            the String description to be used in the decoration, or
+	 *            <code>null</code> if the decoration has no description.
 	 * @param image
 	 *            the image to be used in the decoration
 	 */
@@ -269,7 +270,8 @@ public class FieldDecorationRegistry {
 	 * @param id
 	 *            the String id used to identify and access the decoration.
 	 * @param description
-	 *            the String description to be used in the decoration.
+	 *            the String description to be used in the decoration, or
+	 *            <code>null</code> if the decoration has no description. *
 	 * @param imageId
 	 *            the id of the image in the JFaceResources image registry that
 	 *            is used for this decorator
@@ -288,7 +290,8 @@ public class FieldDecorationRegistry {
 	 * @param id
 	 *            the String id used to identify and access the decoration.
 	 * @param description
-	 *            the String description to be used in the decoration.
+	 *            the String description to be used in the decoration, or
+	 *            <code>null</code> if the decoration has no description. *
 	 * @param imageId
 	 *            the id of the image in the supplied image registry that is
 	 *            used for this decorator
