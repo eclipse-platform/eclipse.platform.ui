@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.swt.SWT;
@@ -189,7 +189,7 @@ public class DayEditorTest {
 	};
 	
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
-		public void refresh(Date day, Calendarable[] controls) {
+		public void refresh(Date day, CalendarableItem[] controls) {
 			int dayOffset = getOffset(day);
 			
 			for (int event=0; event < events[dayOffset].length; ++event) {
@@ -197,7 +197,7 @@ public class DayEditorTest {
 			}
 		}
 
-		private void fillEvent(Calendarable c, Event event) {
+		private void fillEvent(CalendarableItem c, Event event) {
 			if (event.allDay) {
 				c.setAllDayEvent(true);
 			} else {

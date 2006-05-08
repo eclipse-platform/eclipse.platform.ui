@@ -105,5 +105,10 @@ public abstract class Binding {
 	 * 
 	 */
 	public abstract void updateTargetFromModel();
+	
+	/**
+	 * Dispose all observables managed by the current Binding
+	 */
+	public abstract void dispose();
 
 }

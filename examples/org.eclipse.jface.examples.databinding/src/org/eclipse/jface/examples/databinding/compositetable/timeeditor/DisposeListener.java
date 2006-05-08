@@ -26,5 +26,5 @@ public interface DisposeListener {
 	 * 
 	 * @param sender The Calendarable being disposed.
 	 */
-	public void widgetDisposed(Calendarable sender);
+	public void widgetDisposed(CalendarableItem sender);
 }

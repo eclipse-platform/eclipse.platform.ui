@@ -111,6 +111,14 @@ public class ValueBinding extends Binding {
 		}
 		updateTargetFromModel();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
+	 */
+	public void dispose() {
+		target.dispose();
+		model.dispose();
+	}
 
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
 		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {

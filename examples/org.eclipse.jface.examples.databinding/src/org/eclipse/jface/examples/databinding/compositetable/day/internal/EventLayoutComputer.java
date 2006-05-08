@@ -17,7 +17,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.graphics.Point;
 
@@ -73,7 +73,7 @@ public class EventLayoutComputer {
 		return baseSlot + (int)additionalSlots-1;
 	}
 
-	private int[] getSlotsForEvent(Calendarable event) {
+	private int[] getSlotsForEvent(CalendarableItem event) {
 		int startTime = getSlotForStartTime(event.getStartTime());
 		int endTime = getSlotForEndTime(event.getEndTime());
 		if (endTime >= startTime) {
@@ -83,32 +83,32 @@ public class EventLayoutComputer {
 	}
 	
 	private class EventLayout {
-		private Calendarable[][] eventLayout;
+		private CalendarableItem[][] eventLayout;
 		private final int timeSlotsInDay;
 
 		public EventLayout(int timeSlotsInDay) {
 			this.timeSlotsInDay = timeSlotsInDay;
-			eventLayout = new Calendarable[1][timeSlotsInDay];
+			eventLayout = new CalendarableItem[1][timeSlotsInDay];
 			initializeColumn(0, timeSlotsInDay);
 		}
 		
 		private void initializeColumn(int column, final int timeSlotsInDay) {
-			eventLayout[column] = new Calendarable[timeSlotsInDay];
+			eventLayout[column] = new CalendarableItem[timeSlotsInDay];
 			for (int slot = 0; slot < eventLayout[column].length; slot++) {
 				eventLayout[column][slot] = null;
 			}
 		}
 		
 		public void addColumn() {
-			Calendarable[][] old = eventLayout;
-			eventLayout = new Calendarable[old.length+1][timeSlotsInDay];
+			CalendarableItem[][] old = eventLayout;
+			eventLayout = new CalendarableItem[old.length+1][timeSlotsInDay];
 			for (int i = 0; i < old.length; i++) {
 				eventLayout[i] = old[i];
 			}
 			initializeColumn(eventLayout.length-1, timeSlotsInDay);
 		}
 		
-		public Calendarable[][] getLayout() {
+		public CalendarableItem[][] getLayout() {
 			return eventLayout;
 		}
 
@@ -128,8 +128,8 @@ public class EventLayoutComputer {
 	 *            A list of Calenderables
 	 * @return The number of columns required to lay out those Calendarables. 
 	 */
-	public Calendarable[][] computeEventLayout(List calendarables) {
-		Collections.sort(calendarables, Calendarable.comparator);
+	public CalendarableItem[][] computeEventLayout(List calendarables) {
+		Collections.sort(calendarables, CalendarableItem.comparator);
 		
 		final int timeSlotsInDay = IEventEditor.DISPLAYED_HOURS * numberOfDivisionsInHour;
 		
@@ -137,7 +137,7 @@ public class EventLayoutComputer {
 		
 		// Lay out events
 		for (Iterator eventsIter = calendarables.iterator(); eventsIter.hasNext();) {
-			Calendarable event = (Calendarable) eventsIter.next();
+			CalendarableItem event = (CalendarableItem) eventsIter.next();
 			if (event.isAllDayEvent()) continue;
 			
 			int[] slotsEventSpans = getSlotsForEvent(event);
@@ -148,7 +148,7 @@ public class EventLayoutComputer {
 		
 		// Expand them horizontally if possible
 		for (Iterator eventsIter = calendarables.iterator(); eventsIter.hasNext();) {
-			Calendarable event = (Calendarable) eventsIter.next();
+			CalendarableItem event = (CalendarableItem) eventsIter.next();
 			if (event.isAllDayEvent()) continue;
 
 			int[] slotsEventSpans = getSlotsForEvent(event);
@@ -168,7 +168,7 @@ public class EventLayoutComputer {
 		return eventLayout.getLayout();
 	}
 	
-	private int findEventColumn(Calendarable event, Calendarable[][] layout, int[] slotsEventSpans) {
+	private int findEventColumn(CalendarableItem event, CalendarableItem[][] layout, int[] slotsEventSpans) {
 		for (int column = 0; column < layout.length; column++) {
 			if (layout[column][slotsEventSpans[START]] == event) {
 				return column;
@@ -180,7 +180,7 @@ public class EventLayoutComputer {
 	private int findColumnForEvent(EventLayout eventLayout, int[] slotsEventSpans) {
 		int currentColumn = 0;
 		while (true) {
-			Calendarable[][] layout = eventLayout.getLayout();
+			CalendarableItem[][] layout = eventLayout.getLayout();
 			if (columnIsAvailable(currentColumn, layout, slotsEventSpans)) {
 				return currentColumn;
 			}
@@ -191,7 +191,7 @@ public class EventLayoutComputer {
 		}
 	}
 
-	private boolean columnIsAvailable(int column, Calendarable[][] layout, int[] slotsEventSpans) {
+	private boolean columnIsAvailable(int column, CalendarableItem[][] layout, int[] slotsEventSpans) {
 		int currentSlot = slotsEventSpans[START];
 		while (currentSlot <= slotsEventSpans[END]) {
 			if (isSlotAlreadyOccupiedInColumn(currentSlot, layout, column)) {
@@ -202,7 +202,7 @@ public class EventLayoutComputer {
 		return true;
 	}
 	
-	private void placeEvent(Calendarable event, Calendarable[][] eventLayout, int currentColumn, int[] slotsEventSpans) {
+	private void placeEvent(CalendarableItem event, CalendarableItem[][] eventLayout, int currentColumn, int[] slotsEventSpans) {
 		for (int slot = slotsEventSpans[START]; slot <= slotsEventSpans[END]; ++slot) {
 			eventLayout[currentColumn][slot] = event;
 			Point position = new Point(currentColumn, slot);
@@ -214,11 +214,11 @@ public class EventLayoutComputer {
 		}
 	}
 	
-	private boolean isSlotAlreadyOccupiedInColumn(int slot, Calendarable[][] layout, int currentColumn) {
+	private boolean isSlotAlreadyOccupiedInColumn(int slot, CalendarableItem[][] layout, int currentColumn) {
 		return layout[currentColumn][slot] != null;
 	}
 
-	private boolean isNewColumnNeeded(int currentColumn, Calendarable[][] layout) {
+	private boolean isNewColumnNeeded(int currentColumn, CalendarableItem[][] layout) {
 		return currentColumn >= layout.length-1;
 	}
 }

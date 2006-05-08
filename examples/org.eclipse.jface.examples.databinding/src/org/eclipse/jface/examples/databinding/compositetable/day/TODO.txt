@@ -1,0 +1,33 @@
+Calendar binding tasks:
+=======================
+
+CalendarableItem(Control)? tasks:
+ * Needs an event model (change listeners, etc)  **DONE**
+ * Needs to update the control when the item is updated if the control is visible  **DONE**
+ * Needs an in-place editor (DEFERRED)
+ 
+DayEditor tasks:
+ * Needs an event that is fired when a CalendarableItem is no longer visible 
+   (so bindings can be disposed)  **DONE**
+ * Needs an addInsertHandler/removeInsertHandler, ...  **DONE**
+ * Needs an addDeleteHandler/removeDeleteHandler, ...  **DONE**
+ * Needs an addEditHandler/removeEditHandler, ...      **DONE**
+ * Add code to implement insert and deletion using the above listeners
+ * Hook up UI gestures (double-click, insert keypress, delete keypress) to 
+   insert/delete events
+   
+DayEditor data binding tasks:
+ * Write an JavaBeansObservableMap
+ * Write a DayEditorObservableMap
+ * Write a MapBinding class
+ * Write a MapBinding factory or maybe change DefaultBindSupportFactory
+ * Write a MapObservableFactory
+
+ * Create a java.util.Map wrapper to our EventModel that we can bind
+ 
+In-place editing tasks: (DEFERRED)
+ * Show in-place editor when user clicks a CalendarableItemControl (or maybe use
+   an SWT Text to begin with)
+ * Hook events on the editor and change the CalendarableItem's text property
+   as the CalendarableItemControl's text property changes
+   

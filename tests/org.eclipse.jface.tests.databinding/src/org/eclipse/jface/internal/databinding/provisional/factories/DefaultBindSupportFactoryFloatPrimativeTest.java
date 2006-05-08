@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.factories;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.examples.databinding.model.ModelObject;
+import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;

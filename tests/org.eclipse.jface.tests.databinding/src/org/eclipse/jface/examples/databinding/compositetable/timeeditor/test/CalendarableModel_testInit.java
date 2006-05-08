@@ -15,7 +15,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
@@ -49,7 +49,7 @@ public class CalendarableModel_testInit extends TestCase {
 		cm.setTimeBreakdown(1, 2);
 		assertNoRefreshCalled();
 		cm.setEventContentProvider(new EventContentProvider() {
-			public void refresh(Date day, Calendarable[] controls) {
+			public void refresh(Date day, CalendarableItem[] controls) {
 			}});
 		assertNoRefreshCalled();
 		cm.setStartDate(new Date());

@@ -242,13 +242,14 @@ public class TimeSlice extends Composite {
 		if (currentTime == null) {
 			timeLabel.setImage(allDayImage);
 			timeLabel.setText("");
-			setHourStartOnDays(false);
 			setAllDayEventOnDays(true);
 			return;
 		}
 		
 		setAllDayEventOnDays(false);
 		timeLabel.setImage(null);
+		
+		setTimeOnDays(currentTime);
 		
 		this.currentTime = currentTime;
 		Calendar calendar = new GregorianCalendar();
@@ -259,19 +260,17 @@ public class TimeSlice extends Composite {
 			DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
 			String time = df.format(currentTime);
 			timeLabel.setText(time);
-			setHourStartOnDays(true);
 		} else {
 			timeLabel.setText("");
-			setHourStartOnDays(false);
 		}
 	}
-
-	private void setHourStartOnDays(boolean isHourStart) {
+	
+	private void setTimeOnDays(Date currentTime) {
 		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
 			Object dayCandidate = daysIter.next();
 			if (dayCandidate instanceof TimeSlot) {
 				TimeSlot day = (TimeSlot) dayCandidate;
-				day.setHourStart(isHourStart);
+				day.setTime(currentTime);
 			}
 		}
 	}

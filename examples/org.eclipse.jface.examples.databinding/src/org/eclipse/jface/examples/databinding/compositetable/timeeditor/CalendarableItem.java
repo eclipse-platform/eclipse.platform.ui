@@ -11,10 +11,13 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
+import org.eclipse.jface.examples.databinding.ModelObject;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -24,15 +27,55 @@ import org.eclipse.swt.graphics.Point;
  * 
  * @since 3.2
  */
-public class Calendarable {
+public class CalendarableItem extends ModelObject {
 	
 	/**
-	 * A comparator for Calenarable objects
+	 * 
+	 */
+	private static final String PROP_DATE = "date";
+
+	/**
+	 * A constant representing the name of the toolTipText property.
+	 */
+	public static final String PROP_TOOL_TIP_TEXT = "toolTipText";
+
+	/**
+	 * A constant representing the name of the data property.
+	 */
+	public static final String PROP_DATA = "data";
+
+	/**
+	 * A constant representing the name of the text property.
+	 */
+	public static final String PROP_TEXT = "text";
+
+	/**
+	 * A constant representing the name of the image property.
+	 */
+	public static final String PROP_IMAGE = "image";
+
+	/**
+	 * A constant representing the name of the endTime property.
+	 */
+	public static final String PROP_END_TIME = "endTime";
+
+	/**
+	 * A constant representing the name of the startTime property.
+	 */
+	public static final String PROP_START_TIME = "startTime";
+
+	/**
+	 * A constant representing the name of the allDayEvent property.
+	 */
+	public static final String PROP_ALL_DAY_EVENT = "allDayEvent";
+
+	/**
+	 * A comparator for CalendarableItem objects
 	 */
 	public static final Comparator comparator = new Comparator() {
 		public int compare(Object c1, Object c2) {
-			Calendarable cal1 = (Calendarable) c1;
-			Calendarable cal2 = (Calendarable) c2;
+			CalendarableItem cal1 = (CalendarableItem) c1;
+			CalendarableItem cal2 = (CalendarableItem) c2;
 			if (cal1.isAllDayEvent()) {
 				if (cal2.isAllDayEvent()) {
 					return 0;
@@ -45,6 +88,10 @@ public class Calendarable {
 			return cal1.getStartTime().compareTo(cal2.getStartTime());
 		}
 	};
+	
+	public CalendarableItem(Date day) {
+		setDate(day);
+	}
 	
 	private boolean allDayEvent = false;
 	
@@ -63,10 +110,62 @@ public class Calendarable {
 	 * @param allDayEvent true if this is an all-day event; false otherwise.
 	 */
 	public void setAllDayEvent(boolean allDayEvent) {
+		boolean oldValue = this.allDayEvent;
 		this.allDayEvent = allDayEvent;
+		firePropertyChange(PROP_ALL_DAY_EVENT, oldValue, allDayEvent);
 	}
 	
-	private Date startTime = null;
+	/**
+	 * @return Returns the date on which the event falls.
+	 */
+	public Date getDate() {
+		return startTime;
+	}
+
+	/**
+	 * @param date Sets the date on which the event falls.  Ignores the time
+	 * component of the date that is passed in.
+	 */
+	public void setDate(Date date) {
+		Date oldValue = this.startTime;
+		this.startTime = setDateComponentOf(date, startTime);
+		this.endTime = setDateComponentOf(date, endTime);
+		firePropertyChange(PROP_DATE, oldValue, startTime);
+	}
+
+	/**
+	 * @param source
+	 * @param into 
+	 */
+	private Date setDateComponentOf(Date source, Date into) {
+		GregorianCalendar mergeSource = new GregorianCalendar();
+		mergeSource.setTime(source);
+		GregorianCalendar mergeTarget = new GregorianCalendar();
+		mergeTarget.setTime(into);
+		mergeTarget.set(Calendar.MONTH, mergeSource.get(Calendar.MONTH));
+		mergeTarget.set(Calendar.DAY_OF_MONTH, mergeSource.get(Calendar.DAY_OF_MONTH));
+		mergeTarget.set(Calendar.YEAR, mergeSource.get(Calendar.YEAR));
+		return mergeTarget.getTime();
+	}
+	
+	/**
+	 * @param source
+	 * @param into 
+	 */
+	private Date setTimeComponentOf(Date source, Date into) {
+		GregorianCalendar mergeSource = new GregorianCalendar();
+		mergeSource.setTime(source);
+		GregorianCalendar mergeTarget = new GregorianCalendar();
+		mergeTarget.setTime(into);
+		mergeTarget.set(Calendar.AM_PM, mergeSource.get(Calendar.AM_PM));
+		mergeTarget.set(Calendar.HOUR, mergeSource.get(Calendar.HOUR));
+		mergeTarget.set(Calendar.MINUTE, mergeSource.get(Calendar.MINUTE));
+		mergeTarget.set(Calendar.SECOND, mergeSource.get(Calendar.SECOND));
+		mergeTarget.set(Calendar.MILLISECOND, mergeSource.get(Calendar.MILLISECOND));
+		return mergeTarget.getTime();
+	}
+	
+	private Date startTime = new Date();
 	
 	/**
 	 * Gets the event's start time.  This value is ignored if this is an all-day event.
@@ -83,10 +182,12 @@ public class Calendarable {
 	 * @param startTime the event's start time.
 	 */
 	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+		Date oldValue = this.startTime;
+		this.startTime = setTimeComponentOf(startTime, this.startTime);
+		firePropertyChange(PROP_START_TIME, oldValue, startTime);
 	}
 	
-	private Date endTime = null;
+	private Date endTime = new Date();
 
 
 	/**
@@ -104,7 +205,9 @@ public class Calendarable {
 	 * @param endTime the event's end time.  This value is ignored if this is an all-day event.
 	 */
 	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
+		Date oldValue = this.endTime;
+		this.endTime = setTimeComponentOf(endTime, this.endTime);
+		firePropertyChange(PROP_END_TIME, oldValue, endTime);
 	}
 
 	private Image image;
@@ -130,7 +233,12 @@ public class Calendarable {
 	 * </ul>
 	 */
 	public void setImage(Image image) {
+		Image oldValue = this.image;
 		this.image = image;
+		if (control != null) {
+			control.setImage(image);
+		}
+		firePropertyChange(PROP_IMAGE, oldValue, image);
 	}
 
 	private String text = null;
@@ -169,8 +277,49 @@ public class Calendarable {
 	 * </ul>
 	 */
 	public void setText(String string) {
+		String oldValue = this.text;
 		this.text = string;
+		if (control != null) {
+			control.setText(string);
+		}
+		firePropertyChange(PROP_TEXT, oldValue, text);
 	}
+	
+	private String toolTipText;
+	
+	/**
+	 * Returns the receiver's tool tip text, or null if it has
+	 * not been set.
+	 *
+	 * @return the receiver's tool tip text
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public String getToolTipText() {
+		return toolTipText;
+	}
+
+	/**
+	 * Sets the receiver's tool tip text to the argument, which
+	 * may be null indicating that no tool tip text should be shown.
+	 *
+	 * @param string the new tool tip text (or null)
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 */
+	public void setToolTipText(String string) {
+		String oldValue = this.toolTipText;
+		this.toolTipText = string;
+		if (control != null) {
+			control.setToolTipText(string);
+		}
+		firePropertyChange(PROP_TOOL_TIP_TEXT, oldValue, toolTipText);
+	}
+
 	
 	private Object data = null;
 	
@@ -211,7 +360,9 @@ public class Calendarable {
 	 * @see #getData()
 	 */
 	public void setData(Object data) {
+		Object oldValue = this.data;
 		this.data = data;
+		firePropertyChange(PROP_DATA, oldValue, data);
 	}
 	
 	private Point upperLeftPositionInDayRowCoordinates = null;
@@ -228,14 +379,19 @@ public class Calendarable {
 	/**
 	 * (non-API)
 	 * Sets the upper left position of the bounding box and initializes the
-	 * lower right position to be the same as the upper left.
+	 * lower right position to be the same as the upper left if the lower right
+	 * has not yet been set.  If the lower right has been set, it is left as it
+	 * is.
 	 * 
 	 * @param upperLeftPositionInDayRowCoordinates The upperLeftPositionInDayRowCoordinates to set.
 	 */
 	public void setUpperLeftPositionInDayRowCoordinates(
 			Point upperLeftPositionInDayRowCoordinates) {
 		this.upperLeftPositionInDayRowCoordinates = upperLeftPositionInDayRowCoordinates;
-		this.lowerRightPositionInDayRowCoordinates = upperLeftPositionInDayRowCoordinates;
+
+		if (lowerRightPositionInDayRowCoordinates == null) {
+			this.lowerRightPositionInDayRowCoordinates = upperLeftPositionInDayRowCoordinates;
+		}
 	}
 	
 	private Point lowerRightPositionInDayRowCoordinates = null;
@@ -259,31 +415,31 @@ public class Calendarable {
 		this.lowerRightPositionInDayRowCoordinates = lowerRightPositionInDayRowCoordinates;
 	}
 
-	private CalendarableEventControl control = null;
+	private CalendarableItemControl control = null;
 	
 	/**
 	 * (non-API)
-	 * Returns the UI control for this Calendarable.
+	 * Returns the UI control for this CalendarableItem.
 	 * 
-	 * @return The UI control for this Calendarable or null if there is none.
+	 * @return The UI control for this CalendarableItem or null if there is none.
 	 */
-	public CalendarableEventControl getControl() {
+	public CalendarableItemControl getControl() {
 		return control;
 	}
 
 	/**
 	 * (non-API)
-	 * Set the UI control for this Calendarable.
+	 * Set the UI control for this CalendarableItem.
 	 * 
 	 * @param control The control to set.
 	 */
-	public void setControl(CalendarableEventControl control) {
+	public void setControl(CalendarableItemControl control) {
 		if (control == null) {
-			this.control.setCalendarable(null);
+			this.control.setCalendarableItem(null);
 		}
 		this.control = control;
 		if (control != null) {
-			control.setCalendarable(this);
+			control.setCalendarableItem(this);
 		}
 	}
 

@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.day;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 
 /**
  * A SelectionChangeEvent for selected Calendarables in a DayEditor.
@@ -22,12 +22,12 @@ public class SelectionChangeEvent {
 	/**
 	 * The previously selected Calendarable or null if no selection
 	 */
-	public final Calendarable oldSelection;
+	public final CalendarableItem oldSelection;
 	
 	/**
 	 * The new selection or null if the selection is being cleared
 	 */
-	public final Calendarable newSelection;
+	public final CalendarableItem newSelection;
 
 	/**
 	 * Constructor SelectionChangeEvent.  Construct a SelectionChangeEvent from
@@ -36,7 +36,7 @@ public class SelectionChangeEvent {
 	 * @param oldSelection The previously selected Calendarable or null if no selection
 	 * @param newSelection The new selection or null if the selection is being cleared
 	 */
-	public SelectionChangeEvent(final Calendarable oldSelection, final Calendarable newSelection) {
+	public SelectionChangeEvent(final CalendarableItem oldSelection, final CalendarableItem newSelection) {
 		this.oldSelection = oldSelection;
 		this.newSelection = newSelection;
 	}

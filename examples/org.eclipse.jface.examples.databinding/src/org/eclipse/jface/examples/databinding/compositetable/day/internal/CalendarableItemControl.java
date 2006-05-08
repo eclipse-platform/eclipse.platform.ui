@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
@@ -23,6 +23,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 3.2
  */
-public class CalendarableEventControl extends Canvas  {
+public class CalendarableItemControl extends Canvas  {
 
 	private static final int MARGIN = 3;
 	private Label label = null;
@@ -72,7 +73,7 @@ public class CalendarableEventControl extends Canvas  {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public CalendarableEventControl(Composite parent, int style) {
+	public CalendarableItemControl(Composite parent, int style) {
 		super(parent, style);
 		Display display = parent.getDisplay();
 		BORDER_COLOR = new Color(display, 215, 215, 245);
@@ -113,9 +114,20 @@ public class CalendarableEventControl extends Canvas  {
 	 */
 	public void setText(String text) {
 		label.setText(text);
-		label.setToolTipText(text);
 	}
 		
+	/**
+	 * @param image
+	 */
+	public void setImage(Image image) {
+		label.setImage(image);
+	}
+	
+	public void setToolTipText(String text) {
+		super.setToolTipText(text);
+		label.setToolTipText(text);
+	}
+
 	private int clipping;
 	
 	/**
@@ -200,7 +212,7 @@ public class CalendarableEventControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			e.widget = CalendarableEventControl.this;
+			e.widget = CalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseDoubleClick(e);
@@ -211,7 +223,7 @@ public class CalendarableEventControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
-			e.widget = CalendarableEventControl.this;
+			e.widget = CalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseDown(e);
@@ -222,7 +234,7 @@ public class CalendarableEventControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
-			e.widget = CalendarableEventControl.this;
+			e.widget = CalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseUp(e);
@@ -230,21 +242,21 @@ public class CalendarableEventControl extends Canvas  {
 		}
 	};
 
-	private Calendarable calendarable;
+	private CalendarableItem calendarable;
 
 	/**
 	 * Method setCalendarable. Sets the associated model.
 	 * @param calendarable
 	 */
-	public void setCalendarable(Calendarable calendarable) {
+	public void setCalendarableItem(CalendarableItem calendarable) {
 		this.calendarable = calendarable;
 	}
 
 	/**
 	 * @return Returns the calendarable.
 	 */
-	public Calendarable getCalendarable() {
+	public CalendarableItem getCalendarableItem() {
 		return calendarable;
 	}
-	
+
 } // @jve:decl-index=0:visual-constraint="10,10"

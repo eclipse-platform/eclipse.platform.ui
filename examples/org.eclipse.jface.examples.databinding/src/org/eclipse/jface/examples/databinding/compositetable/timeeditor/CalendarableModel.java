@@ -36,7 +36,7 @@ public class CalendarableModel {
 	private int numberOfDays = -1;
 	private int numberOfDivisionsInHour = -1;
 	private ArrayList[] dayColumns = null;
-	private Calendarable[][][] eventLayout = null;  // [day][column][row]
+	private CalendarableItem[][][] eventLayout = null;  // [day][column][row]
 
 	private int defaultStartHour = DEFAULT_START_HOUR;
 	
@@ -60,7 +60,7 @@ public class CalendarableModel {
 	 * @param dayOffset
 	 * @param eventLayout
 	 */
-	public void setEventLayout(int dayOffset, Calendarable[][] eventLayout) {
+	public void setEventLayout(int dayOffset, CalendarableItem[][] eventLayout) {
 		this.eventLayout[dayOffset] = eventLayout;
 	}
 	
@@ -70,7 +70,7 @@ public class CalendarableModel {
 	 * @param dayOffset
 	 * @return the eventLayout array for the specified day or null if none has been computed.
 	 */
-	public Calendarable[][] getEventLayout(int dayOffset) {
+	public CalendarableItem[][] getEventLayout(int dayOffset) {
 		return eventLayout[dayOffset];
 	}
 	
@@ -99,7 +99,7 @@ public class CalendarableModel {
 		for (int i=0; i < numberOfDays; ++i) {
 			dayColumns[i] = new ArrayList();
 		}
-		eventLayout = new Calendarable[numberOfDays][][];
+		eventLayout = new CalendarableItem[numberOfDays][][];
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class CalendarableModel {
 				calculateDate(startDate, numberOfDays-1).before(this.startDate))
 		{
 			this.startDate = startDate;
-			eventLayout = new Calendarable[numberOfDays][][];
+			eventLayout = new CalendarableItem[numberOfDays][][];
 			return refresh();
 		}
 		
@@ -278,19 +278,19 @@ public class CalendarableModel {
 		while (dayColumns[column].size() > 0) {
 			invalidatedElements.add(dayColumns[column].remove(0));
 		}
-		resizeList(dayColumns[column], numberOfEventsInDay);
+		resizeList(date, dayColumns[column], numberOfEventsInDay);
 		
-		Calendarable[] tempEvents = (Calendarable[]) dayColumns[column]
-				.toArray(new Calendarable[numberOfEventsInDay]);
+		CalendarableItem[] tempEvents = (CalendarableItem[]) dayColumns[column]
+				.toArray(new CalendarableItem[numberOfEventsInDay]);
 
 		eventContentProvider.refresh(
 				date, 
 				tempEvents);
 	}
 
-	private void resizeList(ArrayList list, int numberOfEventsInDay) {
+	private void resizeList(Date date, ArrayList list, int numberOfEventsInDay) {
 		while (list.size() < numberOfEventsInDay) {
-			list.add(new Calendarable());
+			list.add(new CalendarableItem(date));
 		}
 		while (list.size() > numberOfEventsInDay) {
 			list.remove(0);
@@ -345,7 +345,7 @@ public class CalendarableModel {
 			ArrayList calendarables = dayColumns[day];
 			int allDayEventsInCurrentDay = 0;
 			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
-				Calendarable event = (Calendarable) iter.next();
+				CalendarableItem event = (CalendarableItem) iter.next();
 				if (event.isAllDayEvent()) {
 					allDayEventsInCurrentDay++;
 				}
@@ -373,7 +373,7 @@ public class CalendarableModel {
 		for (int day = 0; day < dayColumns.length; day++) {
 			ArrayList calendarables = dayColumns[day];
 			for (Iterator iter = calendarables.iterator(); iter.hasNext();) {
-				Calendarable event = (Calendarable) iter.next();
+				CalendarableItem event = (CalendarableItem) iter.next();
 				if (event.isAllDayEvent()) {
 					continue;
 				}
@@ -413,10 +413,10 @@ public class CalendarableModel {
 	 * @return The day offset (0-based)
 	 * @throws IllegalArgumentException if Calendarable isn't found
 	 */
-	public int getDay(Calendarable calendarable) {
+	public int getDay(CalendarableItem calendarable) {
 		for (int day = 0; day < dayColumns.length; day++) {
 			for (Iterator calendarableIter = dayColumns[day].iterator(); calendarableIter.hasNext();) {
-				Calendarable event = (Calendarable) calendarableIter.next();
+				CalendarableItem event = (CalendarableItem) calendarableIter.next();
 				if (event == calendarable) {
 					return day;
 				}
@@ -451,15 +451,15 @@ public class CalendarableModel {
 	 * @param day The day to return all day Calendarables for
 	 * @return All the all day Calendarables for the specified day, order maintained
 	 */
-	public Calendarable[] getAllDayCalendarables(int day) {
+	public CalendarableItem[] getAllDayCalendarables(int day) {
 		List allDays = new LinkedList();
 		for (Iterator calendarablesIter = getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
-			Calendarable candidate = (Calendarable) calendarablesIter.next();
+			CalendarableItem candidate = (CalendarableItem) calendarablesIter.next();
 			if (candidate.isAllDayEvent()) {
 				allDays.add(candidate);
 			}
 		}
-		return (Calendarable[]) allDays.toArray(new Calendarable[allDays.size()]);
+		return (CalendarableItem[]) allDays.toArray(new CalendarableItem[allDays.size()]);
 	}
 
 	/**
@@ -468,8 +468,8 @@ public class CalendarableModel {
 	 * @param selection The currently selected Calendarable or null if none
 	 * @return The next Calendarable in the specified direction where result != selection; null if none
 	 */
-	public Calendarable findAllDayCalendarable(int day, boolean forward, Calendarable selection) {
-		Calendarable[] calendarables = getAllDayCalendarables(day);
+	public CalendarableItem findAllDayCalendarable(int day, boolean forward, CalendarableItem selection) {
+		CalendarableItem[] calendarables = getAllDayCalendarables(day);
 		if (forward) {
 			if (calendarables.length < 1) {
 				return null;
@@ -510,8 +510,8 @@ public class CalendarableModel {
 	 * @param selection The Calendarable associated with currentRow or null if none
 	 * @return The next Calendarable in the specified direction where result != selection; null if none
 	 */
-	public Calendarable findTimedCalendarable(int day, int currentRow, int stopPosition, boolean forward, Calendarable selection) {
-		Calendarable[][] eventLayoutForDay = getEventLayout(day);
+	public CalendarableItem findTimedCalendarable(int day, int currentRow, int stopPosition, boolean forward, CalendarableItem selection) {
+		CalendarableItem[][] eventLayoutForDay = getEventLayout(day);
 		if (eventLayoutForDay == null) {
 			throw new IllegalArgumentException("Day " + day + " has no event data!!!");
 		}
@@ -531,7 +531,7 @@ public class CalendarableModel {
 			}
 			for (int row = currentRow; row < stopPosition; row++) {
 				while (true) {
-					Calendarable candidate = eventLayoutForDay[currentColumn][row];
+					CalendarableItem candidate = eventLayoutForDay[currentColumn][row];
 					if (candidate != null && candidate != selection) {
 						if (selection == null || 
 							candidate.getStartTime().after(selection.getStartTime()) || 
@@ -553,7 +553,7 @@ public class CalendarableModel {
 			}
 			for (int row = currentRow; row >= stopPosition; --row) {
 				while (true) {
-					Calendarable candidate = eventLayoutForDay[currentColumn][row];
+					CalendarableItem candidate = eventLayoutForDay[currentColumn][row];
 					if (candidate != null && candidate != selection && candidate.getUpperLeftPositionInDayRowCoordinates().y == row) {
 						if (selection == null || 
 							candidate.getStartTime().before(selection.getStartTime()) || 
@@ -563,7 +563,7 @@ public class CalendarableModel {
 								// The candidate could have an earlier start time
 								// than some other column
 								for (int earlierColumn = currentColumn-1; earlierColumn >= 0; --earlierColumn) {
-									Calendarable newCandidate = eventLayoutForDay[earlierColumn][row];
+									CalendarableItem newCandidate = eventLayoutForDay[earlierColumn][row];
 									if (newCandidate.getStartTime().after(candidate.getStartTime())) {
 										candidate = newCandidate;
 									}
@@ -583,7 +583,7 @@ public class CalendarableModel {
 		return null;
 	}
 
-	private int findCalendarable(Calendarable selection, int currentRow, Calendarable[][] eventLayoutForDay) {
+	private int findCalendarable(CalendarableItem selection, int currentRow, CalendarableItem[][] eventLayoutForDay) {
 		for (int column = 0; column < eventLayoutForDay.length; column++) {
 			if (eventLayoutForDay[column][currentRow] == selection) {
 				return column;
@@ -599,9 +599,9 @@ public class CalendarableModel {
 	 * @param isAllDayEventRow
 	 * @return
 	 */
-	public Calendarable findNextCalendarable(int selectedDay, int selectedRow, Calendarable selection, boolean isAllDayEventRow) {
+	public CalendarableItem findNextCalendarable(int selectedDay, int selectedRow, CalendarableItem selection, boolean isAllDayEventRow) {
 		// Search the rest of the selectedDay starting at selectedRow
-		Calendarable result = null;
+		CalendarableItem result = null;
 		if (isAllDayEventRow) {
 			result = findAllDayCalendarable(selectedDay, true, selection);
 			if (result != null)
@@ -620,7 +620,7 @@ public class CalendarableModel {
 		int currentDay = nextDay(selectedDay);
 		while (currentDay != selectedDay) {
 			// Is there an all-day event to select?
-			Calendarable[] allDayCalendarables = getAllDayCalendarables(currentDay);
+			CalendarableItem[] allDayCalendarables = getAllDayCalendarables(currentDay);
 			if (allDayCalendarables.length > 0) {
 				return allDayCalendarables[0];
 			}
@@ -635,7 +635,7 @@ public class CalendarableModel {
 		}
 		
 		// Search selectedDay from 0 to selectedRow
-		Calendarable[] allDayCalendarables = getAllDayCalendarables(selectedDay);
+		CalendarableItem[] allDayCalendarables = getAllDayCalendarables(selectedDay);
 		if (allDayCalendarables.length > 0) {
 			return allDayCalendarables[0];
 		}
@@ -670,8 +670,8 @@ public class CalendarableModel {
 	 * @param isAllDayEventRow 
 	 * @return
 	 */
-	public Calendarable findPreviousCalendarable(int selectedDay, int selectedRow, Calendarable selection, boolean isAllDayEventRow) {
-		Calendarable result = null;
+	public CalendarableItem findPreviousCalendarable(int selectedDay, int selectedRow, CalendarableItem selection, boolean isAllDayEventRow) {
+		CalendarableItem result = null;
 		
 		// Search to the beginning of the current day
 		if (!isAllDayEventRow) {
@@ -702,7 +702,7 @@ public class CalendarableModel {
 			}
 			
 			// Is there an all-day event to select?
-			Calendarable[] allDayCalendarables = getAllDayCalendarables(currentDay);
+			CalendarableItem[] allDayCalendarables = getAllDayCalendarables(currentDay);
 			if (allDayCalendarables.length > 0) {
 				return allDayCalendarables[allDayCalendarables.length-1];
 			}

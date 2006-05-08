@@ -9,23 +9,23 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
+package org.eclipse.jface.examples.databinding.compositetable.day;
 
-import java.util.Date;
 
 /**
- * A strategy pattern object that can refresh all of the event controls
- * for a given day.
+ * Abstract class CalendarableItemEventHandler.  An abstract class defining
+ * the API for objects that implement strategy pattern services such as
+ * insert, edit, and delete from a DayEditor object.
  * 
  * @since 3.2
  */
-public abstract class EventContentProvider {
+public abstract class CalendarableItemEventHandler {
 	/**
-	 * Refreshes the contents of the specified event controls for the specified
-	 * day.
+	 * Process this CalenderableItemEvent, please.
 	 * 
-	 * @param day The day
-	 * @param controls The controls to refresh
+	 * @param e
+	 *            The CalendarableItemEvent to process.
 	 */
-	abstract public void refresh(Date day, CalendarableItem[] controls);
+	public abstract void handleRequest(CalendarableItemEvent e);
+
 }

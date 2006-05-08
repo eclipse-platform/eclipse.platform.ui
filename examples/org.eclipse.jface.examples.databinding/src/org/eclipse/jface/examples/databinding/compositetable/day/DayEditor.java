@@ -11,6 +11,7 @@
 package org.eclipse.jface.examples.databinding.compositetable.day;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -23,11 +24,11 @@ import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider
 import org.eclipse.jface.examples.databinding.compositetable.RowConstructionListener;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableEventControl;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlot;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
@@ -61,7 +62,7 @@ import org.eclipse.swt.widgets.Layout;
 public class DayEditor extends Composite implements IEventEditor {
 	private CompositeTable compositeTable = null;
 	private CalendarableModel model = new CalendarableModel();
-	private List spareCalendarableEventControls = new LinkedList();
+	private List recycledCalendarableEventControls = new LinkedList();
 	protected TimeSlice daysHeader = null;
 	private final boolean headerDisabled;
 	
@@ -160,7 +161,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private KeyListener keyListener = new KeyAdapter() {
 		public void keyPressed(KeyEvent e) {
-			Calendarable selection = selectedCalendarable;
+			CalendarableItem selection = selectedCalendarable;
 			int selectedRow;
 			int selectedDay;
 			boolean allDayEventRowSelected = false;
@@ -188,14 +189,14 @@ public class DayEditor extends Composite implements IEventEditor {
 			switch (e.character) {
 			case SWT.TAB:
 				if ((e.stateMask & SWT.SHIFT) != 0) {
-					Calendarable newSelection = model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					CalendarableItem newSelection = model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
 					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
 					if (newTopRow != compositeTable.getTopRow()) {
 						compositeTable.setTopRow(newTopRow);
 					}
 					setSelection(newSelection);
 				} else {
-					Calendarable newSelection = model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					CalendarableItem newSelection = model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
 					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
 					if (newTopRow != compositeTable.getTopRow()) {
 						compositeTable.setTopRow(newTopRow);
@@ -206,7 +207,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	};
 	
-	private int computeNewTopRowBasedOnSelection(Calendarable newSelection) {
+	private int computeNewTopRowBasedOnSelection(CalendarableItem newSelection) {
 		int topRow = compositeTable.getTopRow();
 		int numberOfRowsInDisplay = compositeTable.getNumRowsVisible();
 		int newTopRow = topRow;
@@ -241,7 +242,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	};
 	
-	private void setSelectionByDayAndRow(int day, int row, Calendarable aboutToSelect) {
+	private void setSelectionByDayAndRow(int day, int row, CalendarableItem aboutToSelect) {
 		int dayRow = convertViewportRowToDayRow(row);
 		if (aboutToSelect == null)
 			aboutToSelect = getFirstCalendarableAt(day, dayRow);
@@ -261,11 +262,11 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @param row The row offset in DayRow coordinates
 	 * @return the first Calendarable in the specified (day, row) or null if none.
 	 */
-	protected Calendarable getFirstCalendarableAt(int day, int row) {
-		Calendarable[][] eventLayout = model.getEventLayout(day);
-		Calendarable selectedCalendarable = null;
+	protected CalendarableItem getFirstCalendarableAt(int day, int row) {
+		CalendarableItem[][] eventLayout = model.getEventLayout(day);
+		CalendarableItem selectedCalendarable = null;
 		for (int column=0; column < eventLayout.length; ++column) {
-			Calendarable calendarable = eventLayout[column][row];
+			CalendarableItem calendarable = eventLayout[column][row];
 			if (calendarable != null) {
 				if (selectedCalendarable == null) {
 					selectedCalendarable = calendarable;
@@ -284,10 +285,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @param row
 	 * @return The found Calendarable or null if none
 	 */
-	protected Calendarable getAllDayCalendarableAt(int day, int row) {
-		Calendarable[] allDayEvents = model.getAllDayCalendarables(day);
+	protected CalendarableItem getAllDayCalendarableAt(int day, int row) {
+		CalendarableItem[] allDayEvents = model.getAllDayCalendarables(day);
 		for (int allDayEventRow = 0; allDayEventRow < allDayEvents.length; allDayEventRow++) {
-			Calendarable candidate = allDayEvents[allDayEventRow];
+			CalendarableItem candidate = allDayEvents[allDayEventRow];
 			if (allDayEventRow == row) {
 				return candidate;
 			}
@@ -305,14 +306,14 @@ public class DayEditor extends Composite implements IEventEditor {
 		return null;
 	}
 
-	private Calendarable selectedCalendarable = null;
+	private CalendarableItem selectedCalendarable = null;
 	
 	/**
 	 * Method selectCalendarable.  Selects the specified Calendarable event.
 	 * 
 	 * @param newSelection The Calendarable to select.
 	 */
-	public void setSelection(Calendarable newSelection) {
+	public void setSelection(CalendarableItem newSelection) {
 		if (newSelection != null) {
 			int day = model.getDay(newSelection);
 			int row = computeRowForCalendarable(newSelection, day);
@@ -324,7 +325,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 
-	private void selectCalenderableControl(Calendarable newSelection) {
+	private void selectCalenderableControl(CalendarableItem newSelection) {
 		if (selectedCalendarable == newSelection) {
 			return;
 		}
@@ -349,13 +350,13 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * 
 	 * @return the selected Calendarable or null if nothing is selected.
 	 */
-	public Calendarable getSelection() {
+	public CalendarableItem getSelection() {
 		return selectedCalendarable;
 	}
 	
-	private List selectionChangeListeners = new LinkedList();
+	private List selectionChangeListeners = new ArrayList();
 
-	private void fireSelectionChangeEvent(Calendarable currentSelection, Calendarable newSelection) {
+	private void fireSelectionChangeEvent(CalendarableItem currentSelection, CalendarableItem newSelection) {
 		SelectionChangeEvent sce = new SelectionChangeEvent(currentSelection, newSelection);
 		for (Iterator listenersIter = selectionChangeListeners.iterator(); listenersIter.hasNext();) {
 			CalendarableSelectionChangeListener listener = (CalendarableSelectionChangeListener) listenersIter.next();
@@ -393,6 +394,281 @@ public class DayEditor extends Composite implements IEventEditor {
 			throw new SWTException("Widget is disposed");
 		}
 		selectionChangeListeners.add(l);
+	}
+	
+	private boolean fireEvents(CalendarableItem calendarableItem, List listeners) {
+		CalendarableItemEvent e = new CalendarableItemEvent();
+		e.calendarableItem = calendarableItem;
+		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+			CalendarableItemEventHandler handler = (CalendarableItemEventHandler) iter.next();
+			handler.handleRequest(e);
+			if (!e.doit) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private List editHandlers = new ArrayList();
+	
+	private boolean fireEditItemStrategy(CalendarableItem item) {
+		return fireEvents(item, editHandlers);
+	}
+	
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted in the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #removeItemInsertHandler
+	 */
+	public void addItemEditHandler(CalendarableItemEventHandler handler) {		
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		editHandlers.add(handler);
+	}
+	
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted into the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #addItemInsertHandler
+	 */
+	public void removeItemEditHandler(CalendarableItemEventHandler handler) {		
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		editHandlers.remove(handler);
+	}
+	
+	private List insertHandlers = new ArrayList();
+	
+	private boolean fireInsertItemStrategy(CalendarableItem item) {
+		return fireEvents(item, insertHandlers);
+	}
+	
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted in the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #removeItemInsertHandler
+	 */
+	public void addItemInsertHandler(CalendarableItemEventHandler handler) {		
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		insertHandlers.add(handler);
+	}
+	
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted into the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #addItemInsertHandler
+	 */
+	public void removeItemInsertHandler(CalendarableItemEventHandler handler) {		
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}
+		insertHandlers.remove(handler);
+	}
+	
+	private List deleteHandlers = new ArrayList();
+
+	private boolean fireDeleteItemStrategy(CalendarableItem item) {
+		return fireEvents(item, deleteHandlers);
+	}
+	
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is deleted from the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeDeleteItemHandler
+	 */
+	public void addItemDeleteHandler(CalendarableItemEventHandler handler) {
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}		
+		deleteHandlers.add(handler);
+	}
+	
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is deleted from the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #addDeleteItemHandler
+	 */
+	public void removeItemDeleteHandler(CalendarableItemEventHandler handler) {
+		deleteHandlers.remove(handler);
+	}
+	
+	private List itemDisposeHandlers = new ArrayList();
+	
+	private boolean fireDisposeItemStrategy(CalendarableItem item) {
+		return fireEvents(item, itemDisposeHandlers);
+	}
+	
+	/**
+	 * Adds the handler to the collection of handler who will
+	 * be notified when a CalendarableItem's control is disposed, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.  This is normally used to remove any data bindings
+	 * that may be attached to the (now-unused) CalendarableItem.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeCalendarableItemDisposeHandler
+	 */
+	public void addItemDisposeHandler(CalendarableItemEventHandler handler) {
+		if (handler == null) {
+			throw new IllegalArgumentException("The argument cannot be null");
+		}
+		if (isDisposed()) {
+			throw new SWTException("Widget is disposed");
+		}		
+		itemDisposeHandlers.add(handler);
+	}
+	
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is disposed, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.  This is normally used to remove any data bindings
+	 * that may be attached to the (now-unused) CalendarableItem.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeDeleteListener
+	 */
+	public void removeItemDisposeHandler(CalendarableItemEventHandler handler) {
+		itemDisposeHandlers.remove(handler);
 	}
 	
 	/**
@@ -573,10 +849,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @param day
 	 * @return The row in DayRow coordinates
 	 */
-	private int computeRowForCalendarable(Calendarable calendarable, int day) {
+	private int computeRowForCalendarable(CalendarableItem calendarable, int day) {
 		int row = 0;
 		if (calendarable.isAllDayEvent()) {
-			Calendarable[] allDayEvents = model.getAllDayCalendarables(day);
+			CalendarableItem[] allDayEvents = model.getAllDayCalendarables(day);
 			for (int allDayEventRow = 0; allDayEventRow < allDayEvents.length; allDayEventRow++) {
 				if (allDayEvents[allDayEventRow] == calendarable) {
 					row = allDayEventRow - compositeTable.getTopRow();
@@ -654,7 +930,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private void freeObsoleteCalendarableEventControls(List removedCalendarables) {
 		for (Iterator removedCalendarablesIter = removedCalendarables.iterator(); removedCalendarablesIter.hasNext();) {
-			Calendarable toRemove = (Calendarable) removedCalendarablesIter.next();
+			CalendarableItem toRemove = (CalendarableItem) removedCalendarablesIter.next();
 			if (selectedCalendarable == toRemove) {
 				setSelection(null);
 			}
@@ -667,7 +943,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
 			if (model.getNumberOfColumnsWithinDay(day) == -1) {
 				List events = model.getCalendarableEvents(day);
-				Calendarable[][] eventLayout = dayModel.computeEventLayout(events);
+				CalendarableItem[][] eventLayout = dayModel.computeEventLayout(events);
 				model.setEventLayout(day, eventLayout);
 			}
 		}
@@ -703,7 +979,7 @@ public class DayEditor extends Composite implements IEventEditor {
 				int allDayEventRow = 0;
 				
 				for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
-					Calendarable calendarable = (Calendarable) calendarablesIter.next();
+					CalendarableItem calendarable = (CalendarableItem) calendarablesIter.next();
 					if (calendarable.isAllDayEvent()) {
 						layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);
 						++allDayEventRow;
@@ -738,12 +1014,12 @@ public class DayEditor extends Composite implements IEventEditor {
 		return columns;
 	}
 
-	private void fillControlData(Calendarable calendarable, int clippingStyle) {
+	private void fillControlData(CalendarableItem calendarable, int clippingStyle) {
 		calendarable.getControl().setText(calendarable.getText());
 		calendarable.getControl().setClipping(clippingStyle);
 	}
 
-	private void layoutAllDayEvent(int day, int allDayEventRow, Calendarable calendarable, Control[] gridRows) {
+	private void layoutAllDayEvent(int day, int allDayEventRow, CalendarableItem calendarable, Control[] gridRows) {
 		if (eventRowIsVisible(allDayEventRow)) {
 			createCalendarableControl(calendarable);
 			fillControlData(calendarable, SWT.NULL);
@@ -759,7 +1035,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 
-	private void layoutTimedEvent(int day, Point[] columnPositions, Calendarable calendarable, Control[] gridRows) {
+	private void layoutTimedEvent(int day, Point[] columnPositions, CalendarableItem calendarable, Control[] gridRows) {
 		int firstVisibleRow = model.computeStartHour() * model.getNumberOfDivisionsInHour();
 		
 		int scrolledRows = compositeTable.getTopRow() - numberOfAllDayEventRows;
@@ -820,7 +1096,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		return false;
 	}
 	
-	private boolean timedEventIsVisible(Calendarable calendarable, int firstVisibleRow, int lastVisibleRow, int startRow, int endRow) {
+	private boolean timedEventIsVisible(CalendarableItem calendarable, int firstVisibleRow, int lastVisibleRow, int startRow, int endRow) {
 		if (startRow < firstVisibleRow && endRow < firstVisibleRow)
 			return false;
 		
@@ -830,7 +1106,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		return true;
 	}
 
-	private void createCalendarableControl(Calendarable calendarable) {
+	private void createCalendarableControl(CalendarableItem calendarable) {
 		if (calendarable.getControl() == null) {
 			calendarable.setControl(newCEC());
 			if (calendarable == selectedCalendarable) {
@@ -845,10 +1121,11 @@ public class DayEditor extends Composite implements IEventEditor {
 		return getBoundsInDayEditorCoordinates(slot);
 	}
 	
-	private void freeCalendarableControl(Calendarable calendarable) {
-		if (calendarable.getControl() != null) {
-			freeCEC(calendarable.getControl());
-			calendarable.setControl(null);
+	private void freeCalendarableControl(CalendarableItem calendarableItem) {
+		if (calendarableItem.getControl() != null) {
+			freeCEC(calendarableItem.getControl());
+			calendarableItem.setControl(null);
+			fireDisposeItemStrategy(calendarableItem);
 		}
 	}
 	
@@ -856,35 +1133,35 @@ public class DayEditor extends Composite implements IEventEditor {
 		return Display.getCurrent().map(slot.getParent(), this, slot.getBounds());
 	}
 
-	// CalendarableEventControl construction/destruction here -----------------
+	// CalendarableItemControl construction/destruction here -----------------
 
 	MouseAdapter selectCompositeTableOnMouseDownAdapter = new MouseAdapter() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
-			CalendarableEventControl control = (CalendarableEventControl) e.widget;
-			Calendarable aboutToSelect = control.getCalendarable();
+			CalendarableItemControl control = (CalendarableItemControl) e.widget;
+			CalendarableItem aboutToSelect = control.getCalendarableItem();
 			setSelection(aboutToSelect);
 		}
 	};
 
-	private CalendarableEventControl newCEC() {
-		if (spareCalendarableEventControls.size() > 0) {
-			CalendarableEventControl result = (CalendarableEventControl) spareCalendarableEventControls.remove(0);
+	private CalendarableItemControl newCEC() {
+		if (recycledCalendarableEventControls.size() > 0) {
+			CalendarableItemControl result = (CalendarableItemControl) recycledCalendarableEventControls.remove(0);
 			result.setVisible(true);
 			return result;
 		}
-		CalendarableEventControl calendarableEventControl = new CalendarableEventControl(this, SWT.NULL);
-		calendarableEventControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
-		return calendarableEventControl;
+		CalendarableItemControl calendarableItemControl = new CalendarableItemControl(this, SWT.NULL);
+		calendarableItemControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
+		return calendarableItemControl;
 	}
 	
-	private void freeCEC(CalendarableEventControl control) {
+	private void freeCEC(CalendarableItemControl control) {
 		control.setSelected(false);
-		control.setCalendarable(null);
+		control.setCalendarableItem(null);
 		control.setVisible(false);
-		spareCalendarableEventControls.add(control);
+		recycledCalendarableEventControls.add(control);
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

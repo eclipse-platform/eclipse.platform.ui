@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.test.CalendarableModel_TestTimedFindMethods.Event;
@@ -58,7 +58,7 @@ public class CMTimedEventFixture {
 	/**
 	 */
 	private class ECNP extends EventContentProvider {
-		public void refresh(Date day, Calendarable[] controls) {
+		public void refresh(Date day, CalendarableItem[] controls) {
 			if (controls.length != data[getOffset(day)].length) {
 				throw new RuntimeException("Number of elements to fill != amount of data we've got");
 			}

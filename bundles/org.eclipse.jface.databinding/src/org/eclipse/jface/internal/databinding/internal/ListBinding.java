@@ -53,6 +53,14 @@ public class ListBinding extends Binding {
 		updateTargetFromModel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
+	 */
+	public void dispose() {
+		targetList.dispose();
+		modelList.dispose();
+	}
+	
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {
 		public void handleListChange(IObservableList source, ListDiff diff) {
 			if (updating) {

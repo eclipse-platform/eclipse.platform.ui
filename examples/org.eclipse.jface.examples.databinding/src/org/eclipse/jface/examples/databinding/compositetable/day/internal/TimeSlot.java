@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -165,13 +169,15 @@ public class TimeSlot extends Canvas {
 				gc.setForeground(TIME_BAR_COLOR);
 				gc.drawLine(controlSize.x - 1, 0, controlSize.x - 1,
 						controlSize.y);
-				if (hourStart) {
+				if (isMinutesAfterHour(0)) {
 					gc.setForeground(CELL_BORDER_EMPHASIZED);
 				} else {
 					gc.setForeground(CELL_BORDER_LIGHT);
 				}
 //				gc.drawLine(TIME_BAR_WIDTH + 2, 0, controlSize.x - 2, 0);
-				gc.drawLine(0, 0, controlSize.x, 0);
+				if (isMinutesAfterHour(0) || isMinutesAfterHour(30) && !isAllDay()) {
+					gc.drawLine(0, 0, controlSize.x, 0);
+				}
 			} finally {
 				gc.setBackground(oldBackground);
 				gc.setForeground(oldForeground);
@@ -223,36 +229,46 @@ public class TimeSlot extends Canvas {
 		}
 	};
 
-	private boolean hourStart = true;
-
 	/**
-	 * @param isHourStart
+	 * @param minute The minute to check
+	 *  
+	 * @return true if the time falls on the specified minute of the hour.
+	 * false otherwise.
 	 */
-	public void setHourStart(boolean isHourStart) {
-		this.hourStart = isHourStart;
-		redraw();
-	}
-
-	/**
-	 * @return true if the current day represents the start of an hour; false
-	 *         otherwise.
-	 */
-	public boolean isHourStart() {
-		return hourStart;
+	public boolean isMinutesAfterHour(int minute) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(time);
+		return calendar.get(Calendar.MINUTE) == minute;
 	}
 	
-	private boolean allDayEvent = false;
+	private boolean allDay = false;
 	
-
 	/**
 	 * @param isAllDayEvent
 	 */
 	public void setAllDay(boolean isAllDayEvent) {
-		this.allDayEvent = isAllDayEvent;
+		this.allDay = isAllDayEvent;
 		if (isAllDayEvent) {
 			setBackground(CELL_BACKGROUND_WHITE);
 		} else {
 			setBackground(CELL_BACKGROUND_LIGHT);
 		}
+	}
+	
+	/**
+	 * @return Returns the allDay.
+	 */
+	public boolean isAllDay() {
+		return allDay;
+	}
+	
+	private Date time = new Date();
+
+	/**
+	 * @param currentTime
+	 */
+	public void setTime(Date currentTime) {
+		this.time = currentTime;
+		redraw();
 	}
 }

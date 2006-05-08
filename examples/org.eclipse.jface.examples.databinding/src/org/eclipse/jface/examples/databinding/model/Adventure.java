@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 

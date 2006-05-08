@@ -19,7 +19,7 @@ import java.util.List;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 
 /**
@@ -57,7 +57,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 			List events = cm.getCalendarableEvents(day);
 			assertEquals("number of events equal", events.size(), data[day].length);
 			for (int element = 0; element < data[day].length; element++) {
-				assertEquals("Event " + element + ", day " + day + "equal", data[day][element], ((Calendarable)events.get(element)).getText());
+				assertEquals("Event " + element + ", day " + day + "equal", data[day][element], ((CalendarableItem)events.get(element)).getText());
 			}
 		}
 	}
@@ -89,9 +89,9 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		return gc.getTime();
 	}
 	
-	private Calendarable[] getAllDayEvents(String[][] data) {
+	private CalendarableItem[] getAllDayEvents(String[][] data) {
 		setupModel(data);
-		Calendarable[] allDayEvents = cm.getAllDayCalendarables(0);
+		CalendarableItem[] allDayEvents = cm.getAllDayCalendarables(0);
 		return allDayEvents;
 	}
 	
@@ -266,7 +266,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1First", "2", "3"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
 		
 		assertEquals("Should find one all-day event", 1, allDayEvents.length);
 		assertEquals("Found 1First", "1First", allDayEvents[0].getText());
@@ -276,7 +276,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"0", "1First", "1Second", "2", "1Third"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
 		
 		assertEquals("Should find three all-day event", 3, allDayEvents.length);
 		assertEquals("Found 1First", "1First", allDayEvents[0].getText());
@@ -290,7 +290,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 				{"5", "5", "2", "3", "5", "5"}
 		};
 		setupModel(data);
-		Calendarable result = cm.findAllDayCalendarable(0, true, null);
+		CalendarableItem result = cm.findAllDayCalendarable(0, true, null);
 		assertNull("No calendarables forward", result);
 	}
 
@@ -298,8 +298,8 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"5", "5", "2", "3", "5", "5"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
-		Calendarable result = cm.findAllDayCalendarable(0, false, null);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem result = cm.findAllDayCalendarable(0, false, null);
 		assertNull("No calendarables forward", result);
 	}
 	
@@ -307,8 +307,8 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
-		Calendarable result = cm.findAllDayCalendarable(0, false, allDayEvents[0]);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem result = cm.findAllDayCalendarable(0, false, allDayEvents[0]);
 		assertNull("No Calendarables backward from first", result);
 	}
 	
@@ -316,8 +316,8 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
-		Calendarable result = cm.findAllDayCalendarable(0, true, allDayEvents[3]);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem result = cm.findAllDayCalendarable(0, true, allDayEvents[3]);
 		assertNull("No calendarables forward", result);
 	}
 	
@@ -325,8 +325,8 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
-		Calendarable result = cm.findAllDayCalendarable(0, true, allDayEvents[1]);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem result = cm.findAllDayCalendarable(0, true, allDayEvents[1]);
 		assertEquals("Should find third event", allDayEvents[2], result);
 	}
 	
@@ -334,8 +334,8 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"1First", "1Second", "2", "3", "1Third", "1Fourth"}
 		};
-		Calendarable[] allDayEvents = getAllDayEvents(data);
-		Calendarable result = cm.findAllDayCalendarable(0, false, allDayEvents[1]);
+		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		CalendarableItem result = cm.findAllDayCalendarable(0, false, allDayEvents[1]);
 		assertEquals("Should find first event", allDayEvents[0], result);
 	}
 	

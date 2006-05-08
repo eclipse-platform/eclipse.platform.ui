@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.examples.databinding.model;
+package org.eclipse.jface.examples.databinding;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -49,6 +49,12 @@ public class ModelObject {
 	
 	protected void firePropertyChange(String propertyName, int oldValue,
 			int newValue) {
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
+				newValue);
+	}
+	
+	protected void firePropertyChange(String propertyName, boolean oldValue,
+			boolean newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}

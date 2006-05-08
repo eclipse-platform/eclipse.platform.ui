@@ -20,7 +20,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.swt.graphics.Point;
 
@@ -31,8 +31,8 @@ import org.eclipse.swt.graphics.Point;
 public class DayModel_testGetColumnsForEvents extends TestCase {
 	// Fixtures ---------------------------------------------------------------
 
-	private Calendarable event(int number) {
-		return (Calendarable) expectedEvents.get(number);
+	private CalendarableItem event(int number) {
+		return (CalendarableItem) expectedEvents.get(number);
 	}
 
 	private Date time(int hour, int minutes) {
@@ -43,8 +43,8 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		return gc.getTime();
 	}
 	
-	private Calendarable addCalendarable(Date startTime, Date endTime, String description) {
-		Calendarable c = new Calendarable();
+	private CalendarableItem addCalendarable(Date startTime, Date endTime, String description) {
+		CalendarableItem c = new CalendarableItem(new Date());
 		c.setStartTime(startTime);
 		c.setEndTime(endTime);
 		c.setText(description);
@@ -52,15 +52,15 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		return c;
 	}
 	
-	private Calendarable addCalendarable(String description) {
-		Calendarable c = new Calendarable();
+	private CalendarableItem addCalendarable(String description) {
+		CalendarableItem c = new CalendarableItem(new Date());
 		c.setText(description);
 		c.setAllDayEvent(true);
 		expectedEvents.add(c);
 		return c;
 	}
 	
-	private void assertEventInColumnInPositions(Calendarable event, int column, int[] expectedSlotsForEvent) {
+	private void assertEventInColumnInPositions(CalendarableItem event, int column, int[] expectedSlotsForEvent) {
 		int firstSlotForEvent = expectedSlotsForEvent[0];
 		int lastSlotForEvent = expectedSlotsForEvent[expectedSlotsForEvent.length-1];
 		int lastSlotInDay = eventLayout[column].length;
@@ -81,7 +81,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		}
 	}
 	
-	private void assertEventNotInColumn(Calendarable event, int column) {
+	private void assertEventNotInColumn(CalendarableItem event, int column) {
 		for (int slot = 0; slot < eventLayout[column].length; slot++) {
 			assertFalse("event not in column: " + column + ", " + slot, event == eventLayout[column][slot]);
 		}
@@ -91,7 +91,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		assertEquals(expected+ " columns", expected, eventLayout.length);
 	}
 
-	private void assertBounds(Calendarable c, Point leftTop, Point rightBottom) {
+	private void assertBounds(CalendarableItem c, Point leftTop, Point rightBottom) {
 		assertEquals("top left position", leftTop, c.getUpperLeftPositionInDayRowCoordinates());
 		assertEquals("bottom right position", rightBottom, c.getLowerRightPositionInDayRowCoordinates());
 	}
@@ -103,7 +103,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	private IEventEditor eventEditor;
 	private EventLayoutComputer dayModel;
 	private List expectedEvents;
-	private Calendarable[][] eventLayout; 
+	private CalendarableItem[][] eventLayout; 
 		
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -128,7 +128,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	}
 	
 	public void test_getEventLayout_OneEventNoSpan() throws Exception {
-		Calendarable c = addCalendarable(time(8, 00), time(8, 30), "One event");
+		CalendarableItem c = addCalendarable(time(8, 00), time(8, 30), "One event");
 		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(1);
@@ -137,7 +137,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	}
 
 	public void test_getEventLayout_TwoEventsOneIsAllDaySpan3FullBlocks() throws Exception {
-		Calendarable c = addCalendarable(time(8, 00), time(9, 30), "One event, 3 timeslots");
+		CalendarableItem c = addCalendarable(time(8, 00), time(9, 30), "One event, 3 timeslots");
 		addCalendarable("All-day-event");
 		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
@@ -199,7 +199,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		addCalendarable(time(01, 00), time(3, 00), "First event");
 		addCalendarable(time(01, 30), time(3, 00), "Second event");
 		addCalendarable(time(02, 00), time(4, 00), "Third event");
-		Calendarable c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
+		CalendarableItem c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
 		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(3);
@@ -228,7 +228,7 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 		addCalendarable(time(01, 30), time(3, 00), "Second event");
 		addCalendarable(time(02, 00), time(4, 00), "Third event");
 		addCalendarable("ad2");
-		Calendarable c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
+		CalendarableItem c = addCalendarable(time(03, 00), time(4, 00), "Fourth event");
 		eventLayout = dayModel.computeEventLayout(expectedEvents);
 		
 		assertExpectedColumns(3);

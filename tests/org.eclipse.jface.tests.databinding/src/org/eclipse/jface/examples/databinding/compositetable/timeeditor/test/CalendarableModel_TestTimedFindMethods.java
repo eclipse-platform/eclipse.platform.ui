@@ -18,7 +18,7 @@ import java.util.GregorianCalendar;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 
 /**
@@ -41,7 +41,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 		cm.setStartDate(cmf.startDate);
 		EventLayoutComputer dm = new EventLayoutComputer(4);
 		for (int day = 0; day < cmf.getNumberOfDays(); ++day ) {
-			Calendarable[][] eventLayout = dm.computeEventLayout(cm.getCalendarableEvents(day));
+			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm.getCalendarableEvents(day));
 			cm.setEventLayout(day, eventLayout);
 		}
 
@@ -51,7 +51,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 		cm0.setEventContentProvider(cmf0.eventContentProvider);
 		cm0.setStartDate(cmf0.startDate);
 		for (int day = 0; day < cmf0.getNumberOfDays(); ++day ) {
-			Calendarable[][] eventLayout = dm.computeEventLayout(cm0.getCalendarableEvents(day));
+			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm0.getCalendarableEvents(day));
 			cm0.setEventLayout(day, eventLayout);
 		}
 	}
@@ -138,136 +138,136 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 		{},
 	};
 
-	private Calendarable calendarable(int day, int event) {
-		return (Calendarable) cm.getCalendarableEvents(day).get(event);
+	private CalendarableItem calendarable(int day, int event) {
+		return (CalendarableItem) cm.getCalendarableEvents(day).get(event);
 	}
 	
 	public void testFindTimedCalendarable_ForwardWithoutSelection_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 51, -1, true, null);
+		CalendarableItem found = cm.findTimedCalendarable(0, 51, -1, true, null);
 		assertNull("Should not find any Calendarable", found);
 	}
 
 	public void testFindTimedCalendarable_BackwardWithoutSelection_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 20, -1, false, null);
+		CalendarableItem found = cm.findTimedCalendarable(0, 20, -1, false, null);
 		assertNull("Should not find any Calendarable", found);
 	}
 
 	public void testFindTimedCalendarable_ForwardWithoutSelection_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 40, -1, true, null);
+		CalendarableItem found = cm.findTimedCalendarable(0, 40, -1, true, null);
 		assertEquals("Should have found Calendarable", calendarable(0, 1), found);
 	}
 
 	public void testFindTimedCalendarable_BackwardWithoutSelection_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 40, -1, false, null);
+		CalendarableItem found = cm.findTimedCalendarable(0, 40, -1, false, null);
 		assertEquals("Should have found Calendarable", calendarable(0, 0), found);
 	}
 
 	public void testFindTimedCalendarable_ForwardWithSelection_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 46, -1, true, calendarable(0, 1));
+		CalendarableItem found = cm.findTimedCalendarable(0, 46, -1, true, calendarable(0, 1));
 		assertNull("Should not find any Calendarable", found);
 	}
 
 	public void testFindTimedCalendarable_BackwardWithSelection_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 25, -1, false, calendarable(0, 0));
+		CalendarableItem found = cm.findTimedCalendarable(0, 25, -1, false, calendarable(0, 0));
 		assertNull("Should not find any Calendarable", found);
 	}
 
 	public void testFindTimedCalendarable_ForwardWithSelection_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 25, -1, true, calendarable(0, 0));
+		CalendarableItem found = cm.findTimedCalendarable(0, 25, -1, true, calendarable(0, 0));
 		assertEquals("Should have found Calendarable", calendarable(0, 1), found);
 	}
 
 	public void testFindTimedCalendarable_BackwardWithSelection_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(0, 46, -1, false, calendarable(0, 1));
+		CalendarableItem found = cm.findTimedCalendarable(0, 46, -1, false, calendarable(0, 1));
 		assertEquals("Should have found Calendarable", calendarable(0, 0), found);
 	}
 
 	public void testFindTimedCalendarable_ForwardEventCollision_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(4, 52, -1, true, calendarable(4, 4));
+		CalendarableItem found = cm.findTimedCalendarable(4, 52, -1, true, calendarable(4, 4));
 		assertEquals("Should have found Calendarable", calendarable(4, 5), found);
 	}
 
 	public void testFindTimedCalendarable_BackwardEventCollision_GotAHit() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(6, 48, -1, false, calendarable(6, 3));
+		CalendarableItem found = cm.findTimedCalendarable(6, 48, -1, false, calendarable(6, 3));
 		assertEquals("Should have found Calendarable", calendarable(6, 2), found);
 	}
 	
 	public void testFindTimedCalendarable_ForwardEventCollision_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(6, 47, -1, true, calendarable(6, 3));
+		CalendarableItem found = cm.findTimedCalendarable(6, 47, -1, true, calendarable(6, 3));
 		assertNull("Should not find any Calendarable", found);
 	}
 
 	public void testFindTimedCalendarable_BackwardEventCollision_NothingToFind() throws Exception {
-		Calendarable found = cm.findTimedCalendarable(6, 41, -1, false, calendarable(6, 0));
+		CalendarableItem found = cm.findTimedCalendarable(6, 41, -1, false, calendarable(6, 0));
 		assertNull("Should not find any Calendarable", found);
 	}
 	
 	// findNextCalendarable tests ---------------------------------------------
 	
 	public void testFindNextCalendarable_FindNextAlldayEventInSameDay() throws Exception {
-		Calendarable found = cm.findNextCalendarable(4, 0, calendarable(4, 0), true);
+		CalendarableItem found = cm.findNextCalendarable(4, 0, calendarable(4, 0), true);
 		assertEquals("Should have found Calendarable", calendarable(4, 1), found);
 	}
 	
 	public void testFindNextCalendarable_StartWithAllday_GetFirstTimedEventFromAllDaySelection() throws Exception {
-		Calendarable found = cm.findNextCalendarable(4, 1, calendarable(4, 1), true);
+		CalendarableItem found = cm.findNextCalendarable(4, 1, calendarable(4, 1), true);
 		assertEquals("Should have found Calendarable", calendarable(4, 2), found);
 	}
 
 	public void testFindNextCalendarable_StartWithAllday_GetFirstTimedEventFromNoSelection() throws Exception {
-		Calendarable found = cm.findNextCalendarable(4, 2, null, false);
+		CalendarableItem found = cm.findNextCalendarable(4, 2, null, false);
 		assertEquals("Should have found Calendarable", calendarable(4, 2), found);
 	}
 
 	public void testFindNextCalendarable_WrapToNextDay() throws Exception {
-		Calendarable found = cm.findNextCalendarable(6, 47, calendarable(6, 3), false);
+		CalendarableItem found = cm.findNextCalendarable(6, 47, calendarable(6, 3), false);
 		assertEquals("Should have found Calendarable", calendarable(8, 0), found);
 	}
 	
 	public void testFindNextCalendarable_WrapFromLastDayToFirstDay() throws Exception {
-		Calendarable found = cm.findNextCalendarable(15, 42, calendarable(15, 1), false);
+		CalendarableItem found = cm.findNextCalendarable(15, 42, calendarable(15, 1), false);
 		assertEquals("Should have found Calendarable", calendarable(0, 0), found);
 	}
 	
 	public void testFindNextCalendarable_NoEventsInDisplay() throws Exception {
-		Calendarable found = cm0.findNextCalendarable(15, 42, null, false);
+		CalendarableItem found = cm0.findNextCalendarable(15, 42, null, false);
 		assertNull("Should find no events", found);
 	}
 	
 	// findPreviousCalendarable tests -----------------------------------------
 
 	public void testFindPreviousCalendarable_FindPreviousTimedEventInSameDay() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(0, 44, calendarable(0, 1), false);
+		CalendarableItem found = cm.findPreviousCalendarable(0, 44, calendarable(0, 1), false);
 		assertEquals("Should have found Calendarable", calendarable(0, 0), found);
 	}
 	
 	public void testFindPreviousCalendarable_FindLastAlldayEventInSameDay() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(3, 32, calendarable(3, 1), false);
+		CalendarableItem found = cm.findPreviousCalendarable(3, 32, calendarable(3, 1), false);
 		assertEquals("Should have found Calendarable", calendarable(3, 0), found);
 	}
 	
 	public void testFindPreviousCalendarable_FindPreviousAlldayEventInSameDay() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(4, 1, calendarable(4, 1), true);
+		CalendarableItem found = cm.findPreviousCalendarable(4, 1, calendarable(4, 1), true);
 		assertEquals("Should have found Calendarable", calendarable(4, 0), found);
 	}
 	
 	public void testFindPreviousCalendarable_WrapToPreviousDay_AllDayEvent() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(4, 0, calendarable(4, 0), true);
+		CalendarableItem found = cm.findPreviousCalendarable(4, 0, calendarable(4, 0), true);
 		assertEquals("Should have found Calendarable", calendarable(3, 2), found);
 	}
 	
 	public void testFindPreviousCalendarable_WrapToPreviousDay_TimedEvent() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(8, 35, calendarable(8, 0), false);
+		CalendarableItem found = cm.findPreviousCalendarable(8, 35, calendarable(8, 0), false);
 		assertEquals("Should have found Calendarable", calendarable(6, 3), found);
 	}
 	
 	public void testFindPreviousCalendarable_WrapFromFirstDayToLastDay() throws Exception {
-		Calendarable found = cm.findPreviousCalendarable(0, 24, calendarable(0, 0), false);
+		CalendarableItem found = cm.findPreviousCalendarable(0, 24, calendarable(0, 0), false);
 		assertEquals("Should have found Calendarable", calendarable(15, 1), found);
 	}
 	
 	public void testFindPreviousCalendarable_NoEventsInDisplay() throws Exception {
-		Calendarable found = cm0.findPreviousCalendarable(15, 42, null, false);
+		CalendarableItem found = cm0.findPreviousCalendarable(15, 42, null, false);
 		assertNull("Should find no events", found);
 	}
 }
