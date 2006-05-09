@@ -33,7 +33,7 @@ public interface IPredicateRule extends IRule {
 	 * Evaluates the rule by examining the characters available from
 	 * the provided character scanner. The token returned by this rule
 	 * returns <code>true</code> when calling <code>isUndefined</code>,
-	 * if the text the rule investigated does not match the rule's requirements. Otherwise,
+	 * if the text that the rule investigated does not match the rule's requirements. Otherwise,
 	 * this method returns this rule's success token. If this rules relies on a text pattern
 	 * comprising a opening and a closing character sequence this method can also be called
 	 * when the scanner is positioned already between the opening and the closing sequence.
