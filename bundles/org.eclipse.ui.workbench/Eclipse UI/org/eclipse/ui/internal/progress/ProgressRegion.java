@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -46,8 +45,6 @@ public class ProgressRegion implements IWindowTrim {
 	 * the side the receiver is placed on
 	 */
 	private int side = SWT.BOTTOM;
-	
-	private boolean forceHorizontal;
 
     /**
      * Create a new instance of the receiver.
@@ -69,15 +66,6 @@ public class ProgressRegion implements IWindowTrim {
     public Control createContents(Composite parent, WorkbenchWindow window) {
         workbenchWindow = window;
 
-        // Test whether or not 'advanced' graphics are available
-        // If not then we'll 'force' the ProgressBar to always be
-        // HORIZONTAL...
-        //TODO: This should likely be at some 'global' level state
-        GC gc = new GC(parent);
-        gc.setAdvanced(true);
-        forceHorizontal = !gc.getAdvanced();
-        gc.dispose();
-        
         region = new Composite(parent, SWT.NONE) {
 			/*
 			 * (non-Javadoc)
@@ -205,11 +193,6 @@ public class ProgressRegion implements IWindowTrim {
 	public void dock(int dropSide) {
 		int oldSide = side;
 		side = dropSide;
-		
-		// If we can't rotate the bar then leave it horizontal
-		if (forceHorizontal)
-			side = SWT.BOTTOM;
-		
 		if (oldSide == dropSide || (isVertical(oldSide) && isVertical(dropSide)) || (isHorizontal(oldSide) && isHorizontal(dropSide)))
 			return;
 		recreate();
