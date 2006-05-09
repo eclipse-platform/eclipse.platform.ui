@@ -781,6 +781,7 @@ public class ReviewPage	extends BannerPage {
 					getContainer().run(true, true,
 							getCheckStateOperation(event, parent.getDisplay()));
 					getContainer().updateButtons();
+					updateStatusButton();
 				} catch (InvocationTargetException e) {
 					UpdateUI.logException(e);
 				} catch (InterruptedException e) {
@@ -982,6 +983,10 @@ public class ReviewPage	extends BannerPage {
 	
 	private void setValidationStatus(IStatus newValidationStatus) {
 		this.validationStatus = newValidationStatus;
+		updateStatusButton();
+	}
+	
+	private void updateStatusButton() {
 		statusButton.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				boolean newState = validationStatus != null && validationStatus.getSeverity() != IStatus.OK;
