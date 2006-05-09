@@ -847,7 +847,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
     
     public String resolveVariables(String text) {
-    	//if (configurer==null) return text;
+    	if (text==null) return null;
     	if (text.indexOf('$')== -1)
     		return text;
     	// resolve
