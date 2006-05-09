@@ -52,7 +52,7 @@ public class LaunchTreeModel extends AsynchronousTreeModel {
             return legacyAdapter;
         }
         
-        return new BogusTreeAdapter();
+        return null;
     }
 
     /**
@@ -169,15 +169,4 @@ public class LaunchTreeModel extends AsynchronousTreeModel {
 
     }
     
-    private class BogusTreeAdapter extends AsynchronousContentAdapter {
-        protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-            return new Object[0];
-        }
-        protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-            return false;
-        }
-        protected boolean supportsPartId(String id) {
-            return false;
-        }
-    }    
 }

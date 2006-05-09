@@ -82,7 +82,7 @@ public abstract class AsynchronousModel {
 		}
 	}
 	
-	private IAsynchronousContentAdapter fEmptyContentAdapter = new EmptyContentAdapter();
+	protected IAsynchronousContentAdapter fEmptyContentAdapter = new EmptyContentAdapter();
 	
 	/**
 	 * List of requests currently being performed.
@@ -455,9 +455,6 @@ public abstract class AsynchronousModel {
             IAdaptable adaptable = (IAdaptable) element;
             adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
         }
-        if (adapter == null) {
-        	adapter = fEmptyContentAdapter;
-        }
         return adapter;
     }	
     
@@ -470,6 +467,9 @@ public abstract class AsynchronousModel {
     public void updateChildren(ModelNode parent) {
         Object element = parent.getElement();
         IAsynchronousContentAdapter adapter = getContentAdapter(element);
+        if (adapter == null) {
+        	adapter = fEmptyContentAdapter;
+        }
         if (adapter != null) {
             IChildrenRequestMonitor update = new ChildrenRequestMonitor(parent, this);
             requestScheduled(update);

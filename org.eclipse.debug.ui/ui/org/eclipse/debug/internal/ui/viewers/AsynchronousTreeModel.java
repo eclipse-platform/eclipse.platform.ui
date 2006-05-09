@@ -229,6 +229,9 @@ public class AsynchronousTreeModel extends AsynchronousModel {
     protected void updateHasChildren(ModelNode node) {
         Object element = node.getElement();
         IAsynchronousContentAdapter adapter = getContentAdapter(element);
+        if (adapter == null) {
+        	adapter = fEmptyContentAdapter;
+        }
         if (adapter != null) {
             IContainerRequestMonitor update = new ContainerRequestMonitor(node, this);
             requestScheduled(update);
