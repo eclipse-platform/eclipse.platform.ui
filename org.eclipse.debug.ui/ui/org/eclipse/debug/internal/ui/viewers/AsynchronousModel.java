@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
@@ -54,7 +56,33 @@ public abstract class AsynchronousModel {
 	static {
 		DEBUG_MODEL = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
 		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/model")); //$NON-NLS-1$
-	}    
+	}  
+	
+	class EmptyContentAdapter extends AsynchronousContentAdapter {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+		 */
+		protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
+			return EMPTY;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+		 */
+		protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
+		 */
+		protected boolean supportsPartId(String id) {
+			return true;
+		}
+	}
+	
+	private IAsynchronousContentAdapter fEmptyContentAdapter = new EmptyContentAdapter();
 	
 	/**
 	 * List of requests currently being performed.
@@ -426,6 +454,9 @@ public abstract class AsynchronousModel {
         } else if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             adapter = (IAsynchronousContentAdapter) adaptable.getAdapter(IAsynchronousContentAdapter.class);
+        }
+        if (adapter == null) {
+        	adapter = fEmptyContentAdapter;
         }
         return adapter;
     }	
