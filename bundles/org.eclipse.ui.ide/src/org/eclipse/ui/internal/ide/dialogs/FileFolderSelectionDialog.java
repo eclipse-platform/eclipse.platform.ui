@@ -29,14 +29,14 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Selection dialog to select files and/or folders on the file system. Use
- * setInput to set input to a java.io.File that points to a folder.
+ * setInput to set input to an IFileStore that points to a folder.
  * 
  * @since 2.1
  */
 public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 	/**
-	 * Label provider for java.io.File objects.
+	 * Label provider for IFileStore objects.
 	 */
 	private static class FileLabelProvider extends LabelProvider {
 		private static final Image IMG_FOLDER = PlatformUI.getWorkbench()
@@ -75,7 +75,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	}
 
 	/**
-	 * Content provider for java.io.File objects.
+	 * Content provider for IFileStore objects.
 	 */
 	private static class FileContentProvider implements ITreeContentProvider {
 		private static final Object[] EMPTY = new Object[0];
