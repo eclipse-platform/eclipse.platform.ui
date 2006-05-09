@@ -16,3 +16,5 @@ Require-Bundle: org.eclipse.ui.forms;visibility:=reexport,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text
+Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,
+ J2SE-1.3
