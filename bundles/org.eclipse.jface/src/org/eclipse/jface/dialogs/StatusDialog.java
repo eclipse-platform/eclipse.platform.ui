@@ -103,13 +103,17 @@ public abstract class StatusDialog extends TrayDialog {
 				String message = status.getMessage();
 				if (message != null && message.length() > 0) {
 					setText(message);
-					StatusDialog.this.setImage(findImage(status));
+					// unqualified call of setImage is too ambiguous for Foundation 1.0 compiler
+					// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
+					MessageLine.this.setImage(findImage(status));
 					setBackground(JFaceColors.getErrorBackground(getDisplay()));
 					return;
 				}
 			}
 			setText(""); //$NON-NLS-1$	
-			StatusDialog.this.setImage(null);
+			// unqualified call of setImage is too ambiguous for Foundation 1.0 compiler
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
+			MessageLine.this.setImage(null);
 			setBackground(fNormalMsgAreaBackground);
 		}
 	}
