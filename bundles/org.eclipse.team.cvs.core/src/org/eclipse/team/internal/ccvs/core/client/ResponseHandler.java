@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -90,10 +90,13 @@ public abstract class ResponseHandler {
                 relativePath = repositoryDir;
             }
             IResource resource = folder.getIResource();
-            if (resource != null && resource.getProject().isAccessible() && !CVSTeamProvider.isSharedWithCVS(resource.getProject())) {
-            	// The project isn't shared but we are about to perform an operation on it.
-            	// we need to flag the project as shared so that the sync info management works
-            	CVSTeamProvider.markAsTempShare(resource.getProject());
+            if (resource != null) {
+            	IProject project = resource.getProject();
+				if (project != null && project.isAccessible() && !CVSTeamProvider.isSharedWithCVS(project)) {
+	            	// The project isn't shared but we are about to perform an operation on it.
+	            	// we need to flag the project as shared so that the sync info management works
+	            	CVSTeamProvider.markAsTempShare(project);
+            	}
             }
             folder.setFolderSyncInfo(new FolderSyncInfo(
 				relativePath,
