@@ -130,6 +130,13 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		IEditorInput oldInput= getEditorInput();
 		if (oldInput instanceof IPropertyChangeNotifier)
 			((IPropertyChangeNotifier)input).removePropertyChangeListener(fPropertyChangeListener);
+
+		ISaveablesLifecycleListener lifecycleListener= null;
+		if (oldInput != null) {
+			lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+			lifecycleListener.handleLifecycleEvent(
+				new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
+		}
 			
 		super.setInput(input);
 		
@@ -154,6 +161,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
         
         firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
+        
+        if (lifecycleListener != null) {
+        	lifecycleListener.handleLifecycleEvent(
+        		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
+        }
 	}
 	
 	public IActionBars getActionBars() {
