@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IncludedFeatureReference;
 import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.UpdateCore;
 
@@ -771,7 +772,7 @@ public class FeatureModel extends ModelObject {
 			this.featureIncludes = new ArrayList();
 		//PERF: no ListContains()
 		//if (!this.featureIncludes.contains(include))
-		this.featureIncludes.add(include);
+		this.featureIncludes.add(new IncludedFeatureReference(include));
 	}
 
 	/**

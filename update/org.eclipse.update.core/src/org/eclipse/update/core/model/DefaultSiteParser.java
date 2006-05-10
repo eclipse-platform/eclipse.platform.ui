@@ -909,8 +909,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		try {
 			fullDigestURL = getFullDigestURL( site, Locale.getDefault().getCountry(), Locale.getDefault().getLanguage());
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UpdateCore.log("Could not access digest on the site: " + e.getMessage(), null); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -921,8 +920,8 @@ public class DefaultSiteParser extends DefaultHandler {
 				features[i].setSite(site);
 			}
 			return features;
-		} catch(Exception e){ 
-			e.printStackTrace();
+		} catch(Exception e) { 
+			UpdateCore.log("Digest could not be parsed:" + e.getMessage(), null); //$NON-NLS-1$
 			return null;
 		}
 	}

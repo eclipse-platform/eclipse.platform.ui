@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.IncludedFeatureReference;
 import org.eclipse.update.core.model.DefaultSiteParser;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureModelFactory;
@@ -42,6 +44,7 @@ import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.core.ExtendedSiteURLFactory;
 import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.jarprocessor.JarProcessor;
 import org.eclipse.update.internal.jarprocessor.Main;
 import org.xml.sax.SAXException;
@@ -205,10 +208,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			String featureJarFileName = (String) featureIterator.next();
 			// System.out.println("i=" + i++);
 
-			if (featureJarFileName.endsWith("jar")) //$NON-NLS-1$
+			if (featureJarFileName.endsWith("jar")) { //$NON-NLS-1$
 				System.out.println("Processing... " + featureJarFileName); //$NON-NLS-1$
-			else
+			} else {
 				System.out.println("Skipping... " + featureJarFileName); //$NON-NLS-1$
+				continue;
+			}
 
 			JarFile featureJar = null;
 			try {
@@ -691,7 +696,9 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 						.getCopyrightModel().getAnnotation().trim().length() == 0))
 				&& ((featureModel.getLicenseModel() == null)
 						|| (featureModel.getLicenseModel().getAnnotation() == null) || (featureModel
-						.getLicenseModel().getAnnotation().trim().length() == 0))) {
+						.getLicenseModel().getAnnotation().trim().length() == 0)) 
+				&& ((featureModel.getFeatureIncluded() == null) || (featureModel
+						.getFeatureIncluded().length == 0))){
 			digest.println("/> "); //$NON-NLS-1$
 		} else {
 			digest.println("> "); //$NON-NLS-1$
@@ -726,7 +733,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					&& (featureModel.getDescriptionModel().getAnnotation()
 							.trim().length() != 0)) {
 				digest.println("\t<description>"); //$NON-NLS-1$
-				digest.println("\t\t" + description); //$NON-NLS-1$
+				digest.println("\t\t" + UpdateManagerUtils.getWritableXMLString(description)); //$NON-NLS-1$
 				digest.println("\t</description>"); //$NON-NLS-1$
 			}
 
@@ -736,7 +743,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					// (featureModel.getDescriptionModel().getAnnotation().length()
 					// != 0) {
 					digest.println("\t<copyright>"); //$NON-NLS-1$
-					digest.println("\t\t" + copyright); //$NON-NLS-1$
+					digest.println("\t\t" + UpdateManagerUtils.getWritableXMLString(copyright)); //$NON-NLS-1$
 					digest.println("\t</copyright>"); //$NON-NLS-1$
 					// }
 				}
@@ -747,7 +754,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					&& (featureModel.getDescriptionModel().getAnnotation()
 							.trim().length() != 0)) {
 				digest.println("\t<license>"); //$NON-NLS-1$
-				digest.println("\t\t" + license); //$NON-NLS-1$
+				digest.println("\t\t" + UpdateManagerUtils.getWritableXMLString(license)); //$NON-NLS-1$
 				digest.println("\t</license>"); //$NON-NLS-1$
 			}
 
@@ -780,6 +787,37 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 								+ "\" "); //$NON-NLS-1$
 
 					digest.println("/> "); //$NON-NLS-1$
+				}
+			}	
+				
+			IIncludedFeatureReference[] inlcudedFeatures = featureModel.getFeatureIncluded();
+				
+			if ((inlcudedFeatures != null) && (inlcudedFeatures.length != 0)) {
+				for (int i = 0; i < inlcudedFeatures.length; i++) {
+					try {
+						digest.print("\t<includes "); //$NON-NLS-1$
+						
+						digest.print("id=\"" + inlcudedFeatures[i].getVersionedIdentifier().getIdentifier() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						digest.print("version=\"" + inlcudedFeatures[i].getVersionedIdentifier().getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						if (inlcudedFeatures[i].getOS() != null)
+							digest.print("os=\"" + inlcudedFeatures[i].getOS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+						if (inlcudedFeatures[i].getNL() != null)
+							digest.print("nl=\"" + inlcudedFeatures[i].getNL() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						if (inlcudedFeatures[i].getWS() != null)
+							digest.print("ws=\"" + inlcudedFeatures[i].getWS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+						if (inlcudedFeatures[i].getOSArch() != null)
+							digest.print("arch=\"" + inlcudedFeatures[i].getOSArch() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$											
+						if ( (inlcudedFeatures[i] instanceof IncludedFeatureReference) && (((IncludedFeatureReference)inlcudedFeatures[i]).getLabel() != null))
+							digest.print("name=\"" + inlcudedFeatures[i].getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$									
+						if (inlcudedFeatures[i].isOptional())
+							digest.print("optional=\"true\""); //$NON-NLS-1$
+						digest.print("search-location=\"" + inlcudedFeatures[i].getSearchLocation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+
+						digest.println("/> "); //$NON-NLS-1$
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			digest.println("</feature>"); //$NON-NLS-1$
