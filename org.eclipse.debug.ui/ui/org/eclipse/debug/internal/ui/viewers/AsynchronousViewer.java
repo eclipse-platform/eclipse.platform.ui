@@ -1096,18 +1096,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     		if (DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\titem mapped: " + node); //$NON-NLS-1$
     		}
-    		
-    		if (preserveSelectionForSetData()) {
-    			final ModelNode child = node;
-	    		preservingSelection(new Runnable() {
-	    		    public void run() {
-	    		        internalRefresh(child);
-	    		    }
-	    		});
-    		}
-    		else {
-    			internalRefresh(node);
-    		}
+    		internalRefresh(node);
 		} else {
 			if (DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
@@ -1141,11 +1130,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	private int getNodeIndex(int level) {
 		return fSetDataIndicies[level];
-	}
-	
-	protected boolean preserveSelectionForSetData()
-	{
-		return true;
 	}
 	
 	protected abstract int indexOf(Widget parent, Widget child);

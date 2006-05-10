@@ -465,7 +465,4 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		return !fTopIndexQueue.isEmpty();
 	}
 
-	protected boolean preserveSelectionForSetData() {
-		return false;
-	}
 }
