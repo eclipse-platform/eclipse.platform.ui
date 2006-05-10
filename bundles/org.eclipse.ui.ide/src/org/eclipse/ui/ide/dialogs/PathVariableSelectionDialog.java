@@ -11,10 +11,14 @@
 
 package org.eclipse.ui.ide.dialogs;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -96,7 +100,12 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                     .getSelection()[0];
             dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
             dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
-            dialog.setInput(selection.path.toFile());
+            //XXX This only works for variables that refer to local file system locations
+            try {
+				dialog.setInput(EFS.getStore(URIUtil.toURI(selection.path)));
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), null, null, e.getStatus());
+			}
             if (dialog.open() == Window.OK
                     && pathVariablesGroup.performOk()) {
                 setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
