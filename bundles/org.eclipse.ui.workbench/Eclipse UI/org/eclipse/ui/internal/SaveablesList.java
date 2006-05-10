@@ -311,9 +311,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				// EditorManager.saveAll
 				int response = SaveableHelper.savePart(saveablePart2, window,
 						true);
-				// only include this part in the following logic if it returned
-				// DEFAULT
-				if (response != ISaveablePart2.DEFAULT) {
+				if (response == ISaveablePart2.CANCEL) {
+					// user canceled
+					return null;
+				} else if (response != ISaveablePart2.DEFAULT) {
+					// only include this part in the following logic if it returned
+					// DEFAULT
 					continue;
 				}
 			}
