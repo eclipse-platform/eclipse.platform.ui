@@ -38,7 +38,7 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 	public ShowRefactoringHistoryWizard() {
 		setNeedsProgressMonitor(false);
 		setWindowTitle(ScriptingMessages.ShowRefactoringHistoryWizard_title);
-		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_REFACTOR);
+		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_SHOW_HISTORY);
 		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
 		if (section == null)
