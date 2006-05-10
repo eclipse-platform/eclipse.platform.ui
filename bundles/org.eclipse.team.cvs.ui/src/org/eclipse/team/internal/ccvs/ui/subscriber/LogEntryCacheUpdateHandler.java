@@ -306,8 +306,11 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
         if (info != null) {
             collectedInfos.remove(info.getLocal());
             LogEntryCache cache = (LogEntryCache)cacheReference.get();
-            if (cache != null)
-                cache.clearEntries(getRemoteResource(info));
+            if (cache != null) {
+				ICVSRemoteResource remoteResource = getRemoteResource(info);
+				if (remoteResource != null)
+					cache.clearEntries(remoteResource);
+			}
         }
     }
 
