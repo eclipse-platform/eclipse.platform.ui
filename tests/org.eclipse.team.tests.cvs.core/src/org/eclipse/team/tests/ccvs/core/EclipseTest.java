@@ -987,15 +987,20 @@ public class EclipseTest extends ResourceTest {
 			}
 		});
 	}
-
-	protected static void executeHeadless(TeamOperation op) throws CVSException {
+	
+	protected static void executeHeadless(final TeamOperation op) throws CVSException {
 		try {
-			try {
-				// Bypass contxt by executing run(IProgressMonitor) directly
-				op.run(DEFAULT_MONITOR);
-			} catch (InvocationTargetException e1) {
-				throw CVSException.wrapException(e1);
-			}
+				EclipseRunnable tempRunnable = new EclipseRunnable(op, DEFAULT_MONITOR);
+				Thread tempThread = new Thread(tempRunnable);
+				tempThread.start();
+				while (tempThread.isAlive()){
+					Thread.sleep(100);
+					while (Display.getCurrent().readAndDispatch()) {};
+				}
+				//check for errors
+				Exception ex = tempRunnable.getException();
+				if (ex instanceof InvocationTargetException)
+					throw CVSException.wrapException(ex);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}
