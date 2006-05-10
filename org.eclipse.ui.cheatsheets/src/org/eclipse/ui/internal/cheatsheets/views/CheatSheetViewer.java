@@ -943,9 +943,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	/**
-	* Read the contents of the welcome page
+	* Read the contents of the cheat sheet file
+	* @return true if the file was read and parsed without error
 	*/
 	private boolean readFile() {
+		if (contentElement == null) {
+			return false;
+		}
 		if(parser == null)
 			parser = new CheatSheetParser();
 		// If the cheat sheet was registered then
@@ -1197,7 +1201,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	public void addListener(CheatSheetListener listener) {
-		getManager().addListener(listener);		
+		if (contentElement != null ) {
+			getManager().addListener(listener);		
+		}
 	}
 
 	public int contributeToViewMenu(Menu menu, int index) {
