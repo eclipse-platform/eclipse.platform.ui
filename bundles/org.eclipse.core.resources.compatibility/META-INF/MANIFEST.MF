@@ -11,3 +11,4 @@ Export-Package: org.eclipse.core.internal.indexing;x-internal:=true,
  org.eclipse.core.internal.localstore;x-internal:=true,
  org.eclipse.core.internal.properties;x-internal:=true,
  org.eclipse.core.internal.resources;x-internal:=true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
