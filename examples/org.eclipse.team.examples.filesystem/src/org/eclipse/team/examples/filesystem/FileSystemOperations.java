@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -69,8 +70,31 @@ public class FileSystemOperations {
 	}
 
 	/**
+	 * Make the local state of the traversals match the remote state by getting any out-of-sync 
+	 * resources. The overrideOutgoing flag is used to indicate whether locally modified
+	 * files should also be replaced or left alone.
+	 * @param traversals the traversals that cover the resources to get
+	 * @param overrideOutgoing whether locally modified resources should be replaced
+	 * @param progress a progress monitor
+	 * @throws TeamException
+	 */
+	public void get(ResourceTraversal[] traversals, boolean overrideOutgoing, IProgressMonitor monitor) throws TeamException {
+		try {
+			// ensure the progress monitor is not null
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100* traversals.length);
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				get(traversal.getResources(), traversal.getDepth(), overrideOutgoing, new SubProgressMonitor(monitor, 100));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/**
 	 * Checkout the given resources to the given depth by setting any files
-	 * to writtable (i.e set read-only to <coce>false</code>.
+	 * to writable (i.e set read-only to <code>false</code>.
 	 * @param resources the resources to be checked out
 	 * @param depth the depth of the checkout
 	 * @param progress a progress monitor
@@ -101,7 +125,7 @@ public class FileSystemOperations {
 	}
 
 	/**
-	 * Checkin the given resources to the given depth by replacing the remote (i.e. file system)
+	 * Check-in the given resources to the given depth by replacing the remote (i.e. file system)
 	 * contents with the local workspace contents. 
 	 * @param resources the resources
 	 * @param depth the depth of the operation

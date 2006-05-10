@@ -13,13 +13,14 @@ package org.eclipse.team.examples.filesystem.ui;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
  * An abstract class that acts as a super class for FileSystemProvider actions.
- * It provides some general methods applicable to multipe actions.
+ * It provides some general methods applicable to multiple actions.
  */
 public abstract class FileSystemAction extends TeamAction {
 
@@ -27,17 +28,7 @@ public abstract class FileSystemAction extends TeamAction {
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0)
-			return false;
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			// we only want to work on resources mapped to a file system provider
-			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), FileSystemPlugin.PROVIDER_ID);
-			if (provider == null)
-				return false;
-		}
-		return true;
+		return getSelectedMappings().length > 0;
 	}
 
 	/**
@@ -56,6 +47,16 @@ public abstract class FileSystemAction extends TeamAction {
 			list.add(resources[i]);
 		}
 		return result;
+	}
+	
+	/**
+	 * Return the selected resource mappings that are associated with the
+	 * file system provider.
+	 * @return the selected resource mappings that are associated with the
+	 * file system provider.
+	 */
+	protected ResourceMapping[] getSelectedMappings() {
+		return getSelectedResourceMappings(FileSystemPlugin.PROVIDER_ID);
 	}
 	
 }
