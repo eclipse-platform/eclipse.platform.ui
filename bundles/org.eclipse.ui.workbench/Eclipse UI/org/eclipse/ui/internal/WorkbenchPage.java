@@ -2102,6 +2102,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 		}
 
+        boolean promptedForSave = false;
         IViewPart view = ref.getView(false);
         if (view != null) {
 
@@ -2110,9 +2111,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
             
             // Confirm.
-            if (!persp.canCloseView(view)) {
-				return;
-			}
+    		if (view instanceof ISaveablePart) {
+    			ISaveablePart saveable = (ISaveablePart)view;
+    			if (saveable.isSaveOnCloseNeeded()) {
+    				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();
+    				boolean success = EditorManager.saveAll(Collections.singletonList(view), true, true, window);
+    				if (!success) {
+    					// the user cancelled.
+    					return;
+    				}
+    				promptedForSave = true;
+    			}
+    		}
         }
         
         int refCount = getViewFactory().getReferenceCount(ref);
@@ -2124,7 +2134,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				saveablesList = (SaveablesList) actualPart
 						.getSite().getService(ISaveablesLifecycleListener.class);
 				postCloseInfo = saveablesList.preCloseParts(Collections
-						.singletonList(actualPart), true, this
+						.singletonList(actualPart), !promptedForSave, this
 						.getWorkbenchWindow());
 				if (postCloseInfo==null) {
 					// cancel

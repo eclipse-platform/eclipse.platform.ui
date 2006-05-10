@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,14 +36,12 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPlaceholderFolderLayout;
-import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -179,20 +176,6 @@ public class Perspective {
         } else {
             return presentation.bringPartToTop(getPane(ref));
         }
-    }
-
-    /**
-     * Returns true if a view can close.
-     */
-    public boolean canCloseView(IViewPart view) {
-		if (view instanceof ISaveablePart) {
-			ISaveablePart saveable = (ISaveablePart)view;
-			if (saveable.isSaveOnCloseNeeded()) {
-				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();
-				return EditorManager.saveAll(Collections.singletonList(view), true, true, window);
-			}
-		}
-    	return true;
     }
 
     /**
