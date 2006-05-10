@@ -1104,10 +1104,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void disposeExistingTabs() {
 		fDisposingTabs = true;
-		CTabItem[] oldTabs = fTabFolder.getItems();
-		for (int i = 0; i < oldTabs.length; i++) {
-			oldTabs[i].dispose();
-		}
+        fTabFolder.dispose();
+        fTabFolder = null;
 		createTabFolder(fTabComposite);
 		disposeTabGroup();
 		fDisposingTabs = false;
