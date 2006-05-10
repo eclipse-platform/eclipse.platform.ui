@@ -19,6 +19,8 @@ import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
@@ -30,7 +32,7 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
  * @since 1.0
  * 
  */
-public class ValidationErrorList extends ObservableList {
+public class ValidationErrorList extends ObservableList implements ILazyDataSupplier {
 
 	private boolean isDirty = true;
 
@@ -125,4 +127,13 @@ public class ValidationErrorList extends ObservableList {
 		return ValidationError.class;
 	}
 
+
+	private static LazyInsertDeleteProvider nullLazyInsertDeleteProvider = new LazyInsertDeleteProvider();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier#getLazyInsertDeleteProvider()
+	 */
+	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
+		return nullLazyInsertDeleteProvider;
+	}
 }

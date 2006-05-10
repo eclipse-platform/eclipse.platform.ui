@@ -11,13 +11,16 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
+import org.eclipse.jface.internal.databinding.internal.LazyListBinding;
 import org.eclipse.jface.internal.databinding.internal.ListBinding;
 import org.eclipse.jface.internal.databinding.internal.ValueBinding;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
@@ -57,11 +60,19 @@ public class DefaultBindingFactory implements IBindingFactory {
 			if (modelObservable instanceof IObservableList) {
 				IObservableList target = (IObservableList) targetObservable;
 				IObservableList model = (IObservableList) modelObservable;
+				
 				dataBindingContext.fillBindSpecDefaults(dataBindingContext,
 						bindSpec, target.getElementType(), model
-								.getElementType());
-				binding = new ListBinding(dataBindingContext, target, model,
-						bindSpec);
+						.getElementType());
+				
+				if (modelObservable instanceof ILazyDataSupplier &&
+						targetObservable instanceof ILazyDataRequestor)
+				{
+					binding = new LazyListBinding(dataBindingContext, target, model, bindSpec);
+				} else {
+					binding = new ListBinding(dataBindingContext, target, model,
+							bindSpec);
+				}
 				return binding;
 			}
 			throw new BindingException(

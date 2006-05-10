@@ -16,13 +16,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 
 /**
  * Mutable observable list backed by an ArrayList.
  * 
  * @since 1.0
  */
-public class WritableList extends ObservableList {
+public class WritableList extends ObservableList implements ILazyDataSupplier {
+
+	private LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider();
 
 	/**
 	 * Creates an empty writable list containing elements of type Object.
@@ -38,6 +42,16 @@ public class WritableList extends ObservableList {
 	 */
 	public WritableList(Object elementType) {
 		super(new ArrayList(), elementType);
+	}
+
+	/**
+	 * Creates an empty writable list containing elements of the given type.
+	 * 
+	 * @param elementType
+	 */
+	public WritableList(Object elementType, LazyInsertDeleteProvider insertDeleteProvider) {
+		super(new ArrayList(), elementType);
+		this.insertDeleteProvider = insertDeleteProvider;
 	}
 
 	public Object set(int index, Object element) {
@@ -156,4 +170,11 @@ public class WritableList extends ObservableList {
 				.toArray(new ListDiffEntry[entries.size()])));
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier#getLazyInsertDeleteProvider()
+	 */
+	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
+		return insertDeleteProvider;
+	}
 }
