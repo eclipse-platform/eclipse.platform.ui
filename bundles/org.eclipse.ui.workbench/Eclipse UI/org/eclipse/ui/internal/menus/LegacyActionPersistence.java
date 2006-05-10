@@ -15,11 +15,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandEvent;
+import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
@@ -233,6 +238,38 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * must not be <code>null</code>.
 	 */
 	private final IWorkbenchWindow window;
+	
+	/**
+	 * Help action sets with enable/disable.
+	 */
+	private ICommandListener actionSetListener = new ICommandListener() {
+		public void commandChanged(CommandEvent commandEvent) {
+			Command cmd = commandEvent.getCommand();
+			String commandId = cmd.getId();
+			Binding binding = (Binding) commandIdToBinding.get(commandId);
+			if (binding != null) {
+				if (cmd.isEnabled()) {
+					if (!actionSetActiveBindings.contains(binding)) {
+						bindingService.addBinding(binding);
+						actionSetActiveBindings.add(binding);
+					}
+				} else if (actionSetActiveBindings.contains(binding)) {
+					bindingService.removeBinding(binding);
+					actionSetActiveBindings.remove(binding);
+				}
+			}
+		}
+	};
+	
+	/**
+	 * Map every commandId to its binding.
+	 */
+	private HashMap commandIdToBinding = new HashMap();
+	
+	/**
+	 * Which bindings do we currently have outstanding.
+	 */
+	private HashSet actionSetActiveBindings = new HashSet();
 
 	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
@@ -280,7 +317,18 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * collection. This should be called before every read.
 	 */
 	private final void clearBindings() {
-		// TODO Implement
+		Iterator i = commandIdToBinding.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry entry = (Map.Entry) i.next();
+			String commandId = (String) entry.getKey();
+			Binding binding = (Binding) entry.getValue();
+			commandService.getCommand(commandId).removeCommandListener(actionSetListener);
+			if (binding!=null && actionSetActiveBindings.contains(binding)) {
+				bindingService.removeBinding(binding);
+			}
+		}
+		commandIdToBinding.clear();
+		actionSetActiveBindings.clear();
 	}
 
 	/**
@@ -343,7 +391,14 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final Binding binding = new KeyBinding(keySequence, command,
 					activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW, null,
 					null, null, Binding.SYSTEM);
-			bindingService.addBinding(binding);
+			commandIdToBinding.put(command.getCommand().getId(), binding);
+			
+			if (command.getCommand().isEnabled()) {
+				bindingService.addBinding(binding);
+				actionSetActiveBindings.add(binding);
+			}
+			
+			command.getCommand().addCommandListener(actionSetListener);
 		}
 	}
 
@@ -686,8 +741,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	public final void dispose() {
 		super.dispose();
-		clearActivations();
 		clearBindings();
+		clearActivations();
 		clearImages();
 		clearMenus();
 	}

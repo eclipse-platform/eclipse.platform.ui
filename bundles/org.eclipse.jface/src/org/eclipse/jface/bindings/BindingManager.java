@@ -71,14 +71,14 @@ public final class BindingManager extends HandleObjectManager implements
 	public static boolean DEBUG = false;
 
 	/**
-	 * The separator character used in locales.
-	 */
-	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
-	
-	/**
 	 * Returned for optimized lookup.
 	 */
 	private static final TriggerSequence[] EMPTY_TRIGGER_SEQUENCE = new TriggerSequence[0];
+	
+	/**
+	 * The separator character used in locales.
+	 */
+	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 
 	/**
 	 * </p>
@@ -328,7 +328,7 @@ public final class BindingManager extends HandleObjectManager implements
 		bindings[bindingCount++] = binding;
 		clearCache();
 	}
-
+	
 	/**
 	 * <p>
 	 * Adds a listener to this binding manager. The listener will be notified
@@ -1318,6 +1318,7 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 
 		return bestBinding.getTriggerSequence();
 	}
+
 	/**
 	 * Gets the formatted string representing the best active binding for a
 	 * command. The best binding is the one that would be most appropriate to
@@ -1343,7 +1344,6 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 
 		return null;
 	}
-
 	/**
 	 * <p>
 	 * Returns the set of all bindings managed by this class.
@@ -1716,6 +1716,42 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		setActiveBindings(commandIdsByTrigger, triggersByParameterizedCommand,
 				buildPrefixTable(commandIdsByTrigger));
 		existingCache.setPrefixTable(prefixTable);
+	}
+
+	/**
+	 * <p>Remove the specific binding by identity. Does nothing if the binding is
+	 * not in the manager.</p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
+	 * 
+	 * @param binding
+	 *            The binding to be removed; must not be <code>null</code>.
+	 * @since 3.2
+	 */
+	public final void removeBinding(final Binding binding) {
+		if (bindings == null || bindings.length < 1) {
+			return;
+		}
+
+		final Binding[] newBindings = new Binding[bindings.length];
+		boolean bindingsChanged = false;
+		int index = 0;
+		for (int i = 0; i < bindingCount; i++) {
+			final Binding b = bindings[i];
+			if (b == binding) {
+				bindingsChanged = true;
+			} else {
+				newBindings[index++] = b;
+			}
+		}
+
+		if (bindingsChanged) {
+			this.bindings = newBindings;
+			bindingCount = index;
+			clearCache();
+		}
 	}
 
 	/**

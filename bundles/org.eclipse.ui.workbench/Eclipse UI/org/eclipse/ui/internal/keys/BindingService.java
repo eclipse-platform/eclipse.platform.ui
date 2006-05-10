@@ -114,7 +114,7 @@ public final class BindingService implements IBindingService {
 	public final void addBinding(final Binding binding) {
 		bindingManager.addBinding(binding);
 	}
-
+	
 	public final void dispose() {
 		bindingPersistence.dispose();
 	}
@@ -206,6 +206,17 @@ public final class BindingService implements IBindingService {
 	public final void readRegistryAndPreferences(
 			final ICommandService commandService) {
 		bindingPersistence.read();
+	}
+
+	/**
+	 * Remove the specific binding by identity. Does nothing if the binding is
+	 * not in the manager.
+	 * 
+	 * @param binding
+	 *            The binding to be removed; must not be <code>null</code>.
+	 */
+	public final void removeBinding(final Binding binding) {
+		bindingManager.removeBinding(binding);
 	}
 
 	public final void savePreferences(final Scheme activeScheme,
