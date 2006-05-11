@@ -54,7 +54,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * A map from the viewer's model elements to SWT widgets. (key type:
-	 * <code>Object</code>, value type: <code>Widget</code>).
+	 * <code>Object</code>, value type: <code>Widget</code>, or <code>Widget[]</code>).
 	 * <code>null</code> means that the element map is disabled.
 	 */
 	private CustomHashtable elementMap;
@@ -737,12 +737,18 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * must not be changed by clients; it might change upon calling other
 	 * methods on this viewer.
 	 * <p>
+	 * This method was introduced to support multiple equal elements in a viewer
+	 * (@see {@link AbstractTreeViewer}). Multiple equal elements are only
+	 * supported if the element map is enabled by calling
+	 * {@link #setUseHashlookup(boolean)} and passing <code>true</code>.
+	 * </p>
+	 * <p>
 	 * The default implementation of this method tries first to find the widget
 	 * for the given element assuming that it is the viewer's input; this is
 	 * done by calling <code>doFindInputItem</code>. If it is not found
-	 * there, the widgets are looked up in the internal element map provided that this
-	 * feature has been enabled. If the element map is disabled, the widget is
-	 * found via <code>doFindInputItem</code>.
+	 * there, the widgets are looked up in the internal element map provided
+	 * that this feature has been enabled. If the element map is disabled, the
+	 * widget is found via <code>doFindInputItem</code>.
 	 * </p>
 	 * 
 	 * @param element
@@ -1889,8 +1895,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
      * This method was added to support JDT's explorations
      * into grouping by working sets, which requires viewers to support multiple 
      * equal elements.  See bug 76482 for more details.  This support will
-     * likely be removed in Eclipse 3.2 in favour of proper support for
-     * multiple equal elements. 
+     * likely be removed in Eclipse 3.3 in favour of proper support for
+     * multiple equal elements (which was implemented for AbtractTreeViewer in 3.2). 
      * </p>
      * @param widget
      *            the widget for the element

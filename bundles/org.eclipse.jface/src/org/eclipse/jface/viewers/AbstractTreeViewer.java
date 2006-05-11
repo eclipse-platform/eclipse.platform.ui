@@ -41,8 +41,14 @@ import org.eclipse.swt.widgets.Widget;
  * nodes.
  * </p>
  * <p>
- * Content providers for abstract tree viewers must implement the <code>ITreeContentProvider</code>
- * interface.
+ * As of 3.2, AbstractTreeViewer supports multiple equal elements (each with a
+ * different parent chain) in the tree. This support requires that clients
+ * enable the element map by calling <code>setUseHashLookup(true)</code>.
+ * </p>
+ * <p>
+ * Content providers for abstract tree viewers must implement one of the
+ * interfaces <code>ITreeContentProvider</code> or (as of 3.2, to support
+ * multiple equal elements) <code>ITreePathContentProvider</code>.
  * </p>
  * 
  * @see TreeViewer
