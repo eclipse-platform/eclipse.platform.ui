@@ -11,11 +11,31 @@
 
 package org.eclipse.ui;
 
+import org.eclipse.ui.part.EditorPart;
+
 /**
  * Workbench parts that work in terms of units of saveability should implement
  * this interface in order to provide better integration with workbench
  * facilities like the Save command, prompts to save on part close or shutdown,
  * etc.
+ * <p>
+ * IMPORTANT: As of 3.2, implementers of <code>ISaveablesSource</code> must
+ * satisfy the following conditions:
+ * <ul>
+ * <li>the part must implement <code>ISaveablePart</code></li>
+ * <li>if any of its Saveable objects are dirty, the part must return
+ * <code>true</code> from {@link ISaveablePart#isDirty()}</li>
+ * <li>the part must return <code>true</code> from
+ * {@link ISaveablePart#isSaveOnCloseNeeded()} if it is dirty (the default
+ * behaviour implemented by {@link EditorPart})</li>
+ * <li>the part must not implement {@link ISaveablePart2}</li>
+ * </ul>
+ * If any of these conditions are not met, it is undefined whether the Workbench
+ * will prompt to save dirty Saveables when closing parts.
+ * </p>
+ * <p>
+ * These conditions may be relaxed in future releases.
+ * </p>
  * 
  * @since 3.2
  */
@@ -27,8 +47,26 @@ public interface ISaveablesSource {
 	 * must notify an implicit listener using
 	 * {@link ISaveablesLifecycleListener#handleLifecycleEvent(SaveablesLifecycleEvent)}.
 	 * <p>
-	 * The listener must be obtained from the part site by calling
+	 * Additions of saveables to the list of saveables of this part are
+	 * announced using an event of type
+	 * {@link SaveablesLifecycleEvent#POST_OPEN}. Removals are announced in a
+	 * two-stage process, first using an event of type
+	 * {@link SaveablesLifecycleEvent#PRE_CLOSE} followed by an event of type
+	 * {@link SaveablesLifecycleEvent#POST_CLOSE}. Since firing the
+	 * <code>PRE_CLOSE</code> event may trigger prompts to save dirty
+	 * saveables, the cancellation status of the event must be checked by the
+	 * part after the notification. When removing only non-dirty saveables,
+	 * <code>POST_CLOSE</code> notification is sufficient.
+	 * </p>
+	 * <p>
+	 * The listener is obtained from the part site by calling
 	 * <code>partSite.getService(ISaveablesLifecycleListener.class)</code>.
+	 * </p>
+	 * <p>
+	 * The part must not notify from its initialization method, or from its
+	 * dispose method. Parts that implement {@link IReusableEditor} must notify
+	 * when their input is changed by calling
+	 * {@link IReusableEditor#setInput(IEditorInput)}.
 	 * </p>
 	 * 
 	 * @return the saveables presented by the workbench part
