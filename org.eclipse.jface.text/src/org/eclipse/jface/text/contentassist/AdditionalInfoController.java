@@ -97,7 +97,16 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				final ICompletionProposalExtension5 proposal= getCurrentProposalEx();
 				Job job= new Job(JFaceTextMessages.getString("AdditionalInfoController.job_name")) { //$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
-						Object info= proposal.getAdditionalProposalInfo(monitor);
+						Object info;
+                        try {
+	                        info= proposal.getAdditionalProposalInfo(monitor);
+                        } catch (RuntimeException x) {
+                        	/*
+							 * XXX: This is the safest fix at this point so close to end of 3.2.
+							 *		Will be revisited when fixing https://bugs.eclipse.org/bugs/show_bug.cgi?id=101033 
+                        	 */
+                        	return new Status(IStatus.WARNING, "org.eclipse.jface.text", IStatus.OK, "", x); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
 						setInfo((ICompletionProposal) proposal, info);
 					    return new Status(IStatus.OK, "org.eclipse.jface.text", IStatus.OK, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 					}
