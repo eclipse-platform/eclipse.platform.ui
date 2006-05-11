@@ -528,23 +528,14 @@ public class DefaultSiteParser extends DefaultHandler {
 			extendedSite.setDigestExist(true);
 			extendedSite.setDigestURL(attributes.getValue("digestURL")); //$NON-NLS-1$
 			
-			if ( (attributes.getValue("availableLocals") != null) && (!attributes.getValue("availableLocals").trim().equals(""))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-				StringTokenizer locals = new StringTokenizer(attributes.getValue("availableLocals"), ",");  //$NON-NLS-1$//$NON-NLS-2$
+			if ( (attributes.getValue("availableLocales") != null) && (!attributes.getValue("availableLocales").trim().equals(""))) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				StringTokenizer locals = new StringTokenizer(attributes.getValue("availableLocales"), ",");  //$NON-NLS-1$//$NON-NLS-2$
 				String[] availableLocals = new String[locals.countTokens()];
 				int i = 0;
 				while(locals.hasMoreTokens()) {
 					availableLocals[i++] = locals.nextToken();
 				}
 				extendedSite.setAvailableLocals(availableLocals);
-			}
-			if ( (attributes.getValue("availableLanguages") != null) && (!attributes.getValue("availableLanguages").trim().equals(""))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				StringTokenizer languages = new StringTokenizer(attributes.getValue("availableLanguages"), ","); //$NON-NLS-1$ //$NON-NLS-2$
-				String[] availableLanguages = new String[languages.countTokens()];
-				int i = 0;
-				while(languages.hasMoreTokens()) {
-					availableLanguages[i++] = languages.nextToken();
-				}
-				extendedSite.setAvailableLanguages(availableLanguages);
 			}
 		}
 		
@@ -940,7 +931,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	}
 
 	private boolean isLangaugeSupported(ExtendedSite site, String language) {
-		String[] availableLanguages =  site.getAvailableLanguages();
+		String[] availableLanguages =  site.getAvailableLocals();
 		if ((availableLanguages == null) || (availableLanguages.length == 0)) {
 			return false;
 		}
@@ -954,7 +945,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private boolean isLocalSupported(ExtendedSite site, String country, String language) {
 		String localeCode = language + "_" + country; //$NON-NLS-1$
-		String[] availableLocals =  site.getAvailableLanguages();
+		String[] availableLocals =  site.getAvailableLocals();
 		if ((availableLocals == null) || (availableLocals.length == 0)) {
 			return false;
 		}

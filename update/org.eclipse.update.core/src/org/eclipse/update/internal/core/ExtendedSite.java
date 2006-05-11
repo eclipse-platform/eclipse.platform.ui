@@ -19,7 +19,6 @@ import org.eclipse.update.internal.model.SiteWithTimestamp;
 public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	
 	private boolean digestExist;
-	private String[] availableLanguages;
 	private String[] availableLocals;
 	private String digestURL;
 	private LiteFeature[] liteFeatures;
@@ -33,12 +32,7 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	public void setDigestURL(String digestURL) {
 		this.digestURL = digestURL;
 	}
-	public String[] getAvailableLanguages() {
-		return availableLanguages;
-	}
-	public void setAvailableLanguages(String[] availableLanguages) {
-		this.availableLanguages = availableLanguages;
-	}
+
 	public String[] getAvailableLocals() {
 		return availableLocals;
 	}
