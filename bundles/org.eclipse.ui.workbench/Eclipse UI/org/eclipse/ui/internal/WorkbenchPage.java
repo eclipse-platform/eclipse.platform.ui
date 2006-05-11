@@ -1362,10 +1362,46 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			zoomOut();
 		}
 
+        if (saveEditors) {
+	        List partsToSave = new ArrayList();
+	        // collect views that will go away and are dirty
+	        IViewReference[] viewReferences = persp.getViewReferences();
+	        for (int i = 0; i < viewReferences.length; i++) {
+				IViewReference reference = viewReferences[i];
+		        if (getViewFactory().getReferenceCount(reference) == 1) {
+		        	if (reference.isDirty()) {
+		        		IViewPart viewPart = reference.getView(false);
+		        		if (viewPart != null) {
+		        			partsToSave.add(viewPart);
+		        		}
+		        	}
+		        }
+			}
+	        if (perspList.size() == 1) {
+	        	// collect editors that are dirty
+	        	IEditorReference[] editorReferences = getEditorReferences();
+	        	for (int i = 0; i < editorReferences.length; i++) {
+					IEditorReference reference = editorReferences[i];
+					if (reference.isDirty()) {
+						IEditorPart editorPart = reference.getEditor(false);
+						if (editorPart != null) {
+							partsToSave.add(editorPart);
+						}
+					}
+				}
+	        }
+	        if (!partsToSave.isEmpty()) {
+	        	if (!EditorManager.saveAll(partsToSave, true, true, window)) {
+	        		// user canceled
+	        		return;
+	        	}
+	        }
+        }
+        
         // Close all editors on last perspective close
         if (perspList.size() == 1 && getEditorManager().getEditorCount() > 0) {
             // Close all editors
-            if (!closeAllEditors(saveEditors)) {
+            if (!closeAllEditors(false)) {
 				return;
 			}
         }
@@ -1395,8 +1431,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			zoomOut();
 		}
 
+        if(saveEditors) {
+        	if (!saveAllEditors(true)) {
+        		return;
+        	}
+        }
         // Close all editors
-        if (!closeAllEditors(saveEditors)) {
+        if (!closeAllEditors(false)) {
 			return;
 		}
 

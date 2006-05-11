@@ -684,6 +684,10 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * If <code>confirm</code> is <code>true</code> the user is prompted to
 	 * confirm the command.
 	 * </p>
+	 * <p>
+	 * Note that as of 3.2, this method also saves views that implement
+	 * ISaveablePart and are dirty.
+	 * </p>
 	 * 
 	 * @param confirm
 	 *            <code>true</code> to ask the user before saving unsaved
