@@ -23,6 +23,31 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 
 	private ProposedResourceDelta root = new ProposedResourceDelta(ResourcesPlugin.getWorkspace().getRoot());
 
+	/**
+	 * Creates and returns a delta representing a deleted resource. The created
+	 * delta is not added to the root tree of deltas being assembled by this factory.
+	 */
+	private ProposedResourceDelta buildDeleteDelta(IResource resource) {
+		ProposedResourceDelta delta = new ProposedResourceDelta(resource);
+		delta.setKind(IResourceDelta.REMOVED);
+		if (resource.getType() == IResource.FILE)
+			return delta;
+		//recurse to build deletion deltas for children
+		try {
+			IResource[] members = ((IContainer) resource).members();
+			int childCount = members.length;
+			if (childCount > 0) {
+				ProposedResourceDelta[] childDeltas = new ProposedResourceDelta[childCount];
+				for (int i = 0; i < childCount; i++)
+					childDeltas[i] = buildDeleteDelta(members[i]);
+				delta.setChildren(childDeltas);
+			}
+		} catch (CoreException e) {
+			//don't need to create deletion deltas for children of inaccessible resources
+		}
+		return delta;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#change(org.eclipse.core.resources.IFile)
 	 */
@@ -62,21 +87,12 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#delete(org.eclipse.core.resources.IResource)
 	 */
 	public void delete(IResource resource) {
-		try {
-			if (resource.isAccessible()) {
-				resource.accept(new IResourceVisitor() {
-					public boolean visit(IResource child) {
-						ProposedResourceDelta delta = getDelta(child);
-						delta.setKind(IResourceDelta.REMOVED);
-						return true;
-					}
-				});
-			} else {
-				//closed or does not currently exist - the best we can do is a delta for the resource itself
-				getDelta(resource).setKind(IResourceDelta.REMOVED);
-			}
-		} catch (CoreException e) {
-			fail(e);
+		if (resource.getType() == IResource.ROOT) {
+			root = buildDeleteDelta(resource);
+			//the root cannot be deleted
+			root.setKind(IResourceDelta.NO_CHANGE);
+		} else {
+			getDelta(resource.getParent()).add(buildDeleteDelta(resource));
 		}
 	}
 

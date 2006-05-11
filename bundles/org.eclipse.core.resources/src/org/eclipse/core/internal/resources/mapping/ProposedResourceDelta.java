@@ -21,7 +21,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 
 	protected static int KIND_MASK = 0xFF;
 
-	private List children = new ArrayList();
+	private ArrayList children = new ArrayList();
 	private IPath movedFromPath;
 	private IPath movedToPath;
 	private IResource resource;
@@ -182,6 +182,17 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 */
 	public IResource getResource() {
 		return resource;
+	}
+
+	/**
+	 * Sets the children of this delta to be the provided deltas.
+ 	 */
+	void setChildren(ProposedResourceDelta[] childDeltas) {
+		int childCount = childDeltas.length;
+		children.clear();
+		children.ensureCapacity(childCount);
+		for (int i = 0; i < childCount; i++)
+			children.add(childDeltas[i]);
 	}
 
 	public void setFlags(int flags) {
