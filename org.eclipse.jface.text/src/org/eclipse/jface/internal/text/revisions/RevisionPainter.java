@@ -73,6 +73,7 @@ import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.LineRange;
 
 import org.eclipse.jface.internal.text.JFaceTextUtil;
+import org.eclipse.jface.internal.text.link.contentassist.HTMLTextPresenter;
 
 /**
  * A strategy for painting the live annotate colors onto the vertical ruler column. It also manages
@@ -454,7 +455,7 @@ public final class RevisionPainter {
 	            final int shellStyle= SWT.TOOL | (fIsFocusable ? SWT.RESIZE : SWT.NO_TRIM);
 	            return new BrowserInformationControl(parent, shellStyle, style, null);
             }
-			return new DefaultInformationControl(parent, style, null);
+			return new DefaultInformationControl(parent, style, new HTMLTextPresenter());
 		}
 	}
 	
