@@ -989,21 +989,21 @@ public class EclipseTest extends ResourceTest {
 	}
 	
 	protected static void executeHeadless(final TeamOperation op) throws CVSException {
-		try {
-				EclipseRunnable tempRunnable = new EclipseRunnable(op, DEFAULT_MONITOR);
-				Thread tempThread = new Thread(tempRunnable);
-				tempThread.start();
-				while (tempThread.isAlive()){
-					Thread.sleep(100);
-					while (Display.getCurrent().readAndDispatch()) {};
-				}
-				//check for errors
-				Exception ex = tempRunnable.getException();
-				if (ex instanceof InvocationTargetException)
-					throw CVSException.wrapException(ex);
-		} catch (InterruptedException e) {
-			throw new OperationCanceledException();
+		EclipseRunnable tempRunnable = new EclipseRunnable(op, DEFAULT_MONITOR);
+		Thread tempThread = new Thread(tempRunnable);
+		tempThread.start();
+		while (tempThread.isAlive()) {
+			try {
+				Thread.sleep(100);
+				while (Display.getCurrent().readAndDispatch()) {}
+			} catch (InterruptedException e) {
+				//ignore
+			}
 		}
+		//check for errors
+		Exception ex = tempRunnable.getException();
+		if (ex instanceof InvocationTargetException)
+			throw CVSException.wrapException(ex);
 	}
     
     protected void setUp() throws Exception {
