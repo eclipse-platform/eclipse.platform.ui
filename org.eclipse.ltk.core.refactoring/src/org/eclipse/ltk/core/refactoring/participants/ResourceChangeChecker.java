@@ -91,7 +91,7 @@ public class ResourceChangeChecker implements IConditionChecker {
 			public boolean visit(IResourceDelta delta) throws CoreException {
 				final int kind= delta.getKind();
 				final IResource resource= delta.getResource();
-				if (((kind & IResourceDelta.CHANGED) != 0 || (kind & IResourceDelta.REMOVED) != 0 || (kind & IResourceDelta.ADDED) != 0) && resource.getType() == IResource.FILE) {
+				if ((kind & IResourceDelta.CHANGED) != 0 && resource.getType() == IResource.FILE) {
 					result.add(resource);
 				}
 				return true;
