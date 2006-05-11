@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -43,6 +44,13 @@ public class SelectAllHandler extends WidgetMethodHandler {
 			try {
 				final Control focusControl = Display.getCurrent()
 						.getFocusControl();
+				
+				// if it's an embedded swing component, fail gracefully for now.
+				if ((focusControl instanceof Composite)
+                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+					return null;
+				}
+				
 				final int numParams = methodToExecute.getParameterTypes().length;
 
 				if (numParams == 0) {
