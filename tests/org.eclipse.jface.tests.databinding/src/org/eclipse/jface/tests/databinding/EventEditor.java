@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding;
@@ -25,7 +25,10 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCou
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 
 /**
- * A concrete class that implements IEventEditor for testing purposes
+ * A concrete class that implements IEventEditor for testing purposes.
+ * <p>
+ * Eventually, this could become an abstract parent class for creating 
+ * arbitrary new IEventEditor implementations.
  * 
  * @since 3.3
  */
