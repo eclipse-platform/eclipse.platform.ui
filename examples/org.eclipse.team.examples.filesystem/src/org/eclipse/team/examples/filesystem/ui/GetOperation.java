@@ -13,7 +13,7 @@ package org.eclipse.team.examples.filesystem.ui;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.examples.filesystem.FileSystemProvider;
@@ -40,7 +40,7 @@ public class GetOperation extends FileSystemOperation {
 			throws CoreException {
 		provider.getOperations().get(traversals, isOverwriteOutgoing(), monitor);
 		if (!isOverwriteOutgoing() && hasIncomingChanges(traversals)) {
-			MessageDialog.openInformation(getShell(), "Conflicts", "Could not get all changes due to conflicts.");
+			throw new TeamException("Could not get all changes due to conflicts.");
 		}
 
 	}
