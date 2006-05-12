@@ -24,11 +24,18 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	private ProposedResourceDelta root = new ProposedResourceDelta(ResourcesPlugin.getWorkspace().getRoot());
 
 	/**
-	 * Creates and returns a delta representing a deleted resource. The created
-	 * delta is not added to the root tree of deltas being assembled by this factory.
+	 * Creates and a delta representing a deleted resource, and adds it to the provided
+	 * parent delta.
+	 * @param parentDelta The parent of the deletion delta to create
+	 * @param resource The deleted resource to create a delta for
 	 */
-	private ProposedResourceDelta buildDeleteDelta(IResource resource) {
-		ProposedResourceDelta delta = new ProposedResourceDelta(resource);
+	private ProposedResourceDelta buildDeleteDelta(ProposedResourceDelta parentDelta, IResource resource) {
+		//start with the existing delta for this resource, if any, to preserve other flags
+		ProposedResourceDelta delta = parentDelta.getChild(resource.getName());
+		if (delta == null) {
+			delta = new ProposedResourceDelta(resource);
+			parentDelta.add(delta);
+		}
 		delta.setKind(IResourceDelta.REMOVED);
 		if (resource.getType() == IResource.FILE)
 			return delta;
@@ -39,8 +46,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 			if (childCount > 0) {
 				ProposedResourceDelta[] childDeltas = new ProposedResourceDelta[childCount];
 				for (int i = 0; i < childCount; i++)
-					childDeltas[i] = buildDeleteDelta(members[i]);
-				delta.setChildren(childDeltas);
+					childDeltas[i] = buildDeleteDelta(delta, members[i]);
 			}
 		} catch (CoreException e) {
 			//don't need to create deletion deltas for children of inaccessible resources
@@ -88,11 +94,12 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	 */
 	public void delete(IResource resource) {
 		if (resource.getType() == IResource.ROOT) {
-			root = buildDeleteDelta(resource);
-			//the root cannot be deleted
-			root.setKind(IResourceDelta.NO_CHANGE);
+			//the root itself cannot be deleted, so create deletions for each project
+			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+			for (int i = 0; i < projects.length; i++)
+				buildDeleteDelta(root, projects[i]);
 		} else {
-			getDelta(resource.getParent()).add(buildDeleteDelta(resource));
+			buildDeleteDelta(getDelta(resource.getParent()), resource);
 		}
 	}
 

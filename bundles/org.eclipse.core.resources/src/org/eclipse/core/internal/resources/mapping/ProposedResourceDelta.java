@@ -21,7 +21,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 
 	protected static int KIND_MASK = 0xFF;
 
-	private ArrayList children = new ArrayList();
+	private HashMap children = new HashMap(8);
 	private IPath movedFromPath;
 	private IPath movedToPath;
 	private IResource resource;
@@ -51,7 +51,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 		if (!visitor.visit(this))
 			return;
-		for (Iterator iter = children.iterator(); iter.hasNext();) {
+		for (Iterator iter = children.values().iterator(); iter.hasNext();) {
 			ProposedResourceDelta childDelta = (ProposedResourceDelta) iter.next();
 			childDelta.accept(visitor, memberFlags);
 		}
@@ -64,7 +64,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	protected void add(ProposedResourceDelta delta) {
 		if (children.size() == 0 && status == 0)
 			setKind(IResourceDelta.CHANGED);
-		children.add(delta);
+		children.put(delta.getResource().getName(), delta);
 	}
 
 	/**
@@ -86,17 +86,10 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 
 		//iterate over the path and find matching child delta
 		ProposedResourceDelta current = this;
-		segments: for (int i = 0; i < segmentCount; i++) {
-			List currentChildren = current.children;
-			for (Iterator iter = currentChildren.iterator(); iter.hasNext();) {
-				ProposedResourceDelta child = (ProposedResourceDelta) iter.next();
-				if (child.getFullPath().lastSegment().equals(path.segment(i))) {
-					current = child;
-					continue segments;
-				}
-			}
-			//matching child not found, return
-			return null;
+		for (int i = 0; i < segmentCount; i++) {
+			current = (ProposedResourceDelta) current.children.get(path.segment(i));
+			if (current == null)
+				return null;
 		}
 		return current;
 	}
@@ -120,12 +113,20 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 */
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 		List result = new ArrayList();
-		for (Iterator iter = children.iterator(); iter.hasNext();) {
+		for (Iterator iter = children.values().iterator(); iter.hasNext();) {
 			ProposedResourceDelta child = (ProposedResourceDelta) iter.next();
 			if ((child.getKind() & kindMask) != 0)
 				result.add(child);
 		}
 		return (IResourceDelta[]) result.toArray(new IResourceDelta[result.size()]);
+	}
+	
+	/**
+	 * Returns the child delta corresponding to the given child resource name,
+	 * or <code>null</code>.
+	 */
+	ProposedResourceDelta getChild(String name) {
+		return (ProposedResourceDelta) children.get(name);
 	}
 
 	/* (non-Javadoc)
@@ -182,17 +183,6 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 */
 	public IResource getResource() {
 		return resource;
-	}
-
-	/**
-	 * Sets the children of this delta to be the provided deltas.
- 	 */
-	void setChildren(ProposedResourceDelta[] childDeltas) {
-		int childCount = childDeltas.length;
-		children.clear();
-		children.ensureCapacity(childCount);
-		for (int i = 0; i < childCount; i++)
-			children.add(childDeltas[i]);
 	}
 
 	public void setFlags(int flags) {
