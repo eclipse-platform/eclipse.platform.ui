@@ -185,7 +185,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	 */
 	public IResourceVariant getResourceVariant(IResource resource) {
 		File file = getFile(resource);
-		if (file == null) return null;
+		if (file == null || !file.exists()) return null;
 		return new FileSystemResourceVariant(file);
 	}
 	

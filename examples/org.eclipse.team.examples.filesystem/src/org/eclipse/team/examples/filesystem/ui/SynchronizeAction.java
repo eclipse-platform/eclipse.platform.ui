@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.ui;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemMergeContext;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * Action to synchronize the selected resources. This results
@@ -25,16 +28,14 @@ public class SynchronizeAction extends FileSystemAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IResource[] resources = getSelectedResources();
-		// First check if there is an existing matching participant
-		FileSystemSynchronizeParticipant participant = (FileSystemSynchronizeParticipant)SubscriberParticipant.getMatchingParticipant(FileSystemSynchronizeParticipant.ID, resources);
-		// If there isn't, create one and add to the manager
-		if (participant == null) {
-			participant = new FileSystemSynchronizeParticipant(new ResourceScope(resources));
-			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-		}
-		participant.refresh(resources, null, null, getTargetPart().getSite());
-
+		ResourceMapping[] mappings = getSelectedMappings();
+		if (mappings.length == 0)
+			return;
+		SubscriberScopeManager manager = FileSystemOperation.createScopeManager(FileSystemSubscriber.getInstance().getName(), mappings);
+		FileSystemMergeContext context = new FileSystemMergeContext(manager);
+		FileSystemSynchronizeParticipant participant = new FileSystemSynchronizeParticipant(context);
+		TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+		participant.run(getTargetPart());
 	}
 
 }

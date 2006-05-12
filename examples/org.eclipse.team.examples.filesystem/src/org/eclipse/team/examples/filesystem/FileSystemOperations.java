@@ -147,6 +147,28 @@ public class FileSystemOperations {
 	}
 
 	/**
+	 * Check-in the given resources to the given depth by replacing the remote (i.e. file system)
+	 * contents with the local workspace contents. 
+	 * @param traversals the traversals that cover the resources to check in
+	 * @param overrideIncoming indicate whether incoming remote changes should be replaced
+	 * @param progress a progress monitor
+	 * @throws TeamException
+	 */
+	public void checkin(ResourceTraversal[] traversals, boolean overrideIncoming, IProgressMonitor monitor) throws TeamException {
+		try {
+			// ensure the progress monitor is not null
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(null, 100* traversals.length);
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				checkin(traversal.getResources(), traversal.getDepth(), overrideIncoming, new SubProgressMonitor(monitor, 100));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	/**
 	 * Return whether the local resource is checked out. A resource
 	 * is checked out if it is a file that is not read-only. Folders
 	 * are always checked out.
@@ -230,7 +252,7 @@ public class FileSystemOperations {
 		byte[] baseBytes = synchronizer.getBaseBytes(localFile);
 		IResourceVariant base = provider.getResourceVariant(localFile, baseBytes);
 		if (!synchronizer.hasSyncBytes(localFile) 
-				|| (synchronizer.isLocallyModified(localFile) && !overrideOutgoing)) {
+				|| (isLocallyModified(localFile) && !overrideOutgoing)) {
 			// Do not overwrite the local modification
 			return;
 		}
@@ -243,7 +265,10 @@ public class FileSystemOperations {
 				throw TeamException.asTeamException(e);
 			}
 		}
-		if (!synchronizer.isLocallyModified(localFile) && comparator.compare(base, remote)) {
+		if (!synchronizer.isLocallyModified(localFile) 
+				&& base != null 
+				&& remote != null 
+				&& comparator.compare(base, remote)) {
 			// The base and remote are the same and there's no local changes
 			// so nothing needs to be done
 		}
@@ -288,10 +313,15 @@ public class FileSystemOperations {
 		progress.done();
 	}
 	
-	/*
-	 * Get the file if it is out-of-sync.
+	/**
+	 * Put the file if the sync state allows it.
+	 * @param localFile the local file
+	 * @param overrideIncoming whether incoming changs shoudl be overwritten
+	 * @param progress a progress monitor
+	 * @return whether the put succeeded (i.e. the local matches the remote)
+	 * @throws TeamException
 	 */
-	private void internalPut(IFile localFile, boolean overrideIncoming, IProgressMonitor progress) throws TeamException {
+	private boolean internalPut(IFile localFile, boolean overrideIncoming, IProgressMonitor progress) throws TeamException {
 		ThreeWaySynchronizer synchronizer = FileSystemSubscriber.getInstance().getSynchronizer();
 		IResourceVariantComparator comparator = FileSystemSubscriber.getInstance().getResourceComparator();
 		FileSystemResourceVariant remote = getResourceVariant(localFile);
@@ -302,7 +332,7 @@ public class FileSystemOperations {
 		if (base == null && remote != null && !overrideIncoming) {
 			// The remote is an incoming (or conflicting) addition.
 			// Do not replace unless we are overriding
-			return;
+			return false;
 		} else  if (base != null && remote == null) {
 			// The remote is an incoming deletion
 			if (!localFile.exists()) {
@@ -310,18 +340,18 @@ public class FileSystemOperations {
 				synchronizer.flush(localFile, IResource.DEPTH_ZERO);
 			} else if (!overrideIncoming) {
 				// Do not override the incoming deletion
-				return;
+				return false;
 			}
 		} else if (base != null && remote != null) {
 			boolean same = comparator.compare(base, remote);
-			if (!synchronizer.isLocallyModified(localFile) && same) {
+			if (!isLocallyModified(localFile) && same) {
 				// The base and remote are the same and there's no local changes
 				// so nothing needs to be done
-				return;
+				return true;
 			}
 			if (!same && !overrideIncoming) {
 				// The remote has changed. Only override if specified
-				return;
+				return false;
 			}
 		}
 		
@@ -361,8 +391,18 @@ public class FileSystemOperations {
 				throw FileSystemPlugin.wrapException(e);
 			}
 		}
+		return true;
 	}
 	
+	private boolean isLocallyModified(IFile localFile) throws TeamException {
+		ThreeWaySynchronizer synchronizer = FileSystemSubscriber.getInstance().getSynchronizer();
+		if (!localFile.exists()) {
+			// Extra check for bug 141415
+			return synchronizer.getBaseBytes(localFile) != null;
+		}
+		return synchronizer.isLocallyModified(localFile);
+	}
+
 	/*
 	 * Get the folder and its children to the depth specified.
 	 */

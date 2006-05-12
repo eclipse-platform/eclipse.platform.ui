@@ -22,8 +22,10 @@ public class GetAction extends FileSystemAction {
 
 	public void run(IAction action) {
 		try {
-			new GetOperation(getTargetPart(), 
-					FileSystemOperation.createScopeManager(Policy.bind("GetAction.working"), getSelectedMappings())).run(); //$NON-NLS-1$
+			GetOperation operation = new GetOperation(getTargetPart(), 
+								FileSystemOperation.createScopeManager(Policy.bind("GetAction.working"), getSelectedMappings())); //$NON-NLS-1$
+			operation.setOverwriteOutgoing(isOverwriteOutgoing());
+			operation.run();
 		} catch (InvocationTargetException e) {
 			handle(e, null, Policy.bind("GetAction.problemMessage")); //$NON-NLS-1$
 		} catch (InterruptedException e) {

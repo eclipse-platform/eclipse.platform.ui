@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,12 +134,19 @@ public abstract class FileSystemOperation extends ModelOperation {
 	 * @param monitor a progress monitor
 	 * @throws CoreException
 	 */
-	protected abstract void execute(FileSystemProvider provider, ResourceTraversal[] traversals, SubProgressMonitor monitor) throws CoreException;
+	protected abstract void execute(FileSystemProvider provider, ResourceTraversal[] traversals, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Return the task name for this operation.
 	 * @return the task name for this operation
 	 */
 	protected abstract String getTaskName();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		return true;
+	}
 
 }

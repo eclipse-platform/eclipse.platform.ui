@@ -22,13 +22,18 @@ import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Operation for getting the contents of the selected resources
+ * Operation for copying the selected resources to the file system location
  */
-public class GetOperation extends FileSystemOperation {
+public class PutOperation extends FileSystemOperation {
 
-	private boolean overwriteOutgoing;
+	private boolean overwriteIncoming;
 
-	public GetOperation(IWorkbenchPart part, SubscriberScopeManager manager) {
+	/**
+	 * Create the put operation
+	 * @param part the originating part
+	 * @param manager the scope manager
+	 */
+	protected PutOperation(IWorkbenchPart part, SubscriberScopeManager manager) {
 		super(part, manager);
 	}
 
@@ -38,21 +43,21 @@ public class GetOperation extends FileSystemOperation {
 	protected void execute(FileSystemProvider provider,
 			ResourceTraversal[] traversals, IProgressMonitor monitor)
 			throws CoreException {
-		provider.getOperations().get(traversals, isOverwriteOutgoing(), monitor);
-		if (!isOverwriteOutgoing() && hasIncomingChanges(traversals)) {
-			MessageDialog.openInformation(getShell(), "Conflicts", "Could not get all changes due to conflicts.");
+		provider.getOperations().checkin(traversals, isOverwriteIncoming(), monitor);
+		if (!isOverwriteIncoming() && hasOutgoingChanges(traversals)) {
+			MessageDialog.openInformation(getShell(), "Conflicts", "Could not put all changes due to conflicts.");
 		}
 
 	}
 
-	private boolean hasIncomingChanges(ResourceTraversal[] traversals) throws CoreException {
+	private boolean hasOutgoingChanges(ResourceTraversal[] traversals) throws CoreException {
 		final RuntimeException found = new RuntimeException();
 		try {
 			FileSystemSubscriber.getInstance().accept(traversals, new IDiffVisitor() {
 				public boolean visit(IDiff diff) {
 					if (diff instanceof IThreeWayDiff) {
 						IThreeWayDiff twd = (IThreeWayDiff) diff;
-						if (twd.getDirection() == IThreeWayDiff.INCOMING || twd.getDirection() == IThreeWayDiff.CONFLICTING) {
+						if (twd.getDirection() == IThreeWayDiff.OUTGOING || twd.getDirection() == IThreeWayDiff.CONFLICTING) {
 							throw found;
 						}
 					}
@@ -66,29 +71,28 @@ public class GetOperation extends FileSystemOperation {
 		}
 		return false;
 	}
-	
-	/**
-	 * Indicate whether the operation should overwrite outgoing changes.
-	 * By default, the get operation does not override local modifications.
-	 * @return whether the operation should overwrite outgoing changes.
-	 */
-	protected boolean isOverwriteOutgoing() {
-		return overwriteOutgoing;
-	}
 
-	/**
-	 * Set whether the operation should overwrite outgoing changes.
-	 * @param overwriteOutgoing whether the operation should overwrite outgoing changes
-	 */
-	public void setOverwriteOutgoing(boolean overwriteOutgoing) {
-		this.overwriteOutgoing = overwriteOutgoing;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.examples.filesystem.ui.FileSystemOperation#getTaskName()
 	 */
 	protected String getTaskName() {
-		return Policy.bind("GetAction.working"); //$NON-NLS-1$
+		return Policy.bind("PutAction.working"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Return whether incoming changes should be overwritten.
+	 * @return whether incoming changes should be overwritten
+	 */
+	public boolean isOverwriteIncoming() {
+		return overwriteIncoming;
+	}
+
+	/**
+	 * Set whether incoming changes should be overwritten.
+	 * @param overwriteIncoming whether incoming changes should be overwritten
+	 */
+	public void setOverwriteIncoming(boolean overwriteIncoming) {
+		this.overwriteIncoming = overwriteIncoming;
 	}
 
 }

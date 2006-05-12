@@ -132,9 +132,8 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 				result[i] = new FileSystemResourceVariant(members[i]);
 			}
 			return result;
-		} else {
-			return new FileSystemResourceVariant[0];
 		}
+		return new FileSystemResourceVariant[0];
 	}
 
 	/**

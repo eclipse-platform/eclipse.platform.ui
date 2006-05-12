@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 20046 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,58 +11,58 @@
 package org.eclipse.team.examples.filesystem.ui;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.core.subscribers.SubscriberScopeManager;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemMergeContext;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
-import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.ModelParticipantWizard;
 
-public class SynchronizeWizard extends Wizard {
-	private GlobalRefreshResourceSelectionPage selectionPage;
+/**
+ * This class is registered as the file system synchronization wizard.
+ */
+public class SynchronizeWizard extends ModelParticipantWizard {
 	private IWizard importWizard;
 	
+	/*
+	 * Default no-arg constructor
+	 */
 	public SynchronizeWizard() {
-		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE));
-		setNeedsProgressMonitor(false);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#getWindowTitle()
-	 */
-	public String getWindowTitle() {
-		return TeamUIMessages.GlobalRefreshSubscriberPage_0; 
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
-	public void addPages() {
-		selectionPage = new GlobalRefreshResourceSelectionPage(FileSystemSubscriber.getInstance().roots());
-		selectionPage.setTitle("Synchronize File System Example");
-		selectionPage.setMessage("Synchronize File System Example");
-		addPage(selectionPage);
+		super();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
+	 * @see org.eclipse.team.ui.synchronize.ModelParticipantWizard#createParticipant(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
-	public boolean performFinish() {
-		if (importWizard != null) {
-			return importWizard.performFinish();
-		} else {
-			IResource[] resources = selectionPage.getRootResources();
-			if (resources != null && resources.length > 0) {
-				SubscriberParticipant participant = new FileSystemSynchronizeParticipant(selectionPage.getSynchronizeScope());
-				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
-				// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
-				participant.run(null /* no site */);
-			}
-			return true;
-		}
+	protected ISynchronizeParticipant createParticipant(ResourceMapping[] selectedMappings) {
+		SubscriberScopeManager manager = FileSystemOperation.createScopeManager(FileSystemSubscriber.getInstance().getName(), selectedMappings);
+		FileSystemMergeContext context = new FileSystemMergeContext(manager);
+		FileSystemSynchronizeParticipant participant = new FileSystemSynchronizeParticipant(context);
+		return participant;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#getImportWizard()
+	 */
+	protected IWizard getImportWizard() {
+		// We don't have an import wizard for the file system example but
+		// if we did, we could return it here and it would be used if the
+		// getRoots method returned an empty array.
+		return importWizard;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#getPageTitle()
+	 */
+	protected String getPageTitle() {
+		return "Synchronize File System Example";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ParticipantSynchronizeWizard#getRootResources()
+	 */
+	protected IResource[] getRootResources() {
+		return FileSystemSubscriber.getInstance().roots();
 	}
 }

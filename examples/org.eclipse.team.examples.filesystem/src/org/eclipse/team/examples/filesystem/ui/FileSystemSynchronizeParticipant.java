@@ -11,16 +11,24 @@
 package org.eclipse.team.examples.filesystem.ui;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.MergeContext;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.examples.filesystem.FileSystemPlugin;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemMergeContext;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
 
@@ -31,28 +39,34 @@ import org.eclipse.team.ui.synchronize.*;
  * 
  * @since 3.0
  */
-public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
+public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipant {
 	
 	/**
-	 * The particpant ID as defined in the plugin manifest
+	 * The participant id for the org.eclipse.team.ui.synchronizeParticipant extension point.
 	 */
 	public static final String ID = "org.eclipse.team.examples.filesystem.participant"; //$NON-NLS-1$
 	
 	/**
-	 * Contxt menu action group for synchronize view actions
+	 * The viewer id for the org.eclipse.ui.navigator.viewer extension point.
 	 */
-	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_1 = "context_group_1"; //$NON-NLS-1$
+	public static final String VIEWER_ID = "org.eclipse.team.examples.filesystem.syncViewer"; //$NON-NLS-1$
+	
+	/**
+	 * Custom menu groups included in the viewer definition in the plugin.xml.
+	 */
+	public static final String CONTEXT_MENU_PUT_GROUP_1 = "put"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_GET_GROUP_1 = "get"; //$NON-NLS-1$
 	
 	/**
 	 * A custom label decorator that will show the remote mapped path for each
 	 * file.
 	 */
-	private class FileSystemParticipantLabelDecorator extends LabelProvider implements ILabelDecorator {
+	public class FileSystemParticipantLabelDecorator extends LabelProvider implements ILabelDecorator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
 		 */
 		public Image decorateImage(Image image, Object element) {
-			return null;
+			return image;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
@@ -70,6 +84,7 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 					}
 				}
 			} catch (TeamException e) {
+				FileSystemPlugin.log(e.getStatus());
 			}
 			return null;
 		}
@@ -79,7 +94,7 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 	 * Action group that contributes the get an put menus to the context menu 
 	 * in the synchronize view
 	 */
-	private class FileSystemParticipantActionGroup extends SynchronizePageActionGroup {
+	public class FileSystemParticipantActionGroup extends ModelSynchronizeParticipantActionGroup {
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 		 */
@@ -87,33 +102,82 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 			super.initialize(configuration);
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new GetSynchronizeAction("Get", configuration));
-			appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
-					new PutSynchronizeAction("Put", configuration));
+					CONTEXT_MENU_PUT_GROUP_1,
+					new ModelPutAction("Put", configuration));
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.operations.MergeActionGroup#configureMergeAction(java.lang.String, org.eclipse.jface.action.Action)
+		 */
+		protected void configureMergeAction(String mergeActionId, Action action) {
+			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
+				// This is the default label so this line could be left out but it is here for illustration
+				action.setText("Merge");
+			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
+				// Custom label for overwrite
+				action.setText("Get");
+			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
+				// Custom label for mark-as-merged
+				action.setText("Ignore Remote");
+			} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
+				// This is the default label so this line could be left out but it is here for illustration
+				action.setText("Merge All");
+			} else {
+				super.configureMergeAction(mergeActionId, action);
+			}
+		}
+		
+		protected void addToContextMenu(String mergeActionId, Action action, IMenuManager manager) {
+			IContributionItem group = null;
+			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
+				// This could be left out since this is the default group but it is here for illustration
+				group = manager.find(MERGE_ACTION_GROUP);
+			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
+				// This is a custom group for the overwrite command
+				group = manager.find(CONTEXT_MENU_GET_GROUP_1);
+			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
+				// This could be left out since this is the default group but it is here for illustration
+				group = manager.find(OTHER_ACTION_GROUP);
+			} else {
+				super.addToContextMenu(mergeActionId, action, manager);
+				return;
+			}
+			if (group != null) {
+				manager.appendToGroup(group.getId(), action);
+			} else {
+				manager.add(action);
+			}
 		}
 
 	}
 	
-	public FileSystemSynchronizeParticipant(ISynchronizeScope scope) {
-		super(scope);
-		setSubscriber(FileSystemSubscriber.getInstance());
+	/**
+	 * Create a file system participant. This method is invoked by the
+	 * Synchronize view when a persisted participant is being restored.
+	 * Participants that are persisted must override the
+	 * {@link #restoreContext(ISynchronizationScopeManager)} method to recreate
+	 * the context and may also need to override the
+	 * {@link #createScopeManager(ResourceMapping[])} method if they require a
+	 * custom scope manager.
+	 */
+	public FileSystemSynchronizeParticipant() {
+		super();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)
+	/**
+	 * Create the participant for the given context. This method is used
+	 * by the file system plugin to create a participant and then add it to
+	 * the sync view (or show it is some other container).
+	 * @param context the synchronization context
 	 */
-	protected void setSubscriber(Subscriber subscriber) {
-		super.setSubscriber(subscriber);
+	public FileSystemSynchronizeParticipant(SynchronizationContext context) {
+		super(context);
 		try {
-			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
-			setInitializationData(descriptor);
-			setSecondaryId(Long.toString(System.currentTimeMillis()));
+			setInitializationData(TeamUI.getSynchronizeManager().getParticipantDescriptor(ID));
 		} catch (CoreException e) {
-			// ignore
+			TeamUIPlugin.log(e);
 		}
+		setSecondaryId(Long.toString(System.currentTimeMillis()));
 	}
 	
 	/* (non-Javadoc)
@@ -121,19 +185,30 @@ public class FileSystemSynchronizeParticipant extends SubscriberParticipant {
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
+		configuration.setProperty(ISynchronizePageConfiguration.P_VIEWER_ID, VIEWER_ID);
 		
-		ILabelDecorator labelDecorator = new FileSystemParticipantLabelDecorator();
-		configuration.addLabelDecorator(labelDecorator);
-		
-		// Add support for showing mode buttons
-		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
-		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
-		
-		// Create the action group that contributes the get and put actions
-		configuration.addActionContribution(new FileSystemParticipantActionGroup());
-		// Add the get and put group to the context menu
-		configuration.addMenuGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				CONTEXT_MENU_CONTRIBUTION_GROUP_1);
+		// Add the label decorator
+		configuration.addLabelDecorator(new FileSystemParticipantLabelDecorator());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant#createMergeActionGroup()
+	 */
+	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
+		return new FileSystemParticipantActionGroup();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant#restoreContext(org.eclipse.team.core.mapping.ISynchronizationScopeManager)
+	 */
+	protected MergeContext restoreContext(ISynchronizationScopeManager manager) {
+		return new FileSystemMergeContext(manager);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
+	 */
+	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
+		return FileSystemOperation.createScopeManager(getName(), mappings);
 	}
 }
