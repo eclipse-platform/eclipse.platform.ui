@@ -16,8 +16,7 @@ import java.util.List;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
-import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
@@ -31,7 +30,7 @@ import org.eclipse.jface.util.Assert;
  * @since 3.2
  * 
  */
-public class NestedObservableList extends ObservableList implements ILazyDataSupplier {
+public class NestedObservableList extends ObservableList implements ILazyListElementProvider {
 
 	private boolean updating = false;
 
@@ -117,20 +116,6 @@ public class NestedObservableList extends ObservableList implements ILazyDataSup
 		feature = null;
 		innerObservableList = null;
 		innerChangeListener = null;
-	}
-
-
-	private static LazyInsertDeleteProvider nullLazyInsertDeleteProvider = new LazyInsertDeleteProvider();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier#getLazyInsertDeleteProvider()
-	 */
-	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
-		if (innerObservableList instanceof ILazyDataSupplier) {
-			ILazyDataSupplier supplier = (ILazyDataSupplier) innerObservableList;
-			return supplier.getLazyInsertDeleteProvider();
-		}
-		return nullLazyInsertDeleteProvider;
 	}
 
 }

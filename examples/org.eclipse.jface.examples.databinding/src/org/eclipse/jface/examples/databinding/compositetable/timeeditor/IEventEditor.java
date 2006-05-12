@@ -13,6 +13,9 @@ package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 
 import java.util.Date;
 
+import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.swt.SWTException;
+
 /**
  * Interface IEventEditor.  An interface for editors of time-based data that
  * can be visualized on various calendar-like controls.
@@ -88,7 +91,7 @@ public interface IEventEditor {
 	 * 
 	 * @param eventCountProvider The eventCountProvider to set.
 	 */
-	void setDayEventCountProvider(EventCountProvider eventCountProvider);
+	void setEventCountProvider(EventCountProvider eventCountProvider);
 	
 	/**
 	 * Sets the strategy pattern object that can set the properties of the 
@@ -107,9 +110,192 @@ public interface IEventEditor {
 	 * @param date The date to refresh or null to refresh everything.
 	 */
 	void refresh(Date date);
+
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted in the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #removeItemInsertHandler
+	 */
+	void addItemInsertHandler(CalendarableItemEventHandler insertHandler);
+
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted into the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #addItemInsertHandler
+	 */
+	void removeItemInsertHandler(CalendarableItemEventHandler insertHandler);
+
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is deleted from the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeDeleteItemHandler
+	 */
+	void addItemDeleteHandler(CalendarableItemEventHandler deleteHandler);
+
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is deleted from the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #addDeleteItemHandler
+	 */
+	void removeItemDeleteHandler(CalendarableItemEventHandler deleteHandler);
+
+	/**
+	 * Adds the handler to the collection of handler who will
+	 * be notified when a CalendarableItem's control is disposed, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.  This is normally used to remove any data bindings
+	 * that may be attached to the (now-unused) CalendarableItem.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeCalendarableItemDisposeHandler
+	 */
+	void addItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler);
+
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is disposed, by sending
+	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
+	 * abstract class.  This is normally used to remove any data bindings
+	 * that may be attached to the (now-unused) CalendarableItem.
+	 * <p>
+	 * <code>itemDeleted</code> is called when the CalendarableItem is deleted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemEventHandler
+	 * @see #removeDeleteListener
+	 */
+	void removeItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler);
 	
-	/* Not needed for now? */
-//	void addInsertHandler(IInsertHandler);
+	/**
+	 * Adds the handler to the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted in the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #removeItemInsertHandler
+	 */
+	public void addItemEditHandler(CalendarableItemEventHandler handler);
 	
-//	void addDeleteHandler(IDeleteHandler);
+	/**
+	 * Removes the handler from the collection of handlers who will
+	 * be notified when a CalendarableItem is inserted into the receiver, by sending
+	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * abstract class.
+	 * <p>
+	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * </p>
+	 *
+	 * @param handler the handler which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableItemInsertHandler
+	 * @see #addItemInsertHandler
+	 */
+	public void removeItemEditHandler(CalendarableItemEventHandler handler);
+
+	
 }

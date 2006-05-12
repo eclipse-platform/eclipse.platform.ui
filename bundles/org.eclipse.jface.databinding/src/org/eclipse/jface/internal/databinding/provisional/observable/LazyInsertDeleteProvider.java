@@ -26,12 +26,13 @@ public class LazyInsertDeleteProvider {
 	 * 
 	 * @param positionHint The position to insert the new element.  Clients are
 	 * free to use or ignore this information as it is a hint.
+	 * @param initializationData TODO
 	 * 
 	 * @return An ILazyDataRequestor.NewObject containing the actual position
 	 * where the object was inserted and the new object that was inserted, or
 	 * null to indicate that no object was inserted.
 	 */
-	public ILazyDataRequestor.NewObject insertElementAt(int positionHint) {
+	public ILazyDataRequestor.NewObject insertElementAt(int positionHint, Object initializationData) {
 		return null;
 	}
 	

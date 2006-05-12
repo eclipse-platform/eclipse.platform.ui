@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
-import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
 import org.eclipse.jface.util.Assert;
 
@@ -28,7 +27,7 @@ import org.eclipse.jface.util.Assert;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableList extends ObservableList implements ILazyDataSupplier {
+public class JavaBeanObservableList extends ObservableList implements ILazyListElementProvider {
 
 	private final Object object;
 
@@ -47,8 +46,6 @@ public class JavaBeanObservableList extends ObservableList implements ILazyDataS
 
 	private PropertyDescriptor descriptor;
 	
-	private LazyInsertDeleteProvider lazyInsertDeleteProvider = new LazyInsertDeleteProvider();
-
 	private ListenerSupport collectionListenSupport = new ListenerSupport(
 			collectionListener);
 
@@ -64,18 +61,6 @@ public class JavaBeanObservableList extends ObservableList implements ILazyDataS
 		this.descriptor = descriptor;
 		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
-	}
-
-	/**
-	 * @param object
-	 * @param descriptor
-	 * @param elementType
-	 */
-	public JavaBeanObservableList(Object object, PropertyDescriptor descriptor,
-			Class elementType, LazyInsertDeleteProvider lazyInsertDeleteProvider) 
-	{
-		this(object, descriptor, elementType);
-		this.lazyInsertDeleteProvider = lazyInsertDeleteProvider;
 	}
 
 	protected void firstListenerAdded() {
@@ -121,12 +106,5 @@ public class JavaBeanObservableList extends ObservableList implements ILazyDataS
 		return values;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier#getLazyInsertDeleteProvider()
-	 */
-	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
-		return lazyInsertDeleteProvider;
-	}
 }
 

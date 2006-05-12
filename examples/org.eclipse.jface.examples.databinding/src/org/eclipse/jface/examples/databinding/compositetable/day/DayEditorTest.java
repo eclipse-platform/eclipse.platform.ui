@@ -148,7 +148,7 @@ public class DayEditorTest {
 		dayEditor.setTimeBreakdown(7, 4);
 		
 		dayEditor.setDefaultStartHour(8);
-		dayEditor.setDayEventCountProvider(eventCountProvider);
+		dayEditor.setEventCountProvider(eventCountProvider);
 		dayEditor.setEventContentProvider(eventContentProvider);
 		dayEditor.setLayoutData(gridData);
 		updateStartDate();

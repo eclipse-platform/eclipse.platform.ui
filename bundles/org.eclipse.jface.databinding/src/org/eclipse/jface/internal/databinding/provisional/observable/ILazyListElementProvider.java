@@ -11,17 +11,17 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable;
 
+import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
+
 /**
  * Marker interface for Observables that can supply data lazily.
  * 
  * @since 3.3
  */
-public interface ILazyDataSupplier {
+public interface ILazyListElementProvider extends IObservableList {
 	/**
-	 * Returns an object that can perform inserts and/or deletes inside the
-	 * lazy collection by implementing the LazyInsertDeleteProvider API.
-	 * 
-	 * @return LazyInsertDeleteProvider the provider or null if none is implemented.
+	 * @param position
+	 * @return
 	 */
-	LazyInsertDeleteProvider getLazyInsertDeleteProvider();
+	abstract public Object get(int position);
 }

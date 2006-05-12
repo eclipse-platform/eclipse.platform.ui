@@ -741,8 +741,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
 	 */
-	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
-		model.setDayEventCountProvider(eventCountProvider);
+	public void setEventCountProvider(EventCountProvider eventCountProvider) {
+		model.setEventCountProvider(eventCountProvider);
 		updateVisibleRows();
 		layoutEventControls();
 	}

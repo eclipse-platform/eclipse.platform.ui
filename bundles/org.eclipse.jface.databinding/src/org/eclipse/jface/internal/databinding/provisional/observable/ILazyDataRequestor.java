@@ -11,14 +11,13 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 
 /**
  * Marker interface for Observables that request data lazily.
  * 
  * @since 3.3
  */
-public interface ILazyDataRequestor extends IObservableList {
+public interface ILazyDataRequestor extends IObservable {
 	/**
 	 * Represents a new object that was inserted into a lazy collection.
 	 * @since 3.3
@@ -57,7 +56,7 @@ public interface ILazyDataRequestor extends IObservableList {
 	 * 
 	 * @param p The listener to add.
 	 */
-	void addElementProvider(LazyElementProvider p);
+	void addElementProvider(ILazyListElementProvider p);
 	
 	/**
 	 * Removes the listener from the set of listeners that will be invoked when
@@ -65,7 +64,7 @@ public interface ILazyDataRequestor extends IObservableList {
 	 * 
 	 * @param p The listener to remove.
 	 */
-	void removeElementProvider(LazyElementProvider p);
+	void removeElementProvider(ILazyListElementProvider p);
 	
 	/**
 	 * Adds the listener to the set of listeners that will be invoked when
@@ -82,4 +81,15 @@ public interface ILazyDataRequestor extends IObservableList {
 	 * @param p The listener to remove.
 	 */
 	void removeInsertDeleteProvider(LazyInsertDeleteProvider p);
+
+	/**
+	 * @param position
+	 * @param element
+	 */
+	void add(int position, Object element);
+
+	/**
+	 * @param position
+	 */
+	Object remove(int position);
 }

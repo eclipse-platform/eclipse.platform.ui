@@ -10,10 +10,22 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
@@ -23,17 +35,61 @@ import org.eclipse.jface.internal.databinding.provisional.observable.value.Writa
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
- * 
- * 
+ * A binding for pairs of things that operate in a lazy but synchronous manner.
+ * This binding purely synchronizes two list-like things where the target side
+ * operates in an event-driven manner and the model side operates in a random-
+ * access manner.
+ * <p>
+ * Unlike other list bindings, this binding does <strong>not</strong> attempt
+ * to notify observers when the contents of the individual elements inside the 
+ * lists change, but only when the lists themselves receive new elements or 
+ * have elements removed.
  */
-public class LazyListBinding extends Binding {
+public class LazyListBinding extends Binding implements ILazyListElementProvider {
 
 	private boolean updating = false;
 
-	private IObservableList modelList;
+	private final ILazyDataRequestor targetList;
+	private ILazyListElementProvider modelList;
 
-	private final IObservableList targetList;
+	private LazyInsertDeleteProvider lazyInsertDeleteProvider;
 
+	private class DelegatingInsertDeleteProvider extends LazyInsertDeleteProvider {
+		private LazyInsertDeleteProvider lazyInsertDeleteProvider;
+		
+		public DelegatingInsertDeleteProvider(LazyInsertDeleteProvider parent) {
+			this.lazyInsertDeleteProvider = parent;
+		}
+		
+		public NewObject insertElementAt(int positionHint, Object initializationData) {
+			NewObject newObject;
+			try {
+				updating = true;
+				newObject = lazyInsertDeleteProvider.insertElementAt(positionHint, initializationData);
+			} finally {
+				updating = false;
+			}
+			if (newObject != null) {
+				fetchNewIterator();
+			}
+			return newObject;
+		}
+		
+		public boolean deleteElementAt(int position) {
+			boolean deleted = false;
+			try {
+				updating = true;
+				deleted = lazyInsertDeleteProvider.deleteElementAt(position);
+			} finally {
+				updating = false;
+			}
+			if (deleted) {
+				fetchNewIterator();
+			}
+			return deleted;
+		}
+	}
+	
 	/**
 	 * @param context
 	 * @param targetList
@@ -42,15 +98,19 @@ public class LazyListBinding extends Binding {
 	 * @param model
 	 * @param bindSpec
 	 */
-	public LazyListBinding(DataBindingContext context, IObservableList targetList,
+	public LazyListBinding(DataBindingContext context, IObservable targetList,
 			IObservableList modelList, BindSpec bindSpec) {
 		super(context);
-		this.targetList = targetList;
-		this.modelList = modelList;
+		this.targetList = (ILazyDataRequestor) targetList;
+		this.modelList = (ILazyListElementProvider) modelList;
+		this.targetList.addElementProvider(this);
+		lazyInsertDeleteProvider = new DelegatingInsertDeleteProvider(bindSpec.getLazyInsertDeleteProvider());
+		this.targetList.addInsertDeleteProvider(lazyInsertDeleteProvider);
 		
 		// TODO validation/conversion as specified by the bindSpec
-		targetList.addListChangeListener(targetChangeListener);
 		modelList.addListChangeListener(modelChangeListener);
+		
+		fetchNewIterator();
 		updateTargetFromModel();
 	}
 
@@ -58,51 +118,21 @@ public class LazyListBinding extends Binding {
 	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
 	 */
 	public void dispose() {
+		targetList.removeElementProvider(this);
+		targetList.removeInsertDeleteProvider(lazyInsertDeleteProvider);
 		targetList.dispose();
+		
+		modelList.removeListChangeListener(modelChangeListener);
 		modelList.dispose();
 	}
 	
-	private final IListChangeListener targetChangeListener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, ListDiff diff) {
-			if (updating) {
-				return;
-			}
-			// TODO validation
-			BindingEvent e = new BindingEvent(modelList, targetList, diff,
-					BindingEvent.EVENT_COPY_TO_MODEL,
-					BindingEvent.PIPELINE_AFTER_GET);
-			if (failure(errMsg(fireBindingEvent(e)))) {
-				return;
-			}
-			updating = true;
-			try {
-				// get setDiff from event object - might have been modified by a
-				// listener
-				ListDiff setDiff = (ListDiff) e.diff;
-				ListDiffEntry[] differences = setDiff.getDifferences();
-				for (int i = 0; i < differences.length; i++) {
-					ListDiffEntry entry = differences[i];
-					if (entry.isAddition()) {
-						modelList.add(entry.getPosition(), entry.getElement());
-					} else {
-						modelList.remove(entry.getPosition());
-					}
-				}
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
-				if (failure(errMsg(fireBindingEvent(e)))) {
-					return;
-				}
-			} finally {
-				updating = false;
-			}
-		}
-	};
-
 	private IListChangeListener modelChangeListener = new IListChangeListener() {
 		public void handleListChange(IObservableList source, ListDiff diff) {
 			if (updating) {
 				return;
 			}
+			fetchNewIterator();
+			
 			// TODO validation
 			BindingEvent e = new BindingEvent(modelList, targetList, diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
@@ -133,11 +163,13 @@ public class LazyListBinding extends Binding {
 			}
 		}
 	};
+	
 
 	private WritableValue partialValidationErrorObservable = new WritableValue(
 			null);
 
 	private WritableValue validationErrorObservable = new WritableValue(null);
+
 
 	private ValidationError errMsg(ValidationError validationError) {
 		partialValidationErrorObservable.setValue(null);
@@ -157,8 +189,7 @@ public class LazyListBinding extends Binding {
 	public void updateTargetFromModel() {
 		updating = true;
 		try {
-			targetList.clear();
-			targetList.addAll(modelList);
+			targetList.setSize(modelList.size());
 		} finally {
 			updating = false;
 		}
@@ -173,12 +204,269 @@ public class LazyListBinding extends Binding {
 	}
 
 	public void updateModelFromTarget() {
-		updating = true;
-		try {
-			modelList.clear();
-			modelList.addAll(targetList);
-		} finally {
-			updating = false;
-		}
+		throw new UnsupportedOperationException("Lazy targets don't support full copies"); //$NON-NLS-1$
+//		updating = true;
+//		try {
+//			modelList.clear();
+//			modelList.addAll(targetList);
+//		} finally {
+//			updating = false;
+//		}
+	}
+
+	private RandomAccessListIterator iterator = null;
+	
+	/**
+	 * 
+	 */
+	public void fetchNewIterator() {
+		iterator = new RandomAccessListIterator(modelList);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider#get(int)
+	 */
+	public Object get(int position) {
+		return iterator.get(position);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#add(java.lang.Object)
+	 */
+	public boolean add(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(java.util.Collection)
+	 */
+	public boolean addAll(Collection c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(int, java.util.Collection)
+	 */
+	public boolean addAll(int index, Collection c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
+	 */
+	public void addListChangeListener(IListChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#contains(java.lang.Object)
+	 */
+	public boolean contains(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#containsAll(java.util.Collection)
+	 */
+	public boolean containsAll(Collection c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#getElementType()
+	 */
+	public Object getElementType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#indexOf(java.lang.Object)
+	 */
+	public int indexOf(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#isEmpty()
+	 */
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#iterator()
+	 */
+	public Iterator iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#lastIndexOf(java.lang.Object)
+	 */
+	public int lastIndexOf(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator()
+	 */
+	public ListIterator listIterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator(int)
+	 */
+	public ListIterator listIterator(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(java.lang.Object)
+	 */
+	public boolean remove(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(int)
+	 */
+	public Object remove(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeAll(java.util.Collection)
+	 */
+	public boolean removeAll(Collection c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
+	 */
+	public void removeListChangeListener(IListChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#retainAll(java.util.Collection)
+	 */
+	public boolean retainAll(Collection c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#set(int, java.lang.Object)
+	 */
+	public Object set(int index, Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#size()
+	 */
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#subList(int, int)
+	 */
+	public List subList(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray()
+	 */
+	public Object[] toArray() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray(java.lang.Object[])
+	 */
+	public Object[] toArray(Object[] a) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.List#add(int, java.lang.Object)
+	 */
+	public void add(int arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.List#clear()
+	 */
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#addChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener)
+	 */
+	public void addChangeListener(IChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#addStaleListener(org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener)
+	 */
+	public void addStaleListener(IStaleListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#isStale()
+	 */
+	public boolean isStale() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#removeChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener)
+	 */
+	public void removeChangeListener(IChangeListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#removeStaleListener(org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener)
+	 */
+	public void removeStaleListener(IStaleListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 }

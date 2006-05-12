@@ -20,7 +20,7 @@ import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataSupplier;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
@@ -65,7 +65,7 @@ public class DefaultBindingFactory implements IBindingFactory {
 						bindSpec, target.getElementType(), model
 						.getElementType());
 				
-				if (modelObservable instanceof ILazyDataSupplier &&
+				if (modelObservable instanceof ILazyListElementProvider &&
 						targetObservable instanceof ILazyDataRequestor)
 				{
 					binding = new LazyListBinding(dataBindingContext, target, model, bindSpec);
