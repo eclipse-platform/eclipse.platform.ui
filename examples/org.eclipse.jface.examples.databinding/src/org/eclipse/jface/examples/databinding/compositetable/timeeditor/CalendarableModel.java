@@ -210,7 +210,7 @@ public class CalendarableModel {
 	 * 
 	 * @param eventCountProvider
 	 */
-	public void setDayEventCountProvider(EventCountProvider eventCountProvider) {
+	public void setEventCountProvider(EventCountProvider eventCountProvider) {
 		this.eventCountProvider = eventCountProvider;
 		refresh();
 	}

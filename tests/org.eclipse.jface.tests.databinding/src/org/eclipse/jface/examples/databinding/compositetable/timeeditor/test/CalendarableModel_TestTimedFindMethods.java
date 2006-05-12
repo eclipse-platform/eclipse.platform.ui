@@ -36,7 +36,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 	protected void setUp() throws Exception {
 		cm = new CalendarableModel();
 		cm.setTimeBreakdown(cmf.getNumberOfDays(), 4);
-		cm.setDayEventCountProvider(cmf.eventCountProvider);
+		cm.setEventCountProvider(cmf.eventCountProvider);
 		cm.setEventContentProvider(cmf.eventContentProvider);
 		cm.setStartDate(cmf.startDate);
 		EventLayoutComputer dm = new EventLayoutComputer(4);
@@ -47,7 +47,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 
 		cm0 = new CalendarableModel();
 		cm0.setTimeBreakdown(cmf0.getNumberOfDays(), 4);
-		cm0.setDayEventCountProvider(cmf0.eventCountProvider);
+		cm0.setEventCountProvider(cmf0.eventCountProvider);
 		cm0.setEventContentProvider(cmf0.eventContentProvider);
 		cm0.setStartDate(cmf0.startDate);
 		for (int day = 0; day < cmf0.getNumberOfDays(); ++day ) {

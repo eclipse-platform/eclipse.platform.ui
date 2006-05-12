@@ -44,7 +44,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 	private void setupModel(String[][] data) {
 		cmf.setData(data);
 		cm.setTimeBreakdown(data.length, 4);
-		cm.setDayEventCountProvider(cmf.eventCountProvider);
+		cm.setEventCountProvider(cmf.eventCountProvider);
 		cm.setEventContentProvider(cmf.eventContentProvider);
 		cm.setStartDate(cmf.startDate);
 		

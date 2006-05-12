@@ -44,7 +44,7 @@ public class CalendarableModel_testInit extends TestCase {
 			};
 		};
 		
-		cm.setDayEventCountProvider(ecp);
+		cm.setEventCountProvider(ecp);
 		assertNoRefreshCalled();
 		cm.setTimeBreakdown(1, 2);
 		assertNoRefreshCalled();
