@@ -34,7 +34,7 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEd
  */
 public class EventEditor implements IEventEditor {
 
-	private CalendarableModel model = new CalendarableModel();
+	protected CalendarableModel model = new CalendarableModel();
 
 	// Utilities --------------------------------------------------------------
 	

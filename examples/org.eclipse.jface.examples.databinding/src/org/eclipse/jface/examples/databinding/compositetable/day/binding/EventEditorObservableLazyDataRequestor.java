@@ -174,6 +174,13 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#setSize(int)
+	 */
+	public void setSize(int size) {
+		this.modelSize = size;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#add(int, java.lang.Object)
 	 */
 	public void add(int position, Object element) {
@@ -187,13 +194,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	public Object remove(int position) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#setSize(int)
-	 */
-	public void setSize(int size) {
-		this.modelSize = size;
 	}
 	
 	// Utility methods here ---------------------------------------------------
@@ -226,7 +226,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
     }
     
     private Date nextDay(Date refreshDate) {
-    	return null;
+    	GregorianCalendar gc = new GregorianCalendar();
+    	gc.setTime(refreshDate);
+    	gc.add(Calendar.DATE, 1);
+    	return gc.getTime();
     }
     
 	private Date datePartOf(Date rawDate) {

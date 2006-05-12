@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 
 /**
- * Marker interface for Observables that can supply data lazily.
+ * Interface for Observables that can supply data lazily.
  * 
  * @since 3.3
  */
