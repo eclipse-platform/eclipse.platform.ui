@@ -126,7 +126,7 @@ public class ChangeDescription {
 
 	private void handleMove(IResourceDelta delta) {
 		if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
-			movedRoots.add(delta.getResource());
+			ensureResourceCovered(delta.getResource(), movedRoots);
 		} else if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0) {
 			IResource source = createSourceResource(delta);
 			ensureResourceCovered(source, movedRoots);
