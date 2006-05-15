@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
 package org.eclipse.ui.menus;
 
@@ -22,6 +22,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * hosted in.
  *
  * @see org.eclipse.jface.menus.IWidget
+ *
+ * @since 3.2
  */
 public interface IWorkbenchWidget extends IWidget {
     /**
