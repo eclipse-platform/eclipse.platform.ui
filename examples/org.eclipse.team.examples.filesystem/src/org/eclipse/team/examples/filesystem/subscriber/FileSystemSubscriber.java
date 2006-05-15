@@ -13,17 +13,12 @@ package org.eclipse.team.examples.filesystem.subscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.core.variants.ThreeWayRemoteTree;
-import org.eclipse.team.core.variants.ThreeWaySubscriber;
-import org.eclipse.team.core.variants.ThreeWaySynchronizer;
+import org.eclipse.team.core.variants.*;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.examples.filesystem.FileSystemProvider;
 
@@ -121,6 +116,36 @@ public class FileSystemSubscriber extends ThreeWaySubscriber {
 		FileSystemSyncInfo info = new FileSystemSyncInfo(local, base, remote, this.getResourceComparator());
 		info.init();
 		return info;
+	}
+
+	/**
+	 * Make the resource in-sync.
+	 * @param resource the resource
+	 * @throws TeamException
+	 */
+	public void makeInSync(IResource resource) throws TeamException {
+		ThreeWaySynchronizer synchronizer = getSynchronizer();
+		byte[] remoteBytes = synchronizer.getRemoteBytes(resource);
+		if (remoteBytes == null) {
+			if (!resource.exists())
+				synchronizer.flush(resource, IResource.DEPTH_ZERO);
+		} else {
+			synchronizer.setBaseBytes(resource, remoteBytes);
+		}
+	}
+
+	/**
+	 * Make the change an outgoing change
+	 * @param resource
+	 * @throws TeamException 
+	 */
+	public void markAsMerged(IResource resource, IProgressMonitor monitor) throws TeamException {
+		makeInSync(resource);
+		try {
+			resource.touch(monitor);
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		}
 	}
 
 }

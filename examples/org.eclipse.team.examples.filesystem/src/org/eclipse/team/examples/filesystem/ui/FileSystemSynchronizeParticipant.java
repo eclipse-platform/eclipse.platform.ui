@@ -55,7 +55,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 	 * Custom menu groups included in the viewer definition in the plugin.xml.
 	 */
 	public static final String CONTEXT_MENU_PUT_GROUP_1 = "put"; //$NON-NLS-1$
-	public static final String CONTEXT_MENU_GET_GROUP_1 = "get"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_OVERWRITE_GROUP_1 = "overwrite"; //$NON-NLS-1$
 	
 	/**
 	 * A custom label decorator that will show the remote mapped path for each
@@ -111,17 +111,11 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 		 */
 		protected void configureMergeAction(String mergeActionId, Action action) {
 			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
-				// This is the default label so this line could be left out but it is here for illustration
-				action.setText("Merge");
-			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
 				// Custom label for overwrite
 				action.setText("Get");
 			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
 				// Custom label for mark-as-merged
 				action.setText("Ignore Remote");
-			} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
-				// This is the default label so this line could be left out but it is here for illustration
-				action.setText("Merge All");
 			} else {
 				super.configureMergeAction(mergeActionId, action);
 			}
@@ -134,7 +128,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 				group = manager.find(MERGE_ACTION_GROUP);
 			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
 				// This is a custom group for the overwrite command
-				group = manager.find(CONTEXT_MENU_GET_GROUP_1);
+				group = manager.find(CONTEXT_MENU_OVERWRITE_GROUP_1);
 			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
 				// This could be left out since this is the default group but it is here for illustration
 				group = manager.find(OTHER_ACTION_GROUP);

@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.subscriber;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 
 /**
@@ -35,17 +38,18 @@ public class FileSystemMergeContext extends SubscriberMergeContext {
 	 */
 	protected void makeInSync(IDiff diff, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO Auto-generated method stub
-
+		IResource resource = ResourceDiffTree.getResourceFor(diff);
+		FileSystemSubscriber.getInstance().makeInSync(resource);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IMergeContext#markAsMerged(org.eclipse.team.core.diff.IDiff, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void markAsMerged(IDiff node, boolean inSyncHint,
+	public void markAsMerged(IDiff diff, boolean inSyncHint,
 			IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
-
+		// TODO if inSyncHint is true, we should test to see if the contents match
+		IResource resource = ResourceDiffTree.getResourceFor(diff);
+		FileSystemSubscriber.getInstance().markAsMerged(resource, monitor);
 	}
 
 	/* (non-Javadoc)
@@ -53,8 +57,15 @@ public class FileSystemMergeContext extends SubscriberMergeContext {
 	 */
 	public void reject(IDiff diff, IProgressMonitor monitor)
 			throws CoreException {
-		// TODO Auto-generated method stub
-
+		markAsMerged(diff, false, monitor);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext#getMergeRule(org.eclipse.team.core.diff.IDiff)
+	 */
+	public ISchedulingRule getMergeRule(IDiff node) {
+		return ResourceDiffTree.getResourceFor(node).getProject();
+	}
+	
 
 }

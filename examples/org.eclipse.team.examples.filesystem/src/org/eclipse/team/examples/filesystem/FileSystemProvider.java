@@ -12,12 +12,9 @@ package org.eclipse.team.examples.filesystem;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -28,21 +25,21 @@ import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
  * This example illustrates how to create a concrete implementation of a <code>RepositoryProvider</code>
  * that uses the file system to act as the repository. See the plugin.xml file for the xml required
  * to register this provider with the Team extension point <code>org.eclipse.team.core.repository</code>.
- * The plugin.xml file also contains examples of how to filter menu items using a repsitory provider's
+ * The plugin.xml file also contains examples of how to filter menu items using a repository provider's
  * ID.
  * 
  * <p>
  * This example provider illustrates the following:
  * <ol>
  * <li>simple working implementation of <code>RepositoyProvider</code>
- * <li>storage of a persistant property with the project (which provides the target location for the provider)
+ * <li>storage of a persistent property with the project (which provides the target location for the provider)
  * <li>access to an instance of <code>SimpleAccessOperations</code> for performing simple file operations
  * </ol>
  * 
  * <p>
  * Additional functionality that will be illustrated in the future include:
  * <ol>
- * <li>Validate Save/Validat Edit
+ * <li>Validate Save/Validate Edit
  * <li>Move/Delete Hook
  * <li>Project Sets
  * <li>Use of the workspace synchronizer (ISynchronizer)
@@ -53,10 +50,17 @@ import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
  */
 public class FileSystemProvider extends RepositoryProvider {
 	
+	/*
+	 * Create a custom rule factory to allow more optimistic concurrency
+	 */
+	private static final ResourceRuleFactory RESOURCE_RULE_FACTORY = new ResourceRuleFactory() {
+		// Just need a subclass to instantiate
+	};
+	
 	// The location of the folder on file system where the repository is stored.
 	private IPath root;
 	
-	// The QualifiedName that is used to persist the location accross workspace as a persistant property on a resource
+	// The QualifiedName that is used to persist the location across workspace as a persistent property on a resource
 	private static QualifiedName FILESYSTEM_REPO_LOC = new QualifiedName(FileSystemPlugin.ID, "disk_location"); //$NON-NLS-1$
 
 	/**
@@ -202,6 +206,13 @@ public class FileSystemProvider extends RepositoryProvider {
 			return new File(rootdir.append(resource.getProjectRelativePath()).toOSString());
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getRuleFactory()
+	 */
+	public IResourceRuleFactory getRuleFactory() {
+		return RESOURCE_RULE_FACTORY;
 	}
 
 }

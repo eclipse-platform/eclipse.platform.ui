@@ -46,9 +46,9 @@ public class FileSystemSyncInfo extends SyncInfo {
 		// If the kind has been set and there is an incoming change
 		// return null as the base since the server does not keep the
 		// base contents
-		if ((getKind() & INCOMING) > 0) {
-			return null;
-		}
+//		if ((getKind() & INCOMING) > 0) {
+//			return null;
+//		}
 		return super.getBase();
 	}
 }

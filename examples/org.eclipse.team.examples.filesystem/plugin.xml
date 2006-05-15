@@ -102,6 +102,47 @@
    </extension>
       
 <!-- =================================================================================== -->
+<!-- Common Navigator viewer for the file systen synchronizations						 -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+       <viewer
+           viewerId="org.eclipse.team.examples.filesystem.syncViewer">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.examples.filesystem.syncViewer#PopupMenu">  
+             <insertionPoint name="file"/>  
+             <insertionPoint name="edit"/>          
+             <insertionPoint name="synchronize"/>
+             <insertionPoint
+                   name="navigate"
+                   separator="true"/>
+             <insertionPoint
+                   name="merge"
+                   separator="true"/>
+             <insertionPoint
+                   name="put"
+                   separator="false"/>
+             <insertionPoint
+                   name="overwrite"
+                   separator="true"/> 
+             <insertionPoint
+                   name="other"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="properties"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
+   </extension>
+   
+<!-- =================================================================================== -->
 <!-- Menus for File System Example														 -->
 <!-- =================================================================================== -->
 
