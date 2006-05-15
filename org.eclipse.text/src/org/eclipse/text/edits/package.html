@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Eclipse Text Editor" name="GENERATOR">
+  <title>Text Edits</title>
+</head>
+
+<body>
+Provides support for describing and applying textual document editions.
+<p>
+A complex textual edition can be described by a tree of <tt>TextEdit</tt>s. An edit
+can be applied to an <tt>IDocument</tt> by calling <tt>TextEdit.apply</tt> or by 
+using a <tt>TextEditProcessor</tt>. Applying a text edit can record a reverse edit
+description that can be used to undo the edition.
+</p>
+<p>
+Use the standard edit kinds to describe the basic document editing operations:
+<ul>
+  <li><em>replace</em> a document range: <tt>ReplaceEdit</tt></li>
+  <li><em>delete</em> a document range: <tt>DeleteEdit</tt></li>
+  <li><em>insert</em> text: <tt>InsertEdit</tt></li>
+  <li><em>track</em> a range while the document is being modified: <tt>RangeMarker</tt></li>
+</ul>
+</p>
+<p>
+Other subclasses of <tt>TextEdit</tt> exist for specialized tasks. Use <tt>MultiTextEdit</tt> to
+compose a complex edit tree, or subclass it to provide a custom edit.
+</p>
+</body></html>

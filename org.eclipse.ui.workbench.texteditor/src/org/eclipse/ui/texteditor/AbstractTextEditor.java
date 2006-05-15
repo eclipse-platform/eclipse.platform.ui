@@ -170,23 +170,23 @@ import org.eclipse.ui.part.EditorPart;
  * Subclasses are responsible for configuring the editor appropriately.
  * The standard text editor, <code>TextEditor</code>, is one such example.</p>
  * <p>
- * If a subclass calls <code>setEditorContextMenuId</code> the argument is
+ * If a subclass calls {@linkplain #setEditorContextMenuId(String) setEditorContextMenuId} the argument is
  * used as the id under which the editor's context menu is registered for extensions.
  * If no id is set, the context menu is registered under <b>[editor_id].EditorContext</b>
  * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
  * run in version 1.0 context menu registration compatibility mode, the latter form of the
- * registration even happens if a context menu id has been set via <code>setEditorContextMenuId</code>.
+ * registration even happens if a context menu id has been set via {@linkplain #setEditorContextMenuId(String) setEditorContextMenuId}.
  * If no id is set while in compatibility mode, the menu is registered under
- * <code>DEFAULT_EDITOR_CONTEXT_MENU_ID</code>.</p>
+ * {@link #DEFAULT_EDITOR_CONTEXT_MENU_ID}.</p>
  * <p>
- * If a subclass calls <code>setRulerContextMenuId</code> the argument is
+ * If a subclass calls {@linkplain #setRulerContextMenuId(String) setRulerContextMenuId} the argument is
  * used as the id under which the ruler's context menu is registered for extensions.
  * If no id is set, the context menu is registered under <b>[editor_id].RulerContext</b>
  * whereby [editor_id] is replaced with the editor's part id.  If the editor is instructed to
  * run in version 1.0 context menu registration compatibility mode, the latter form of the
- * registration even happens if a context menu id has been set via <code>setRulerContextMenuId</code>.
+ * registration even happens if a context menu id has been set via {@linkplain #setRulerContextMenuId(String) setRulerContextMenuId}.
  * If no id is set while in compatibility mode, the menu is registered under
- * <code>DEFAULT_RULER_CONTEXT_MENU_ID</code>.</p>
+ * {@link #DEFAULT_RULER_CONTEXT_MENU_ID}.</p>
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider {
 

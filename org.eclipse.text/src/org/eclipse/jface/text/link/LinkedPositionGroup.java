@@ -32,9 +32,8 @@ import org.eclipse.jface.text.Region;
 
 /**
  * A group of positions in multiple documents that are simultaneously modified -
- * if one gets edited, all other positions in a <code>PositionGroup</code>
- * are edited the same way. All linked positions in a group have the same
- * content.
+ * if one gets edited, all other positions in a group are edited the same way.
+ * All linked positions in a group have the same content.
  * <p>
  * Normally, new positions are given a tab stop weight which can be used by
  * clients, e.g. the UI. If no weight is given, a position will not be visited.

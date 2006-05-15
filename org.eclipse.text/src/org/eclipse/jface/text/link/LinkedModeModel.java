@@ -33,8 +33,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.IDocumentExtension.IReplace;
 
 /**
- * A <code>LinkedModeModel</code> umbrellas several
- * <code>LinkedPositionGroup</code>s. Once installed, the model
+ * The model for linked mode, umbrellas several
+ * {@link LinkedPositionGroup}s. Once installed, the model
  * propagates any changes to a position to all its siblings in the same position
  * group.
  * <p>

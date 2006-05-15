@@ -12,6 +12,7 @@ package org.eclipse.jface.text.hyperlink;
 
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 
 /**
@@ -21,6 +22,7 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface.
  * </p>
  *
+ * @see SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
  * @since 3.1
  */
 public interface IHyperlinkDetector {

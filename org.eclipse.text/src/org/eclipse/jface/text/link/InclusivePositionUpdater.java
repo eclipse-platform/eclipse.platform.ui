@@ -16,9 +16,9 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.Position;
 
 /**
- * Position updater that takes any change in
- * <code>[position.offset, position.offset + position.length]</code> as
- * belonging to the position.
+ * Position updater that considers any change in
+ * <code>[p.offset,&nbsp;p.offset&nbsp;+&nbsp;p.length]</code> of a {@link Position}
+ * <code>p</code> as belonging to the position.
  * <p>
  * Internal class. Do not use. Public for testing purposes only.
  * </p>
