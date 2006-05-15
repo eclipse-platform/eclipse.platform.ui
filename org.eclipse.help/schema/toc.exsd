@@ -168,9 +168,7 @@ or not primary and intended to be integrated into another table of contents.
          <attribute name="extradir" type="string">
             <annotation>
                <documentation>
-                  specifies relative directory name of containing additional documents that are associated with the table of contents.
-All help documents in this directory, and all subdirectories, will be indexed, and accessible through
-the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the TOC file do not refer to these documents.
+                  specifies a plug-in relative path to a directory containing additional documents that are associated with the table of contents. All help documents in this directory, and all subdirectories, will be indexed and accessible through the documentation search, even if the documents are not in the table of contents. Note: the directory must be within the declaring plug-in (e.g. &quot;../my.other.plugin/path&quot; is invalid)
                </documentation>
             </annotation>
          </attribute>
