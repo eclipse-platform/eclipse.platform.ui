@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 transitional//EN">
 <html><head>
   <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
   <meta content="IBM" name="Author">
@@ -14,7 +14,6 @@ can be applied to an <tt>IDocument</tt> by calling <tt>TextEdit.apply</tt> or by
 using a <tt>TextEditProcessor</tt>. Applying a text edit can record a reverse edit
 description that can be used to undo the edition.
 </p>
-<p>
 Use the standard edit kinds to describe the basic document editing operations:
 <ul>
   <li><em>replace</em> a document range: <tt>ReplaceEdit</tt></li>
@@ -22,7 +21,6 @@ Use the standard edit kinds to describe the basic document editing operations:
   <li><em>insert</em> text: <tt>InsertEdit</tt></li>
   <li><em>track</em> a range while the document is being modified: <tt>RangeMarker</tt></li>
 </ul>
-</p>
 <p>
 Other subclasses of <tt>TextEdit</tt> exist for specialized tasks. Use <tt>MultiTextEdit</tt> to
 compose a complex edit tree, or subclass it to provide a custom edit.
