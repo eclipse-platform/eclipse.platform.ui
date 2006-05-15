@@ -321,7 +321,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.2
       </documentation>
    </annotation>
 
