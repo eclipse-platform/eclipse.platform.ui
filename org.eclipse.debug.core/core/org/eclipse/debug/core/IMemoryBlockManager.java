@@ -58,8 +58,8 @@ public interface IMemoryBlockManager {
 	public void addListener(IMemoryBlockListener listener);
 	
 	/**
-	 * Deregisters the givem listener for memory block addition and
-	 * removal notficiation. Has no effect if an identical listener
+	 * Unregisters the given listener for memory block addition and
+	 * removal notification. Has no effect if an identical listener
 	 * is not already registered.
 	 * 
 	 * @param listener the listener to remove
@@ -74,7 +74,7 @@ public interface IMemoryBlockManager {
 	public IMemoryBlock[] getMemoryBlocks();
 	
 	/**
-	 * Returns all registered memory blocks assocaited with the
+	 * Returns all registered memory blocks associated with the
 	 * given debug target. That is, all registered memory blocks
 	 * whose <code>getDebugTarget()</code> method returns the
 	 * specified debug target.

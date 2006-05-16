@@ -77,9 +77,9 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	private HashMap fAttributes;	
 	
 	/**
-	 * Flag indiating that change notification should
+	 * Flag indicating that change notification should
 	 * be suppressed. <code>true</code> until this
-	 * launch has been initialzied.
+	 * launch has been initialized.
 	 */
 	private boolean fSuppressChange = true;
 		
@@ -110,7 +110,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	}
 	
 	/**
-	 * Remvoes the registered listeners.
+	 * Removes the registered listeners.
 	 */
 	private void removeListeners() {
 		getLaunchManager().removeLaunchListener(this);

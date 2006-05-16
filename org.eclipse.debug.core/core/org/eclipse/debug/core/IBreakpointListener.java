@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * A breakpoint listener is notified of breakpoint additions,
- * removals, and changes. Listeners register and deregister with the
+ * removals, and changes. Listeners register and unregister with the
  * breakpoint manager.
  * <p>
  * Clients may implement this interface.

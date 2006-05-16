@@ -95,7 +95,7 @@ public interface ILaunchManager {
 	public void addLaunches(ILaunch[] launches);	
 	/**
 	 * Adds the given listener to the collection of registered launch listeners.
-	 * Has no effect if an identical listener is already registerd.
+	 * Has no effect if an identical listener is already registered.
 	 *
 	 * @param listener the listener to register
 	 * @since 2.1
@@ -103,7 +103,7 @@ public interface ILaunchManager {
 	public void addLaunchListener(ILaunchesListener listener);		
 	/**
 	 * Adds the given listener to the collection of registered launch listeners.
-	 * Has no effect if an identical listener is already registerd.
+	 * Has no effect if an identical listener is already registered.
 	 *
 	 * @param listener the listener to register
 	 */
@@ -173,7 +173,7 @@ public interface ILaunchManager {
 	 * 
 	 * @param type a launch configuration type
 	 * @return all launch configurations of the specified type defined in the workspace
-	 * @exception CoreException if an error occurs while retreiving
+	 * @exception CoreException if an error occurs while retrieving
 	 *  a launch configuration
 	 * @since 2.0
 	 */
@@ -229,7 +229,7 @@ public interface ILaunchManager {
 	 * compatible with current tooling.
 	 * 
 	 * @return a collection of launch configurations that required migration
-	 * @exception org.eclipse.core.runtime.CoreException if an exception occurrs determining
+	 * @exception org.eclipse.core.runtime.CoreException if an exception occurs determining
 	 * 	 migration candidates
 	 * @since 3.2
 	 */
@@ -292,13 +292,13 @@ public interface ILaunchManager {
 	 * Depending on what you intend to do with the environment, the
 	 * lack of normalization may or may not be create problems. On 
 	 * WIN32, this method normalizes mixed-case keys variable names
-	 * to uppercase. Use {@link #getNativeEnvironmentCasePreserved()}
+	 * to upper case. Use {@link #getNativeEnvironmentCasePreserved()}
 	 * instead to get a WIN32 system environment where the keys are
 	 * the mixed-case variable names recorded by the OS.
 	 * </p>
 	 * 
 	 * @return the native system environment variables; on WIN32, mixed-case
-	 * variable names (keys) have been normalized to uppercase
+	 * variable names (keys) have been normalized to upper case
 	 * (key type: <code>String</code>; value type: <code>String</code>)
 	 * @since 3.0
 	 */	
@@ -315,7 +315,7 @@ public interface ILaunchManager {
 	 * method returns mixed-case keys using the variable names 
 	 * recorded by the OS.
 	 * Use {@link #getNativeEnvironment()} instead to get a WIN32 system
-	 * environment where all keys have been normalized to uppercase.
+	 * environment where all keys have been normalized to upper case.
 	 * </p>
 	 * 
 	 * @return the native system environment variables; on WIN32, mixed-case
@@ -444,18 +444,18 @@ public interface ILaunchManager {
 	
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
-	 * Has no effect if an identical listener is not already registerd.
+	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to deregister
+	 * @param listener the listener to unregister
 	 * @since 2.1
 	 */
 	public void removeLaunchListener(ILaunchesListener listener);
 	
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
-	 * Has no effect if an identical listener is not already registerd.
+	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to deregister
+	 * @param listener the listener to unregister
 	 */
 	public void removeLaunchListener(ILaunchListener listener);
 	

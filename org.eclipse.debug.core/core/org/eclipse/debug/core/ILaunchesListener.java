@@ -17,7 +17,7 @@ package org.eclipse.debug.core;
  * when a process or debug target is added to a launch,
  * listeners are notified of a change.
  * <p>
- * This interface is analagous to <code>ILaunchListerner</code>, except
+ * This interface is analogous to <code>ILaunchListerner</code>, except
  * notifications are batched to include more than one launch object
  * when possible.
  * </p>

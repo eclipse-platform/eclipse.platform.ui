@@ -427,7 +427,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  framework.
 	 * @param build whether the workspace should be built before the launch
 	 * @return resulting launch
-	 * @throws CoreException if an exception occurrs during the launch sequence
+	 * @throws CoreException if an exception occurs during the launch sequence
 	 * @since 3.0
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException;	
@@ -452,7 +452,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * launch method, for contributions (debug targets and processes). When
 	 * <code>register</code> is <code>false</code>, the launch is not registered with
 	 * the launch manager. Clients that launch configurations without registering
-	 * a launch should register appropiate debug event filters to intercept events
+	 * a launch should register appropriate debug event filters to intercept events
 	 * from unregistered launches.
 	 * </p>
 	 * <p>
@@ -474,7 +474,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @param build whether the workspace should be built before the launch
 	 * @param register whether to register the resulting launch with the launch manager
 	 * @return resulting launch
-	 * @throws CoreException if an exception occurrs during the launch sequence
+	 * @throws CoreException if an exception occurs during the launch sequence
 	 * @since 3.1
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException;

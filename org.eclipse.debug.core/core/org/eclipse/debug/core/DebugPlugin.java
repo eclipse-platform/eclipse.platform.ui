@@ -442,7 +442,7 @@ public class DebugPlugin extends Plugin {
 	public void asyncExec(Runnable r) {
 		synchronized(fRunnableLock) {
 			if (fRunnables == null) {
-				// initialize runnables and async job
+				// initialize runnables and asynchronous job
 				fRunnables= new Vector(5);
 				fAsynchJob = new AsynchJob();
 			}
@@ -834,7 +834,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
+			// this message is intentionally not externalized, as an exception may
 			// be due to the resource bundle itself
 			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null)); //$NON-NLS-1$
 		}

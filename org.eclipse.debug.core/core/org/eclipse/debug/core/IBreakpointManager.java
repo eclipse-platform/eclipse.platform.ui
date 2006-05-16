@@ -238,7 +238,7 @@ public interface IBreakpointManager {
 	public void setEnabled(boolean enabled);
 
     /**
-     * Returns the name (user presentable String) of the given
+     * Returns the name (user readable String) of the given
      * breakpoint's type or <code>null</code> if none has been
      * specified.
      * 

@@ -48,7 +48,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  *   instances of this type will delegate to instances of this class
  *   to perform launching.</li>
  * <li><code>modes</code> specifies a comma separated list of the modes this
- *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug"</code>.</li>
+ *    type of launch configuration supports - <code>"run"</code> and/or <code>"debug"</code>.</li>
  * <li><code>name</code> specifies a human readable name for this type
  *    of launch configuration.</li>
  * <li><code>category</code> is an optional attribute that specifies a category
@@ -56,17 +56,17 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * attribute was added in the 2.1 release.</li>
  * <li><code>sourceLocatorId</code> an optional unique identifier of a sourceLocator extension that
  * is used to create the source locator for sessions launched using launch configurations
- * of this type. This atttribute was added in the 3.0 release.</li>
+ * of this type. This attribute was added in the 3.0 release.</li>
  * <li><code>sourcePathComputerId</code> an optional unique identifier of a sourcePathComputer extension
  * that is used to compute a default source lookup path for launch configurations of this type.
- * This atttribute was added in the 3.0 release.</li>
+ * This attribute was added in the 3.0 release.</li>
  * </ul>
  * </p>
  * <p>
  * The <code>category</code> attribute has been added in release 2.1, such that other
  * tools may re-use the launch configuration framework for purposes other than
- * the standard running and debugging of programs under developement. Such that
- * clients may access arbitrary attribtes specified in launch configuration type
+ * the standard running and debugging of programs under development. Such that
+ * clients may access arbitrary attributes specified in launch configuration type
  * extension definitions, the method <code>getAttribute</code> has also been
  * added. Launch configurations that are to be recognized as standard run/debug
  * launch configurations should not specify the <code>category</code> attribute.
@@ -154,7 +154,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	/**
 	 * Returns the identifier of the persistable source locator registered with
 	 * this launch configurations type, or <code>null</code> if unspecified.
-	 * Launch configuration types optionally specify this attribue
+	 * Launch configuration types optionally specify this attribute
 	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
 	 *  
 	 * @return the identifier of the persistable source locator registered with
@@ -188,7 +188,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * Returns whether this launch configuration type is public.  Public configuration
 	 * types are available for use by the user, for example, the user can create new
 	 * configurations based on public types through the UI.  Private types are not
-	 * accessbile in this way, but are still available through the methods on 
+	 * accessible in this way, but are still available through the methods on 
 	 * <code>ILaunchManager</code>.
 	 * 
 	 * @return whether this launch configuration type is public.

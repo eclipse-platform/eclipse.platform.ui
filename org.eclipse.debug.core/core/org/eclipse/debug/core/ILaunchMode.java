@@ -16,7 +16,7 @@ package org.eclipse.debug.core;
  * modes in plug-in XML via the <code>launchModes</code> extension point.
  * <p>
  * Following is an example launch mode contribution for profiling. A launch
- * mode has an unique identifer specified by the <code>mode</code> attribute
+ * mode has an unique identifier specified by the <code>mode</code> attribute
  * and a human readable label specified by the <code>label</code> attribute.
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.launchModes&quot;&gt;
@@ -51,7 +51,7 @@ public interface ILaunchMode {
 	/**
 	 * Returns a human readable label for this launch mode when used in a
 	 * cascade menu. For example, "Run As". Allows the label to be
-	 * properly localized.
+	 * properly externalized.
 	 * <p>
 	 * A new attribute has been added the the launch mode extension in 3.2
 	 * to specify this label. When unspecified a default label is generated

@@ -15,10 +15,10 @@ import org.eclipse.debug.core.model.IExpression;
 
 /**
  * An expression listener is notified of expression additions,
- * removals, and changes. Listeners register and deregister with the
+ * removals, and changes. Listeners register and unregister with the
  * expression manager.
  * <p>
- * This interface is analagous to <code>IExpressionListener</code>, except
+ * This interface is analogous to <code>IExpressionListener</code>, except
  * notifications are batched for more than when expression when possible.
  * </p>
  * <p>

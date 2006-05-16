@@ -25,7 +25,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 public interface IMemoryBlockListener {
 	
 	/**
-	 * Notification the given memory blocks ahve been added to the
+	 * Notification the given memory blocks have been added to the
 	 * memory block manager.
 	 * 
 	 * @param memory blocks added to the memory block manager
