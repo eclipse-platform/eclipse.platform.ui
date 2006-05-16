@@ -15,6 +15,9 @@ import org.eclipse.core.runtime.Assert;
 /**
  * A group category is used to annotate change groups so that
  * they can be identified and filtered.
+ * <p>
+ * Note: this class is not intended to be subclassed
+ * </p>
  * 
  * @since 3.2
  */

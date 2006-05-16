@@ -84,6 +84,8 @@ public class RefactoringCore {
 	 *            the unique id of the contribution
 	 * @return the refactoring contribution, or <code>null</code> if in
 	 *         contribution is registered with for this id
+	 * 
+	 * @since 3.2
 	 */
 	public static RefactoringContribution getRefactoringContribution(String id) {
 		return RefactoringContributionManager.getInstance().getRefactoringContribution(id);

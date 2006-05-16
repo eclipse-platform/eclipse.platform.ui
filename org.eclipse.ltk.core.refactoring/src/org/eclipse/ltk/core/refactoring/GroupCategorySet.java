@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.Assert;
  * A special set to manage group categories. Group category sets are value
  * objects and are therefore best used as static final fields to share a
  * group category set between n {@link TextEditBasedChangeGroup}s.
+ * <p>
+ * Note: this class is not intended to be subclassed
+ * </p>
  * 
  * @since 3.2
  */

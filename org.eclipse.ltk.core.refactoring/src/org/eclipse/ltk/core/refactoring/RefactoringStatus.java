@@ -380,6 +380,7 @@ public class RefactoringStatus {
 	 * @return the refactoring status
 	 * 
 	 * @see IStatus
+	 * @since 3.2
 	 */
 	public static RefactoringStatus create(IStatus status) {
 		if (status.isOK())

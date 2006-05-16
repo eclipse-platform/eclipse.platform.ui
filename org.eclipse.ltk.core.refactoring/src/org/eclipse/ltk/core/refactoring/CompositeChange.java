@@ -437,7 +437,7 @@ public class CompositeChange extends Change {
 	 * by clients which provide their own composite change to create
 	 * a corresponding undo change.
 	 * 
-	 * @param childUndos the child undo. The undos appear in the
+	 * @param childUndos the child undo. The undo edits appear in the
 	 *  list in the reverse order of their execution. So the first
 	 *  change in the array is the undo change of the last change
 	 *  that got executed.
@@ -474,6 +474,8 @@ public class CompositeChange extends Change {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @since 3.2
 	 */
 	public ChangeDescriptor getDescriptor() {
 		for (final Iterator iterator= fChanges.iterator(); iterator.hasNext();) {

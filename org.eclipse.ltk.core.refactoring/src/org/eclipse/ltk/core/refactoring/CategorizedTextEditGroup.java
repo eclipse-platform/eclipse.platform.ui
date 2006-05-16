@@ -18,6 +18,9 @@ import org.eclipse.core.runtime.Assert;
 /**
  * A special text edit group that manages an additional set of
  * group categories.
+ * <p>
+ * Note: this class is not intended to be subclassed
+ * </p>
  * 
  * @since 3.2
  */
