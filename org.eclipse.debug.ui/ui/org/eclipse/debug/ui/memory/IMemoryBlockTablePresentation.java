@@ -22,10 +22,10 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
  * in table and text based renderings provided by the debug platform.
  * <p>
  * To contribute a memory block table presentation, implement your debug model
- * presentaion as documented in <code>org.eclipse.debug.ui.IDebugModelPresentation</code>.
+ * presentation as documented in <code>org.eclipse.debug.ui.IDebugModelPresentation</code>.
  * In addition, implement this interface in your debug model presentation.  Your model
  * presentation will be called when <code>org.eclipse.debug.ui.memory.AbstractTableRendering</code>
- * contructs its column and row labels. 
+ * constructs its column and row labels. 
  * </p>
  * <p>
  * Clients may implement this interface.

@@ -40,11 +40,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * <p>
  * To contribute an action to a rendering, an <code>objectContribution</code> can
  * be used on a rendering implementation class itself using a 
- * <code>popupMenus</code> extension. Additionaly, the context menu created
+ * <code>popupMenus</code> extension. Additionally, the context menu created
  * by <code>createPopupMenu()</code> is registered with an identifier of this
  * rendering's container identifier. Actions may also be contributed to the
  * container's context menu specifically by using a  <code>viewerContribution</code>
- * on a <code>popupMenus</code> extension that has a <code>targetID</code> refering
+ * on a <code>popupMenus</code> extension that has a <code>targetID</code> referring
  * to this rendering container's identifier. 
  * </p>
  * <p>
@@ -78,7 +78,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	}
 	
 	/**
-	 * Cient may provide a label decorator adapter from its memory block
+	 * Client may provide a label decorator adapter from its memory block
 	 * to decorate the label of a rendering.
 	 * @since 3.2 
 	 */
@@ -306,11 +306,11 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * <p>
 	 * To contribute an action to a rendering, an <code>objectContribution</code> can
 	 * be used on a rendering implementation class itself using a 
-	 * <code>popupMenus</code> extension. Additionaly, the context menu created
+	 * <code>popupMenus</code> extension. Additionally, the context menu created
 	 * by this method is registered with an identifier of this rendering's container.
 	 * Actions may also be contributed to the context menu specifically by using a 
 	 * <code>viewerContribution</code> on a <code>popupMenus</code> extension
-	 * that has a <code>targetID</code> refering to this rendering container's identifier. 
+	 * that has a <code>targetID</code> referring to this rendering container's identifier. 
 	 * </p>
 	 * <p>
 	 * Clients are expected to become a menu listener for their pop  up 
@@ -329,7 +329,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 						
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
-			// must add additions seperator before registering the menu
+			// must add additions separator before registering the menu
 			// otherwise, we will get an error
 			fPopupMenuMgr.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {

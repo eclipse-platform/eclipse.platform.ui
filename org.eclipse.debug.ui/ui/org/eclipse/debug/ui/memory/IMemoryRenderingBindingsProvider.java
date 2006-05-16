@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 /**
  * A rendering bindings provider provides rendering type bindings for a memory block.
  * <p>
- * By defualt, bindings for a memory block are provided by the memory rendering
+ * By default, bindings for a memory block are provided by the memory rendering
  * manager. However, a client can provide dynamic renderings for a memory block
  * by contributing a dynamic rendering binding in the <code>renderingBindings</code>
  * element of a <code>memoryRenderings</code> extension.
@@ -30,7 +30,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 public interface IMemoryRenderingBindingsProvider {
 	
 	/**
-     * Retunrs all rendering types bound to the given memory block.
+     * Returns all rendering types bound to the given memory block.
      * This includes default and primary rendering types.
      * 
      * @param block memory block

@@ -29,7 +29,7 @@ public interface IMemoryRenderingContainer {
 	public IMemoryRenderingSite getMemoryRenderingSite();
 	
 	/**
-	 * Reutrns the identifier of this container. Identifiers
+	 * Returns the identifier of this container. Identifiers
 	 * are unique within a container.
 	 * 
 	 * @return the identifier of this container

@@ -641,7 +641,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			address = start;
 		}
 		
-		// bigger than end address, no need to load, alread at top
+		// bigger than end address, no need to load, already at top
 		if (address.compareTo(end) > 0)
 		{
 			if (isAtBottomLimit())
@@ -951,7 +951,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		// actual column size is number of addressable units * size of the addressable unit
 		columnSize = columnSize * getAddressableSize();
 		
-		// check synchronized col size
+		// check synchronized column size
 		Integer colSize = (Integer)getSynchronizedProperty(AbstractTableRendering.PROPERTY_COL_SIZE);
 		if (colSize != null)
 		{
@@ -1357,7 +1357,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		if (!fEvtHandleLock.acquireLock(evtLockClient))
 			return false;
 		
-		// if the tab is already created and is being reformated
+		// if the tab is already created and is being reformatted
 		if (fIsCreated)
 		{	
 			if (fTableViewer == null)
@@ -1554,9 +1554,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * Returns the addressible size of this rendering's memory block in bytes.
+	 * Returns the addressable size of this rendering's memory block in bytes.
 	 * 
-	 * @return the addressible size of this rendering's memory block in bytes
+	 * @return the addressable size of this rendering's memory block in bytes
 	 */
 	public int getAddressableSize() {
 		return fAddressableSize;
@@ -1648,7 +1648,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			
 			// if info is available, some other view tab has already been
 			// created
-			// do not overwirte info int he synchronizer if that's the case
+			// do not overwrite info in the synchronizer if that's the case
 			if (selectedAddress == null) {
 				updateSyncSelectedAddress();
 			}
@@ -2302,7 +2302,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * Will load more memory if the address is not currently visible.
 	 * 
 	 * @param address address to position cursor at
-	 * @throws DebugException if an exception occurrs
+	 * @throws DebugException if an exception occurs
 	 */
 	public void goToAddress(BigInteger address) throws DebugException {
 		Object evtLockClient = new Object();
@@ -2363,7 +2363,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 					updateSyncPageStartAddress();
 				}
 				
-				// if the table is reloaded, the top address is chagned in this case
+				// if the table is reloaded, the top address is changed in this case
 				fTopRowAddress = address;
 				updateSyncTopAddress();
 				
@@ -2385,7 +2385,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	/**
 	 * Check if address provided is out of buffered range
 	 * @param address
-	 * @return if address is out of bufferred range
+	 * @return if address is out of buffered range
 	 */
 	private boolean isAddressOutOfRange(BigInteger address)
 	{
@@ -2439,7 +2439,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * Handle scrollling and reload table if necessary
+	 * Handle scrolling and reload table if necessary
 	 * @param event
 	 */
 	private synchronized void handleScrollBarSelection()
@@ -2682,7 +2682,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 	
 	/**
-	 * Activate celll editor and prefill it with initial value.
+	 * Activate cell editor and pre-fill it with initial value.
 	 * If initialValue is null, use cell content as initial value
 	 * @param initialValue
 	 */
@@ -2717,7 +2717,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		// is not invoked from here.  This is to prevent data to be modified when
 		// the table cursor loses focus from a cell.  By default, data will
 		// be changed in a table when the cell loses focus.  This is to workaround
-		// this default behaviour and only change data when the cell editor
+		// this default behavior and only change data when the cell editor
 		// is activated.
 		((TableRenderingCellModifier)cellModifier).setEditActionInvoked(true);
 		boolean canEdit = cellModifier.canModify(element, (String)property);
@@ -3283,7 +3283,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 							else
 								fContentProvider.loadContentForSimpleMemoryBlock();
 	
-							// update UI asynchrounously
+							// update UI asynchronously
 							Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
 							display.asyncExec(new Runnable() {
 								public void run() {
@@ -3359,7 +3359,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * <code>null</code> if none.
 	 * <p>
 	 * By default a color provider is obtained by asking this rendering's
-	 * memory bock for its {@link IColorProvider} adapter. When the color
+	 * memory block for its {@link IColorProvider} adapter. When the color
 	 * provider is queried for color information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -3376,7 +3376,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * <code>null</code> if none.
 	 * <p>
 	 * By default a label provider is obtained by asking this rendering's
-	 * memory bock for its {@link ILabelProvider} adapter. When the label
+	 * memory block for its {@link ILabelProvider} adapter. When the label
 	 * provider is queried for label information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -3393,7 +3393,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * <code>null</code> if none.
 	 * <p>
 	 * By default a font provider is obtained by asking this rendering's
-	 * memory bock for its {@link IFontProvider} adapter. When the font
+	 * memory block for its {@link IFontProvider} adapter. When the font
 	 * provider is queried for font information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -3410,7 +3410,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * <code>null</code> if none.
 	 * <p>
 	 * By default a table presentation is obtained by asking this rendering's
-	 * memory bock for its {@link IMemoryBlockTablePresentation} adapter.
+	 * memory block for its {@link IMemoryBlockTablePresentation} adapter.
 	 * </p>
 	 * @return the table presentation for this rendering's memory block,
 	 *  or <code>null</code>

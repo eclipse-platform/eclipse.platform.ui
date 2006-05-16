@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Control;
  * Renderings needing to synchronize with other renderings are intended to use
  * property change notifications via its synchronization service. For example, when a
  * rendering becomes visible, it can register for property change events with its rendering
- * site's synchronization service, and when it becomes hidden it can deregister. When a
+ * site's synchronization service, and when it becomes hidden it can unregister. When a
  * rendering is activated, it should set itself as the synchrnoization provider in its
  * rendering site and fire property change events to communicate information to
  * interested listeners.

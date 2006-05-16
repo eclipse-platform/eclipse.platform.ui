@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * <p>
  * A rendering site has an optional synchronization provider at any one time. If a
  * rendering provides synchronization information it should set itself as the synchronization
- * prodiver for its memory rendering site when it is activated. 
+ * provider for its memory rendering site when it is activated. 
  * </p>
  * <p>
  * Clients hosting memory rendering may implement this interface.
@@ -35,10 +35,10 @@ public interface IMemoryRenderingSite {
     public IWorkbenchPartSite getSite();
         
     /**
-     * Returns the syncrhonization serivce for this rendering site
+     * Returns the syncrhonization service for this rendering site
      * or <code>null</code> if none.
      * 
-     * @return the syncrhonization serivce for this rendering site or <code>null</code>
+     * @return the syncrhonization service for this rendering site or <code>null</code>
      */
     public IMemoryRenderingSynchronizationService getSynchronizationService();
     

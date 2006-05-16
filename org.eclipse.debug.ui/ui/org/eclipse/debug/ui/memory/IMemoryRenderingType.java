@@ -46,7 +46,7 @@ public interface IMemoryRenderingType {
      * if none.
      * 
      * @return a new rendering of this type
-     * @exception CoreException if an exception occurrs creating
+     * @exception CoreException if an exception occurs creating
      *  the rendering
      */
     public IMemoryRendering createRendering() throws CoreException;

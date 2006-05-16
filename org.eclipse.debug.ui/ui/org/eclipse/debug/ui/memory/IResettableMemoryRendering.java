@@ -17,7 +17,7 @@ import org.eclipse.debug.core.DebugException;
  * A memory rendering that can be reset.  Reset behavior is rendering
  * specific.  Typically, reset means that the rendering would position
  * itself back to the base address of its memory block.  However, clients 
- * may define its reset behaviour that is suitable for its rendering.
+ * may define its reset behavior that is suitable for its rendering.
  * 
  * @since 3.2
  *
