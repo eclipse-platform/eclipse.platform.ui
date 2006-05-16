@@ -284,6 +284,8 @@ then the item expands to something equivalent to:
 &lt;!ATTLIST command&nbsp;
 &nbsp; serialization       CDATA #REQUIRED
 &nbsp; returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      CDATA #IMPLIED
+&nbsp; confirm  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
+&nbsp; when    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &gt;</pre>
 <p>Each &lt;command&gt; element describes an command in a cheat sheet.
 &lt;command&gt; attributes are as follows:</p>
@@ -298,6 +300,12 @@ then the item expands to something equivalent to:
   sheet variable which will be used to store the return value of the command. 
   This allows a command to set a cheat sheet variable which is used in 
   a later &lt;perform-when&gt;, &lt;conditional-subitem&gt; or &lt;repeated-subitem&gt;.</li>
+  <li><b>confirm</b> - &quot;true&quot; indicates this step (or sub-step)
+    requires the user to manually confirm that the command has been completed.</li>
+  <li><b>when</b> - Indicates this command is to be used if and only if the value
+    of the condition attribute of the containing &lt;perform-when&gt; element
+    matches this string value. This attribute is ignored if the &lt;command&gt;
+    element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
 </ul>
 <p>Below is an example of an item with a command which opens a dialog box and 
 stores the result in the cheat sheet variable &quot;result&quot;.</p>
