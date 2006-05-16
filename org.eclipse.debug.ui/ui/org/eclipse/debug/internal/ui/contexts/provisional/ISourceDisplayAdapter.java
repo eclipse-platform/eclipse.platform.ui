@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.contexts.provisional;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
- * An adpater that is capable of displaying source for an object.
+ * An adapter that is capable of displaying source for an object.
  * The adapter is obtained from an object in a debug context.
  * 
  * @since 3.2
