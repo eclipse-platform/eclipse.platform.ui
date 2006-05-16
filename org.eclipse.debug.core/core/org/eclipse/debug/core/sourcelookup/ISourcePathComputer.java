@@ -47,7 +47,7 @@ public interface ISourcePathComputer extends ISourcePathComputerDelegate {
 	
 	/**
 	 * Launch configuration attribute to specify a source path computer
-	 * that should be used for a launch configuration. The value is an identifer
+	 * that should be used for a launch configuration. The value is an identifier
 	 * of a source path computer extension, or unspecified (<code>null</code>), if the
 	 * default source path computer should be used. A default source path computer
 	 * can be associated with a launch configuration type.

@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**
  * An archive in the local file system. Returns instances
- * of <code>ZipEntryStorage</code> as source elemetns.
+ * of <code>ZipEntryStorage</code> as source elements.
  * <p>
  * Clients may instantiate this class. This class is not intended to
  * be subclassed.
@@ -87,7 +87,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				// try exact match
 				ZipEntry entry = file.getEntry(name);
 				if (entry != null) {
-					// can't be any dups if there is an exact match
+					// can't be any duplicates if there is an exact match
 					return new Object[]{new ZipEntryStorage(file, entry)};
 				}
 				// search
@@ -124,7 +124,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * 
 	 * @param file zip file to search in
 	 * @param name file name
-	 * @exception CoreException if an exception occurrs while detecting the root
+	 * @exception CoreException if an exception occurs while detecting the root
 	 */
 	private ZipEntry searchRoots(ZipFile file, String name) {
 		if (fPotentialRoots == null) {

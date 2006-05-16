@@ -46,7 +46,7 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	
 	/* (non-Javadoc)
 	 * 
-	 * By default, do nothing. Subclasses should override as requried.
+	 * By default, do nothing. Subclasses should override as required.
 	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */

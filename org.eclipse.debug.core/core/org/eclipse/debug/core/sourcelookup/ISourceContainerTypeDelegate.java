@@ -34,7 +34,7 @@ public interface ISourceContainerTypeDelegate {
 	 * Creates and returns a new source container of this type
 	 * corresponding to the given memento.
 	 * 
-	 * @param memento a memento for a source conatiner of this source container type
+	 * @param memento a memento for a source container of this source container type
 	 * @return a source container corresponding to the given memento
 	 * @exception CoreException if unable to construct a source container based
 	 *  on the given memento

@@ -17,7 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * A source lookup director directs the source lookup process
  * among a set of participants and source containers.
  * <p>
- * Clients may implement this interface. An astract implementation
+ * Clients may implement this interface. An abstract implementation
  * is provided by <code>AbstractSourceLookupDirector</code>, which
  * clients should subclass.
  * </p>
@@ -145,7 +145,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * Sets the source path computer for this source lookup director.
 	 * This method can be used to override the default source path computer
 	 * for a launch configuration type. When <code>null</code> is specified
-	 * the default source path computer will be used (i.e. the one assocaited
+	 * the default source path computer will be used (i.e. the one associated
 	 * with this director's launch configuration's type).
 	 *  
 	 * @param computer source path computer or <code>null</code>
@@ -164,7 +164,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
 	 * @return a collection of source elements corresponding to the given
 	 *  debug artifact, possibly empty
-	 * @exception CoreException if an exception occurrs while searching for source
+	 * @exception CoreException if an exception occurs while searching for source
 	 */
 	public Object[] findSourceElements(Object object) throws CoreException;	
 	

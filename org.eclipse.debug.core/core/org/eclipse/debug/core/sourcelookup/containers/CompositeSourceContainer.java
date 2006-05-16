@@ -63,7 +63,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	 * @param name the name of the source element to search for
 	 * @param containers the containers to search
 	 * @return a collection of source elements corresponding to the given name
-	 * @exception CoreException if an exception occurrs while searching for source elements
+	 * @exception CoreException if an exception occurs while searching for source elements
 	 */	
 	protected Object[] findSourceElements(String name, ISourceContainer[] containers) throws CoreException {
 		List results = null;

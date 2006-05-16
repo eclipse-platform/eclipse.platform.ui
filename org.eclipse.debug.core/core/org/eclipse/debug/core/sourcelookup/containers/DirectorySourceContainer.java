@@ -34,7 +34,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	
 	// root directory
 	private File fDirectory;
-	// whether to search subfolders
+	// whether to search sub-folders
 	private boolean fSubfolders = false;
 	/**
 	 * Unique identifier for the directory source container type
@@ -103,7 +103,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 			sources.add(new LocalFileStorage(file));
 		}
 		
-		//check subfolders		
+		//check sub-folders		
 		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i=0; i < containers.length; i++) {

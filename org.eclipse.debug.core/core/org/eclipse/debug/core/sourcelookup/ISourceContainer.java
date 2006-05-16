@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IAdaptable;
 public interface ISourceContainer extends IAdaptable {
 	
 	/**
-	 * Notifiation this source container has been added to the given
+	 * Notification this source container has been added to the given
 	 * source lookup director.
 	 * 
 	 * @param director the director this container has been added to
@@ -59,7 +59,7 @@ public interface ISourceContainer extends IAdaptable {
 	 * </p>
 	 * @param name the name of the source element to search for
 	 * @return a collection of source elements corresponding to the given name
-	 * @exception CoreException if an exception occurrs while searching for source elements
+	 * @exception CoreException if an exception occurs while searching for source elements
 	 */
 	public Object[] findSourceElements(String name) throws CoreException;
 

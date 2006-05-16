@@ -57,7 +57,7 @@ public interface ISourceLookupParticipant {
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
 	 * @return a collection of source elements corresponding to the given
 	 *  debug artifact, possibly empty
-	 * @exception CoreException if an exception occurrs while searching for source
+	 * @exception CoreException if an exception occurs while searching for source
 	 */
 	public Object[] findSourceElements(Object object) throws CoreException;
 	
@@ -74,7 +74,7 @@ public interface ISourceLookupParticipant {
 
 	/**
 	 * Disposes this source lookup participant. This method is called when
-	 * the source lookup director assocaited with this participant is 
+	 * the source lookup director associated with this participant is 
 	 * disposed.
 	 */
 	public void dispose();

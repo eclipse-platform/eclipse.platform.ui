@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 
 /**
- * A source contaier for a container in the workspace. Source elements are searched
+ * A source container for a container in the workspace. Source elements are searched
  * for within this container and optionally nested containers.
  * <p>
  * Names specified in <code>findSourceElements</code> method can
@@ -122,7 +122,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 			}
 		}
 
-		//check subfolders		
+		//check sub-folders		
 		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
 			ISourceContainer[] containers = getSourceContainers();
 			for (int i=0; i < containers.length; i++) {

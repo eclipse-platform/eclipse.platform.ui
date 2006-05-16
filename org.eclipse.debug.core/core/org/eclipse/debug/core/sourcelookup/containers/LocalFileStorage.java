@@ -97,7 +97,7 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 	}
 	
 	/**
-	 * Returns the file asscoiated with this storage
+	 * Returns the file associated with this storage
 	 * 
 	 * @return file
 	 */

@@ -64,7 +64,7 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	
 	/**
 	 * Returns a short description of this source container type that can be used
-	 * for presenetation purposes, or <code>null</code> if none.
+	 * for presentation purposes, or <code>null</code> if none.
 	 * 
 	 * @return a short description of this source container type, or <code>null</code>
 	 */

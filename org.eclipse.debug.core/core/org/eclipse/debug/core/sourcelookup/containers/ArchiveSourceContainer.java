@@ -18,7 +18,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 
 /**
  * Archive source container for an archive in the workspace. Returns instances
- * of <code>ZipEntryStorage</code> as source elemetns.
+ * of <code>ZipEntryStorage</code> as source elements.
  * <p>
  * Clients may instantiate this class. This class is not intended to
  * be subclassed.
