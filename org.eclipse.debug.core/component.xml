@@ -21,6 +21,7 @@
  	<type name="ILaunch" />
  	<type name="ILaunchConfiguration" implement="false" />
  	<type name="ILaunchConfigurationListener" />
+ 	<teyp name="ILaunchConfigurationMigrationDelegate" />
  	<type name="ILaunchConfigurationType" implement="false" />
  	<type name="ILaunchConfigurationWorkingCopy" implement="false" />
  	<type name="ILaunchesListener" />
