@@ -26,6 +26,7 @@ import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendar
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
+import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
@@ -344,11 +345,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		return null;
 	}
 	
-	/**
-	 * @param item
-	 * @param sourceElement
-	 */
-	protected void setCalendarableItemProperties(CalendarableItem item, Object sourceElement) {
+	protected void bindCalendarableItemProperties(CalendarableItem item, Object sourceElement) {
+		/*
+		 * 
+		 */
 		item.setDate(getBeginningDate(sourceElement));
 		// TODO : a lot of logic here to do.
 		item.setStartTime(getBeginningTime(sourceElement));
@@ -361,11 +361,9 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		} else {
 			item.setAllDayEvent(false);
 		}
-		data = getProperty(sourceElement, textPropertyName);
-		if (data != null) {
-			item.setText((String)data);
-		} else {
-			item.setText("");
+		if (textPropertyName != null) {
+			Binding binding = dbc.bind(new Property(item, "text"), new Property(sourceElement, textPropertyName), null);
+			addBindingToCalenderable(binding, item);
 		}
 		data = getProperty(sourceElement, toolTipTextPropertyName);
 		if (data != null) {
@@ -381,6 +379,15 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 	}
 
+	private void addBindingToCalenderable(Binding binding, CalendarableItem item) {
+		List bindingList = (List) item.getData();
+		if (bindingList == null) {
+			bindingList = new ArrayList();
+			item.setData(bindingList);
+		}
+		bindingList.add(binding);
+	}
+
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
 		public void refresh(Date day, CalendarableItem[] items) {
 			if (currentlyFetching == null || !currentlyFetching.equals(day)) {
@@ -390,7 +397,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			Iterator source = dataForCurrentDate.iterator();
 			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
 				Object sourceElement = source.next();
-				setCalendarableItemProperties(items[itemIndex], sourceElement);
+				bindCalendarableItemProperties(items[itemIndex], sourceElement);
 			}
 		}
 	};

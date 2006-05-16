@@ -31,6 +31,8 @@ import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
@@ -58,8 +60,12 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 
 	private DataBindingContext getDBC() {
 		DataBindingContext dbc = new DataBindingContext();
+		dbc.addBindingFactory(new DefaultBindingFactory());
 		dbc.addBindingFactory(new IBindingFactory() {
 			public Binding createBinding(DataBindingContext dataBindingContext, IObservable target, IObservable model, BindSpec bindSpec) {
+				if (!(model instanceof IObservableList)) {
+					return null;
+				}
 				if (bindSpec == null) {
 					bindSpec = new BindSpec();
 				}
@@ -76,6 +82,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 			}
 		});
 		dbc.addObservableFactory(new BeanObservableFactory(dbc, null, null));
+		dbc.addBindSupportFactory(new DefaultBindSupportFactory());
 		return dbc;
 	}
 
@@ -345,7 +352,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		List testDataList = loadTestDataIntoList(testData);
 		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
 				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
-		dbc.bind(editorBindDesc, makeModel(testDataList), new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));
+		dbc.bind(editorBindDesc, makeModel(testDataList), null);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
 				{},
