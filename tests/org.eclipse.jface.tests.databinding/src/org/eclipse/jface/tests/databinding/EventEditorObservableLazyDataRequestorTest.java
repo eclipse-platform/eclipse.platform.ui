@@ -280,9 +280,9 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		Event[] testData = new Event[] {
 				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
 		dbc.bind(editorBindDesc, makeModel(testData), null);
-		EventEditorObservableLazyDataRequestor requestor = 
-			new EventEditorObservableLazyDataRequestor(editorBindDesc);
-		requestor.setSize(1);
+//		EventEditorObservableLazyDataRequestor requestor = 
+//			new EventEditorObservableLazyDataRequestor(editorBindDesc);
+//		requestor.setSize(1);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
 				{},
