@@ -95,7 +95,7 @@ public class VariablesPlugin extends Plugin {
 	}
 	
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_CORE_VARIABLES;

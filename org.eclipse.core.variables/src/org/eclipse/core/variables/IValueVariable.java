@@ -15,7 +15,7 @@ package org.eclipse.core.variables;
  * a value variable is referenced does not effect the value of the variable.
  * A value variable can be contributed by an extension or created programmatically.
  * A contributor may optionally specify an initial value for a variable, or
- * provide a delegate that will initialie the variable with a value. 
+ * provide a delegate that will initialize the variable with a value. 
  * <p>
  * Example of a value variable contribution with an initial value, the specified
  * variable is created with the initial value "/usr/local/foo".

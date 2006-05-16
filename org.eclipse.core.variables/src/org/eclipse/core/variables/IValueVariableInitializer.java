@@ -13,7 +13,7 @@ package org.eclipse.core.variables;
 /**
  * Value variable initializers compute an initial value for a value
  * variable contributed by an extension, which is not defined with an initial
- * value. This provides a mechnism for programatically computing the initial
+ * value. This provides a mechanism for programmatically computing the initial
  * value of a value variable.
  * <p>
  * Clients may implement this interface.

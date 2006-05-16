@@ -20,7 +20,7 @@ package org.eclipse.core.variables;
  * </pre>
  * <p>
  * A variable is identified by its name, and optionally accepts an argument. When an
- * argument is present, a colon seperates the variable name from its argument.
+ * argument is present, a colon separates the variable name from its argument.
  * </p>
  * <p>
  * Variables can be contributed by extensions or programmatically. There are two

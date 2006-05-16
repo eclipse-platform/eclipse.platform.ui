@@ -75,12 +75,12 @@ public interface IStringVariableManager {
 	public IDynamicVariable getDynamicVariable(String name);
     
     /**
-     * Returns the plugin identifier of the plugin that contributed the
+     * Returns the plug-in identifier of the plug-in that contributed the
      * given variable via extension or <code>null</code> if the given
      * variable wasn't contributed via extension.
      * 
      * @param variable the variable
-     * @return the plugin identifier of the plugin that contributed the
+     * @return the plug-in identifier of the plug-in that contributed the
      *  given variable or <code>null</code>
      * @since 3.1
      */
