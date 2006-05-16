@@ -33,6 +33,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * <li>Add the new rendering to the container.</li>
  * </ol> 
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  * @see AddMemoryRenderingActionDelegate
  */

@@ -49,6 +49,9 @@ import org.eclipse.ui.IEditorPart;
  * the identifiers <code>IDebugUIConstants.ANNOTATION_INSTRUCTION_POINTER_CURRENT</code>
  * and <code>IDebugUIConstants.ANNOTAION_INSTRUCTION_POINTER_SECONDARY</code>.
  * </p>
+ * <p>
+ * Clients implementing a debug model presentation may also implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface IInstructionPointerPresentation extends IDebugModelPresentation {

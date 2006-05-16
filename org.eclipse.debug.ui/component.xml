@@ -23,6 +23,7 @@
  	<type name="IDebugModelPresentation" />
  	<type name="IDebugUIConstants" implement="false" />
  	<type name="IDebugView" />
+	<type name= "IInstructionPointerPresentation" />
  	<type name="ILaunchConfigurationDialog" implement="false" />
  	<type name="ILaunchConfigurationTab" />
  	<type name="ILaunchConfigurationTabGroup" />
@@ -37,15 +38,19 @@
  <package name="org.eclipse.debug.ui.actions">
 	<type name="AbstractLaunchHistoryAction" />
 	<type name="AbstractLaunchToolbarAction" />
+	<type name="AddMemoryRenderingActionDelegate" instantiate="false" subclass="false" />
 	<type name="ContextualLaunchAction" />
 	<type name="DebugAction" subclass="false" />
 	<type name="ExportBreakpointsOperation" subclass="false" />
+	<type name="IAddMemoryBlocksTarget" />
+	<type name="IAddMemoryRenderingsTarget" />
 	<type name="ILaunchable" implement="false" />
 	<type name="ImportBreakpointsOperation" subclass="false" />
 	<type name="IRunToLineTarget" />
 	<type name="IToggleBreakpointsTarget" />
 	<type name="IToggleBreakpointsTargetExtension" />
 	<type name="IVariableValueEditor" />
+	<type name="IWatchExpressionFactoryAdapter" />
 	<type name="LaunchAction" subclass="false" />
 	<type name="LaunchAsAction" subclass="false" />
 	<type name="LaunchShortcutsAction" />
@@ -84,17 +89,18 @@
 	<type name="IMemoryRenderingSynchronizationService" />
 	<type name="IMemoryRenderingType" />
 	<type name="IMemoryRenderingTypeDelegate" />
+	<type name="IResettableMemoryRendering" />
 	<type name="MemoryRenderingElement" />
  </package>
  <package name="org.eclipse.debug.ui.sourcelookup">
 	<type name="AbstractSourceContainerBrowser" />
+	<type name="CommonSourceNotFoundEditor" />
+	<type name="CommonSourceNotFoundEditorInput" />
 	<type name="ISourceContainerBrowser" />
 	<type name="ISourceLookupResult" implement="false" />
 	<type name="SourceLookupDialog" subclass="false" />
 	<type name="SourceLookupTab" subclass="false" />
 	<type name="WorkingSetSourceContainer" subclass="false" />
-	<type name="CommonSourceNotFoundEditor" />
-	<type name="CommonSourceNotFoundEditorInput" />
  </package>  
  
  <component-depends unrestricted="true"/>

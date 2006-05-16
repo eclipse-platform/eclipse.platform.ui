@@ -19,7 +19,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * An adapter for an "add memory block" operation. The Memory View provides
  * a retargettable "add memory block" action that debuggers may plug into
  * by providing an adapter (see <code>IAdaptable</code>) of this type.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface IAddMemoryBlocksTarget {

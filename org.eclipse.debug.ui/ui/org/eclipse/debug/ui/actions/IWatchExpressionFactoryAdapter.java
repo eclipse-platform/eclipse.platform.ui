@@ -24,6 +24,9 @@ import org.eclipse.debug.core.model.IVariable;
  * consulted to create a watch expression for that variable. When no adapter is provided,
  * the watch expression is generated based on the variable's name.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface IWatchExpressionFactoryAdapter {

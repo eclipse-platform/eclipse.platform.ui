@@ -18,7 +18,9 @@ import org.eclipse.debug.core.DebugException;
  * specific.  Typically, reset means that the rendering would position
  * itself back to the base address of its memory block.  However, clients 
  * may define its reset behavior that is suitable for its rendering.
- * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  *
  */
