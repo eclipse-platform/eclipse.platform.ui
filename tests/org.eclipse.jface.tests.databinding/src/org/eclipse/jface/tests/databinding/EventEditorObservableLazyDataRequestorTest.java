@@ -92,7 +92,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		}
 	}
 	
-	private static class Event extends ModelObject {
+	protected static class Event extends ModelObject {
 		public boolean allDay = false;
 		public Date startTime;
 		public Date endTime;
@@ -145,7 +145,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 
 	}
 	
-	private Date time(int month, int day, int hour, int minutes) {
+	protected Date time(int month, int day, int hour, int minutes) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(new Date());
 		gc.set(Calendar.MONTH, month);
@@ -158,7 +158,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 	}
 
 	
-	private Date time(int hour, int minutes) {
+	protected Date time(int hour, int minutes) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(new Date());
 		gc.set(Calendar.HOUR_OF_DAY, hour);
@@ -168,7 +168,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return gc.getTime();
 	}
 
-	private Date date(int month, int day) {
+	protected Date date(int month, int day) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(new Date());
 		gc.set(Calendar.MONTH, month);
@@ -180,7 +180,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return gc.getTime();
 	}
 
-    private Date nextDay(Date date) {
+    protected Date nextDay(Date date) {
     	GregorianCalendar gc = new GregorianCalendar();
     	gc.setTime(date);
     	gc.add(Calendar.DATE, 1);
