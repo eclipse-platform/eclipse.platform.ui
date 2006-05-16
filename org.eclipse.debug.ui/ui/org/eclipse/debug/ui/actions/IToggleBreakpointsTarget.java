@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * retargettable actions for toggling line breakpoints, method breakpoints,
  * and watchpoints. A debug implementation can plug into the global actions
  * by providing an adapter of this type on relevant parts and objects.
- * The debug platform provides one command and keybinding for each breakpoint
+ * The debug platform provides one command and key binding for each breakpoint
  * operation.
  * <p>
  * When a part is activated, a retargettable action asks the part

@@ -94,9 +94,9 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	}
 	
 	/**
-	 * Returns the launch group associatd with this action.
+	 * Returns the launch group associated with this action.
 	 * 
-	 * @return the launch group associatd with this action
+	 * @return the launch group associated with this action
 	 */
 	private ILaunchGroup getLaunchGroup() {
 		return fGroup;
@@ -179,7 +179,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		IEvaluationContext context = createContext();
 		// gather all shortcuts and run their filters so that we only run the
 		// filters one time for each shortcut. Running filters can be expensive.
-		// Also, only *LOADED* plugins get their filters run.
+		// Also, only *LOADED* plug-ins get their filters run.
 		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(getLaunchGroup().getCategory());
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
@@ -216,7 +216,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	}
 	
 	/**
-	 * Add the shortcut to the context menu's launch submenu.
+	 * Add the shortcut to the context menu's launch sub-menu.
 	 */
 	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
@@ -255,7 +255,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * Creates the menu for the action
 	 */
 	private void initMenu() {
-		// Add listener to repopulate the menu each time
+		// Add listener to re-populate the menu each time
 		// it is shown to reflect changes in selection or active perspective
 		fCreatedMenu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {

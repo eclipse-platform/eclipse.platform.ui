@@ -221,7 +221,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * Creates the menu for the action
 	 */
 	private void initMenu() {
-		// Add listener to repopulate the menu each time
+		// Add listener to re-populate the menu each time
 		// it is shown because of dynamic history list
 		fMenu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {

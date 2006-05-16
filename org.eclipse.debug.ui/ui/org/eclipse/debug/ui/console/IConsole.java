@@ -61,7 +61,7 @@ public interface IConsole {
 	 * </p>
 	 * @param link the hyperlink to add 
 	 * @param offset the character offset within the console document where the
-	 * text assoicated with the hyperlink begins
+	 * text associated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
 	 * @deprecated replaced with addLink(IHyperlink link, int offset, int length)
 	 */
@@ -77,7 +77,7 @@ public interface IConsole {
 	 * </p>
 	 * @param link the hyperlink to add 
 	 * @param offset the character offset within the console document where the
-	 * text assoicated with the hyperlink begins
+	 * text associated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
 	 * @since 3.1
 	 */

@@ -39,10 +39,10 @@ public abstract class RulerBreakpointAction extends Action {
 	
 	/**
 	 * Constructs an action to work on breakpoints in the specified
-	 * text editor with the specified vertical ruler info.
+	 * text editor with the specified vertical ruler information.
 	 * 
 	 * @param editor text editor
-	 * @param info vertical ruler info
+	 * @param info vertical ruler information
 	 */
 	public RulerBreakpointAction(ITextEditor editor, IVerticalRulerInfo info) {
 		fEditor = editor;
@@ -95,9 +95,9 @@ public abstract class RulerBreakpointAction extends Action {
 	}
 	
 	/**
-	 * Returns the vertical ruler info this action was created for.
+	 * Returns the vertical ruler information this action was created for.
 	 * 
-	 * @return vertical ruler info
+	 * @return vertical ruler information
 	 */
 	protected IVerticalRulerInfo getVerticalRulerInfo() {
 		return fRulerInfo;

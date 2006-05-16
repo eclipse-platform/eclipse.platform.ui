@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Color;
  * process. By default, a document is created which is connected to the standard
  * input, output, and error streams associated with the process. A client may
  * override the default coloring by specifying a custom content provider for a
- * process type. A proccess type is defined via the process attribute
+ * process type. A process type is defined via the process attribute
  * <code>IProcess. ATTR_PROCESS_TYPE</code>.
  * <p>
  * A console color provider extension is defined in <code>plugin.xml</code>.

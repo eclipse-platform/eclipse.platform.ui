@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Adpater for the platform's retargettable "add memory rendering" action. 
+ * Adapter for the platform's retargettable "add memory rendering" action. 
  * Clients implementing this adapter are expected to add the necessary memory blocks
  * and renderings when the adapter is invoked.
  * <p>
@@ -75,7 +75,7 @@ public interface IAddMemoryRenderingsTarget {
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the active debug context
-	 * @return a list of rendering types that can be added, possiby empty
+	 * @return a list of rendering types that can be added, possibly empty
 	 */
 	public IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection);
 }

@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * An adapter for a "run to line" operation. The debug platform provides
  * a retargettable "run to line" action that debuggers may plug into
  * by providing an adapter (see <code>IAdaptable</code>) of this type.
- * This allows the platform to provide one command and keybinding for
+ * This allows the platform to provide one command and key binding for
  * the "run to line" function to be shared by many debuggers.
  * <p>
  * When a part is activated, a retargettable action asks the part

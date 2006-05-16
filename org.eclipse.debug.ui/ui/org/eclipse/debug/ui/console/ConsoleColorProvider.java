@@ -19,7 +19,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Default console color provider for a processs. Colors output to standard
+ * Default console color provider for a process. Colors output to standard
  * out, in, and error, as specified by user preferences.
  * <p>
  * Clients implementing a console color provider should subclass this class.

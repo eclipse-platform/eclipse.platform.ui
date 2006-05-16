@@ -45,7 +45,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * Clients may instantiate this class; not intended to be subclassed.
  * </p>
  * @since 2.1
- * @deprecated The use of perspective based launch shorcuts has been deprecated
+ * @deprecated The use of perspective based launch shortcuts has been deprecated
  *  in the 3.1 release. Instead, selection sensitive launch is supported in the top level
  *  menus. Use <code>LaunchShorcutsAction</code> instead.
  */
@@ -81,9 +81,9 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	}
 	
 	/**
-	 * Returns the launch group associatd with this action.
+	 * Returns the launch group associated with this action.
 	 * 
-	 * @return the launch group associatd with this action
+	 * @return the launch group associated with this action
 	 */
 	private LaunchGroupExtension getLaunchGroup() {
 		return getLaunchConfigurationManager().getLaunchGroup(fLaunchGroupIdentifier);

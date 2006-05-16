@@ -60,14 +60,14 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 		try {
 			for (int i = 0; i < fBreakpoints.length; i++) {
 				IBreakpoint breakpoint = fBreakpoints[i];
-				//in the event we are in workingset view, we can have multiple selection of the same breakpoint
+				//in the event we are in working set view, we can have multiple selection of the same breakpoint
 				//so do a simple check for it
 				IMarker marker = breakpoint.getMarker();
 				IMemento root = memento.createChild(IImportExportConstants.IE_NODE_BREAKPOINT);
 				root.putString(IImportExportConstants.IE_BP_ENABLED, Boolean.toString(breakpoint.isEnabled()));
 				root.putString(IImportExportConstants.IE_BP_REGISTERED, Boolean.toString(breakpoint.isRegistered()));
 				root.putString(IImportExportConstants.IE_BP_PERSISTANT, Boolean.toString(breakpoint.isPersisted()));
-				//write out the resource info
+				//write out the resource information
 				IResource resource = marker.getResource();
 				IMemento child = root.createChild(IImportExportConstants.IE_NODE_RESOURCE);
 				child.putString(IImportExportConstants.IE_NODE_PATH, resource.getFullPath().toPortableString());

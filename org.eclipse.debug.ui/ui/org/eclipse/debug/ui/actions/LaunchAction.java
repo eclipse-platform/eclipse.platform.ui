@@ -42,7 +42,7 @@ public class LaunchAction extends Action {
 	private String fMode;
 	
 	/**
-	 * Constucts an action that launches the specified launch configuration
+	 * Constructs an action that launches the specified launch configuration
 	 * in the specified mode.
 	 * 
 	 * @param configuration launch configuration

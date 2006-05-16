@@ -116,9 +116,9 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		//Create the new menu. The menu will get filled when it is about to be shown. see fillMenu(Menu).
 		Menu menu = new Menu(parent);
 		/**
-		 * Add listener to repopulate the menu each time
+		 * Add listener to re-populate the menu each time
 		 * it is shown because MenuManager.update(boolean, boolean) 
-		 * doesn't dispose pulldown ActionContribution items for each popup menu.
+		 * doesn't dispose pull-down ActionContribution items for each popup menu.
 		 */
 		menu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {
@@ -174,7 +174,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		IEvaluationContext context = createContext();
 		// gather all shortcuts and run their filters so that we only run the
 		// filters one time for each shortcut. Running filters can be expensive.
-		// Also, only *LOADED* plugins get their filters run.
+		// Also, only *LOADED* plug-ins get their filters run.
 		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
@@ -271,7 +271,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	}
 
 	/**
-	 * Add the shortcut to the context menu's launch submenu.
+	 * Add the shortcut to the context menu's launch sub-menu.
 	 */
 	private void populateMenuItem(String mode, LaunchShortcutExtension ext, Menu menu, int accelerator) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);

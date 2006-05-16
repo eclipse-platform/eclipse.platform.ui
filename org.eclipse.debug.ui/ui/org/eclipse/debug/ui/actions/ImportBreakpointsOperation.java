@@ -190,7 +190,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	/**
 	 * Creates a working set and sets the values
-	 * @param breakpoint the restored breakpoint to add to the new workingset
+	 * @param breakpoint the restored breakpoint to add to the new working set
 	 */
 	private void createWorkingSet(String setname, IAdaptable element) {
 		IWorkingSetManager wsmanager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -227,7 +227,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 	/**
 	 * This method is used internally to find a non-specific marker on a given resource.
-	 * With this method we can search for similar markers even though they may have differing ids
+	 * With this method we can search for similar markers even though they may have differing IDs
 	 * 
 	 * @param resource the resource to search for the marker
 	 * @param line the line number or <code>null</code>
