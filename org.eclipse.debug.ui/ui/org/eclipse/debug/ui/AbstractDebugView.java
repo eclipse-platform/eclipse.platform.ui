@@ -164,7 +164,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 	/**
 	 * Part listener that disables updating when the view is not visible and
-	 * reenables updating when the view appears.
+	 * re-enables updating when the view appears.
 	 */
 	private class DebugViewPartListener implements IPartListener2 {
 		/**
@@ -401,7 +401,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	
 	/**
 	 * Saves the checked state for all actions contributed to the toolbar
-	 * manager that function as a toggleable action.  The states are saved in
+	 * manager that function as a toggle action.  The states are saved in
 	 * the Debug UI plugin's preference store.
 	 * 
 	 * @since 2.1
@@ -426,7 +426,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * preference store.  The specified action is expected to be enabled and
 	 * support the style <code>IAction.AS_CHECK_BOX</code>.
 	 * 
-	 * @param action the enabled, toggleable action whose checked state will be
+	 * @param action the enabled, toggle action whose checked state will be
 	 * saved in preferences
 	 * @since 2.1
 	 */
@@ -451,9 +451,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	
 	/**
 	 * Convenience method to return the preference store for the Debug UI
-	 * plugin.
+	 * plug-in.
 	 * 
-	 * @return the preference store for the Debug UI plugin
+	 * @return the preference store for the Debug UI plug-in
 	 * @since 2.1
 	 */
 	protected IPreferenceStore getPreferenceStore() {
@@ -537,7 +537,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 
-		// register the context menu such that other plugins may contribute to it
+		// register the context menu such that other plug-ins may contribute to it
 		if (getSite() != null) {
 			getSite().registerContextMenu(menuMgr, getViewer());
 		}
@@ -944,7 +944,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Returns whether this view is currently visible.
 	 * 
-	 * @return whether this view is currently visbile
+	 * @return whether this view is currently visible
 	 * @since 2.1
 	 */
 	public boolean isVisible() {
@@ -965,7 +965,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 
 	/**
-	 * Deregisters and disposes this event handler's part listener.
+	 * Unregisters and disposes this event handler's part listener.
 	 * 
 	 * @since 2.1
 	 */

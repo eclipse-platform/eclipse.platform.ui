@@ -39,7 +39,7 @@ import org.eclipse.ui.IEditorPart;
  * </p>
  * <p>
  * These methods are called when the debugger has opened an editor to display
- * source for the given stack frame. The iamge will be positioned based on stack frame
+ * source for the given stack frame. The image will be positioned based on stack frame
  * line number and character ranges.
  * </p>
  * <p>

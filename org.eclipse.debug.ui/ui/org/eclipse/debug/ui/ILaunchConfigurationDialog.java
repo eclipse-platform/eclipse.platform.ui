@@ -113,7 +113,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * the specified index is not within the limits of the tabs returned by
 	 * <code>getTabs()</code>.
 	 * 
-	 * @param index the index of the tab to dispay
+	 * @param index the index of the tab to display
 	 * @since 2.1
 	 */
 	public void setActiveTab(int index);	

@@ -87,7 +87,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
-	 * Provides a persistable dialog for selecting the sharded project location
+	 * Provides a persistable dialog for selecting the shared project location
 	 * @since 3.2
 	 */
 	class SharedLocationSelectionDialog extends ContainerSelectionDialog {
@@ -289,7 +289,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     }
 
     /**
-     * Eanbles or disables the ouptput capture widgets based on the the specified enablement
+     * Enables or disables the output capture widgets based on the the specified enablement
      * @param enable if the output capture widgets should be enabled or not
      * @since 3.2
      */
@@ -365,7 +365,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Sets the widgets for specifying that a launch configuraiton is to be shared to the enable value
+	 * Sets the widgets for specifying that a launch configuration is to be shared to the enable value
 	 * @param enable the enabled value for 
 	 */
 	private void setSharedEnabled(boolean enable) {
@@ -563,7 +563,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Updates the configuration form the local shared config working copy
-	 * @param config the local sharded config working copy
+	 * @param config the local shared config working copy
 	 */
 	private void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
 		if (isShared()) {
@@ -587,7 +587,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
-	 * 	and will be missing for older configs.
+	 * 	and will be missing for older configurations.
 	 */
 	private void updateConfigFromFavorites(ILaunchConfigurationWorkingCopy config) {
 		try {
@@ -668,7 +668,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     }
 
     /**
-     * Valdates if the redirect file is valid
+     * Validates if the redirect file is valid
      * @return true if the filename is not zero, false otherwise
      */
     private boolean validateRedirectFile() {
@@ -684,7 +684,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
     /**
      * validates the local shared config file location
-     * @return true if the local sharded file exists, false otherwsie
+     * @return true if the local shared file exists, false otherwise
      */
     private boolean validateLocalShared() {
 		if (isShared()) {

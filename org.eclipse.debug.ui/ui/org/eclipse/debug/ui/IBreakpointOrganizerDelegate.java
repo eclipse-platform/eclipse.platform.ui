@@ -20,7 +20,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * change notification when categorization has changed. Categories are represented
  * as arbitrary adaptable objects. For example, projects could be used to
  * categorize breakpoints. Images and labels for categories are generated
- * via workbench adapaters.
+ * via workbench adapters.
  * <p>
  * Organizers may optionally support breakpoint recategorization. 
  * </p>

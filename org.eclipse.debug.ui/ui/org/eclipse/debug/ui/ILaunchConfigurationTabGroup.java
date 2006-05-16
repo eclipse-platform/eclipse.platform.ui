@@ -41,13 +41,13 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * can be called before a tab's controls are created.
  * </p>
  * <p>
- * The launch tab framework was originially designed to handle inter tab
+ * The launch tab framework was originally designed to handle inter tab
  * communication by applying attributes from the active tab to a launch configuration
  * being edited, when a tab is exited, and by initializing a tab when activated.
  * In 3.0, the addition of the methods <code>activated</code> and <code>deactivated</code>
  * allow tabs to determine the appropriate course of action. The default implementation
  * in <code>AbstractLaunchConfigurationTab</code> is to call the old methods
- * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should overeride
+ * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should override
  * the new methods as required.
  * </p>
  * <p>

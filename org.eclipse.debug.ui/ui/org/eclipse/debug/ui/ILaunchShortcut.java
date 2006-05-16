@@ -17,7 +17,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * A launch shortcut is capable of launching a selection
  * or active editor in the workbench. The delegate is responsible for
- * interpretting the selection or active editor (if it applies), and launching
+ * interpreting the selection or active editor (if it applies), and launching
  * an application. This may require creating a new launch configuration
  * with default values, or re-using an existing launch configuration.
  * <p>
@@ -72,13 +72,13 @@ import org.eclipse.ui.IEditorPart;
  * <li><code>modes</code> specifies a comma separated list of modes this shortcut
  *  supports.</li>
  * <li><code>perspective</code> one or more perspective entries enumerate the
- * 	perspectives that this shortcut is avilable in, from the run/debug cascade
+ * 	perspectives that this shortcut is available in, from the run/debug cascade
  * 	menus.</li>
  * <li><code>filter</code> zero or more filter entries specify the attribute
  * <code>name</code> and attribute <code>value</code> that will be supplied to
  * the <code>testAttribute</code> method implemented by the <code>filterClass</code>
  * Java Class. If all filters in this list return <code>true</code> when applied
- * to a selection target, the shortcut will be avilable in the run/debug context menu.
+ * to a selection target, the shortcut will be available in the run/debug context menu.
  * 	menu.</li>
  * <li><code>contextLabel</code> zero or more context menu labels. For
  * shortcuts that pass their filter tests, the specified label will appear
@@ -87,7 +87,7 @@ import org.eclipse.ui.IEditorPart;
  * </ul>
  * </p>
  * <p>
- * Clients contributing a lanuch shortcut are intended to implement this interface.
+ * Clients contributing a launch shortcut are intended to implement this interface.
  * </p>
  * @since 2.0
  */

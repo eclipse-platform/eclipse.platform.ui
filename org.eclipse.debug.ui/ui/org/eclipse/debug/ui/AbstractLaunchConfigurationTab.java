@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 2.0
  */
 public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
-//	 TODO Add in accessor methods for createGroup, createLabel and createSingleText from SWTUtil post 3.2 API freeze
+//	 TODO Add in access methods for createGroup, createLabel and createSingleText from SWTUtil post 3.2 API freeze
 	
 	/**
 	 * The control for this page, or <code>null</code>
@@ -329,7 +329,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * implementation provided, calls this tab's <code>initializeFrom</code> method.
 	 * Tabs should override this method as required.
 	 * <p>
-	 * The launch tab framework was originially designed to take care of inter tab
+	 * The launch tab framework was originally designed to take care of inter tab
 	 * communication by applying attributes from the active tab to the launch configuration
 	 * being edited, when a tab is exited, and by initializing a tab when activated.
 	 * The addition of the methods <code>activated</code> and <code>deactivated</code>
@@ -350,7 +350,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * compatible behavior, the default implementation provided, calls this tab's
 	 * <code>performApply</code> method. Tabs should override this method as required.
 	 * <p>
-	 * The launch tab framework was originially designed to take care of inter tab
+	 * The launch tab framework was originally designed to take care of inter tab
 	 * communication by applying attributes from the active tab to the launch configuration
 	 * being edited, when a tab is exited, and by initializing a tab when activated.
 	 * The addition of the methods <code>activated</code> and <code>deactivated</code>

@@ -74,14 +74,14 @@ public abstract class DebugPopup extends PopupDialog {
     }
 
     /**
-     * Returns the text to be shown in the popups's info area. 
+     * Returns the text to be shown in the popups's information area. 
      * May return <code>null</code>.
      * <p>
      * By default, if this dialog has a persistence command associated with it,
      * the text displayed is of the form "Press {key-sequence} to {action}". The
      * action text is specified by the method <code>getActionText()</code>.
      * </p>
-     * @return The text to be shown in the popup's info area or <code>null</code>
+     * @return The text to be shown in the popup's information area or <code>null</code>
      */
     protected String getInfoText() {
     	if (getCommandId() != null && getActionText() != null) {

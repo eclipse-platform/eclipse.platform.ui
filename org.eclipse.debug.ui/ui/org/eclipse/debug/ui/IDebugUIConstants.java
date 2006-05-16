@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * Popup menus in the debug UI support action contribution via the
  * <code>org.eclipse.ui.popupMenus</code>  extension. Actions may be
  * contributed to any group on the menu. To facilitate insertion of actions
- * inbetween existing groups, empty groups have been defined
+ * in between existing groups, empty groups have been defined
  * in the menu. Each group prefixed by "empty" indicates an empty group.
  * </p>
  * <h3>Debug View Popup Menu</h3>
@@ -71,7 +71,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  *   <li>Empty Navigation group</li>
  *   <li>Navigation group</li>
  *   <li>Open action</li>
- *   <li>Empty Breakpoint goup</li>
+ *   <li>Empty Breakpoint group</li>
  *   <li>Breakpoint group</li>
  *   <li>Enable action</li> 
  *   <li>Disable action</li>
@@ -213,11 +213,11 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE= PLUGIN_ID + ".skip_breakpoints_during_run_to_line"; //$NON-NLS-1$
 	
-	/**
-	 * Preference for using step filters.
-	 * TODO: uncomment when API freeze is over
-	 * @since 3.2
-	 */
+	//
+	// Preference for using step filters.
+	// TODO: uncomment when API freeze is over
+	// @since 3.2
+	//
 	//public static final String PREF_USE_STEP_FILTERS = PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$ 
 	
 	/**

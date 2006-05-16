@@ -25,7 +25,7 @@ public interface IDebugEditorPresentation {
 	/**
 	 * Positions and adds annotations to the given editor for the specified
 	 * stack frame and returns whether any annotations were added. When
-	 * <code>true</code> is returned, a call will be made to remove anntations
+	 * <code>true</code> is returned, a call will be made to remove annotations
 	 * when the source selection is cleared for the stack frame. When
 	 * <code>false</code> is returned, the debugger will position and add
 	 * standard annotations to the editor, and a corresponding call to remove

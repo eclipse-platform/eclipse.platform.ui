@@ -52,10 +52,10 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * A viewer that retrieves labels and content asynchronously via adapters and supports
- * duplicate elements in the viewer. Retrieving conetnt and labels asynchrnously allows
+ * duplicate elements in the viewer. Retrieving content and labels asynchronously allows
  * for arbitrary latency without blocking the UI thread.
  * <p>
- * This viewer uses adapters to retreive labels and content rather than
+ * This viewer uses adapters to retrieve labels and content rather than
  * a label provider and content provider. As such, the label provider for this viewer
  * is <code>null</code> by default. The content provider returned by this viewer is
  * non-<code>null</code> to conform to the viewer specification, but performs no 
@@ -113,7 +113,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * by a 'set data' callback. Indicies are bottom up. For example when 'set data' for 
 	 * the 3rd child of the 4th child of the 2nd root element were being asked for,
 	 * the first 3 indicies would look like: [3, 4, 2, ....]. We re-use an array to avoid
-	 * creating a new one all the time. The array grows as needed to accomodate deep
+	 * creating a new one all the time. The array grows as needed to accommodate deep
 	 * elements.
 	 */
 	private int[] fSetDataIndicies = new int[5];
@@ -227,7 +227,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * Clients may override this method if required to provide special
 	 * implementations of contexts.
 	 * 
-	 * @return presentation contenxt
+	 * @return presentation context
 	 */
 	public IPresentationContext getPresentationContext() {
 		return fContext;
@@ -267,7 +267,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}
 	
 	/**
-	 * Creaets a new emptyu model for this viewer that
+	 * Creates a new empty model for this viewer that
 	 * is *not* initialized.
 	 * 
 	 * @return a new model
@@ -561,7 +561,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	}	
 	
 	/**
-	 * Creates and returns a new seletion from this viewer, based on the selected
+	 * Creates and returns a new selection from this viewer, based on the selected
 	 * elements in the widget.
 	 * 
 	 * @return a new selection
@@ -894,7 +894,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     protected abstract void clearChild(Widget parent, int childIndex);
 
 	/**
-	 * Returns the child widet at the given index for the given parent or
+	 * Returns the child widget at the given index for the given parent or
 	 * <code>null</code>
 	 * 
 	 * @param parent
@@ -912,7 +912,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected abstract void setItemCount(Widget parent, int itemCount);
 
     /**
-     * Attempt pending udpates. Subclasses may override but should call super.
+     * Attempt pending updates. Subclasses may override but should call super.
      */
     protected void attemptPendingUpdates() {
     	attemptSelection(false);

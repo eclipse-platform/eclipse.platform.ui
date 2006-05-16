@@ -36,7 +36,7 @@ public class SourceLookupResult implements ISourceLookupResult {
      */
     private String fEditorId;
     /**
-     * Associatd editor input, used to display the source element,
+     * Associated editor input, used to display the source element,
      * or <code>null</code> if unknown.
      */
     private IEditorInput fEditorInput;
@@ -115,7 +115,7 @@ public class SourceLookupResult implements ISourceLookupResult {
 	
 	/**
 	 * Updates the artifact to refer to the given artifact
-	 * if equal. For example, when a source lookup result is resued
+	 * if equal. For example, when a source lookup result is reused
 	 * for the same stack frame, we still need to update in case
 	 * the stack frame is not identical.
 	 * 

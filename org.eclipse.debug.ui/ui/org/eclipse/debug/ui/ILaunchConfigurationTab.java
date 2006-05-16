@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Control;
  * The method <code>setDefaults(ILaunchConfigurationWorkingCopy)</code>
  * can be called before a tab's controls are created.
  * <p>
- * The launch tab framework was originially designed to handle inter tab
+ * The launch tab framework was originally designed to handle inter tab
  * communication by applying attributes from the active tab to a launch configuration
  * being edited, when a tab is exited, and by initializing a tab when activated.
  * In 3.0, the addition of the methods <code>activated</code> and <code>deactivated</code>
