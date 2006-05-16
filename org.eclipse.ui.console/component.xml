@@ -17,6 +17,7 @@
  	<type name="IConsolePageParticipant" />
  	<type name="IConsoleView" implement="false" />
  	<type name="IHyperlink" />
+ 	<type name="IHyperlink2" />
  	<type name="IOConsole" />
  	<type name="IOConsoleInputStream" subclass="false" instantiate="false" />
  	<type name="IOConsoleOutputStream" subclass="false" instantiate="false" />
