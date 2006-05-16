@@ -12,6 +12,7 @@ package org.eclipse.team.examples.model;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 public class ModelObjectElementFile extends ModelFile {
 
@@ -35,6 +36,11 @@ public class ModelObjectElementFile extends ModelFile {
 	
 	public ModelObject getParent() {
 		return parent;
+	}
+	
+	public void delete() throws CoreException {
+		parent.remove(this);
+		super.delete();
 	}
 
 }

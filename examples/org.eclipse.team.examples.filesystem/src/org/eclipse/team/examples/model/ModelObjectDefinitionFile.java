@@ -24,8 +24,12 @@ public class ModelObjectDefinitionFile extends ModelFile {
 	private static final String MODEL_OBJECT_DEFINITION_FILE_EXTENSION = "mod";
 
 	public static boolean isModFile(IResource resource) {
-		return resource instanceof IFile 
-		&& resource.getFileExtension().equals(MODEL_OBJECT_DEFINITION_FILE_EXTENSION);
+		if (resource instanceof IFile) {
+			String fileExtension = resource.getFileExtension();
+			if (fileExtension != null)
+				return fileExtension.equals(MODEL_OBJECT_DEFINITION_FILE_EXTENSION);
+		}
+		return false;
 	}
 	
 	public ModelObjectDefinitionFile(IFile file) {
@@ -60,7 +64,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		List result = new ArrayList();
 		try {
 			while ((line = reader.readLine()) != null) {
-				result.add(line);
+				result.add(line.trim());
 			}
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, FileSystemPlugin.ID, 0, 
@@ -75,6 +79,16 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
+	private void writeLines(String[] strings) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < strings.length; i++) {
+			String string = strings[i];
+			buffer.append(string);
+			buffer.append("\n");
+		}
+		((IFile)getResource()).setContents(new ByteArrayInputStream(buffer.toString().getBytes()), false, true, null);
+	}
+	
 	private ModelObjectElementFile getMoeFile(IFile file) {
 		if (ModelObjectElementFile.isMoeFile(file)) {
 			return new ModelObjectElementFile(this, file);
@@ -83,6 +97,8 @@ public class ModelObjectDefinitionFile extends ModelFile {
 	}
 
 	private IFile getFile(String path) {
+		if (path.length() == 0)
+			return null;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IStatus status = workspace.validatePath(path, IResource.FILE);
 		if (status.isOK()) {
@@ -90,6 +106,31 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		}
 		FileSystemPlugin.log(status);
 		return null;
+	}
+
+	public void addMoe(IFile file) throws CoreException {
+		((IFile)getResource()).appendContents(new ByteArrayInputStream(("\n" + file.getFullPath()).getBytes()), false, true, null);
+	}
+
+	public void remove(ModelObjectElementFile file) throws CoreException {
+		ModelObjectElementFile[] files = getModelObjectElementFiles();
+		List paths = new ArrayList();
+		for (int i = 0; i < files.length; i++) {
+			ModelObjectElementFile child = files[i];
+			if (!child.equals(file)) {
+				paths.add(child.getResource().getFullPath().toString());
+			}
+		}
+		writeLines((String[]) paths.toArray(new String[paths.size()]));
+	}
+
+	public void delete() throws CoreException {
+		ModelObjectElementFile[] files = getModelObjectElementFiles();
+		super.delete();
+		for (int i = 0; i < files.length; i++) {
+			ModelObjectElementFile file = files[i];
+			file.getResource().delete(false, null);
+		}
 	}
 
 }

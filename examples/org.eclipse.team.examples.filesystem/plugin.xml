@@ -394,33 +394,7 @@
         <run class="org.eclipse.team.examples.model.ModelNature"/>
      </runtime>
    </extension>
-   
-   <!-- ================================================================================ -->
-   <!-- Context menu items for model projects											 -->
-   <!-- ================================================================================ -->
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="false"
-            id="org.eclipse.team.examples.model.ProjectContributions">
-		 <enablement>
-		  <not>
-           <adapt type="org.eclipse.core.resources.IFile">
-              <test property="org.eclipse.core.resources.projectNature" args="org.eclipse.team.examples.filesystem.modelNature" />
-           </adapt>
-           </not>
-         </enablement>
-         <action
-               label="Add Example Model Project Nature"
-               tooltip="Turn the selected project into an example model project"
-               class="org.eclipse.team.examples.model.ui.AddModelNatureAction"
-               menubarPath="additions"
-               id="org.eclipse.team.examples.model.makeModelProject">
-         </action>
-      </objectContribution>
-   </extension>
-   
+    
    <!-- ================================================================================ -->
    <!-- Common Navigator viewer for use in the Project Explorer							 -->
    <!-- ================================================================================ -->
@@ -428,6 +402,7 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             contentProvider="org.eclipse.team.examples.model.ui.ModelNavigatorContentProvider"
+            icon="$nl$/icons/full/obj/root_obj.gif"
             id="org.eclipse.team.examples.model.navigator"
             labelProvider="org.eclipse.team.examples.model.ui.ModelNavigatorLabelProvider"
             name="Example Model">
@@ -443,6 +418,9 @@
          <override
                policy="InvokeAlwaysRegardlessOfSuppressedExt"
                suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
+         <actionProvider
+               class="org.eclipse.team.examples.model.ui.ModelNavigatorActionProvider"
+               id="org.eclipse.team.examples.model.actionProvider"/>
       </navigatorContent>
    </extension>
       <extension
@@ -450,7 +428,6 @@
       <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
          <includes>
             <contentExtension
-                  isRoot="true"
                   pattern="org.eclipse.team.examples.model.navigator"/>
          </includes>
       </viewerContentBinding>
@@ -465,7 +442,7 @@
       </extension>
    <extension
          point="org.eclipse.ui.newWizards">
-         <category name="Model Example" id="org.eclipse.team.examples.model.newWizards">
+         <category name="Team Logical Model Example" id="org.eclipse.team.examples.model.newWizards">
          </category>
       <wizard
             category="org.eclipse.team.examples.model.newWizards"

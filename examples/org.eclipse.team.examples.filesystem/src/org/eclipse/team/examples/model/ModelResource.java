@@ -11,6 +11,7 @@
 package org.eclipse.team.examples.model;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A model object that has a corresponding resource.
@@ -52,5 +53,27 @@ public abstract class ModelResource extends ModelObject{
 	
 	public ModelObject getParent() {
 		return ModelObject.create(getResource().getParent());
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof ModelResource) {
+			ModelResource mr = (ModelResource) obj;
+			return getResource().equals(mr.getResource());
+		}
+		return super.equals(obj);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getResource().hashCode();
+	}
+	
+	public void delete() throws CoreException {
+		getResource().delete(false, null);
 	}
 }

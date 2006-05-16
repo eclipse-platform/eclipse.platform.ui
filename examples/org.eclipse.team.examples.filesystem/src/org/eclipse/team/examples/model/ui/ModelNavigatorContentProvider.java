@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.examples.model.ui;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.team.examples.model.ModelObject;
-import org.eclipse.team.examples.model.ModelWorkspace;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.examples.filesystem.FileSystemPlugin;
+import org.eclipse.team.examples.model.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.ICommonContentProvider;
+import org.eclipse.ui.navigator.*;
 
 /**
  * Model content provider for use with the Common Navigator framework.
@@ -24,18 +29,28 @@ import org.eclipse.ui.navigator.ICommonContentProvider;
  * of model objects.
  */
 public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
-		implements ICommonContentProvider {
+		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider {
 
 	private ICommonContentExtensionSite extensionSite;
 	private boolean isWorkspaceRoot;
+	private Viewer viewer;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
 	public void init(ICommonContentExtensionSite aConfig) {
 		extensionSite = aConfig;
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.BaseWorkbenchContentProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
 	 */
@@ -81,6 +96,168 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 			return ((ModelWorkspace)parent).getResource();
 		}
 		return parent;
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		this.viewer = viewer;
+		super.inputChanged(viewer, oldInput, newInput);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		if (viewer == null) return;
+		IResourceDelta delta = event.getDelta();
+		IResourceDelta[] children = delta.getAffectedChildren();
+		boolean refreshAll = false;
+		List refreshProjects = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			IResourceDelta childDelta = children[i];
+			if (isModelProject(childDelta.getResource())) {
+				if (isProjectChange(childDelta)) {
+					refreshAll = true;
+					break;
+				}
+				refreshProjects.add(ModelObject.create(childDelta.getResource()));
+			}
+		}
+		if (refreshAll || !refreshProjects.isEmpty()) {
+			if (refreshAll)
+				refreshViewer();
+			else 
+				refreshProjects((ModelProject[]) refreshProjects.toArray(new ModelProject[refreshProjects.size()]));
+		}
+	}
+
+	private void refreshProjects(final ModelProject[] projects) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				if (!getViewer().getControl().isDisposed()) {
+					for (int i = 0; i < projects.length; i++) {
+						ModelProject project = projects[i];
+						((AbstractTreeViewer)getViewer()).refresh(project, true);
+					}
+				}
+			}
+		
+		});
+	}
+
+	private void refreshViewer() {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				if (!getViewer().getControl().isDisposed()) {
+					getViewer().refresh();
+				}
+			}
+		
+		});
+	}
+
+	private boolean isProjectChange(IResourceDelta childDelta) {
+		if ((childDelta.getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) > 0)
+			return true;
+		return false;
+	}
+
+	private boolean isModelProject(IResource resource) {
+		try {
+			return ModelProject.isModProject(resource.getProject());
+		} catch (CoreException e) {
+			FileSystemPlugin.log(e.getStatus());
+			return false;
+		}
+	}
+
+	Viewer getViewer() {
+		return viewer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
+	 */
+	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
+		// Nothing to do
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
+	 */
+	public void getPipelinedElements(Object anInput, Set theCurrentElements) {
+		// Replace any model projects with a ModelProject
+		if (anInput instanceof IWorkspaceRoot) {
+			List newProjects = new ArrayList();
+			for (Iterator iter = theCurrentElements.iterator(); iter.hasNext();) {
+				Object element = iter.next();
+				if (element instanceof IProject) {
+					IProject project = (IProject) element;
+					try {
+						if (ModelProject.isModProject(project)) {
+							iter.remove();
+							newProjects.add(ModelObject.create(project));
+						}
+					} catch (CoreException e) {
+						FileSystemPlugin.log(e.getStatus());
+					}
+				}
+			}
+			theCurrentElements.addAll(newProjects);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent(java.lang.Object, java.lang.Object)
+	 */
+	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
+		// We're not changing the parenting of any resources
+		return aSuggestedParent;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
+	 */
+	public PipelinedShapeModification interceptAdd(PipelinedShapeModification anAddModification) {
+		if (anAddModification.getParent() instanceof IWorkspaceRoot) {
+			for (Iterator iter = anAddModification.getChildren().iterator(); iter.hasNext();) {
+				Object element = iter.next();
+				if (element instanceof IProject) {
+					IProject project = (IProject) element;
+					try {
+						if (ModelProject.isModProject(project)) {
+							iter.remove();
+						}
+					} catch (CoreException e) {
+						FileSystemPlugin.log(e.getStatus());
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
+	 */
+	public boolean interceptRefresh(PipelinedViewerUpdate aRefreshSynchronization) {
+		// No need to intercept the refresh
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
+	 */
+	public PipelinedShapeModification interceptRemove(PipelinedShapeModification aRemoveModification) {
+		// No need to intercept the remove
+		return aRemoveModification;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate(org.eclipse.ui.navigator.PipelinedViewerUpdate)
+	 */
+	public boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
+		// No need to intercept the update
+		return false;
 	}
 
 }

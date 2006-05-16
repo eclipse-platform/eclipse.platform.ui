@@ -55,4 +55,9 @@ public abstract class ModelObject extends PlatformObject {
 	 * @return the parent of this object
 	 */
 	public abstract ModelObject getParent();
+
+	/**
+	 * Delete the model object
+	 */
+	public abstract void delete() throws CoreException;;
 }
