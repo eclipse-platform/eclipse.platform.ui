@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding;
@@ -14,18 +14,25 @@ package org.eclipse.jface.tests.databinding;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
+import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorBindingDescription;
+import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor;
 import org.eclipse.jface.internal.databinding.internal.LazyListBinding;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
@@ -34,13 +41,17 @@ import org.eclipse.jface.internal.databinding.provisional.observable.list.Writab
 
 /**
  * This is basically two tests in one.  It's an integration test that makes
- * sure that we can successfully bind
+ * sure that we can successfully bind EventEditors to JavaBean-style List 
+ * objects.  However, since all of the other layers in this binding are also
+ * unit-tested, it is also a unit test of the 
+ * EventEditorObservableLazyDataRequestor.
+ * 
  * @since 3.2
  */
 public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 
 	private Date startDate = new Date();
-	private IEventEditor editor;
+	private EventEditorStub editor;
 	private WritableList model;
 	private Binding binding;
 	private DataBindingContext dbc;
@@ -55,6 +66,16 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 				return new LazyListBinding(dataBindingContext, target, (IObservableList) model, bindSpec);
 			}
 		});
+		dbc.addObservableFactory(new IObservableFactory() {
+			public IObservable createObservable(Object description) {
+				if (description instanceof EventEditorBindingDescription) {
+					return new EventEditorObservableLazyDataRequestor(
+							(EventEditorBindingDescription) description);
+				}
+				return null;
+			}
+		});
+		dbc.addObservableFactory(new BeanObservableFactory(dbc, null, null));
 		return dbc;
 	}
 
@@ -64,23 +85,69 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		}
 	}
 	
-	private static class Event {
+	private static class Event extends ModelObject {
 		public boolean allDay = false;
 		public Date startTime;
 		public Date endTime;
 		public String description;
 		
 		public Event(Date startTime, Date endTime, String description) {
+			this(startTime, endTime, description, false);
+		}
+
+		public Event(Date startTime, Date endTime, String description, boolean isAllDay) {
 			this.startTime = startTime;
 			this.endTime = endTime;
 			this.description = description;
+			this.allDay = isAllDay;
 		}
 
-		public Event(String description) {
-			this.allDay = true;
-			this.description = description;
+		public void setDescription(String string) {
+			String oldValue = this.description;
+			description = string;
+			firePropertyChange("description", oldValue, string);
 		}
+
+		public boolean isAllDay() {
+			return allDay;
+		}
+
+		public void setAllDay(boolean allDay) {
+			this.allDay = allDay;
+		}
+
+		public Date getEndTime() {
+			return endTime;
+		}
+
+		public void setEndTime(Date endTime) {
+			this.endTime = endTime;
+		}
+
+		public Date getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(Date startTime) {
+			this.startTime = startTime;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
 	}
+	
+	private Date time(int month, int day, int hour, int minutes) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(new Date());
+		gc.set(Calendar.MONTH, month);
+		gc.set(Calendar.DATE, day);
+		gc.set(Calendar.HOUR_OF_DAY, hour);
+		gc.set(Calendar.MINUTE, minutes);
+		return gc.getTime();
+	}
+
 	
 	private Date time(int hour, int minutes) {
 		GregorianCalendar gc = new GregorianCalendar();
@@ -89,86 +156,204 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		gc.set(Calendar.MINUTE, minutes);
 		return gc.getTime();
 	}
-	
-	private Event[][] testData = new Event[][] {
-			{new Event(time(5, 45), time(9, 45), "Stand-up meeting"),
-				new Event(time(11, 00), time(12, 15), "Meet with customer")},
-			{},
-			{},
-			{new Event("Nat. Conference"),
-				new Event(time(7, 50), time(9, 00), "Stand-up meeting"),
-				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{new Event("Nat. Conference"),
-				new Event("Field trip to PC HQ"),
-				new Event(time(8, 30), time(9, 30), "Stand-up meeting"),
-				new Event(time(10, 00), time(13, 15), "Meet with customer"),
-				new Event(time(12, 45), time(14, 15), "RC1 due"),
-				new Event(time(13, 45), time(14, 15), "Way too much work"),
-				new Event(time(10, 00), time(13, 30), "Callisto meeting")},
-			{new Event("Nat. Conference")},
-			{new Event(time(8, 30), time(11, 30), "Stand-up meeting"),
-				new Event(time(10, 00), time(12, 15), "Meet with customer1"),
-				new Event(time(11, 45), time(12, 15), "Meet with customer2"),
-				new Event(time(11, 00), time(11, 15), "Meet with customer3")},
-			{},
-			{new Event(time(8, 50), time(9, 00), "Stand-up meeting"),
-				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{new Event(time(8, 45), time(9, 45), "Stand-up meeting"),
-				new Event(time(11, 00), time(12, 15), "Meet with customer")},
-			{},
-			{},
-			{new Event(time(8, 12), time(9, 00), "Stand-up meeting"),
-				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{},
-			{},
-			{new Event(time(8, 30), time(11, 30), "Stand-up meeting"),
-				new Event(time(10, 00), time(12, 15), "Meet with customer"),
-				new Event(time(11, 45), time(12, 15), "Meet with customer"),
-				new Event(time(11, 00), time(2, 45), "Meet with customer")},
-			{new Event(time(9, 50), time(9, 00), "Stand-up meeting"),
-				new Event(time(10, 15), time(12, 00), "Work on prototype")},
-			{},
-	};
-	
-    private Date nextDay(Date refreshDate) {
+
+	private Date date(int month, int day) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(new Date());
+		gc.set(Calendar.MONTH, month);
+		gc.set(Calendar.DATE, day);
+		gc.set(Calendar.HOUR_OF_DAY, 0);
+		gc.set(Calendar.MINUTE, 0);
+		gc.set(Calendar.SECOND, 0);
+		gc.set(Calendar.MILLISECOND, 0);
+		return gc.getTime();
+	}
+
+    private Date nextDay(Date date) {
     	GregorianCalendar gc = new GregorianCalendar();
-    	gc.setTime(refreshDate);
+    	gc.setTime(date);
     	gc.add(Calendar.DATE, 1);
     	return gc.getTime();
     }
     
-	private List testDataList;
-
-	/*
-	 * FIXME: Need to convert testData into something that supports mult-day
-	 * events.  Need to convert testData into a sorted List rather than a
-	 * two-dimensional array or Map.
-	 */
-	private void loadTestDataIntoList() {
-		testDataList = new LinkedList();
+	private List loadTestDataIntoList(Event[] testData) {
+		List testDataList = new LinkedList();
 		Date loadDate = startDate;
-		for (int day=0; day < testData.length; ++day) {
-			if (testData[day].length > 0) {
-				for (int event = 0; event < testData[day].length; event++) {
-					testDataList.add(testData[day][event]);
-				}
-			}
-			loadDate = nextDay(loadDate);
+		for (int event = 0; event < testData.length; event++) {
+			testDataList.add(testData[event]);
 		}
+		loadDate = nextDay(loadDate);
+		return testDataList;
 	}
 	
-	private void assertModelMatchesEvents() {
-		
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		loadTestDataIntoList();
-		editor = new EventEditor();
+		editor = new EventEditorStub();
+		dbc = getDBC();
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		dbc.dispose();
+	}
+	
+	private CalendarableItem ci(Date startDate, Date startTime, Date endTime, String description) {
+		return ci(startDate, startTime, endTime, description, false);
 	}
 
+	private CalendarableItem ci(Date startDate, String description) {
+		return ci(startDate, startDate, startDate, description, true);
+	}
+
+	private CalendarableItem ci(Date startDate, Date startTime, Date endTime, String description, boolean isAllDay) {
+		CalendarableItem result = new CalendarableItem(startDate);
+		result.setStartTime(startTime);
+		result.setEndTime(endTime);
+		result.setText(description);
+		result.setAllDayEvent(isAllDay);
+		return result;
+	}
+
+	private Property makeModel(final Event[] testData) {
+		Object model = new ModelObject() {
+			List testDataList = loadTestDataIntoList(testData);
+
+			public List getTestDataList() {
+				return testDataList;
+			}
+
+			public void setTestDataList(List testDataList) {
+				Object oldValue = this.testDataList;
+				this.testDataList = testDataList;
+				firePropertyChange("testDataList", oldValue, testDataList);
+			}
+		};
+		return new Property(model, "testDataList");
+	}
+
+	private Property makeModel(final List testData) {
+		Object model = new ModelObject() {
+			List testDataList = testData;
+
+			public List getTestDataList() {
+				return testDataList;
+			}
+
+			public void setTestDataList(List testDataList) {
+				Object oldValue = this.testDataList;
+				this.testDataList = testDataList;
+				firePropertyChange("testDataList", oldValue, testDataList);
+			}
+		};
+		return new Property(model, "testDataList");
+	}
+
+	private void assertEditorState(EventEditorStub editor, CalendarableItem[][] itemsInDay) {
+		CalendarableModel cm = editor.model();
+		for (int day=0; day < cm.getNumberOfDays(); ++day) {
+			List calendarables = cm.getCalendarableEvents(day);
+			int itemInDay=0;
+			assertEquals("List sizes same", itemsInDay[day].length, calendarables.size());
+			for (Iterator calIter = calendarables.iterator(); calIter.hasNext();) {
+				CalendarableItem item = (CalendarableItem) calIter.next();
+				assertEquals("Start time", itemsInDay[day][itemInDay].getStartTime(), item.getStartTime());
+				assertEquals("End time", itemsInDay[day][itemInDay].getEndTime(), item.getEndTime());
+				assertEquals("Text", itemsInDay[day][itemInDay].getText(), item.getText());
+				++itemInDay;
+			}
+		}
+	}
+
+	// Tests here -------------------------------------------------------------
+
+	public void test_oneDayOneEvent() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
+				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		EventEditorObservableLazyDataRequestor requestor = 
+			new EventEditorObservableLazyDataRequestor(editorBindDesc);
+		requestor.setSize(1);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
+
+	public void test_oneDayOneAllDayEvent() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg", true)};
+		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
+				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		EventEditorObservableLazyDataRequestor requestor = 
+			new EventEditorObservableLazyDataRequestor(editorBindDesc);
+		requestor.setSize(1);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
+	
+	public void test_bindCalendarableDescription() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		List testDataList = loadTestDataIntoList(testData);
+		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
+				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		dbc.bind(editorBindDesc, makeModel(testDataList), new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));
+		EventEditorObservableLazyDataRequestor requestor = 
+			new EventEditorObservableLazyDataRequestor(editorBindDesc);
+		requestor.setSize(1);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+		Event event = (Event) testDataList.get(0);
+		event.setDescription("The quick brown fox jumped over the lazy dog.");
+		
+		List calendarableEvents = editor.model.getCalendarableEvents((0));
+		CalendarableItem item = (CalendarableItem) calendarableEvents.get(0);
+		assertEquals("item Text was changed", event.description, item.getText());
+	}
+	
+//	new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg"),
+//	new Event (time(5, 15, 10, 45), time(5, 15, 11, 45), "Meet with customer"),
+//	new Event (time(5, 15, 14, 00), time(5, 15, 15, 45), "Another mtg"),
+//	new Event (time(5, 15, 15, 00), time(5, 17, 9, 45), "3-day stand-up mtg"),
+//	new Event (time(5, 15, 16, 45), time(5, 16, 9, 45), "Overnight mtg"),
+//	new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg"),
+//	new Event (time(5, 16, 7, 45), time(5, 16, 10, 45), "Stand-up mtg")	
+
+	
 	private LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
 		public NewObject insertElementAt(int positionHint, Object initializationData) {
 			return null;

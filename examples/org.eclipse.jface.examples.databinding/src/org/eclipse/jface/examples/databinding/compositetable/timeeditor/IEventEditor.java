@@ -86,19 +86,30 @@ public interface IEventEditor {
 	Date getStartDate();
 	
 	/**
-	 * Set the strategy pattern object that can return how many events to display
-	 * for specific periods of time.
+	 * Set the strategy pattern object that can return how many events to
+	 * display for specific periods of time.
+	 * <p>
+	 * Note that having a separate event count provider and event content
+	 * provider assumes that the implementer is single-threaded and that the
+	 * count can't change between calling the count provider and the content
+	 * provider.
 	 * 
-	 * @param eventCountProvider The eventCountProvider to set.
+	 * @param eventCountProvider
+	 *            The eventCountProvider to set.
 	 */
 	void setEventCountProvider(EventCountProvider eventCountProvider);
 	
 	/**
-	 * Sets the strategy pattern object that can set the properties of the 
-	 * event objects in order to display the data associated with the 
-	 * specified event.
+	 * Sets the strategy pattern object that can set the properties of the event
+	 * objects in order to display the data associated with the specified event.
+	 * <p>
+	 * Note that having a separate event count provider and event content
+	 * provider assumes that the implementer is single-threaded and that the
+	 * count can't change between calling the count provider and the content
+	 * provider.
 	 * 
-	 * @param eventContentProvider The eventContentProvider to set.
+	 * @param eventContentProvider
+	 *            The eventContentProvider to set.
 	 */
 	void setEventContentProvider(EventContentProvider eventContentProvider);
 	

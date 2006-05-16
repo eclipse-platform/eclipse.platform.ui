@@ -16,10 +16,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.reflect.ReflectedProperty;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
@@ -31,6 +33,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRe
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @since 3.2
@@ -46,39 +49,32 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private String textPropertyName = null;
 	private String toolTipTextPropertyName = null;
 	private String imagePropertyName = null;
+	private String allDayEventPropertyName = null;
 	
 	/**
-	 * @param editor
-	 * @param dbc
-	 * @param startTimePropertyName
-	 * @param endTimePropertyName
-	 * @param textPropertyName
-	 * @param toolTipTextPropertyName
-	 * @param imagePropertyName
+	 * @param description
 	 */
-	public EventEditorObservableLazyDataRequestor(IEventEditor editor,
-			DataBindingContext dbc, String startTimePropertyName,
-			String endTimePropertyName, String textPropertyName,
-			String toolTipTextPropertyName, String imagePropertyName) {
+	public EventEditorObservableLazyDataRequestor(EventEditorBindingDescription d) {
 		super();
-		this.editor = editor;
-		this.dbc = dbc;
-		if (startTimePropertyName == null) {
+		this.editor = d.editor;
+		this.dbc = d.dbc;
+		if (d.startTimePropertyName == null) {
 			throw new IllegalArgumentException("Start time property description cannot be null");
 		}
-		this.startTimePropertyName = startTimePropertyName;
-		this.endTimePropertyName = endTimePropertyName;
-		this.textPropertyName = textPropertyName;
-		this.toolTipTextPropertyName = toolTipTextPropertyName;
-		this.imagePropertyName = imagePropertyName;
+		this.startTimePropertyName = d.startTimePropertyName;
+		this.endTimePropertyName = d.endTimePropertyName;
+		this.allDayEventPropertyName = d.allDayEventPropertyName;
+		this.textPropertyName = d.textPropertyName;
+		this.toolTipTextPropertyName = d.toolTipTextPropertyName;
+		this.imagePropertyName = d.imagePropertyName;
 		
+		editor.setEventCountProvider(eventCountProvider);
+		editor.setEventContentProvider(eventContentProvider);
 		editor.addItemInsertHandler(insertHandler);
 		editor.addItemDeleteHandler(deleteHandler);
 		editor.addItemDisposeHandler(itemDisposeHandler);
-		editor.setEventCountProvider(eventCountProvider);
-		editor.setEventContentProvider(eventContentProvider);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable#dispose()
 	 */
@@ -91,6 +87,13 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		editor.setEventContentProvider(null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#isStale()
+	 */
+	public boolean isStale() {
+		return false;
+	}
+	
 	private IObservableValue createObservableIfNotNull(DataBindingContext dbc, Object target, String propertyName) {
 		if (target == null) {
 			throw new IllegalArgumentException("Target cannot be null");
@@ -117,7 +120,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		elementProviders.remove(p);
 	}
 
-	private Object fireElementProviders(int index) {
+	private Object getModelElementAt(int index) {
 		for (Iterator epIter = elementProviders.iterator(); epIter.hasNext();) {
 			ILazyListElementProvider p = (ILazyListElementProvider) epIter.next();
 			Object result = p.get(index);
@@ -167,13 +170,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#isStale()
-	 */
-	public boolean isStale() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#setSize(int)
 	 */
 	public void setSize(int size) {
@@ -184,8 +180,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#add(int, java.lang.Object)
 	 */
 	public void add(int position, Object element) {
-		
-		
+		// TODO
 	}
 
 	/* (non-Javadoc)
@@ -243,32 +238,173 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	}
 
 	private Date getBeginningDate(Object it) {
-		IObservableValue dateObservable = (IObservableValue) dbc.createObservable(new Property(it, startTimePropertyName));
-		return datePartOf((Date) dateObservable.getValue());
+		ReflectedProperty property = new ReflectedProperty(it, startTimePropertyName);
+		Date date = datePartOf((Date) property.get());
+		return date;
 	}
 	
-	private Date getEndingDate(Object it) {
+	private Date getBeginningTime(Object it) {
+		ReflectedProperty property = new ReflectedProperty(it, startTimePropertyName);
+		return ((Date) property.get());
+	}
+		
+	private Date getEndingTime(Object it) {
 		if (endTimePropertyName == null) {
-			return getBeginningDate(it);
+			return getBeginningTime(it);
 		}
-		IObservableValue dateObservable = (IObservableValue) dbc.createObservable(new Property(it, endTimePropertyName));
-		return datePartOf((Date)dateObservable.getValue());
+		ReflectedProperty property = new ReflectedProperty(it, endTimePropertyName);
+		return (Date)property.get();
+	}
+	
+	// Event handlers here ----------------------------------------------------
+
+	private Date currentlyFetching = null;
+	private List dataForCurrentDate = null;
+	private int currentOffset = 0;
+
+	private boolean currentOffsetIsSame(Date day) {
+		Object current = getModelElementAt(currentOffset);
+		return getBeginningDate(current).equals(datePartOf(day));
 	}
 
-	// Event handlers here ----------------------------------------------------
+	private boolean currentOffsetIsAfter(Date day) {
+		Object current = getModelElementAt(currentOffset);
+		return getBeginningDate(current).after(datePartOf(day));
+	}
+
+	private boolean currentOffsetIsBefore(Date day) {
+		Object current = getModelElementAt(currentOffset);
+		return getBeginningDate(current).before(datePartOf(day));
+	}
+	
+	protected void scrollToBeginningOfDay(Date day) {
+		if (currentOffset >= modelSize) {
+			currentOffset = modelSize-1;
+		}
+		if (currentOffset < 0) {
+			currentOffset = 0;
+		}
+		
+		while (currentOffsetIsBefore(day) && currentOffset < modelSize - 1) {
+			++currentOffset;
+		}
+		while (currentOffsetIsAfter(day) && currentOffset > 0) {
+			--currentOffset;
+		}
+		while (currentOffsetIsSame(day) && currentOffset > 0) {
+			--currentOffset;
+		}
+		if (currentOffset < modelSize - 1) {
+			++currentOffset;
+		}
+	}
+
+	private void getDataForDate(Date day) {
+		currentlyFetching = day;
+		dataForCurrentDate = new LinkedList();
+		
+		if (modelSize < 1) {
+			return;
+		}
+		
+		scrollToBeginningOfDay(day);
+		Object current = getModelElementAt(currentOffset);
+		
+		while (getBeginningDate(current).equals(day)) {
+			dataForCurrentDate.add(current);
+			if (modelSize <= currentOffset) {
+				break;
+			}
+			++currentOffset;
+			current = getModelElementAt(currentOffset);
+		}
+	}
+
+	private EventCountProvider eventCountProvider = new EventCountProvider() {
+		public int getNumberOfEventsInDay(Date day) {
+			if (currentlyFetching == null || !currentlyFetching.equals(day)) {
+				getDataForDate(day);
+			}
+			return dataForCurrentDate.size();
+		}
+	};
+	
+	private Object getProperty(Object source, String propertyName) {
+		if (propertyName != null) {
+			return new ReflectedProperty(source, propertyName).get();
+		}
+		return null;
+	}
+	
+	/**
+	 * @param item
+	 * @param sourceElement
+	 */
+	protected void setCalendarableItemProperties(CalendarableItem item, Object sourceElement) {
+		item.setDate(getBeginningDate(sourceElement));
+		// TODO : a lot of logic here to do.
+		item.setStartTime(getBeginningTime(sourceElement));
+		item.setEndTime(getEndingTime(sourceElement));
+
+		Object data;
+		data = getProperty(sourceElement, allDayEventPropertyName);
+		if (data != null) {
+			item.setAllDayEvent(((Boolean) data).booleanValue());
+		} else {
+			item.setAllDayEvent(false);
+		}
+		data = getProperty(sourceElement, textPropertyName);
+		if (data != null) {
+			item.setText((String)data);
+		} else {
+			item.setText("");
+		}
+		data = getProperty(sourceElement, toolTipTextPropertyName);
+		if (data != null) {
+			item.setToolTipText((String)data);
+		} else {
+			item.setToolTipText("");
+		}
+		data = getProperty(sourceElement, imagePropertyName);
+		if (data != null) {
+			item.setImage((Image)data);
+		} else {
+			item.setImage(null);
+		}
+	}
+
+	private EventContentProvider eventContentProvider = new EventContentProvider() {
+		public void refresh(Date day, CalendarableItem[] items) {
+			if (!currentlyFetching.equals(day)) {
+				getDataForDate(day);
+			}
+			
+			Iterator source = dataForCurrentDate.iterator();
+			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
+				Object sourceElement = source.next();
+				setCalendarableItemProperties(items[itemIndex], sourceElement);
+			}
+		}
+	};
+	
+	private CalendarableItemEventHandler itemDisposeHandler = new CalendarableItemEventHandler() {
+		public void handleRequest(CalendarableItemEvent e) {
+			
+		}
+	};
 
 	private CalendarableItemEventHandler insertHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			NewObject newObject = fireInsert(e.calendarableItem);
-			if (newObject == null) {
-				e.doit = false;
-				return;
-			}
-			Date firstDayOfEvent = getBeginningDate(newObject.it);
-			Date lastDayOfEvent = getEndingDate(newObject.it);
-			for (Date refreshDate = firstDayOfEvent; isDateBetweenInclusive(refreshDate, firstDayOfEvent, lastDayOfEvent); refreshDate = nextDay(refreshDate)) {
-				editor.refresh(refreshDate);
-			}
+//			NewObject newObject = fireInsert(e.calendarableItem);
+//			if (newObject == null) {
+//				e.doit = false;
+//				return;
+//			}
+//			Date firstDayOfEvent = getBeginningDate(newObject.it);
+//			Date lastDayOfEvent = getEndingDate(newObject.it);
+//			for (Date refreshDate = firstDayOfEvent; isDateBetweenInclusive(refreshDate, firstDayOfEvent, lastDayOfEvent); refreshDate = nextDay(refreshDate)) {
+//				editor.refresh(refreshDate);
+//			}
 		}
 	};
 
@@ -278,23 +414,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 	};
 
-	private CalendarableItemEventHandler itemDisposeHandler = new CalendarableItemEventHandler() {
-		public void handleRequest(CalendarableItemEvent e) {
-			
-		}
-	};
-
-	private EventCountProvider eventCountProvider = new EventCountProvider() {
-		public int getNumberOfEventsInDay(Date day) {
-			return 0;
-		}
-	};
-	
-	private EventContentProvider eventContentProvider = new EventContentProvider() {
-		public void refresh(Date day, CalendarableItem[] controls) {
-			
-		}
-	};
 }
 
 

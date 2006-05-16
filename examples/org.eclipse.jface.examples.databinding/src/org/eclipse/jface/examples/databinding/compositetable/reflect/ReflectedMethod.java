@@ -67,6 +67,15 @@ public class ReflectedMethod {
             return null;
         }
     }
+
+	/**
+	 * Method getType.  Returns the return type of the method.
+	 * 
+	 * @return The return type or null if none.
+	 */
+	public Class getType() {
+		return method.getReturnType();
+	}
 }
 
 
