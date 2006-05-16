@@ -145,6 +145,8 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		gc.set(Calendar.DATE, day);
 		gc.set(Calendar.HOUR_OF_DAY, hour);
 		gc.set(Calendar.MINUTE, minutes);
+		gc.set(Calendar.SECOND, 0);
+		gc.set(Calendar.MILLISECOND, 0);
 		return gc.getTime();
 	}
 
@@ -154,6 +156,8 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		gc.setTime(new Date());
 		gc.set(Calendar.HOUR_OF_DAY, hour);
 		gc.set(Calendar.MINUTE, minutes);
+		gc.set(Calendar.SECOND, 0);
+		gc.set(Calendar.MILLISECOND, 0);
 		return gc.getTime();
 	}
 
@@ -261,13 +265,36 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 			assertEquals("List sizes same", itemsInDay[day].length, calendarables.size());
 			for (Iterator calIter = calendarables.iterator(); calIter.hasNext();) {
 				CalendarableItem item = (CalendarableItem) calIter.next();
-				assertEquals("Start time", itemsInDay[day][itemInDay].getStartTime(), item.getStartTime());
-				assertEquals("End time", itemsInDay[day][itemInDay].getEndTime(), item.getEndTime());
+				assertEquals("All-day", itemsInDay[day][itemInDay].isAllDayEvent(), item.isAllDayEvent());
 				assertEquals("Text", itemsInDay[day][itemInDay].getText(), item.getText());
+				if (item.isAllDayEvent()) {
+					assertTrue("same day", isSameDay(itemsInDay[day][itemInDay].getStartTime(), item.getStartTime()));
+				} else {
+					assertEquals("Start time", itemsInDay[day][itemInDay].getStartTime(), item.getStartTime());
+					assertEquals("End time", itemsInDay[day][itemInDay].getEndTime(), item.getEndTime());					
+				}
 				++itemInDay;
 			}
 		}
 	}
+
+	private boolean isSameDay(Date time1, Date time2) {
+		GregorianCalendar gc1 =  new GregorianCalendar();
+		GregorianCalendar gc2 = new GregorianCalendar();
+		gc1.setTime(time1);
+		gc2.setTime(time2);
+		if (gc1.get(Calendar.YEAR) != gc2.get(Calendar.YEAR)) {
+			return false;
+		}		
+		if (gc1.get(Calendar.MONTH) != gc2.get(Calendar.MONTH)) {
+			return false;
+		}		
+		if (gc1.get(Calendar.DATE) != gc2.get(Calendar.DATE)) {
+			return false;
+		}
+		return true;
+	}
+
 
 	// Tests here -------------------------------------------------------------
 
@@ -280,9 +307,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		Event[] testData = new Event[] {
 				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
 		dbc.bind(editorBindDesc, makeModel(testData), null);
-//		EventEditorObservableLazyDataRequestor requestor = 
-//			new EventEditorObservableLazyDataRequestor(editorBindDesc);
-//		requestor.setSize(1);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
 				{},
@@ -302,9 +326,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
 				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
 		dbc.bind(editorBindDesc, makeModel(testData), null);
-		EventEditorObservableLazyDataRequestor requestor = 
-			new EventEditorObservableLazyDataRequestor(editorBindDesc);
-		requestor.setSize(1);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), "Stand-up mtg")},
 				{},
@@ -325,9 +346,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
 				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
 		dbc.bind(editorBindDesc, makeModel(testDataList), new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));
-		EventEditorObservableLazyDataRequestor requestor = 
-			new EventEditorObservableLazyDataRequestor(editorBindDesc);
-		requestor.setSize(1);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
 				{},

@@ -788,6 +788,19 @@ public class DayEditor extends Composite implements IEventEditor {
 		updateVisibleRows();
 		layoutEventControls();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
+	 */
+	public void refresh() {
+		Date dateToRefresh = getStartDate();
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(dateToRefresh);
+		for (int i=0; i < getNumberOfDays(); ++i) {
+			refresh(gc.getTime());
+			gc.add(Calendar.DATE, 1);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDays()

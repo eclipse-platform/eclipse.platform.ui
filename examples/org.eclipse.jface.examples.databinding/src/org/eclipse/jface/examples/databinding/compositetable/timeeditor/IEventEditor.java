@@ -114,13 +114,18 @@ public interface IEventEditor {
 	void setEventContentProvider(EventContentProvider eventContentProvider);
 	
 	/**
-	 * Tells the IEvent editor to refresh its display for the specified date.
+	 * Tells the IEventEditor to refresh its display for the specified date.
 	 * If the specified date is not being displayed, the request will be ignored.
 	 * If null is passed as the date, the entire display is refreshed.
 	 * 
 	 * @param date The date to refresh or null to refresh everything.
 	 */
 	void refresh(Date date);
+	
+	/**
+	 * Tells the IEventEditor to refresh all days in its display.
+	 */
+	void refresh();
 
 	/**
 	 * Adds the handler to the collection of handlers who will

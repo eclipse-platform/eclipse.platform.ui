@@ -232,6 +232,9 @@ public class CalendarableModel {
 	 * Refresh everything in the display.
 	 */
 	private List refresh() {
+		if (startDate == null) {
+			return new LinkedList();
+		}
 		LinkedList result = new LinkedList();
 		if(!isInitialized()) {
 			return result;

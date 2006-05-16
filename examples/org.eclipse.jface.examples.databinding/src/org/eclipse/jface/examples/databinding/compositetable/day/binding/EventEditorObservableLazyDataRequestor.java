@@ -174,6 +174,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 */
 	public void setSize(int size) {
 		this.modelSize = size;
+		editor.refresh();
 	}
 	
 	/* (non-Javadoc)
@@ -310,12 +311,19 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		scrollToBeginningOfDay(day);
 		Object current = getModelElementAt(currentOffset);
 		
+		if (!getBeginningDate(current).equals(day)) {
+			return;
+		}
+		
 		while (getBeginningDate(current).equals(day)) {
 			dataForCurrentDate.add(current);
 			if (modelSize <= currentOffset) {
 				break;
 			}
 			++currentOffset;
+			if (currentOffset >= modelSize) {
+				return;
+			}
 			current = getModelElementAt(currentOffset);
 		}
 	}
@@ -375,7 +383,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
 		public void refresh(Date day, CalendarableItem[] items) {
-			if (!currentlyFetching.equals(day)) {
+			if (currentlyFetching == null || !currentlyFetching.equals(day)) {
 				getDataForDate(day);
 			}
 			

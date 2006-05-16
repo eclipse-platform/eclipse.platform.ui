@@ -12,7 +12,9 @@
 package org.eclipse.jface.tests.databinding;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -199,6 +201,20 @@ public class EventEditor implements IEventEditor {
 	public void refresh(Date date) {
 		model.refresh(date);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
+	 */
+	public void refresh() {
+		Date dateToRefresh = getStartDate();
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(dateToRefresh);
+		for (int i=0; i < getNumberOfDays(); ++i) {
+			refresh(gc.getTime());
+			gc.add(Calendar.DATE, 1);
+		}
+	}
+
 }
 
 
