@@ -81,7 +81,7 @@ pre				{ font-size: 10pt}
 
 /* end font size declarations */
 
-body	     { background: #FFFFFF}
+body	     { background: #FFFFFF; margin-bottom: 1em }
 h1           { font-size: 18pt; margin-top: 5; margin-bottom: 1 }	
 h2           { font-size: 14pt; margin-top: 25; margin-bottom: 3 }
 h3           { font-size: 11pt; margin-top: 20; margin-bottom: 3 }
