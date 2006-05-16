@@ -1,0 +1,56 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.examples.model;
+
+import org.eclipse.core.resources.IResource;
+
+/**
+ * A model object that has a corresponding resource.
+ * This does not indicate that the model object only
+ * consists of a single resource. It only means that at least
+ * the resource of this model element makes up the model
+ * element. There may be other resources included as well.
+ * <p>
+ * The model consists of the following:
+ * <ol>
+ * <li>Model object definition files (*.mod). A MOD file consists
+ * of a pointer to one of more model object element (*.moe) files.</li>
+ * <li>Model object element file (*.moe) contain one or more elements</li>
+ * <li>Model object projects correspond to workspace projects but only show child
+ * folders and MOD files when expanded.</li>
+ * <li>Model object folders correspond to workspace folders but only show child
+ * folders and MOD files when expanded.</li>
+ * </ol>
+ * 
+ */
+public abstract class ModelResource extends ModelObject{
+	private final IResource resource;
+	
+	protected ModelResource(IResource resource) {
+		this.resource = resource;
+	}
+
+	public IResource getResource() {
+		return resource;
+	}
+	
+	public String getName() {
+		return getResource().getName();
+	}
+	
+	public String getPath() {
+		return getResource().getFullPath().makeRelative().toString();
+	}
+	
+	public ModelObject getParent() {
+		return ModelObject.create(getResource().getParent());
+	}
+}

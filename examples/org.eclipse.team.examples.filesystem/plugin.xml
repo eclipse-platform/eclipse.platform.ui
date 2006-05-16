@@ -37,6 +37,7 @@
 	<import plugin="org.eclipse.compare"/>
 	<import plugin="org.eclipse.ui"/>
  <import plugin="org.eclipse.core.filesystem"/>
+ <import plugin="org.eclipse.ui.navigator"/>
 </requires>
 
 <!-- =================================================================================== -->
@@ -379,6 +380,108 @@
       </objectContribution>
    </extension>
    
+<!-- =================================================================================== -->
+<!-- Definitions used for the example logical model										 -->
+<!-- =================================================================================== -->
+
+   <!-- ================================================================================ -->
+   <!-- Nature that identifies model projects											 -->
+   <!-- ================================================================================ -->
+   <extension
+        id="modelNature"
+        point="org.eclipse.core.resources.natures">
+     <runtime>
+        <run class="org.eclipse.team.examples.model.ModelNature"/>
+     </runtime>
+   </extension>
+   
+   <!-- ================================================================================ -->
+   <!-- Context menu items for model projects											 -->
+   <!-- ================================================================================ -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="false"
+            id="org.eclipse.team.examples.model.ProjectContributions">
+		 <enablement>
+		  <not>
+           <adapt type="org.eclipse.core.resources.IFile">
+              <test property="org.eclipse.core.resources.projectNature" args="org.eclipse.team.examples.filesystem.modelNature" />
+           </adapt>
+           </not>
+         </enablement>
+         <action
+               label="Add Example Model Project Nature"
+               tooltip="Turn the selected project into an example model project"
+               class="org.eclipse.team.examples.model.ui.AddModelNatureAction"
+               menubarPath="additions"
+               id="org.eclipse.team.examples.model.makeModelProject">
+         </action>
+      </objectContribution>
+   </extension>
+   
+   <!-- ================================================================================ -->
+   <!-- Common Navigator viewer for use in the Project Explorer							 -->
+   <!-- ================================================================================ -->
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            contentProvider="org.eclipse.team.examples.model.ui.ModelNavigatorContentProvider"
+            id="org.eclipse.team.examples.model.navigator"
+            labelProvider="org.eclipse.team.examples.model.ui.ModelNavigatorLabelProvider"
+            name="Example Model">
+         <triggerPoints>
+            <or>
+               <instanceof value="org.eclipse.team.examples.model.ModelObject"/>
+               <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof value="org.eclipse.team.examples.model.ModelObject"/>
+         </possibleChildren>
+         <override
+               policy="InvokeAlwaysRegardlessOfSuppressedExt"
+               suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
+      </navigatorContent>
+   </extension>
+      <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+         <includes>
+            <contentExtension
+                  isRoot="true"
+                  pattern="org.eclipse.team.examples.model.navigator"/>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+      <extension
+            point="org.eclipse.core.runtime.adapters">
+         <factory
+               adaptableType="org.eclipse.team.examples.model.ModelObject"
+               class="org.eclipse.team.examples.model.ui.AdapterFactory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+      </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+         <category name="Model Example" id="org.eclipse.team.examples.model.newWizards">
+         </category>
+      <wizard
+            category="org.eclipse.team.examples.model.newWizards"
+            icon="$nl$/icons/full/obj/root_obj.gif"
+            name="Model Project"
+            class="org.eclipse.team.examples.model.ui.NewModelProjectWizard"
+            project="true"
+            id="org.eclipse.team.examples.model.newModelProject">
+            <description> 
+              This wizard creates a model project that illustrates some of the logical model support in the Eclipse Platform
+            </description>
+      </wizard>
+   </extension>
+   
+
+  
 <!-- =================================================================================== -->
 <!-- Capability Support (a.k.a. Activities)														 -->
 <!-- Note: Uncomment the lines below to enable the capabilities. These can't be enabled in the -->
