@@ -60,7 +60,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
-		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
+		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ILabelProviderListener {
  
 	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
@@ -341,6 +341,13 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 				return false;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+	 */
+	public void labelProviderChanged(LabelProviderChangedEvent event) { 
+		fireLabelProviderChanged(event);		
 	}
 
 }

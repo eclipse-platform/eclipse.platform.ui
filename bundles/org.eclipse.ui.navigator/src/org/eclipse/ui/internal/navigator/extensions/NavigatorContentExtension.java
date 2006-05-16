@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -184,7 +185,9 @@ public class NavigatorContentExtension implements IMementoAware,
 					} else {
 						labelProvider = new SafeDelegateCommonLabelProvider(
 								tempLabelProvider);
-					}
+					}					
+					
+					labelProvider.addListener( (ILabelProviderListener)contentService.createCommonLabelProvider() );
 				}
 			} catch (CoreException e) {
 				labelProviderInitializationFailed = true;
@@ -236,6 +239,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 					public void run() throws Exception {
 						if (labelProvider != null) {
+							labelProvider.removeListener((ILabelProviderListener)contentService.createCommonLabelProvider());
 							labelProvider.dispose();
 						}
 
