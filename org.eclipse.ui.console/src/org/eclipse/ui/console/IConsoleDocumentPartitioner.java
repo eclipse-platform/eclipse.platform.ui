@@ -18,7 +18,7 @@ import org.eclipse.swt.custom.StyleRange;
  * A document partitioner for a text console.
  * <p>
  * In addition to regular partitioner duties, a console document partitioner
- * dicates which regions in its document are read-only and provides style ranges.
+ * dictates which regions in its document are read-only and provides style ranges.
  * </p>
  * <p>
  * Clients may implement this interface.

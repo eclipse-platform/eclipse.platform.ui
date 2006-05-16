@@ -47,7 +47,7 @@ public interface IConsolePageParticipant extends IAdaptable {
      * Called during page initialization. Marks the start of this 
      * page participant's lifecycle.
      * 
-     * @param page the page corresponsing to the given console
+     * @param page the page corresponding to the given console
      * @param console the console for which a page has been created
      */
     public void init(IPageBookViewPage page, IConsole console);

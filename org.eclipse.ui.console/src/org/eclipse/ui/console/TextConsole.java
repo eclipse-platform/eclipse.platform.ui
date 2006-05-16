@@ -456,10 +456,10 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
-     * Returns the region assocaited with the given hyperlink.
+     * Returns the region associated with the given hyperlink.
      * 
      * @param link hyperlink
-     * @return the region associated witht the hyperlink or null if the hyperlink is not found.
+     * @return the region associated with the hyperlink or null if the hyperlink is not found.
      */
     public IRegion getRegion(IHyperlink link) {
 		try {
@@ -479,10 +479,10 @@ public abstract class TextConsole extends AbstractConsole {
     }
     
     /**
-     * Returns the attribue associated with the specified key.
+     * Returns the attribute associated with the specified key.
      * 
      * @param key attribute key
-     * @return the attribue associated with the specified key
+     * @return the attribute associated with the specified key
      */
     public Object getAttribute(String key) {
         synchronized (fAttributes) {

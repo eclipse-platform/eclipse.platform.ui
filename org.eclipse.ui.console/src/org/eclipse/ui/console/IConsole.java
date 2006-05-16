@@ -80,7 +80,7 @@ public interface IConsole {
 	
 	/**
 	 * Removes the given property listener from this console page.
-	 * Has no effect if an identical listener is not alread registered.
+	 * Has no effect if an identical listener is not already registered.
 	 * 
 	 * @param listener a property listener
 	 */

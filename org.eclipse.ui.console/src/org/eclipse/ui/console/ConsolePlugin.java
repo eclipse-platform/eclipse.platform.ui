@@ -38,7 +38,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	private IConsoleManager fConsoleManager = null;
 
 	/**
-	 * The singleton console plugin instance
+	 * The singleton console plug-in instance
 	 */
 	private static ConsolePlugin fgPlugin= null;
 	
@@ -49,7 +49,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	private static final String PI_UI_CONSOLE = "org.eclipse.ui.console"; //$NON-NLS-1$
 		
 	/**
-	 * Returns the singleton instance of the console plugin.
+	 * Returns the singleton instance of the console plug-in.
 	 */
 	public static ConsolePlugin getDefault() {
 		return fgPlugin;
@@ -61,7 +61,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_UI_CONSOLE;
@@ -86,7 +86,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns a new error status for this plugin with the given message
+	 * Returns a new error status for this plug-in with the given message
 	 * @param message the message to be included in the status
 	 * @param exception the exception to be included in the status or <code>null</code> if none
 	 * @return a new error status

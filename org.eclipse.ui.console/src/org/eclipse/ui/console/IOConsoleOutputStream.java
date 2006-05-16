@@ -253,7 +253,7 @@ public class IOConsoleOutputStream extends OutputStream {
     /**
      * Sets the character encoding used to interpret characters written to this steam. 
      * 
-     * @param encoding endcoding identifier
+     * @param encoding encoding identifier
      */
     public void setEncoding(String encoding) {
         fEncoding = encoding;

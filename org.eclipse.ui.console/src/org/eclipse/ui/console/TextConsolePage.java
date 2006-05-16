@@ -79,7 +79,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected ArrayList fSelectionActions = new ArrayList();
     protected ClearOutputAction fClearOutputAction;
     
-	// text selection listener, used to update selection dependant actions on selection changes
+	// text selection listener, used to update selection dependent actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			updateSelectionDependentActions();

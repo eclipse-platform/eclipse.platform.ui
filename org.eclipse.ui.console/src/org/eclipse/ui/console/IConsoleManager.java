@@ -28,10 +28,10 @@ public interface IConsoleManager {
 	public void addConsoleListener(IConsoleListener listener);
 	
 	/**
-	 * Deregisters the given listener for console notifications. Has
+	 * Unregisters the given listener for console notifications. Has
 	 * no effect if an identical listener is not already registered.
 	 * 
-	 * @param listener listener to deregister
+	 * @param listener listener to unregister
 	 */
 	public void removeConsoleListener(IConsoleListener listener);
 

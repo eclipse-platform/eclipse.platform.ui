@@ -71,7 +71,7 @@ public class IOConsoleInputStream extends InputStream {
     private Color color;
     
     /**
-     * The font stye used to decorate input in the console.
+     * The font style used to decorate input in the console.
      */
     private int fontStyle = SWT.NORMAL;
 

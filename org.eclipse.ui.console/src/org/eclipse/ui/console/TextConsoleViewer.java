@@ -557,7 +557,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
      * a fixed width should not be used.
      * 
      * @param width
-     *            fixed characater width of the console, or -1
+     *            fixed character width of the console, or -1
      */
     public void setConsoleWidth(int width) {
         if (consoleWidth != width) {

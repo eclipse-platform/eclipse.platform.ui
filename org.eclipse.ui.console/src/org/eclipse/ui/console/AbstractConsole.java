@@ -131,7 +131,7 @@ public abstract class AbstractConsole implements IConsole {
 	 * @param autoLifecycle whether this console's lifecycle methods should be called
 	 *  automatically when it is added (<code>initialize()</code>) and removed
 	 *  (<code>destroy()</code>) from the console manager. When <code>false</code>,
-	 *  clients are responsible for calling the lifecycle methdods.
+	 *  clients are responsible for calling the lifecycle methods.
 	 * @since 3.1
 	 */
 	public AbstractConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {

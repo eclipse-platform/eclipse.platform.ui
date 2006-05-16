@@ -155,7 +155,7 @@ public class IOConsole extends TextConsole {
 
 	/**
 	 * Returns the maximum number of characters that the console will display at
-	 * once. This is analagous to the size of the text buffer this console
+	 * once. This is analogous to the size of the text buffer this console
 	 * maintains.
 	 * 
 	 * @return the maximum number of characters that the console will display
@@ -198,7 +198,7 @@ public class IOConsole extends TextConsole {
 
     /**
      * Check if all streams connected to this console are closed. If so,
-     * notifiy the partitioner that this console is finished. 
+     * notify the partitioner that this console is finished. 
      */
     private void checkFinished() {
         if (openStreams.isEmpty()) {
