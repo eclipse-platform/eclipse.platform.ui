@@ -64,7 +64,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	/**
 	 * Returns a description of the type of data this variable is
 	 * declared to reference. Note that the declared type of a
-	 * variable and the concrete type of its value are not neccessarily
+	 * variable and the concrete type of its value are not necessarily
 	 * the same.
 	 *
 	 * @return the declared type of this variable

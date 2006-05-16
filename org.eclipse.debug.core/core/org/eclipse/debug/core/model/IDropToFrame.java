@@ -29,8 +29,8 @@ public interface IDropToFrame {
     
     /**
      * Performs a drop to frame on this element. Implementations must generate
-     * events such that debug clients can update appropraitely, such as corresponding
-     * <code>RESUME</code> and <code>SUSPEND</code> events, or a sinlge <code>CHANGE</code>
+     * events such that debug clients can update appropriately, such as corresponding
+     * <code>RESUME</code> and <code>SUSPEND</code> events, or a single <code>CHANGE</code>
      * event when the drop is complete. Implementations should implement drop to frame
      * in a non-blocking fashion. 
      * 

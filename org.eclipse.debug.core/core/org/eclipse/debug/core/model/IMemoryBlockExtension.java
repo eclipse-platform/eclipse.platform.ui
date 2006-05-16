@@ -41,7 +41,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * address is in terms of addressable units.
 	 * 
 	 * @return the base address of this memory block
-	 * @throws DebugException if unable to retreive the base address
+	 * @throws DebugException if unable to retrieve the base address
 	 */
 	public BigInteger getBigBaseAddress() throws DebugException;
 	
@@ -167,12 +167,12 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 
 	/**
 	 * Sets bytes in this memory block at the specified offset within this memory block to
-	 * the spcified bytes. The offset is zero based. After successfully modifying the
+	 * the specified bytes. The offset is zero based. After successfully modifying the
 	 * specified bytes, a debug event should be fired with a kind of <code>CHANGE</code>. 
 	 * 
 	 * @param offset the zero based offset at which to set the new value.  Modify
 	 * the memory starting from base address + offset.
-	 * @param bytes replcement bytes
+	 * @param bytes replacement bytes
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for

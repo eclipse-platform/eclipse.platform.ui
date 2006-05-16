@@ -19,7 +19,7 @@ package org.eclipse.debug.core.model;
  * <p>
  * If a logical structure type delegate implements this interface, it will
  * be consulted for a description rather than using the description attribute
- * provided in plub-in XML.
+ * provided in plug-in XML.
  * </p>
  * <p>
  * Clients contributing logical structure types can implement this
@@ -34,7 +34,7 @@ public interface ILogicalStructureTypeDelegate2 {
 	 * Returns a simple description of the logical structure provided by this
 	 * structure type delegate, for the given value.
 	 * Cannot return <code>null</code>. This method is only called if this
-	 * logical strucure type delegate returns <code>true</code> for
+	 * logical structure type delegate returns <code>true</code> for
 	 * <code>providesLogicalStructure(IValue)</code>.
 	 * 
 	 * @return a simple description of the logical structure provided by this

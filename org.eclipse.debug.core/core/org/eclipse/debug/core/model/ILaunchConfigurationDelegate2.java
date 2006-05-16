@@ -60,7 +60,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @param monitor progress monitor
 	 * @return whether the debug platform should perform an incremental workspace
 	 *  build before the launch
-	 * @throws CoreException if an exception occurrs while building
+	 * @throws CoreException if an exception occurs while building
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 	
@@ -88,7 +88,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @param mode launch mode
 	 * @param monitor progress monitor
 	 * @return whether the launch should proceed
-	 * @throws CoreException if an exception occurs while performing pre launch checks
+	 * @throws CoreException if an exception occurs while performing pre-launch checks
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 }

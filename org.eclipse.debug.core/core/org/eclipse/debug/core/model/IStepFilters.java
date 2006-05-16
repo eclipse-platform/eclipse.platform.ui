@@ -26,7 +26,7 @@ package org.eclipse.debug.core.model;
  * <p>
  * In 2.1, the <code>IFilteredStep</code> interface was used
  * to implement step filtering. The <code>IFilteredStep</code>
- * interface is now deprecated, and this inteface should be used
+ * interface is now deprecated, and this interface should be used
  * in its place to allow filters to be applied to any step
  * function.
  * </p>

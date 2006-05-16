@@ -63,7 +63,7 @@ public interface IMemoryBlock extends IDebugElement {
 	
 	/**
 	 * Sets the value of the bytes in this memory block at the specified
-	 * offset within this memory block to the spcified bytes.
+	 * offset within this memory block to the specified bytes.
 	 * The offset is zero based.
 	 * 
 	 * @param offset the offset at which to set the new values

@@ -16,7 +16,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * A source locator that can be persisted and restored,
- * to be used with a specfic launch configuration.
+ * to be used with a specific launch configuration.
  * The debug plug-in defines a source locator extension
  * point for persistable source locators.
  * <p>
@@ -74,7 +74,7 @@ public interface IPersistableSourceLocator extends ISourceLocator {
 	 * source lookup for the given launch configuration.
 	 * 
 	 * @param configuration launch configuration this source locator
-	 *  will be performing souce lookup for
+	 *  will be performing source lookup for
 	 * @exception CoreException on failure to initialize
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException;

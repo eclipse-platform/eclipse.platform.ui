@@ -12,7 +12,7 @@ package org.eclipse.debug.core.model;
 
 
 /**
- * A byte of memory in a meomry block. Each byte of memory has a value and
+ * A byte of memory in a memory block. Each byte of memory has a value and
  * attributes indicating if the byte is read-only, valid, or if its value has
  * changed.
  * <p>

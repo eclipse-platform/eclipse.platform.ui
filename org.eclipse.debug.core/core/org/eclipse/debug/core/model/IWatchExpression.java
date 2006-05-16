@@ -21,7 +21,7 @@ package org.eclipse.debug.core.model;
  * <p>
  * Clients are not intended to implement this interface. An implementation
  * is provided by the debug platform. Clients that support watch expressions
- * should contribute and implement a watch exrepssion delegate. Watch
+ * should contribute and implement a watch expression delegate. Watch
  * expressions can be created via the <code>IExpressionManager</code>.
  * </p>
  * @see org.eclipse.debug.core.model.IWatchExpressionDelegate

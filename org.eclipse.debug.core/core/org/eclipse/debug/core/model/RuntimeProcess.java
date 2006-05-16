@@ -32,7 +32,7 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  * process (<code>java.lang.Process</code>).
  * <p>
  * Clients may subclass this class. Clients that need to replace the implementation
- * of a streams proxy associatd with an <code>IProcess</code> should subclass this
+ * of a streams proxy associated with an <code>IProcess</code> should subclass this
  * class. Generally clients should not instantiate this class directly, but should
  * instead call <code>DebugPlugin.newProcess(...)</code>, which can delegate to an 
  * <code>IProcessFactory</code> if one is referenced by the associated launch configuration.
@@ -98,7 +98,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * launch.
 	 * 
 	 * @param launch the launch this process will be parented by
-	 * @param process underlyig system process
+	 * @param process underlying system process
 	 * @param name the label used for this process
 	 * @param attributes map of attributes used to initialize the attributes
 	 *   of this process, or <code>null</code> if none

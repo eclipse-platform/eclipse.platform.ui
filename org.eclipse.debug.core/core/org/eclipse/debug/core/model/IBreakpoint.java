@@ -109,7 +109,7 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Persisted breakpoint marker attribute (value <code>"org.eclipse.debug.core.persisted"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
-	 * whether a breakpoint is to be persisted accross workspace
+	 * whether a breakpoint is to be persisted across workspace
 	 * invocations.
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)

@@ -42,7 +42,7 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * default pre-launch check prompts the user to launch in debug mode
  * if breakpoints are present in the workspace. 
  * <p>
- * Clients implementing launch configration delegates should subclass
+ * Clients implementing launch configuration delegates should subclass
  * this class.
  * </p>
  * @since 3.0
@@ -132,7 +132,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @param configuration the configuration being launched
 	 * @param mode launch mode
 	 * @return projects to build, in build order, or <code>null</code>
-	 * @throws CoreException if an exception occurrs
+	 * @throws CoreException if an exception occurs
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
@@ -145,7 +145,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @param configuration the configuration being launched
 	 * @param mode launch mode
 	 * @return a list of projects or <code>null</code>
-	 * @throws CoreException if an exception occurrs
+	 * @throws CoreException if an exception occurs
 	 */
 	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
@@ -228,9 +228,9 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @param configuration the configuration being launched
 	 * @param mode the launch mode
-	 * @param monitor progess monitor
+	 * @param monitor progress monitor
 	 * @return whether the launch should continue
-	 * @throws CoreException if an exception occurrs during the save
+	 * @throws CoreException if an exception occurs during the save
 	 * @since 3.2
 	 */
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
@@ -266,7 +266,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * containing all of the projects specified by <code>baseProjects</code>
 	 * and all of their referenced projects.
 	 *  
-	 * @param baseProjects a collection of projetcs
+	 * @param baseProjects a collection of projects
 	 * @return an array of projects in their suggested build order
 	 * containing all of the projects specified by <code>baseProjects</code>
 	 * @throws CoreException if an error occurs while computing referenced
@@ -374,7 +374,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @param problemMarker candidate problem
 	 * @return whether the given problem should potentially abort the launch
-	 * @throws CoreException if any exceptions occurr while accessing marker attributes
+	 * @throws CoreException if any exceptions occur while accessing marker attributes
 	 */
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		Integer severity = (Integer)problemMarker.getAttribute(IMarker.SEVERITY);
@@ -390,7 +390,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @param projects projects to build
 	 * @param monitor progress monitor
-	 * @throws CoreException if an exception occurrs while building
+	 * @throws CoreException if an exception occurs while building
 	 */
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < projects.length; i++ ) {

@@ -13,7 +13,7 @@ package org.eclipse.debug.core.model;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A delegate that provides a value represengting the logical structure of a raw
+ * A delegate that provides a value representing the logical structure of a raw
  * implementation value from a debug model. Associated with a logical structure
  * type extension.
  * <p>
@@ -29,7 +29,7 @@ public interface ILogicalStructureTypeDelegate {
 	 * Returns whether this structure type can provide a logical structure for 
 	 * the given value.
 	 * 
-	 * @param value value for which a logial structure is being requested
+	 * @param value value for which a logical structure is being requested
 	 * @return whether this structure type can provide a logical structure for 
 	 * the given value
 	 */
@@ -40,7 +40,7 @@ public interface ILogicalStructureTypeDelegate {
 	 * 
 	 * @param value value for which a logical structure is being requested
 	 * @return value representing logical structure
-	 * @throws CoreException if an exception occurrs generating a logical
+	 * @throws CoreException if an exception occurs generating a logical
 	 *  structure
 	 */
 	public IValue getLogicalStructure(IValue value) throws CoreException;
