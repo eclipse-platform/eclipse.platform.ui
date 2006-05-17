@@ -97,23 +97,21 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		setSourceLocator(locator);
 		fMode = mode;
 		fSuppressChange = false;
+		getLaunchManager().addLaunchListener(this);
+		getLaunchManager().addLaunchConfigurationListener(this);
 	}
 	
 	/**
-	 * Registers listeners for launches, launch configurations
-	 * and debug events.
+	 * Registers debug event listener.
 	 */
-	private void addListeners() {
-		getLaunchManager().addLaunchListener(this);
-		getLaunchManager().addLaunchConfigurationListener(this);
+	private void addEventListener() {
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
 	/**
-	 * Removes the registered listeners.
+	 * Removes debug event listener.
 	 */
-	private void removeListeners() {
-		getLaunchManager().removeLaunchListener(this);
+	private void removeEventListener() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 	
@@ -324,7 +322,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void addDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (!getDebugTargets0().contains(target)) {
-				addListeners();
+				addEventListener();
 				getDebugTargets0().add(target);
 				fireChanged();
 			}
@@ -348,7 +346,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void addProcess(IProcess process) {
 		if (process != null) {
 			if (!getProcesses0().contains(process)) {
-				addListeners();
+				addEventListener();
 				getProcesses0().add(process);
 				fireChanged();
 			}
@@ -402,7 +400,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 			((LaunchManager)getLaunchManager()).fireUpdate(this, LaunchManager.TERMINATE);
 			((LaunchManager)getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.TERMINATE);
 		}
-		removeListeners();
+		removeEventListener();
 	}
 	
 	/**
@@ -491,7 +489,8 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 */
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
-			removeListeners();
+			removeEventListener();
+			getLaunchManager().removeLaunchListener(this);
 			getLaunchManager().removeLaunchConfigurationListener(this);
 		}
 	}

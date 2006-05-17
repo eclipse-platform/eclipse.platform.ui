@@ -109,10 +109,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	private ISelection fCurrentSelection;
 	
 	/**
-	 * Array used to store indicies of the path to an item in the viewer being mapped
-	 * by a 'set data' callback. Indicies are bottom up. For example when 'set data' for 
+	 * Array used to store indices of the path to an item in the viewer being mapped
+	 * by a 'set data' callback. Indices are bottom up. For example when 'set data' for 
 	 * the 3rd child of the 4th child of the 2nd root element were being asked for,
-	 * the first 3 indicies would look like: [3, 4, 2, ....]. We re-use an array to avoid
+	 * the first 3 indices would look like: [3, 4, 2, ....]. We re-use an array to avoid
 	 * creating a new one all the time. The array grows as needed to accommodate deep
 	 * elements.
 	 */
@@ -248,6 +248,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected synchronized void inputChanged(Object input, Object oldInput) {
+		fPendingSelection = null;
+		fCurrentSelection = null;
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
             fUpdatePolicy.init(this);
@@ -262,6 +264,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			getControl().setData(fModel.getRootNode().getElement());
 		} else {
 			unmapAllElements();
+			getControl().setData(null);
 		}
         refresh();		
 	}

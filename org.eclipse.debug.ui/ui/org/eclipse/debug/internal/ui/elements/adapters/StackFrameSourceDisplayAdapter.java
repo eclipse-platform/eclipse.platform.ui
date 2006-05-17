@@ -50,7 +50,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 					switch (event.getKind()) {
 						case DebugEvent.TERMINATE:
 							clearCachedModel(event.getSource());
-							// fall thru
+							// fall through
 						case DebugEvent.RESUME:
 							if (!event.isEvaluation()) {
 								clearSourceSelection(event.getSource());
@@ -96,16 +96,19 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 				IStackFrame lookupFrame = fTarget;
 				ISourceLocator lookupLocator = fLocator;
 				
-				ISourceLookupResult result = null;
-				result = DebugUITools.lookupSource(lookupFrame, lookupLocator);
-				synchronized (StackFrameSourceDisplayAdapter.this) {
-					fPrevResult = (SourceLookupResult)result;
-					fPrevFrame = lookupFrame;
+				if (lookupFrame != null && lookupLocator != null) {
+					ISourceLookupResult result = null;
+					result = DebugUITools.lookupSource(lookupFrame, lookupLocator);
+					synchronized (StackFrameSourceDisplayAdapter.this) {
+						fPrevResult = (SourceLookupResult)result;
+						fPrevFrame = lookupFrame;
+					}
+					if (!monitor.isCanceled() && fPage != null) {
+						fSourceDisplayJob.setDisplayInfo(result, fPage);
+						fSourceDisplayJob.schedule();
+					}
 				}
-				if (!monitor.isCanceled()) {
-					fSourceDisplayJob.setDisplayInfo(result, fPage);
-					fSourceDisplayJob.schedule();
-				}
+				setLookupInfo(null, null, null);
 			}
 			return Status.OK_STATUS;
 		}
@@ -136,9 +139,10 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public synchronized IStatus runInUIThread(IProgressMonitor monitor) {
-			if (!monitor.isCanceled()) {
+			if (!monitor.isCanceled() && fResult != null && fPage != null) {
 				DebugUITools.displaySource(fResult, fPage);
 			}
+			setDisplayInfo(null, null);
 			return Status.OK_STATUS;
 		}
 		
@@ -161,7 +165,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 	}
 	
 	/**
-	 * Deselects any source decorations associated with the given thread or
+	 * Clears any source decorations associated with the given thread or
 	 * debug target.
 	 * 
 	 * @param source thread or debug target
