@@ -18,6 +18,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
@@ -35,7 +37,6 @@ import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRe
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * @since 3.2
@@ -52,6 +53,41 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private String toolTipTextPropertyName = null;
 	private String imagePropertyName = null;
 	private String allDayEventPropertyName = null;
+	
+	/**
+	 * (Non-API class)  This is public for testability only.
+	 */
+	public static class EventCache {
+		private Map daysToEventsMap;
+		
+		public EventCache() {
+			flush();
+		}
+		
+		public void flush() {
+			daysToEventsMap = new TreeMap();
+		}
+		
+		public void add(Object event) {
+			ReflectedProperty property = new ReflectedProperty(event, "startTime");
+			Object startTime = property.get();
+			List events = (List) daysToEventsMap.get(startTime);
+			if (events == null) {
+				events = new LinkedList();
+				daysToEventsMap.put(startTime, events);
+			}
+			events.add(event);
+			daysToEventsMap.put(startTime, events);
+		}
+		
+		public void remove(Object event) {
+			
+		}
+		
+		public List get(Date date) {
+			return (List) daysToEventsMap.get(date);
+		}
+	}
 	
 	/**
 	 * @param description
@@ -341,32 +377,36 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		/*
 		 * 
 		 */
+//		if (getBeginningDate(sourceElement).equals(getEndingDate(sourceElement))) {
+//			
+//		}
+//		bindCalendarableItem(
+//				item, CalendarableItem.PROP_START_TIME, 
+//				sourceElement, startTimePropertyName, null);
 		item.setDate(getBeginningDate(sourceElement));
 		// TODO : a lot of logic here to do.
 		item.setStartTime(getBeginningTime(sourceElement));
 		item.setEndTime(getEndingTime(sourceElement));
 
-		Object data;
-		data = getProperty(sourceElement, allDayEventPropertyName);
-		if (data != null) {
-			item.setAllDayEvent(((Boolean) data).booleanValue());
-		} else {
-			item.setAllDayEvent(false);
+		if (allDayEventPropertyName != null) {
+			bindCalendarableItem(
+					item, CalendarableItem.PROP_ALL_DAY_EVENT, 
+					sourceElement, allDayEventPropertyName, null);
 		}
 		if (textPropertyName != null) {
-			bindCalendarableItem(item, "text", sourceElement, textPropertyName, null);
+			bindCalendarableItem(
+					item, CalendarableItem.PROP_TEXT, 
+					sourceElement, textPropertyName, null);
 		}
-		data = getProperty(sourceElement, toolTipTextPropertyName);
-		if (data != null) {
-			item.setToolTipText((String)data);
-		} else {
-			item.setToolTipText("");
+		if (toolTipTextPropertyName != null) {
+			bindCalendarableItem(
+					item, CalendarableItem.PROP_TOOL_TIP_TEXT, 
+					sourceElement, toolTipTextPropertyName, null);
 		}
-		data = getProperty(sourceElement, imagePropertyName);
-		if (data != null) {
-			item.setImage((Image)data);
-		} else {
-			item.setImage(null);
+		if (imagePropertyName != null) {
+			bindCalendarableItem(
+					item, CalendarableItem.PROP_IMAGE, 
+					sourceElement, imagePropertyName, null);
 		}
 	}
 
