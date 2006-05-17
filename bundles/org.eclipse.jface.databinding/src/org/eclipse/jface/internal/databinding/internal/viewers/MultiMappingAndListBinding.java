@@ -76,6 +76,8 @@ public class MultiMappingAndListBinding extends Binding {
 		targetList.dispose();
 		model.dispose();
 		modelList.dispose();
+		
+		disposed = true;
 	}
 	
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {

@@ -113,7 +113,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		fetchNewIterator();
 		updateTargetFromModel();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
 	 */
@@ -124,6 +124,8 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		
 		modelList.removeListChangeListener(modelChangeListener);
 		modelList.dispose();
+		
+		disposed=true;
 	}
 	
 	private IListChangeListener modelChangeListener = new IListChangeListener() {

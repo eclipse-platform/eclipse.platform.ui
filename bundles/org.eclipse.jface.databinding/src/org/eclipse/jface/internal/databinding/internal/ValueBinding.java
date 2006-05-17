@@ -118,8 +118,9 @@ public class ValueBinding extends Binding {
 	public void dispose() {
 		target.dispose();
 		model.dispose();
+		disposed = true;
 	}
-
+	
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
 		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {
 			if (updating)

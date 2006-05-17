@@ -52,7 +52,7 @@ public class ListBinding extends Binding {
 		modelList.addListChangeListener(modelChangeListener);
 		updateTargetFromModel();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
 	 */
@@ -61,6 +61,8 @@ public class ListBinding extends Binding {
 		modelList.removeListChangeListener(modelChangeListener);
 		targetList.dispose();
 		modelList.dispose();
+		
+		disposed = true;
 	}
 	
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {

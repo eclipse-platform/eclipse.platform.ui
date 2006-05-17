@@ -76,6 +76,8 @@ public class MultiMappingAndSetBinding extends Binding {
 		targetSet.dispose();
 		model.dispose();
 		modelSet.dispose();
+		
+		disposed = true;
 	}
 	
 	private final ISetChangeListener targetChangeListener = new ISetChangeListener() {

@@ -111,4 +111,13 @@ public abstract class Binding {
 	 */
 	public abstract void dispose();
 
+	protected boolean disposed = false;
+	
+	/**
+	 * @return true if the binding has been disposed.  false otherwise.
+	 */
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 }
