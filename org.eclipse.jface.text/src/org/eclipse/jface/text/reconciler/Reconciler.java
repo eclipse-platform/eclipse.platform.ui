@@ -52,7 +52,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 
 	/**
 	 * Creates a new reconciler with the following configuration: it is
-	 * an incremental reconciler with a standard delay of 500 milli-seconds. There
+	 * an incremental reconciler with a standard delay of 500 milliseconds. There
 	 * are no predefined reconciling strategies. The partitioning it uses
 	 * is the default partitioning {@link IDocumentExtension3#DEFAULT_PARTITIONING}.
 	 */

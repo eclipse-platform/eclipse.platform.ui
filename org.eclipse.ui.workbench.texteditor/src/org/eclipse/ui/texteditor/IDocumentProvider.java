@@ -114,7 +114,7 @@ public interface IDocumentProvider {
 	/**
 	 * Saves the given document provided for the given element.
 	 *
-	 * @param monitor a progress monitor to report progress and request cancellation
+	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @param element the element, or <code>null</code>
 	 * @param document the document
 	 * @param overwrite indicates whether overwrite should be performed

@@ -25,7 +25,7 @@ package org.eclipse.jface.text;
  * <ul>
  * <li>{@link org.eclipse.jface.text.IWidgetTokenOwnerExtension} since version
  * 3.0 introducing priorities when requesting a widget token and thus replacing
- * the unprioritized scheme.</li>
+ * the non-prioritized scheme.</li>
  * </ul>
  *
  * @see org.eclipse.jface.text.IWidgetTokenOwnerExtension

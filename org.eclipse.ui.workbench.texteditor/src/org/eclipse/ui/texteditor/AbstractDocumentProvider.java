@@ -234,7 +234,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * <p>
 	 * Subclasses must implement this method.</p>
 	 *
-	 * @param monitor a progress monitor to report progress and request cancellation
+	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @param element the element
 	 * @param document the document
 	 * @param overwrite indicates whether an overwrite should happen if necessary

@@ -27,7 +27,7 @@ package org.eclipse.jface.text;
  * <ul>
  * <li>{@link org.eclipse.jface.text.IWidgetTokenKeeperExtension} since version
  *     3.0 introducing priorities when requesting a widget token and thus replacing
- *     the unprioritized scheme. It also allows a client to force a widget token
+ *     the non-prioritized scheme. It also allows a client to force a widget token
  *     keeper to accept focus.</li>
  * </ul>
  *

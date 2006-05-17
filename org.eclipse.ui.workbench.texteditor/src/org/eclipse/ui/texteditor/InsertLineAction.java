@@ -77,7 +77,7 @@ public class InsertLineAction extends TextEditorAction {
 	 */
 	public void run() {
 		/*
-		 * Implemenation note: instead of computing any indentations needed
+		 * Implementation note: instead of computing any indentations needed
 		 * (which we can't at this generic level), we simply insert a new
 		 * line delimiter either at the end of the current line (normal) or
 		 * the end of the previous line (reverse). By operating directly on

@@ -122,7 +122,7 @@ final class ColumnLayout extends Layout {
 			
 			// Modify the weights to reflect what each column already
 			// has due to its minimum. Otherwise, columns with low
-			// minimums get discrimnated.
+			// minimums get discriminated.
 			int totalWantedPixels= 0;
 			final int[] wantedPixels= new int[numberOfWeightColumns];
 			for (int i= 0; i < numberOfWeightColumns; i++) {

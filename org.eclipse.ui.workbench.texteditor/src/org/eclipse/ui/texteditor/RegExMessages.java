@@ -176,7 +176,7 @@ final class RegExMessages extends NLS {
 	public static String displayString_atomicCap;
 	public static String additionalInfo_atomicCap;
 	
-	//look-araound
+	//look-ahead
 	public static String displayString_posLookahead;
 	public static String additionalInfo_posLookahead;
 	public static String displayString_negLookahead;

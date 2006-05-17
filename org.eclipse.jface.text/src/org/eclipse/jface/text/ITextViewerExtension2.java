@@ -30,7 +30,7 @@ import org.eclipse.swt.graphics.Point;
  * with a new method that allows to specify state masks for a better control of
  * the hover behavior.
  * <p>
- * An {@link org.eclipse.jface.text.IAutoEditStrategy}is a generalization of
+ * An {@link org.eclipse.jface.text.IAutoEditStrategy} is a generalization of
  * the original {@link org.eclipse.jface.text.IAutoIndentStrategy}. Auto edit
  * strategies can be arranged in a list that is executed like a pipeline when
  * the viewer content is changed.

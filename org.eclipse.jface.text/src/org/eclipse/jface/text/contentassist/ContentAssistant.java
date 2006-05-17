@@ -819,7 +819,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * overlays the completion proposals with context information list if necessary, and shows the
 	 * context information above the location at which it was activated. If auto activation will be
 	 * enabled, without further configuration steps, this content assistant is activated after a 500
-	 * milli-seconds delay. It uses the default partitioning.
+	 * milliseconds delay. It uses the default partitioning.
 	 */
 	public ContentAssistant() {
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;

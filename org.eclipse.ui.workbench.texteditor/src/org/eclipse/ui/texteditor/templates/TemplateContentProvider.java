@@ -17,7 +17,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 
 /**
- * A content provider for the template preferenc page's table viewer.
+ * A content provider for the template preference page's table viewer.
  *
  * @since 3.0
  */
