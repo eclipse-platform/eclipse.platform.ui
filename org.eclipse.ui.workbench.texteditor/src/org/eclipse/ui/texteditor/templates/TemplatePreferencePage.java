@@ -827,6 +827,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return super.performCancel();
 	}
 
+	/*
+	 * @since 3.2
+	 */
 	private void openReadErrorDialog() {
 		String title= TextEditorTemplateMessages.TemplatePreferencePage_error_read_title;
 		String message= TextEditorTemplateMessages.TemplatePreferencePage_error_read_message;

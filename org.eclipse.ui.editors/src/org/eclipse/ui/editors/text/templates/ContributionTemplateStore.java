@@ -253,6 +253,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	
 	/*
 	 * @see org.eclipse.jface.text.templates.persistence.TemplateStore#handleException(java.io.IOException)
+	 * @since 3.2
 	 */
 	protected void handleException(IOException x) {
 		EditorsPlugin.log(x);

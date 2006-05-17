@@ -106,6 +106,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 * @since 3.2
 	 */
 	public void runWithEvent(IAction action, Event event) {
 		if (fAction != null)

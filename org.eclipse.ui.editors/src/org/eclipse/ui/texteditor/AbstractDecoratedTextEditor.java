@@ -470,6 +470,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension4#showRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation, java.lang.String)
+	 * @since 3.2
 	 */
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
 		if (!ensureQuickDiffProvider(quickDiffProviderId))

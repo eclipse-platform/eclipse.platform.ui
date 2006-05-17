@@ -37,6 +37,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
  *
  * @see ISourceViewer
  * @see IQuickAssistProcessor
+ * @since 3.2
  */
  public interface IQuickAssistAssistant {
 
