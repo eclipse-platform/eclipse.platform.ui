@@ -41,7 +41,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 		cm.setStartDate(cmf.startDate);
 		EventLayoutComputer dm = new EventLayoutComputer(4);
 		for (int day = 0; day < cmf.getNumberOfDays(); ++day ) {
-			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm.getCalendarableEvents(day));
+			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm.getCalendarableItems(day));
 			cm.setEventLayout(day, eventLayout);
 		}
 
@@ -51,7 +51,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 		cm0.setEventContentProvider(cmf0.eventContentProvider);
 		cm0.setStartDate(cmf0.startDate);
 		for (int day = 0; day < cmf0.getNumberOfDays(); ++day ) {
-			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm0.getCalendarableEvents(day));
+			CalendarableItem[][] eventLayout = dm.computeEventLayout(cm0.getCalendarableItems(day));
 			cm0.setEventLayout(day, eventLayout);
 		}
 	}
@@ -139,7 +139,7 @@ public class CalendarableModel_TestTimedFindMethods extends TestCase {
 	};
 
 	private CalendarableItem calendarable(int day, int event) {
-		return (CalendarableItem) cm.getCalendarableEvents(day).get(event);
+		return (CalendarableItem) cm.getCalendarableItems(day).get(event);
 	}
 	
 	public void testFindTimedCalendarable_ForwardWithoutSelection_NothingToFind() throws Exception {

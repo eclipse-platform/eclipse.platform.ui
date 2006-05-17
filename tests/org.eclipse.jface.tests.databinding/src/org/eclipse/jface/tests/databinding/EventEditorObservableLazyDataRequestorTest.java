@@ -189,11 +189,9 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
     
 	private List loadTestDataIntoList(Event[] testData) {
 		List testDataList = new LinkedList();
-		Date loadDate = startDate;
 		for (int event = 0; event < testData.length; event++) {
 			testDataList.add(testData[event]);
 		}
-		loadDate = nextDay(loadDate);
 		return testDataList;
 	}
 	
@@ -267,9 +265,9 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 	private void assertEditorState(EventEditorStub editor, CalendarableItem[][] itemsInDay) {
 		CalendarableModel cm = editor.model();
 		for (int day=0; day < cm.getNumberOfDays(); ++day) {
-			List calendarables = cm.getCalendarableEvents(day);
+			List calendarables = cm.getCalendarableItems(day);
 			int itemInDay=0;
-			assertEquals("List sizes same", itemsInDay[day].length, calendarables.size());
+			assertEquals("Day " + day + ": list sizes same", itemsInDay[day].length, calendarables.size());
 			for (Iterator calIter = calendarables.iterator(); calIter.hasNext();) {
 				CalendarableItem item = (CalendarableItem) calIter.next();
 				assertEquals("All-day", itemsInDay[day][itemInDay].isAllDayEvent(), item.isAllDayEvent());
@@ -284,7 +282,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 			}
 		}
 	}
-
+	
 	private boolean isSameDay(Date time1, Date time2) {
 		GregorianCalendar gc1 =  new GregorianCalendar();
 		GregorianCalendar gc2 = new GregorianCalendar();
@@ -302,15 +300,19 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return true;
 	}
 
+	private EventEditorBindingDescription makeBindingDescription() {
+		return new EventEditorBindingDescription(
+				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+	}
+	
 
 	// Tests here -------------------------------------------------------------
 
-	public void test_oneDayOneEvent() throws Exception {
+	public void test_oneDayEvent_onEditorStartDate() throws Exception {
 		editor.setTimeBreakdown(7, 4);
 		editor.setStartDate(date(5, 15));
 		
-		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
-				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
 		Event[] testData = new Event[] {
 				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
 		dbc.bind(editorBindDesc, makeModel(testData), null);
@@ -325,13 +327,51 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		});
 	}
 
+	public void test_oneDayOneEvent_notOnEditorStartDate() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		Event[] testData = new Event[] {
+				new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg")};
+		dbc.bind(editorBindDesc, makeModel(testData), null); 
+		assertEditorState(editor, new CalendarableItem[][] {
+				{},
+				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
+
+	public void test_threeDayOneEvent() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{ci(date(5, 17), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
+
+
 	public void test_oneDayOneAllDayEvent() throws Exception {
 		editor.setTimeBreakdown(7, 4);
 		editor.setStartDate(date(5, 15));
 		Event[] testData = new Event[] {
 				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg", true)};
-		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
-				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
 		dbc.bind(editorBindDesc, makeModel(testData), null);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), "Stand-up mtg")},
@@ -350,8 +390,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		Event[] testData = new Event[] {
 				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
 		List testDataList = loadTestDataIntoList(testData);
-		EventEditorBindingDescription editorBindDesc = new EventEditorBindingDescription(
-				editor, dbc, "startTime", "endTime", "allDay", "description", null, null);
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
 		dbc.bind(editorBindDesc, makeModel(testDataList), null);
 		assertEditorState(editor, new CalendarableItem[][] {
 				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
@@ -365,7 +404,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		Event event = (Event) testDataList.get(0);
 		event.setDescription("The quick brown fox jumped over the lazy dog.");
 		
-		List calendarableEvents = editor.model.getCalendarableEvents((0));
+		List calendarableEvents = editor.model.getCalendarableItems((0));
 		CalendarableItem item = (CalendarableItem) calendarableEvents.get(0);
 		assertEquals("item Text was changed", event.description, item.getText());
 	}

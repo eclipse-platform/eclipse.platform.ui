@@ -955,7 +955,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		EventLayoutComputer dayModel = new EventLayoutComputer(model.getNumberOfDivisionsInHour());
 		for (int day=0; day < model.getNumberOfDays(); ++day) {
 			if (model.getNumberOfColumnsWithinDay(day) == -1) {
-				List events = model.getCalendarableEvents(day);
+				List events = model.getCalendarableItems(day);
 				CalendarableItem[][] eventLayout = dayModel.computeEventLayout(events);
 				model.setEventLayout(day, eventLayout);
 			}
@@ -991,7 +991,7 @@ public class DayEditor extends Composite implements IEventEditor {
 				
 				int allDayEventRow = 0;
 				
-				for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+				for (Iterator calendarablesIter = model.getCalendarableItems(day).iterator(); calendarablesIter.hasNext();) {
 					CalendarableItem calendarable = (CalendarableItem) calendarablesIter.next();
 					if (calendarable.isAllDayEvent()) {
 						layoutAllDayEvent(day, allDayEventRow, calendarable, gridRows);

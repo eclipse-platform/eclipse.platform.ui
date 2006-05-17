@@ -333,7 +333,7 @@ public class CalendarableModel {
 	 * @param dayOffset
 	 * @return A List of events.
 	 */
-	public List getCalendarableEvents(int dayOffset) {
+	public List getCalendarableItems(int dayOffset) {
 		return dayColumns[dayOffset];
 	}
 
@@ -456,7 +456,7 @@ public class CalendarableModel {
 	 */
 	public CalendarableItem[] getAllDayCalendarables(int day) {
 		List allDays = new LinkedList();
-		for (Iterator calendarablesIter = getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
+		for (Iterator calendarablesIter = getCalendarableItems(day).iterator(); calendarablesIter.hasNext();) {
 			CalendarableItem candidate = (CalendarableItem) calendarablesIter.next();
 			if (candidate.isAllDayEvent()) {
 				allDays.add(candidate);

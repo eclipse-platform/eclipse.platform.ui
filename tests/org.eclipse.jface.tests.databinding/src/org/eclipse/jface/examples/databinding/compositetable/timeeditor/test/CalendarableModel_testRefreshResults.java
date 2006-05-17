@@ -54,7 +54,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 	private void verifyModel(CalendarableModel cm, String[][] data) {
 		assertEquals("number of days equal", cm.getNumberOfDays(), data.length);
 		for (int day = 0; day < data.length; day++) {
-			List events = cm.getCalendarableEvents(day);
+			List events = cm.getCalendarableItems(day);
 			assertEquals("number of events equal", events.size(), data[day].length);
 			for (int element = 0; element < data[day].length; element++) {
 				assertEquals("Event " + element + ", day " + day + "equal", data[day][element], ((CalendarableItem)events.get(element)).getText());
