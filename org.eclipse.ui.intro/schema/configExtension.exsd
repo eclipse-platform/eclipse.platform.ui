@@ -231,7 +231,7 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
          configId=&quot;com.org.xyz.introConfig&quot; 
          content=&quot;extensionContent.xml&quot;/&gt;  
 
-    &lt;standbyPart
+    &lt;standbyContentPart
          id=&quot;com.org.xyz.myStandbyPart&quot;
          class=&quot;com.org.xyz.internal.MyStandbyContent&quot;
          pluginId=&quot;com.org.xyz&quot;/&gt;
