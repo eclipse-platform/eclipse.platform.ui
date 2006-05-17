@@ -228,6 +228,27 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return result;
 	}
 
+	protected Date setToStartOfDay(Date rawDate) {
+		GregorianCalendar gc = new GregorianCalendar();
+    	gc.setTime(rawDate);
+    	gc.set(Calendar.HOUR_OF_DAY, 0);
+    	gc.set(Calendar.MINUTE, 0);
+    	gc.set(Calendar.SECOND, 0);
+    	gc.set(Calendar.MILLISECOND, 0);
+    	return gc.getTime();
+	}
+
+	protected Date setToEndOfDay(Date date) {
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTime(date);
+		gc.set(Calendar.HOUR_OF_DAY, 23);
+		gc.set(Calendar.MINUTE, 59);
+		gc.set(Calendar.SECOND, 59);
+		gc.set(Calendar.MILLISECOND, 999);
+		Date time = gc.getTime();
+		return time;
+	}
+	
 	private Property makeModel(final Event[] testData) {
 		Object model = new ModelObject() {
 			List testDataList = loadTestDataIntoList(testData);
@@ -262,7 +283,9 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return new Property(model, "testDataList");
 	}
 
-	private void assertEditorState(EventEditorStub editor, CalendarableItem[][] itemsInDay) {
+	private void assertEditorState(
+			EventEditorStub editor, 
+			CalendarableItem[][] itemsInDay) {
 		CalendarableModel cm = editor.model();
 		for (int day=0; day < cm.getNumberOfDays(); ++day) {
 			List calendarables = cm.getCalendarableItems(day);
@@ -352,13 +375,32 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		
 		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
 		Event[] testData = new Event[] {
-				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+				new Event (time(5, 15, 5, 45), time(5, 17, 9, 45), "Stand-up mtg")};
 		dbc.bind(editorBindDesc, makeModel(testData), null);
 		assertEditorState(editor, new CalendarableItem[][] {
-				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
-				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg")},
-				{ci(date(5, 17), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{ci(date(5, 15), time(5, 45), setToEndOfDay(date(5, 15)), "Stand-up mtg")},
+				{ci(date(5, 16), setToStartOfDay(date(5, 16)), setToEndOfDay(date(5, 16)), "Stand-up mtg")},
+				{ci(date(5, 17), setToStartOfDay(date(5, 17)), time(9, 45), "Stand-up mtg")},
 				{},
+				{},
+				{},
+				{}
+		});
+	}
+
+	public void test_threeDayOneEvent_notOnEditorStartDate() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 14));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 17, 9, 45), "Stand-up mtg")};
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{},
+				{ci(date(5, 15), time(5, 45), setToEndOfDay(date(5, 15)), "Stand-up mtg")},
+				{ci(date(5, 16), setToStartOfDay(date(5, 16)), setToEndOfDay(date(5, 16)), "Stand-up mtg")},
+				{ci(date(5, 17), setToStartOfDay(date(5, 17)), time(9, 45), "Stand-up mtg")},
 				{},
 				{},
 				{}
@@ -409,15 +451,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		assertEquals("item Text was changed", event.description, item.getText());
 	}
 	
-//	new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg"),
-//	new Event (time(5, 15, 10, 45), time(5, 15, 11, 45), "Meet with customer"),
-//	new Event (time(5, 15, 14, 00), time(5, 15, 15, 45), "Another mtg"),
-//	new Event (time(5, 15, 15, 00), time(5, 17, 9, 45), "3-day stand-up mtg"),
-//	new Event (time(5, 15, 16, 45), time(5, 16, 9, 45), "Overnight mtg"),
-//	new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg"),
-//	new Event (time(5, 16, 7, 45), time(5, 16, 10, 45), "Stand-up mtg")	
-
-	
 	private LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
 		public NewObject insertElementAt(int positionHint, Object initializationData) {
 			return null;
@@ -429,24 +462,49 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 	};
 	
 	/**
+	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#dispose()}.
+	 */
+	public void testDispose() {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 14));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 17, 9, 45), "Stand-up mtg")};
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		
+		List daysToDispose = new LinkedList();
+		CalendarableModel cm = editor.model;
+		for (int day=0; day < 7; ++day) {
+			List calendarables = editor.model().getCalendarableItems(day);
+			if (calendarables != null) {
+				daysToDispose.addAll(calendarables);
+			}
+		}
+		
+		editor.setStartDate(date(5, 1));
+		
+		for (Iterator disposedDaysIter = daysToDispose.iterator(); disposedDaysIter.hasNext();) {
+			CalendarableItem item = (CalendarableItem) disposedDaysIter.next();
+			List bindingList = (List) item.getData();
+			for (Iterator bindingListIter = bindingList.iterator(); bindingListIter.hasNext();) {
+				Binding binding = (Binding) bindingListIter.next();
+				assertTrue("should be disposed", binding.isDisposed());
+			}
+		}
+	}
+	
+	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#add(int, java.lang.Object)}.
 	 */
-	public void testInsert() {
-		fail("Not yet implemented");
-	}
+//	public void testInsert() {
+//		fail("Not yet implemented");
+//	}
 	
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#remove(int)}.
 	 */
-	public void testRemove() {
-		fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#dispose()}.
-	 */
-	public void testDispose() {
-		fail("Not yet implemented");
-	}
-
+//	public void testRemove() {
+//		fail("Not yet implemented");
+//	}
 }
