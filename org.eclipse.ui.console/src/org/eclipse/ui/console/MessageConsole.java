@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ public class MessageConsole extends IOConsole {
 	public static final int DEFAULT_TAB_SIZE = IConsoleConstants.DEFAULT_TAB_SIZE;	
 
     /**
-     * Consturcts a message console with the given name and image.
+     * Constructs a message console with the given name and image.
      * 
      * @param name console name
      * @param imageDescriptor console image descriptor or <code>null</code>

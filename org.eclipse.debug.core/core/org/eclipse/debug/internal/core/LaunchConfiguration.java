@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Launch configuration attribute that specifies the resources paths mapped to it.
 	 * Not all launch configurations will have a mapped resource unless migrated.
-	 * Value is a list of resource paths stored as portabable strings, or <code>null</code>
+	 * Value is a list of resource paths stored as portable strings, or <code>null</code>
 	 * if none.
 	 * 
 	 * @since 3.2
@@ -75,7 +75,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Launch configuration attribute that specifies the resources types mapped to it.
 	 * Not all launch configurations will have a mapped resource unless migrated.
-	 * Value is a list of resource type intergers, or <code>null</code> if none.
+	 * Value is a list of resource type integers, or <code>null</code> if none.
 	 * 
 	 * @since 3.2
 	 */	
