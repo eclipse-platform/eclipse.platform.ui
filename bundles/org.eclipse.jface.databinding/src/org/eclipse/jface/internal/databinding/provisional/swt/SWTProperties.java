@@ -50,5 +50,10 @@ public interface SWTProperties {
 	 * Applies to Text, Label, Combo
 	 */
 	public static final String TEXT = "text"; //$NON-NLS-1$
+	
+	/**
+	 * Applies to Label, CLabel.
+	 */
+	public static final String IMAGE = "image"; //$NON-NLS-1$
 
 }

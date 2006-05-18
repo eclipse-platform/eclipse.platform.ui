@@ -142,9 +142,9 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		
 		editor.setEventCountProvider(eventCountProvider);
 		editor.setEventContentProvider(eventContentProvider);
+		editor.addItemDisposeHandler(itemDisposeHandler);
 		editor.addItemInsertHandler(insertHandler);
 		editor.addItemDeleteHandler(deleteHandler);
-		editor.addItemDisposeHandler(itemDisposeHandler);
 	}
 
 	/* (non-Javadoc)

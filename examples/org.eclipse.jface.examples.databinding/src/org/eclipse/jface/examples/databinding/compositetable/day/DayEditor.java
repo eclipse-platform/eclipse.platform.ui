@@ -744,7 +744,11 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setEventCountProvider(EventCountProvider eventCountProvider) {
 		model.setEventCountProvider(eventCountProvider);
 		updateVisibleRows();
-		layoutEventControls();
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				layoutEventControls();
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -753,7 +757,11 @@ public class DayEditor extends Composite implements IEventEditor {
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
 		model.setEventContentProvider(eventContentProvider);
 		updateVisibleRows();
-		layoutEventControls();
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				layoutEventControls();
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -789,17 +797,30 @@ public class DayEditor extends Composite implements IEventEditor {
 		layoutEventControls();
 	}
 	
+	private boolean refreshing = false;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
 	 */
 	public void refresh() {
-		Date dateToRefresh = getStartDate();
-		GregorianCalendar gc = new GregorianCalendar();
-		gc.setTime(dateToRefresh);
-		for (int i=0; i < getNumberOfDays(); ++i) {
-			refresh(gc.getTime());
-			gc.add(Calendar.DATE, 1);
-		}
+		/*
+		 * FIXME: refesh() and refresh(Date) are currently totally broken!!!
+		 */
+//		if (!refreshing) {
+//			refreshing = true;
+//			Display.getCurrent().asyncExec(new Runnable() {
+//				public void run() {
+//					Date dateToRefresh = getStartDate();
+//					GregorianCalendar gc = new GregorianCalendar();
+//					gc.setTime(dateToRefresh);
+//					for (int i=0; i < getNumberOfDays(); ++i) {
+//						refresh(gc.getTime());
+//						gc.add(Calendar.DATE, 1);
+//					}
+//					refreshing = false;
+//				}
+//			});
+//		}
 	}
 
 	/* (non-Javadoc)

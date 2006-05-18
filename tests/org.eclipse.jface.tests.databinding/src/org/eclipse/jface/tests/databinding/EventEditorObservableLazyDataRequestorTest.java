@@ -33,7 +33,6 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
 /**
  * This is basically two tests in one.  It's an integration test that makes
@@ -46,10 +45,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.list.Writab
  */
 public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 
-	private Date startDate = new Date();
 	private EventEditorStub editor;
-	private WritableList model;
-	private Binding binding;
 	private DataBindingContext dbc;
 
 	private DataBindingContext getDBC() {
