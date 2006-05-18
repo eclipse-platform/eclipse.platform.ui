@@ -33,6 +33,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
@@ -504,9 +505,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 					// the expression gives the setGlobalActionHandler() a
 					// priority.
 					final IHandler actionHandler = new ActionHandler(handler);
+					Expression handlerExpression = EXPRESSION;
+					//XXX add new API in next release to avoid down-casting (bug 137091)
+					if (this instanceof EditorActionBars) {
+						handlerExpression = ((EditorActionBars)this).getHandlerExpression();
+					}
 					final IHandlerActivation activation = service
 							.activateHandler(commandId, actionHandler,
-									EXPRESSION);
+									handlerExpression);
 					activationsByActionId.put(actionID, activation);
 				}
 			}

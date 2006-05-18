@@ -405,7 +405,7 @@ public class EditorReference extends WorkbenchPartReference implements
             
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
-            site.setActionBars(new EditorActionBars(manager.page, site, getId()));
+            site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
             try {
                 part.init(site, input);
             } catch (PartInitException e) {

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.internal.expressions.LegacyEditorActionBarExpression;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.services.IServiceLocator;
@@ -88,6 +90,7 @@ public class EditorActionBars extends SubActionBars2 {
 	private String type;
 	
 	private IActionBarPresentationFactory actionBarPresentation;
+
 
 	/**
 	 * Constructs the EditorActionBars for an editor.
@@ -197,6 +200,7 @@ public class EditorActionBars extends SubActionBars2 {
 			coolItemToolBarMgr.removeAll();
 		}
 		coolItemToolBarMgr = null;
+		editorHandlerExpression = null;
 	}
 
 	/**
@@ -327,7 +331,6 @@ public class EditorActionBars extends SubActionBars2 {
 		super.partChanged(part);
 		if (part instanceof IEditorPart) {
 			IEditorPart editor = (IEditorPart) part;
-			setServiceLocator(editor.getEditorSite());
 			if (editorContributor != null) {
 				editorContributor.setActiveEditor(editor);
 			}
@@ -469,5 +472,18 @@ public class EditorActionBars extends SubActionBars2 {
 				toolBarContributionItem.setVisible(visible || !forceVisibility);
 			}
 		}
+	}
+
+	private LegacyEditorActionBarExpression editorHandlerExpression = null;
+	
+	/**
+	 * Returns the expression used for action handler activation.
+	 * @return the expression used for action handler activation.
+	 */
+	public Expression getHandlerExpression() {
+		if (editorHandlerExpression == null) {
+			editorHandlerExpression = new LegacyEditorActionBarExpression(type);
+		}
+		return editorHandlerExpression;
 	}
 }

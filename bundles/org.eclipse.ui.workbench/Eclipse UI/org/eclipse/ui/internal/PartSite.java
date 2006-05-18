@@ -536,6 +536,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		buffer.append(getPluginId());
 		buffer.append(",registeredName="); //$NON-NLS-1$
 		buffer.append(getRegisteredName());
+		buffer.append(",hashCode="); //$NON-NLS-1$
+		buffer.append(hashCode());
 		buffer.append(')');
 		return buffer.toString();
 	}

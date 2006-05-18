@@ -301,7 +301,7 @@ public class EditorManager implements IExtensionChangeHandler {
 		}
 
 		// Create a new action bar set.
-		actionBars = new EditorActionBars(page, site, type);
+		actionBars = new EditorActionBars(page, site.getWorkbenchWindow(), type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 
@@ -333,7 +333,7 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		// Create a new action bar set.
 		// Note: It is an empty set.
-		EditorActionBars actionBars = new EditorActionBars(page, site, type);
+		EditorActionBars actionBars = new EditorActionBars(page, site.getWorkbenchWindow(), type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 
