@@ -224,7 +224,12 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	private void activateModel(String modelId, ILaunch launch) {
 		List contextIds = (List) fModelToContextIds.get(modelId);
 		if (contextIds == null) {
-			return;
+			// if there are no contexts for a model, the base debug context should 
+			// be activated (i.e. a debug model with no org.eclipse.ui.contexts and
+			// associated org.eclipse.debug.ui.modelContextBindings)
+			contextIds = new ArrayList();
+			contextIds.add(DEBUG_CONTEXT);
+			fModelToContextIds.put(modelId, contextIds);
 		}
 		Iterator iterator = contextIds.iterator();
 		while (iterator.hasNext()) {
