@@ -432,14 +432,6 @@
          </includes>
       </viewerContentBinding>
    </extension>
-      <extension
-            point="org.eclipse.core.runtime.adapters">
-         <factory
-               adaptableType="org.eclipse.team.examples.model.ModelObject"
-               class="org.eclipse.team.examples.model.ui.AdapterFactory">
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>
-      </extension>
    <extension
          point="org.eclipse.ui.newWizards">
          <category name="Team Logical Model Example" id="org.eclipse.team.examples.model.newWizards">
@@ -457,6 +449,36 @@
       </wizard>
    </extension>
    
+   <!-- ================================================================================ -->
+   <!-- Model provider for the model example											 -->
+   <!-- ================================================================================ -->
+   <extension
+         id="modelProvider"
+         point="org.eclipse.core.resources.modelProviders">
+      <modelProvider class="org.eclipse.team.examples.model.mapping.ModelProvider"/>
+      <extends-model id="org.eclipse.core.resources.modelProvider"/>
+      <enablement>
+          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.team.examples.filesystem.modelNature" />
+      </enablement>
+   </extension>
+   
+   <!-- ================================================================================ -->
+   <!-- Adapter factories for the model example											 -->
+   <!-- ================================================================================ -->
+      <extension
+            point="org.eclipse.core.runtime.adapters">
+         <factory
+               adaptableType="org.eclipse.team.examples.model.ModelObject"
+               class="org.eclipse.team.examples.model.ui.AdapterFactory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+         </factory>
+         <factory
+               adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
+               class="org.eclipse.team.examples.model.ui.AdapterFactory">
+            <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
+         </factory>
+      </extension>
 
   
 <!-- =================================================================================== -->

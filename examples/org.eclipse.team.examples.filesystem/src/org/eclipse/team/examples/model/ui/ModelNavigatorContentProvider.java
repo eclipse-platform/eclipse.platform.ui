@@ -179,6 +179,7 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
 		// Nothing to do
+		theCurrentChildren.iterator();
 	}
 
 	/* (non-Javadoc)

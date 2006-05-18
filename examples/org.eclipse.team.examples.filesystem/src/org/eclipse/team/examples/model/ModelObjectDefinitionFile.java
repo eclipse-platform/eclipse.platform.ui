@@ -32,6 +32,21 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return false;
 	}
 	
+	public static IResource[] getReferencedResources(IStorage storage) throws CoreException {
+		List result = new ArrayList();
+		String[] filePaths = readLines(storage);
+		for (int i = 0; i < filePaths.length; i++) {
+			String path = filePaths[i];
+			IFile file = getFile(path);
+			if (file != null 
+					&& file.getFileExtension() != null 
+					&& file.getFileExtension().equals(MODEL_OBJECT_DEFINITION_FILE_EXTENSION)) {
+				result.add(file);
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+	
 	public ModelObjectDefinitionFile(IFile file) {
 		super(file);
 	}
@@ -43,7 +58,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return getModelObjectElementFiles();
 	}
 
-	private ModelObjectElementFile[] getModelObjectElementFiles() throws CoreException {
+	public ModelObjectElementFile[] getModelObjectElementFiles() throws CoreException {
 		List result = new ArrayList();
 		String[] filePaths = readLines((IFile)getResource());
 		for (int i = 0; i < filePaths.length; i++) {
@@ -58,7 +73,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return (ModelObjectElementFile[]) result.toArray(new ModelObjectElementFile[result.size()]);
 	}
 
-	private String[] readLines(IFile file) throws CoreException {
+	private static String[] readLines(IStorage file) throws CoreException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
 		String line = null;
 		List result = new ArrayList();
@@ -96,7 +111,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return null;
 	}
 
-	private IFile getFile(String path) {
+	private static IFile getFile(String path) {
 		if (path.length() == 0)
 			return null;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -131,6 +146,15 @@ public class ModelObjectDefinitionFile extends ModelFile {
 			ModelObjectElementFile file = files[i];
 			file.getResource().delete(false, null);
 		}
+	}
+
+	public void setElements(IResource[] resources) throws CoreException {
+		List paths = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			paths.add(resource.getFullPath().toString());
+		}
+		writeLines((String[]) paths.toArray(new String[paths.size()]));
 	}
 
 }

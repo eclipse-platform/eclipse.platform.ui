@@ -59,5 +59,11 @@ public abstract class ModelObject extends PlatformObject {
 	/**
 	 * Delete the model object
 	 */
-	public abstract void delete() throws CoreException;;
+	public abstract void delete() throws CoreException;
+
+	/**
+	 * Return the project that contains this model object.
+	 * @return the project that contains this model object
+	 */
+	public abstract ModelProject getProject();
 }

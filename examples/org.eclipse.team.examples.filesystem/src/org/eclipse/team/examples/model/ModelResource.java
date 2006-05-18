@@ -73,7 +73,17 @@ public abstract class ModelResource extends ModelObject{
 		return getResource().hashCode();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.examples.model.ModelObject#delete()
+	 */
 	public void delete() throws CoreException {
 		getResource().delete(false, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.examples.model.ModelObject#getProject()
+	 */
+	public ModelProject getProject() {
+		return (ModelProject)ModelObject.create(getResource().getProject());
 	}
 }
