@@ -580,7 +580,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * method must not be long running. If a long running calculation is required
 	 * to calculate the traversals, an empty traversal should be returned and the
 	 * content provider should initiate a background task to calculate the 
-	 * required traversals and update the vew according when the task completes.
+	 * required traversals and update the view according when the task completes.
 	 * @param context the synchronization context
 	 * @param object the object
 	 * @return the traversals for the given object in the given context
