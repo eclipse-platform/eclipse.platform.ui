@@ -455,7 +455,7 @@
    <extension
          id="modelProvider"
          point="org.eclipse.core.resources.modelProviders">
-      <modelProvider class="org.eclipse.team.examples.model.mapping.ModelProvider"/>
+      <modelProvider class="org.eclipse.team.examples.model.mapping.ExampleModelProvider"/>
       <extends-model id="org.eclipse.core.resources.modelProvider"/>
       <enablement>
           <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.team.examples.filesystem.modelNature" />
@@ -478,6 +478,42 @@
                class="org.eclipse.team.examples.model.ui.AdapterFactory">
             <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
          </factory>
+      </extension>
+      <extension
+            point="org.eclipse.team.ui.teamContentProviders">
+         <teamContentProvider
+               contentExtensionId="org.eclipse.team.examples.model.synchronizeContent"
+               icon="$nl$/icons/full/obj/root_obj.gif"
+               modelProviderId="org.eclipse.team.examples.filesystem.modelProvider"/>
+      </extension>
+      <extension
+            point="org.eclipse.ui.navigator.navigatorContent">
+         <navigatorContent
+               contentProvider="org.eclipse.team.examples.model.ui.mapping.ModelSyncContentProvider"
+               icon="$nl$/icons/full/obj/root_obj.gif"
+               id="org.eclipse.team.examples.model.synchronizeContent"
+               labelProvider="org.eclipse.team.examples.model.ui.mapping.ModelSyncLabelProvider"
+               name="Example Model"
+               priority="normal">
+            <actionProvider class="org.eclipse.team.examples.model.ui.mapping.ModelSyncActionProvider"/>
+            <override
+                  policy="InvokeAlwaysRegardlessOfSuppressedExt"
+                  suppressedExtensionId="org.eclipse.team.ui.resourceContent"/>
+            <triggerPoints>
+               <or>
+                  <instanceof value="org.eclipse.team.core.mapping.ISynchronizationScope"/>
+                  <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
+                  <instanceof value="org.eclipse.team.examples.model.ModelObject"/>
+                  <instanceof value="org.eclipse.team.examples.model.mapping.ExampleModelProvider"/>
+               </or>
+            </triggerPoints>
+            <possibleChildren>
+               <or>
+                  <instanceof value="org.eclipse.team.examples.model.ModelObject"/>
+                  <instanceof value="org.eclipse.team.examples.model.mapping.ExampleModelProvider"/>
+               </or>
+            </possibleChildren>
+         </navigatorContent>
       </extension>
 
   

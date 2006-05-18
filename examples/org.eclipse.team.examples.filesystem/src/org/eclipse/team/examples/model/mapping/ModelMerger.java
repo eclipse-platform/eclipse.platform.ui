@@ -28,9 +28,9 @@ import org.eclipse.team.examples.model.*;
  */
 public class ModelMerger extends ResourceMappingMerger {
 
-	private final org.eclipse.team.examples.model.mapping.ModelProvider provider;
+	private final org.eclipse.team.examples.model.mapping.ExampleModelProvider provider;
 
-	public ModelMerger(org.eclipse.team.examples.model.mapping.ModelProvider provider) {
+	public ModelMerger(org.eclipse.team.examples.model.mapping.ExampleModelProvider provider) {
 		this.provider = provider;
 	}
 

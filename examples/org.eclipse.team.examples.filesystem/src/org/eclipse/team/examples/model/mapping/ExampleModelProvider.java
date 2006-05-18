@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ModelStatus;
+import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
@@ -23,12 +23,12 @@ import org.eclipse.team.examples.model.*;
 /**
  * The model provider for our example
  */
-public class ModelProvider extends
+public class ExampleModelProvider extends
 		org.eclipse.core.resources.mapping.ModelProvider {
 
 	public static final String ID = "org.eclipse.team.examples.filesystem.modelProvider";
 
-	public ModelProvider() {
+	public ExampleModelProvider() {
 		super();
 	}
 	
@@ -78,6 +78,15 @@ public class ModelProvider extends
 			return new MultiStatus(FileSystemPlugin.ID, 0, (IStatus[]) problems.toArray(new IStatus[problems.size()]), "Multiple potential side effects have been found.",  null);
 		}
 		return super.validateChange(delta, monitor);
+	}
+	
+	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
+		if (ModelProject.isModProject(resource.getProject())) {
+			ModelObject object = ModelObject.create(resource);
+			if (object != null)
+				return new ResourceMapping[] { (ResourceMapping)object.getAdapter(ResourceMapping.class) };
+		}
+		return super.getMappings(resource, context, monitor);
 	}
 
 }

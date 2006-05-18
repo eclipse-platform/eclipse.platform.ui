@@ -46,7 +46,7 @@ public abstract class ModelResourceMapping extends ResourceMapping {
 	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelProviderId()
 	 */
 	public String getModelProviderId() {
-		return ModelProvider.ID;
+		return ExampleModelProvider.ID;
 	}
 
 	/* (non-Javadoc)

@@ -27,9 +27,9 @@ public class AdapterFactory implements IAdapterFactory {
 			return modelAdapter;
 		if (adapterType == ResourceMapping.class && adaptableObject instanceof ModelObject)
 			return ModelResourceMapping.create((ModelObject)adaptableObject);
-		if (adapterType == IResourceMappingMerger.class && adaptableObject instanceof ModelProvider) {
+		if (adapterType == IResourceMappingMerger.class && adaptableObject instanceof ExampleModelProvider) {
 			if (modelMerger == null) {
-				modelMerger = new ModelMerger((ModelProvider)adaptableObject);
+				modelMerger = new ModelMerger((ExampleModelProvider)adaptableObject);
 			}
 			return modelMerger;
 		}

@@ -26,7 +26,9 @@ import org.eclipse.ui.navigator.*;
 /**
  * Model content provider for use with the Common Navigator framework.
  * It makes use of an IWorkbenchAdapter to get the children and parent 
- * of model objects.
+ * of model objects. It also makes use of the Common Navigator pipeline 
+ * to override the resource content extension so that model projects will
+ * replace the corresponding resource project in the Project Explorer.
  */
 public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider {
@@ -179,7 +181,6 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
 		// Nothing to do
-		theCurrentChildren.iterator();
 	}
 
 	/* (non-Javadoc)

@@ -8,26 +8,17 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.examples.model;
+package org.eclipse.team.examples.model.ui.mapping;
 
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 
-public class ModelWorkspace extends ModelContainer {
+/**
+ * The action provider that is used for synchronizations.
+ */
+public class ModelSyncActionProvider extends SynchronizationActionProvider {
 
-	protected ModelWorkspace() {
-		super(ResourcesPlugin.getWorkspace().getRoot());
-	}
-	
-	public String getName() {
-		return "Model Root";
-	}
-	
-	public ModelObject getParent() {
-		return null;
-	}
-
-	public static Object getRoot() {
-		return new ModelWorkspace();
+	public ModelSyncActionProvider() {
+		// TODO Auto-generated constructor stub
 	}
 
 }
