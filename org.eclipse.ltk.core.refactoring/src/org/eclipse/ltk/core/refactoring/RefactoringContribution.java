@@ -46,6 +46,11 @@ import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescr
  * descriptor. </li>
  * </ul>
  * </p>
+ * Refactorings for which a refactoring contribution has been registered should
+ * also return a {@link RefactoringDescriptor} during change generation (ie.
+ * returning a change object whose {@link Change#getDescriptor()} method has
+ * been implemented to return a {@link RefactoringChangeDescriptor}
+ * encapsulating {@link RefactoringDescriptor}.
  * <p>
  * Note: Clients which extend this class are required to reimplement the method
  * {@link #retrieveArgumentMap(RefactoringDescriptor)} in subclasses to capture
