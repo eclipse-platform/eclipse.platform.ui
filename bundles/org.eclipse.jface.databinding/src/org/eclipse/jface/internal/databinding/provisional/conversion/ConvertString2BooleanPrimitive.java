@@ -16,9 +16,9 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * ConvertString2BooleanPrimative.
+ * ConvertString2BooleanPrimitive.
  */
-public class ConvertString2BooleanPrimative implements IConverter {
+public class ConvertString2BooleanPrimitive implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

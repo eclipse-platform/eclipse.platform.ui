@@ -15,9 +15,9 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 
 /**
- * ConvertString2DoublePrimative.
+ * ConvertString2DoublePrimitive.
  */
-public class ConvertString2DoublePrimative implements IConverter {
+public class ConvertString2DoublePrimitive implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

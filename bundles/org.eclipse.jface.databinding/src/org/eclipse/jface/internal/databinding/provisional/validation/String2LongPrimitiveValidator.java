@@ -15,31 +15,35 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * FloatValidator.  Verify string to float data conversion
+ * LongValidator.  Validate String to long data input
  */
-public class String2FloatPrimativeValidator implements IValidator {
-    
+public class String2LongPrimitiveValidator implements IValidator {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
+	 */
 	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
+		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
             return null;
 
         return ValidationError.error(getHint());
 	}
     
-    public ValidationError isValid(Object value) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
+	 */
+	public ValidationError isValid(Object value) {
         try {
-            Float.parseFloat((String)value);
+            Long.parseLong((String)value);
             return null;
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return ValidationError.error(getHint());
         }
-    }
+    }    
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
-		BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
-		+ Float.MIN_VALUE + 
-		", " + Float.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE +  //$NON-NLS-1$
+			BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

@@ -14,19 +14,16 @@ package org.eclipse.jface.tests.databinding;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.internal.LazyListBinding;
+import junit.framework.TestCase;
+
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
-
-import junit.framework.TestCase;
 
 /**
  * @since 3.2
@@ -57,14 +54,7 @@ public class LazyListBindingTest extends TestCase {
 
 	private DataBindingContext getDBC() {
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.addBindingFactory(new IBindingFactory() {
-			public Binding createBinding(DataBindingContext dataBindingContext, IObservable target, IObservable model, BindSpec bindSpec) {
-				if (bindSpec == null) {
-					bindSpec = new BindSpec();
-				}
-				return new LazyListBinding(dataBindingContext, target, (IObservableList) model, bindSpec);
-			}
-		});
+		dbc.addBindingFactory(new DefaultBindingFactory());
 		return dbc;
 	}
 

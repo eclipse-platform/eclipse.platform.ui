@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBinding
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.widgets.Widget;
 
-public class DefaultBindSupportFactoryDoublePrimativeTest extends TestCase {
+public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
@@ -30,100 +30,100 @@ public class DefaultBindSupportFactoryDoublePrimativeTest extends TestCase {
 		ctx = getDatabindingContext();
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
-		dataObject.setDoublePrimativeVal(0);
-		dataObject.setDoubleVal(new Double(0));		
+		dataObject.setBooleanPrimitiveVal(false);
+		dataObject.setBooleanVal(new Boolean(false));		
 	}
 	
-	public void testStringToDoublePrimativeConverter() {
-		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "doublePrimativeVal"), null);
+	public void testStringToBooleanPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "booleanPrimitiveVal"), null);
 		
-		dataObject.setDoublePrimativeVal(789.5);
-		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("String value does not match", "789.5", dataObject.getStringVal());
+		dataObject.setBooleanPrimitiveVal(true);
+		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
+		assertEquals("String value does not match", "true", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setStringVal("910.5");
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("String value does not match", "910.5", dataObject.getStringVal());
+		dataObject.setStringVal("false");
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
+		assertEquals("String value does not match", "false", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal("");
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
 		assertEquals("String value does not match", "", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal(null);
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
 		assertNull("String value does not match", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 
-	public void testDoubleToDoublePrimativeConverter() {
-		ctx.bind(new Property(dataObject, "doubleVal"), new Property(dataObject, "doublePrimativeVal"), null);
+	public void testBooleanToBooleanPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "booleanVal"), new Property(dataObject, "booleanPrimitiveVal"), null);
 		
-		dataObject.setDoublePrimativeVal(789.5);
-		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("Double value does not match", new Double(789.5), dataObject.getDoubleVal());
+		dataObject.setBooleanPrimitiveVal(true);
+		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
+		assertEquals("Boolean value does not match", new Boolean(true), dataObject.getBooleanVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setDoubleVal(new Double(910.5));
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("Double value does not match", new Double(910.5), dataObject.getDoubleVal());
+		dataObject.setBooleanVal(new Boolean(false));
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
+		assertEquals("Boolean value does not match", new Boolean(false), dataObject.getBooleanVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
-		dataObject.setDoubleVal(null);
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
-		assertNull("Double value does not match", dataObject.getDoubleVal());
+		dataObject.setBooleanVal(null);
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
+		assertNull("Boolean value does not match", dataObject.getBooleanVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 	}
 	
-	public void testObjectToDoublePrimativeConverter() {
-		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "doublePrimativeVal"), null);
+	public void testObjectToBooleanPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "booleanPrimitiveVal"), null);
 		
-		dataObject.setDoublePrimativeVal(789.5);
-		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("Object value does not match", new Double(789.5), dataObject.getObjectVal());
+		dataObject.setBooleanPrimitiveVal(true);
+		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
+		assertEquals("Object value does not match", new Boolean(true), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setObjectVal(new Double(910.5));
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
-		assertEquals("Object value does not match", new Double(910.5), dataObject.getObjectVal());
+		dataObject.setObjectVal(new Boolean(false));
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
+		assertEquals("Object value does not match", new Boolean(false), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setObjectVal(null);
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
 		assertNull("Object value does not match", dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		Object object = new Object();
 		dataObject.setObjectVal(object);
-		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimativeVal(), .001);
+		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
 		assertSame("Object value does not match", object, dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 	
 	public class TestDataObject extends ModelObject {
-		private double doublePrimativeValue;
+		private boolean booleanPrimitiveValue;
 		private String stringVal;
-		private Double doubleVal;
+		private Boolean booleanVal;
 		private Object objectVal;
 		
-		public Double getDoubleVal() {
-			return doubleVal;
+		public Boolean getBooleanVal() {
+			return booleanVal;
 		}
-		public void setDoubleVal(Double doubleVal) {
-			Object oldVal = this.doubleVal;
-			this.doubleVal = doubleVal;
-			firePropertyChange("doubleVal", oldVal, this.doubleVal);
+		public void setBooleanVal(Boolean booleanVal) {
+			Object oldVal = this.booleanVal;
+			this.booleanVal = booleanVal;
+			firePropertyChange("booleanVal", oldVal, this.booleanVal);
 		}
 
-		public double getDoublePrimativeVal() {
-			return doublePrimativeValue;
+		public boolean getBooleanPrimitiveVal() {
+			return booleanPrimitiveValue;
 		}
-		public void setDoublePrimativeVal(double doublePrimativeValue) {
-			double oldVal = this.doublePrimativeValue;
-			this.doublePrimativeValue = doublePrimativeValue;
-			firePropertyChange("doublePrimativeVal", new Double(oldVal), new Double(this.doublePrimativeValue));
+		public void setBooleanPrimitiveVal(boolean booleanPrimitiveValue) {
+			boolean oldVal = this.booleanPrimitiveValue;
+			this.booleanPrimitiveValue = booleanPrimitiveValue;
+			firePropertyChange("booleanPrimitiveVal", new Boolean(oldVal), new Boolean(this.booleanPrimitiveValue));
 		}
 		
 		public String getStringVal() {

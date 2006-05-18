@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBinding
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.widgets.Widget;
 
-public class DefaultBindSupportFactoryBooleanPrimativeTest extends TestCase {
+public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
@@ -30,100 +30,100 @@ public class DefaultBindSupportFactoryBooleanPrimativeTest extends TestCase {
 		ctx = getDatabindingContext();
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
-		dataObject.setBooleanPrimativeVal(false);
-		dataObject.setBooleanVal(new Boolean(false));		
+		dataObject.setLongPrimitiveVal((long) 0);
+		dataObject.setLongVal(new Long((long) 0));		
 	}
 	
-	public void testStringToBooleanPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "booleanPrimativeVal"), null);
+	public void testStringToLongPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "longPrimitiveVal"), null);
 		
-		dataObject.setBooleanPrimativeVal(true);
-		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimativeVal());
-		assertEquals("String value does not match", "true", dataObject.getStringVal());
+		dataObject.setLongPrimitiveVal((long)110);
+		assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("String value does not match", "110", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setStringVal("false");
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
-		assertEquals("String value does not match", "false", dataObject.getStringVal());
+		dataObject.setStringVal("70");
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("String value does not match", "70", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal("");
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
 		assertEquals("String value does not match", "", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal(null);
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
 		assertNull("String value does not match", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 
-	public void testBooleanToBooleanPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "booleanVal"), new Property(dataObject, "booleanPrimativeVal"), null);
+	public void testLongToLongPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "longVal"), new Property(dataObject, "longPrimitiveVal"), null);
 		
-		dataObject.setBooleanPrimativeVal(true);
-		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimativeVal());
-		assertEquals("Boolean value does not match", new Boolean(true), dataObject.getBooleanVal());
+		dataObject.setLongPrimitiveVal((long)110);
+		assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("Long value does not match", new Long((long)110), dataObject.getLongVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setBooleanVal(new Boolean(false));
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
-		assertEquals("Boolean value does not match", new Boolean(false), dataObject.getBooleanVal());
+		dataObject.setLongVal(new Long((long)70));
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("Long value does not match", new Long((long)70), dataObject.getLongVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
-		dataObject.setBooleanVal(null);
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
-		assertNull("Boolean value does not match", dataObject.getBooleanVal());
+		dataObject.setLongVal(null);
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
+		assertNull("Long value does not match", dataObject.getLongVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 	}
 	
-	public void testObjectToBooleanPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "booleanPrimativeVal"), null);
+	public void testObjectToLongPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "longPrimitiveVal"), null);
 		
-		dataObject.setBooleanPrimativeVal(true);
-		assertEquals("boolean value does not match", true, dataObject.getBooleanPrimativeVal());
-		assertEquals("Object value does not match", new Boolean(true), dataObject.getObjectVal());
+		dataObject.setLongPrimitiveVal((long)110);
+		assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("Object value does not match", new Long((long)110), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setObjectVal(new Boolean(false));
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
-		assertEquals("Object value does not match", new Boolean(false), dataObject.getObjectVal());
+		dataObject.setObjectVal(new Long((long)70));
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
+		assertEquals("Object value does not match", new Long((long)70), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setObjectVal(null);
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
 		assertNull("Object value does not match", dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		Object object = new Object();
 		dataObject.setObjectVal(object);
-		assertEquals("boolean value does not match", false, dataObject.getBooleanPrimativeVal());
+		assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
 		assertSame("Object value does not match", object, dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 	
 	public class TestDataObject extends ModelObject {
-		private boolean booleanPrimativeValue;
+		private long longPrimitiveValue;
 		private String stringVal;
-		private Boolean booleanVal;
+		private Long longVal;
 		private Object objectVal;
 		
-		public Boolean getBooleanVal() {
-			return booleanVal;
+		public Long getLongVal() {
+			return longVal;
 		}
-		public void setBooleanVal(Boolean booleanVal) {
-			Object oldVal = this.booleanVal;
-			this.booleanVal = booleanVal;
-			firePropertyChange("booleanVal", oldVal, this.booleanVal);
+		public void setLongVal(Long longVal) {
+			Object oldVal = this.longVal;
+			this.longVal = longVal;
+			firePropertyChange("longVal", oldVal, this.longVal);
 		}
 
-		public boolean getBooleanPrimativeVal() {
-			return booleanPrimativeValue;
+		public long getLongPrimitiveVal() {
+			return longPrimitiveValue;
 		}
-		public void setBooleanPrimativeVal(boolean booleanPrimativeValue) {
-			boolean oldVal = this.booleanPrimativeValue;
-			this.booleanPrimativeValue = booleanPrimativeValue;
-			firePropertyChange("booleanPrimativeVal", new Boolean(oldVal), new Boolean(this.booleanPrimativeValue));
+		public void setLongPrimitiveVal(long longPrimitiveValue) {
+			long oldVal = this.longPrimitiveValue;
+			this.longPrimitiveValue = longPrimitiveValue;
+			firePropertyChange("longPrimitiveVal", new Long(oldVal), new Long(this.longPrimitiveValue));
 		}
 		
 		public String getStringVal() {

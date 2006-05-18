@@ -19,38 +19,38 @@ import junit.framework.TestCase;
  */
 public class ObjectToPrimitiveValidatorTest extends TestCase {
 
-	private ObjectToPrimativeValidator objectToPrimativeValidator;
+	private ObjectToPrimitiveValidator objectToPrimitiveValidator;
 	
 	protected void setUp() throws Exception {
-		this.objectToPrimativeValidator = new ObjectToPrimativeValidator(Integer.TYPE);
+		this.objectToPrimitiveValidator = new ObjectToPrimitiveValidator(Integer.TYPE);
 	}
 
 	/**
-	 * Test method for {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimativeValidator#isPartiallyValid(java.lang.Object)}.
+	 * Test method for {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator#isPartiallyValid(java.lang.Object)}.
 	 */
 	public void testIsPartiallyValid() {
-		ValidationError result = this.objectToPrimativeValidator.isPartiallyValid(null);
-		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimativeValidator.getNullHint());
+		ValidationError result = this.objectToPrimitiveValidator.isPartiallyValid(null);
+		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimitiveValidator.getNullHint());
 
-		result = this.objectToPrimativeValidator.isPartiallyValid(new Integer(1));
+		result = this.objectToPrimitiveValidator.isPartiallyValid(new Integer(1));
 		assertNull("No validation error should be found.", result);
 		
-		result = this.objectToPrimativeValidator.isPartiallyValid(new Object());
-		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimativeValidator.getClassHint());
+		result = this.objectToPrimitiveValidator.isPartiallyValid(new Object());
+		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimitiveValidator.getClassHint());
 	}
 
 	/**
-	 * Test method for {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimativeValidator#isValid(java.lang.Object)}.
+	 * Test method for {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator#isValid(java.lang.Object)}.
 	 */
 	public void testIsValid() {
-		ValidationError result = this.objectToPrimativeValidator.isValid(null);
-		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimativeValidator.getNullHint());
+		ValidationError result = this.objectToPrimitiveValidator.isValid(null);
+		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimitiveValidator.getNullHint());
 
-		result = this.objectToPrimativeValidator.isValid(new Integer(1));
+		result = this.objectToPrimitiveValidator.isValid(new Integer(1));
 		assertNull("No validation error should be found.", result);
 		
-		result = this.objectToPrimativeValidator.isValid(new Object());
-		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimativeValidator.getClassHint());
+		result = this.objectToPrimitiveValidator.isValid(new Object());
+		assertEquals("The wrong validation error was found.", result.message, this.objectToPrimitiveValidator.getClassHint());
 	}
 
 }

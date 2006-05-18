@@ -15,18 +15,18 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 
 /**
- * ConvertString2FloatPrimative.
+ * ConvertString2LongPrimitive.
  */
-public class ConvertString2FloatPrimative implements IConverter {
+public class ConvertString2LongPrimitive implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
         try {
-            return new Float(Float.parseFloat((String) source));
+            return new Long(Long.parseLong((String) source));
         } catch (Exception e) {
-            throw new IllegalArgumentException("String2Float: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("String2Long: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
         }
 	}
 
@@ -35,7 +35,7 @@ public class ConvertString2FloatPrimative implements IConverter {
 	}
 
 	public Object getToType() {
-		return Float.TYPE;
+		return Long.TYPE;
 	}
 
 }

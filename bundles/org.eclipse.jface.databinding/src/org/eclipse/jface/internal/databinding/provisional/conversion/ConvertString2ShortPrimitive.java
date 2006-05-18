@@ -15,9 +15,9 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 
 /**
- * ConvertString2ShortPrimative.
+ * ConvertString2ShortPrimitive.
  */
-public class ConvertString2ShortPrimative implements IConverter {
+public class ConvertString2ShortPrimitive implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

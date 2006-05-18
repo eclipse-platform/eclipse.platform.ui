@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Boolean.
  */
-public class ConvertString2Boolean extends ConvertString2BooleanPrimative {
+public class ConvertString2Boolean extends ConvertString2BooleanPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

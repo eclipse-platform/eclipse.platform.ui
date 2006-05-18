@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Long.
  */
-public class ConvertString2Short extends ConvertString2ShortPrimative {
+public class ConvertString2Short extends ConvertString2ShortPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

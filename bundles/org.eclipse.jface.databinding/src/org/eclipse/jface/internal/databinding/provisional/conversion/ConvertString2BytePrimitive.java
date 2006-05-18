@@ -15,18 +15,18 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 
 /**
- * ConvertString2IntegerPrimative.
+ * ConvertString2BytePrimitive.
  */
-public class ConvertString2IntegerPrimative implements IConverter {
+public class ConvertString2BytePrimitive implements IConverter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
         try {
-            return new Integer(Integer.parseInt((String) source));
+            return new Byte(Byte.parseByte((String) source));
         } catch (Exception e) {
-            throw new IllegalArgumentException("String2Int: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("String2Byte: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
         }
 	}
 
@@ -35,7 +35,7 @@ public class ConvertString2IntegerPrimative implements IConverter {
 	}
 
 	public Object getToType() {
-		return Integer.TYPE;
+		return Byte.TYPE;
 	}
 
 }

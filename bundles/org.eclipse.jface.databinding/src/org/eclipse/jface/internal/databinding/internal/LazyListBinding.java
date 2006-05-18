@@ -22,7 +22,6 @@ import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
@@ -98,11 +97,11 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @param model
 	 * @param bindSpec
 	 */
-	public LazyListBinding(DataBindingContext context, IObservable targetList,
-			IObservableList modelList, BindSpec bindSpec) {
+	public LazyListBinding(DataBindingContext context, ILazyDataRequestor targetList,
+			ILazyListElementProvider modelList, BindSpec bindSpec) {
 		super(context);
-		this.targetList = (ILazyDataRequestor) targetList;
-		this.modelList = (ILazyListElementProvider) modelList;
+		this.targetList = targetList;
+		this.modelList = modelList;
 		this.targetList.addElementProvider(this);
 		lazyInsertDeleteProvider = new DelegatingInsertDeleteProvider(bindSpec.getLazyInsertDeleteProvider());
 		this.targetList.addInsertDeleteProvider(lazyInsertDeleteProvider);

@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Integer.
  */
-public class ConvertString2Integer extends ConvertString2IntegerPrimative {
+public class ConvertString2Integer extends ConvertString2IntegerPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

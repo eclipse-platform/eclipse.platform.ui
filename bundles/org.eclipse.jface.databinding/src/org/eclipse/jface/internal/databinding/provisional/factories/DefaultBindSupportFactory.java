@@ -24,21 +24,21 @@ import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityCon
 import org.eclipse.jface.internal.databinding.provisional.conversion.ToStringConverter;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ReadOnlyValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2BigDecimalValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2BytePrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2BytePrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2ByteValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2DateValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2DoublePrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2DoublePrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2DoubleValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2FloatPrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2FloatPrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2FloatValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2IntegerPrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2IntegerPrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2IntegerValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2LongPrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2LongPrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2LongValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.String2ShortPrimativeValidator;
+import org.eclipse.jface.internal.databinding.provisional.validation.String2ShortPrimitiveValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.String2ShortValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
@@ -223,7 +223,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", INTEGER_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2IntegerPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", INTEGER_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2IntegerPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -241,7 +241,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", BYTE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BytePrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", BYTE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BytePrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -260,7 +260,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", DOUBLE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2DoublePrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", DOUBLE_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2DoublePrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -278,7 +278,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", BOOLEAN_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BooleanPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", BOOLEAN_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2BooleanPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -296,7 +296,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", FLOAT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2FloatPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", FLOAT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2FloatPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -315,7 +315,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", SHORT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2ShortPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", SHORT_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2ShortPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -334,7 +334,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			converterMap
 					.put(
 							new Pair(
-									"java.lang.String", LONG_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2LongPrimative"); //$NON-NLS-1$ //$NON-NLS-2$
+									"java.lang.String", LONG_TYPE), "org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2LongPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(
@@ -575,17 +575,17 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 		private ValidatorRegistry() {
 			// Standalone validators here...
 			associate(String.class, Integer.TYPE,
-					new String2IntegerPrimativeValidator());
+					new String2IntegerPrimitiveValidator());
 			associate(String.class, Byte.TYPE,
-					new String2BytePrimativeValidator());
+					new String2BytePrimitiveValidator());
 			associate(String.class, Short.TYPE,
-					new String2ShortPrimativeValidator());
+					new String2ShortPrimitiveValidator());
 			associate(String.class, Long.TYPE,
-					new String2LongPrimativeValidator());
+					new String2LongPrimitiveValidator());
 			associate(String.class, Float.TYPE,
-					new String2FloatPrimativeValidator());
+					new String2FloatPrimitiveValidator());
 			associate(String.class, Double.TYPE,
-					new String2DoublePrimativeValidator());
+					new String2DoublePrimitiveValidator());
 
 			associate(String.class, Integer.class, new String2IntegerValidator());
 			associate(String.class, Byte.class, new String2ByteValidator());
@@ -599,21 +599,21 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 					new String2BigDecimalValidator());
 
 
-			associate(Integer.class, Integer.TYPE, new ObjectToPrimativeValidator(Integer.TYPE));
-			associate(Byte.class, Byte.TYPE, new ObjectToPrimativeValidator(Byte.TYPE));
-			associate(Short.class, Short.TYPE, new ObjectToPrimativeValidator(Short.TYPE));
-			associate(Long.class, Long.TYPE, new ObjectToPrimativeValidator(Long.TYPE));
-			associate(Float.class, Float.TYPE, new ObjectToPrimativeValidator(Float.TYPE));
-			associate(Double.class, Double.TYPE, new ObjectToPrimativeValidator(Double.TYPE));
-			associate(Boolean.class, Boolean.TYPE, new ObjectToPrimativeValidator(Boolean.TYPE));
+			associate(Integer.class, Integer.TYPE, new ObjectToPrimitiveValidator(Integer.TYPE));
+			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(Byte.TYPE));
+			associate(Short.class, Short.TYPE, new ObjectToPrimitiveValidator(Short.TYPE));
+			associate(Long.class, Long.TYPE, new ObjectToPrimitiveValidator(Long.TYPE));
+			associate(Float.class, Float.TYPE, new ObjectToPrimitiveValidator(Float.TYPE));
+			associate(Double.class, Double.TYPE, new ObjectToPrimitiveValidator(Double.TYPE));
+			associate(Boolean.class, Boolean.TYPE, new ObjectToPrimitiveValidator(Boolean.TYPE));
 			
-			associate(Object.class, Integer.TYPE, new ObjectToPrimativeValidator(Integer.TYPE));
-			associate(Object.class, Byte.TYPE, new ObjectToPrimativeValidator(Byte.TYPE));
-			associate(Object.class, Short.TYPE, new ObjectToPrimativeValidator(Short.TYPE));
-			associate(Object.class, Long.TYPE, new ObjectToPrimativeValidator(Long.TYPE));
-			associate(Object.class, Float.TYPE, new ObjectToPrimativeValidator(Float.TYPE));
-			associate(Object.class, Double.TYPE, new ObjectToPrimativeValidator(Double.TYPE));
-			associate(Object.class, Boolean.TYPE, new ObjectToPrimativeValidator(Boolean.TYPE));
+			associate(Object.class, Integer.TYPE, new ObjectToPrimitiveValidator(Integer.TYPE));
+			associate(Object.class, Byte.TYPE, new ObjectToPrimitiveValidator(Byte.TYPE));
+			associate(Object.class, Short.TYPE, new ObjectToPrimitiveValidator(Short.TYPE));
+			associate(Object.class, Long.TYPE, new ObjectToPrimitiveValidator(Long.TYPE));
+			associate(Object.class, Float.TYPE, new ObjectToPrimitiveValidator(Float.TYPE));
+			associate(Object.class, Double.TYPE, new ObjectToPrimitiveValidator(Double.TYPE));
+			associate(Object.class, Boolean.TYPE, new ObjectToPrimitiveValidator(Boolean.TYPE));
 
 			// Regex-implemented validators here...
 			// associate(String.class, Character.TYPE, new RegexStringValidator(

@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBinding
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.widgets.Widget;
 
-public class DefaultBindSupportFactoryShortPrimativeTest extends TestCase {
+public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
@@ -30,100 +30,100 @@ public class DefaultBindSupportFactoryShortPrimativeTest extends TestCase {
 		ctx = getDatabindingContext();
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
-		dataObject.setShortPrimativeVal((short) 0);
-		dataObject.setShortVal(new Short((short) 0));		
+		dataObject.setDoublePrimitiveVal(0);
+		dataObject.setDoubleVal(new Double(0));		
 	}
 	
-	public void testStringToShortPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "shortPrimativeVal"), null);
+	public void testStringToDoublePrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "doublePrimitiveVal"), null);
 		
-		dataObject.setShortPrimativeVal((short)110);
-		assertEquals("short value does not match", 110, dataObject.getShortPrimativeVal());
-		assertEquals("String value does not match", "110", dataObject.getStringVal());
+		dataObject.setDoublePrimitiveVal(789.5);
+		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("String value does not match", "789.5", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setStringVal("70");
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
-		assertEquals("String value does not match", "70", dataObject.getStringVal());
+		dataObject.setStringVal("910.5");
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("String value does not match", "910.5", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal("");
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
 		assertEquals("String value does not match", "", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal(null);
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
 		assertNull("String value does not match", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 
-	public void testShortToShortPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "shortVal"), new Property(dataObject, "shortPrimativeVal"), null);
+	public void testDoubleToDoublePrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "doubleVal"), new Property(dataObject, "doublePrimitiveVal"), null);
 		
-		dataObject.setShortPrimativeVal((short)110);
-		assertEquals("short value does not match", 110, dataObject.getShortPrimativeVal());
-		assertEquals("Short value does not match", new Short((short)110), dataObject.getShortVal());
+		dataObject.setDoublePrimitiveVal(789.5);
+		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("Double value does not match", new Double(789.5), dataObject.getDoubleVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setShortVal(new Short((short)70));
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
-		assertEquals("Short value does not match", new Short((short)70), dataObject.getShortVal());
+		dataObject.setDoubleVal(new Double(910.5));
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("Double value does not match", new Double(910.5), dataObject.getDoubleVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
-		dataObject.setShortVal(null);
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
-		assertNull("Short value does not match", dataObject.getShortVal());
+		dataObject.setDoubleVal(null);
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertNull("Double value does not match", dataObject.getDoubleVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 	}
 	
-	public void testObjectToShortPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "shortPrimativeVal"), null);
+	public void testObjectToDoublePrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "doublePrimitiveVal"), null);
 		
-		dataObject.setShortPrimativeVal((short)110);
-		assertEquals("short value does not match", 110, dataObject.getShortPrimativeVal());
-		assertEquals("Object value does not match", new Short((short)110), dataObject.getObjectVal());
+		dataObject.setDoublePrimitiveVal(789.5);
+		assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("Object value does not match", new Double(789.5), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setObjectVal(new Short((short)70));
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
-		assertEquals("Object value does not match", new Short((short)70), dataObject.getObjectVal());
+		dataObject.setObjectVal(new Double(910.5));
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
+		assertEquals("Object value does not match", new Double(910.5), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setObjectVal(null);
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
 		assertNull("Object value does not match", dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		Object object = new Object();
 		dataObject.setObjectVal(object);
-		assertEquals("short value does not match", 70, dataObject.getShortPrimativeVal());
+		assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
 		assertSame("Object value does not match", object, dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 	
 	public class TestDataObject extends ModelObject {
-		private short shortPrimativeValue;
+		private double doublePrimitiveValue;
 		private String stringVal;
-		private Short shortVal;
+		private Double doubleVal;
 		private Object objectVal;
 		
-		public Short getShortVal() {
-			return shortVal;
+		public Double getDoubleVal() {
+			return doubleVal;
 		}
-		public void setShortVal(Short shortVal) {
-			Object oldVal = this.shortVal;
-			this.shortVal = shortVal;
-			firePropertyChange("shortVal", oldVal, this.shortVal);
+		public void setDoubleVal(Double doubleVal) {
+			Object oldVal = this.doubleVal;
+			this.doubleVal = doubleVal;
+			firePropertyChange("doubleVal", oldVal, this.doubleVal);
 		}
 
-		public short getShortPrimativeVal() {
-			return shortPrimativeValue;
+		public double getDoublePrimitiveVal() {
+			return doublePrimitiveValue;
 		}
-		public void setShortPrimativeVal(short shortPrimativeValue) {
-			short oldVal = this.shortPrimativeValue;
-			this.shortPrimativeValue = shortPrimativeValue;
-			firePropertyChange("shortPrimativeVal", new Short(oldVal), new Short(this.shortPrimativeValue));
+		public void setDoublePrimitiveVal(double doublePrimitiveValue) {
+			double oldVal = this.doublePrimitiveValue;
+			this.doublePrimitiveValue = doublePrimitiveValue;
+			firePropertyChange("doublePrimitiveVal", new Double(oldVal), new Double(this.doublePrimitiveValue));
 		}
 		
 		public String getStringVal() {

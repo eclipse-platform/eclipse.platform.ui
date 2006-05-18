@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
 /**
  * IntegerValidator.  Validate String to Short data input
  */
-public class String2ShortValidator extends String2ShortPrimativeValidator {
+public class String2ShortValidator extends String2ShortPrimitiveValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)

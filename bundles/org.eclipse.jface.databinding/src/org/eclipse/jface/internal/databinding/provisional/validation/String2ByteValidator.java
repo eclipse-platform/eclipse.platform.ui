@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
 /**
  * IntegerValidator.  Validate String to Byte data input
  */
-public class String2ByteValidator extends String2BytePrimativeValidator {
+public class String2ByteValidator extends String2BytePrimitiveValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)

@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Byte.
  */
-public class ConvertString2Byte extends ConvertString2BytePrimative {
+public class ConvertString2Byte extends ConvertString2BytePrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

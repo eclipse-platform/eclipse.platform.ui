@@ -15,10 +15,10 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * LongValidator.  Validate String to long data input
+ * ByteValidator.  Validate String input for bytes
  */
-public class String2LongPrimativeValidator implements IValidator {
-
+public class String2BytePrimitiveValidator implements IValidator {
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
@@ -29,21 +29,21 @@ public class String2LongPrimativeValidator implements IValidator {
         return ValidationError.error(getHint());
 	}
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
-	 */
-	public ValidationError isValid(Object value) {
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
+     */
+    public ValidationError isValid(Object value) {
         try {
-            Long.parseLong((String)value);
+            Byte.parseByte((String)value);
             return null;
         } catch (Throwable t) {
             return ValidationError.error(getHint());
         }
-    }    
+    }
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		return BindingMessages.getString("Validate_RangeStart") + Byte.MIN_VALUE +  //$NON-NLS-1$
+			BindingMessages.getString("and") + Byte.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

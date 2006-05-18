@@ -15,15 +15,10 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * DoubleValidator.  Verify data input for doubles
- *
- * @author djo
+ * FloatValidator.  Verify string to float data conversion
  */
-public class String2DoublePrimativeValidator implements IValidator {
+public class String2FloatPrimitiveValidator implements IValidator {
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
-	 */
 	public ValidationError isPartiallyValid(Object fragment) {
 		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
             return null;
@@ -31,23 +26,20 @@ public class String2DoublePrimativeValidator implements IValidator {
         return ValidationError.error(getHint());
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
-     */
     public ValidationError isValid(Object value) {
         try {
-            Double.parseDouble((String)value);
+            Float.parseFloat((String)value);
             return null;
-        } catch (Throwable t) {
+        } catch (Exception e) {
             return ValidationError.error(getHint());
         }
     }
 
 	private String getHint() {
 		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
-			BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
-			+ Double.MIN_VALUE + 
-			", " + Double.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
+		+ Float.MIN_VALUE + 
+		", " + Float.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

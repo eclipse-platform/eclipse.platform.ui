@@ -17,7 +17,7 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 /**
  * ShortValidator.  Validate String to short data input
  */
-public class String2ShortPrimativeValidator implements IValidator {
+public class String2ShortPrimitiveValidator implements IValidator {
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)

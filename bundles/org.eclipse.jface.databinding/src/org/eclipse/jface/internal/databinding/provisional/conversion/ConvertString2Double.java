@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Double.
  */
-public class ConvertString2Double extends ConvertString2DoublePrimative {
+public class ConvertString2Double extends ConvertString2DoublePrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

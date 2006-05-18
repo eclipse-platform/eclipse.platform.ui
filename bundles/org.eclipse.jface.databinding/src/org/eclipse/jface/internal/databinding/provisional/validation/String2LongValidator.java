@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
 /**
  * IntegerValidator.  Validate String to Long data input
  */
-public class String2LongValidator extends String2LongPrimativeValidator {
+public class String2LongValidator extends String2LongPrimitiveValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)

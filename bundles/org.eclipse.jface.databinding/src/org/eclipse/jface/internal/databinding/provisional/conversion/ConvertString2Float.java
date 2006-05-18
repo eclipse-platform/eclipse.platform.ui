@@ -17,7 +17,7 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Float.
  */
-public class ConvertString2Float extends ConvertString2FloatPrimative {
+public class ConvertString2Float extends ConvertString2FloatPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)

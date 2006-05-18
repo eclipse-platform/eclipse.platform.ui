@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBinding
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.widgets.Widget;
 
-public class DefaultBindSupportFactoryLongPrimativeTest extends TestCase {
+public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
@@ -30,100 +30,100 @@ public class DefaultBindSupportFactoryLongPrimativeTest extends TestCase {
 		ctx = getDatabindingContext();
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
-		dataObject.setLongPrimativeVal((long) 0);
-		dataObject.setLongVal(new Long((long) 0));		
+		dataObject.setShortPrimitiveVal((short) 0);
+		dataObject.setShortVal(new Short((short) 0));		
 	}
 	
-	public void testStringToLongPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "longPrimativeVal"), null);
+	public void testStringToShortPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "shortPrimitiveVal"), null);
 		
-		dataObject.setLongPrimativeVal((long)110);
-		assertEquals("long value does not match", 110, dataObject.getLongPrimativeVal(), .001);
+		dataObject.setShortPrimitiveVal((short)110);
+		assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
 		assertEquals("String value does not match", "110", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
 		dataObject.setStringVal("70");
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
 		assertEquals("String value does not match", "70", dataObject.getStringVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal("");
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
 		assertEquals("String value does not match", "", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setStringVal(null);
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
 		assertNull("String value does not match", dataObject.getStringVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 
-	public void testLongToLongPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "longVal"), new Property(dataObject, "longPrimativeVal"), null);
+	public void testShortToShortPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "shortVal"), new Property(dataObject, "shortPrimitiveVal"), null);
 		
-		dataObject.setLongPrimativeVal((long)110);
-		assertEquals("long value does not match", 110, dataObject.getLongPrimativeVal(), .001);
-		assertEquals("Long value does not match", new Long((long)110), dataObject.getLongVal());
+		dataObject.setShortPrimitiveVal((short)110);
+		assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
+		assertEquals("Short value does not match", new Short((short)110), dataObject.getShortVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setLongVal(new Long((long)70));
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
-		assertEquals("Long value does not match", new Long((long)70), dataObject.getLongVal());
+		dataObject.setShortVal(new Short((short)70));
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
+		assertEquals("Short value does not match", new Short((short)70), dataObject.getShortVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
-		dataObject.setLongVal(null);
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
-		assertNull("Long value does not match", dataObject.getLongVal());
+		dataObject.setShortVal(null);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
+		assertNull("Short value does not match", dataObject.getShortVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 	}
 	
-	public void testObjectToLongPrimativeConverter() {
-		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "longPrimativeVal"), null);
+	public void testObjectToShortPrimitiveConverter() {
+		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "shortPrimitiveVal"), null);
 		
-		dataObject.setLongPrimativeVal((long)110);
-		assertEquals("long value does not match", 110, dataObject.getLongPrimativeVal(), .001);
-		assertEquals("Object value does not match", new Long((long)110), dataObject.getObjectVal());
+		dataObject.setShortPrimitiveVal((short)110);
+		assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
+		assertEquals("Object value does not match", new Short((short)110), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());
 		
-		dataObject.setObjectVal(new Long((long)70));
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
-		assertEquals("Object value does not match", new Long((long)70), dataObject.getObjectVal());
+		dataObject.setObjectVal(new Short((short)70));
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
+		assertEquals("Object value does not match", new Short((short)70), dataObject.getObjectVal());
 		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
 
 		dataObject.setObjectVal(null);
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
 		assertNull("Object value does not match", dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
 
 		Object object = new Object();
 		dataObject.setObjectVal(object);
-		assertEquals("long value does not match", 70, dataObject.getLongPrimativeVal(), .001);
+		assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
 		assertSame("Object value does not match", object, dataObject.getObjectVal());
 		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
 	}
 	
 	public class TestDataObject extends ModelObject {
-		private long longPrimativeValue;
+		private short shortPrimitiveValue;
 		private String stringVal;
-		private Long longVal;
+		private Short shortVal;
 		private Object objectVal;
 		
-		public Long getLongVal() {
-			return longVal;
+		public Short getShortVal() {
+			return shortVal;
 		}
-		public void setLongVal(Long longVal) {
-			Object oldVal = this.longVal;
-			this.longVal = longVal;
-			firePropertyChange("longVal", oldVal, this.longVal);
+		public void setShortVal(Short shortVal) {
+			Object oldVal = this.shortVal;
+			this.shortVal = shortVal;
+			firePropertyChange("shortVal", oldVal, this.shortVal);
 		}
 
-		public long getLongPrimativeVal() {
-			return longPrimativeValue;
+		public short getShortPrimitiveVal() {
+			return shortPrimitiveValue;
 		}
-		public void setLongPrimativeVal(long longPrimativeValue) {
-			long oldVal = this.longPrimativeValue;
-			this.longPrimativeValue = longPrimativeValue;
-			firePropertyChange("longPrimativeVal", new Long(oldVal), new Long(this.longPrimativeValue));
+		public void setShortPrimitiveVal(short shortPrimitiveValue) {
+			short oldVal = this.shortPrimitiveValue;
+			this.shortPrimitiveValue = shortPrimitiveValue;
+			firePropertyChange("shortPrimitiveVal", new Short(oldVal), new Short(this.shortPrimitiveValue));
 		}
 		
 		public String getStringVal() {

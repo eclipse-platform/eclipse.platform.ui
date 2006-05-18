@@ -15,13 +15,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimativeTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimativeTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryDoublePrimativeTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryFloatPrimativeTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryDoublePrimitiveTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryFloatPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryIntTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryLongPrimativeTest;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryShortPrimativeTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryLongPrimitiveTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryShortPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
@@ -43,14 +43,16 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(SelectionAwareObservableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());
 		addTestSuite(DefaultBindSupportFactoryIntTest.class);
-		addTestSuite(DefaultBindSupportFactoryDoublePrimativeTest.class);
-		addTestSuite(DefaultBindSupportFactoryBytePrimativeTest.class);
-		addTestSuite(DefaultBindSupportFactoryLongPrimativeTest.class);
-		addTestSuite(DefaultBindSupportFactoryShortPrimativeTest.class);
-		addTestSuite(DefaultBindSupportFactoryBooleanPrimativeTest.class);
-		addTestSuite(DefaultBindSupportFactoryFloatPrimativeTest.class);
+		addTestSuite(DefaultBindSupportFactoryDoublePrimitiveTest.class);
+		addTestSuite(DefaultBindSupportFactoryBytePrimitiveTest.class);
+		addTestSuite(DefaultBindSupportFactoryLongPrimitiveTest.class);
+		addTestSuite(DefaultBindSupportFactoryShortPrimitiveTest.class);
+		addTestSuite(DefaultBindSupportFactoryBooleanPrimitiveTest.class);
+		addTestSuite(DefaultBindSupportFactoryFloatPrimitiveTest.class);
 		addTestSuite(ObjectToPrimitiveValidatorTest.class);
 		addTestSuite(IdentityConverterTest.class);
+		addTestSuite(LazyListBindingTest.class);
+		addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
 	}
 
 	/**

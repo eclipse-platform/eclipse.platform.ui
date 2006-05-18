@@ -1,6 +1,13 @@
 Calendar binding tasks:
 =======================
 
+ * Create a Hibernate mapping for a java.util.List Events that we can bind
+ 
+ * Add code to implement insert and deletion using the above listeners
+ * Hook up UI gestures (double-click, insert keypress, delete keypress) to 
+   insert/delete events
+
+
 CalendarableItem(Control)? tasks:
  * Needs an event model (change listeners, etc)  **DONE**
  * Needs to update the control when the item is updated if the control is visible  **DONE**
@@ -12,19 +19,9 @@ DayEditor tasks:
  * Needs an addInsertHandler/removeInsertHandler, ...  **DONE**
  * Needs an addDeleteHandler/removeDeleteHandler, ...  **DONE**
  * Needs an addEditHandler/removeEditHandler, ...      **DONE**
- * Add code to implement insert and deletion using the above listeners
- * Hook up UI gestures (double-click, insert keypress, delete keypress) to 
-   insert/delete events
    
-DayEditor data binding tasks:
- * Write an JavaBeansObservableMap
- * Write a DayEditorObservableMap
- * Write a MapBinding class
- * Write a MapBinding factory or maybe change DefaultBindSupportFactory
- * Write a MapObservableFactory
+DayEditor data binding tasks: **DONE**
 
- * Create a java.util.Map wrapper to our EventModel that we can bind
- 
 In-place editing tasks: (DEFERRED)
  * Show in-place editor when user clicks a CalendarableItemControl (or maybe use
    an SWT Text to begin with)

@@ -15,16 +15,16 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * ByteValidator.  Validate String input for bytes
+ * IntValidator.  Validate String to int data input
  */
-public class String2BytePrimativeValidator implements IValidator {
+public class String2IntegerPrimitiveValidator implements IValidator {
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
 	public ValidationError isPartiallyValid(Object fragment) {
 		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-            return null;
+		    return null;
 
         return ValidationError.error(getHint());
 	}
@@ -34,7 +34,7 @@ public class String2BytePrimativeValidator implements IValidator {
      */
     public ValidationError isValid(Object value) {
         try {
-            Byte.parseByte((String)value);
+            Integer.parseInt((String)value);
             return null;
         } catch (Throwable t) {
             return ValidationError.error(getHint());
@@ -42,8 +42,8 @@ public class String2BytePrimativeValidator implements IValidator {
     }
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Byte.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Byte.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		return BindingMessages.getString("Validate_RangeStart") + Integer.MIN_VALUE +  //$NON-NLS-1$
+			BindingMessages.getString("and") + Integer.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

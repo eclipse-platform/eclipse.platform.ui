@@ -15,26 +15,28 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * IntValidator.  Validate String to int data input
+ * DoubleValidator.  Verify data input for doubles
+ *
+ * @author djo
  */
-public class String2IntegerPrimativeValidator implements IValidator {
+public class String2DoublePrimitiveValidator implements IValidator {
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
 	 */
 	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-		    return null;
+		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
+            return null;
 
         return ValidationError.error(getHint());
 	}
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
+     * @see org.eclipse.jface.viewers.ICellEditorValidator#isValid(java.lang.Object)
      */
     public ValidationError isValid(Object value) {
         try {
-            Integer.parseInt((String)value);
+            Double.parseDouble((String)value);
             return null;
         } catch (Throwable t) {
             return ValidationError.error(getHint());
@@ -42,8 +44,10 @@ public class String2IntegerPrimativeValidator implements IValidator {
     }
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Integer.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Integer.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
+			BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
+			+ Double.MIN_VALUE + 
+			", " + Double.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

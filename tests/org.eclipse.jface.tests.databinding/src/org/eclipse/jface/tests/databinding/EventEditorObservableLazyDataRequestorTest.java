@@ -22,23 +22,17 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorBindingDescription;
-import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor;
+import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestorFactory;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
-import org.eclipse.jface.internal.databinding.internal.LazyListBinding;
-import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
 /**
@@ -61,26 +55,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 	private DataBindingContext getDBC() {
 		DataBindingContext dbc = new DataBindingContext();
 		dbc.addBindingFactory(new DefaultBindingFactory());
-		dbc.addBindingFactory(new IBindingFactory() {
-			public Binding createBinding(DataBindingContext dataBindingContext, IObservable target, IObservable model, BindSpec bindSpec) {
-				if (!(model instanceof IObservableList)) {
-					return null;
-				}
-				if (bindSpec == null) {
-					bindSpec = new BindSpec();
-				}
-				return new LazyListBinding(dataBindingContext, target, (IObservableList) model, bindSpec);
-			}
-		});
-		dbc.addObservableFactory(new IObservableFactory() {
-			public IObservable createObservable(Object description) {
-				if (description instanceof EventEditorBindingDescription) {
-					return new EventEditorObservableLazyDataRequestor(
-							(EventEditorBindingDescription) description);
-				}
-				return null;
-			}
-		});
+		dbc.addObservableFactory(new EventEditorObservableLazyDataRequestorFactory());
 		dbc.addObservableFactory(new BeanObservableFactory(dbc, null, null));
 		dbc.addBindSupportFactory(new DefaultBindSupportFactory());
 		return dbc;

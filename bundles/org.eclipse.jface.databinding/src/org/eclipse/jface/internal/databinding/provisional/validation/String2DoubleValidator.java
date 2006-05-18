@@ -14,7 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
 /**
  * IntegerValidator.  Validate String to Double data input
  */
-public class String2DoubleValidator extends String2DoublePrimativeValidator {
+public class String2DoubleValidator extends String2DoublePrimitiveValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)

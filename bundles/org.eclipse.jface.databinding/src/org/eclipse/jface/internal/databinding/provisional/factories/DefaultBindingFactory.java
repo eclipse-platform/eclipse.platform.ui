@@ -65,18 +65,20 @@ public class DefaultBindingFactory implements IBindingFactory {
 						bindSpec, target.getElementType(), model
 						.getElementType());
 				
-				if (modelObservable instanceof ILazyListElementProvider &&
-						targetObservable instanceof ILazyDataRequestor)
-				{
-					binding = new LazyListBinding(dataBindingContext, target, model, bindSpec);
-				} else {
-					binding = new ListBinding(dataBindingContext, target, model,
-							bindSpec);
-				}
-				return binding;
+				return new ListBinding(dataBindingContext, target, model,
+						bindSpec);
 			}
 			throw new BindingException(
 					"incompatible observable: target is list, model is " + modelObservable.getClass().getName()); //$NON-NLS-1$
+		}
+		if (targetObservable instanceof ILazyDataRequestor
+				&& modelObservable instanceof ILazyListElementProvider) {
+			if (bindSpec == null) {
+				bindSpec = new BindSpec();
+			}
+			return new LazyListBinding(dataBindingContext,
+					(ILazyDataRequestor) targetObservable,
+					(ILazyListElementProvider) modelObservable, bindSpec);
 		}
 		return null;
 	}

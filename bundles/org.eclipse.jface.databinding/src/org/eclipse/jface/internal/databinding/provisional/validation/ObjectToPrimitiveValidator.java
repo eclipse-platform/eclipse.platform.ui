@@ -17,7 +17,7 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
  * @since 3.2
  *
  */
-public class ObjectToPrimativeValidator implements IValidator {
+public class ObjectToPrimitiveValidator implements IValidator {
 	
 	private Class toType;
 	
@@ -32,7 +32,7 @@ public class ObjectToPrimativeValidator implements IValidator {
 			{Boolean.TYPE, Boolean.class},
 	};	
 	
-	public ObjectToPrimativeValidator(Class toType) {
+	public ObjectToPrimitiveValidator(Class toType) {
 		this.toType = toType;
 	}
 	
@@ -73,10 +73,10 @@ public class ObjectToPrimativeValidator implements IValidator {
 	}
 
 	protected String getNullHint() {
-		return BindingMessages.getString("Validate_ConversionToPrimative"); //$NON-NLS-1$
+		return BindingMessages.getString("Validate_ConversionToPrimitive"); //$NON-NLS-1$
 	}
 	
 	protected String getClassHint() {
-		return BindingMessages.getString("Validate_ConversionFromClassToPrimative"); //$NON-NLS-1$
+		return BindingMessages.getString("Validate_ConversionFromClassToPrimitive"); //$NON-NLS-1$
 	}
 }
