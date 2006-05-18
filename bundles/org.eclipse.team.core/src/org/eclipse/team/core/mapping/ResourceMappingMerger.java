@@ -26,7 +26,7 @@ import org.eclipse.team.core.mapping.provider.MergeStatus;
  * delegates the merge of all resources covered by the mappings of the
  * model provider returned from {@link #getModelProvider()} back to the
  * merge context. Subclasses should override the {@link #merge(IMergeContext, IProgressMonitor)}
- * methdo in order to change this behavior.
+ * method in order to change this behavior.
  * 
  * <p>
  * Clients may subclass this class.
@@ -57,7 +57,7 @@ public abstract class ResourceMappingMerger implements IResourceMappingMerger {
 	 * that belong to the model provider of this merger.
      * @param context the context that contains the changes to be merged
      * @return the scheduling rule required by this merger to merge all
-     * the changes in the gibven context belonging to the merger's
+     * the changes in the given context belonging to the merger's
      * model provider.
 	 * @see org.eclipse.team.core.mapping.IResourceMappingMerger#getMergeRule(org.eclipse.team.core.mapping.IMergeContext)
 	 */
