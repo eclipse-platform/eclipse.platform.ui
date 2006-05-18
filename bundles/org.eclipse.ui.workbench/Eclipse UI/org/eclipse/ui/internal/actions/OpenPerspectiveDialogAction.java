@@ -12,13 +12,16 @@
 package org.eclipse.ui.internal.actions;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -66,7 +69,10 @@ public class OpenPerspectiveDialogAction extends Action implements
         IPerspectiveDescriptor desc = dlg.getSelection();
         if (desc != null) {
             try {
-                workbenchWindow.openPage(desc.getId(), null);
+            	IWorkbench workbench = workbenchWindow.getWorkbench();
+				IAdaptable input = ((Workbench) workbench)
+						.getDefaultPageInput();
+				workbenchWindow.openPage(desc.getId(), input);
             } catch (WorkbenchException e) {
                 WorkbenchPlugin.log("Error opening perspective ", e); //$NON-NLS-1$
             }
