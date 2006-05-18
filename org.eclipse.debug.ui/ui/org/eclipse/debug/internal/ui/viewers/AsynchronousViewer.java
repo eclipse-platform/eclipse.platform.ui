@@ -749,6 +749,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		ISelection remaining = doAttemptSelectionToWidget(oldSelection, false);
 		// send out notification if old and new differ
 		fCurrentSelection = newSelectionFromWidget();
+		if (!selectionExists(fCurrentSelection)) {
+			if (selectionExists(oldSelection)) {
+				// old selection exists in the model, but not widget
+				fCurrentSelection = oldSelection;
+			} else {
+				fCurrentSelection = getEmptySelection();
+			}
+		}
 		if (!fCurrentSelection.equals(oldSelection)) {
 			handleInvalidSelection(oldSelection, fCurrentSelection);
 			// if the remaining selection still exists in the model, make it pending

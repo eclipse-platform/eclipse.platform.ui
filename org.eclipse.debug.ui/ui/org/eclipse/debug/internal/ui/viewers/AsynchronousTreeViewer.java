@@ -1629,7 +1629,35 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		} else {
 			return ((TreeItem)parent).indexOf((TreeItem)child);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#selectionExists(org.eclipse.jface.viewers.ISelection)
+	 */
+	protected boolean selectionExists(ISelection selection) {
+		if (!selection.isEmpty() && selection instanceof TreeSelection) {
+			TreeSelection ts = (TreeSelection) selection;
+			TreePath[] paths = ts.getPaths();
+			int matchingPaths = 0;
+			for (int i = 0; i < paths.length; i++) {
+				TreePath path = paths[i];
+				Object element = path.getLastSegment();
+				ModelNode[] nodes = getModel().getNodes(element);
+				if (nodes != null) {
+					for (int j = 0; j < nodes.length; j++) {
+						ModelNode node = nodes[j];
+						if (node.getTreePath().equals(path)) {
+							matchingPaths++;
+							break;
+						}
+					}
+				}
+			}
+			return matchingPaths == paths.length;
+		}
+		return super.selectionExists(selection);
 	}	
+	
 	
 	
 

@@ -172,6 +172,9 @@ public class InstructionPointerManager {
 		
 		// Remove all annotations for the thread
 		removeAnnotations(thread, threadMap);
+		if (threadMap.isEmpty()) {
+			fDebugTargetMap.remove(debugTarget);
+		}
 	}
 	
 	/**
@@ -204,6 +207,17 @@ public class InstructionPointerManager {
 				annotationModel.removeAnnotation(annotation);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the number of targets with cached instruction pointers.
+	 * Used by the test suite.
+	 * 
+	 * @return the number of targets with cached instruction pointers
+	 * @since 3.2
+	 */
+	public int getCachedTargetCount() {
+		return fDebugTargetMap.size();
 	}
 	
 }

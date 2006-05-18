@@ -96,14 +96,14 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 				IStackFrame lookupFrame = fTarget;
 				ISourceLocator lookupLocator = fLocator;
 				
-				if (lookupFrame != null && lookupLocator != null) {
+				if (lookupFrame != null && lookupLocator != null && !lookupFrame.isTerminated()) {
 					ISourceLookupResult result = null;
 					result = DebugUITools.lookupSource(lookupFrame, lookupLocator);
 					synchronized (StackFrameSourceDisplayAdapter.this) {
 						fPrevResult = (SourceLookupResult)result;
 						fPrevFrame = lookupFrame;
 					}
-					if (!monitor.isCanceled() && fPage != null) {
+					if (!monitor.isCanceled() && fPage != null && !lookupFrame.isTerminated()) {
 						fSourceDisplayJob.setDisplayInfo(result, fPage);
 						fSourceDisplayJob.schedule();
 					}
@@ -141,6 +141,13 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		public synchronized IStatus runInUIThread(IProgressMonitor monitor) {
 			if (!monitor.isCanceled() && fResult != null && fPage != null) {
 				DebugUITools.displaySource(fResult, fPage);
+				// termination may have occurred while displaying source
+				if (monitor.isCanceled()) {
+					Object artifact = fResult.getArtifact();
+					if (artifact instanceof IStackFrame) {
+						clearSourceSelection(((IStackFrame)artifact).getThread());
+					}
+				}
 			}
 			setDisplayInfo(null, null);
 			return Status.OK_STATUS;
@@ -161,7 +168,6 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 			fSourceLookupJob.setLookupInfo(frame, frame.getLaunch().getSourceLocator(), page);
 			fSourceLookupJob.schedule();
 		}
-		
 	}
 	
 	/**
@@ -196,6 +202,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 			if (fPrevFrame.getDebugTarget().equals(target)) {
 				fPrevFrame = null;
 				fPrevResult = null;
+				fSourceDisplayJob.cancel();
 			}
 		}
 	}
