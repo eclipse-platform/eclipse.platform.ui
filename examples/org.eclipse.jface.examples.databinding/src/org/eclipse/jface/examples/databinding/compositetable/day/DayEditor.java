@@ -244,9 +244,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private void setSelectionByDayAndRow(int day, int row, CalendarableItem aboutToSelect) {
 		int dayRow = convertViewportRowToDayRow(row);
-		if (aboutToSelect == null)
+		if (aboutToSelect == null && dayRow >= 0)
 			aboutToSelect = getFirstCalendarableAt(day, dayRow);
-		if (aboutToSelect == null) {
+		if (aboutToSelect == null || dayRow < 0) {
 			aboutToSelect = getAllDayCalendarableAt(day, row + compositeTable.getTopRow());
 		}
 		selectCalenderableControl(aboutToSelect);
@@ -769,7 +769,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public void setStartDate(Date startDate) {
 		List removedDays = model.setStartDate(startDate);
-		findEventRowsForNewDays(startDate);
+		computeEventRowsForNewDays(startDate);
 		if (daysHeader != null) {
 			refreshColumnHeaders(daysHeader.getColumns());
 		}
@@ -794,6 +794,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		List removedDays = model.refresh(date);
 		freeObsoleteCalendarableEventControls(removedDays);
 		updateVisibleRows();
+		computeEventRowsForDate(date);
 		layoutEventControls();
 	}
 	
@@ -803,24 +804,21 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
 	 */
 	public void refresh() {
-		/*
-		 * FIXME: refesh() and refresh(Date) are currently totally broken!!!
-		 */
-//		if (!refreshing) {
-//			refreshing = true;
-//			Display.getCurrent().asyncExec(new Runnable() {
-//				public void run() {
-//					Date dateToRefresh = getStartDate();
-//					GregorianCalendar gc = new GregorianCalendar();
-//					gc.setTime(dateToRefresh);
-//					for (int i=0; i < getNumberOfDays(); ++i) {
-//						refresh(gc.getTime());
-//						gc.add(Calendar.DATE, 1);
-//					}
-//					refreshing = false;
-//				}
-//			});
-//		}
+		if (!refreshing) {
+			refreshing = true;
+			Display.getCurrent().asyncExec(new Runnable() {
+				public void run() {
+					Date dateToRefresh = getStartDate();
+					GregorianCalendar gc = new GregorianCalendar();
+					gc.setTime(dateToRefresh);
+					for (int i=0; i < getNumberOfDays(); ++i) {
+						refresh(gc.getTime());
+						gc.add(Calendar.DATE, 1);
+					}
+					refreshing = false;
+				}
+			});
+		}
 	}
 
 	/* (non-Javadoc)
@@ -958,7 +956,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		for (Iterator iter = columns.iterator(); iter.hasNext();) {
 			CLabel headerLabel = (CLabel) iter.next();
 			headerLabel.setText(formatter.format(gc.getTime()));
-			gc.add(Calendar.DAY_OF_MONTH, 1);
+			gc.add(Calendar.DATE, 1);
 		}
 	}
 	
@@ -972,15 +970,37 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 	
-	private void findEventRowsForNewDays(Date startDate) {
+	private void computeEventRowsForDate(Date date) {
+		GregorianCalendar targetDate = new GregorianCalendar();
+		targetDate.setTime(date);
+		GregorianCalendar target = new GregorianCalendar();
+		target.setTime(model.getStartDate());
 		EventLayoutComputer dayModel = new EventLayoutComputer(model.getNumberOfDivisionsInHour());
-		for (int day=0; day < model.getNumberOfDays(); ++day) {
-			if (model.getNumberOfColumnsWithinDay(day) == -1) {
-				List events = model.getCalendarableItems(day);
-				CalendarableItem[][] eventLayout = dayModel.computeEventLayout(events);
-				model.setEventLayout(day, eventLayout);
+		for (int dayOffset=0; dayOffset < model.getNumberOfDays(); ++dayOffset) {
+			if (target.get(Calendar.DATE) == targetDate.get(Calendar.DATE) &&
+				target.get(Calendar.MONTH) == targetDate.get(Calendar.MONTH) &&
+				target.get(Calendar.YEAR) == targetDate.get(Calendar.YEAR)) 
+			{
+				computeEventLayout(dayModel, dayOffset);
+				break;
+			}
+			target.add(Calendar.DATE, 1);
+		}
+	}
+	
+	private void computeEventRowsForNewDays(Date startDate) {
+		EventLayoutComputer dayModel = new EventLayoutComputer(model.getNumberOfDivisionsInHour());
+		for (int dayOffset=0; dayOffset < model.getNumberOfDays(); ++dayOffset) {
+			if (model.getNumberOfColumnsWithinDay(dayOffset) == -1) {
+				computeEventLayout(dayModel, dayOffset);
 			}
 		}
+	}
+
+	private void computeEventLayout(EventLayoutComputer dayModel, int dayOffset) {
+		List events = model.getCalendarableItems(dayOffset);
+		CalendarableItem[][] eventLayout = dayModel.computeEventLayout(events);
+		model.setEventLayout(dayOffset, eventLayout);
 	}
 
 	private void layoutEventControlsDeferred() {

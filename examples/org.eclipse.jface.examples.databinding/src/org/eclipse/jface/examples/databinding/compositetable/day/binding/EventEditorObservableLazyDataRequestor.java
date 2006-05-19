@@ -37,6 +37,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRe
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.swt.SWT;
 
 /**
  * An Observable for IEventEditor objects.
@@ -426,33 +427,8 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			Object sourceElement,
 			int eventPosition, 
 			int eventLength) {
-		/*
-		 * 
-		 */
-		if (eventLength == 1) {
-			item.setDate(getBeginningDate(sourceElement));
-			item.setStartTime(getBeginningTime(sourceElement));
-			item.setEndTime(getEndingTime(sourceElement));
-		} else { // multiday event
-			if (eventPosition == 0) { // first day of event
-				Date day = getBeginningDate(sourceElement);
-				item.setDate(day);
-				item.setStartTime(getBeginningTime(sourceElement));
-				item.setEndTime(setToEndOfDay(day));
-			} else if (eventPosition == eventLength - 1) { // last day of event
-				Date beginningOfEndDay = setToStartOfDay(getEndingTime(sourceElement));
-				item.setDate(beginningOfEndDay);
-				item.setStartTime(beginningOfEndDay);
-				item.setEndTime(getEndingTime(sourceElement));
-			} else { // in between first and last day of event
-				Date day = incrementDay(getBeginningDate(sourceElement), eventPosition);
-				Date startOfDay = setToStartOfDay(day);
-				item.setDate(startOfDay);
-				item.setStartTime(startOfDay);
-				item.setEndTime(setToEndOfDay(day));
-			}
-		}
 
+		// Optional bindings first...
 		if (allDayEventPropertyName != null) {
 			bindCalendarableItem(
 					item, CalendarableItem.PROP_ALL_DAY_EVENT, 
@@ -472,6 +448,38 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			bindCalendarableItem(
 					item, CalendarableItem.PROP_IMAGE, 
 					sourceElement, imagePropertyName, null);
+		}
+		
+		// Now the standard bindings...
+		item.setContinued(SWT.NULL);
+		if (eventLength == 1) {
+			item.setDate(getBeginningDate(sourceElement));
+			item.setStartTime(getBeginningTime(sourceElement));
+			item.setEndTime(getEndingTime(sourceElement));
+		} else { // multiday event
+			if (eventPosition == 0) { // first day of event
+				Date day = getBeginningDate(sourceElement);
+				item.setDate(day);
+				item.setStartTime(getBeginningTime(sourceElement));
+				item.setEndTime(setToEndOfDay(day));
+				if (!item.isAllDayEvent())
+					item.setContinued(SWT.BOTTOM);
+			} else if (eventPosition == eventLength - 1) { // last day of event
+				Date beginningOfEndDay = setToStartOfDay(getEndingTime(sourceElement));
+				item.setDate(beginningOfEndDay);
+				item.setStartTime(beginningOfEndDay);
+				item.setEndTime(getEndingTime(sourceElement));
+				if (!item.isAllDayEvent())
+					item.setContinued(SWT.TOP);
+			} else { // in between first and last day of event
+				Date day = incrementDay(getBeginningDate(sourceElement), eventPosition);
+				Date startOfDay = setToStartOfDay(day);
+				item.setDate(startOfDay);
+				item.setStartTime(startOfDay);
+				item.setEndTime(setToEndOfDay(day));
+				if (!item.isAllDayEvent())
+					item.setContinued(SWT.TOP | SWT.BOTTOM);
+			}
 		}
 	}
 

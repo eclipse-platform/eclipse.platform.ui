@@ -146,21 +146,50 @@ public class CalendarableItemControl extends Canvas  {
 		return clipping;
 	}
 	
+	private int continued;
+	
+	/**
+	 * Sets the continued style bits
+	 * @param continued  One of SWT.TOP or SWT.BOTTOM
+	 */
+	public void setContinued(int continued) {
+		this.continued = continued;
+	}
+	
+	/**
+	 * @return the continued style bits
+	 */
+	public int getContinued() {
+		return continued;
+	}
+	
 	private PaintListener paintListener = new PaintListener() {
 		public void paintControl(PaintEvent e) {
 			Rectangle bounds = getBounds();
 			Color savedForeground = e.gc.getForeground();
 			Color savedBackground = e.gc.getBackground();
-			e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-			e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-			if ((clipping & SWT.TOP) != 0) {
+			if ((continued & SWT.TOP) != 0 && (clipping & SWT.TOP) == 0) {
+				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			} else {
+				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+			}
+			if ((clipping & SWT.TOP) != 0 || (continued & SWT.TOP) != 0) {
 				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += 2*MARGIN + 3) {
 					int[] arrowPoints = new int[] {arrow, MARGIN-1, arrow + MARGIN, 0, arrow + 2 * MARGIN, MARGIN-1};
 					e.gc.fillPolygon(arrowPoints);
 					e.gc.drawPolygon(arrowPoints);
 				}
 			}
-			if ((clipping & SWT.BOTTOM) != 0) {
+			if ((continued & SWT.BOTTOM) != 0 && (clipping & SWT.BOTTOM) == 0) {
+				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			} else {
+				e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+				e.gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+			}
+			if ((clipping & SWT.BOTTOM) != 0 || (continued & SWT.BOTTOM) != 0) {
 				int bottom = bounds.height-1;
 				int marginBottom = bounds.height - MARGIN;
 				for (int arrow = MARGIN; arrow < bounds.width - 2*MARGIN; arrow += 2*MARGIN + 3) {

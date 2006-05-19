@@ -70,6 +70,11 @@ public class CalendarableItem extends ModelObject {
 	public static final String PROP_ALL_DAY_EVENT = "allDayEvent";
 
 	/**
+	 * A constant representing the name of the continued property.
+	 */
+	public static final String PROP_CONTINUED = "continued";
+
+	/**
 	 * A comparator for CalendarableItem objects
 	 */
 	public static final Comparator comparator = new Comparator() {
@@ -440,7 +445,30 @@ public class CalendarableItem extends ModelObject {
 		this.control = control;
 		if (control != null) {
 			control.setCalendarableItem(this);
+			control.setContinued(continued);
 		}
+	}
+
+	private int continued;
+	
+	/**
+	 * Sets the "To be continued..." bitmask indicating that this event is
+	 * continued on the next or previous days respectively.
+	 * 
+	 * @param continued One or both of SWT.TOP or SWT.BOTTOM
+	 */
+	public void setContinued(int continued) {
+		this.continued = continued;
+		if (control != null) {
+			control.setContinued(continued);
+		}
+	}
+	
+	/**
+	 * @return The continued bitmask
+	 */
+	public int getContinued() {
+		return continued;
 	}
 
 }
