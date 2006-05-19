@@ -158,4 +158,14 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		writeLines((String[]) paths.toArray(new String[paths.size()]));
 	}
 
+	public boolean hasMoe(IFile file) throws CoreException {
+		ModelObjectElementFile[] files = getModelObjectElementFiles();
+		for (int i = 0; i < files.length; i++) {
+			ModelObjectElementFile child = files[i];
+			if (child.getResource().equals(file))
+				return true;
+		}
+		return false;
+	}
+
 }
