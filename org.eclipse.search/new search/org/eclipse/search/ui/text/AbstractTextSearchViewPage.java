@@ -451,6 +451,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Determines whether the provided selection can be used to remove matches from the result.
+	 * @since 3.2
 	 */
 	protected boolean canRemoveMatchesWith(ISelection selection) {
 		return !selection.isEmpty();
@@ -542,6 +543,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		};
 	}
 
+	/**
+	 * Posts a  UI update to make sure an element is selected.
+	 * @since 3.2
+	 */
     protected void postEnsureSelection() {
         fScheduleEnsureSelection= true;
         scheduleUIUpdate();
