@@ -170,8 +170,8 @@ public class ModelMerger extends ResourceMappingMerger {
 				// First determine the element files and element file changes
 				IResourceDiff remoteChange = (IResourceDiff)twd.getRemoteChange();
 				IResource[] localElements = getReferencedResources(resource);
-				IResource[] baseElements = getReferencedResources(remoteChange.getBeforeState(), monitor);
-				IResource[] remoteElements = getReferencedResources(remoteChange.getAfterState(), monitor);
+				IResource[] baseElements = getReferencedResources(resource.getProject().getName(), remoteChange.getBeforeState(), monitor);
+				IResource[] remoteElements = getReferencedResources(resource.getProject().getName(), remoteChange.getAfterState(), monitor);
 				IResource[] addedElements = getAddedElements(baseElements, remoteElements);
 				// Trick: The removed elements can be obtained by reversing the base and remote and looking for added
 				IResource[] removedElements = getAddedElements(remoteElements, baseElements);
@@ -263,14 +263,14 @@ public class ModelMerger extends ResourceMappingMerger {
 
 	private IResource[] getReferencedResources(IResource resource) throws CoreException {
 		if (resource instanceof IFile && resource.exists()) {
-			return ModelObjectDefinitionFile.getReferencedResources((IFile) resource);
+			return ModelObjectDefinitionFile.getReferencedResources(resource.getProject().getName(), (IFile) resource);
 		}
 		return new IResource[0];
 	}
 	
-	private IResource[] getReferencedResources(IFileRevision revision, IProgressMonitor monitor) throws CoreException {
+	private IResource[] getReferencedResources(String projectName, IFileRevision revision, IProgressMonitor monitor) throws CoreException {
 		if (revision != null) {
-			return ModelObjectDefinitionFile.getReferencedResources(revision.getStorage(monitor));
+			return ModelObjectDefinitionFile.getReferencedResources(projectName, revision.getStorage(monitor));
 		} 
 		return new IResource[0];
 	}

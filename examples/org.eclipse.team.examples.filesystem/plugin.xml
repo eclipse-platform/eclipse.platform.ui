@@ -454,6 +454,7 @@
    <!-- ================================================================================ -->
    <extension
          id="modelProvider"
+         name="Example Model"
          point="org.eclipse.core.resources.modelProviders">
       <modelProvider class="org.eclipse.team.examples.model.mapping.ExampleModelProvider"/>
       <extends-model id="org.eclipse.core.resources.modelProvider"/>
@@ -477,6 +478,7 @@
                adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
                class="org.eclipse.team.examples.model.ui.AdapterFactory">
             <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
+            <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
          </factory>
       </extension>
       <extension

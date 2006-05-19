@@ -36,13 +36,28 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	private ICommonContentExtensionSite extensionSite;
 	private boolean isWorkspaceRoot;
 	private Viewer viewer;
+	private final boolean updateViewer;
+
+	public ModelNavigatorContentProvider() {
+		super();
+		updateViewer = true;
+	}
+	
+	/**
+	 * Create a contentProvider
+	 * @param updateViewer whether this content provider is reponsible for updating the viewer
+	 */
+	public ModelNavigatorContentProvider(boolean updateViewer) {
+		this.updateViewer = updateViewer;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
 	public void init(ICommonContentExtensionSite aConfig) {
 		extensionSite = aConfig;
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		if (updateViewer)
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/* (non-Javadoc)

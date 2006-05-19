@@ -32,15 +32,15 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return false;
 	}
 	
-	public static IResource[] getReferencedResources(IStorage storage) throws CoreException {
+	public static IResource[] getReferencedResources(String projectName, IStorage storage) throws CoreException {
 		List result = new ArrayList();
 		String[] filePaths = readLines(storage);
 		for (int i = 0; i < filePaths.length; i++) {
 			String path = filePaths[i];
-			IFile file = getFile(path);
+			IFile file = getFile(projectName, path);
 			if (file != null 
 					&& file.getFileExtension() != null 
-					&& file.getFileExtension().equals(MODEL_OBJECT_DEFINITION_FILE_EXTENSION)) {
+					&& file.getFileExtension().equals(ModelObjectElementFile.MODEL_OBJECT_ELEMENTFILE_EXTENSION)) {
 				result.add(file);
 			}
 		}
@@ -63,7 +63,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		String[] filePaths = readLines((IFile)getResource());
 		for (int i = 0; i < filePaths.length; i++) {
 			String path = filePaths[i];
-			IFile file = getFile(path);
+			IFile file = getFile(getResource().getProject().getName(), path);
 			if (file != null) {
 				ModelObjectElementFile moeFile = getMoeFile(file);
 				if (moeFile != null)
@@ -111,20 +111,21 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		return null;
 	}
 
-	private static IFile getFile(String path) {
+	private static IFile getFile(String projectName, String path) {
 		if (path.length() == 0)
 			return null;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IStatus status = workspace.validatePath(path, IResource.FILE);
+		IStatus status = workspace.validatePath("/" + projectName + "/" + path, IResource.FILE);
 		if (status.isOK()) {
-			return workspace.getRoot().getFile(new Path(path));
+			IProject project = workspace.getRoot().getProject(projectName);
+			return project.getFile(new Path(path));
 		}
 		FileSystemPlugin.log(status);
 		return null;
 	}
 
 	public void addMoe(IFile file) throws CoreException {
-		((IFile)getResource()).appendContents(new ByteArrayInputStream(("\n" + file.getFullPath()).getBytes()), false, true, null);
+		((IFile)getResource()).appendContents(new ByteArrayInputStream(("\n" + file.getProjectRelativePath()).getBytes()), false, true, null);
 	}
 
 	public void remove(ModelObjectElementFile file) throws CoreException {
@@ -133,7 +134,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		for (int i = 0; i < files.length; i++) {
 			ModelObjectElementFile child = files[i];
 			if (!child.equals(file)) {
-				paths.add(child.getResource().getFullPath().toString());
+				paths.add(child.getResource().getProjectRelativePath().toString());
 			}
 		}
 		writeLines((String[]) paths.toArray(new String[paths.size()]));
@@ -152,7 +153,7 @@ public class ModelObjectDefinitionFile extends ModelFile {
 		List paths = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			paths.add(resource.getFullPath().toString());
+			paths.add(resource.getProjectRelativePath().toString());
 		}
 		writeLines((String[]) paths.toArray(new String[paths.size()]));
 	}

@@ -15,12 +15,15 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.core.mapping.IResourceMappingMerger;
 import org.eclipse.team.examples.model.ModelObject;
 import org.eclipse.team.examples.model.mapping.*;
+import org.eclipse.team.examples.model.ui.mapping.CompareAdapter;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class AdapterFactory implements IAdapterFactory {
 
 	private IWorkbenchAdapter modelAdapter = new ModelWorkbenchAdapter();
 	private ModelMerger modelMerger;
+	private CompareAdapter compareAdapter;
 	
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType == IWorkbenchAdapter.class && adaptableObject instanceof ModelObject)
@@ -33,6 +36,12 @@ public class AdapterFactory implements IAdapterFactory {
 			}
 			return modelMerger;
 		}
+		if (adapterType == ISynchronizationCompareAdapter.class && adaptableObject instanceof ExampleModelProvider) {
+			if (compareAdapter == null) {
+				compareAdapter = new CompareAdapter((ExampleModelProvider)adaptableObject);
+			}
+			return compareAdapter;
+		}
 		return null;
 	}
 
@@ -40,7 +49,7 @@ public class AdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IWorkbenchAdapter.class, ResourceMapping.class, IResourceMappingMerger.class };
+		return new Class[] { IWorkbenchAdapter.class, ResourceMapping.class, IResourceMappingMerger.class, ISynchronizationCompareAdapter.class };
 	}
 
 }

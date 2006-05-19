@@ -37,6 +37,7 @@ public class ModResourceMapping extends ModelResourceMapping {
 			RemoteResourceMappingContext remoteContext = (RemoteResourceMappingContext) context;
 			if (remoteContext.hasRemoteChange(getResource(), new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN))) {
 				IResource[] remoteResources = ModelObjectDefinitionFile.getReferencedResources(
+						getResource().getProject().getName(), 
 						remoteContext.fetchRemoteContents((IFile)getResource(), 
 								new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)));
 				for (int i = 0; i < remoteResources.length; i++) {
@@ -47,6 +48,7 @@ public class ModResourceMapping extends ModelResourceMapping {
 			if (remoteContext.isThreeWay() 
 					&& remoteContext.hasLocalChange(getResource(), new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN))) {
 				IResource[] remoteResources = ModelObjectDefinitionFile.getReferencedResources(
+						getResource().getProject().getName(),
 						remoteContext.fetchBaseContents((IFile)getResource(), 
 								new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)));
 				for (int i = 0; i < remoteResources.length; i++) {

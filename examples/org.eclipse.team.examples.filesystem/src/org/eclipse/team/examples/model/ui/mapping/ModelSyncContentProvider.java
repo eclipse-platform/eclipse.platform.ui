@@ -14,10 +14,11 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -25,6 +26,7 @@ import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.examples.model.*;
 import org.eclipse.team.examples.model.mapping.ExampleModelProvider;
 import org.eclipse.team.examples.model.ui.ModelNavigatorContentProvider;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.SynchronizationResourceMappingContext;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
 import org.eclipse.ui.navigator.*;
@@ -48,7 +50,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 	 */
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
-		delegate = new ModelNavigatorContentProvider();
+		delegate = new ModelNavigatorContentProvider(getContext() != null);
 		delegate.init(site);
 	}
 	
@@ -90,7 +92,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 			ResourceMappingContext rmc = new SynchronizationResourceMappingContext(context);
 			try {
 				// Technically speaking, this may end up being too long running for this
-				// but it will do for illustration purposes
+				// (i.e. we may end up hitting the server) but it will do for illustration purposes
 				return mapping.getTraversals(rmc, new NullProgressMonitor());
 			} catch (CoreException e) {
 				FileSystemPlugin.log(e.getStatus());
@@ -114,7 +116,9 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 				IDiff diff = diffs[i];
 				IResource resource = ResourceDiffTree.getResourceFor(diff);
 				if (!resource.exists() && ModelObjectDefinitionFile.isModFile(resource)) {
-					allChildren.add(ModelObject.create(resource));
+					ModelObject o = ModelObject.create(resource);
+					if (o != null)
+						allChildren.add(o);
 				}
 			}
 		}
@@ -125,7 +129,9 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 				IDiff diff = diffs[i];
 				IResource resource = ResourceDiffTree.getResourceFor(diff);
 				if (!resource.exists() && ModelObjectElementFile.isMoeFile(resource)) {
-					allChildren.add(ModelObject.create(resource));
+					ModelObject o = new ModelObjectElementFile((ModelObjectDefinitionFile)parent, (IFile)resource);
+					if (o != null)
+						allChildren.add(o);
 				}
 			}
 		}
@@ -222,6 +228,126 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 	public boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
 		// No need to intercept the update
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#diffsChanged(org.eclipse.team.core.diff.IDiffChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void diffsChanged(final IDiffChangeEvent event, IProgressMonitor monitor) {
+		// Override in order to perform custom viewer updates when the diff tree changes
+		Utils.syncExec(new Runnable() {
+			public void run() {
+				handleChange(event);
+			}
+		}, (StructuredViewer)getViewer());
+	}
+
+	void handleChange(IDiffChangeEvent event) {
+		Set existingProjects = getVisibleModelProjects();
+		IProject[] changedProjects = getChangedModelProjects(event);
+		List refreshes = new ArrayList(changedProjects.length);
+		List additions = new ArrayList(changedProjects.length);
+		List removals = new ArrayList(changedProjects.length);
+		for (int i = 0; i < changedProjects.length; i++) {
+			IProject project = changedProjects[i];
+			if (hasVisibleChanges(event.getTree(), project)) {
+				if (existingProjects.contains(project)) {
+					refreshes.add(ModelObject.create(project));
+				} else {
+					additions.add(ModelObject.create(project));
+				}
+			} else if (existingProjects.contains(project)) {
+				removals.add(ModelObject.create(project));
+				
+			}
+		}
+		if (!removals.isEmpty() || !additions.isEmpty() || !refreshes.isEmpty()) {
+			TreeViewer viewer = (TreeViewer)getViewer();
+			Tree tree = viewer.getTree();
+			try {
+				tree.setRedraw(false);
+				if (!additions.isEmpty())
+					viewer.add(viewer.getInput(), additions.toArray());
+				if (!removals.isEmpty())
+					viewer.remove(viewer.getInput(), removals.toArray());
+				if (!refreshes.isEmpty()) {
+					for (Iterator iter = refreshes.iterator(); iter.hasNext();) {
+						Object element = iter.next();
+						viewer.refresh(element);
+					}
+				}
+			} finally {
+				tree.setRedraw(true);
+			}
+		}
+	}
+
+	private boolean hasVisibleChanges(IDiffTree tree, IProject project) {
+		return tree.hasMatchingDiffs(project.getFullPath(), new FastDiffFilter() {
+			public boolean select(IDiff diff) {
+				return isVisible(diff);
+			}
+		});
+	}
+
+	/*
+	 * Return the list of all projects that are model projects
+	 */
+	private IProject[] getChangedModelProjects(IDiffChangeEvent event) {
+		Set result = new HashSet();
+		IDiff[] changes = event.getChanges();
+		for (int i = 0; i < changes.length; i++) {
+			IDiff diff = changes[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null && isModProject(resource.getProject())) {
+				result.add(resource.getProject());
+			}
+		}
+		IDiff[] additions = event.getAdditions();
+		for (int i = 0; i < additions.length; i++) {
+			IDiff diff = additions[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null && isModProject(resource.getProject())) {
+				result.add(resource.getProject());
+			}
+		}
+		IPath[] removals = event.getRemovals();
+		for (int i = 0; i < removals.length; i++) {
+			IPath path = removals[i];
+			if (path.segmentCount() > 0) {
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.segment(0));
+				if (isModProject(project))
+					result.add(project);
+			}
+		}
+		return (IProject[]) result.toArray(new IProject[result.size()]);
+	}
+
+	private boolean isModProject(IProject project) {
+		try {
+			return ModelProject.isModProject(project);
+		} catch (CoreException e) {
+			FileSystemPlugin.log(e.getStatus());
+		}
+		return false;
+	}
+
+	/*
+	 * Return the set of visible model projects
+	 */
+	private Set getVisibleModelProjects() {
+		TreeViewer viewer = (TreeViewer)getViewer();
+		Tree tree = viewer.getTree();
+		TreeItem[] children = tree.getItems();
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			TreeItem control = children[i];
+			Object data = control.getData();
+			if (data instanceof ModelProject) {
+				result.add(((ModelProject) data).getProject());
+			}
+		}
+		return result;
 	}
 
 }

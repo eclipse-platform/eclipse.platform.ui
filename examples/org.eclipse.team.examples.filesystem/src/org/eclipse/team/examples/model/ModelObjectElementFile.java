@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class ModelObjectElementFile extends ModelFile {
 
-	private static final String MODEL_OBJECT_ELEMENTFILE_EXTENSION = "moe";
+	public static final String MODEL_OBJECT_ELEMENTFILE_EXTENSION = "moe";
 	
 	private final ModelObjectDefinitionFile parent;
 
