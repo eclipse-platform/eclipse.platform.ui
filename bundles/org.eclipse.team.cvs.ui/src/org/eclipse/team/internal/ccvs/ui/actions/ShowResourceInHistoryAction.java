@@ -57,7 +57,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
 	 */
 	protected boolean isEnabledForAddedResources() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -82,6 +82,10 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	}	
 	
 	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
+	
+	protected boolean isEnabledForIgnoredResources() {
 		return true;
 	}
 }

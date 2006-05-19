@@ -90,10 +90,14 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
 	 */
 	protected boolean isEnabledForAddedResources() {
-		return false;
+		return true;
 	}
 	
 	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
+	
+	protected boolean isEnabledForIgnoredResources() {
 		return true;
 	}
 }
