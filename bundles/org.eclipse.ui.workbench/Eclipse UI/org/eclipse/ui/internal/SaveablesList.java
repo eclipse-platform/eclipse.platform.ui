@@ -429,8 +429,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION, buttons, 0, WorkbenchMessages.EditorManager_closeWithoutPromptingOption, false) {
 						protected int getShellStyle() {
-							return (canCancel ? SWT.CLOSE : SWT.NONE) | SWT.MIN
-									| SWT.MAX | SWT.RESIZE;
+							return (canCancel ? SWT.CLOSE : SWT.NONE)
+									| SWT.TITLE | SWT.BORDER
+									| SWT.APPLICATION_MODAL
+									| getDefaultOrientation();
 						}
 					};
 					dialog = dialogWithToggle;
@@ -443,8 +445,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION, buttons, 0) {
 						protected int getShellStyle() {
-							return (canCancel ? SWT.CLOSE : SWT.NONE) | SWT.MIN
-									| SWT.MAX | SWT.RESIZE;
+							return (canCancel ? SWT.CLOSE : SWT.NONE)
+									| SWT.TITLE | SWT.BORDER
+									| SWT.APPLICATION_MODAL
+									| getDefaultOrientation();
 						}
 					};
 				}
