@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.examples.model.ModelObject;
-import org.eclipse.team.examples.model.ModelObjectElementFile;
+import org.eclipse.team.examples.model.*;
 import org.eclipse.team.examples.model.mapping.ExampleModelProvider;
 import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 import org.eclipse.ui.IMemento;
@@ -70,6 +71,9 @@ public class CompareAdapter extends SynchronizationCompareAdapter {
 		return super.asCompareInput(context, o);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#restore(org.eclipse.ui.IMemento)
+	 */
 	public ResourceMapping[] restore(IMemento memento) {
 		List result = new ArrayList();
 		IMemento[] children = memento.getChildren(CTX_MODEL_MAPPINGS);
@@ -82,13 +86,56 @@ public class CompareAdapter extends SynchronizationCompareAdapter {
 		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
 	}
 
-	private ResourceMapping restoreMapping(IMemento child) {
-		// TODO Auto-generated method stub
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#save(org.eclipse.core.resources.mapping.ResourceMapping[], org.eclipse.ui.IMemento)
+	 */
+	public void save(ResourceMapping[] mappings, IMemento memento) {
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			Object o = mapping.getModelObject();
+			if (o instanceof ModelObject) {
+				ModelObject mo = (ModelObject) o;
+				save(mo, memento.createChild(CTX_MODEL_MAPPINGS));
+			}
+		}
+		
 	}
 
-	public void save(ResourceMapping[] mappings, IMemento memento) {
-		
+	private ResourceMapping restoreMapping(IMemento child) {
+		String parent = child.getString("definition");
+		String path = child.getString("resource");
+		if (parent != null) {
+			ModelObjectDefinitionFile modFile = (ModelObjectDefinitionFile)ModelObject.create(getResource(parent));
+			if (modFile != null)
+				return (ResourceMapping)new ModelObjectElementFile(modFile, (IFile)getResource(path)).getAdapter(ResourceMapping.class);
+		} else {
+			ModelObject object = ModelObject.create(getResource(path));
+			if (object != null)
+				return (ResourceMapping)object.getAdapter(ResourceMapping.class);
+		}
+		return null;
+	}
+	
+	private IResource getResource(String path) {
+		Path resourcePath = new Path(path);
+		if (path.endsWith(ModelObjectDefinitionFile.MODEL_OBJECT_DEFINITION_FILE_EXTENSION) 
+				|| path.endsWith(ModelObjectElementFile.MODEL_OBJECT_ELEMENTFILE_EXTENSION))
+			return ResourcesPlugin.getWorkspace().getRoot().getFile(resourcePath);
+		if (resourcePath.segmentCount() == 1)
+			return ResourcesPlugin.getWorkspace().getRoot().getProject(resourcePath.lastSegment());
+		return ResourcesPlugin.getWorkspace().getRoot().getFolder(resourcePath);
+	}
+
+	private void save(ModelObject mo, IMemento memento) {
+		if (mo instanceof ModelResource) {
+			ModelResource resource = (ModelResource) mo;
+			memento.putString("resource", resource.getResource().getFullPath().toString());
+			if (mo instanceof ModelObjectElementFile) {
+				ModelObjectElementFile moeFile = (ModelObjectElementFile) mo;
+				ModelObjectDefinitionFile parent = (ModelObjectDefinitionFile)moeFile.getParent();
+				memento.putString("definition", parent.getResource().getFullPath().toString());
+			}
+		}
 	}
 
 	public ModelProvider getProvider() {

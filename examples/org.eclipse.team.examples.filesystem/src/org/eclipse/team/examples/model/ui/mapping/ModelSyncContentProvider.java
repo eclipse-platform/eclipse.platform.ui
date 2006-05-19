@@ -349,5 +349,44 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 		}
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#propertyChanged(org.eclipse.team.core.diff.IDiffTree, int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
+		// We're overriding this message so that label updates occur for any elements
+		// whose labels may have changed
+		if (getContext() == null)
+			return;
+		final Set updates = new HashSet();
+		boolean refresh = false;
+		for (int i = 0; i < paths.length; i++) {
+			IPath path = paths[i];
+			IDiff diff = tree.getDiff(path);
+			if (diff != null) {
+				IResource resource = ResourceDiffTree.getResourceFor(diff);
+				ModelObject object = ModelObject.create(resource);
+				if (object != null) {
+					updates.add(object);
+				} else {
+					// If the resource is a MOE file, we need to update both the MOE and the MOD file
+					// Unfortunately, there's no good way to find the parent file so we'll just refresh everything
+					refresh = true;
+				}
+			}
+		}
+		if (!updates.isEmpty() || refresh) {
+			final boolean refreshAll = refresh;
+			final StructuredViewer viewer = (StructuredViewer)getViewer();
+			Utils.syncExec(new Runnable() {
+				public void run() {
+					if (refreshAll)
+						viewer.refresh(true);
+					else
+						viewer.update(updates.toArray(new Object[updates.size()]), null);
+				}
+			}, viewer);
+		}
+	}
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 
 public class ModelObjectDefinitionFile extends ModelFile {
 
-	private static final String MODEL_OBJECT_DEFINITION_FILE_EXTENSION = "mod";
+	public static final String MODEL_OBJECT_DEFINITION_FILE_EXTENSION = "mod";
 
 	public static boolean isModFile(IResource resource) {
 		if (resource instanceof IFile) {

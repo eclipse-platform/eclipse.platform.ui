@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.examples.model.ui.mapping;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.examples.model.ModelResource;
+import org.eclipse.team.core.diff.IDiffTree;
+import org.eclipse.team.examples.filesystem.FileSystemPlugin;
+import org.eclipse.team.examples.model.*;
 import org.eclipse.team.examples.model.ui.ModelNavigatorLabelProvider;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 /**
  * The label provider that is used for synchronizations.
+ * It provides a diff for each model element and also provides
+ * overlay hints for isBust, conflict propagation and markers.
  */
 public class ModelSyncLabelProvider extends SynchronizationLabelProvider {
 	
@@ -62,6 +67,62 @@ public class ModelSyncLabelProvider extends SynchronizationLabelProvider {
 			return getContext().getDiffTree().getDiff(mr.getResource());
 		}
 		return super.getDiff(element);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#isIncludeOverlays()
+	 */
+	protected boolean isIncludeOverlays() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeLabelProvider#isBusy(java.lang.Object)
+	 */
+	protected boolean isBusy(Object element) {
+		if (element instanceof ModelResource) {
+			ModelResource mr = (ModelResource) element;
+			boolean busy = getContext().getDiffTree().getProperty(mr.getResource().getFullPath(), IDiffTree.P_BUSY_HINT);
+			if (!busy && mr instanceof ModelObjectDefinitionFile) {
+				ModelObjectDefinitionFile modFile = (ModelObjectDefinitionFile) mr;
+				try {
+					ModelObjectElementFile[] children = modFile.getModelObjectElementFiles();
+					for (int i = 0; i < children.length; i++) {
+						ModelObjectElementFile file = children[i];
+						busy = getContext().getDiffTree().getProperty(file.getResource().getFullPath(), IDiffTree.P_BUSY_HINT);
+						if (busy)
+							break;
+					}
+				} catch (CoreException e) {
+					FileSystemPlugin.log(e.getStatus());
+				}
+			}
+			return busy;
+		}
+		return super.isBusy(element);
+	}
+	
+	protected boolean hasDecendantConflicts(Object element) {
+		if (element instanceof ModelResource) {
+			ModelResource mr = (ModelResource) element;
+			boolean conflict = getContext().getDiffTree().getProperty(mr.getResource().getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+			if (!conflict && mr instanceof ModelObjectDefinitionFile) {
+				ModelObjectDefinitionFile modFile = (ModelObjectDefinitionFile) mr;
+				try {
+					ModelObjectElementFile[] children = modFile.getModelObjectElementFiles();
+					for (int i = 0; i < children.length; i++) {
+						ModelObjectElementFile file = children[i];
+						conflict = getContext().getDiffTree().getProperty(file.getResource().getFullPath(), IDiffTree.P_HAS_DESCENDANT_CONFLICTS);
+						if (conflict)
+							break;
+					}
+				} catch (CoreException e) {
+					FileSystemPlugin.log(e.getStatus());
+				}
+			}
+			return conflict;
+		}
+		return super.hasDecendantConflicts(element);
 	}
 
 }
