@@ -110,7 +110,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	private void createCompositeTable(final int numberOfDays,
 			final int numberOfDivisionsInHour) {
+		
 		compositeTable = new CompositeTable(this, SWT.NONE);
+		compositeTable.setTraverseOnTabsEnabled(false);
+		
 		if (!headerDisabled) {
 			new TimeSlice(compositeTable, SWT.BORDER);		// The prototype header
 		}
@@ -190,6 +193,10 @@ public class DayEditor extends Composite implements IEventEditor {
 			case SWT.TAB:
 				if ((e.stateMask & SWT.SHIFT) != 0) {
 					CalendarableItem newSelection = model.findPreviousCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					if (newSelection == null) {
+						// There was only 0 or one visible event--nothing to scroll to
+						return;
+					}
 					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
 					if (newTopRow != compositeTable.getTopRow()) {
 						compositeTable.setTopRow(newTopRow);
@@ -197,6 +204,10 @@ public class DayEditor extends Composite implements IEventEditor {
 					setSelection(newSelection);
 				} else {
 					CalendarableItem newSelection = model.findNextCalendarable(selectedDay, selectedRow, selection, allDayEventRowSelected);
+					if (newSelection == null) {
+						// There was only 0 or one visible event--nothing to scroll to
+						return;
+					}
 					int newTopRow = computeNewTopRowBasedOnSelection(newSelection);
 					if (newTopRow != compositeTable.getTopRow()) {
 						compositeTable.setTopRow(newTopRow);
@@ -338,7 +349,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		
 		selectedCalendarable = newSelection;
 		
-		if (newSelection != null) {
+		if (newSelection != null && newSelection.getControl() != null) {
 			newSelection.getControl().setSelected(true);
 		}
 		fireSelectionChangeEvent(selectedCalendarable, newSelection);

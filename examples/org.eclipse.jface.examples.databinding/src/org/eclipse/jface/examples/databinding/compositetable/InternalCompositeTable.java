@@ -1148,7 +1148,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 			return;
 		}
 	}
-
+	
 	/**
 	 * Handle the keyTraversed event on any child control in the table.
 	 * 
@@ -1160,23 +1160,25 @@ public class InternalCompositeTable extends Composite implements Listener {
 	public void keyTraversed(TableRow sender, TraverseEvent e) {
 		if (makeFocusedRowVisible()) return;
 
-		if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
-			if (currentColumn >= sender.getNumColumns() - 1) {
+		if (parent.isTraverseOnTabsEnabled()) {
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+				if (currentColumn >= sender.getNumColumns() - 1) {
+					e.detail = SWT.TRAVERSE_NONE;
+					handleNextRowNavigation();
+				}
+			} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+				if (currentColumn == 0) {
+					e.detail = SWT.TRAVERSE_NONE;
+					handlePreviousRowNavigation(sender);
+				}
+			} else if (e.detail == SWT.TRAVERSE_RETURN) {
 				e.detail = SWT.TRAVERSE_NONE;
-				handleNextRowNavigation();
-			}
-		} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-			if (currentColumn == 0) {
-				e.detail = SWT.TRAVERSE_NONE;
-				handlePreviousRowNavigation(sender);
-			}
-		} else if (e.detail == SWT.TRAVERSE_RETURN) {
-			e.detail = SWT.TRAVERSE_NONE;
-			if (currentColumn >= sender.getNumColumns() - 1) {
-				handleNextRowNavigation();
-			} else {
-				deferredSetFocus(getControl(currentColumn + 1, currentRow),
-						false);
+				if (currentColumn >= sender.getNumColumns() - 1) {
+					handleNextRowNavigation();
+				} else {
+					deferredSetFocus(getControl(currentColumn + 1, currentRow),
+							false);
+				}
 			}
 		}
 	}

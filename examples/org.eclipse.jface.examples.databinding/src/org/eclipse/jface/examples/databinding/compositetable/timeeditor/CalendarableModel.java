@@ -649,7 +649,8 @@ public class CalendarableModel {
 		}
 		
 		// Search the last of the timed-events
-		result = findTimedCalendarable(selectedDay, 0, selectedRow-1, true, selection);
+		result = findTimedCalendarable(selectedDay, 0, selectedRow-1, true, null);
+//		result = findTimedCalendarable(selectedDay, 0, selectedRow-1, true, selection);
 		if (result != null) {
 			return result;
 		}

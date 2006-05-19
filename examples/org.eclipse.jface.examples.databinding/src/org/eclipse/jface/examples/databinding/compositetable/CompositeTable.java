@@ -1099,6 +1099,35 @@ public class CompositeTable extends Canvas {
 		scrollListeners.remove(scrollListener);
 	}
 
+	private boolean traverseOnTabsEnabled = true;
+	
+	/**
+	 * Method isTraverseOnTabsEnabled. Returns true if Tab and Shift-tab cause
+	 * the focus to wrap from the end of the table back to the beginning and
+	 * Enter causes the focus to advance. Returns false otherwise.
+	 * <p>
+	 * This property defaults to true.
+	 * 
+	 * @return true if CompositeTable is handling Tab, Shift-tab, and Enter key
+	 *         behavior; false otherwise.
+	 */
+	public boolean isTraverseOnTabsEnabled() {
+		return traverseOnTabsEnabled;
+	}
+
+	/**
+	 * Method setTraverseOnTabsEnabled. Sets if Tab and Shift-tab cause
+	 * the focus to wrap from the end of the table back to the beginning and
+	 * Enter causes the focus to advance.
+	 * <p>
+	 * This property defaults to true.
+	 * 
+	 * @param enabled true if CompositeTable is handling Tab, Shift-tab, and Enter key
+	 *         behavior; false otherwise.
+	 */
+	public void setTraverseOnTabsEnabled(boolean enabled) {
+		this.traverseOnTabsEnabled = enabled;
+	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
 
