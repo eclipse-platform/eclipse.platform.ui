@@ -15,6 +15,8 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
@@ -370,9 +372,58 @@ public class CalendarableItem extends ModelObject {
 		firePropertyChange(PROP_DATA, oldValue, data);
 	}
 	
+	private Map dataMap = new HashMap();
+	
+	/**
+	 * Sets the application defined property of the receiver
+	 * with the specified name to the given value.
+	 * <p>
+	 * Applications may associate arbitrary objects with the
+	 * receiver in this fashion. 
+	 * </p>
+	 *
+	 * @param key the name of the property
+	 * @param value the new value for the property
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the key is null</li>
+	 * </ul>
+	 *
+	 * @see #getData(String)
+	 */
+	public void setData(String key, Object data) {
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		dataMap.put(key, data);
+	}
+	
+	/**
+	 * Returns the application defined property of the receiver
+	 * with the specified name, or null if it has not been set.
+	 * <p>
+	 * Applications may have associated arbitrary objects with the
+	 * receiver in this fashion.
+	 * </p>
+	 *
+	 * @param	key the name of the property
+	 * @return the value of the property or null if it has not been set
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the key is null</li>
+	 * </ul>
+	 *
+	 * @see #setData(String, Object)
+	 */
+	public Object getData(String key) {
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		return dataMap.get(key);
+	}
+	
 	private Point upperLeftPositionInDayRowCoordinates = null;
 	
-
 	/**
 	 * (non-API)
 	 * @return Returns the upperLeftPositionInDayRowCoordinates.

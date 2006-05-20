@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.ReflectedProperty;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
@@ -61,6 +62,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	
 	private class EventCache {
 		private Map daysToEventsMap;
+		private List eventsList;
 		
 		public EventCache() {
 			flush();
@@ -68,6 +70,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		
 		public void flush() {
 			daysToEventsMap = new TreeMap();
+			eventsList = new LinkedList();
 			for (int i=0; i < modelSize; ++i) {
 				Object event = getModelElementAt(i);
 				add(event);
@@ -75,6 +78,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 		
 		public void add(Object event) {
+			eventsList.add(event);
 			Date beginningDate = getBeginningDate(event);
 			Date endingDate = getEndingDate(event);
 			for (Date currentDate = beginningDate; 
@@ -95,15 +99,17 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			daysToEventsMap.put(date, events);
 		}
 		
-		public void remove(Object event) {
-			Date beginningDate = getBeginningDate(event);
-			Date endingDate = getEndingDate(event);
+		public Object remove(int position) {
+			Object toRemove = eventsList.remove(position);
+			Date beginningDate = getBeginningDate(toRemove);
+			Date endingDate = getEndingDate(toRemove);
 			for (Date currentDate = beginningDate; 
 				currentDate.before(endingDate); 
 				currentDate = nextDay(currentDate)) 
 			{
-				removeEventFromMap(currentDate, event);
+				removeEventFromMap(currentDate, toRemove);
 			}
+			return toRemove;
 		}
 		
 		private void removeEventFromMap(Date date, Object event) {
@@ -121,6 +127,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		public List get(Date date) {
 			date = setToStartOfDay(date);
 			return (List) daysToEventsMap.get(date);
+		}
+		
+		public int indexOf(Object event) {
+			return eventsList.indexOf(event);
 		}
 	}
 	
@@ -256,15 +266,18 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 */
 	public void add(int position, Object element) {
 		eventCache.add(element);
+		modelSize++;
+		editor.refresh();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#remove(int)
 	 */
 	public Object remove(int position) {
-		Object toRemove = getModelElementAt(position);
-		eventCache.remove(toRemove);
-		return toRemove;
+		Object removed = eventCache.remove(position);
+		modelSize--;
+		editor.refresh();
+		return removed;
 	}
 	
 	// Utility methods here ---------------------------------------------------
@@ -483,24 +496,24 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 	}
 
-	/**
-	 * @param sourceElement
-	 * @return
-	 */
+	private static final String dataKey = "BindingData";
+	private static final String bindingKey = "BindingBinding";
+	
 	private void bindCalendarableItem(CalendarableItem item, String itemPropertyName, Object sourceElement, String sourcePropertyName, BindSpec bindSpec) {
+		item.setData(dataKey, sourceElement);
 		Binding binding = dbc.bind(new Property(item, itemPropertyName), 
 				new Property(sourceElement, sourcePropertyName), bindSpec);
-		List bindingList = (List) item.getData();
+		List bindingList = (List) item.getData(bindingKey);
 		if (bindingList == null) {
 			bindingList = new ArrayList();
-			item.setData(bindingList);
+			item.setData(bindingKey, bindingList);
 		}
 		bindingList.add(binding);
 	}
 
 	private CalendarableItemEventHandler itemDisposeHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			List bindings = (List)e.calendarableItem.getData();
+			List bindings = (List)e.calendarableItem.getData(bindingKey);
 			if (bindings != null) {
 				for (Iterator bindingIter = bindings.iterator(); bindingIter.hasNext();) {
 					Binding binding = (Binding) bindingIter.next();
@@ -546,17 +559,21 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				e.doit = false;
 				return;
 			}
-			Date firstDayOfEvent = getBeginningDate(newObject.it);
-			Date lastDayOfEvent = getEndingDate(newObject.it);
-			for (Date refreshDate = firstDayOfEvent; isDateBetweenInclusive(refreshDate, firstDayOfEvent, lastDayOfEvent); refreshDate = nextDay(refreshDate)) {
-				editor.refresh(refreshDate);
-			}
+			eventCache.add(newObject.it);
+			Date firstDayOfEvent = getBeginningTime(newObject.it);
+			Date lastDayOfEvent = getEndingTime(newObject.it);
+			e.result = new NewEvent(newObject.it, new Date[] {firstDayOfEvent, lastDayOfEvent});
 		}
 	};
 
 	private CalendarableItemEventHandler deleteHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			throw new UnsupportedOperationException();
+			int objectToDelete = eventCache.indexOf(e.calendarableItem.getData(dataKey));
+			if (!fireDelete(objectToDelete)) {
+				e.doit = false;
+				return;
+			}
+			eventCache.remove(objectToDelete);
 		}
 	};
 

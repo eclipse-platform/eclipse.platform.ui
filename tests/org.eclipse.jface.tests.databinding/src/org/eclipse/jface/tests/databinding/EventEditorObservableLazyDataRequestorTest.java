@@ -21,10 +21,12 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
+import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorBindingDescription;
 import org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestorFactory;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
+import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
@@ -33,6 +35,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
+import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
 /**
  * This is basically two tests in one.  It's an integration test that makes
@@ -158,8 +161,8 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
     	return gc.getTime();
     }
     
-	private List loadTestDataIntoList(Event[] testData) {
-		List testDataList = new LinkedList();
+	private WritableList loadTestDataIntoList(Event[] testData) {
+		WritableList testDataList = new WritableList();
 		for (int event = 0; event < testData.length; event++) {
 			testDataList.add(testData[event]);
 		}
@@ -220,21 +223,8 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return time;
 	}
 	
-	private Property makeModel(final Event[] testData) {
-		Object model = new ModelObject() {
-			List testDataList = loadTestDataIntoList(testData);
-
-			public List getTestDataList() {
-				return testDataList;
-			}
-
-			public void setTestDataList(List testDataList) {
-				Object oldValue = this.testDataList;
-				this.testDataList = testDataList;
-				firePropertyChange("testDataList", oldValue, testDataList);
-			}
-		};
-		return new Property(model, "testDataList");
+	private WritableList makeModel(final Event[] testData) {
+		return loadTestDataIntoList(testData);
 	}
 
 	private Property makeModel(final List testData) {
@@ -319,6 +309,38 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 				{},
 				{}
 		});
+	}
+
+	public void test_addingAndRemovingFromModel() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		WritableList model = makeModel(testData);
+		dbc.bind(editorBindDesc, model, null);	
+		Event event = new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg 2");
+		model.add(event);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg 2")},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+		model.remove(event);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});		
 	}
 
 	public void test_oneDayOneEvent_notOnEditorStartDate() throws Exception {
@@ -422,16 +444,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		assertEquals("item Text was changed", event.description, item.getText());
 	}
 	
-	private LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
-		public NewObject insertElementAt(int positionHint, Object initializationData) {
-			return null;
-		}
-		
-		public boolean deleteElementAt(int position) {
-			return false;
-		}
-	};
-	
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#dispose()}.
 	 */
@@ -457,7 +469,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		
 		for (Iterator disposedDaysIter = daysToDispose.iterator(); disposedDaysIter.hasNext();) {
 			CalendarableItem item = (CalendarableItem) disposedDaysIter.next();
-			List bindingList = (List) item.getData();
+			List bindingList = (List) item.getData("BindingBinding");
 			for (Iterator bindingListIter = bindingList.iterator(); bindingListIter.hasNext();) {
 				Binding binding = (Binding) bindingListIter.next();
 				assertTrue("should be disposed", binding.isDisposed());
@@ -468,14 +480,88 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#add(int, java.lang.Object)}.
 	 */
-//	public void testInsert() {
-//		fail("Not yet implemented");
-//	}
+	public void testInsert() {
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		final WritableList model = makeModel(testData);
+		
+		LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
+			public NewObject insertElementAt(int positionHint, Object initializationData) {
+				Event event = new Event(time(5, 17, 5, 45), time(5, 17, 9, 45), "Stand-up mtg 3");
+				model.add(positionHint, event);
+				return new NewObject(positionHint, event);
+			}
+			
+			public boolean deleteElementAt(int position) {
+				return false;
+			}
+		};
+		
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		dbc.bind(editorBindDesc, model, new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));	
+		Event event = new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg 2");
+		model.add(event);
+		
+		// Add the third event (to the target via the insertDeleteProvider)
+		NewEvent results = editorBindDesc.editor.fireInsert(date(5, 17));
+		
+		assertEquals("start date", time(5, 17, 5, 45), results.startTimeEndTime[0]);
+		assertEquals("end date", time(5, 17, 9, 45), results.startTimeEndTime[1]);
+		
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), time(5, 45), time(9, 45), "Stand-up mtg")},
+				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg 2")},
+				{ci(date(5, 17), time(5, 45), time(9, 45), "Stand-up mtg 3")},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
 	
 	/**
 	 * Test method for {@link org.eclipse.jface.examples.databinding.compositetable.day.binding.EventEditorObservableLazyDataRequestor#remove(int)}.
 	 */
-//	public void testRemove() {
-//		fail("Not yet implemented");
-//	}
+	public void testRemove() {
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 15, 9, 45), "Stand-up mtg")};
+		final WritableList model = makeModel(testData);
+		
+		LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
+			public NewObject insertElementAt(int positionHint, Object initializationData) {
+				return null;
+			}
+			
+			public boolean deleteElementAt(int position) {
+				model.remove(position);
+				return true;
+			}
+		};
+		
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		dbc.bind(editorBindDesc, model, new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));	
+		Event event = new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg 2");
+		model.add(event);
+		
+		// Add the third event (to the target via the insertDeleteProvider)
+		boolean result = editorBindDesc.editor.fireDelete((CalendarableItem) editor.model.getCalendarableItems(0).get(0));
+		
+		assertTrue("Could delete", result);
+		
+		assertEditorState(editor, new CalendarableItem[][] {
+				{},
+				{ci(date(5, 16), time(5, 45), time(9, 45), "Stand-up mtg 2")},
+				{},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
 }

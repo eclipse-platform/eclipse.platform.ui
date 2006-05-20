@@ -407,6 +407,17 @@ public class DayEditor extends Composite implements IEventEditor {
 		selectionChangeListeners.add(l);
 	}
 	
+	private boolean fireEvents(CalendarableItemEvent e, List handlers) {
+		for (Iterator i = handlers.iterator(); i.hasNext();) {
+			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
+			h.handleRequest(e);
+			if (!e.doit) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private boolean fireEvents(CalendarableItem calendarableItem, List listeners) {
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = calendarableItem;
@@ -490,10 +501,21 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private List insertHandlers = new ArrayList();
 	
-	private boolean fireInsertItemStrategy(CalendarableItem item) {
-		return fireEvents(item, insertHandlers);
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireInsert(java.util.Date)
+	 */
+	public NewEvent fireInsert(Date date) {
+		CalendarableItem item = new CalendarableItem(date);
+		CalendarableItemEvent e = new CalendarableItemEvent();
+		e.calendarableItem = item;
+		if (fireEvents(e, insertHandlers)) {
+			// TODO: Only refresh the affected days
+			refresh();
+			return (NewEvent) e.result;
+		}
+		return null;
 	}
-	
+
 	/**
 	 * Adds the handler to the collection of handlers who will
 	 * be notified when a CalendarableItem is inserted in the receiver, by sending
@@ -558,8 +580,16 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private List deleteHandlers = new ArrayList();
 
-	private boolean fireDeleteItemStrategy(CalendarableItem item) {
-		return fireEvents(item, deleteHandlers);
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireDelete(org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem)
+	 */
+	public boolean fireDelete(CalendarableItem item) {
+		boolean result = fireEvents(item, deleteHandlers);
+		if (result) {
+			// TODO: Only refresh the affected days.
+			refresh();
+		}
+		return result;
 	}
 	
 	/**

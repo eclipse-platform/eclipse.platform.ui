@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
@@ -40,7 +41,7 @@ public class EventEditor implements IEventEditor {
 
 	// Utilities --------------------------------------------------------------
 	
-	private void fireEvent(List handlers, CalendarableItemEvent e) {
+	private void fireEvent(CalendarableItemEvent e, List handlers) {
 		for (Iterator i = handlers.iterator(); i.hasNext();) {
 			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
 			h.handleRequest(e);
@@ -60,9 +61,16 @@ public class EventEditor implements IEventEditor {
 	
 	private List insertHandlers = new ArrayList();
 	
-	public void fireInsert(Date date) {
+    public NewEvent fireInsert(Date date) {
 		CalendarableItem item = new CalendarableItem(date);
-		fireEvent(insertHandlers, calendarableItemEvent(item));
+		CalendarableItemEvent e = calendarableItemEvent(item);
+		fireEvent(e, insertHandlers);
+		if (e.doit) {
+			// TODO: Only refresh days that need refreshing
+			refresh();
+			return (NewEvent) e.result;
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -82,8 +90,14 @@ public class EventEditor implements IEventEditor {
 	
 	private List deleteHandlers = new ArrayList();
 
-	public void fireDelete(CalendarableItem toDelete) {
-		fireEvent(deleteHandlers, calendarableItemEvent(toDelete));
+	public boolean fireDelete(CalendarableItem toDelete) {
+		CalendarableItemEvent e = calendarableItemEvent(toDelete);
+		fireEvent(e, deleteHandlers);
+		if (e.doit) {
+			// TODO: only refresh affected days
+			refresh();
+		}
+		return e.doit;
 	}
 
 	/* (non-Javadoc)
@@ -103,7 +117,7 @@ public class EventEditor implements IEventEditor {
 	private List editHandlers = new ArrayList();
 	
 	public void fireEdit(CalendarableItem toEdit) {
-		fireEvent(disposeHandlers, calendarableItemEvent(toEdit));
+		fireEvent(calendarableItemEvent(toEdit), disposeHandlers);
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +137,7 @@ public class EventEditor implements IEventEditor {
 	private List disposeHandlers = new ArrayList();
 
 	public void fireDispose(CalendarableItem disposed) {
-		fireEvent(disposeHandlers, calendarableItemEvent(disposed));
+		fireEvent(calendarableItemEvent(disposed), disposeHandlers);
 	}
 	
 	/* (non-Javadoc)

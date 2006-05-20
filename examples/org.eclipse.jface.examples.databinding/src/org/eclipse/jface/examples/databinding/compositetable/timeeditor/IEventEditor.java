@@ -14,6 +14,7 @@ package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 import java.util.Date;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.swt.SWTException;
 
 /**
@@ -174,6 +175,19 @@ public interface IEventEditor {
 	void removeItemInsertHandler(CalendarableItemEventHandler insertHandler);
 
 	/**
+	 * Requests that the event editor attempt to insert a new element by calling
+	 * its registered insert handlers
+	 * 
+	 * @param date
+	 *            The date/time on which to request the insert.  The actual date
+	 *            on which the insert is performed may be different.  This is
+	 *            a HINT.
+	 *            
+	 * @return NewEvent a NewEvent object describing the event that was inserted.
+	 */
+	public NewEvent fireInsert(Date date);
+	
+	/**
 	 * Adds the handler to the collection of handlers who will
 	 * be notified when a CalendarableItem is deleted from the receiver, by sending
 	 * it one of the messages defined in the <code>CalendarableItemEventHandler</code>
@@ -195,6 +209,15 @@ public interface IEventEditor {
 	 * @see #removeDeleteItemHandler
 	 */
 	void addItemDeleteHandler(CalendarableItemEventHandler deleteHandler);
+
+	/**
+	 * Requests that the event editor delete the specified CalendarableItem's
+	 * data.
+	 *  
+	 * @param toDelete The CalendarableItem to delete.
+	 * @return true if successful; false otherwise.
+	 */
+	public boolean fireDelete(CalendarableItem toDelete);
 
 	/**
 	 * Removes the handler from the collection of handlers who will

@@ -34,6 +34,13 @@ public class CalendarableItemEvent {
 	 */
 	public CalendarableItem calendarableItem;
 	
+	/**
+	 * Returns the result of the operation.  If the operation is an insert,
+	 * must contain an (startDateTime, endDateTime) of the event that was inserted
+	 * where the values are instances of java.util.Date.
+	 */
+	public Object result = null;
+	
 	public String toString() {
 		return "calendarableItem = " + calendarableItem;
 	}
