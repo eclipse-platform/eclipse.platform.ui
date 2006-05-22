@@ -44,7 +44,11 @@ public class FindReplaceDialogTest extends TestCase {
 	}
 	
 	public static Test suite() {
-		return new TestSuite(FindReplaceDialogTest.class); 
+		TestSuite suite= new TestSuite();
+		suite.addTest(new FindReplaceDialogTest("testInitialButtonState"));
+		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfRegEx"));
+		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfNotWord"));
+		return suite;
 	}
 	
 	protected void tearDown () {
