@@ -61,7 +61,7 @@ public abstract class TextSearchEngine {
 	}
 		
 	/**
-	 * Uses a given search pattern to find matches in the content of workspace file resources. If the file is open in an editor, the
+	 * Uses a given search pattern to find matches in the content of workspace file resources. If a file is open in an editor, the
 	 * editor buffer is searched.
 
 	 * @param requestor the search requestor that gets the search results
@@ -73,7 +73,7 @@ public abstract class TextSearchEngine {
 	public abstract IStatus search(TextSearchScope scope, TextSearchRequestor requestor, Pattern searchPattern, IProgressMonitor monitor);
 
 	/**
-	 * Uses a given search pattern to find matches in the content of a workspace file resource. If the file is open in an editor, the
+	 * Uses a given search pattern to find matches in the content of workspace file resources. If a file is open in an editor, the
 	 * editor buffer is searched.
 
 	 * @param requestor the search requestor that gets the search results
