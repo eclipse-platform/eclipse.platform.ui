@@ -33,7 +33,7 @@ public interface IColumnPresentationFactoryAdapter {
 	 * or <code>null</code> if none. Allows a previous column presentation to be re-used if
 	 * it has not changed type.
 	 * 
-	 * @param context presentaiton context
+	 * @param context presentation context
 	 * @param element input element
 	 * @return column presentation id or <code>null</code>
 	 */

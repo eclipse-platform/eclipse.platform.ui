@@ -57,7 +57,7 @@ public interface IPresentationContext {
     public void addPropertyChangeListener(IPropertyChangeListener listener);
     
     /**
-     * Deregisters the given listener from property change notification.
+     * Unregisters the given listener from property change notification.
      * 
      * @param listener property listener.
      */

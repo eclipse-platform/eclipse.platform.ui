@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * of changes in the active context specific to the workbench, a specific window, or a
  * specific part.
  * <p>
- * Cleints provide a context policy to notifiy the context service of interesting
+ * Clients provide a context policy to notify the context service of interesting
  * contexts within a model. For example the debug platform provides a context policy
  * that maps debug events to suspended contexts.
  * </p>
@@ -38,7 +38,7 @@ public interface IDebugContextManager {
 	public void addDebugContextProvider(IDebugContextProvider provider);
 	
 	/**
-	 * Deregisters the given debug context provider.
+	 * Unregisters the given debug context provider.
 	 * 
 	 * @param provider
 	 */
@@ -52,7 +52,7 @@ public interface IDebugContextManager {
 	 */
 	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window);
 	/**
-	 * Deregisters for context activation notification in this service in the
+	 * Unregisters for context activation notification in this service in the
 	 * given window.
 	 * 
 	 * @param listener
@@ -71,7 +71,7 @@ public interface IDebugContextManager {
 	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window, String partId);
 	
 	/**
-	 * Deregisters for context activation notification in the specified part of
+	 * Unregisters for context activation notification in the specified part of
 	 * the specified window.
 	 * 
 	 * @param listener
@@ -105,7 +105,7 @@ public interface IDebugContextManager {
 	public void addDebugContextListener(IDebugContextListener listener);
 	
 	/**
-	 * Deregisters for context activation notification in all windows.
+	 * Unregisters for context activation notification in all windows.
 	 * 
 	 * @param listener
 	 */	

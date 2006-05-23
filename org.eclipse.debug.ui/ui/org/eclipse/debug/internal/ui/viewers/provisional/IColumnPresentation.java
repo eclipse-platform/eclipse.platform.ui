@@ -30,7 +30,7 @@ public interface IColumnPresentation {
 	public void init(IPresentationContext context);
 	
 	/**
-	 * Disposes tihs column presentation
+	 * Disposes this column presentation
 	 */
 	public void dispose();
 	
@@ -44,7 +44,7 @@ public interface IColumnPresentation {
 	
 	/**
 	 * Returns an ordered array of columns that should be displayed initially for
-	 * this presentation as column ids.
+	 * this presentation as column IDs.
 	 * 
 	 * @return initial columns to display
 	 */

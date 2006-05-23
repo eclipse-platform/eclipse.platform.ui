@@ -32,9 +32,9 @@ public interface IColumnEditorFactoryAdapter {
 	 * or <code>null</code> if none. Allows a previous column editor to be re-used if
 	 * it has not changed type.
 	 * 
-	 * @param context presentaiton context
+	 * @param context presentation context
 	 * @param element element
-	 * @return column edtior id or <code>null</code>
+	 * @return column editor id or <code>null</code>
 	 */
 	public String getColumnEditorId(IPresentationContext context, Object element);
 }

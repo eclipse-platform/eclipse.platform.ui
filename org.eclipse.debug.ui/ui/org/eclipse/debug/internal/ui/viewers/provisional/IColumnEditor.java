@@ -30,7 +30,7 @@ public interface IColumnEditor {
 	public void init(IPresentationContext context);
 	
 	/**
-	 * Disposes tihs column presentation
+	 * Disposes this column presentation
 	 */
 	public void dispose();	
 	

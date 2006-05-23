@@ -39,7 +39,7 @@ public interface IDebugContextProvider {
 	public void addDebugContextListener(IDebugContextListener listener);
     
     /**
-     * Deregisters the given listener for context notifications.
+     * Unregisters the given listener for context notifications.
      * 
      * @param listener context listener
      */

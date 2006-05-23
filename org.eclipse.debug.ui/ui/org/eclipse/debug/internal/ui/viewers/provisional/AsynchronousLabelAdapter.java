@@ -120,7 +120,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * @param element element to compute label for
 	 * @param context presentation context
 	 * @return label
-	 * @exception CoreException if an exception occurrs computing label
+	 * @exception CoreException if an exception occurs computing label
 	 */
     protected abstract String[] getLabels(Object element, IPresentationContext context) throws CoreException;
     
@@ -131,7 +131,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
      * @param element element to compute image descriptor for
      * @param context presentation context
      * @return image descriptor or <code>null</code>
-     * @throws CoreException if an exception occurrs computing image descriptor
+     * @throws CoreException if an exception occurs computing image descriptor
      */
     protected abstract ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException;
     
@@ -142,7 +142,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
      * @param element element to compute font data for
      * @param context presentation context
      * @return font data or <code>null</code>
-     * @throws CoreException if an exception occurrs computing font data
+     * @throws CoreException if an exception occurs computing font data
      */
     protected abstract FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException;
     
@@ -153,7 +153,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
      * @param element element to compute color for
      * @param context presentation context
      * @return color or <code>null</code>
-     * @throws CoreException if an exception occurrs computing color
+     * @throws CoreException if an exception occurs computing color
      */
     protected abstract RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException;
     
@@ -164,7 +164,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
      * @param element element to compute color for
      * @param context presentation context
      * @return color or <code>null</code>
-     * @throws CoreException if an exception occurrs computing color
+     * @throws CoreException if an exception occurs computing color
      */
     protected abstract RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException;
 }

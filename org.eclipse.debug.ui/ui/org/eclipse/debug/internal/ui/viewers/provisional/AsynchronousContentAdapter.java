@@ -80,7 +80,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 	}
     
     /**
-     * Returns the scheduling rule for jobs determingin if an element is a container.
+     * Returns the scheduling rule for jobs determining if an element is a container.
      * 
      * @param parent
      * @param context
@@ -94,7 +94,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * Computes the children for the given parent in the specified context.
      * 
      * @param parent parent to retrieve children for
-     * @param context presentation contenxt
+     * @param context presentation context
      * @param monitor result to report to
      */
     protected void computeChildren(Object parent, IPresentationContext context, IChildrenRequestMonitor monitor) {
@@ -116,7 +116,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * Computes whether the given element is a container.
      * 
      * @param parent potential parent
-     * @param context presentation contenxt
+     * @param context presentation context
      * @param monitor result to report to
      */
     protected void computeIsContainer(Object parent, IPresentationContext context, IContainerRequestMonitor monitor) {
@@ -138,7 +138,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * @param parent element to retrieve children for
      * @param context context children will be presented in
      * @return children
-     * @throws CoreException if an exception occurrs retieving children
+     * @throws CoreException if an exception occurs retrieving children
      */
     protected abstract Object[] getChildren(Object parent, IPresentationContext context) throws CoreException;
     
@@ -148,7 +148,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * @param element element that may have children
      * @param context context element will be presented in
      * @return whether the given element has children in the specified context
-     * @throws CoreException if an exception occurrs determining whether the
+     * @throws CoreException if an exception occurs determining whether the
      *  element has children
      */
     protected abstract boolean hasChildren(Object element, IPresentationContext context) throws CoreException;    

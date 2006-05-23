@@ -522,7 +522,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 
 			protected IStatus run(IProgressMonitor monitor) {
 				
-				// gather info from memory block
+				// gather information from memory block
 				initAddressableSize();					
 				final BigInteger topVisibleAddress = getInitialTopVisibleAddress();
 				BigInteger mbBaseAddress = null;
@@ -552,7 +552,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				
 				createContentDescriptor(topVisibleAddress);
 				
-				// if it takes too long to get other info, and user has canceled
+				// if it takes too long to get other information, and user has canceled
 				// remove this rendering.
 				if (monitor.isCanceled())
 				{
@@ -581,7 +581,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						fPresentationContext = new MemoryViewPresentationContext(site, container, AbstractAsyncTableRendering.this);
 						fTableViewer.setContext(fPresentationContext);
 						
-						// must call this after the context is created as the info is stored in the context
+						// must call this after the context is created as the information is stored in the context
 						getDynamicLoadFromPreference();
 						getPageSizeFromPreference();
 						
@@ -655,7 +655,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/**
 	 * Create popup menu for this rendering
 	 * @param control - control to create the popup menu for
-	 * @param menuListener - listener to notify when popup meu is about to show
+	 * @param menuListener - listener to notify when popup menu is about to show
 	 */
 	private void createPopupMenu(Control control, IMenuListener menuListener)
 	{
@@ -670,7 +670,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
-			// must add additions seperator before registering the menu
+			// must add additions separator before registering the menu
 			// otherwise, we will get an error
 			popupMenuMgr.addMenuListener(menuListener);
 			
@@ -959,7 +959,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private void handlePageSizeChanged(int pageSize) {
 		fPageSize = pageSize;
-		// only refresh if in non-autoload mode
+		// only refresh if in non-auto-load mode
 		fContentDescriptor.setNumLines(pageSize);
 		refresh();
 	}	
@@ -1200,9 +1200,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	/**
-	 * Returns the addressible size of this rendering's memory block in bytes.
+	 * Returns the addressable size of this rendering's memory block in bytes.
 	 * 
-	 * @return the addressible size of this rendering's memory block in bytes
+	 * @return the addressable size of this rendering's memory block in bytes
 	 */
 	public int getAddressableSize() {
 		return fAddressableSize;
@@ -1907,7 +1907,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Will load more memory if the address is not currently visible.
 	 * 
 	 * @param address address to position cursor at
-	 * @throws DebugException if an exception occurrs
+	 * @throws DebugException if an exception occurs
 	 */
 	public void goToAddress(BigInteger address) throws DebugException {
 		
@@ -2162,7 +2162,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			address = start;
 		}
 		
-		// bigger than end address, no need to load, alread at top
+		// bigger than end address, no need to load, already at top
 		if (address.compareTo(end) > 0)
 		{
 			if (isAtBottomLimit())
@@ -2423,8 +2423,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns the color provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a color provider is obtained by aksing this rendering's
-	 * memory bock for its {@link IColorProvider} adapter. When the color
+	 * By default a color provider is obtained by asking this rendering's
+	 * memory block for its {@link IColorProvider} adapter. When the color
 	 * provider is queried for color information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -2440,8 +2440,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns the label provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a label provider is obtained by aksing this rendering's
-	 * memory bock for its {@link ILabelProvider} adapter. When the label
+	 * By default a label provider is obtained by asking this rendering's
+	 * memory block for its {@link ILabelProvider} adapter. When the label
 	 * provider is queried for label information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -2457,8 +2457,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns the font provider for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a font provider is obtained by aksing this rendering's
-	 * memory bock for its {@link IFontProvider} adapter. When the font
+	 * By default a font provider is obtained by asking this rendering's
+	 * memory block for its {@link IFontProvider} adapter. When the font
 	 * provider is queried for font information, it is provided with a
 	 * {@link MemoryRenderingElement} as an argument. 
 	 * </p>
@@ -2474,8 +2474,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * Returns the table presentation for this rendering's memory block or
 	 * <code>null</code> if none.
 	 * <p>
-	 * By default a table presentation is obtained by aksing this rendering's
-	 * memory bock for its {@link IMemoryBlockTablePresentation} adapter.
+	 * By default a table presentation is obtained by asking this rendering's
+	 * memory block for its {@link IMemoryBlockTablePresentation} adapter.
 	 * </p>
 	 * @return the table presentation for this rendering's memory block,
 	 *  or <code>null</code>

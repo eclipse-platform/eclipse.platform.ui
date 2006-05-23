@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
 /**
- * Common function for model proxies.
+ * Common function for a model proxy.
  * <p>
  * Clients may subclass this class.
  * </p>

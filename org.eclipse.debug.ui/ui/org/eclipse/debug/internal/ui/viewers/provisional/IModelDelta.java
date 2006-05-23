@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
 
 /**
  * Describes a change within a model. A delta is a hierarchical description of changes
- * within a model. It constists of a tree of nodes. Each node references an element
- * from a model desribing how that element changed. A model proxy fires model deltas
+ * within a model. It consists of a tree of nodes. Each node references an element
+ * from a model describing how that element changed. A model proxy fires model deltas
  * as its model changes in order to update views displaying that model. 
  * <p>
  * Each node in a model delta describes the following:

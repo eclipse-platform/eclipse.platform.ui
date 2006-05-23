@@ -73,7 +73,7 @@ public interface IModelProxy {
 	public void addModelChangedListener(IModelChangedListener listener);
 	
 	/**
-	 * Deregisters the given listener from model delta notification.
+	 * Unregisters the given listener from model delta notification.
 	 * 
 	 * @param listener model delta listener
 	 */
