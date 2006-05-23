@@ -30,7 +30,6 @@ import org.eclipse.search2.internal.ui.text2.FindInWorkspaceActionDelegate;
 
 /**
  * Action group that adds a sub-menu with text search actions to a context menu.
- * to a context menu.
  * 
  * @since 3.2
  */
@@ -53,7 +52,7 @@ public class TextSearchGroup extends ActionGroup {
 
 	/**
 	 * Changes the text that is used for the submenu. The default is 
-	 * "Find Text".
+	 * "Search Text".
 	 */
 	public void setMenuText(String text) {
 		fMenuText= text;
