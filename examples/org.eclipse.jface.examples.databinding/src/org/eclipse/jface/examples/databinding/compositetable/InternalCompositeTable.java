@@ -1341,7 +1341,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 	private PaintListener headerPaintListener = new PaintListener() {
 		public void paintControl(PaintEvent e) {
-			if (parent.gridLinesOn) {
+			if (parent.linesVisible) {
 				drawGridLines(e, true);
 			}
 		}
@@ -1349,7 +1349,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 	private PaintListener rowPaintListener = new PaintListener() {
 		public void paintControl(PaintEvent e) {
-			if (parent.gridLinesOn) {
+			if (parent.linesVisible) {
 				drawGridLines(e, false);
 			}
 		}

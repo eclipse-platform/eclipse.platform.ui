@@ -532,32 +532,32 @@ public class CompositeTable extends Canvas {
 		}
 	}
 
-	boolean gridLinesOn = true;
+	boolean linesVisible = true;
 
 	/**
-	 * Method isGridLinesOn. Returns if the CompositeTable will draw grid lines
+	 * Method getLinesVisible. Returns if the CompositeTable will draw grid lines
 	 * on the header and row Composite objects. This property is ignored if the
 	 * programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
 	 * @return true if the CompositeTable will draw grid lines; false otherwise.
 	 */
-	public boolean isGridLinesOn() {
-		return gridLinesOn;
+	public boolean getLinesVisible() {
+		return linesVisible;
 	}
 
 	/**
-	 * Method setGridLinesOn. Sets if the CompositeTable will draw grid lines on
+	 * Method setLinesVisible. Sets if the CompositeTable will draw grid lines on
 	 * the header and row Composite objects. This property is ignored if the
 	 * programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
-	 * @param gridLinesOn
+	 * @param linesVisible
 	 *            true if the CompositeTable will draw grid lines; false
 	 *            otherwise.
 	 */
-	public void setGridLinesOn(boolean gridLinesOn) {
-		this.gridLinesOn = gridLinesOn;
+	public void setLinesVisible(boolean linesVisible) {
+		this.linesVisible = linesVisible;
 	}
 
 	String insertHint = "Press <Ctrl-INSERT> to insert new data."; //$NON-NLS-1$
