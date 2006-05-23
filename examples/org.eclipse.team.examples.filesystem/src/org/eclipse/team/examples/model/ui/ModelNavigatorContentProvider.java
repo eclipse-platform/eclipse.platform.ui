@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.examples.model.*;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.navigator.*;
@@ -31,12 +32,13 @@ import org.eclipse.ui.navigator.*;
  * replace the corresponding resource project in the Project Explorer.
  */
 public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
-		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider {
+		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider, ITeamStateChangeListener {
 
 	private ICommonContentExtensionSite extensionSite;
 	private boolean isWorkspaceRoot;
 	private Viewer viewer;
 	private final boolean updateViewer;
+	private SynchronizationStateTester syncStateTester;
 
 	public ModelNavigatorContentProvider() {
 		super();
@@ -56,8 +58,12 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	 */
 	public void init(ICommonContentExtensionSite aConfig) {
 		extensionSite = aConfig;
-		if (updateViewer)
+		if (updateViewer) {
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+			// Use a synchronization state tester to listen for team state changes
+			syncStateTester = new SynchronizationStateTester();
+			syncStateTester.getTeamStateProvider().addDecoratedStateChangeListener(this);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -66,6 +72,8 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	public void dispose() {
 		super.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		if (syncStateTester != null)
+			syncStateTester.getTeamStateProvider().removeDecoratedStateChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -118,6 +126,40 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = viewer;
 		super.inputChanged(viewer, oldInput, newInput);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ITeamStateChangeListener#teamStateChanged(org.eclipse.team.ui.mapping.ITeamStateChangeEvent)
+	 */
+	public void teamStateChanged(ITeamStateChangeEvent event) {
+		// We need to listen to team state changes in order to determine when we need
+		// to perform label updates on model elements.
+		// We actually just refresh all projects that contain changes.
+		// This is inefficient but will do for an example
+		Set refreshProjects = new HashSet();
+		IResource[] addedRoots = event.getAddedRoots();
+		for (int i = 0; i < addedRoots.length; i++) {
+			IResource resource = addedRoots[i];
+			if (isModelProject(resource.getProject())) {
+				refreshProjects.add(ModelObject.create(resource.getProject()));
+			}
+		}
+		IResource[] removedRoots = event.getRemovedRoots();
+		for (int i = 0; i < removedRoots.length; i++) {
+			IResource resource = removedRoots[i];
+			if (isModelProject(resource.getProject())) {
+				refreshProjects.add(ModelObject.create(resource.getProject()));
+			}
+		}
+		IResource[] changed = event.getChangedResources();
+		for (int i = 0; i < changed.length; i++) {
+			IResource resource = changed[i];
+			if (isModelProject(resource.getProject())) {
+				refreshProjects.add(ModelObject.create(resource.getProject()));
+			}
+		}
+		
+		refreshProjects((ModelProject[]) refreshProjects.toArray(new ModelProject[refreshProjects.size()]));
 	}
 	
 	/* (non-Javadoc)
