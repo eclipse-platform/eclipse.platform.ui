@@ -738,6 +738,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSetSelectionDialog_detailsButton_label;
 	public static String WorkingSetSelectionDialog_newButton_label;
 	public static String WorkingSetSelectionDialog_removeButton_label;
+	
+	public static String WorkbenchPage_workingSet_default_label;
+	public static String WorkbenchPage_workingSet_multi_label;
 
 	// =================================================================
 	// System Summary

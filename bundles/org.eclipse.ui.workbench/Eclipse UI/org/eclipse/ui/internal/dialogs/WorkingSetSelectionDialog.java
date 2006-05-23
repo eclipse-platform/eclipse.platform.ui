@@ -346,8 +346,11 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				IWorkingSet aggregate = workingSetManager
 						.getWorkingSet(setId);
 				if (aggregate == null) {
-					aggregate = workingSetManager.createAggregateWorkingSet(
-							setId, "Multiple Working Sets", typedResult); //$NON-NLS-1$
+					aggregate = workingSetManager
+							.createAggregateWorkingSet(
+									setId,
+									WorkbenchMessages.WorkbenchPage_workingSet_multi_label,
+									typedResult);
 					workingSetManager.addWorkingSet(aggregate);
 				}
 				setSelection(new IWorkingSet[] {aggregate});

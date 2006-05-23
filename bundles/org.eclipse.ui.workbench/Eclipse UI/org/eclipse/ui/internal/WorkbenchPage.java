@@ -4725,8 +4725,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 							getAggregateWorkingSetId());
 			if (aggregateWorkingSet == null) {
 				aggregateWorkingSet = (AggregateWorkingSet) workingSetManager
-						.createAggregateWorkingSet(getAggregateWorkingSetId(),
-								"Window Working Set", getWorkingSets()); //$NON-NLS-1$
+						.createAggregateWorkingSet(
+								getAggregateWorkingSetId(),
+								WorkbenchMessages.WorkbenchPage_workingSet_default_label,
+								getWorkingSets());
 				workingSetManager.addWorkingSet(aggregateWorkingSet);
 			}
 		}
