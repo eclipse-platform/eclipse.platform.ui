@@ -95,14 +95,20 @@ public final class PlatformUI {
     }
 
     /**
-     * Returns whether {@link #createAndRunWorkbench createAndRunWorkbench} has been
-     * called to create the workbench, and the workbench has yet to terminate.
-     * 
-     * @return <code>true</code> if the workbench has been created and is still
-     * running, and <code>false</code> if the workbench has not yet been created
-     * or has completed
-     * @since 3.0
-     */
+	 * Returns whether {@link #createAndRunWorkbench createAndRunWorkbench} has
+	 * been called to create the workbench, and the workbench has yet to
+	 * terminate.
+	 * <p>
+	 * Note that this method may return <code>true</code> while the workbench
+	 * is still being initialized, so it may not be safe to call workbench API
+	 * methods even if this method returns true. See bug 49316 for details.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the workbench has been created and is
+	 *         still running, and <code>false</code> if the workbench has not
+	 *         yet been created or has completed
+	 * @since 3.0
+	 */
     public static boolean isWorkbenchRunning() {
         return Workbench.getInstance() != null
                 && Workbench.getInstance().isRunning();
