@@ -31,7 +31,7 @@ public class ModelSyncActionProvider extends SynchronizationActionProvider {
 		// We provide custom handlers that ensure that the MOD files get updated properly
 		// when MOE files are merged.
 		registerHandler(MERGE_ACTION_ID, new ModelMergeActionHandler(configuration, false));
-		registerHandler(OVERWRITE_ACTION_ID, new ModelMergeActionHandler(configuration, false));
+		registerHandler(OVERWRITE_ACTION_ID, new ModelMergeActionHandler(configuration, true));
 		// We can just use the default mark as merged handler
 	}
 }
