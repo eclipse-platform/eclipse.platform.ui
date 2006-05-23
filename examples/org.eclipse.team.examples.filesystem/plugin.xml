@@ -401,6 +401,7 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
+            activeByDefault="true"
             contentProvider="org.eclipse.team.examples.model.ui.ModelNavigatorContentProvider"
             icon="$nl$/icons/full/obj/root_obj.gif"
             id="org.eclipse.team.examples.model.navigator"
