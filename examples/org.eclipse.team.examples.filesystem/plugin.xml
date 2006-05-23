@@ -475,7 +475,7 @@
             <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
          </factory>
          <factory
-               adaptableType="org.eclipse.core.resources.mapping.ModelProvider"
+               adaptableType="org.eclipse.team.examples.model.mapping.ExampleModelProvider"
                class="org.eclipse.team.examples.model.ui.AdapterFactory">
             <adapter type="org.eclipse.team.core.mapping.IResourceMappingMerger"/>
             <adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
