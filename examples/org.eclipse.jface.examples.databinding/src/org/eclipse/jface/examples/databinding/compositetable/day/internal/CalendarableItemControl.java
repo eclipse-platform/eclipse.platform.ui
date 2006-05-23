@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -107,6 +108,14 @@ public class CalendarableItemControl extends Canvas  {
         setLayout(fillLayout);
         addPaintListener(paintListener);
         label.addMouseListener(labelMouseListener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		label.setMenu(menu);
 	}
 
 	/**

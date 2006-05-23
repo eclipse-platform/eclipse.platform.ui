@@ -1,9 +1,19 @@
 Calendar binding tasks:
 =======================
 
- * Create a Hibernate mapping for a java.util.List Events that we can bind
- 
- * Add code to implement insert and deletion using the above listeners
+ * Create a Hibernate mapping for a java.util.List Events that we can bind **DONE**
+ * Add code to implement insert and deletion using the above listeners **DONE**
+ * Change the new event dialog so that it inserts the event by adding it to
+   Hibernate's mapped collection, then calling flush() on the session. **DONE**
+   
+ * Create a LazyInsertDeleteProvider that displays the new event dialog and 
+   initializes its values to the current date/time.
+ * In the action that opens a dialog to create a new event, detect if an 
+   IEventEditor is open, and if it is,
+   call fireInsert to display the new event dialog and perform the insert 
+   operation.
+ * When the user clicks OK in the new event dialog, detect if the calender is
+   open and if it is not open, open it.
  * Hook up UI gestures (double-click, insert keypress, delete keypress) to 
    insert/delete events
 

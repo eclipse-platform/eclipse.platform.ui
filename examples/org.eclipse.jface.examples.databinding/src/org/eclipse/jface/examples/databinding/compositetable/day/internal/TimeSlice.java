@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -151,6 +152,17 @@ public class TimeSlice extends Composite {
 	public TimeSlice(Composite parent, int style) {
 		super(parent, SWT.NULL);
 		initialize();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.setMenu(menu);
+		}
 	}
 
 	/**

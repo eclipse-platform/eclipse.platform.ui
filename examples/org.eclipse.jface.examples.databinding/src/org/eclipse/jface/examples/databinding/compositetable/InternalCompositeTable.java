@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Widget;
 
@@ -630,6 +631,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		Control newControl = createInternalControl(controlHolder,
 				rowConstructor);
+		if (menu != null) {
+			newControl.setMenu(menu);
+		}
 		fireRowConstructionEvent(newControl);
 		TableRow newRow = new TableRow(this, newControl);
 		if (newRow.getRowControl() instanceof Composite) {
@@ -1697,6 +1701,25 @@ public class InternalCompositeTable extends Composite implements Listener {
 			rowControls[i] = getRowByNumber(i).getRowControl();
 		}
 		return rowControls;
+	}
+	
+	private Menu menu = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		this.menu = menu;
+		setMenuOnCollection(rows, menu);
+		setMenuOnCollection(spareRows, menu);
+	}
+
+	private void setMenuOnCollection(LinkedList collection, Menu menu) {
+		for (Iterator rowsIter = collection.iterator(); rowsIter.hasNext();) {
+			TableRow row = (TableRow) rowsIter.next();
+			row.getRowControl().setMenu(menu);
+		}
 	}
 
 	/**

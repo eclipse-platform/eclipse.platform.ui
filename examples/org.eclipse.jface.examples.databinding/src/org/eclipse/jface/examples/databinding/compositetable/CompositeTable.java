@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * Class CompositeTable. n. (1) An SWT virtual table control that extends
@@ -143,6 +144,7 @@ public class CompositeTable extends Canvas {
 
 	private Control rowControl = null;
 
+	// TODO: on public API methods that reference contentPane, make sure it's not null before doing anything
 	private InternalCompositeTable contentPane = null;
 
 	/**
@@ -813,6 +815,16 @@ public class CompositeTable extends Canvas {
 	 */
 	public Control[] getRowControls() {
 		return contentPane.getRowControls();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		if (contentPane != null) {
+			contentPane.setMenu(menu);
+		}
 	}
 	
 	/**

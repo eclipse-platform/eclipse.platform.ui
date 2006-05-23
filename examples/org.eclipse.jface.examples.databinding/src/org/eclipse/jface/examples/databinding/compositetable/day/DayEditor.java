@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * A DayEditor is an SWT control that can display events on a time line that can
@@ -65,6 +66,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	private List recycledCalendarableEventControls = new LinkedList();
 	protected TimeSlice daysHeader = null;
 	private final boolean headerDisabled;
+	private Menu controlMenu;
 	
 	/**
 	 * NO_HEADER constant.  A style bit constant to indicate that no header
@@ -160,6 +162,29 @@ public class DayEditor extends Composite implements IEventEditor {
 		});
 		
 		compositeTable.setRunTime(true);
+	}
+	
+	private Menu menu = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		this.menu = menu;
+		compositeTable.setMenu(menu);
+		setMenuOnCollection(recycledCalendarableEventControls, menu);
+		for (int day=0; day < model.getNumberOfDays(); ++day) {
+			List calendarablesForDay = model.getCalendarableItems(day);
+			setMenuOnCollection(calendarablesForDay, menu);
+		}
+	}
+
+	private void setMenuOnCollection(List collection, Menu menu) {
+		for (Iterator controls = collection.iterator(); controls.hasNext();) {
+			CalendarableItemControl control = (CalendarableItemControl) controls.next();
+			control.setMenu(menu);
+		}
 	}
 	
 	private KeyListener keyListener = new KeyAdapter() {
@@ -1248,6 +1273,9 @@ public class DayEditor extends Composite implements IEventEditor {
 			return result;
 		}
 		CalendarableItemControl calendarableItemControl = new CalendarableItemControl(this, SWT.NULL);
+		if (menu != null) {
+			calendarableItemControl.setMenu(menu);
+		}
 		calendarableItemControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
 		return calendarableItemControl;
 	}

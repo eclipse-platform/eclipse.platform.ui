@@ -163,11 +163,15 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 */
 	public void dispose() {
 		super.dispose();
+		if (editor == null) {
+			return;
+		}
 		editor.removeItemInsertHandler(insertHandler);
 		editor.removeItemDeleteHandler(deleteHandler);
 		editor.removeItemDisposeHandler(itemDisposeHandler);
 		editor.setEventCountProvider(null);
 		editor.setEventContentProvider(null);
+		editor = null;  // encourage the garbage collector to run... ;-)
 	}
 
 	/* (non-Javadoc)
@@ -230,7 +234,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		insertDeleteProviders.remove(p);
 	}
 
-	private NewObject fireInsert(Object initializationData) {
+	private NewObject fireInsert(CalendarableItem initializationData) {
 		for (Iterator iter = insertDeleteProviders.iterator(); iter.hasNext();) {
 			LazyInsertDeleteProvider p = (LazyInsertDeleteProvider) iter.next();
 			NewObject result = p.insertElementAt(0, initializationData);
