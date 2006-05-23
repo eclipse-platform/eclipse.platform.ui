@@ -35,12 +35,12 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
  * <p>
  * Information flow is like this:
  * </p>
- * <ol>IConcurrentModel sends unordered elements to BackgroundContentProvider (in a background thread)</ol>
- * <ol>BackgroundContentProvider sorts, filters, and sends element/index pairs to
- *     ConcurrentTableUpdator (in a background thread)</ol>
- * <ol>ConcurrentTableUpdator batches the updates and sends them to an AbstractVirtualTable 
- *     (in the UI thread)</ol>  
- * <li>
+ * <ol>
+ * <li>IConcurrentModel sends unordered elements to BackgroundContentProvider (in a background thread)</li>
+ * <li>BackgroundContentProvider sorts, filters, and sends element/index pairs to
+ *     ConcurrentTableUpdator (in a background thread)</li>
+ * <li>ConcurrentTableUpdator batches the updates and sends them to an AbstractVirtualTable 
+ *     (in the UI thread)</li>  
  * </ol>
  * 
  * <p>
