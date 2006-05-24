@@ -24,6 +24,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 
@@ -584,6 +586,13 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		// Ensure HEAD matches branch
 		assertContentsEqual(project, branchedProject);
 		
+		// Ensure that the tag on the file is HEAD
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(project.getFile("folder2/added.txt"));
+		ResourceSyncInfo syncInfo = cvsFile.getSyncInfo();
+		CVSTag tag = syncInfo.getTag();
+		if (tag != null && !tag.equals(CVSTag.DEFAULT))
+			fail("Invalid tag for added file");
+		
 		// Modify the file on the branch
 		setContentsAndEnsureModified(branchedProject.getFile("folder2/added.txt"), "Unmergable contents");
 		commitProject(branchedProject);
@@ -668,4 +677,50 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
     		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
     	}
     }
+    
+	public void testMergeNewFileToBranch() throws InvocationTargetException, InterruptedException, CoreException, IOException {
+		// Create a project
+		IProject project = createProject(new String[] {"file1.txt"});
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// Add a file to HEAD
+		addResources(project, new String[] {"added.txt"}, true);
+		
+		// Merge the file with branch but do not commit
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(branchedProject, root, CVSTag.DEFAULT);
+		assertSyncEquals("testFileAddedToBranch", subscriber, branchedProject, 
+				new String[]{"added.txt"}, true, 
+				new int[]{
+					SyncInfo.INCOMING | SyncInfo.ADDITION
+				});
+		mergeResources(subscriber, branchedProject, new String[]{"added.txt"}, true /* allow overwrite */);
+		
+		// Ensure HEAD matches branch
+		assertContentsEqual(project, branchedProject);
+		
+		// Ensure that the tag on the file is the branch tag
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(branchedProject.getFile("added.txt"));
+		ResourceSyncInfo syncInfo = cvsFile.getSyncInfo();
+		assertEquals("Invalid tag for added file", syncInfo.getTag(), branch);
+		
+		// Add a file in a subfolder to HEAD
+		addResources(project, new String[] {"folder1/added.txt"}, true);
+		assertSyncEquals("testFileAddedToBranch", subscriber, branchedProject, 
+				new String[]{"folder1/added.txt"}, true, 
+				new int[]{
+					SyncInfo.INCOMING | SyncInfo.ADDITION
+				});
+		mergeResources(subscriber, branchedProject, new String[]{"folder1/added.txt"}, true /* allow overwrite */);
+		// Ensure HEAD matches branch
+		assertContentsEqual(project, branchedProject);
+		
+		// Ensure that the tag on the file is the branch tag
+		cvsFile = CVSWorkspaceRoot.getCVSFileFor(branchedProject.getFile("folder1/added.txt"));
+		syncInfo = cvsFile.getSyncInfo();
+		assertEquals("Invalid tag for added file", syncInfo.getTag(), branch);
+	}
 }

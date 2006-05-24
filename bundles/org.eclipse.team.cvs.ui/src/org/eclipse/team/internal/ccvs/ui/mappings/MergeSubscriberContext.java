@@ -25,8 +25,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 
@@ -97,6 +96,7 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 							byte[] syncBytes = variant.asBytes();
 							MutableResourceSyncInfo info = new MutableResourceSyncInfo(resource.getName(), ResourceSyncInfo.ADDED_REVISION);
 							info.setKeywordMode(ResourceSyncInfo.getKeywordMode(syncBytes));
+							info.setTag(getTag(resource.getParent()));
 							CVSWorkspaceRoot.getCVSFileFor((IFile)resource).setSyncInfo(info, ICVSFile.DIRTY);
 						}
 					}
@@ -107,6 +107,14 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 		return status[0];
 	}
 
+	CVSTag getTag(IContainer parent) throws CVSException {
+		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
+		FolderSyncInfo info = folder.getFolderSyncInfo();
+		if (info != null)
+			return info.getTag();
+		return null;
+	}
+	
 	boolean equals(IThreeWayDiff currentDiff, IThreeWayDiff otherDiff) {
 		return currentDiff.getKind() == otherDiff.getKind() 
 			&& currentDiff.getDirection() == otherDiff.getDirection();
