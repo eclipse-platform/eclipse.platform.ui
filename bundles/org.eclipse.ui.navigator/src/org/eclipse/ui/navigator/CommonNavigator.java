@@ -23,8 +23,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
@@ -155,8 +153,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		 * make sure input is set after sorters and filters to avoid unnecessary
 		 * refreshes
 		 */
-		commonViewer.setInput(getInitialInput());
-		commonViewer.getControl().addDisposeListener(createDisposeListener());
+		commonViewer.setInput(getInitialInput()); 
 
 		getSite().setSelectionProvider(commonViewer);
 
@@ -481,21 +478,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	protected ActionGroup createCommonActionGroup() {
 		return new CommonNavigatorActionGroup(this, commonViewer);
-	}
-
-	/**
-	 * @return A listener to track the disposal of the Eclipse view part in
-	 *         order to dispose of the framework state.
-	 */
-	protected DisposeListener createDisposeListener() {
-		return new DisposeListener() {
-			/**
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		};
 	}
 
 	/**
