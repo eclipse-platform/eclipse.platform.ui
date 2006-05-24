@@ -23,14 +23,33 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Action which terminates a launch and then relaunches it. This is equivalent
- * to the Terminate action followed by Relaunch, but is provided to the user as
- * a convenience.
+ * Action which terminates a launch and then re-launches it.
  */
 public class TerminateAndRelaunchAction extends AbstractDebugContextAction {
+	
+	class RequestMonitor extends ActionRequestMonitor {
+		
+		private ILaunch fLaunch;
+
+		public RequestMonitor(ILaunch launch) {
+			fLaunch = launch;
+		}
+		
+		public void done() {
+			super.done();
+	        DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+	            public void run() {
+	                // Must be run in the UI thread since the launch can require
+	                // prompting to proceed
+	                RelaunchActionDelegate.relaunch(fLaunch.getLaunchConfiguration(), fLaunch.getLaunchMode());
+	            }
+	        });			
+		}
+		
+	}
 
     protected void doAction(Object element) {
-        final ILaunch launch = RelaunchActionDelegate.getLaunch(element);
+        ILaunch launch = RelaunchActionDelegate.getLaunch(element);
         if (launch == null || !(element instanceof ITerminate)) {
             // Shouldn't happen because of enablement check.
             return;
@@ -39,17 +58,8 @@ public class TerminateAndRelaunchAction extends AbstractDebugContextAction {
         if (element instanceof IAdaptable) {
             IAsynchronousTerminateAdapter adapter = (IAsynchronousTerminateAdapter) ((IAdaptable)element).getAdapter(IAsynchronousTerminateAdapter.class);
             if (adapter != null)
-                adapter.terminate(element, new ActionRequestMonitor());
+                adapter.terminate(element, new RequestMonitor(launch));
         }
-
-
-        DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-            public void run() {
-                // Must be run in the UI thread since the launch can require
-                // prompting to proceed
-                RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-            }
-        });
     }
 
 
