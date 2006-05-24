@@ -843,7 +843,7 @@ public class CompositeTable extends Canvas {
 	 * Method getSelection. Returns the currently-selected (column, row) pair
 	 * where the row specifies the offset from the top of the table window. In
 	 * order to get the current row in the underlying data structure, use
-	 * getSelection().y + getCurrentRow().
+	 * getSelection().y + getTopRow().
 	 * 
 	 * @return the currently-selected (column, row) pair where the row specifies
 	 *         the offset from the top of the table window.

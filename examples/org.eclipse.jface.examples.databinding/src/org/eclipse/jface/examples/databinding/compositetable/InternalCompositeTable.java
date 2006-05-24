@@ -1708,7 +1708,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
-	public void setMenu(Menu menu) {
+	public void setMenu(final Menu menu) {
 		super.setMenu(menu);
 		this.menu = menu;
 		setMenuOnCollection(rows, menu);
@@ -1721,6 +1721,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 			row.getRowControl().setMenu(menu);
 		}
 	}
+	
+	
 
 	/**
 	 * Method getControlRow.  Given a row control, returns its row number

@@ -179,13 +179,18 @@ public interface IEventEditor {
 	 * its registered insert handlers
 	 * 
 	 * @param date
-	 *            The date/time on which to request the insert.  The actual date
-	 *            on which the insert is performed may be different.  This is
-	 *            a HINT.
-	 *            
-	 * @return NewEvent a NewEvent object describing the event that was inserted.
+	 *            The date/time on which to request the insert. The actual date
+	 *            on which the insert is performed may be different. This is a
+	 *            HINT.
+	 * 
+	 * @param allDayEvent
+	 *            Indicates if the new event should be an all-day event. This is
+	 *            a HINT; the actual event inserted may be a timed event.
+	 * 
+	 * @return NewEvent a NewEvent object describing the event that was
+	 *         inserted.
 	 */
-	public NewEvent fireInsert(Date date);
+	public NewEvent fireInsert(Date date, boolean allDayEvent);
 	
 	/**
 	 * Adds the handler to the collection of handlers who will

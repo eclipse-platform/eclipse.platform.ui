@@ -41,6 +41,17 @@ public class WritableList extends ObservableList implements ILazyListElementProv
 		super(new ArrayList(), elementType);
 	}
 
+	/**
+	 * Creates a writable list containing elements of the given type,
+	 * wrapping an existing client-supplied list.
+	 * 
+	 * @param toWrap The java.utilList to wrap
+	 * @param elementType
+	 */
+	public WritableList(List toWrap, Object elementType) {
+		super(toWrap, elementType);
+	}
+
 	public Object set(int index, Object element) {
 		getterCalled();
 		Object oldElement = wrappedList.set(index, element);

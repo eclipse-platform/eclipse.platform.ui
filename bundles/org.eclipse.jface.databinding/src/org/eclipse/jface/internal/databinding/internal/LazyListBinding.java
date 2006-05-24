@@ -119,11 +119,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	public void dispose() {
 		targetList.removeElementProvider(this);
 		targetList.removeInsertDeleteProvider(lazyInsertDeleteProvider);
-		targetList.dispose();
-		
 		modelList.removeListChangeListener(modelChangeListener);
-		modelList.dispose();
-		
 		disposed=true;
 	}
 	

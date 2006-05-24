@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -345,6 +346,28 @@ public class TimeSlice extends Composite {
 		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
 			TimeSlot cell = (TimeSlot) columnsIter.next();
 			cell.removeKeyListener(listener);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void addMouseListener(MouseListener listener) {
+		super.addMouseListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.addMouseListener(listener);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		super.removeMouseListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.removeMouseListener(listener);
 		}
 	}
 	

@@ -1,5 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2006 The Pampered Chef and others.
+/******************************************************************************* * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -498,26 +497,23 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 					item.setContinued(SWT.TOP | SWT.BOTTOM);
 			}
 		}
+		item.setData(CalendarableItem.DATA_KEY, sourceElement);	
 	}
-
-	private static final String dataKey = "BindingData";
-	private static final String bindingKey = "BindingBinding";
 	
 	private void bindCalendarableItem(CalendarableItem item, String itemPropertyName, Object sourceElement, String sourcePropertyName, BindSpec bindSpec) {
-		item.setData(dataKey, sourceElement);
 		Binding binding = dbc.bind(new Property(item, itemPropertyName), 
 				new Property(sourceElement, sourcePropertyName), bindSpec);
-		List bindingList = (List) item.getData(bindingKey);
+		List bindingList = (List) item.getData(CalendarableItem.BINDING_KEY);
 		if (bindingList == null) {
 			bindingList = new ArrayList();
-			item.setData(bindingKey, bindingList);
+			item.setData(CalendarableItem.BINDING_KEY, bindingList);
 		}
 		bindingList.add(binding);
 	}
 
 	private CalendarableItemEventHandler itemDisposeHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			List bindings = (List)e.calendarableItem.getData(bindingKey);
+			List bindings = (List)e.calendarableItem.getData(CalendarableItem.BINDING_KEY);
 			if (bindings != null) {
 				for (Iterator bindingIter = bindings.iterator(); bindingIter.hasNext();) {
 					Binding binding = (Binding) bindingIter.next();
@@ -572,7 +568,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 
 	private CalendarableItemEventHandler deleteHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			int objectToDelete = eventCache.indexOf(e.calendarableItem.getData(dataKey));
+			int objectToDelete = eventCache.indexOf(e.calendarableItem.getData(CalendarableItem.DATA_KEY));
 			if (!fireDelete(objectToDelete)) {
 				e.doit = false;
 				return;

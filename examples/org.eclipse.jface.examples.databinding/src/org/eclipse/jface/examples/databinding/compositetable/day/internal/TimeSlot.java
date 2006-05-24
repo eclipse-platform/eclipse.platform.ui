@@ -22,6 +22,9 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -76,6 +79,7 @@ public class TimeSlot extends Canvas {
 		addPaintListener(paintListener);
 		addDisposeListener(disposeListener);
 		addKeyListener(keyListener);
+		addMouseListener(mouseListener);
 
 		Display display = Display.getCurrent();
 
@@ -100,6 +104,8 @@ public class TimeSlot extends Canvas {
 			removeTraverseListener(traverseListener);
 			removeFocusListener(focusListener);
 			removePaintListener(paintListener);
+			removeMouseListener(mouseListener);
+			removeKeyListener(keyListener);
 			removeDisposeListener(disposeListener);
 
 			// Dispose colors here
@@ -226,6 +232,12 @@ public class TimeSlot extends Canvas {
 	 */
 	private TraverseListener traverseListener = new TraverseListener() {
 		public void keyTraversed(TraverseEvent e) {
+		}
+	};
+	
+	private MouseListener mouseListener = new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			setFocus();
 		}
 	};
 

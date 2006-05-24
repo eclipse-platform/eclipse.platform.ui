@@ -46,6 +46,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -139,6 +140,7 @@ public class DayEditor extends Composite implements IEventEditor {
 				timeSlice.setNumberOfColumns(numberOfDays);
 				timeSlice.addCellFocusListener(cellFocusListener);
 				timeSlice.addKeyListener(keyListener);
+				timeSlice.addMouseListener(cellMouseListener);
 			}
 		});
 		compositeTable.addRowContentProvider(new IRowContentProvider() {
@@ -169,16 +171,22 @@ public class DayEditor extends Composite implements IEventEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
-	public void setMenu(Menu menu) {
-		super.setMenu(menu);
-		this.menu = menu;
-		compositeTable.setMenu(menu);
-		setMenuOnCollection(recycledCalendarableEventControls, menu);
-		for (int day=0; day < model.getNumberOfDays(); ++day) {
-			List calendarablesForDay = model.getCalendarableItems(day);
-			setMenuOnCollection(calendarablesForDay, menu);
-		}
+	public void setMenu(final Menu menu) {
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				DayEditor.super.setMenu(menu);
+				DayEditor.this.menu = menu;
+				compositeTable.setMenu(menu);
+				setMenuOnCollection(recycledCalendarableEventControls, menu);
+				for (int day=0; day < model.getNumberOfDays(); ++day) {
+					List calendarablesForDay = model.getCalendarableItems(day);
+					setMenuOnCollection(calendarablesForDay, menu);
+				}
+			}
+		});
 	}
+	
+
 
 	private void setMenuOnCollection(List collection, Menu menu) {
 		for (Iterator controls = collection.iterator(); controls.hasNext();) {
@@ -187,8 +195,37 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 	
+	private ArrayList keyListeners = new ArrayList();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void addKeyListener(KeyListener listener) {
+		keyListeners.add(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		keyListeners.remove(listener);
+	}
+	
 	private KeyListener keyListener = new KeyAdapter() {
+		public void keyReleased(KeyEvent e) {
+			for (Iterator i = keyListeners.iterator(); i.hasNext();) {
+				KeyListener keyListener = (KeyListener) i.next();
+				keyListener.keyReleased(e);
+				if (!e.doit) return;
+			}
+		}
+		
 		public void keyPressed(KeyEvent e) {
+			for (Iterator i = keyListeners.iterator(); i.hasNext();) {
+				KeyListener keyListener = (KeyListener) i.next();
+				keyListener.keyPressed(e);
+				if (!e.doit) return;
+			}
 			CalendarableItem selection = selectedCalendarable;
 			int selectedRow;
 			int selectedDay;
@@ -242,6 +279,55 @@ public class DayEditor extends Composite implements IEventEditor {
 			}
 		}
 	};
+	
+	private ArrayList mouseListeners = new ArrayList();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	public void addMouseListener(MouseListener listener) {
+		mouseListeners.add(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		mouseListeners.remove(listener);
+	}
+	
+	private MouseListener cellMouseListener = new MouseListener() {
+		public void mouseDoubleClick(MouseEvent e) {
+			fireMouseDoubleClickEvent(e);
+		}
+		public void mouseDown(MouseEvent e) {
+			fireMouseDownEvent(e);
+		}
+		public void mouseUp(MouseEvent e) {
+			fireMouseUpEvent(e);
+		}
+	};
+	
+	protected void fireMouseDownEvent(MouseEvent e) {
+		for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			MouseListener mouseListener = (MouseListener) i.next();
+			mouseListener.mouseDown(e);
+		}
+	}
+	
+	protected void fireMouseUpEvent(MouseEvent e) {
+		for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			MouseListener mouseListener = (MouseListener) i.next();
+			mouseListener.mouseUp(e);
+		}
+	}
+	
+	protected void fireMouseDoubleClickEvent(MouseEvent e) {
+		for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+			MouseListener mouseListener = (MouseListener) i.next();
+			mouseListener.mouseDoubleClick(e);
+		}
+	}
 	
 	private int computeNewTopRowBasedOnSelection(CalendarableItem newSelection) {
 		int topRow = compositeTable.getTopRow();
@@ -381,13 +467,35 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 	
 	/**
-	 * Method getSelection.  Returns the selected Calendarable event or null
-	 * if no Calendarable is selected.
+	 * Method getSelection.  Returns the selection.  This is computed as follows:
+	 * <ol>
+	 * <li>If a CalendarableItem is currently selected, it is returned.
+	 * <li>If the selection rectangle is in an all-day event row, null is returned.
+	 * <li>Otherwise, the date/time corresponding to the selection rectangle is returned as a java.util.Date.
+	 * </ol>
 	 * 
-	 * @return the selected Calendarable or null if nothing is selected.
+	 * @return the current DayEditorSelection
 	 */
-	public CalendarableItem getSelection() {
-		return selectedCalendarable;
+	public DayEditorSelection getSelection() {
+		DayEditorSelection selection = new DayEditorSelection();
+		Point compositeTableSelection = compositeTable.getSelection();
+		
+		if (selectedCalendarable != null) {
+			selection.setSelectedCalendarable(selectedCalendarable);
+			if (selectedCalendarable.isAllDayEvent()) {
+				selection.setAllDay(true);
+			}
+		} else {
+			int visibleAllDayEventRows = model.computeNumberOfAllDayEventRows();
+			visibleAllDayEventRows -= compositeTable.getTopRow();
+			if (visibleAllDayEventRows > 0) {
+				if (compositeTableSelection.y <= visibleAllDayEventRows) {
+					selection.setAllDay(true);
+				}
+			}
+		}
+		selection.setDateTime(computeDateTimeFromViewportCoordinates(compositeTableSelection));
+		return selection;
 	}
 	
 	private List selectionChangeListeners = new ArrayList();
@@ -529,8 +637,9 @@ public class DayEditor extends Composite implements IEventEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireInsert(java.util.Date)
 	 */
-	public NewEvent fireInsert(Date date) {
+	public NewEvent fireInsert(Date date, boolean allDayEvent) {
 		CalendarableItem item = new CalendarableItem(date);
+		item.setAllDayEvent(allDayEvent);
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = item;
 		if (fireEvents(e, insertHandlers)) {
@@ -941,6 +1050,23 @@ public class DayEditor extends Composite implements IEventEditor {
 		return row;
 	}
 	
+	private Date computeDateTimeFromViewportCoordinates(Point viewportSelection) {
+		Date startDate = model.calculateDate(getStartDate(), viewportSelection.x);
+		int dayRowTime = convertViewportRowToDayRow(viewportSelection.y);
+		if (dayRowTime < 0) {
+			dayRowTime = 0;
+		}
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTime(startDate);
+		calendar.set(Calendar.HOUR_OF_DAY, 
+				model.computeHourFromRow(dayRowTime));
+		calendar.set(Calendar.MINUTE,
+				model.computeMinuteFromRow(dayRowTime));
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+	
 
 	/**
 	 * @param calendarable
@@ -1260,9 +1386,24 @@ public class DayEditor extends Composite implements IEventEditor {
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
+			fireMouseDownEvent(e);
 			CalendarableItemControl control = (CalendarableItemControl) e.widget;
 			CalendarableItem aboutToSelect = control.getCalendarableItem();
 			setSelection(aboutToSelect);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+			fireMouseDoubleClickEvent(e);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent e) {
+			fireMouseUpEvent(e);
 		}
 	};
 

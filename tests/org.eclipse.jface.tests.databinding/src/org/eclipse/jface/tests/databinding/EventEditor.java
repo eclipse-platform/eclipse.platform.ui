@@ -61,7 +61,7 @@ public class EventEditor implements IEventEditor {
 	
 	private List insertHandlers = new ArrayList();
 	
-    public NewEvent fireInsert(Date date) {
+    public NewEvent fireInsert(Date date, boolean allDayEvent) {
 		CalendarableItem item = new CalendarableItem(date);
 		CalendarableItemEvent e = calendarableItemEvent(item);
 		fireEvent(e, insertHandlers);

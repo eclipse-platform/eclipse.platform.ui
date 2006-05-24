@@ -196,7 +196,6 @@ public class CalendarableItem extends ModelObject {
 	
 	private Date endTime = new Date();
 
-
 	/**
 	 * Returns the event's end time.  This value is ignored if this is an all-day event.
 	 * 
@@ -501,6 +500,10 @@ public class CalendarableItem extends ModelObject {
 	}
 
 	private int continued;
+
+	public static final String TIME_BINDING_KEY = "TimeBinding";
+	public static final String BINDING_KEY = "BindingBinding";
+	public static final String DATA_KEY = "BindingData";
 	
 	/**
 	 * Sets the "To be continued..." bitmask indicating that this event is

@@ -419,6 +419,24 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		});
 	}
 	
+	public void test_multiDayAllDayEvent() throws Exception {
+		editor.setTimeBreakdown(7, 4);
+		editor.setStartDate(date(5, 15));
+		Event[] testData = new Event[] {
+				new Event (time(5, 15, 5, 45), time(5, 17, 9, 45), "three day mtg", true)};
+		EventEditorBindingDescription editorBindDesc = makeBindingDescription();
+		dbc.bind(editorBindDesc, makeModel(testData), null);
+		assertEditorState(editor, new CalendarableItem[][] {
+				{ci(date(5, 15), "three day mtg")},
+				{ci(date(5, 16), "three day mtg")},
+				{ci(date(5, 17), "three day mtg")},
+				{},
+				{},
+				{},
+				{}
+		});
+	}
+	
 	public void test_bindCalendarableDescription() throws Exception {
 		editor.setTimeBreakdown(7, 4);
 		editor.setStartDate(date(5, 15));
@@ -506,7 +524,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		model.add(event);
 		
 		// Add the third event (to the target via the insertDeleteProvider)
-		NewEvent results = editorBindDesc.editor.fireInsert(date(5, 17));
+		NewEvent results = editorBindDesc.editor.fireInsert(date(5, 17), false);
 		
 		assertEquals("start date", time(5, 17, 5, 45), results.startTimeEndTime[0]);
 		assertEquals("end date", time(5, 17, 9, 45), results.startTimeEndTime[1]);
@@ -549,7 +567,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		Event event = new Event (time(5, 16, 5, 45), time(5, 16, 9, 45), "Stand-up mtg 2");
 		model.add(event);
 		
-		// Add the third event (to the target via the insertDeleteProvider)
 		boolean result = editorBindDesc.editor.fireDelete((CalendarableItem) editor.model.getCalendarableItems(0).get(0));
 		
 		assertTrue("Could delete", result);
