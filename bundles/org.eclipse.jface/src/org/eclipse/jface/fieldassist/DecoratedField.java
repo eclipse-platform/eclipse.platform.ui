@@ -448,6 +448,8 @@ public class DecoratedField {
 	private void updateControlAttachments(int index, FieldDecorationData decData) {
 		FormData formData = (FormData) control.getLayoutData();
 		int newWidth = widthOf(decData.decoration.getImage());
+		// opposing represents the location of the decoration above or below
+		// the one in question.
 		int opposing;
 
 		switch (index) {
@@ -464,24 +466,25 @@ public class DecoratedField {
 				formData.left = new FormAttachment(decData.label);
 			} else if (decDatas[opposing].data.width < newWidth) {
 				// Decorator on opposing side is the smaller one. Attach
-				// control to the new one and center align the smaller one
+				// control to the new one. 
 				formData.left = new FormAttachment(decData.label);
+				// Center align the smaller one relative to the larger one.
 				decDatas[opposing].data.left.alignment = SWT.CENTER;
 				decDatas[opposing].data.left.control = decData.label;
 			} else {
 				// The new decorator is the smaller one. Keep the
-				// control attached to the opposing one and horizontally center
-				// the smaller one.
+				// control attached to the opposing one. 
 				formData = null;
+				// Horizontally center the smaller one relative to the larger one.
 				decData.data.left.alignment = SWT.CENTER;
 				decData.data.left.control = decDatas[opposing].label;
 			}
 			break;
 		/*
 		 * The only real difference in right side cases is that we are attaching
-		 * the right side of the control to the wider decoration instead
-		 * of the left.  Other concerns (horizontally aligning the smaller
-		 * decoration) are the same.
+		 * the right side of the control to the wider decoration rather than the
+		 * left side of the control.  Other concerns (horizontally aligning the 
+		 * smaller decoration relative to the larger one) are the same.
 		 */
 		case RIGHT_TOP:
 		case RIGHT_BOTTOM:
@@ -496,17 +499,22 @@ public class DecoratedField {
 				formData.right = new FormAttachment(decData.label);
 			} else if (decDatas[opposing].data.width < newWidth) {
 				// Decorator on opposing side is the smaller one. Attach
-				// control to the new one and center align the smaller one
+				// control to the new one. 
 				formData.right = new FormAttachment(decData.label);
-				decDatas[opposing].data.left.alignment = SWT.CENTER;
-				decDatas[opposing].data.left.control = decData.label;
+				// Center align the smaller one to the larger one.
+				// Note that this could be done using the left or right
+				// attachment, we use the right since it is already
+				// created for all right-side decorations.
+				decDatas[opposing].data.right.alignment = SWT.CENTER;
+				decDatas[opposing].data.right.control = decData.label;
 			} else {
 				// The new decorator is the smaller one. Keep the
-				// control attached to the opposing one and horizontally center
-				// the smaller one.
+				// control attached to the opposing one.
 				formData = null;
-				decData.data.left.alignment = SWT.CENTER;
-				decData.data.left.control = decDatas[opposing].label;
+				// Horizontally center align the smaller one to the
+				// larger one. 
+				decData.data.right.alignment = SWT.CENTER;
+				decData.data.right.control = decDatas[opposing].label;
 			}
 			break;
 		default:
