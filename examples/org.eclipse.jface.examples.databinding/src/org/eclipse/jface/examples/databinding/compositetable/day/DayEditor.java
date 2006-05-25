@@ -68,6 +68,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	protected TimeSlice daysHeader = null;
 	private final boolean headerDisabled;
 	private Menu controlMenu;
+	private int defaultEventDuration;
 	
 	/**
 	 * NO_HEADER constant.  A style bit constant to indicate that no header
@@ -566,8 +567,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private List editHandlers = new ArrayList();
 	
-	private boolean fireEditItemStrategy(CalendarableItem item) {
-		return fireEvents(item, editHandlers);
+	private boolean fireEdit(CalendarableItem toEdit) {
+		return fireEvents(toEdit, editHandlers);
 	}
 	
 	/**
@@ -640,6 +641,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	public NewEvent fireInsert(Date date, boolean allDayEvent) {
 		CalendarableItem item = new CalendarableItem(date);
 		item.setAllDayEvent(allDayEvent);
+		item.setStartTime(date);
+		item.setEndTime(incrementHour(date, getDefaultEventDuration()));
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = item;
 		if (fireEvents(e, insertHandlers)) {
@@ -650,24 +653,36 @@ public class DayEditor extends Composite implements IEventEditor {
 		return null;
 	}
 
+	private Date incrementHour(Date date, int increment) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.HOUR_OF_DAY, increment);
+		return c.getTime();
+	}
+
 	/**
-	 * Adds the handler to the collection of handlers who will
-	 * be notified when a CalendarableItem is inserted in the receiver, by sending
-	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
+	 * Adds the handler to the collection of handlers who will be notified when
+	 * a CalendarableItem is inserted in the receiver, by sending it one of the
+	 * messages defined in the <code>CalendarableItemInsertHandler</code>
 	 * abstract class.
 	 * <p>
-	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * <code>itemInserted</code> is called when the CalendarableItem is
+	 * inserted.
 	 * </p>
-	 *
-	 * @param handler the handler which should be notified
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * </ul>
-	 *
+	 * 
+	 * @param handler
+	 *            the handler which should be notified
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                </ul>
+	 * 
 	 * @see CalendarableItemInsertHandler
 	 * @see #removeItemInsertHandler
 	 */
@@ -1052,16 +1067,12 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private Date computeDateTimeFromViewportCoordinates(Point viewportSelection) {
 		Date startDate = model.calculateDate(getStartDate(), viewportSelection.x);
-		int dayRowTime = convertViewportRowToDayRow(viewportSelection.y);
-		if (dayRowTime < 0) {
-			dayRowTime = 0;
-		}
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(startDate);
 		calendar.set(Calendar.HOUR_OF_DAY, 
-				model.computeHourFromRow(dayRowTime));
+				model.computeHourFromRow(viewportSelection.y));
 		calendar.set(Calendar.MINUTE,
-				model.computeMinuteFromRow(dayRowTime));
+				model.computeMinuteFromRow(viewportSelection.y));
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
@@ -1426,6 +1437,14 @@ public class DayEditor extends Composite implements IEventEditor {
 		control.setCalendarableItem(null);
 		control.setVisible(false);
 		recycledCalendarableEventControls.add(control);
+	}
+
+	public int getDefaultEventDuration() {
+		return defaultEventDuration;
+	}
+
+	public void setDefaultEventDuration(int defaultEventDuration) {
+		this.defaultEventDuration = defaultEventDuration;
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

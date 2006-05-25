@@ -117,7 +117,7 @@ public class EventEditor implements IEventEditor {
 	private List editHandlers = new ArrayList();
 	
 	public void fireEdit(CalendarableItem toEdit) {
-		fireEvent(calendarableItemEvent(toEdit), disposeHandlers);
+		fireEvent(calendarableItemEvent(toEdit), editHandlers);
 	}
 
 	/* (non-Javadoc)

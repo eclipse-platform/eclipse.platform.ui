@@ -155,6 +155,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		editor.addItemDisposeHandler(itemDisposeHandler);
 		editor.addItemInsertHandler(insertHandler);
 		editor.addItemDeleteHandler(deleteHandler);
+		editor.addItemEditHandler(editHandler);
 	}
 
 	/* (non-Javadoc)
@@ -168,6 +169,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		editor.removeItemInsertHandler(insertHandler);
 		editor.removeItemDeleteHandler(deleteHandler);
 		editor.removeItemDisposeHandler(itemDisposeHandler);
+		editor.removeItemEditHandler(editHandler);
 		editor.setEventCountProvider(null);
 		editor.setEventContentProvider(null);
 		editor = null;  // encourage the garbage collector to run... ;-)
@@ -254,7 +256,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 		return false;
 	}
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#setSize(int)
 	 */
@@ -574,6 +576,16 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				return;
 			}
 			eventCache.remove(objectToDelete);
+		}
+	};
+
+	private CalendarableItemEventHandler editHandler = new CalendarableItemEventHandler() {
+		public void handleRequest(CalendarableItemEvent e) {
+			int objectToEdit = eventCache.indexOf(e.calendarableItem.getData(CalendarableItem.DATA_KEY));
+			//TODO: figure out what we're doing here!
+			eventCache.remove(objectToEdit);
+			//FIXME: ???
+			//eventCache.add(objectToEdit);
 		}
 	};
 
