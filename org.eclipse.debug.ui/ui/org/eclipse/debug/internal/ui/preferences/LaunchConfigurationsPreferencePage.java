@@ -205,7 +205,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		label.setFont(parent.getFont());
 		fMigrateNow = SWTUtil.createPushButton(group, DebugPreferencesMessages.LaunchingPreferencePage_27, null);
 		gd = new GridData(SWT.BEGINNING);
-		gd.widthHint = 100;
+
 		fMigrateNow.setLayoutData(gd);
 		fMigrateNow.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
