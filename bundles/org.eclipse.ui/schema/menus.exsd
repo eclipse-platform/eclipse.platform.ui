@@ -6,15 +6,15 @@
          <meta.schema plugin="org.eclipse.ui" id="menus" name="Menus"/>
       </appInfo>
       <documentation>
-&lt;p&gt;
+         &lt;p&gt;
 This extension point allows the plug-in developer to define menus, separators, logical groups and menu items -- appearing anywhere within the application, from status lines to context menus.  It also allows sets of such contributions to be defined (i.e., action sets); these action sets can be turned on or off by the end user.  In brief, the menus extension point contains all of the presentation elements (except the icons) for contributing to any menu or trim area in Eclipse.
 &lt;/p&gt;
 &lt;p&gt;
 Every element within this extension point is given a unique identifier.  This is so that these elements can be referred to elsewhere without having to restate the element.  For example, the identifier might be required for ordering or for defining an action set.  Also, this allows third-party plug-in developers to place these elements in new locations within the interface, as appropriate.
 &lt;/p&gt;
 &lt;p&gt;
-&lt;b&gt;NOTE:&lt;/b&gt; For 3.2 the only part of this extension mechanism that has been implemented is that part associated with 'trim' contributions. Attempting to add menus, toolbars or status line entries will act as a NO-OP.
-&lt;/p&gt;
+&lt;b&gt;NOTE: For 3.2 the only part of this extension mechanism that has been implemented is that part associated with &apos;trim&apos; contributions. Attempting to add items, menus, toolbars or status line entries will act as a NO-OP.
+&lt;/b&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -164,7 +164,8 @@ A group can contain menus, items and other groups.
    <element name="widget">
       <annotation>
          <documentation>
-            A menu elements that is given direct access to the widgets.  For example, this can be used to render a combo box.  Unfortunately, this means that if a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;  This also will cause problems for things like macro support, scripting and pretty much any other command-based mechanism.
+            A menu or trim element that is given direct access to the widgets.  For example, this can be used to render a combo box.  Unfortunately, this means that if a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;  This also will cause problems for things like macro support, scripting and pretty much any other command-based mechanism.
+            When used as trim the widget will only cause the plug-in to load when it becomes visible in the UI.
          </documentation>
       </annotation>
       <complexType>
@@ -265,7 +266,7 @@ A group can contain menus, items and other groups.
                <documentation>
                   What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.
 &lt;/p&gt;
-&lt;p&gt;If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the item&apos;s command will generally require an icon, and widget elements make more sense.
+&lt;p&gt;If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the bar will generally not require a command or an icon, it should be filled with a widget that displays the trim information.
 &lt;p&gt;
 Within the trim, the workbench defines five general groups which correspond to various positions around the window:
 &lt;ul&gt;
@@ -275,7 +276,7 @@ Within the trim, the workbench defines five general groups which correspond to v
 &lt;li&gt;&lt;b&gt;vertical2&lt;/b&gt; - This represents the (vertical) trim area that is on the opposite side of the workbench from &lt;code&gt;vertical1&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;status&lt;/b&gt; - This represents the (horizontal) trim area along the bottom edge of the workbench.&lt;/li&gt;
 &lt;/ul&gt;
-By positioning the trim contribution within or with respect to this groups, the position is inferred by the workbench.
+By positioning the trim contribution within or with respect to these groups, the position is inferred by the workbench.
 &lt;/p&gt;
                </documentation>
             </annotation>
