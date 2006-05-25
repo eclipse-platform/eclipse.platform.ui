@@ -42,7 +42,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -335,41 +334,7 @@ import com.ibm.icu.text.MessageFormat;
 		fTreeViewer.setSorter(new WorkbenchViewerSorter());
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object obj = event.getElement();
-				ICheckable checked = event.getCheckable();
-				DiffProject proj = null;
-				if (obj instanceof DiffProject){
-					proj = (DiffProject) obj;
-					// Check to see if any of the Diffs contained by the DiffProject
-					// have their diff problems set
-					Object[] diffs = proj.getChildren(null);
-					for (int i= 0; i<diffs.length; i++) {
-					if (((Diff) diffs[i]).containsProblems()){
-						checked.setChecked(obj, false);
-							break;
-						}
-					}
-				} else if (obj instanceof Diff){
-					proj = ((Diff) obj).getProject();
-					// If Diff has any diff problems set, at least one hunk underneath 
-					// does not match - so don't allow entire tree to be checked
-					if (((Diff) obj).containsProblems()){
-						checked.setChecked(obj, false);
-					}
-				} else if (obj instanceof Hunk){
-					Diff diff = (Diff) ((Hunk) obj).getParent(null);
-					proj = diff.getProject();
-					// Check to see if this hunk has any problems OR
-					// if its parent has any problems
-					if( diff.getDiffProblem() ||
-						((Hunk) obj).getHunkProblem()){
-						checked.setChecked(obj, false);
-					}
-				}
-				if (proj!= null &&
-				   !proj.getProject().exists()){
-					checked.setChecked(obj, false);
-				}
+				fTreeViewer.setSubtreeChecked(event.getElement(),event.getChecked());
 				updateEnablements();
 			}
 		});
