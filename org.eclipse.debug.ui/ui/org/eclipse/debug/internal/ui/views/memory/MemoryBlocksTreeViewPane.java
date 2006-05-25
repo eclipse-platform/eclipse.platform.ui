@@ -209,29 +209,32 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			
 			if (event.getKind() == DebugEvent.TERMINATE)
 			{
-				IMemoryBlockRetrieval srcRetrieval = getMemoryBlockRetrieval(event.getSource());
-				if (srcRetrieval == fRetrieval)
+				// should only handle the terminate event if the target is terminated
+				if (event.getSource() instanceof IDebugTarget)
 				{
-					// #setInput must be done on the UI thread
-					UIJob job = new UIJob("setInput"){ //$NON-NLS-1$
-						public IStatus runInUIThread(IProgressMonitor monitor) {
+					IMemoryBlockRetrieval srcRetrieval = getMemoryBlockRetrieval(event.getSource());
+					if (srcRetrieval == fRetrieval)
+					{
+						// #setInput must be done on the UI thread
+						UIJob job = new UIJob("setInput"){ //$NON-NLS-1$
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								
+								// if viewpane is disposed, do not handle event							
+								if (fTreeViewer.getContentProvider() == null)
+									return  Status.OK_STATUS;
+								
+								fTreeViewer.setInput(null);
+								return Status.OK_STATUS;
+							}};
 							
-							// if viewpane is disposed, do not handle event							
-							if (fTreeViewer.getContentProvider() == null)
-								return  Status.OK_STATUS;
-							
-							fTreeViewer.setInput(null);
-							return Status.OK_STATUS;
-						}};
-						
-					job.setSystem(true);
-					job.schedule();
+						job.setSystem(true);
+						job.schedule();
+					}
+					
+					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(event.getSource());
+					if (retrieval != null)
+						fViewerState.remove(retrieval);
 				}
-				
-				IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(event.getSource());
-				if (retrieval != null)
-					fViewerState.remove(retrieval);
-
 			}
 		}
 
