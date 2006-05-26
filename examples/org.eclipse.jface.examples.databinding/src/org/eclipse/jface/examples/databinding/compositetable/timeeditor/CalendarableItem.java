@@ -501,7 +501,6 @@ public class CalendarableItem extends ModelObject {
 
 	private int continued;
 
-	public static final String TIME_BINDING_KEY = "TimeBinding";
 	public static final String BINDING_KEY = "BindingBinding";
 	public static final String DATA_KEY = "BindingData";
 	
