@@ -26,6 +26,19 @@ public abstract class CalendarableItemEventHandler {
 	 * @param e
 	 *            The CalendarableItemEvent to process.
 	 */
-	public abstract void handleRequest(CalendarableItemEvent e);
+	public void handleRequest(CalendarableItemEvent e) {
+		// NOOP by default
+	}
+	
+	/**
+	 * This CalendarableItemEvent has been handled.
+	 * 
+	 * @param e
+	 *            The CalendarableItemEvent that was processed, including the
+	 *            results of processing the event.
+	 */
+	public void requestHandled(CalendarableItemEvent e) {
+		// NOOP by default
+	}
 
 }

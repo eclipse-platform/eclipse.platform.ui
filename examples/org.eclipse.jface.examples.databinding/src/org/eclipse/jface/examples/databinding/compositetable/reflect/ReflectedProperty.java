@@ -30,7 +30,6 @@ public class ReflectedProperty {
 	public ReflectedProperty(Object object, String propertyName) {
 		this.propertyName = propertyName;
 		getter = new ReflectedMethod(object, makeGetterName(propertyName), new Class[] {});
-		System.out.println(object.getClass().getSimpleName());
 		if (!getter.exists()) {
 			getter = new ReflectedMethod(object, makeBooleanGetterName(propertyName), new Class[] {});
 			if (!getter.exists()) {

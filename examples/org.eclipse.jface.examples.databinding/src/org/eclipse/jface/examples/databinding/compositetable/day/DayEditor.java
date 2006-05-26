@@ -70,6 +70,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	private Menu controlMenu;
 	private int defaultEventDuration;
 	
+	
 	/**
 	 * NO_HEADER constant.  A style bit constant to indicate that no header
 	 * should be displayed at the top of the editor window.
@@ -459,12 +460,13 @@ public class DayEditor extends Composite implements IEventEditor {
 			}
 		}
 		
+		CalendarableItem oldSelection = selectedCalendarable;
 		selectedCalendarable = newSelection;
 		
 		if (newSelection != null && newSelection.getControl() != null) {
 			newSelection.getControl().setSelected(true);
 		}
-		fireSelectionChangeEvent(selectedCalendarable, newSelection);
+		fireSelectionChangeEvent(oldSelection, newSelection);
 	}
 	
 	/**
@@ -546,23 +548,37 @@ public class DayEditor extends Composite implements IEventEditor {
 			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
 			h.handleRequest(e);
 			if (!e.doit) {
-				return false;
+				break;
 			}
 		}
-		return true;
+		for (Iterator i = handlers.iterator(); i.hasNext();) {
+			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
+			h.requestHandled(e);
+			if (!e.doit) {
+				break;
+			}
+		}
+		return e.doit;
 	}
 
-	private boolean fireEvents(CalendarableItem calendarableItem, List listeners) {
+	private boolean fireEvents(CalendarableItem calendarableItem, List handlers) {
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = calendarableItem;
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+		for (Iterator iter = handlers.iterator(); iter.hasNext();) {
 			CalendarableItemEventHandler handler = (CalendarableItemEventHandler) iter.next();
 			handler.handleRequest(e);
 			if (!e.doit) {
-				return false;
+				break;
 			}
 		}
-		return true;
+		for (Iterator i = handlers.iterator(); i.hasNext();) {
+			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
+			h.requestHandled(e);
+			if (!e.doit) {
+				break;
+			}
+		}
+		return e.doit;
 	}
 	
 	private List editHandlers = new ArrayList();
@@ -574,27 +590,38 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @return true if the object represented by the CalendarableItem was changed; false otherwise.
 	 */
 	public boolean fireEdit(CalendarableItem toEdit) {
-		return fireEvents(toEdit, editHandlers);
+		CalendarableItemEvent e = new CalendarableItemEvent();
+		e.calendarableItem = toEdit;
+		boolean changed = fireEvents(e, editHandlers);
+		if (changed) {
+			// TODO: only refresh the days that are necessary
+	        refresh();
+		}
+		return changed;
 	}
 	
 	/**
-	 * Adds the handler to the collection of handlers who will
-	 * be notified when a CalendarableItem is inserted in the receiver, by sending
-	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
-	 * abstract class.
+	 * Adds the handler to the collection of handlers who will hand editing of
+	 * calendarable events, by sending it one of the messages defined in the
+	 * <code>CalendarableItemInsertHandler</code> abstract class.
 	 * <p>
-	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * <code>itemInserted</code> is called when the CalendarableItem is
+	 * inserted.
 	 * </p>
-	 *
-	 * @param handler the handler which should be notified
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * </ul>
-	 *
+	 * 
+	 * @param handler
+	 *            the handler which should be notified
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                </ul>
+	 * 
 	 * @see CalendarableItemInsertHandler
 	 * @see #removeItemInsertHandler
 	 */
@@ -609,25 +636,29 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 	
 	/**
-	 * Removes the handler from the collection of handlers who will
-	 * be notified when a CalendarableItem is inserted into the receiver, by sending
-	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
-	 * abstract class.
+	 * Removes the handler from the collection of handlers who will hand editing of
+	 * calendarable events, by sending it one of the messages defined in the
+	 * <code>CalendarableItemInsertHandler</code> abstract class.
 	 * <p>
-	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
+	 * <code>itemInserted</code> is called when the CalendarableItem is
+	 * inserted.
 	 * </p>
-	 *
-	 * @param handler the handler which should be notified
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * </ul>
-	 *
+	 * 
+	 * @param handler
+	 *            the handler which should be notified
+	 * 
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
+	 *                </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                </ul>
+	 * 
 	 * @see CalendarableItemInsertHandler
-	 * @see #addItemInsertHandler
+	 * @see #removeItemInsertHandler
 	 */
 	public void removeItemEditHandler(CalendarableItemEventHandler handler) {		
 		if (handler == null) {
@@ -1276,9 +1307,12 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 		return columns;
 	}
+	
+	
 
 	private void fillControlData(CalendarableItem calendarable, int clippingStyle) {
 		calendarable.getControl().setText(calendarable.getText());
+		calendarable.getControl().setToolTipText(calendarable.getToolTipText());
 		calendarable.getControl().setClipping(clippingStyle);
 	}
 

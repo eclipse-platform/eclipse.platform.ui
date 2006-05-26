@@ -14,7 +14,9 @@ package org.eclipse.jface.examples.databinding.compositetable.timeeditor;
 import java.util.Date;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
+import org.eclipse.jface.examples.databinding.compositetable.day.SelectionChangeEvent;
 import org.eclipse.swt.SWTException;
 
 /**
@@ -341,5 +343,51 @@ public interface IEventEditor {
 	 */
 	public void removeItemEditHandler(CalendarableItemEventHandler handler);
 
+	/**
+	 * Adds the listener to the collection of listeners who will
+	 * be notified when the receiver's selection changes, by sending
+	 * it one of the messages defined in the <code>CalendarableSelectionChangeListener</code>
+	 * interface.
+	 * <p>
+	 * <code>selectionChanged</code> is called when the selection changes.
+	 * </p>
+	 *
+	 * @param listener the listener which should be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableSelectionChangeListener
+	 * @see #removeSelectionChangeListener
+	 * @see SelectionChangeEvent
+	 */
+	public void addSelectionChangeListener(CalendarableSelectionChangeListener l);
 	
+	/**
+	 * Removes the listener from the collection of listeners who will
+	 * be notified when the receiver's selection changes, by sending
+	 * it one of the messages defined in the <code>CalendarableSelectionChangeListener</code>
+	 * interface.
+	 * <p>
+	 * <code>selectionChanged</code> is called when the selection changes.
+	 * </p>
+	 *
+	 * @param listener the listener which should no longer be notified
+	 *
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
+	 * </ul>
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 * </ul>
+	 *
+	 * @see CalendarableSelectionChangeListener
+	 * @see #addSelectionChangeListener
+	 * @see SelectionChangeEvent
+	 */
+	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l);
 }

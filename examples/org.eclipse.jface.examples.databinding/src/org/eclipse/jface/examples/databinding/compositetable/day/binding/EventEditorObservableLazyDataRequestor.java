@@ -22,7 +22,10 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
+import org.eclipse.jface.examples.databinding.compositetable.day.SelectionChangeEvent;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.ReflectedProperty;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
@@ -57,6 +60,47 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private String toolTipTextPropertyName = null;
 	private String imagePropertyName = null;
 	private String allDayEventPropertyName = null;
+	
+	private class Pair {
+		/**
+		 * a in the pair (a, b)
+		 */
+		public Object a;
+
+		/**
+		 * b in the pair (a, b)
+		 */
+		public CalendarableItem b;
+
+		/**
+		 * Construct a Pair(a, b)
+		 * 
+		 * @param a a in the pair (a, b)
+		 * @param b b in the pair (a, b)
+		 */
+		public Pair(Object a, CalendarableItem  b) {
+			this.a = a;
+			this.b = b;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (obj.getClass() != Pair.class) {
+				return false;
+			}
+			Pair other = (Pair) obj;
+			return a.equals(other.a) && b.equals(other.b);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return a.hashCode() + b.hashCode();
+		}
+	}
 	
 	
 	private class EventCache {
@@ -94,7 +138,8 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				events = new LinkedList();
 				daysToEventsMap.put(date, events);
 			}
-			events.add(event);
+			Pair eventToCalenderable = new Pair(event, null);
+			events.add(eventToCalenderable);
 			daysToEventsMap.put(date, events);
 		}
 		
@@ -117,19 +162,94 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				// TODO: Log warning here?
 				return;
 			}
+			for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+				Pair eventToCalendarable = (Pair) eventsIter.next();
+				if (eventToCalendarable.a.equals(event)) {
+					eventsIter.remove();
+					break;
+				}
+			}
 			events.remove(event);
 			if (events.size() < 1) {
 				daysToEventsMap.remove(date);
 			}
 		}
+		
+		public void update(EventDateTimeDiff diff, Object event) {
+			Date oldStartDateTime = setToStartOfDay(diff.getOldStartDateTime());
+			Date oldEndDateTime = incrementDay(setToStartOfDay(diff.getOldEndDateTime()), 1);
+			for (Date currentDate = oldStartDateTime; 
+				currentDate.before(oldEndDateTime); 
+				currentDate = nextDay(currentDate)) 
+			{
+				removeEventFromMap(currentDate, event);
+			}
+			add(event);
+		}
 
-		public List get(Date date) {
+		private List get(Date date) {
 			date = setToStartOfDay(date);
 			return (List) daysToEventsMap.get(date);
 		}
 		
 		public int indexOf(Object event) {
 			return eventsList.indexOf(event);
+		}
+		
+		public void setCalendarableSelection(Object event, boolean selected) {
+			Date beginningDate = getBeginningDate(event);
+			Date endingDate = getEndingDate(event);
+			
+			for (Date currentDate = beginningDate; 
+				currentDate.before(endingDate); 
+				currentDate = nextDay(currentDate)) 
+			{
+				List events = (List) daysToEventsMap.get(currentDate);
+				
+				if (events == null) {	// If we just deleted this event, return
+					return;
+				}
+				
+				for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
+					Pair eventToCalendarable = (Pair) eventsIter.next();
+					if (eventToCalendarable.a.equals(event)) {
+						if (eventToCalendarable.b != null) {
+							CalendarableItemControl control = eventToCalendarable.b.getControl();
+							if (control != null) {
+								control.setSelected(selected);
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		public int getNumberOfEventsInDay(Date day) {
+			List dataForDate = eventCache.get(day);
+			if (dataForDate == null) {
+				return 0;
+			}
+			return dataForDate.size();
+		}
+
+		public void refresh(Date day, CalendarableItem[] items) {
+			List dataForDate = eventCache.get(day);
+			if (dataForDate == null) {
+				return;
+			}
+			
+			Iterator sourceEventIter = dataForDate.iterator();
+			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
+				Pair sourceEventPair = (Pair) sourceEventIter.next();
+				sourceEventPair.b = items[itemIndex];
+				Object sourceEvent = sourceEventPair.a;
+				Date startDate = getBeginningDate(sourceEvent);
+				Date endDate = getEndingTime(sourceEvent);
+				int dayWithinEvent = differenceInDays(day, startDate);
+				int numberOfDaysInEvent = differenceInDays(endDate, startDate)+1;
+				bindCalendarableItemProperties(items[itemIndex], sourceEvent, dayWithinEvent, numberOfDaysInEvent);
+			}
 		}
 	}
 	
@@ -156,6 +276,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		editor.addItemInsertHandler(insertHandler);
 		editor.addItemDeleteHandler(deleteHandler);
 		editor.addItemEditHandler(editHandler);
+		editor.addSelectionChangeListener(selectionListener);
 	}
 
 	/* (non-Javadoc)
@@ -527,30 +648,13 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	
 	private EventCountProvider eventCountProvider = new EventCountProvider() {
 		public int getNumberOfEventsInDay(Date day) {
-			List dataForDate = eventCache.get(day);
-			if (dataForDate == null) {
-				return 0;
-			}
-			return dataForDate.size();
+			return eventCache.getNumberOfEventsInDay(day);
 		}
 	};
 	
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
 		public void refresh(Date day, CalendarableItem[] items) {
-			List dataForDate = eventCache.get(day);
-			if (dataForDate == null) {
-				return;
-			}
-			
-			Iterator sourceEventIter = dataForDate.iterator();
-			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
-				Object sourceEvent = sourceEventIter.next();
-				Date startDate = getBeginningDate(sourceEvent);
-				Date endDate = getEndingTime(sourceEvent);
-				int dayWithinEvent = differenceInDays(day, startDate);
-				int numberOfDaysInEvent = differenceInDays(endDate, startDate)+1;
-				bindCalendarableItemProperties(items[itemIndex], sourceEvent, dayWithinEvent, numberOfDaysInEvent);
-			}
+			eventCache.refresh(day, items);
 		}
 	};
 	
@@ -580,12 +684,22 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	};
 
 	private CalendarableItemEventHandler editHandler = new CalendarableItemEventHandler() {
-		public void handleRequest(CalendarableItemEvent e) {
-			int objectToEdit = eventCache.indexOf(e.calendarableItem.getData(CalendarableItem.DATA_KEY));
-			//TODO: figure out what we're doing here!
-			eventCache.remove(objectToEdit);
-			//FIXME: ???
-			//eventCache.add(objectToEdit);
+		public void requestHandled(CalendarableItemEvent e) {
+			if (e.result != null && e.doit) {
+				eventCache.update((EventDateTimeDiff) e.result, 
+						e.calendarableItem.getData(CalendarableItem.DATA_KEY));
+			}
+		}
+	};
+	
+	private CalendarableSelectionChangeListener selectionListener = new CalendarableSelectionChangeListener() {
+		public void selectionChanged(SelectionChangeEvent e) {
+			if (e.oldSelection != null) {
+				eventCache.setCalendarableSelection(e.oldSelection.getData(CalendarableItem.DATA_KEY), false);
+			}
+			if (e.newSelection != null) {
+				eventCache.setCalendarableSelection(e.newSelection.getData(CalendarableItem.DATA_KEY), true);
+			}
 		}
 	};
 

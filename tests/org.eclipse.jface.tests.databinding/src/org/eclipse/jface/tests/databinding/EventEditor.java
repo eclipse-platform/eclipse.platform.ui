@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
+import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
@@ -227,6 +228,20 @@ public class EventEditor implements IEventEditor {
 			refresh(gc.getTime());
 			gc.add(Calendar.DATE, 1);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
+	 */
+	public void addSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		// no op
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
+	 */
+	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		// no op
 	}
 
 }
