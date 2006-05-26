@@ -7,6 +7,7 @@
       </group>
       <group path="page-content/top-left">
          <extension id="org.eclipse.jdt" importance="low"/>
+         <extension id="org.eclipse.team" importance="low"/>
       </group>
       <group path="page-content/top-right">
          <extension id="org.eclipse.pde" importance="low"/>

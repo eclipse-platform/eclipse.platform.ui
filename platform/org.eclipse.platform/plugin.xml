@@ -49,18 +49,28 @@
 
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <category
+            id="org.eclipse.platform.team"
+            name="%cheatsheet.category.team">
+      </category>
       <cheatsheet
-            category="org.eclipse.platform"
-            contentFile="$nl$/cheatsheets/CVS_1.xml"
-            id="org.eclipse.platform.cvs_1"
-            name="%cheatsheet.cvs.name">
+            category="org.eclipse.platform.team"
+            contentFile="$nl$/cheatsheets/cvs_checkout.xml"
+            id="org.eclipse.platform.cvs.checkout"
+            name="%cheatsheet.cvs.checkout.name">
          <description>
-            %cheatsheet.cvs.desc
+            %cheatsheet.cvs.checkout.desc
          </description>
       </cheatsheet>
-      <category
-            id="org.eclipse.platform"
-            name="%cheatsheet.category.platform"/>
+      <cheatsheet
+            category="org.eclipse.platform.team"
+            contentFile="$nl$/cheatsheets/cvs_merge.xml"
+            id="org.eclipse.platform.cvs.merge"
+            name="%cheatsheet.cvs.merge.name">
+         <description>
+            %cheatsheet.cvs.merge.desc
+         </description>
+      </cheatsheet>
    </extension>
    <!-- =====================================================  -->
    <!-- Standby Content Part contributions                     -->
@@ -73,6 +83,9 @@
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/overviewEx.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/tutorialsEx.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/whatsnewEx1.xml"/>
