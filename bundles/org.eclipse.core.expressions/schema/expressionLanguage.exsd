@@ -247,7 +247,7 @@ rules:
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the operatand of the equals tests. The value provided as a string is converted into
+                  the expected value. The value provided as a string is converted into
                   a Java base type using the same rules as for the value attribute of the test expression.
                </documentation>
             </annotation>
