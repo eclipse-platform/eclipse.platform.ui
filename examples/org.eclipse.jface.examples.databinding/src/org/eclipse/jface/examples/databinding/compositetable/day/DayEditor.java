@@ -567,7 +567,13 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private List editHandlers = new ArrayList();
 	
-	private boolean fireEdit(CalendarableItem toEdit) {
+	/**
+	 * Fire the itemEdit event.
+	 * 
+	 * @param toEdit The CalendarableItem to edit.
+	 * @return true if the object represented by the CalendarableItem was changed; false otherwise.
+	 */
+	public boolean fireEdit(CalendarableItem toEdit) {
 		return fireEvents(toEdit, editHandlers);
 	}
 	

@@ -519,7 +519,7 @@ public class CalendarableItem extends ModelObject {
 	}
 	
 	/**
-	 * @return The continued bitmask
+	 * @return The continued bitmask; one or both of SWT.TOP or SWT.BOTTOM
 	 */
 	public int getContinued() {
 		return continued;
