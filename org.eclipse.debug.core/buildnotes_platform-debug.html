@@ -13,6 +13,7 @@
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143297">143297</a>: Terminate and Relaunch only works asynchronously<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143096">143096</a>: TVT3.2:TCT644: TR: Migrate button truncated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143812">143812</a>: [Memory View] Memory View's tree viewer handles any terminate event<br>
 
 <h2>RC5 - May 19, 2006</h2>
 <h3>Problem Reports Fixed</h3>
@@ -295,10 +296,10 @@
 <h2>January 31, 2006</h2>
 <h3>Enhancements</h3>
 <ul>
-  <li>Added API to consolePatternMatchListeners extension to support the use of 
+  <li>Added API to consolePatternMatchListeners extension to support the use of
     string variable substitution in pattern matchers. See extension point documentation.</li>
-  <li>Added API to delegate watch expression creation to debug model via IWatchExpressionFactoryAdapter. 
-    Allows a debugger to override default watch expression creation based on a 
+  <li>Added API to delegate watch expression creation to debug model via IWatchExpressionFactoryAdapter.
+    Allows a debugger to override default watch expression creation based on a
     variable's name.</li>
 </ul>
 <h3>Problem Reports Fixed</h3>
@@ -322,7 +323,7 @@
 <h2>January 17, 2006</h2>
 <h3>Enhancements</h3>
 <ul>
-  <li>New API to export and import breakpoints. The new API classes ExportBreakpointsOperation 
+  <li>New API to export and import breakpoints. The new API classes ExportBreakpointsOperation
     and ImportBreakpointsOperation can be found in org.eclipse.debug.ui.actions.</li>
 </ul>
 
@@ -376,9 +377,9 @@
 <h2>December 12, 2005</h2>
 <h3>Enhancements</h3>
 <ul>
-  <li>The &quot;source not found&quot; editor and editor input have become API. 
+  <li>The &quot;source not found&quot; editor and editor input have become API.
     See <code>CommonSourceNotFoundEditor</code> and <code>CommonSourceNotFoundEditorInput</code>.</li>
-  <li>The &quot;changed value color&quot; has become API. See <code>IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR</code> 
+  <li>The &quot;changed value color&quot; has become API. See <code>IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR</code>
     and <code>DebugUITools.getPreferenceColor(id)</code>.</li>
 </ul>
 <h3>Problem Reports Fixed</h3>
@@ -405,7 +406,7 @@
 <h3>Enhancements</h3>
 <ul>
   <li>New API action for enabling/disabling breakpoints in editor ruler - RulerEnableDisableBreakpointActionDelegate.</li>
-  <li>New abstract API action for action working on breakpoints in editor ruler 
+  <li>New abstract API action for action working on breakpoints in editor ruler
     - RulerBreakpointAction.</li>
   <li>API to retrieve images and browsers for source containers added to DebugUITools.</li>
   <li>API for overriding default instruction pointer annotations - see IInstructionPointerPresentation.</li>
@@ -418,7 +419,7 @@
 <h2>November 29, 2005</h2>
 <h3>Enhancements</h3>
 <ul>
-  <li>API has been added to retrieve images and browsers for source container 
+  <li>API has been added to retrieve images and browsers for source container
     types. See DebugUITools.</li>
 </ul>
 <h3>Problem Reports Fixed</h3>
@@ -455,8 +456,8 @@
 <h2>October 31, 2005</h2>
 <h3>Enhancements</h3>
 <ol>
-  <li>Consoles can provide context specfic F1 help. Console implementations should 
-    override <code>AbstractConsole.getHelpContextId()</code> to hook appropriate 
+  <li>Consoles can provide context specfic F1 help. Console implementations should
+    override <code>AbstractConsole.getHelpContextId()</code> to hook appropriate
     help. If not provided, the generic help for the console view is displayed.</li>
 </ol>
 <h3>Problem Reports Fixed</h3>
@@ -489,10 +490,10 @@
 <h2>October 4, 2005</h2>
 <h3>Enhancements</h3>
 <ol>
-  <li>The perspective settings associated with launch configurations have been 
-    centralized on the &quot;Run/Debug &gt; Perspectives&quot; preference page. 
-    Previously the perspective settings were controlled via the launch configuration 
-    dialog. The &quot;Perspectives&quot; tab has been replaced with a &quot;Getting 
+  <li>The perspective settings associated with launch configurations have been
+    centralized on the &quot;Run/Debug &gt; Perspectives&quot; preference page.
+    Previously the perspective settings were controlled via the launch configuration
+    dialog. The &quot;Perspectives&quot; tab has been replaced with a &quot;Getting
     Started&quot; tab that explains how to create a new configuration.</li>
 </ol>
 <h3>Problem Reports Fixed</h3>
@@ -524,9 +525,9 @@
 <h2>September 13, 2005</h2>
 <h3>Enhancements</h3>
 <ol>
-  <li><strong>Breakpoint import and export</strong>: Breakpoints can be exported 
-    and imported from the local file system. Actions are available in the context 
-    menu of the Breakpoints view to export/import, as well as in the general import/export 
+  <li><strong>Breakpoint import and export</strong>: Breakpoints can be exported
+    and imported from the local file system. Actions are available in the context
+    menu of the Breakpoints view to export/import, as well as in the general import/export
     wizard. </li>
 </ol>
 <h3>Problem Reports Fixed</h3>
@@ -536,10 +537,10 @@
 <h2>September 6, 2005</h2>
 <h3>Enhancements</h3>
 <ol>
-  <li><strong>System properties as launch variables</strong>: A new string variable 
-    &quot;${system_property:name}&quot; was added to the debug platform that resolves 
-    to the value of a system property in the Eclipse SDK runtime. The variable 
-    accepts a system property name as an argument and a selection dialog allows 
+  <li><strong>System properties as launch variables</strong>: A new string variable
+    &quot;${system_property:name}&quot; was added to the debug platform that resolves
+    to the value of a system property in the Eclipse SDK runtime. The variable
+    accepts a system property name as an argument and a selection dialog allows
     the user to select from known system properties.</li>
 </ol>
 
@@ -560,9 +561,9 @@
 <h2>Aug 8, 2005 </h2>
 <h3>Enhancements</h3>
 <ol>
-  <li><strong>API addition:</strong><code> IDebugUIConstants.PREF_MAX_DETAIL_LENGTH</code>. 
-    The user preference controlling the maximum length of strings displayed in 
-    the Variables view detail area has been made public API. In previous builds 
+  <li><strong>API addition:</strong><code> IDebugUIConstants.PREF_MAX_DETAIL_LENGTH</code>.
+    The user preference controlling the maximum length of strings displayed in
+    the Variables view detail area has been made public API. In previous builds
     the preference was internal.</li>
 </ol>
 <h3>Problem Reports Fixed</h3>
