@@ -186,7 +186,19 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	public void updateTargetFromModel() {
 		updating = true;
 		try {
+			BindingEvent e = new BindingEvent(modelList, targetList, null,
+					BindingEvent.EVENT_COPY_TO_TARGET,
+					BindingEvent.PIPELINE_AFTER_GET);
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
+			
 			targetList.setSize(modelList.size());
+			
+			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+			if (failure(errMsg(fireBindingEvent(e)))) {
+				return;
+			}
 		} finally {
 			updating = false;
 		}
@@ -202,13 +214,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 
 	public void updateModelFromTarget() {
 		throw new UnsupportedOperationException("Lazy targets don't support full copies"); //$NON-NLS-1$
-//		updating = true;
-//		try {
-//			modelList.clear();
-//			modelList.addAll(targetList);
-//		} finally {
-//			updating = false;
-//		}
 	}
 
 	private RandomAccessListIterator iterator = null;
@@ -224,14 +229,23 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider#get(int)
 	 */
 	public Object get(int position) {
-		return iterator.get(position);
+		Object result = iterator.get(position);
+		
+		BindingEvent e = new BindingEvent(modelList, targetList, null,
+				BindingEvent.EVENT_COPY_TO_TARGET,
+				BindingEvent.PIPELINE_AFTER_GET);
+		e.originalValue = result;
+		e.convertedValue = result;
+
+		failure(errMsg(fireBindingEvent(e)));
+		
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#add(java.lang.Object)
 	 */
 	public boolean add(Object o) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -239,7 +253,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -247,7 +260,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(int, java.util.Collection)
 	 */
 	public boolean addAll(int index, Collection c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -255,15 +267,13 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
 	 */
 	public void addListChangeListener(IListChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#contains(java.lang.Object)
 	 */
 	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -271,7 +281,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -279,7 +288,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#getElementType()
 	 */
 	public Object getElementType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -287,7 +295,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -295,7 +302,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#isEmpty()
 	 */
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -303,7 +309,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#iterator()
 	 */
 	public Iterator iterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -311,7 +316,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -319,7 +323,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator()
 	 */
 	public ListIterator listIterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -327,7 +330,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator(int)
 	 */
 	public ListIterator listIterator(int index) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -335,7 +337,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -343,7 +344,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(int)
 	 */
 	public Object remove(int index) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -351,7 +351,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -359,7 +358,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
 	 */
 	public void removeListChangeListener(IListChangeListener listener) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -367,7 +365,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -375,7 +372,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#set(int, java.lang.Object)
 	 */
 	public Object set(int index, Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -383,7 +379,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#size()
 	 */
 	public int size() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -391,7 +386,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#subList(int, int)
 	 */
 	public List subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -399,7 +393,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray()
 	 */
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -407,7 +400,6 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray(java.lang.Object[])
 	 */
 	public Object[] toArray(Object[] a) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -415,39 +407,34 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see java.util.List#add(int, java.lang.Object)
 	 */
 	public void add(int arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.List#clear()
 	 */
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#addChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener)
 	 */
 	public void addChangeListener(IChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#addStaleListener(org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener)
 	 */
 	public void addStaleListener(IStaleListener listener) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#isStale()
 	 */
 	public boolean isStale() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -455,15 +442,13 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#removeChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener)
 	 */
 	public void removeChangeListener(IChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.IObservable#removeStaleListener(org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener)
 	 */
 	public void removeStaleListener(IStaleListener listener) {
-		// TODO Auto-generated method stub
-		
+		//noop
 	}
 }
