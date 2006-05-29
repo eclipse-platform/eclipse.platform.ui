@@ -131,7 +131,7 @@ public final class GridDataFactory {
      * </ul>
      * 
      * @return a new GridDataFactory instance
-     * @see fillDefaults
+     * @see #fillDefaults()
      */
     public static GridDataFactory swtDefaults() {
     	return new GridDataFactory(new GridData());
@@ -168,7 +168,7 @@ public final class GridDataFactory {
      *  
      * @return a GridDataFactory that makes controls fill their grid by default
      * 
-     * @see swtDefaults
+     * @see #swtDefaults()
      */
     public static GridDataFactory fillDefaults() {
     	GridData data = new GridData();
