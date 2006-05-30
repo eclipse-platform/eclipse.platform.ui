@@ -67,7 +67,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			try {
 				updating = true;
 				BindingEvent e = new BindingEvent(modelList, targetList, null,
-						BindingEvent.EVENT_COPY_TO_MODEL,
+						BindingEvent.EVENT_LAZY_INSERT,
 						BindingEvent.PIPELINE_AFTER_GET);
 				e.originalValue = insertEvent;
 				if (failure(errMsg(fireBindingEvent(e)))) {
@@ -90,11 +90,22 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#deleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
 		 */
-		public boolean deleteElementAt(LazyDeleteEvent e) {
+		public boolean deleteElementAt(LazyDeleteEvent deleteEvent) {
 			boolean deleted = false;
 			try {
 				updating = true;
-				deleted = lazyInsertDeleteProvider.deleteElementAt(e);
+				BindingEvent e = new BindingEvent(modelList, targetList, null,
+						BindingEvent.EVENT_LAZY_DELETE,
+						BindingEvent.PIPELINE_AFTER_GET);
+				e.originalValue = deleteEvent;
+				if (failure(errMsg(fireBindingEvent(e)))) {
+					return false;
+				}
+
+				deleted = lazyInsertDeleteProvider.deleteElementAt(deleteEvent);
+				
+				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				failure(errMsg(fireBindingEvent(e)));
 			} finally {
 				updating = false;
 			}
@@ -202,14 +213,17 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	public void updateTargetFromModel() {
 		updating = true;
 		try {
+			int sizeToSetOnTarget = modelList.size();
+			
 			BindingEvent e = new BindingEvent(modelList, targetList, null,
 					BindingEvent.EVENT_COPY_TO_TARGET,
 					BindingEvent.PIPELINE_AFTER_GET);
+			e.originalValue = new Integer(sizeToSetOnTarget);
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
 			
-			targetList.setSize(modelList.size());
+			targetList.setSize(sizeToSetOnTarget);
 			
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			if (failure(errMsg(fireBindingEvent(e)))) {
