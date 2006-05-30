@@ -60,7 +60,7 @@ public class LegacyEditorActionBarExpression extends Expression {
 	}
 
 	public final void collectExpressionInfo(final ExpressionInfo info) {
-		info.addVariableNameAccess(ISources.ACTIVE_EDITOR_ID_NAME);
+		info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 		info
 				.addVariableNameAccess(SourcePriorityNameMapping.LEGACY_LEGACY_NAME);
 	}
@@ -86,7 +86,7 @@ public class LegacyEditorActionBarExpression extends Expression {
 	 */
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		final Object variable = context
-				.getVariable(ISources.ACTIVE_EDITOR_ID_NAME);
+				.getVariable(ISources.ACTIVE_PART_ID_NAME);
 		if (equals(activeEditorId, variable)) {
 			return EvaluationResult.TRUE;
 		}

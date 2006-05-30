@@ -69,7 +69,7 @@ public final class LegacyEditorContributionExpression extends
 
 	public final void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
-		info.addVariableNameAccess(ISources.ACTIVE_EDITOR_ID_NAME);
+		info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 	}
 
 	protected final int computeHashCode() {
@@ -96,7 +96,7 @@ public final class LegacyEditorContributionExpression extends
 		}
 
 		final Object variable = context
-				.getVariable(ISources.ACTIVE_EDITOR_ID_NAME);
+				.getVariable(ISources.ACTIVE_PART_ID_NAME);
 		if (equals(activeEditorId, variable)) {
 			return EvaluationResult.TRUE;
 		}
