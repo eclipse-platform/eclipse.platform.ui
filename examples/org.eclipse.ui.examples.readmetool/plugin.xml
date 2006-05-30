@@ -373,5 +373,23 @@
          <part id="org.eclipse.ui.examples.readmetool.ReadmeEditor"/>
       </actionSetPartAssociation>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <group
+            id="org.eclipse.ui.examples.readmetool.dirtyStatusGroup"
+            separatorsVisible="true">
+         <location>
+            <bar type="trim"/>
+            <order position="after" relativeTo="status"/>
+         </location>
+      </group>
+      <widget class="org.eclipse.ui.examples.readmetool.ReadmeTrimWidget" id="org.eclipse.ui.examples.readmetool.dirtyStatusWidget">
+         <location>
+            <bar path="org.eclipse.ui.examples.readmetool.dirtyStatusGroup" type="trim"/>
+         </location>
+      </widget>
+   </extension>
+
 
 </plugin>
