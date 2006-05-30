@@ -856,7 +856,10 @@ public class ContentProposalAdapter {
 				popupCloser = new PopupCloserListener();
 			}
 			popupCloser.installListeners();
-			showProposalDescription(getSelectedProposal().getDescription());
+			IContentProposal p = getSelectedProposal();
+			if (p != null) {
+				showProposalDescription(p.getDescription());
+			}
 			return value;
 		}
 
