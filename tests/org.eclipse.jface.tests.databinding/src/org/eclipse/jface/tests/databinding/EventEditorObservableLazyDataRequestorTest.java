@@ -33,7 +33,9 @@ import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFa
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
@@ -504,13 +506,13 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		final WritableList model = makeModel(testData);
 		
 		LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
-			public NewObject insertElementAt(int positionHint, Object initializationData) {
+			public NewObject insertElementAt(LazyInsertEvent e) {
 				Event event = new Event(time(5, 17, 5, 45), time(5, 17, 9, 45), "Stand-up mtg 3");
-				model.add(positionHint, event);
-				return new NewObject(positionHint, event);
+				model.add(e.positionHint, event);
+				return new NewObject(e.positionHint, event);
 			}
 			
-			public boolean deleteElementAt(int position) {
+			public boolean deleteElementAt(LazyDeleteEvent e) {
 				return false;
 			}
 		};
@@ -549,12 +551,12 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		final WritableList model = makeModel(testData);
 		
 		LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
-			public NewObject insertElementAt(int positionHint, Object initializationData) {
+			public NewObject insertElementAt(LazyInsertEvent e) {
 				return null;
 			}
 			
-			public boolean deleteElementAt(int position) {
-				model.remove(position);
+			public boolean deleteElementAt(LazyDeleteEvent e) {
+				model.remove(e.position);
 				return true;
 			}
 		};

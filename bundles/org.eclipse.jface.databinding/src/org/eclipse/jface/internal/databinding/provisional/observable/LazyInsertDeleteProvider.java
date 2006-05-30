@@ -32,7 +32,7 @@ public class LazyInsertDeleteProvider {
 	 * where the object was inserted and the new object that was inserted, or
 	 * null to indicate that no object was inserted.
 	 */
-	public ILazyDataRequestor.NewObject insertElementAt(int positionHint, Object initializationData) {
+	public ILazyDataRequestor.NewObject insertElementAt(LazyInsertEvent e) {
 		return null;
 	}
 	
@@ -42,7 +42,7 @@ public class LazyInsertDeleteProvider {
 	 * @param position The position of the object to delete.
 	 * @return true if the object was deleted; false otherwise.
 	 */
-	public boolean deleteElementAt(int position) {
+	public boolean deleteElementAt(LazyDeleteEvent e) {
 		return false;
 	}
 }

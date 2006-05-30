@@ -21,7 +21,9 @@ import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
@@ -70,13 +72,13 @@ public class LazyListBindingTest extends TestCase {
 	private LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
 		private static final String TWO = "Two";
 		
-		public NewObject insertElementAt(int positionHint, Object initializationData) {
+		public NewObject insertElementAt(LazyInsertEvent e) {
 			model.add(1, TWO);
 			return new ILazyDataRequestor.NewObject(1, TWO);
 		}
 		
-		public boolean deleteElementAt(int position) {
-			model.remove(position);
+		public boolean deleteElementAt(LazyDeleteEvent e) {
+			model.remove(e.position);
 			return true;
 		}
 	};

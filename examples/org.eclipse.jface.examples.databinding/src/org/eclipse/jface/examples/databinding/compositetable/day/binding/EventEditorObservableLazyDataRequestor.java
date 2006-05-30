@@ -38,7 +38,9 @@ import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 import org.eclipse.swt.SWT;
 
@@ -359,7 +361,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private NewObject fireInsert(CalendarableItem initializationData) {
 		for (Iterator iter = insertDeleteProviders.iterator(); iter.hasNext();) {
 			LazyInsertDeleteProvider p = (LazyInsertDeleteProvider) iter.next();
-			NewObject result = p.insertElementAt(0, initializationData);
+			NewObject result = p.insertElementAt(new LazyInsertEvent(0, initializationData));
 			if (result != null) {
 				return result;
 			}
@@ -370,7 +372,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private boolean fireDelete(int position) {
 		for (Iterator iter = insertDeleteProviders.iterator(); iter.hasNext();) {
 			LazyInsertDeleteProvider p = (LazyInsertDeleteProvider) iter.next();
-			boolean result = p.deleteElementAt(position);
+			boolean result = p.deleteElementAt(new LazyDeleteEvent(position));
 			if (result) {
 				return true;
 			}

@@ -23,7 +23,9 @@ import org.eclipse.jface.internal.databinding.provisional.observable.IChangeList
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
@@ -60,11 +62,22 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			this.lazyInsertDeleteProvider = parent;
 		}
 		
-		public NewObject insertElementAt(int positionHint, Object initializationData) {
+		public NewObject insertElementAt(LazyInsertEvent insertEvent) {
 			NewObject newObject;
 			try {
 				updating = true;
-				newObject = lazyInsertDeleteProvider.insertElementAt(positionHint, initializationData);
+				BindingEvent e = new BindingEvent(modelList, targetList, null,
+						BindingEvent.EVENT_COPY_TO_MODEL,
+						BindingEvent.PIPELINE_AFTER_GET);
+				e.originalValue = insertEvent;
+				if (failure(errMsg(fireBindingEvent(e)))) {
+					return null;
+				}
+				
+				newObject = lazyInsertDeleteProvider.insertElementAt(insertEvent);
+				
+				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				failure(errMsg(fireBindingEvent(e)));
 			} finally {
 				updating = false;
 			}
@@ -74,11 +87,14 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			return newObject;
 		}
 		
-		public boolean deleteElementAt(int position) {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#deleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
+		 */
+		public boolean deleteElementAt(LazyDeleteEvent e) {
 			boolean deleted = false;
 			try {
 				updating = true;
-				deleted = lazyInsertDeleteProvider.deleteElementAt(position);
+				deleted = lazyInsertDeleteProvider.deleteElementAt(e);
 			} finally {
 				updating = false;
 			}
