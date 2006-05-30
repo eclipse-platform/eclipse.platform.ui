@@ -45,20 +45,20 @@ import org.eclipse.swt.widgets.Widget;
  * interface (see <code>TableViewer.setLabelProvider</code> for more details).
  * </p>
  * <p>
- * As of 3.1 the TableViewer now supports the SWT.VIRTUAL
- * flag. It is important to note that if SWT.VIRTUAL is in use
- * that the Widget based APIs will return null in both the
- * cases where either the element is not specified or not
- * created yet. 
+ * As of 3.1 the TableViewer now supports the SWT.VIRTUAL flag. If the
+ * underlying table is SWT.VIRTUAL, the content provider may implement
+ * {@link ILazyContentProvider} instead of {@link IStructuredContentProvider}.
+ * Note that in this case, the viewer does not support sorting or filtering.
+ * Also note that in this case, the Widget based APIs may return null if the
+ * element is not specified or not created yet.
  * </p>
  * <p>
- * Users of SWT.VIRTUAL should also avoid using getItems()
- * from the Table within the TreeViewer as this does not
- * necessarily generate a callback for the TreeViewer 
- * to populate the items. It also has the side effect of
- * creating all of the items thereby eliminating the
- * performance improvements of SWT.VIRTUAL.
+ * Users of SWT.VIRTUAL should also avoid using getItems() from the Table within
+ * the TreeViewer as this does not necessarily generate a callback for the
+ * TreeViewer to populate the items. It also has the side effect of creating all
+ * of the items thereby eliminating the performance improvements of SWT.VIRTUAL.
  * </p>
+ * 
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)

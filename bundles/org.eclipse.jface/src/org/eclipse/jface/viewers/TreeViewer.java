@@ -44,8 +44,12 @@ import org.eclipse.swt.widgets.Widget;
  * filter (optional), and element sorter (optional).
  * </p>
  * <p>
- * Content providers for tree viewers must implement the
- * <code>ITreeContentProvider</code> interface.
+ * Content providers for tree viewers must implement either the
+ * {@link ITreeContentProvider} interface or (as of 3.2) the
+ * {@link ILazyTreeContentProvider} interface. If the content provider is an
+ * <code>ILazyTreeContentProvider</code>, the underlying Tree must be created
+ * using the {@link SWT#VIRTUAL} style bit, and the tree viewer will not support
+ * sorting or filtering.
  * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
