@@ -264,7 +264,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		BindingEvent e = new BindingEvent(modelList, targetList, null,
 				BindingEvent.EVENT_COPY_TO_TARGET,
 				BindingEvent.PIPELINE_AFTER_GET);
-		e.originalValue = result;
+		e.originalValue = new Integer(position);
 		e.convertedValue = result;
 
 		failure(errMsg(fireBindingEvent(e)));
