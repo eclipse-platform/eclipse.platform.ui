@@ -23,6 +23,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryLongPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryShortPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
+import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 
 public class BindingTestSuite extends TestSuite {
@@ -53,6 +54,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(IdentityConverterTest.class);
 		addTestSuite(LazyListBindingTest.class);
 		addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
+		addTestSuite(EditMaskLexerAndTokenTest.class);
 	}
 
 	/**

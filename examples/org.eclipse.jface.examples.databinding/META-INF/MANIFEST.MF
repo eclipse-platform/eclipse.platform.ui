@@ -16,4 +16,6 @@ Export-Package: org.eclipse.jface.examples.databinding.compositetable,
  org.eclipse.jface.examples.databinding.compositetable.month,
  org.eclipse.jface.examples.databinding.compositetable.reflect,
  org.eclipse.jface.examples.databinding.compositetable.timeeditor,
- org.eclipse.jface.examples.databinding.model
+ org.eclipse.jface.examples.databinding.model,
+ org.eclipse.jface.examples.databinding.mask,
+ org.eclipse.jface.examples.databinding.mask.internal
