@@ -33,6 +33,8 @@ public class ModelObjectDefinitionFile extends ModelFile {
 	}
 	
 	public static IResource[] getReferencedResources(String projectName, IStorage storage) throws CoreException {
+		if (storage == null)
+			return new IResource[0];
 		List result = new ArrayList();
 		String[] filePaths = readLines(storage);
 		for (int i = 0; i < filePaths.length; i++) {
