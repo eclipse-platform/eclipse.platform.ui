@@ -29,25 +29,13 @@ public class ImageResource {
 	// will be lost by the image registry
 	private static Map imageDescriptors;
 
-	// base urls for images
-	private static URL ICON_BASE_URL;
-
-	static {
-		try {
-			String pathSuffix = "icons/"; //$NON-NLS-1$
-			ICON_BASE_URL = FileLocator.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(pathSuffix), null);
-		} catch (Exception e) {
-			Trace.trace(Trace.SEVERE, "Could not set icon base URL", e); //$NON-NLS-1$
-		}
-	}
-
 	private static Image[] busyImages;
 
-	private static final String URL_CLCL = "clcl16/"; //$NON-NLS-1$
-	private static final String URL_ELCL = "elcl16/"; //$NON-NLS-1$
-	private static final String URL_DLCL = "dlcl16/"; //$NON-NLS-1$
-
-	private static final String URL_OBJ = "obj16/"; //$NON-NLS-1$
+	private static final String URL_PREFIX = "$nl$/icons/"; //$NON-NLS-1$
+	private static final String URL_CLCL = URL_PREFIX + "clcl16/"; //$NON-NLS-1$
+	private static final String URL_ELCL = URL_PREFIX + "elcl16/"; //$NON-NLS-1$
+	private static final String URL_DLCL = URL_PREFIX + "dlcl16/"; //$NON-NLS-1$
+	private static final String URL_OBJ = URL_PREFIX + "obj16/"; //$NON-NLS-1$
 
 	// --- constants for images ---
 	// toolbar images
@@ -171,7 +159,8 @@ public class ImageResource {
 	 */
 	private static void registerImage(String key, String partialURL) {
 		try {
-			ImageDescriptor id = ImageDescriptor.createFromURL(new URL(ICON_BASE_URL, partialURL));
+			URL url = FileLocator.find(WebBrowserUIPlugin.getInstance().getBundle(), new Path(partialURL), null);
+			ImageDescriptor id = ImageDescriptor.createFromURL(url);
 			imageRegistry.put(key, id);
 			imageDescriptors.put(key, id);
 		} catch (Exception e) {
