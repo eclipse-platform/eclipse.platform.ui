@@ -36,7 +36,8 @@ public interface IPlatformRunnable {
 
 	/**
 	 * Exit object requesting that the command passed back be executed.  Typically
-	 * this is used to relaunch Eclipse with different command line arguments.
+	 * this is used to relaunch Eclipse with different command line arguments. When the executable is
+	 * relaunched the command line will be retrieved from the <code>eclipse.exit</code> system property.  
 	 */
 	public static final Integer EXIT_RELAUNCH = new Integer(24);
 
