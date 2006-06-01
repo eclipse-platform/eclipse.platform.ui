@@ -62,10 +62,12 @@ import org.eclipse.ui.IDecoratorManager;
 public class SynchronizationStateTester {
 	
 	/**
-	 * Constant that is used as the property key on an {@link IDecorationContext}.
-	 * If a context passed to a team decorator has this property, the associated
-	 * state tester will be used by the decorator to determine whether elements
-	 * have an outgoing change.
+	 * Constant that is used as the property key on an
+	 * {@link IDecorationContext}. Model based views can assign their state
+	 * test to this property in the decoration context. If a context passed to a
+	 * team decorator has this property, the associated state tester will be
+	 * used by the decorator to determine the team state of the elements being
+	 * decorated.
 	 */
 	public static final String PROP_TESTER = "org.eclipse.team.ui.syncStateTester"; //$NON-NLS-1$
 	
