@@ -47,4 +47,7 @@ public interface IRefactoringHelpContextIds {
 
 	/** @since 3.2 */
 	public static final String REFACTORING_SHOW_HISTORY_PAGE= PREFIX + "refactoring_show_history_page"; //$NON-NLS-1$
+	
+	/** @since 3.2 */
+	public static final String REFACTORING_PROPERTY_PAGE= PREFIX + "refactoring_property_page"; //$NON-NLS-1$
 }

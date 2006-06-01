@@ -36,6 +36,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -299,6 +300,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			handleInputEvent(context, project);
 		}
 		applyDialogFont(composite);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IRefactoringHelpContextIds.REFACTORING_PROPERTY_PAGE);
 
 		return composite;
 	}
