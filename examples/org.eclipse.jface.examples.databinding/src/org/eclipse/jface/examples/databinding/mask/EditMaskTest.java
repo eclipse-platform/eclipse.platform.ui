@@ -13,12 +13,17 @@ public class EditMaskTest {
       Shell shell = new Shell(display);
 
       Text text = new Text(shell, SWT.BORDER);
-      text.setText("xxxxxxxxxxxxx");
+      text.setText("XXXXXXXXXXXXX");
       
-      shell.setLayout(new RowLayout());
+      Text text2 = new Text(shell, SWT.BORDER);
+      text2.setText("630XXXXXXXXXX");
+      
+      shell.setLayout(new RowLayout(SWT.VERTICAL));
       shell.setSize(800, 600);
       
       new EditMask(text).setMask("(###) ###-####");
+      new EditMask(text2).setMask("(###) ###-####");
+      
       shell.open();
       while (!shell.isDisposed()) {
          if (!display.readAndDispatch()) {

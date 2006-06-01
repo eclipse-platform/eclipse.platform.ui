@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.mask.internal;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 
 /**
@@ -25,23 +27,23 @@ public class EditMaskLexerAndToken {
 	/*
 	 * First the literals that represent the types of characters
 	 */
-	private static final String[] reservedWords = new String[] {
-			"#",
-			"A",
-			"a",
-			"n"
-	};
+	private static ArrayList reservedWords = new ArrayList();{
+		reservedWords.add("#");
+		reservedWords.add("A");
+		reservedWords.add("a");
+		reservedWords.add("n");
+	}
 	
 	/*
 	 * ...and their corresponding regular expressions
 	 */
-	private static final String[] inputRegexes = new String[] {
-			"^[0-9]$",
-			"^[A-Z]$",
-			"^[a-zA-Z]$",
-			"^[0-9a-zA-Z]$"
-	};
-
+	private static ArrayList inputRegexes = new ArrayList();{
+		inputRegexes.add("^[0-9]$");
+		inputRegexes.add("^[A-Z]$");
+		inputRegexes.add("^[a-zA-Z]$");
+		inputRegexes.add("^[0-9a-zA-Z]$");
+	}
+	
 	private String charRegex = null;	// A regex for matching input characters or null
 	private String literal = null;		// The literal character if charRegex is null
 	private boolean readOnly;
@@ -49,9 +51,9 @@ public class EditMaskLexerAndToken {
 	
 	private boolean recognizeReservedWord(String inputMask, int position) {
 		String input = inputMask.substring(position, position+1);
-		for (int reservedWord = 0; reservedWord < reservedWords.length; reservedWord++) {
-			if (input.equals(reservedWords[reservedWord])) {
-				charRegex = inputRegexes[reservedWord];
+		for (int reservedWord = 0; reservedWord < reservedWords.size(); reservedWord++) {
+			if (input.equals(reservedWords.get(reservedWord))) {
+				charRegex = (String) inputRegexes.get(reservedWord);
 				literal = null;
 				input = null;
 				readOnly = false;

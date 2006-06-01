@@ -85,7 +85,7 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.3
  */
 public class EditMask {
-
+	
 	private static final String FIELD_TEXT = "text";
 	private static final String FIELD_RAW_TEXT = "rawText";
 	protected Text text;
@@ -180,7 +180,7 @@ public class EditMask {
 		}
 		return editMaskParser.isComplete();
 	}
-
+	
 	/**
 	 * JavaBeans boilerplate code...
 	 * 
@@ -250,7 +250,7 @@ public class EditMask {
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
 			oldSelection = selection;
-			selection = text.getCaretPosition();
+			selection = text.getSelection().x;
 			if (!updating)
 				Display.getCurrent().asyncExec(updateTextField);
 		}
@@ -299,7 +299,7 @@ public class EditMask {
 	
 	private FocusListener focusListener = new FocusAdapter() {
 		public void focusGained(FocusEvent e) {
-			selection = editMaskParser.getNextInputPosition(0);
+			selection = editMaskParser.getFirstIncompleteInputPosition();
 			text.setSelection(selection, selection);
 		}
 	};
