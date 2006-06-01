@@ -12,12 +12,19 @@ package org.eclipse.team.examples.filesystem;
 
 import java.io.File;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.examples.filesystem.history.FileSystemHistoryProvider;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemResourceVariant;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 
@@ -63,6 +70,8 @@ public class FileSystemProvider extends RepositoryProvider {
 	// The QualifiedName that is used to persist the location across workspace as a persistent property on a resource
 	private static QualifiedName FILESYSTEM_REPO_LOC = new QualifiedName(FileSystemPlugin.ID, "disk_location"); //$NON-NLS-1$
 
+	private static FileSystemHistoryProvider fileHistoryProvider;
+	
 	/**
 	 * Create a new FileSystemProvider.
 	 */
@@ -213,6 +222,13 @@ public class FileSystemProvider extends RepositoryProvider {
 	 */
 	public IResourceRuleFactory getRuleFactory() {
 		return RESOURCE_RULE_FACTORY;
+	}
+	
+	public IFileHistoryProvider getFileHistoryProvider() {
+		  if (FileSystemProvider.fileHistoryProvider == null) {
+			  FileSystemProvider.fileHistoryProvider = new FileSystemHistoryProvider();
+	        }
+	        return FileSystemProvider.fileHistoryProvider;
 	}
 
 }

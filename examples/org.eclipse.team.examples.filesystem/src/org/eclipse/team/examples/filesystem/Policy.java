@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * This class is a clone of the Polciy classes many Eclipse plugin suse to 
+ * This class is a clone of the Policy classes many Eclipse plugin use to 
  * provide NLSing of strings and aid in proper progress monitoring.
  */
 public class Policy {
