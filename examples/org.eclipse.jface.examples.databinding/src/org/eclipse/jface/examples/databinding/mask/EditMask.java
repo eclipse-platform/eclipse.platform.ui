@@ -65,9 +65,10 @@ import org.eclipse.swt.widgets.Text;
  * Example:
  * 
  * $#{0,3},{0,1}#{0,3}.#{0,2}  ie: $123,456.12 or $12.12 or $1,234.12 or $123.12
+ *
  * 
- * Here's the basic idea of how this is implemented (the actual implementation 
- * is slightly more abstracted and complicated than this):
+ * Here's the basic idea of how the current implementation works (the actual 
+ * implementation is slightly more abstracted and complicated than this):
  * 
  * We always let the verify event pass if the user typed a new digit or selected/deleted anything.
  * During the verify event, we post an async runnable.
