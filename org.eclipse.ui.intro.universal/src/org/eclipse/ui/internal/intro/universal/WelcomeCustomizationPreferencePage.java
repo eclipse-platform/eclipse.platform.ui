@@ -125,36 +125,45 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 	private static final RootPage ROOT_PAGE_TABLE[] = new RootPage[] {
 			new RootPage(IUniversalIntroConstants.ID_OVERVIEW,
-					Messages.WelcomeCustomizationPreferencePage_overview),
+					Messages.WelcomeCustomizationPreferencePage_overview,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_overview),
 			new RootPage(IUniversalIntroConstants.ID_FIRSTSTEPS,
-					Messages.WelcomeCustomizationPreferencePage_firststeps),
+					Messages.WelcomeCustomizationPreferencePage_firststeps,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_firststeps),
 			new RootPage(IUniversalIntroConstants.ID_TUTORIALS,
-					Messages.WelcomeCustomizationPreferencePage_tutorials),
+					Messages.WelcomeCustomizationPreferencePage_tutorials,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_tutorials),
 			new RootPage(IUniversalIntroConstants.ID_SAMPLES,
-					Messages.WelcomeCustomizationPreferencePage_samples),
+					Messages.WelcomeCustomizationPreferencePage_samples,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_samples),
 			new RootPage(IUniversalIntroConstants.ID_WHATSNEW,
-					Messages.WelcomeCustomizationPreferencePage_whatsnew),
+					Messages.WelcomeCustomizationPreferencePage_whatsnew,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_whatsnew),
 			new RootPage(IUniversalIntroConstants.ID_WEBRESOURCES,
-					Messages.WelcomeCustomizationPreferencePage_webresources),
+					Messages.WelcomeCustomizationPreferencePage_webresources,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_webresources),
 			new RootPage(IUniversalIntroConstants.ID_MIGRATE,
-					Messages.WelcomeCustomizationPreferencePage_migrate) };
+					Messages.WelcomeCustomizationPreferencePage_migrate,
+					Messages.WelcomeCustomizationPreferencePage_NoMnemonic_migrate) };
 
 	static class RootPage {
 
 		public String id;
 		public String name;
+		public String nameNoMnemonic;
 
-		public RootPage(String id, String name) {
+		public RootPage(String id, String name, String nameNoMnemonic) {
 			this.id = id;
 			this.name = name;
+			this.nameNoMnemonic = nameNoMnemonic;
 		}
 		
-		public String getRawName() {
+		public String getName() {
 			return name;
 		}
 
-		public String getName() {
-			return stripMnemonic(name);
+		public String getNameNoMnemonic() {
+			return nameNoMnemonic;
 		}
 
 		public boolean equals(Object obj) {
@@ -171,17 +180,6 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public String toString() {
 			return name;
-		}
-		
-		private String stripMnemonic(String src) {
-			if (src==null)
-				return ""; //$NON-NLS-1$
-			int loc = src.indexOf('&');
-			if (loc!=-1) {
-				return src.substring(0,loc)+src.substring(loc+1);
-			}
-			else
-				return src;
 		}
 	}
 
@@ -307,7 +305,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 
 		public String getText(Object obj) {
 			if (obj instanceof RootPage) {
-				return ((RootPage) obj).getName();
+				return ((RootPage) obj).getNameNoMnemonic();
 			}
 			if (obj instanceof ExtensionData) {
 				ExtensionData ed = (ExtensionData) obj;
@@ -903,7 +901,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private String getRootPageName(String id) {
 		for (int i = 0; i < ROOT_PAGE_TABLE.length; i++) {
 			if (ROOT_PAGE_TABLE[i].id.equals(id))
-				return ROOT_PAGE_TABLE[i].getRawName();
+				return ROOT_PAGE_TABLE[i].getName();
 		}
 		return "?"; //$NON-NLS-1$
 	}
