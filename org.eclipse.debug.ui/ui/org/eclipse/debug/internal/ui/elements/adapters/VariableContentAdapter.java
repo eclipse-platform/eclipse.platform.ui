@@ -46,13 +46,13 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
     }
     
     /**
-     * Returns children for the given value, creating array paritions if
+     * Returns children for the given value, creating array partitions if
      * required
      * 
      * @param parent expression or variable containing the given value
      * @param value the value to retrieve children for
      * @param context the context in which children have been requested
-     * @return children for the given value, creating array paritions if
+     * @return children for the given value, creating array partitions if
      *         required
      * @throws CoreException
      */
@@ -168,10 +168,10 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
     }
 
     /**
-     * Return wether to show compute a logical structure or a raw structure
+     * Return whether to show compute a logical structure or a raw structure
      * in the specified context
      * 
-     * @return wether to show compute a logical structure or a raw structure
+     * @return whether to show compute a logical structure or a raw structure
      * in the specified context
      */
     protected boolean isShowLogicalStructure(IPresentationContext context) {
@@ -190,7 +190,7 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
      *         of an indexed collection
      */
     protected int getArrayPartitionSize() {
-        // TODO: should fix this with a user pref
+        // TODO: should fix this with a user preference
         return 100;
     }
     
