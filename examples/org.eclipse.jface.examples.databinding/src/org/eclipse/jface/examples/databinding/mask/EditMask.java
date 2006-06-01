@@ -16,6 +16,7 @@ import java.beans.PropertyChangeSupport;
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -25,18 +26,57 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Ensures text widget has the format specified by the edit mask.
+ * Ensures text widget has the format specified by the edit mask.  Edit masks
+ * are currently defined as follows:
  * 
- * Algorithm:
+ * The following characters are reserved words that match specific kinds of 
+ * characters:
+ * 
+ * # - digits 0-9
+ * A - uppercase A-Z
+ * a - upper or lowercase a-z, A-Z
+ * n - alphanumeric 0-9, a-z, A-Z
+ *
+ * All other characters are literals.  The above characters may be turned into
+ * literals by preceeding them with a backslash.  Use two backslashes to
+ * denote a backslash.
+ * 
+ * Examples:
+ * 
+ * (###) ###-####  U.S. phone number 
+ * ###-##-####     U.S. Social Security number
+ * \\\###          A literal backslash followed by a literal pound symbol followed by two digits
+ * 
+ * Ideas for future expansion:
+ * 
+ * Quantifiers as postfix modifiers to a token.  ie:
+ * 
+ * #{1, 2}/#{1,2}/####   MM/DD/YYYY date format allowing 1 or 2 digit month or day
+ * 
+ * Literals may only be quantified as {0,1} which means that they only appear
+ * if placeholders on both sides of the literal have data.  This will be used
+ * along with:
+ * 
+ * Right-to-left support for numeric entry.  When digits are being entered and
+ * a decimal point is present in the mask, digits to the left of the decimal
+ * are entered right-to-left but digits to the right of the decimal left-to-right.
+ * This might need to be a separate type of edit mask. (NumericMask, maybe?)
+ * 
+ * Example:
+ * 
+ * $#{0,3},{0,1}#{0,3}.#{0,2}  ie: $123,456.12 or $12.12 or $1,234.12 or $123.12
+ * 
+ * Here's the basic idea of how this is implemented (the actual implementation 
+ * is slightly more abstracted and complicated than this):
  * 
  * We always let the verify event pass if the user typed a new digit or selected/deleted anything.
  * During the verify event, we post an async runnable.
  * Inside that async runnable, we:
  *   - Remember the selection position
  *   - getText(), then
- *   - Strip out all special characters
- *   - Truncate the resulting string to 10 digits
- *   - Re-add special characters at the correct positions
+ *   - Strip out all literal characters from edit mask
+ *   - Truncate the resulting string to raw length of edit mask without literals
+ *   - Insert literal characters back in the correct positions
  *   - setText() the resulting string
  *   - reset the selection to the correct location
  *   
@@ -51,33 +91,53 @@ public class EditMask {
 	private PropertyChangeSupport propertyChangeSupport;
 	
 	/**
-	 * Creates an instance that wraps around a text widget and manage its<br>
+	 * Creates an instance that wraps around a text widget and manages its<br>
 	 * formatting.
 	 * 
 	 * @param text
 	 * @param editMask
 	 */
-	public EditMask(Text text, String editMask) {
+	public EditMask(Text text) {
 		this.text = text;
+	}
+	
+	/**
+	 * Set the edit mask string on the edit mask control.
+	 * 
+	 * @param editMask The edit mask string
+	 */
+	public void setMask(String editMask) {
 		editMaskParser = new EditMaskParser(editMask);
-		updateTextField.run();
 		text.addVerifyListener(verifyListener);
-		text.addDisposeListener(disposeListener);
 		text.addFocusListener(focusListener);
+		text.addDisposeListener(disposeListener);
+		updateTextField.run();
 	}
 
+    /**
+     * @param string Sets the text string in the receiver
+     */
     public void setText(String string) {
     	String oldValue = text.getText();
-		editMaskParser.setInput(string);
-		text.setText(editMaskParser.getFormattedResult());
-		firePropertyChange(FIELD_TEXT, oldValue, string);
+    	if (editMaskParser != null) {
+			editMaskParser.setInput(string);
+			String formattedResult = editMaskParser.getFormattedResult();
+			text.setText(formattedResult);
+			firePropertyChange(FIELD_TEXT, oldValue, formattedResult);
+    	} else {
+    		text.setText(string);
+			firePropertyChange(FIELD_TEXT, oldValue, string);
+    	}
 	}
 
 	/**
 	 * @return the actual(formatted) text
 	 */
 	public String getText() {
-		return editMaskParser.getFormattedResult();
+		if (editMaskParser != null) {
+			return editMaskParser.getFormattedResult();
+		}
+		return text.getText();
 	}
 	
 	/**
@@ -87,17 +147,26 @@ public class EditMask {
 	 * @param string the raw (unformatted) text
 	 */
 	public void setRawText(String string)  {
-		String oldValue = editMaskParser.getRawResult();
-		editMaskParser.setInput(string);
-		text.setText(editMaskParser.getFormattedResult());
-		firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
+		if (editMaskParser != null) {
+			String oldValue = editMaskParser.getRawResult();
+			editMaskParser.setInput(string);
+			text.setText(editMaskParser.getFormattedResult());
+			firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
+		} else {
+	    	String oldValue = text.getText();
+    		text.setText(string);
+			firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
+		}
 	}
 
 	/**
 	 * @return The input text with literals removed
 	 */
 	public String getRawText() {
-		return editMaskParser.getRawResult();
+		if (editMaskParser != null) {
+			return editMaskParser.getRawResult();
+		}
+		return text.getText();
 	}
 
 	private PropertyChangeSupport getPropertyChangeSupport() {
@@ -123,6 +192,7 @@ public class EditMask {
 
 	protected int oldSelection = 0;
 	protected int selection = 0;
+	protected String oldRawText = "";
 	
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
@@ -139,34 +209,52 @@ public class EditMask {
 			try {
 				editMaskParser.setInput(text.getText());
 				text.setText(editMaskParser.getFormattedResult());
-				if (selection > oldSelection) {
-					int oldSelectionDelta = 
+				String newRawText = editMaskParser.getRawResult();
+				// Did we just type something that was accepted by the mask?
+				if (!newRawText.equals(oldRawText)) { // yep
+					// Find the position after where the new character was actually inserted
+					int selectionDelta = 
 						editMaskParser.getNextInputPosition(oldSelection)
-							- oldSelection;
-					selection += oldSelectionDelta;
+						- oldSelection;
+					if (selectionDelta == 0) {
+						selectionDelta = editMaskParser.getNextInputPosition(selection)
+						- selection;
+					}
+					selection += selectionDelta;
+					
+					// If the user hits <end>, bounce then back to the end of their actual input
+					int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
+					if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
+						selection = firstIncompletePosition;
+					text.setSelection(new Point(selection, selection));
+				} else { // nothing was accepted by the mask
+					/*
+					 * Either we backspaced over a literal or we typed an illegal character
+					 */
+					if (selection > oldSelection) { // typed an illegal character; backup
+						text.setSelection(new Point(selection-1, selection-1));
+					} else { // backspaced over a literal; don't interfere with selection position
+						text.setSelection(new Point(selection, selection));
+					}
 				}
-				text.setSelection(new Point(selection, selection));
+				oldRawText = newRawText;
 			} finally {
 				updating = false;
 			}
 		}
 	};
 	
-	private FocusListener focusListener = new FocusListener() {
-
+	private FocusListener focusListener = new FocusAdapter() {
 		public void focusGained(FocusEvent e) {
 			selection = editMaskParser.getNextInputPosition(0);
 			text.setSelection(selection, selection);
-		}
-
-		public void focusLost(FocusEvent e) {
-			// no op
 		}
 	};
 	
 	private DisposeListener disposeListener = new DisposeListener() {
 		public void widgetDisposed(DisposeEvent e) {
 			text.removeVerifyListener(verifyListener);
+			text.removeFocusListener(focusListener);
 			text.removeDisposeListener(disposeListener);
 		}
 	};

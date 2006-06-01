@@ -118,6 +118,18 @@ public class EditMaskParser {
 		}
 		return startingAt;
 	}
+	
+	/**
+	 * @return the first input position whose token is not marked as complete.  Returns -1 if all are complete
+	 */
+	public int getFirstIncompleteInputPosition() {
+		for (int position = 0; position < expectedTokens.length; position++) {
+			if (!expectedTokens[position].isComplete()) {
+				return position;
+			}
+		}
+		return -1;
+	}
 
 	/**
 	 * @return Returns the placeholder.

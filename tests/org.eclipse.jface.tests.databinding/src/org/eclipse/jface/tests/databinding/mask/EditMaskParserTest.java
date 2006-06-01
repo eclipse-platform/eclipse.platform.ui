@@ -93,5 +93,13 @@ public class EditMaskParserTest extends TestCase {
 		assertEquals("Position 1 is good", 1, parser.getNextInputPosition(1));
 		assertEquals("Skip )<space>", 6, parser.getNextInputPosition(4));
 	}
+	
+	public void testGetFirstIncompleteInputPosition() throws Exception {
+		assertEquals("1st position incomplete", 1, parser.getFirstIncompleteInputPosition());
+		parser.setInput("6a0) 5*5-1\\12");
+		assertEquals("11th position incomplete", 11, parser.getFirstIncompleteInputPosition());
+		parser.setInput("63a0) 5*55-1\\212");
+		assertEquals("all complete", -1, parser.getFirstIncompleteInputPosition());
+	}
 }
 

@@ -13,11 +13,12 @@ public class EditMaskTest {
       Shell shell = new Shell(display);
 
       Text text = new Text(shell, SWT.BORDER);
-      text.setText("(999) 999-9999   ");
-      new EditMask(text, "(###) ###-####");
+      text.setText("xxxxxxxxxxxxx");
       
       shell.setLayout(new RowLayout());
       shell.setSize(800, 600);
+      
+      new EditMask(text).setMask("(###) ###-####");
       shell.open();
       while (!shell.isDisposed()) {
          if (!display.readAndDispatch()) {

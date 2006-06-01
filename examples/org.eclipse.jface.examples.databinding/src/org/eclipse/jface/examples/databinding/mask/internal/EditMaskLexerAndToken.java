@@ -15,8 +15,8 @@ import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 
 /**
  * Lexical analyzer and token for an input mask.  Since input masks have exactly
- * one kind of token type, we use the same class to be the recognizer and
- * the token itself.
+ * one token type, we use the same class to be the recognizer and the token 
+ * itself.
  * 
  * @since 3.3
  */
