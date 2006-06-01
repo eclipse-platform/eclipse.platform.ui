@@ -20,13 +20,13 @@ import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 import org.eclipse.team.examples.filesystem.FileSystemProvider;
 
 /**
- * The file sytem three-way remote resource varant tree taht provides
+ * The file system three-way remote resource variant tree that provides
  * the ability to traverse the file system for the creation of resource variants.
  */
 public class FileSystemRemoteTree extends ThreeWayRemoteTree {
 	
 	/**
-	 * Create the file syetm remote resource variant tree
+	 * Create the file system remote resource variant tree
 	 * @param subscriber the file system subscriber
 	 */
 	public FileSystemRemoteTree(FileSystemSubscriber subscriber) {

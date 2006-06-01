@@ -1,0 +1,233 @@
+package org.eclipse.team.examples.filesystem.ui;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.history.IFileHistory;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.examples.filesystem.FileSystemProvider;
+import org.eclipse.team.examples.filesystem.history.FileSystemHistory;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.team.ui.history.IHistoryPageSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+
+public class FileSystemHistoryPage extends HistoryPage {
+
+	/* private */IFile file;
+	/* private */FileSystemHistory fileSystemHistory;
+	/* private */IFileRevision[] entries;
+	/* private */IFileRevision currentSelection;
+
+	private FileSystemTableProvider fileSystemTableProvider;
+	/* private */TableViewer tableViewer;
+	private Composite localComposite;
+
+	/* private */OpenFileSystemRevisionAction openAction;
+
+	boolean shutdown = false;
+
+	private RefreshFileHistory refreshFileHistoryJob;
+
+	private class RefreshFileHistory extends Job {
+		/* private */FileSystemHistory fileHistory;
+
+		public RefreshFileHistory() {
+			super("Fetching FileSystem revisions...");  //$NON-NLS-1$
+		}
+
+		public void setFileHistory(FileSystemHistory fileHistory) {
+			this.fileHistory = fileHistory;
+		}
+
+		public IStatus run(IProgressMonitor monitor) {
+
+			IStatus status = Status.OK_STATUS;
+
+			if (fileHistory != null && !shutdown) {
+				fileHistory.refresh(monitor);
+				Utils.asyncExec(new Runnable() {
+					public void run() {
+						tableViewer.setInput(fileHistory);
+					}
+				}, tableViewer);
+			}
+
+			return status;
+		}
+	}
+
+	public boolean inputSet() {
+		IFile tempFile = getFile();
+		this.file = tempFile;
+		if (tempFile == null)
+			return false;
+
+		//blank current input only after we're sure that we have a file
+		//to fetch history for
+		this.tableViewer.setInput(null);
+
+		fileSystemHistory = new FileSystemHistory(file);
+
+		refreshHistory();
+		return true;
+	}
+
+	private IWorkbenchPartSite getWorkbenchSite(IHistoryPageSite parentSite) {
+		IWorkbenchPart part = parentSite.getPart();
+		if (part != null)
+			return part.getSite();
+		return null;
+	}
+
+	private IFile getFile() {
+		Object obj = getInput();
+		if (obj instanceof IFile)
+			return (IFile) obj;
+
+		return null;
+	}
+
+	public void createControl(Composite parent) {
+
+		localComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		localComposite.setLayout(layout);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		localComposite.setLayoutData(data);
+
+		tableViewer = createTable(localComposite);
+
+		contributeActions();
+
+	}
+
+	private void contributeActions() {
+		openAction = new OpenFileSystemRevisionAction("Open");  //$NON-NLS-1$
+		tableViewer.getTable().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openAction.selectionChanged((IStructuredSelection) tableViewer.getSelection());
+			}
+		});
+		openAction.setPage(this);
+		//Contribute actions to popup menu
+		MenuManager menuMgr = new MenuManager();
+		Menu menu = menuMgr.createContextMenu(tableViewer.getTable());
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				menuMgr.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
+				menuMgr.add(openAction);
+			}
+		});
+		menuMgr.setRemoveAllWhenShown(true);
+		tableViewer.getTable().setMenu(menu);
+	}
+
+	private TableViewer createTable(Composite parent) {
+		fileSystemTableProvider = new FileSystemTableProvider();
+		TableViewer viewer = fileSystemTableProvider.createTable(parent);
+		viewer.setContentProvider(new IStructuredContentProvider() {
+
+			public Object[] getElements(Object inputElement) {
+				// The entries of already been fetch so return them
+				if (entries != null)
+					return entries;
+
+				final IFileHistory fileHistory = (IFileHistory) inputElement;
+				entries = fileHistory.getFileRevisions();
+
+				return entries;
+			}
+
+			public void dispose() {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				entries = null;
+			}
+
+		});
+		return viewer;
+	}
+
+	public Control getControl() {
+		return localComposite;
+	}
+
+	public void setFocus() {
+		localComposite.setFocus();
+	}
+
+	public String getDescription() {
+		if (file != null)
+			return file.getFullPath().toString();
+
+		return null;
+	}
+
+	public String getName() {
+		if (file != null)
+			return file.getName();
+
+		return ""; //$NON-NLS-1$
+	}
+
+	public boolean isValidInput(Object object) {
+
+		if (object instanceof IResource && ((IResource) object).getType() == IResource.FILE) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(((IFile) object).getProject());
+			if (provider != null && provider instanceof FileSystemProvider)
+				return true;
+		}
+
+		return false;
+	}
+
+	public void refresh() {
+		refreshHistory();
+	}
+
+	private void refreshHistory() {
+		if (refreshFileHistoryJob == null)
+			refreshFileHistoryJob = new RefreshFileHistory();
+
+		if (refreshFileHistoryJob.getState() != Job.NONE) {
+			refreshFileHistoryJob.cancel();
+		}
+		refreshFileHistoryJob.setFileHistory(fileSystemHistory);
+		IHistoryPageSite parentSite = getHistoryPageSite();
+		Utils.schedule(refreshFileHistoryJob, getWorkbenchSite(parentSite));
+	}
+
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
+}

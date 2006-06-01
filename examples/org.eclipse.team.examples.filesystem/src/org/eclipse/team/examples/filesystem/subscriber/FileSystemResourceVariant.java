@@ -146,4 +146,8 @@ public class FileSystemResourceVariant extends CachedResourceVariant {
 			throw new TeamException("Failed to fetch contents for " + getFilePath(), e); //$NON-NLS-1$
 		}
 	}
+	
+	public java.io.File getFile(){
+		return ioFile;
+	}
 }
