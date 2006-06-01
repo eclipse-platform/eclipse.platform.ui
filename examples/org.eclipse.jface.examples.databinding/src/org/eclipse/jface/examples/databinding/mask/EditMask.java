@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.examples.databinding.mask;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
@@ -178,6 +179,47 @@ public class EditMask {
 			return true;
 		}
 		return editMaskParser.isComplete();
+	}
+
+	/**
+	 * JavaBeans boilerplate code...
+	 * 
+	 * @param listener
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * JavaBeans boilerplate code...
+	 * 
+	 * @param propertyName
+	 * @param listener
+	 */
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	/**
+	 * JavaBeans boilerplate code...
+	 * 
+	 * @param listener
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	/**
+	 * JavaBeans boilerplate code...
+	 * 
+	 * @param propertyName
+	 * @param listener
+	 */
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyName,
+				listener);
 	}
 
 	private PropertyChangeSupport getPropertyChangeSupport() {
