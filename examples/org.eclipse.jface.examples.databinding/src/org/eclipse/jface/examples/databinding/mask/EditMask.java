@@ -168,6 +168,16 @@ public class EditMask {
 		}
 		return text.getText();
 	}
+	
+	/**
+	 * @return true if the field is complete according to the mask; false otherwise
+	 */
+	public boolean isComplete() {
+		if (editMaskParser == null) {
+			return true;
+		}
+		return editMaskParser.isComplete();
+	}
 
 	private PropertyChangeSupport getPropertyChangeSupport() {
 		if (propertyChangeSupport == null) {
