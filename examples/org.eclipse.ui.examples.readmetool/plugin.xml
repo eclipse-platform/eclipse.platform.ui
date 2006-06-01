@@ -377,16 +377,16 @@
    <extension
          point="org.eclipse.ui.menus">
       <group
-            id="org.eclipse.ui.examples.readmetool.dirtyStatusGroup"
-            separatorsVisible="true">
+            id="org.eclipse.ui.examples.readmetool.readmeTrimGroup">
          <location>
             <bar type="trim"/>
-            <order position="after" relativeTo="status"/>
+            <order position="before" relativeTo="status"/>
          </location>
       </group>
-      <widget class="org.eclipse.ui.examples.readmetool.ReadmeTrimWidget" id="org.eclipse.ui.examples.readmetool.dirtyStatusWidget">
+      <widget class="org.eclipse.ui.examples.readmetool.ReadmeTrimWidget" 
+      		  id="org.eclipse.ui.examples.readmetool.readmeTrimWidget">
          <location>
-            <bar path="org.eclipse.ui.examples.readmetool.dirtyStatusGroup" type="trim"/>
+            <bar path="org.eclipse.ui.examples.readmetool.readmeTrimGroup" type="trim"/>
          </location>
       </widget>
    </extension>
