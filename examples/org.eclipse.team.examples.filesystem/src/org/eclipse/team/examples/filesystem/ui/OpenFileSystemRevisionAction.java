@@ -15,8 +15,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
-import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
-import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -124,10 +122,6 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 			return false;
 
 		for (int i = 0; i < objArray.length; i++) {
-			//Don't bother showing if this a category
-			if (objArray[i] instanceof AbstractHistoryCategory)
-				return false;
-
 			IFileRevision revision = (IFileRevision) objArray[i];
 			//check to see if any of the selected revisions are deleted revisions
 			if (revision != null && !revision.exists())
@@ -141,7 +135,7 @@ public class OpenFileSystemRevisionAction extends BaseSelectionListenerAction {
 		IEditorReference[] editorRefs = page.getSite().getPage().getEditorReferences();
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
-			if (part != null && part.getEditorInput() instanceof FileRevisionEditorInput) {
+			if (part != null && part.getEditorInput() instanceof FileSystemRevisionEditorInput) {
 				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
 				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
 

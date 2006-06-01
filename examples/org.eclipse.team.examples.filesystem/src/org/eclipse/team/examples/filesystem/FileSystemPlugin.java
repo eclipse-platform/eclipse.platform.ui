@@ -12,7 +12,11 @@ package org.eclipse.team.examples.filesystem;
 
 import java.io.IOException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -95,6 +99,19 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(IStatus status) {
 		plugin.getLog().log(status);
+	}
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+		}
+		return display;		
 	}
 }
 

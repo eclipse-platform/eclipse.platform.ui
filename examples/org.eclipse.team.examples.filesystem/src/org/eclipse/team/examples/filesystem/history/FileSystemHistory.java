@@ -52,6 +52,8 @@ public class FileSystemHistory extends FileHistory {
 					revisions = new IFileRevision[states.length + 1];
 					int i = 0;
 					for (; i < states.length; i++) {
+						//Note: LocalFileRevision will most likely be made
+						//public API post 3.2
 						revisions[i] = new LocalFileRevision(states[i]);
 					}
 					revisions[i] = new FileSystemFileRevision(javaFile);

@@ -217,7 +217,7 @@
          <action
                class="org.eclipse.team.examples.filesystem.ui.ShowHistoryAction"
                id="org.eclipse.team.examples.filesystem.showHistory"
-               label="Show History Dude"
+               label="Show History"
                menubarPath="team.main/group4">
          </action>
       </objectContribution>

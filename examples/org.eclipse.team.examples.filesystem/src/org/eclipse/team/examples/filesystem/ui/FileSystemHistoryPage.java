@@ -68,6 +68,8 @@ public class FileSystemHistoryPage extends HistoryPage {
 
 			if (fileHistory != null && !shutdown) {
 				fileHistory.refresh(monitor);
+				//Internal code used for convenience - you can use 
+				//your own here
 				Utils.asyncExec(new Runnable() {
 					public void run() {
 						tableViewer.setInput(fileHistory);
@@ -223,6 +225,7 @@ public class FileSystemHistoryPage extends HistoryPage {
 		}
 		refreshFileHistoryJob.setFileHistory(fileSystemHistory);
 		IHistoryPageSite parentSite = getHistoryPageSite();
+		//Internal code used for convenience - you can use your own here
 		Utils.schedule(refreshFileHistoryJob, getWorkbenchSite(parentSite));
 	}
 
