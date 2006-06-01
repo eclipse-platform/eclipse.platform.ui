@@ -360,6 +360,7 @@ public interface IWorkbenchPreferenceConstants {
     
     /**
      * Stores whether or not to show progress while starting the workbench.
+     * The default is <code>false</code>.
      * 
      * @since 3.1
      */
