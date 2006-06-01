@@ -75,7 +75,7 @@ import org.eclipse.swt.widgets.Text;
  * Inside that async runnable, we:
  *   - Remember the selection position
  *   - getText(), then
- *   - Strip out all literal characters from edit mask
+ *   - Strip out all literal characters from text
  *   - Truncate the resulting string to raw length of edit mask without literals
  *   - Insert literal characters back in the correct positions
  *   - setText() the resulting string
