@@ -220,6 +220,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
 		fRemovedEntries= new ArrayList();
+		setHelpAvailable(false);
 	}
 	
 	/**
