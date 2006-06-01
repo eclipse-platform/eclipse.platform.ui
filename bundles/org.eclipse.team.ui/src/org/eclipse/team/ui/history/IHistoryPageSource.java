@@ -19,9 +19,6 @@ import org.eclipse.ui.part.Page;
  * by the history view or other views, dialogs or editors that wish to display
  * the history of an object. 
  *  
- * TODO: There are two ways a history page source is obtained...
- *  
- * <p>
  * This interface is not intended to be implemented by clients.
  * Clients can instead subclass {@link HistoryPageSource}.
  *  
@@ -38,7 +35,7 @@ public interface IHistoryPageSource {
 	public boolean canShowHistoryFor(Object object);
 	
 	/**
-	 * Called by the historyview to create the page for this IFileHistoryProvider. The
+	 * Called by the history view to create the page for this IFileHistoryProvider. The
 	 * page must implement {@link IHistoryPage}.
 	 * @param object the object whose history is to be shown
 	 * 
