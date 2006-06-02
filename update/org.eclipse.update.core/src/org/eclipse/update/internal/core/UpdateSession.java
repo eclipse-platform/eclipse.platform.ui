@@ -17,20 +17,31 @@ import java.util.Set;
 
 public class UpdateSession {
 	
+	private boolean enabled = false;
 	private Set visitedURLs = new HashSet();
 	
 	UpdateSession() {
 	}
 	
 	public boolean isVisited(URL url) {
+		if (!enabled)
+			return false;
 		return visitedURLs.contains(url.toExternalForm());
 	}
 
 	public void markVisited(URL url) {
+		if (!enabled)
+			return ;
 		visitedURLs.add(url.toExternalForm());
 	}
 	
+	/*
+	 * Session will not start caching URLs prior to calling this
+	 * method. If you want to use update session facility make sure
+	 * you call this method first
+	 */
 	public void reset() {
+		this.enabled = true;
 		visitedURLs.clear();
 	}
 
