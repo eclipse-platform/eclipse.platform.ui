@@ -274,9 +274,9 @@ public class ContentReference {
 	 */
 	public String toString() {
 		if (file != null)
-			return file.getAbsolutePath() + '(' + id + ')';
+			return file.getAbsolutePath();
 		else
-			return url.toExternalForm() + '(' + id + ')';
+			return url.toExternalForm();
 	}
 	/**
 	 * Returns the permission for this file.

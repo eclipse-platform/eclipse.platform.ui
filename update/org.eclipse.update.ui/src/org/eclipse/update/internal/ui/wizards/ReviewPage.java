@@ -70,6 +70,7 @@ import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.operations.FeatureStatus;
@@ -370,7 +371,7 @@ public class ReviewPage	extends BannerPage {
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < irefs.length; i++) {
 					IFeatureReference iref = irefs[i];
-					IFeature ifeature = iref.getFeature(null);
+					IFeature ifeature = UpdateUtils.getIncludedFeature(feature, iref);
 					VersionedIdentifier ivid =
 						ifeature.getVersionedIdentifier();
 					if (ivid.equals(vid))
@@ -1481,7 +1482,7 @@ public class ReviewPage	extends BannerPage {
 				for(int i = 0; i < iifr.length; i++) {
 					IFeature current;
 					try {
-						current = iifr[i].getFeature(new NullProgressMonitor());
+						current = UpdateUtils.getIncludedFeature(feature, iifr[i]);
 					} catch (CoreException e) {
 						// if we can not get feature then it can not satisfy requirement, so just ignore it
 						UpdateUI.logException(e);
@@ -1557,7 +1558,7 @@ public class ReviewPage	extends BannerPage {
 	private List getPluginEntriesFromIncludedFeatures(IFeature feature, List plugins, List visitedFeatures) throws CoreException {
 		IIncludedFeatureReference[] iifr = feature.getIncludedFeatureReferences();
 		for(int i = 0; i < iifr.length; i++) {
-			IFeature current = iifr[i].getFeature(new NullProgressMonitor());
+			IFeature current = UpdateUtils.getIncludedFeature( feature, iifr[i]);
 			if (!visitedFeatures.contains(current)) {
 				IPluginEntry[] pluginEntries = current.getPluginEntries();
 				plugins.addAll(Arrays.asList(pluginEntries));

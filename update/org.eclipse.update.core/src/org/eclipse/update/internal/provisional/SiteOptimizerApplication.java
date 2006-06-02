@@ -31,7 +31,9 @@ import java.util.zip.ZipEntry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.IncludedFeatureReference;
@@ -202,11 +204,9 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			return false;
 		}
 
-		Iterator featureIterator = featureList.iterator();
-		// int i = 0;
-		while (featureIterator.hasNext()) {
-			String featureJarFileName = (String) featureIterator.next();
-			// System.out.println("i=" + i++);
+		for(int i = 0; i < featureList.size(); i++) {
+			
+			String featureJarFileName = (String) featureList.get(i);
 
 			if (featureJarFileName.endsWith("jar")) { //$NON-NLS-1$
 				System.out.println("Processing... " + featureJarFileName); //$NON-NLS-1$
@@ -233,6 +233,8 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 				FeatureModel featureModel = fmf.parseFeature(featureJar
 						.getInputStream(featureXMLEntry));
+				
+				featureList = addFeaturesToList( (String) params.get(SITE_XML), featureList, featureModel.getFeatureIncluded(), availableLocales, perFeatureLocales);
 
 				Iterator availableLocalesIterator = availableLocales.values()
 						.iterator();
@@ -275,6 +277,44 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		}
 		System.out.println("Done"); //$NON-NLS-1$
 		return true;
+	}
+
+	private List addFeaturesToList( String siteXML, List featureList, IIncludedFeatureReference[] iIncludedFeatureReferences, Map availableLocales, Map perFeatureLocales ) throws CoreException {
+		
+		String directoryName = (new File(siteXML)).getParent();
+		if (!directoryName.endsWith(File.separator)) {
+			directoryName = directoryName + File.separator;
+		}
+		directoryName = directoryName + "features" + File.separator; //$NON-NLS-1$
+		
+		for (int i = 0; i < iIncludedFeatureReferences.length; i++) {
+			String featureURL = directoryName + iIncludedFeatureReferences[i].getVersionedIdentifier() + ".jar"; //$NON-NLS-1$
+			if (!(isFeatureAlreadyInList(featureList, featureURL))) {
+				try {
+					System.out.println("Extracting locales from inlcuded feature " + featureURL); //$NON-NLS-1$
+					processLocalesInJar(availableLocales, featureURL, perFeatureLocales, true);
+				} catch (IOException e) {
+					if (iIncludedFeatureReferences[i].isOptional()) 
+						continue;
+					System.out.println("Error while extracting locales from inlcuded feature " + featureURL);//$NON-NLS-1$	
+					e.printStackTrace();
+					throw new CoreException( new Status( IStatus.ERROR, "", IStatus.OK, "Error while extracting locales from inlcuded feature " + featureURL, e)); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				featureList.add(featureURL);
+			}
+		}
+		
+		return featureList;
+	}
+
+	private boolean isFeatureAlreadyInList(List featureList, String featureURL) {
+		for (int i = 0; i < featureList.size(); i++) {
+			String currentFeatureURL = (String)featureList.get(i);
+			if (currentFeatureURL.equals(featureURL)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Map loadProperties(JarFile featureJar, String featureJarFileName,
@@ -325,7 +365,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			String feature = (String) features.next();
 			try {
 				System.out.println("Extracting locales from " + feature); //$NON-NLS-1$
-				processLocalesInJar(locales, feature, perFeatureLocales);
+				processLocalesInJar(locales, feature, perFeatureLocales, false);
 			} catch (IOException e) {
 				System.out.println("Error while extracting locales from " //$NON-NLS-1$
 						+ feature);
@@ -337,7 +377,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 	}
 
 	private void processLocalesInJar(Map locales, String feature,
-			Map perFeatureLocales) throws IOException {
+			Map perFeatureLocales, boolean ignoreNewLocales) throws IOException {
 
 		JarFile jar = new JarFile(feature);
 		// System.out.println(feature);
@@ -361,14 +401,13 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					localeString = name.substring(8, name.indexOf('.'));
 				}
 				// System.out.println(name +"::::\"" + localeString + "\"");
-				if (!locales.containsKey(localeString)) {
-					locales
-							.put(localeString,
-									new AvailableLocale(localeString));
+				if ( !ignoreNewLocales && !locales.containsKey(localeString)) {
+					locales.put(localeString, new AvailableLocale(localeString));
 				}
-				AvailableLocale currentLocale = (AvailableLocale) locales
-						.get(localeString);
-				currentLocale.addFeatures(feature);
+				if (locales.containsKey(localeString)) {
+					AvailableLocale currentLocale = (AvailableLocale) locales.get(localeString);
+					currentLocale.addFeatures(feature);
+				}
 			}
 		}
 

@@ -839,6 +839,9 @@ public static class Writer {
 	
 	public static boolean isSameTimestamp(URL url, long timestamp) {	
 		try {
+			if (UpdateCore.getPlugin().getUpdateSession().isVisited(url)) {
+				return true;
+			}
 			URL resolvedURL = URLEncoder.encode(url);
 			IResponse response = ConnectionFactory.get(resolvedURL);
 			long remoteLastModified = response.getLastModified();

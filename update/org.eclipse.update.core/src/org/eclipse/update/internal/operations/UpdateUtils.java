@@ -221,7 +221,7 @@ public class UpdateUtils {
 				if (iref.isOptional())
 					return true;
 				// see if it has optional children
-				IFeature child = iref.getFeature(null);
+				IFeature child = getIncludedFeature( feature, iref);
 				if (hasOptionalFeatures(child))
 					return true;
 			}
@@ -669,4 +669,14 @@ public class UpdateUtils {
 		}
 	}
 }
+	public static IFeature getIncludedFeature(IFeature feature, IFeatureReference iref) throws CoreException {
+		IFeature ifeature = null;
+		if (feature.getSite() instanceof ExtendedSite) {
+			ifeature = ((ExtendedSite)feature.getSite()).getLiteFeature(iref.getVersionedIdentifier());
+		}
+		if (ifeature == null) {
+			ifeature = iref.getFeature(new NullProgressMonitor());
+		}
+		return ifeature;
+	}
 }

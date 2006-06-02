@@ -37,6 +37,7 @@ import org.eclipse.update.core.model.ContentEntryModel;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.operations.UpdateUtils;
 
 
 /**
@@ -278,7 +279,7 @@ public class SiteFile extends Site {
 			IFeatureReference[] children = feature.getIncludedFeatureReferences();
 			IFeature currentFeature = null;
 			for (int i = 0; i < children.length; i++) {
-				currentFeature = children[i].getFeature(null);
+				currentFeature = UpdateUtils.getIncludedFeature(feature, children[i]);
 				if (currentFeature != null) {
 					result += getDownloadSizeFor(currentFeature);
 					if(result == ContentEntryModel.UNKNOWN_SIZE)
@@ -322,7 +323,7 @@ public class SiteFile extends Site {
 			IFeatureReference[] children = feature.getIncludedFeatureReferences();
 			IFeature currentFeature = null;
 			for (int i = 0; i < children.length; i++) {
-				currentFeature = children[i].getFeature(null);
+				currentFeature = UpdateUtils.getIncludedFeature(feature, children[i]);
 				if (currentFeature != null) {
 					//[132029]
 					//pluginsToInstall.addAll(Arrays.asList(currentFeature.getPluginEntries()));

@@ -254,6 +254,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	
 					tempFile.setLastModified(timeStamp);
 					Utilities.mapLocalFile(key, tempFile);
+					UpdateCore.getPlugin().getUpdateSession().markVisited(reference.asURL());
 				} finally {
 					LockManager.returnLock(packed);
 					LockManager.returnLock(key);

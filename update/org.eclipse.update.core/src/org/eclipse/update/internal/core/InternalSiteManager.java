@@ -117,6 +117,7 @@ public class InternalSiteManager {
 		String siteURLString = siteURL.toExternalForm();
 		if ((useCache && globalUseCache) && isValidCachedSite(siteURL)) {
 			site = (ISite) sites.get(siteURLString);
+			UpdateCore.getPlugin().getUpdateSession().markVisited(site.getURL());
 			return site;
 		}
 		
@@ -180,6 +181,7 @@ public class InternalSiteManager {
 
 		if (site != null) {
 			sites.put(site.getURL().toExternalForm(), site);
+			UpdateCore.getPlugin().getUpdateSession().markVisited(site.getURL());
 			if (site instanceof ITimestamp) {
 				siteTimestamps.put(site.getURL(), new Long(((ITimestamp)site).getTimestamp().getTime()));
 			} else {

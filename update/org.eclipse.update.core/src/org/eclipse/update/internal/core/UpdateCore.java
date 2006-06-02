@@ -80,6 +80,9 @@ public class UpdateCore extends Plugin {
 	private ServiceTracker pkgAdminTracker;
 	private ServiceTracker verifierFactoryTracker;
 	
+	// Session
+	private UpdateSession updateSession = null;
+	
 	/**
 	 * The constructor.
 	 */
@@ -327,5 +330,14 @@ public class UpdateCore extends Plugin {
 			verifierFactoryTracker.open();
 		}
 		return (CertificateVerifierFactory)verifierFactoryTracker.getService();
+	}
+	
+	public UpdateSession getUpdateSession() {
+		synchronized(UpdateSession.class) {
+			if (updateSession == null) {
+				updateSession = new UpdateSession();
+			}
+		}		
+		return updateSession;
 	}
 }

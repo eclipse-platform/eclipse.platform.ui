@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.search.SiteSearchCategory;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
@@ -117,7 +118,7 @@ public class InstallWizard
             if (!proceed)
                 return false; // cancel this job, and let the old one go on
         }
-        
+        UpdateCore.getPlugin().getUpdateSession().reset();
         launchInBackground();
         isRunning = false;
         return true;

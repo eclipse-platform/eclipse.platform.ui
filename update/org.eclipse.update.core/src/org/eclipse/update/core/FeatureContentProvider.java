@@ -357,6 +357,9 @@ public abstract class FeatureContentProvider
 		} // end lock
 		ContentReference reference =
 			ref.createContentReference(ref.getIdentifier(), localFile);
+		
+		UpdateCore.getPlugin().getUpdateSession().markVisited(ref.asURL());
+		
 		return reference;
 	}
 

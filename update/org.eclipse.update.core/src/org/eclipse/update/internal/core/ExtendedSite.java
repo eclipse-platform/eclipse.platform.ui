@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.model.SiteWithTimestamp;
 
 public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
@@ -22,6 +23,7 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 	private String[] availableLocals;
 	private String digestURL;
 	private LiteFeature[] liteFeatures;
+	private LiteFeature[] allLiteFeatures;
 	private IURLEntry[] associateSites;
 	private boolean pack200 = false;
 	
@@ -52,7 +54,31 @@ public class ExtendedSite extends SiteWithTimestamp /*Site*/ {
 			return getNonFilteredLiteFeatures();
 	}
 	public void setLiteFeatures(LiteFeature[] liteFeatures) {
-		this.liteFeatures = liteFeatures;
+		
+		if ((liteFeatures == null) || (liteFeatures.length == 0))
+			return;
+		this.allLiteFeatures = liteFeatures;
+		List temp = new ArrayList();
+		for(int i = 0; i < allLiteFeatures.length ; i++) {
+			if (getFeatureReference(allLiteFeatures[i]) != null) {
+				temp.add(allLiteFeatures[i]);
+			}
+		}
+		if (!temp.isEmpty()) {
+			this.liteFeatures = (LiteFeature[])temp.toArray( new LiteFeature[temp.size()]);
+		}
+	}
+	
+	public LiteFeature getLiteFeature(VersionedIdentifier vid) {
+		if (allLiteFeatures == null)
+			return null;
+		
+		for(int i = 0; i < allLiteFeatures.length ; i++) {
+			if (vid.equals(allLiteFeatures[i].getVersionedIdentifier())) {
+				return allLiteFeatures[i];
+			}
+		}
+		return null;
 	}
 	
 	public LiteFeature[] getNonFilteredLiteFeatures() {

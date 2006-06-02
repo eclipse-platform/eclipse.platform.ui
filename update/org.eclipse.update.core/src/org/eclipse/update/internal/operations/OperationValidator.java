@@ -519,7 +519,7 @@ public class OperationValidator implements IOperationValidator {
 		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child = children[i].getFeature(null);
+				IFeature child = UpdateUtils.getIncludedFeature(feature, children[i]);
 				features =
 				computeFeatureSubtree(
 						top,
@@ -693,7 +693,7 @@ public class OperationValidator implements IOperationValidator {
 		feature.getIncludedFeatureReferences();
 		for (int i = 0; i < children.length; i++) {
 			try {
-				IFeature child = children[i].getFeature(null);
+				IFeature child = UpdateUtils.getIncludedFeature(feature, children[i]);
 				checkForCycles(child, candidates, configuredFeatures);
 			} catch (CoreException e) {
 				if (!children[i].isOptional())
