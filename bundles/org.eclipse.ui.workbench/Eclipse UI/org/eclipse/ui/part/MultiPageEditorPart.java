@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -806,7 +807,9 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 */
 	public Object getAdapter(Class adapter) {
 		Object result = super.getAdapter(adapter);
-		if (result == null) {
+		// restrict delegating to the UI thread for bug 144851
+		// TODO to be fixed properly in 3.2.1
+		if (result == null && Display.getCurrent()!=null) {
 			IEditorPart innerEditor = getActiveEditor();
 			// see bug 138823 - this is a hack
 			if (innerEditor != null && innerEditor != this) {
