@@ -185,6 +185,43 @@ public class EditMask {
 	}
 	
 	/**
+	 * Returns the placeholder character.  The placeholder 
+	 * character must be a different character than any character that is 
+	 * allowed as input anywhere in the edit mask.  For example, if the edit
+	 * mask permits spaces to be used as input anywhere, the placeholder 
+	 * character must be something other than a space character.
+	 * <p>
+	 * The space character is the default placeholder character.
+	 * 
+	 * @return the placeholder character
+	 */
+	public char getPlaceholder() {
+		if (editMaskParser == null) {
+			throw new IllegalArgumentException("Have to set an edit mask first");
+		}
+		return editMaskParser.getPlaceholder();
+	}
+	
+	/**
+	 * Sets the placeholder character for the edit mask.  The placeholder 
+	 * character must be a different character than any character that is 
+	 * allowed as input anywhere in the edit mask.  For example, if the edit
+	 * mask permits spaces to be used as input anywhere, the placeholder 
+	 * character must be something other than a space character.
+	 * <p>
+	 * The space character is the default placeholder character.
+	 * 
+	 * @param placeholder The character to use as a placeholder
+	 */
+	public void setPlaceholder(char placeholder) {
+		if (editMaskParser == null) {
+			throw new IllegalArgumentException("Have to set an edit mask first");
+		}
+		editMaskParser.setPlaceholder(placeholder);
+		updateTextField.run();
+	}
+
+	/**
 	 * JavaBeans boilerplate code...
 	 * 
 	 * @param listener
@@ -242,14 +279,12 @@ public class EditMask {
 	protected int oldSelection = 0;
 	protected int selection = 0;
 	protected String oldRawText = "";
-	protected String newFormattedText = "";
 	
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
 			oldSelection = selection;
 			selection = text.getSelection().x;
 			String currentText = text.getText();
-			newFormattedText = currentText.substring(0, e.start) + e.text + currentText.substring(e.end);
 			if (!updating)
 				Display.getCurrent().asyncExec(updateTextField);
 		}
@@ -259,7 +294,7 @@ public class EditMask {
 		public void run() {
 			updating = true;
 			try {
-				editMaskParser.setInput(newFormattedText);
+				editMaskParser.setInput(text.getText());
 				text.setText(editMaskParser.getFormattedResult());
 				String newRawText = editMaskParser.getRawResult();
 				// Did we just type something that was accepted by the mask?
