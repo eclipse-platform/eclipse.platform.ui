@@ -15,12 +15,6 @@ package org.eclipse.jface.viewers;
  * using the SWT.VIRTUAL flag that only wish to return their contents as they
  * are queried.
  * 
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will remain
- * unchanged during the 3.2 release cycle. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 3.2
  */
 public interface ILazyTreeContentProvider extends IContentProvider {
