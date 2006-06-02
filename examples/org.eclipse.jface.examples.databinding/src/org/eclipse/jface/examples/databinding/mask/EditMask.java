@@ -133,7 +133,7 @@ public class EditMask {
 	}
 
 	/**
-	 * @return the actual(formatted) text
+	 * @return the actual (formatted) text
 	 */
 	public String getText() {
 		if (editMaskParser != null) {
