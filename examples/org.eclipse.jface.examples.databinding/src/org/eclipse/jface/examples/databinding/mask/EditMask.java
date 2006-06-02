@@ -86,11 +86,11 @@ import org.eclipse.swt.widgets.Text;
  */
 public class EditMask {
 	
-	private static final String FIELD_TEXT = "text";
-	private static final String FIELD_RAW_TEXT = "rawText";
+	public static final String FIELD_TEXT = "text";
+	public static final String FIELD_RAW_TEXT = "rawText";
 	protected Text text;
 	protected EditMaskParser editMaskParser;
-	private PropertyChangeSupport propertyChangeSupport;
+	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	
 	/**
 	 * Creates an instance that wraps around a text widget and manages its<br>
@@ -149,6 +149,9 @@ public class EditMask {
 	 * @param string the raw (unformatted) text
 	 */
 	public void setRawText(String string)  {
+		if (string == null) {
+			string = "";
+		}
 		if (editMaskParser != null) {
 			String oldValue = editMaskParser.getRawResult();
 			editMaskParser.setInput(string);
@@ -222,13 +225,6 @@ public class EditMask {
 				listener);
 	}
 
-	private PropertyChangeSupport getPropertyChangeSupport() {
-		if (propertyChangeSupport == null) {
-			propertyChangeSupport = new PropertyChangeSupport(this);
-		}
-		return propertyChangeSupport;
-	}
-
 	private boolean isEitherValueNotNull(Object oldValue, Object newValue) {
 		return oldValue != null || newValue != null;
 	}
@@ -236,7 +232,7 @@ public class EditMask {
 	private void firePropertyChange(String propertyName, Object oldValue,
 			Object newValue) {
 		if (isEitherValueNotNull(oldValue, newValue)) {
-			getPropertyChangeSupport().firePropertyChange(propertyName,
+			propertyChangeSupport.firePropertyChange(propertyName,
 					oldValue, newValue);
 		}
 	}
@@ -246,11 +242,14 @@ public class EditMask {
 	protected int oldSelection = 0;
 	protected int selection = 0;
 	protected String oldRawText = "";
+	protected String newFormattedText = "";
 	
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
 			oldSelection = selection;
 			selection = text.getSelection().x;
+			String currentText = text.getText();
+			newFormattedText = currentText.substring(0, e.start) + e.text + currentText.substring(e.end);
 			if (!updating)
 				Display.getCurrent().asyncExec(updateTextField);
 		}
@@ -260,7 +259,7 @@ public class EditMask {
 		public void run() {
 			updating = true;
 			try {
-				editMaskParser.setInput(text.getText());
+				editMaskParser.setInput(newFormattedText);
 				text.setText(editMaskParser.getFormattedResult());
 				String newRawText = editMaskParser.getRawResult();
 				// Did we just type something that was accepted by the mask?

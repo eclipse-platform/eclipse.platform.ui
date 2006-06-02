@@ -9,13 +9,13 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface,
  org.eclipse.jface.databinding,
  org.eclipse.core.runtime
-Export-Package: org.eclipse.jface.examples.databinding.compositetable,
- org.eclipse.jface.examples.databinding.compositetable.day,
- org.eclipse.jface.examples.databinding.compositetable.day.internal,
- org.eclipse.jface.examples.databinding.compositetable.day.binding,
- org.eclipse.jface.examples.databinding.compositetable.month,
- org.eclipse.jface.examples.databinding.compositetable.reflect,
- org.eclipse.jface.examples.databinding.compositetable.timeeditor,
- org.eclipse.jface.examples.databinding.model,
- org.eclipse.jface.examples.databinding.mask,
- org.eclipse.jface.examples.databinding.mask.internal
+Export-Package: org.eclipse.jface.examples.databinding.compositetable;x-internal:=false,
+ org.eclipse.jface.examples.databinding.compositetable.day;x-internal:=false,
+ org.eclipse.jface.examples.databinding.compositetable.day.internal;x-internal:=true,
+ org.eclipse.jface.examples.databinding.compositetable.day.binding;x-internal:=false,
+ org.eclipse.jface.examples.databinding.compositetable.month;x-internal:=false,
+ org.eclipse.jface.examples.databinding.compositetable.reflect;x-internal:=false,
+ org.eclipse.jface.examples.databinding.compositetable.timeeditor;x-internal:=false,
+ org.eclipse.jface.examples.databinding.model;x-internal:=false,
+ org.eclipse.jface.examples.databinding.mask;x-internal:=false,
+ org.eclipse.jface.examples.databinding.mask.internal;x-internal:=true
