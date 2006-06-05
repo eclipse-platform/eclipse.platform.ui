@@ -88,6 +88,7 @@ public class EditMask {
 	
 	public static final String FIELD_TEXT = "text";
 	public static final String FIELD_RAW_TEXT = "rawText";
+	public static final String FIELD_COMPLETE = "complete";
 	protected Text text;
 	protected EditMaskParser editMaskParser;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
@@ -279,6 +280,8 @@ public class EditMask {
 	protected int oldSelection = 0;
 	protected int selection = 0;
 	protected String oldRawText = "";
+	protected String oldValidRawText = "";
+	protected String oldValidText = ""; 
 	
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
@@ -294,11 +297,23 @@ public class EditMask {
 		public void run() {
 			updating = true;
 			try {
+				Boolean oldIsComplete = new Boolean(editMaskParser.isComplete());
+				
 				editMaskParser.setInput(text.getText());
 				text.setText(editMaskParser.getFormattedResult());
 				String newRawText = editMaskParser.getRawResult();
-				// Did we just type something that was accepted by the mask?
-				if (!newRawText.equals(oldRawText)) { // yep
+				
+				updateSelectionPosition(newRawText);
+				firePropertyChangeEvents(oldIsComplete, newRawText);
+			} finally {
+				updating = false;
+			}
+		}
+
+		private void updateSelectionPosition(String newRawText) {
+			// Did we just type something that was accepted by the mask?
+			if (!newRawText.equals(oldRawText)) { // yep
+				if (isInsertingNewCharacter(newRawText)) {
 					// Find the position after where the new character was actually inserted
 					int selectionDelta = 
 						editMaskParser.getNextInputPosition(oldSelection)
@@ -308,25 +323,40 @@ public class EditMask {
 						- selection;
 					}
 					selection += selectionDelta;
-					
-					// If the user hits <end>, bounce then back to the end of their actual input
-					int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
-					if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
-						selection = firstIncompletePosition;
-					text.setSelection(new Point(selection, selection));
-				} else { // nothing was accepted by the mask
-					/*
-					 * Either we backspaced over a literal or we typed an illegal character
-					 */
-					if (selection > oldSelection) { // typed an illegal character; backup
-						text.setSelection(new Point(selection-1, selection-1));
-					} else { // backspaced over a literal; don't interfere with selection position
-						text.setSelection(new Point(selection, selection));
-					}
 				}
-				oldRawText = newRawText;
-			} finally {
-				updating = false;
+				
+				// If the user hits <end>, bounce then back to the end of their actual input
+				int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
+				if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
+					selection = firstIncompletePosition;
+				text.setSelection(new Point(selection, selection));
+			} else { // nothing was accepted by the mask
+				/*
+				 * Either we backspaced over a literal or we typed an illegal character
+				 */
+				if (selection > oldSelection) { // typed an illegal character; backup
+					text.setSelection(new Point(selection-1, selection-1));
+				} else { // backspaced over a literal; don't interfere with selection position
+					text.setSelection(new Point(selection, selection));
+				}
+			}
+			oldRawText = newRawText;
+		}
+
+		private boolean isInsertingNewCharacter(String newRawText) {
+			return newRawText.length() > oldRawText.length();
+		}
+
+		private void firePropertyChangeEvents(Boolean oldIsComplete, String newRawText) {
+			Boolean newIsComplete = new Boolean(editMaskParser.isComplete());
+			if (!oldIsComplete.equals(newIsComplete)) {
+				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
+				if (newIsComplete.booleanValue()) {
+					firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
+					firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
+					oldValidText = text.getText();
+					oldValidRawText = newRawText;
+				}
 			}
 		}
 	};
