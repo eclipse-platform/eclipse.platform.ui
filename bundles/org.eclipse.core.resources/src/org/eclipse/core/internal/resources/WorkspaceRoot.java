@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+
 import java.net.URI;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -162,12 +163,17 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			IPath projectPath = new Path(null, name).makeAbsolute();
 			String message = "Path for project must have only one segment."; //$NON-NLS-1$
 			Assert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
+			//try to get the project using a canonical name
+			String canonicalName = projectPath.lastSegment();
+			result = (Project) projectTable.get(canonicalName);
+			if (result != null)
+				return result;
 			result = new Project(projectPath, workspace);
 			//copy the map on write to protect against concurrent access
 			//note that multiple concurrent writes will overwrite each other, but 
 			//because of the nature of the cache it does not matter
 			ObjectMap newMap = (ObjectMap) projectTable.clone();
-			newMap.put(name, result);
+			newMap.put(canonicalName, result);
 			projectTable = newMap;
 		}
 		return result;
