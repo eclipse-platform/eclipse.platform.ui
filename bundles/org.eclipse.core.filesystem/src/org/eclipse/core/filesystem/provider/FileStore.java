@@ -242,6 +242,28 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
 	}
+	
+	/**
+	 * This implementation of {@link Object#equals(Object)} defines
+	 * equality based on the file store's URI.  Subclasses should override
+	 * this method to return <code>true</code> if and only if the two file stores
+	 * represent the same resource in the backing file system.  Issues to watch
+	 * out for include whether the file system is case-sensitive, and whether trailing
+	 * slashes are considered significant. Subclasses that override this method
+	 * should also override {@link #hashCode()}.
+	 * 
+	 * @param obj The object to compare with the receiver for equality
+	 * @return <code>true</code> if this object is equal to the provided object,
+	 * and <code>false</code> otherwise.
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof FileStore))
+			return false;
+		return toURI().equals(((FileStore)obj).toURI());
+	}
 
 	/**
 	 * The default implementation of {@link IFileStore#fetchInfo()}.
@@ -299,6 +321,19 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @see org.eclipse.core.filesystem.IFileStore#getParent()
 	 */
 	public abstract IFileStore getParent();
+	
+	/**
+	 * This implementation of {@link Object#hashCode()} uses a definition
+	 * of equality based on equality of the file store's URI.  Subclasses that
+	 * override {@link #equals(Object)} should also override this method
+	 * to ensure the contract of {@link Object#hashCode()} is honored.
+	 * 
+	 * @return A hash code value for this file store
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public int hashCode() {
+		return toURI().hashCode();
+	}
 
 	/**
 	 * The default implementation of {@link IFileStore#isParentOf(IFileStore)}.
