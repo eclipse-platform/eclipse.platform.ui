@@ -109,7 +109,7 @@ public final class RefactoringHistoryEvent {
 	}
 
 	/**
-	 * Returns the refactoring history service
+	 * Returns the refactoring history service.
 	 * 
 	 * @return the refactoring history service
 	 */
