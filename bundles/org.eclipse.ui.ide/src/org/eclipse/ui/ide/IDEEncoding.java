@@ -19,14 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -105,50 +99,6 @@ public final class IDEEncoding {
 			return null;
 		}
 		return preference;
-	}
-
-	/**
-	 * Set the resource encoding to be value. Add the encoding to the list of
-	 * encodings stored by the workbench.
-	 * 
-	 * @param value
-	 *            String or <code>null</code> if the preference is to be reset
-	 *            to the default.
-	 * @deprecated Use IWorkspaceRoot#setDefaultCharset and 
-	 * add the encoding using #addEncoding.
-	 * This API will be deleted before 3.1 M3.
-	 */
-	public static void setResourceEncoding(String value) {
-
-		if (value != null) {
-			addIDEEncoding(value);
-		}
-
-		final String finalValue = value;
-		Job charsetJob = new Job(IDEWorkbenchMessages.IDEEncoding_EncodingJob) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(finalValue, monitor);
-				} catch (CoreException exception) {
-					return exception.getStatus();
-				}
-				return Status.OK_STATUS;
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-			 */
-			public boolean shouldRun() {
-				//Do not run after shutdown
-				return PlatformUI.isWorkbenchRunning();
-			}
-		};
-		charsetJob.schedule();
-
 	}
 
 	/**
