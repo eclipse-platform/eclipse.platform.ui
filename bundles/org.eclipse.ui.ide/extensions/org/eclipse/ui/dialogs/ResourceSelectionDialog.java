@@ -45,7 +45,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * <pre>
  * 	ResourceSelectionDialog dialog =
  *		new ResourceSelectionDialog(getShell(), rootResource, msg);
- *	dialog.setInitialSelections(selectedResources));
+ *	dialog.setInitialSelections(selectedResources);
  *	dialog.open();
  *	return dialog.getResult();
  * </pre>
