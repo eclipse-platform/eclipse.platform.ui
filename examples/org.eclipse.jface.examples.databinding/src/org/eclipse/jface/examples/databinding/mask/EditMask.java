@@ -351,7 +351,7 @@ public class EditMask {
 			Boolean newIsComplete = new Boolean(editMaskParser.isComplete());
 			if (!oldIsComplete.equals(newIsComplete)) {
 				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
-				if (newIsComplete.booleanValue()) {
+				if (newIsComplete.booleanValue() || "".equals(newRawText)) {
 					firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
 					firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
 					oldValidText = text.getText();
