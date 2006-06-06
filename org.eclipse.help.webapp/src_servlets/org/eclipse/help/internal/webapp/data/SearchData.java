@@ -235,6 +235,8 @@ public class SearchData extends ActivitiesData {
 			// if we have already set the working set, then use it.
 			if (workingSetName == null)
 				workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
+		} else if (getWorkingSets() == null || getWorkingSets().length == 0) {
+			workingSetName = ServletResources.getString("All", request); //$NON-NLS-1$
 		} else {
 			workingSetName = wsmgr.getCurrentWorkingSet();
 		}

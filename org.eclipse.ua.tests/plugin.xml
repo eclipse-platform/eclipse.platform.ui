@@ -253,6 +253,7 @@
        <toc file="data/help/toc/extraContent/toc2.xml" primary="true"/>
        <toc file="data/help/toc/extraContent/simple_toc.xml" />
        <toc file="data/help/search/toc.xml" primary="true"/>
+       <toc file="data/help/search/toc2.xml" primary="true" extradir="data/help/search/extraDir"/>
        <toc file="data/help/producer/toc.xml" primary="true"/>
    </extension>
 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -261,7 +263,12 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		SearchQuery searchQuery = new SearchQuery();
 		searchQuery.setSearchWord(phrase);
 		SearchResults localResults = new SearchResults(null,
-				DynamicHelpPart.SHORT_COUNT * 2, Platform.getNL());
+				DynamicHelpPart.SHORT_COUNT * 2, Platform.getNL()) {
+			public void addHits(List hits, String highlightTerms) {
+				// don't highlight any terms for dynamic help part
+				super.addHits(hits, ""); //$NON-NLS-1$
+			}
+		};
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,
 				monitor);
 		SearchHit[] hits = localResults.getSearchHits();

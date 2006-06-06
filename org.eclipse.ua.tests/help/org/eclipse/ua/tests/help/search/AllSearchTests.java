@@ -29,6 +29,7 @@ public class AllSearchTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllSearchTests() {
+		addTest(ExtraDirTest.suite());
 		addTest(XHTMLTest.suite());
 		addTest(SearchCheatsheet.suite());
 	}

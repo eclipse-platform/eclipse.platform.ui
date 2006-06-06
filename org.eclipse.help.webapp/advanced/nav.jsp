@@ -93,7 +93,18 @@ function displayTocFor(topic)
 		if(advIndex < 0)
 			return;
 		var tocURL = window.location.href.substr(0, advIndex) + "/advanced/tocView.jsp";
-		tocView.location.replace(tocURL + "?topic="+topic+"&synch=yes");			
+		
+		var indexAnchor=topic.indexOf('#');
+				
+		if (indexAnchor!=-1)
+		 {
+		 var anchor=topic.substr(indexAnchor+1);
+		 topic=topic.substr(0,indexAnchor);
+		 tocView.location.replace(tocURL + "?topic="+topic+"&anchor="+anchor+"&synch=yes");	
+		 }
+		else {
+		 tocView.location.replace(tocURL + "?topic="+topic+"&synch=yes");
+		 }			
 	}
 }
 

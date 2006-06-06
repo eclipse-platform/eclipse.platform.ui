@@ -67,9 +67,6 @@ TD, TR {
 	padding-<%=isRTL?"right":"left"%>:5px;
 	overflow:auto;
 	height:350px;
-<%if (data.isIE()) {%>
-	width:100%;
-<%}%>
 }
 
 .book {
@@ -216,10 +213,12 @@ function collapseOrExpand(nodeId) {
 		node.className = "collapsed";
 		img.src = plus.src;
 		img.alt = altBookClosed;
+		img.title = altBookClosed;
 	} else {
 		node.className = "expanded";
 		img.src = minus.src;
 		img.alt = altBookOpen;
+		img.title = altBookOpen;
 	}
 }
 
@@ -230,6 +229,7 @@ function collapse(nodeId) {
 	node.className = "collapsed";
 	img.src = plus.src;
 	img.alt = altBookClosed;
+	img.title = altBookClosed;
 }
 
 function expand(nodeId) {
@@ -239,6 +239,7 @@ function expand(nodeId) {
 	node.className = "expanded";
 	img.src = minus.src;
 	img.alt = altBookOpen;
+	img.title = altBookOpen;
 }
 
 function getParent(child) {
@@ -248,7 +249,7 @@ function getParent(child) {
 }
 
 function updateParentState(checkbox,parentDiv) {
-
+	enableOK();
 	if (checkbox == null)
 		return;
 
@@ -271,6 +272,7 @@ function updateParentState(checkbox,parentDiv) {
 }
 
 function setSubtreeChecked(checkbox, parentDiv) {
+	enableOK();
 	var state = checkbox.checked;
 	var children = document.getElementById(parentDiv).getElementsByTagName("INPUT");
 	for (var i = children.length - 1; i >= 0; i--) {
@@ -332,9 +334,17 @@ function keyDownHandler(folderId, key, target)
   	return false;
 }
 
+function hasSelections() {
+		var hrefs = getSelectedResources();
+		if (!hrefs || hrefs == "")
+			return false;
+		else
+			return true;
+}
+
 function enableOK() {
 	var value = document.getElementById("workingSet").value;
-	if (!value || value.length == 0 || value.charAt(0) == " ")
+	if (!value || value.length == 0 || value.charAt(0) == " " || !hasSelections())
 		document.getElementById("ok").disabled = true;
 	else
 		document.getElementById("ok").disabled = false;
@@ -370,7 +380,7 @@ for (int i=0; i<data.getTocCount(); i++)
 	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
 %>
 				<div class="book" id='<%="id"+i%>' >
-					<img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
+					<img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
 					<input 	class='<%=className%>' 
 							type="checkbox" 
 							id='<%=data.getTocHref(i)%>' 

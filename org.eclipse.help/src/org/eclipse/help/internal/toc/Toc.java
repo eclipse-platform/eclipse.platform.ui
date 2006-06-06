@@ -43,6 +43,12 @@ public class Toc extends TocNode implements IToc, ITocElement {
 	 * in the map.
 	 */
 	private Map topicMap = new HashMap();
+	
+	/**
+	 * Map of all Anchor href topics contained by this TOC by href with anchor removed.
+	 * Description topic is not in the map.
+	 */
+	private Map anchorTopicMap = new HashMap();
 	private int size = SIZE_UNINITIALIZED;
 	/**
 	 * Constructor. Used when parsing help contributions.
@@ -192,6 +198,19 @@ public class Toc extends TocNode implements IToc, ITocElement {
 	 * @return ITopic or null
 	 */
 	public ITopic getOwnedTopic(String href) {
+		
+		if (topicMap.get(href) != null) {
+			return (ITopic) topicMap.get(href);
+		}
+
+		if (anchorTopicMap.containsKey(href)) {
+			 return (ITopic) anchorTopicMap.get(href);
+		}
+		
+		// if only href without anchor in toc, return it.
+		if (href.indexOf('#') != -1) {
+			href = href.substring(0, href.indexOf('#'));
+		}
 		return (ITopic) topicMap.get(href);
 	}
 	/**
@@ -261,6 +280,13 @@ public class Toc extends TocNode implements IToc, ITocElement {
 		String topicHref = topic.getHref();
 		if (topicHref != null) {
 			topicMap.put(topicHref, topic);
-		}
+			int anchorIndex = topicHref.indexOf('#');
+			if (anchorIndex != -1) {
+				String hrefNoAnchor = topicHref.substring(0, anchorIndex);
+				if (!anchorTopicMap.containsKey(hrefNoAnchor)) {
+					anchorTopicMap.put(hrefNoAnchor, topic);
+				}
+			}
+		}			
 	}
 }

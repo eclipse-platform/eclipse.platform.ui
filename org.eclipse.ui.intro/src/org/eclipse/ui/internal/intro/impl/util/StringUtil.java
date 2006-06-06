@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.intro.impl.util;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,15 @@ public class StringUtil {
 			return URLDecoder.decode(s, enc);
 		} catch (NoSuchMethodError e) {
 			// not running 1.4 so try the old method without an encoding
-			return URLDecoder.decode(s);
+			try {
+				// use reflection to avoid deprecation warning
+				Method m = URLDecoder.class.getMethod("decode", new Class[] { String.class }); //$NON-NLS-1$
+				return (String)m.invoke(null, new Object[] {s});
+			}
+			catch (Exception ex) {
+				// fall back to original string
+				return s;
+			}
 		}
 	}
 

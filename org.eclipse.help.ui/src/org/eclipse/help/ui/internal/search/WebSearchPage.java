@@ -60,6 +60,7 @@ public class WebSearchPage extends RootScopePage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 100;
 		label.setLayoutData(gd);
+		applyDialogFont(parent);
 		updateControls();
 		return 2;
 	}

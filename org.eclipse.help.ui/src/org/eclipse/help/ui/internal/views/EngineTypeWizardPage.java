@@ -12,12 +12,11 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 public class EngineTypeWizardPage extends WizardPage {
@@ -63,11 +62,13 @@ public class EngineTypeWizardPage extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText(Messages.EngineTypeWizardPage_label); 
+		label.setText(Messages.EngineTypeWizardPage_label);
+		label.setFont(font);
 		tableViewer = new TableViewer(container);
 		tableViewer.setContentProvider(new EngineContentProvider());
 		tableViewer.setLabelProvider(new EngineLabelProvider());
@@ -79,6 +80,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		});
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer.setInput(engineTypes);
+		tableViewer.getTable().setFont(font);
 		setControl(container);
 		setPageComplete(false);
 	}

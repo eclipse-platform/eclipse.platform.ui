@@ -43,7 +43,12 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	}
 
 	public AdaptableHelpResource[] getChildren() {
-		return new AdaptableHelpResource[0];
+		ITopic[] topics = this.getSubtopics();
+		AdaptableHelpResource[] adaptableTopic = new AdaptableTopic[topics.length];
+		for (int i = 0; i < topics.length; i++) {
+			adaptableTopic[i] = new AdaptableTopic(topics[i]);
+		}
+		return adaptableTopic;
 	}
 
 	/**

@@ -158,6 +158,7 @@ public class LocalHelpPage extends RootScopePage {
 		capabilityFiltering.setLayoutData(gd);
 		
 		initializeCheckedState();
+		applyDialogFont(parent);
 
 		// Set help for the page
 		// WorkbenchHelp.setHelp(tree, "help_workingset_page");

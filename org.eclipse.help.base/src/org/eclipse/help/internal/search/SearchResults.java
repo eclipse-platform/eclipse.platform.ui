@@ -17,6 +17,9 @@ import java.util.List;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.model.INavigationElement;
+import org.eclipse.help.internal.toc.Toc;
+import org.eclipse.help.internal.toc.Topic;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableToc;
@@ -104,7 +107,9 @@ public class SearchResults implements ISearchHitCollector {
 			}
 			
 			// Set document href
-			href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
+			if (urlEncodedWords.length() > 0) {
+				href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
+			}
 			searchHitList.add(new SearchHit(href, label, rawHit.getRawSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.getFilters()));
 		}
 		searchHits = (SearchHit[]) searchHitList
@@ -119,6 +124,59 @@ public class SearchResults implements ISearchHitCollector {
 			AdaptableHelpResource scope = (AdaptableHelpResource) scopes.get(i);
 			if (scope.getTopic(href) != null)
 				return scope;
+		
+		// add root toc's extradir topics to search scope
+		IToc tocRoot = getTocForScope(scope, locale);
+		if (tocRoot != null) {
+			Toc toc = (Toc) tocRoot;
+			if (toc.getOwnedExtraTopic(href) != null) {
+				return scope;
+			}
+		}
+
+		// add all nested children toc's extradir topics to search scope.
+		if (scope instanceof AdaptableToc) {
+			Toc tocScope = (Toc) scope.getAdapter(IToc.class);
+			if (isExtraDirTopic(tocScope, href)) {
+				return scope;
+			}
+		} else {
+			Topic topicScope = (Topic) scope.getAdapter(ITopic.class);
+			if (isExtraDirTopic(topicScope, href)) {
+				return scope;
+			}
+		}
+	}
+		
+	return null;
+	}
+
+	/**
+	 * Finds a scope in a toc
+	 */
+	private IToc getTocForScope(AdaptableHelpResource scope, String locale) {
+		if (scope == null) {
+			return null;
+		}
+        String href = scope.getHref();
+		if(scope.getAdapter(IToc.class) instanceof IToc){
+			Toc toc=(Toc)scope.getAdapter(IToc.class);
+			href=toc.getTocTopicHref();
+		}
+		
+		if (href != null && href.length() > 0) {
+			return getTocForTopic(href, locale);
+		} else {
+			AdaptableHelpResource[] childrenScopes = scope.getChildren();
+			if (childrenScopes != null) {
+				for (int i = 0; i < childrenScopes.length; i++) {
+					// To find the target toc recursively because scope.getHref
+					// may be null.
+					IToc toc = getTocForScope(childrenScopes[i], locale);
+					if (toc != null)
+						return toc;
+				}
+			}
 		}
 		return null;
 	}
@@ -162,5 +220,32 @@ public class SearchResults implements ISearchHitCollector {
 				scopes.add(elements[i]);
 		}
 		return scopes;
+	}
+	
+	/**
+	 * to find give href in extradir of subtree of current INavigationElement,
+	 * return true if given href exists.
+	 * 
+	 * @return boolean
+	 */
+	boolean isExtraDirTopic(INavigationElement navElement, String href) {
+		// if navElement is a Toc object and has the extradir topic, return.
+		if (navElement instanceof Toc) {
+			Toc toc = (Toc) navElement;
+			if (toc.getOwnedExtraTopic(href) != null)
+				return true;
+		}
+		// navElement is Toc or Link or Anchor or Topic object.
+		List list = navElement.getChildren();
+
+		// find the topic in it's children toc's extradir
+		for (int i = 0; i < list.size(); i++) {
+			Object tocNode = list.get(i);
+			if (isExtraDirTopic((INavigationElement) tocNode, href)) {
+				return true;
+			}
+			continue;
+		}
+		return false;
 	}
 }

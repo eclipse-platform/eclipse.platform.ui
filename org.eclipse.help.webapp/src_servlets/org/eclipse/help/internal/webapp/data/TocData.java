@@ -88,6 +88,11 @@ public class TocData extends ActivitiesData {
 			tocHref = null;
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
+		
+		String anchor = request.getParameter("anchor"); //$NON-NLS-1$
+		if (topicHref != null && anchor != null) {
+			topicHref = topicHref + '#' + anchor;
+		}
 		// initialize rootPath
 		String pathStr = request.getParameter("path"); //$NON-NLS-1$
 		if (pathStr != null && pathStr.length() > 0) {
@@ -367,7 +372,7 @@ public class TocData extends ActivitiesData {
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);
 			out
-					.write("/plus.gif' class='collapsed' alt=\"" + ServletResources.getString("topicClosed", request) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					.write("/plus.gif' class='collapsed' alt=\"" + ServletResources.getString("topicClosed", request) + "\" title=\"" + ServletResources.getString("topicClosed", request) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			out.write("<img src='"); //$NON-NLS-1$
 			out.write(imagesDirectory);

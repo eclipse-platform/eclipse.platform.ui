@@ -219,6 +219,7 @@ function collapse(node) {
 	node.className = "collapsed";
 	node.src = plus.src;
 	node.alt = altExpandTopicTitles;
+	node.title = altExpandTopicTitles;
 	// set the UL as well
 	var ul = getChildNode(node.parentNode, "UL");
 	if (ul != null) ul.className = "collapsed";
@@ -231,6 +232,7 @@ function expand(node) {
 	node.className = "expanded";
 	node.src = minus.src;
 	node.alt = altCollapseTopicTitles;
+	node.title = altCollapseTopicTitles;
 	// set the UL as well
 	var ul = getChildNode(node.parentNode, "UL");
 	if (ul != null) {
