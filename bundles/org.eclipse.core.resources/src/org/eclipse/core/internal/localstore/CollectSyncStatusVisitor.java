@@ -43,12 +43,13 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	public CollectSyncStatusVisitor(String multiStatusTitle, IProgressMonitor monitor) {
 		super(monitor);
 		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, multiStatusTitle, null);
-		affectedResources = new ArrayList(20);
 	}
 
 	protected void changed(Resource target) {
 		String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 		status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
+		if (affectedResources == null)
+			affectedResources = new ArrayList(20);
 		affectedResources.add(target);
 		resourceChanged = true;
 	}
@@ -72,7 +73,8 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 
 	/**
 	 * Returns the list of resources that were not synchronized with
-	 * the local file system.
+	 * the local file system, or <code>null</code> if all resources
+	 * are synchronized.
 	 */
 	public List getAffectedResources() {
 		return affectedResources;

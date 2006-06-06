@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
-	protected IProgressMonitor monitor;
 	protected boolean force;
 	protected boolean keepHistory;
-	protected MultiStatus status;
+	protected IProgressMonitor monitor;
 	protected List skipList;
-	
+	protected MultiStatus status;
+
 	/**
 	 * The number of tickets available on the progress monitor
 	 */
@@ -48,25 +48,23 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	/**
 	 * Deletes a file from both the workspace resource tree and the file system.
 	 */
-	protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean shouldKeepHistory) {
+	protected void delete(UnifiedTreeNode node, boolean shouldKeepHistory) {
 		Resource target = (Resource) node.getResource();
 		try {
-			deleteLocalFile = deleteLocalFile && !target.isLinked() && node.existsInFileSystem();
+			final boolean deleteLocalFile = !target.isLinked() && node.existsInFileSystem();
 			IFileStore localFile = deleteLocalFile ? node.getStore() : null;
-			if (shouldKeepHistory) {
-				IHistoryStore store = target.getLocalManager().getHistoryStore();
-				recursiveKeepHistory(store, node);
-			}
+			if (deleteLocalFile && shouldKeepHistory)
+				recursiveKeepHistory(target.getLocalManager().getHistoryStore(), node);
 			node.removeChildrenFromTree();
 			//delete from disk
 			int work = ticks < 0 ? 0 : ticks;
 			ticks -= work;
-			if (localFile != null && !target.isLinked())
+			if (deleteLocalFile)
 				localFile.delete(EFS.NONE, Policy.subMonitorFor(monitor, work));
 			else
 				monitor.worked(work);
 			//delete from tree
-			if (target != null && node.existsInWorkspace())
+			if (node.existsInWorkspace())
 				target.deleteResource(true, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());
@@ -79,20 +77,9 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		}
 	}
 
-	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
-		if (node.isFolder()) {
-			monitor.subTask(NLS.bind(Messages.localstore_deleting, node.getResource().getFullPath()));
-			for (Iterator children = node.getChildren(); children.hasNext();)
-				recursiveKeepHistory(store, (UnifiedTreeNode) children.next());
-		} else {
-			IFileInfo info = node.fileInfo;
-			if (info == null)
-				info = new FileInfo(node.getLocalName());
-			store.addState(node.getResource().getFullPath(), node.getStore(), info, true);
-		}
-		monitor.worked(1);
-	}
-
+	/**
+	 * Only consider path in equality in order to handle gender changes
+	 */
 	protected boolean equals(IResource one, IResource another) {
 		return one.getFullPath().equals(another.getFullPath());
 	}
@@ -114,6 +101,24 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 				return true;
 		}
 		return false;
+	}
+
+	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
+		final IResource target = node.getResource();
+		//we don't delete linked content, so no need to keep history
+		if (target.isLinked())
+			return;
+		if (node.isFolder()) {
+			monitor.subTask(NLS.bind(Messages.localstore_deleting, target.getFullPath()));
+			for (Iterator children = node.getChildren(); children.hasNext();)
+				recursiveKeepHistory(store, (UnifiedTreeNode) children.next());
+		} else {
+			IFileInfo info = node.fileInfo;
+			if (info == null)
+				info = new FileInfo(node.getLocalName());
+			store.addState(target.getFullPath(), node.getStore(), info, true);
+		}
+		monitor.worked(1);
 	}
 
 	protected void removeFromSkipList(IResource resource) {
@@ -145,7 +150,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		if (isAncestorOfResourceToSkip(target))
 			return true;
 
-		delete(node, true, keepHistory);
+		delete(node, keepHistory);
 		return false;
 	}
 }
