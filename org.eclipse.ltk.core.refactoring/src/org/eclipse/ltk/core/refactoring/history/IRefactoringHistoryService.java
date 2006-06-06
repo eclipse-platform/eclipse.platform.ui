@@ -73,7 +73,7 @@ public interface IRefactoringHistoryService {
 	 * </p>
 	 * 
 	 * @param listener
-	 *            the participant to add
+	 *            the listener to add
 	 */
 	public void addHistoryListener(IRefactoringHistoryListener listener);
 
