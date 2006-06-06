@@ -294,9 +294,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 	private int nonDefaultResourceCount = 0;
 
 	/**
-	 * This maps IPath->IResource, where the path is an absolute file system
-	 * location, and the resource contains the projects and/or linked resources
-	 * that are rooted at that location.
+	 * This maps IFileStore ->IResource, associating a file system location
+	 * with the projects and/or linked resources that are rooted at that location.
 	 */
 	protected final LocationMap locationsMap = new LocationMap();
 
