@@ -737,6 +737,41 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests deleting the parent of a linked resource.
+	 */
+	public void testDeleteLinkParent() {
+		IFolder link = nonExistingFolderInExistingFolder;
+		IFolder linkParent = existingFolderInExistingProject;
+		IFile linkChild = link.getFile("child.txt");
+		IFileStore childStore = null;
+		try {
+			link.createLink(localFolder, IResource.NONE, getMonitor());
+			ensureExistsInWorkspace(linkChild, true);
+			childStore = EFS.getStore(linkChild.getLocationURI());
+		} catch (CoreException e) {
+			fail("0.99", e);
+			return;
+		}
+		
+		//everything should exist at this point
+		assertTrue("1.0", linkParent.exists());
+		assertTrue("1.1", link.exists());
+		assertTrue("1.2", linkChild.exists());
+		
+		//delete the parent of the link
+		try {
+			linkParent.delete(IResource.KEEP_HISTORY, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		//resources should not exist, but link content should exist on disk
+		assertTrue("2.0", !linkParent.exists());
+		assertTrue("2.1", !link.exists());
+		assertTrue("2.2", !linkChild.exists());
+		assertTrue("2.3", childStore.fetchInfo().exists());
+	}
+	/**
 	 * Tests deleting and then recreating a project
 	 */
 	public void testDeleteProjectWithLinks() {
