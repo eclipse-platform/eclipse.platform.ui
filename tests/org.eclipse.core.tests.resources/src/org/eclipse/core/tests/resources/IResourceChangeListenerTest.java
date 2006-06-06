@@ -62,22 +62,6 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		super(name);
 	}
 
-	/**
-	 * Sets the workspace autobuilding to the desired value.
-	 */
-	protected void setAutoBuilding(boolean value) {
-		IWorkspace workspace = getWorkspace();
-		if (workspace.isAutoBuilding() == value)
-			return;
-		IWorkspaceDescription desc = workspace.getDescription();
-		desc.setAutoBuilding(value);
-		try {
-			workspace.setDescription(desc);
-		} catch (CoreException e) {
-			fail("failed to set workspace description", e);
-		}
-	}
-
 	public void _testBenchMark_1GBYQEZ() {
 		// start with a clean workspace
 		getWorkspace().removeResourceChangeListener(verifier);
@@ -209,6 +193,22 @@ public class IResourceChangeListenerTest extends ResourceTest {
 	 */
 	protected void handleCoreException(CoreException e) {
 		fail("IResourceChangeListenerTest", e);
+	}
+
+	/**
+	 * Sets the workspace autobuilding to the desired value.
+	 */
+	protected void setAutoBuilding(boolean value) {
+		IWorkspace workspace = getWorkspace();
+		if (workspace.isAutoBuilding() == value)
+			return;
+		IWorkspaceDescription desc = workspace.getDescription();
+		desc.setAutoBuilding(value);
+		try {
+			workspace.setDescription(desc);
+		} catch (CoreException e) {
+			fail("failed to set workspace description", e);
+		}
 	}
 
 	/**
@@ -968,6 +968,31 @@ public class IResourceChangeListenerTest extends ResourceTest {
 					try {
 						folder3.delete(IResource.FORCE, new SubProgressMonitor(m, 50));
 						file2.move(file1.getFullPath(), true, new SubProgressMonitor(m, 50));
+					} finally {
+						m.done();
+					}
+				}
+			}, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+
+	public void testMoveFileDeleteSourceParent() {
+		try {
+			file1.delete(IResource.NONE, null);
+			create(file3, true);
+			verifier.reset();
+			verifier.addExpectedChange(folder2, IResourceDelta.REMOVED, 0, null, null);
+			verifier.addExpectedChange(file1, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM, file3.getFullPath(), null);
+			verifier.addExpectedChange(file3, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, null, file1.getFullPath());
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor m) throws CoreException {
+					m.beginTask("Creating and moving", 100);
+					try {
+						file3.move(file1.getFullPath(), true, new SubProgressMonitor(m, 50));
+						folder2.delete(IResource.NONE, new SubProgressMonitor(m, 50));
 					} finally {
 						m.done();
 					}
