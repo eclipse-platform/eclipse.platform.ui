@@ -46,7 +46,6 @@ public class MockTaskEditor extends TaskEditor {
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
-		// TODO Auto-generated method stub		
 	}
 
 	public void setValue(String value) {
