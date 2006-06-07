@@ -344,6 +344,14 @@ public class Project extends Container implements IProject {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
+	
+	public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
+		super.deleteResource(convertToPhantom, status);
+		// Delete the project metadata.
+		workspace.getMetaArea().delete(this);
+		// Clear the history store.
+		clearHistory(null);
+	}
 
 	protected void fixupAfterMoveSource() {
 		workspace.deleteResource(this);

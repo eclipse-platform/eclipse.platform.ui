@@ -138,8 +138,6 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	public boolean visit(UnifiedTreeNode node) {
 		Policy.checkCanceled(monitor);
 		Resource target = (Resource) node.getResource();
-		if (target.getType() == IResource.PROJECT)
-			return true;
 		if (shouldSkip(target)) {
 			removeFromSkipList(target);
 			int skipTicks = target.countResources(IResource.DEPTH_INFINITE, false);
@@ -149,7 +147,6 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		}
 		if (isAncestorOfResourceToSkip(target))
 			return true;
-
 		delete(node, keepHistory);
 		return false;
 	}

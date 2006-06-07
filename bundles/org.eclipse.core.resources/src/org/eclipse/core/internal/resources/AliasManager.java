@@ -653,15 +653,8 @@ public class AliasManager implements IManager, ILifecycleListener {
 			// it is already deleted from disk and we can't acquire a different
 			//scheduling rule in this context (none is needed because we are
 			//within scope of the workspace lock)
-			
 			Assert.isTrue(workspace.getWorkManager().getLock().getDepth() > 0);
-
-			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 			project.deleteResource(false, null);
-			// Delete the project metadata.
-			workspace.getMetaArea().delete(project);
-			// Clear the history store.
-			project.clearHistory(null);
 			return true;
 		}
 		return false;

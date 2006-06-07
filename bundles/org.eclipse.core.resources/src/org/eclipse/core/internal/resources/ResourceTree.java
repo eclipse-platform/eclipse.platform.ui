@@ -164,31 +164,15 @@ class ResourceTree implements IResourceTree {
 			// Do nothing if the resource doesn't exist.
 			if (!target.exists())
 				return;
-			Project project = (Project) target;
-			Workspace workspace = (Workspace) project.getWorkspace();
-
 			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 			try {
-				project.deleteResource(false, null);
+				((Project)target).deleteResource(false, null);
 			} catch (CoreException e) {
-				String message = NLS.bind(Messages.resources_errorDeleting, project.getFullPath());
-				IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
+				String message = NLS.bind(Messages.resources_errorDeleting, target.getFullPath());
+				IStatus status = new ResourceStatus(IStatus.ERROR, target.getFullPath(), message, e);
 				// log the status but don't return until we try and delete the rest of the project info
 				failed(status);
 			}
-
-			// Delete the project metadata.
-			try {
-				workspace.getMetaArea().delete(project);
-			} catch (CoreException e) {
-				String message = NLS.bind(Messages.resources_deleteMeta, project.getFullPath());
-				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_METADATA, project.getFullPath(), message, e);
-				// log the status but don't return until we try and delete the rest of the project info
-				failed(status);
-			}
-
-			// Clear the history store.
-			project.clearHistory(null);
 		} finally {
 			lock.release();
 		}
@@ -714,7 +698,7 @@ class ResourceTree implements IResourceTree {
 				destLocation = rootLocation.append(destDescription.getName()).toFile().toURI();
 			}
 			IFileStore destStore = EFS.getStore(destLocation);
-			
+
 			//If this is a replace, just make sure the destination location exists, and return
 			boolean replace = (flags & IResource.REPLACE) != 0;
 			if (replace) {
@@ -807,9 +791,7 @@ class ResourceTree implements IResourceTree {
 				if (!force && !isSynchronized(project, IResource.DEPTH_INFINITE)) {
 					// we are not in sync and force is false so delete via best effort
 					success = internalDeleteProject(project, flags, monitor);
-					if (success) {
-						deletedProject(project);
-					} else {
+					if (!success) {
 						IFileStore store = localManager.getStore(project);
 						message = NLS.bind(Messages.resources_couldnotDelete, store.toString());
 						IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
