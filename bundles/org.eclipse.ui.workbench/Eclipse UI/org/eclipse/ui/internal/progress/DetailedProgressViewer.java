@@ -56,8 +56,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		scrolled.getVerticalBar().setIncrement(height * 2);
 		scrolled.setExpandHorizontal(true);
 		scrolled.setExpandVertical(true);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(scrolled,
-				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		control = new Composite(scrolled, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -66,6 +64,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.setLayout(layout);
 		control.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
+				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 		scrolled.setContent(control);
 		hookControl(control);
@@ -80,6 +81,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		GridData textData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		noEntryLabel.setLayoutData(textData);
 		noEntryLabel.setEditable(false);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel,
+				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
 	}
 
@@ -184,7 +188,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			}
 		});
 
-		//Refresh to populate with the current tasks
+		// Refresh to populate with the current tasks
 		item.refresh();
 		return item;
 	}
@@ -405,11 +409,14 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	public void setFocus() {
 		Control[] children = control.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			ProgressInfoItem item = (ProgressInfoItem) children[i];
-			item.setButtonFocus();
-			return;
-		}
+		if (children.length > 0) {
+			for (int i = 0; i < children.length; i++) {
+				ProgressInfoItem item = (ProgressInfoItem) children[i];
+				item.setButtonFocus();
+				return;
+			}
+		} else
+			noEntryArea.setFocus();
 	}
 
 	/**
