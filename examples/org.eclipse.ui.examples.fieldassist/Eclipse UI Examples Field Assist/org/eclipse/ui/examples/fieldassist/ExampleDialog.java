@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.ComboControlCreator;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldAssistColors;
@@ -297,11 +298,7 @@ public class ExampleDialog extends StatusDialog {
 
 		// Create a combo field representing a user name
 		field = new DecoratedField(main, SWT.BORDER | SWT.DROP_DOWN,
-				new IControlCreator() {
-					public Control createControl(Composite parent, int style) {
-						return new Combo(parent, style);
-					}
-				});
+					new ComboControlCreator());
 		final SmartField comboField = new UserField(field,
 				new ComboContentAdapter());
 		if (store.getBoolean(PreferenceConstants.PREF_SHOWCONTENTPROPOSALCUE)) {
