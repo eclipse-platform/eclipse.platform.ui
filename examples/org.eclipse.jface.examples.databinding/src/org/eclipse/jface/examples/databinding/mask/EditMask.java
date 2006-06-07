@@ -312,7 +312,7 @@ public class EditMask {
 				String newRawText = editMaskParser.getRawResult();
 				
 				updateSelectionPosition(newRawText);
-				firePropertyChangeEvents(oldIsComplete, newRawText);
+				firePropertyChangeEvents(oldIsComplete, newRawText);					
 			} finally {
 				updating = false;
 			}
@@ -360,12 +360,13 @@ public class EditMask {
 			if (!oldIsComplete.equals(newIsComplete)) {
 				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
 			}
-			if (newIsComplete.booleanValue() || "".equals(newRawText)) {
-				System.out.println("oldRawText: " + oldValidRawText + " newRawText: " + newRawText);
-				firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
-				firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
-				oldValidText = text.getText();
-				oldValidRawText = newRawText;
+			if (!newRawText.equals(oldValidRawText)) {
+				if ( newIsComplete.booleanValue() || "".equals(newRawText)) {
+					firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
+					firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
+					oldValidText = text.getText();
+					oldValidRawText = newRawText;
+				}
 			}
 		}
 	};
