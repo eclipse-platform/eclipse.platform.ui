@@ -349,9 +349,10 @@ class ProgressInfoItem extends Composite {
 			image = JFaceResources.getResources().createImageWithDefault(
 					descriptor);
 		}
-		if (image == null) {
-			image = JFaceResources.getImage(DEFAULT_JOB_KEY);
-		}
+		
+		if (image == null) 
+			image = jobInfo.getDisplayImage();
+		
 		return image;
 	}
 
@@ -400,11 +401,9 @@ class ProgressInfoItem extends Composite {
 		switch (job.getState()) {
 		case Job.RUNNING:
 			return name;
-		case Job.SLEEPING: {// if it is sleeping and has a result show it
-			if (job.getResult() == null) {
-				return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
-			}
-			return getJobInfoFinishedString(job, true);
+		case Job.SLEEPING: {
+			return NLS.bind(ProgressMessages.JobInfo_Sleeping, name);
+			
 		}
 		case Job.NONE: // Only happens for kept jobs
 			return getJobInfoFinishedString(job, true);
