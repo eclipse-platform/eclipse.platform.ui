@@ -355,7 +355,8 @@ public class ModelSynchronizeParticipant extends
         int mappingCount = mappings.length;
         if (mappingCount == getContext().getScope().getMappings().length) {
         	// Assume we are refreshing everything and only use the input mapping count
-        	mappingCount = getContext().getScope().getInputMappings().length;
+        	mappings = getContext().getScope().getInputMappings();
+        	mappingCount = mappings.length;
         }
         if (mappingCount == 1) {
             return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), Utils.getLabel(mappings[0]) }); 
