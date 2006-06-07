@@ -197,6 +197,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				bars.setGlobalActionHandler((String) entry.getKey(), (IAction) entry.getValue());
 			}
 		}
+		
+		//add refresh action handler from history view
+		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
+		
 	}
 
 	public void createPartControl(Composite parent) {
