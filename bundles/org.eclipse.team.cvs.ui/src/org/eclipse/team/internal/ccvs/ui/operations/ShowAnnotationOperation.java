@@ -308,7 +308,7 @@ public class ShowAnnotationOperation extends CVSOperation {
         }
     }
 
-    private RevisionInformation createRevisionInformation(final AnnotateListener listener, IProgressMonitor monitor) {
+    private RevisionInformation createRevisionInformation(final AnnotateListener listener, IProgressMonitor monitor) throws CVSException {
 	    Map logEntriesByRevision= new HashMap();
 		if (fCVSResource instanceof ICVSFile) {
 			try {
@@ -317,8 +317,11 @@ public class ShowAnnotationOperation extends CVSOperation {
 					ILogEntry entry= logEntries[i];
 					logEntriesByRevision.put(entry.getRevision(), entry);
 				}
+			} catch (CVSException e) {
+				throw e;
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e);
+				// XXX why does getLogEntries throw TeamException?
+				throw new CVSException("", e); //$NON-NLS-1$
 			}
 		}
 
@@ -332,6 +335,8 @@ public class ShowAnnotationOperation extends CVSOperation {
 			Revision revision= (Revision) sets.get(revisionString);
 			if (revision == null) {
 				final ILogEntry entry= (ILogEntry) logEntriesByRevision.get(revisionString);
+				if (entry == null)
+					continue;
 				
 				revision= new Revision() {
 					public Object getHoverInfo() {
