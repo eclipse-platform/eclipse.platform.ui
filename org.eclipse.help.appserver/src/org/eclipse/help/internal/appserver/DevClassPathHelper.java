@@ -93,7 +93,7 @@ public class DevClassPathHelper {
 					is.close();
 			}
 		} catch (IOException e) {
-			// TODO consider logging here
+			AppserverPlugin.logError("Help failed to load properties file " + url, e); //$NON-NLS-1$
 		}
 		return props;
 	}

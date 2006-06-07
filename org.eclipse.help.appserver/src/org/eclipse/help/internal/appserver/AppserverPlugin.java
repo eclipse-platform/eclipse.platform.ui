@@ -9,8 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.appserver;
-import org.eclipse.core.runtime.*;
-import org.osgi.framework.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
+
 /**
  */
 public class AppserverPlugin extends Plugin {
@@ -41,6 +50,16 @@ public class AppserverPlugin extends Plugin {
 			startWebappServer();
 		}
 		return appServer;
+	}
+	/**
+	 * Logs an Error message with an exception.
+	 */
+	public static synchronized void logError(String message, Throwable ex) {
+		if (message == null)
+			message = ""; //$NON-NLS-1$
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
+		AppserverPlugin.getDefault().getLog().log(errorStatus);
 	}
 	/*
 	 * (non-Javadoc)

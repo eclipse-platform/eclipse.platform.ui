@@ -49,7 +49,6 @@ public class LocalHelp implements ISearchEngine2 {
 		try {
 			Platform.getJobManager().join(IndexerJob.FAMILY, monitor);
 		} catch (InterruptedException e) {
-			// TODO we may need to do something here
 		}
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,
 				monitor);
