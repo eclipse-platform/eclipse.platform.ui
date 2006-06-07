@@ -435,7 +435,5 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 }

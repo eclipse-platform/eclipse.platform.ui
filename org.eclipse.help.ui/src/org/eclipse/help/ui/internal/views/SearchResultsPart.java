@@ -369,7 +369,5 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 }

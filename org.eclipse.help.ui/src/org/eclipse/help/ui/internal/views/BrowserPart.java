@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.util.URLCoder;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -156,7 +157,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 							event.required = true;
 						}
 					} catch (MalformedURLException e) {
-						// TODO report this
+						HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -190,7 +191,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 							parent.showExternalURL(BaseHelpSystem
 									.unresolve(new URL(url)));
 						} catch (MalformedURLException e) {
-							// TODO report this
+							HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
 						}
 					}
 				});

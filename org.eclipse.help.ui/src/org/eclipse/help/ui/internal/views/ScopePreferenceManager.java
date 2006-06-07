@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.*;
 
@@ -32,7 +33,7 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	    		page.setTitle(getLabelText());
 	    	}
 	    	catch (CoreException e) {
-	    		// TODO handle this
+	    		HelpUIPlugin.logError("Unable to create executable extension", e); //$NON-NLS-1$
 	    	}
 	    }
 	}

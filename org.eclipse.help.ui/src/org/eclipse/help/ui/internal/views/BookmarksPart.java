@@ -231,7 +231,5 @@ public class BookmarksPart extends HyperlinkTreePart implements IHelpPart,
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-		
 	}
 }

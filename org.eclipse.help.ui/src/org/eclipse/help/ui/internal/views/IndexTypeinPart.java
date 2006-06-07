@@ -242,14 +242,11 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 	}
 
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
-		// TODO Auto-generated method stub
 		this.parent = parent;
 		this.id = id;
 	}
 
 	public void saveState(IMemento memento) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Control getControl() {
@@ -265,33 +262,24 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 	}
 
 	public boolean hasFocusControl(Control control) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean fillContextMenu(IMenuManager manager) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public IAction getGlobalAction(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void stop() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void toggleRoleFilter() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void refilter() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setFocus() {

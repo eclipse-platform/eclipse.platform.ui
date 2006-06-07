@@ -995,7 +995,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				history.addEntry(new HistoryEntry(HistoryEntry.URL, url,
 						BaseHelpSystem.unresolve(new URL(url))));
 			} catch (MalformedURLException e) {
-				// TODO handle this
+				HelpUIPlugin.logError("Malformed URL: " + url, e); //$NON-NLS-1$
 			}
 		}
 		updateNavigation();
