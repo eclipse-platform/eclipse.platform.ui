@@ -44,9 +44,6 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String DropAdapter_problemsMoving;
 
 	/** Message key. */
-	public static String DropAdapter_question;
-
-	/** Message key. */
 	public static String DropAdapter_targetMustBeResource;
 
 	/** Message key. */
@@ -54,12 +51,6 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	/** Message key. */
 	public static String DropAdapter_resourcesCanNotBeSiblings;
-
-	/** Message key. */
-	public static String DropAdapter_ok;
-
-	/** Message key. */
-	public static String DropAdapter_overwriteQuery;
 
 	/** Message key. */
 	public static String DropAdapter_dropOperationErrorOther;

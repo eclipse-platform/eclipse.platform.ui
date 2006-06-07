@@ -35,22 +35,10 @@ public class CommonNavigatorMessages extends NLS {
 	public static String Could_not_provide_children_for_element;
 
 	/** */
-	public static String Could_not_provide_parent_for_element;
-
-	/** */
-	public static String TreeViewerElementCollector_0;
-
-	/** */
-	public static String TreeViewerElementCollector_1;
-
-	/** */
 	public static String NavigatorViewerDescriptor_Popup_Menu_Overridden;
 
 	/** */
 	public static String StructuredViewerManager_0;
-
-	/** */
-	public static String PendingUpdateAdapter_PendingLabel;
 
 	/** */
 	public static String TextAction_selectAll;
@@ -66,48 +54,9 @@ public class CommonNavigatorMessages extends NLS {
 
 	/** */
 	public static String Delete;
- 
-	/** */
-	public static String PropertyDialog_messageTitle;
-
-	/** */
-	public static String NavigatorContentExtensionRecord_0;
-
-	/** */
-	public static String CommonElementAdapter_0;
-
-	/** */
-	public static String PropertyDialog_noPropertyMessage;
-
-	/** */
-	public static String NavigatorSelectionSerializer_1;
-
-	/** */
-	public static String FetchElementsJob_0;
-
-	/** */
-	public static String NavigatorSelectionSerializer_0;
-
-	/** */
-	public static String DropHandlerDescriptor_10;
 
 	/** */
 	public static String Navigator_statusLineMultiSelect;
-
-	/** */
-	public static String DropHandlerRegistry_0;
-
-	/** */
-	public static String PropertyDialog_toolTip;
-
-	/** */
-	public static String PropertyDialog_text;
-
-	/** */
-	public static String ExtensionFilterDescriptor_11;
-
-	/** */
-	public static String ExtensionFilterDescriptor_10;
 
 	/** */
 	public static String SelectFiltersActionDelegate_1;
@@ -134,46 +83,10 @@ public class CommonNavigatorMessages extends NLS {
 	public static String CollapseAllActionDelegate_0;
 
 	/** */
-	public static String SerializerDescriptor_5;
-
-	/** */
-	public static String SerializerDescriptor_3;
-
-	/** */
-	public static String SerializerDescriptor_1;
-
-	/** */
-	public static String SerializerDescriptor_0;
-
-	/** */
-	public static String CopyAction_toolTip;
-
-	/** */
-	public static String PasteAction_toolTip;
-
-	/** */
-	public static String NavigatorDropSelectionDialog_3;
-
-	/** */
-	public static String NavigatorDropSelectionDialog_1;
-
-	/** */
-	public static String ExtensionFilterRegistry_16;
-
-	/** */
 	public static String LinkEditorActionDelegate_1;
 
 	/** */
 	public static String LinkEditorActionDelegate_0;
-
-	/** */
-	public static String PropertyDialog_propertyMessage;
-
-	/** */
-	public static String NavigatorExtensionSite_0;
-
-	/** */
-	public static String CommonDropHandlerService_0;
 
 	/** */
 	public static String Attribute_Missing_Warning;
