@@ -92,7 +92,7 @@ setTimeout('refresh()', 2000);
 %>
 
 <tr class='list' id='r<%=topic%>'>
-	<td class='score' align='<%=isRTL?"left":"right"%>'>
+	<td class='icon'>
 
 <%
 		boolean isPotentialHit = data.isPotentialHit(topic);
@@ -141,7 +141,7 @@ setTimeout('refresh()', 2000);
 		if (desc!=null) {
 %>
 <tr class='description' id='d<%=topic%>'>
-	<td class='score'>
+	<td class='icon'>
 	</td>
 	<td align='<%=isRTL?"right":"left"%>' class='label'>
 		<%=desc%>
