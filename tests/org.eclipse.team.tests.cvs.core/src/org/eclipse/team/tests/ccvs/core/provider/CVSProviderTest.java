@@ -611,5 +611,27 @@ public class CVSProviderTest extends EclipseTest {
     	deleteResources(copy, new String[] { "a.txt"}, true);
     	updateResources(project, new String[] { "a.txt"}, false);
     }
+    
+    public void testMergeWithTrailingLineFeeds() throws CoreException, IOException {
+		IProject project = createProject("testFileConflict", new String[] { "file1.txt"});
+		// Set the contents of file1.txt to ensure proper merging 
+		// Ensure there is a trailing LF
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "line1" + eol + "line2" + eol + "line3" + eol);
+		commitProject(project);
+		
+		// Checkout and modify a copy
+		IProject copy = checkoutCopy(project, "-copy");
+		appendText(copy.getFile("file1.txt"), "line0" + eol, true);
+		commitProject(copy);
+		
+		// Modify the original in a non-conflicting way
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "line1" + eol + "line2" + eol + "line2.5" + eol + "line3" + eol);
+		
+		// Update and ensure the contents are what we expect
+		updateProject(project, null, false);
+		assertTrue("File contents are not correct after merge", compareContent(
+				new ByteArrayInputStream(("line0" + eol + "line1" + eol + "line2" + eol + "line2.5" + eol + "line3" + eol).getBytes()), 
+						project.getFile("file1.txt").getContents()));
+    }
 }
 

@@ -39,7 +39,7 @@ import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 
-public class EclipseTest extends ResourceTest {
+public class EclipseTest extends ResourceTest { 
 
 	private static final int LOCK_WAIT_TIME = 1000;
     private static final String CVS_TEST_LOCK_FILE = ".lock";
@@ -1400,4 +1400,3 @@ public class EclipseTest extends ResourceTest {
 		waitForBuild();
     }
 }
-
