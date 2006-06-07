@@ -115,8 +115,9 @@ public class MergeSubscriberContext extends CVSSubscriberMergeContext {
 		return null;
 	}
 	
-	boolean equals(IThreeWayDiff currentDiff, IThreeWayDiff otherDiff) {
-		return currentDiff.getKind() == otherDiff.getKind() 
-			&& currentDiff.getDirection() == otherDiff.getDirection();
+	boolean equals(IThreeWayDiff currentDiff, IThreeWayDiff diffTreeDiff) {
+		return currentDiff != null 
+		    && currentDiff.getKind() == diffTreeDiff.getKind() 
+			&& currentDiff.getDirection() == diffTreeDiff.getDirection();
 	}
 }
