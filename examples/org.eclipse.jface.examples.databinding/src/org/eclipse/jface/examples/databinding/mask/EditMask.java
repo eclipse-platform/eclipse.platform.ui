@@ -93,6 +93,9 @@ public class EditMask {
 	protected EditMaskParser editMaskParser;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	
+	protected String oldValidRawText = "";
+	protected String oldValidText = ""; 
+	
 	/**
 	 * Creates an instance that wraps around a text widget and manages its<br>
 	 * formatting.
@@ -115,6 +118,8 @@ public class EditMask {
 		text.addFocusListener(focusListener);
 		text.addDisposeListener(disposeListener);
 		updateTextField.run();
+		oldValidText = text.getText();
+		oldValidRawText = editMaskParser.getRawResult();
 	}
 
     /**
@@ -131,6 +136,8 @@ public class EditMask {
     		text.setText(string);
 			firePropertyChange(FIELD_TEXT, oldValue, string);
     	}
+		oldValidText = text.getText();
+		oldValidRawText = editMaskParser.getRawResult();
 	}
 
 	/**
@@ -163,6 +170,8 @@ public class EditMask {
     		text.setText(string);
 			firePropertyChange(FIELD_RAW_TEXT, oldValue, string);
 		}
+		oldValidText = text.getText();
+		oldValidRawText = editMaskParser.getRawResult();
 	}
 
 	/**
@@ -220,6 +229,7 @@ public class EditMask {
 		}
 		editMaskParser.setPlaceholder(placeholder);
 		updateTextField.run();
+		oldValidText = text.getText();
 	}
 
 	/**
@@ -280,8 +290,6 @@ public class EditMask {
 	protected int oldSelection = 0;
 	protected int selection = 0;
 	protected String oldRawText = "";
-	protected String oldValidRawText = "";
-	protected String oldValidText = ""; 
 	
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent e) {
@@ -351,12 +359,13 @@ public class EditMask {
 			Boolean newIsComplete = new Boolean(editMaskParser.isComplete());
 			if (!oldIsComplete.equals(newIsComplete)) {
 				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
-				if (newIsComplete.booleanValue() || "".equals(newRawText)) {
-					firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
-					firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
-					oldValidText = text.getText();
-					oldValidRawText = newRawText;
-				}
+			}
+			if (newIsComplete.booleanValue() || "".equals(newRawText)) {
+				System.out.println("oldRawText: " + oldValidRawText + " newRawText: " + newRawText);
+				firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
+				firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
+				oldValidText = text.getText();
+				oldValidRawText = newRawText;
 			}
 		}
 	};
