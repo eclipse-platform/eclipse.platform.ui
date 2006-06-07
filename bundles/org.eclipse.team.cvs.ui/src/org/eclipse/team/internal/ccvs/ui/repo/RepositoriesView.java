@@ -160,7 +160,7 @@ public class RepositoriesView extends RemoteViewPart {
 					p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
 					p.setProperty("user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
 					p.setProperty("host", "dev.eclipse.org"); //$NON-NLS-1$ //$NON-NLS-2$
-					p.setProperty("root", "/home/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
+					p.setProperty("root", "/cvsroot/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
 					NewLocationWizard wizard = new NewLocationWizard(p);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.open();
