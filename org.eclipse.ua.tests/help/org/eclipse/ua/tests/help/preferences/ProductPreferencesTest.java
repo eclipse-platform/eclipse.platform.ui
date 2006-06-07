@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.preferences;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -60,11 +61,11 @@ public class ProductPreferencesTest extends TestCase {
 	// [comma-delimited items to search], [index of expected match], [list1], [list2], ...
 	private static final String[][] FIND_BEST_MATCH_DATA = {
 		
-		// not found; take the only choice
-		{ "a", "0", "b,c,d" },
+		// not found
+		{ "a", null, "b,c,d" },
 		
-		// not found; take the first choice
-		{ "a", "0", "b,c,d", "c,f,e", "h,f,w", "j,e,z", "x,y,z","1,2,3" },
+		// not found, more choices
+		{ "a", null, "b,c,d", "c,f,e", "h,f,w", "j,e,z", "x,y,z","1,2,3" },
 		
 		// found one, take only choice
 		{ "a", "0", "a,b,c,d" },
@@ -115,6 +116,8 @@ public class ProductPreferencesTest extends TestCase {
 		// same, but items shuffled
 		{ "four,two,five,one,three", "two,three,four,five,one", "two,three", "one,two", "four,five", "three,four" },
 
+		// would fail if only used one secondary ordering
+		{ "seven,six,five,four,three,two,one", "one,two,three,four,five,six,seven", "one,two", "two,three,four", "one,two,six", "three,four,five", "five,six", "four,five", "six,seven" },
 	};
 
 	// [inputFile in data/help/preferences/], [key1=value1], [key2=value2], ...
@@ -200,8 +203,11 @@ public class ProductPreferencesTest extends TestCase {
 			for (int j=0;j<lists.length;++j) {
 				lists[j] = ProductPreferences.tokenize(data[j + 2]);
 			}
-			List expectedBestMatch = lists[Integer.parseInt(data[1])];
-			Assert.assertEquals("The best match found did not match the expected one", expectedBestMatch, ProductPreferences.findBestMatch(items, lists));
+			List expectedBestMatch = null;
+			if (data[1] != null) {
+				expectedBestMatch = lists[Integer.parseInt(data[1])];
+			}
+			Assert.assertEquals("The best match found did not match the expected one", expectedBestMatch, ProductPreferences.findBestMatch(items, Arrays.asList(lists)));
 		}
 	}
 	

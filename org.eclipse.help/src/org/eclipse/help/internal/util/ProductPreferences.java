@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,27 +62,31 @@ public class ProductPreferences {
 	/**
 	 * Finds the list that contains the most items from the set. If there is a tie,
 	 * the first with the highest number of matches is chosen. If no lists are
-	 * provided, returns null.
+	 * provided, returns null. If none of the lists have any matching items, returns
+	 * null.
 	 * 
 	 * @param items the items to look for
 	 * @param lists the lists to search through
-	 * @return the list containing the most items from the set
+	 * @return the list containing the most items from the set, or null
 	 */
-	public static List findBestMatch(Set items, List[] lists) {
-		if (lists.length == 1) {
-			return lists[0];
-		}
-		else if (lists.length > 0) {
-			List bestMatchSoFar = lists[0];
+	public static List findBestMatch(Set items, List lists) {
+		if (!lists.isEmpty()) {
+			int bestMatchSoFar = 0;
 			int bestCount = 0;
-			for (int i=0;i<lists.length;++i) {
-				int count = countCommonItems(items, lists[i]);
+			Iterator iter = lists.iterator();
+			int i = 0;
+			while (iter.hasNext()) {
+				List list = (List)iter.next();
+				int count = countCommonItems(items, list);
 				if (count > bestCount) {
 					bestCount = count;
-					bestMatchSoFar = lists[i];
+					bestMatchSoFar = i;
 				}
+				++i;
 			}
-			return bestMatchSoFar;
+			if (bestCount > 0) {
+				return (List)lists.get(bestMatchSoFar);
+			}
 		}
 		return null;
 	}
@@ -143,7 +148,7 @@ public class ProductPreferences {
 
 	/**
 	 * Returns the given items in an order that best satisfies the given orderings.
-	 * The primary ordering is consulted first, then the best secondary one is consulted.
+	 * The primary ordering is consulted first, then the secondary.
 	 * 
 	 * @param key the preference key (full form)
 	 * @param items the items to order
@@ -169,17 +174,17 @@ public class ProductPreferences {
 		
 		// if there are any remaining items, order them
 		if (!itemsRemaining.isEmpty()) {
-			// if there are any secondary orderings
-			if (secondary.length > 0) {
-				// find the one that orders the most items
-				List bestMatch = findBestMatch(itemsRemaining, secondary);
-				// satisfy it
+			List secondaryOrderingsRemaining = new ArrayList(Arrays.asList(secondary));
+			List bestMatch;
+			while ((bestMatch = findBestMatch(itemsRemaining, secondaryOrderingsRemaining)) != null) {
+				// satisfy this ordering
 				Iterator iter = bestMatch.iterator();
 				while (iter.hasNext()) {
 					String item = (String)iter.next();
 					if (itemsRemaining.contains(item)) {
 						orderedList.add(item);
 						itemsRemaining.remove(item);
+						secondaryOrderingsRemaining.remove(bestMatch);
 					}
 				}
 			}
