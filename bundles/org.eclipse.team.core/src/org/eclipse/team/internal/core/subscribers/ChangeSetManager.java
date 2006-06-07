@@ -223,4 +223,8 @@ public abstract class ChangeSetManager {
      * This method is called the first time the sets are accessed.
      */
 	protected abstract void initializeSets();
+	
+	public boolean isInitialized() {
+		return sets != null;
+	}
 }

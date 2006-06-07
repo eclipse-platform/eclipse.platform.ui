@@ -322,6 +322,9 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
 	 * @param prefs a preferences node
 	 */
 	protected void save(Preferences prefs) {
+		// No need to save the sets if the manager has never been initialized
+		if (!isInitialized())
+			return;
         // Clear the persisted state before saving the new state
         try {
             String[] oldSetNames = prefs.childrenNames();
