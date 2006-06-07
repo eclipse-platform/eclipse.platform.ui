@@ -495,10 +495,6 @@ class ProgressInfoItem extends Composite {
 				progressBar = null;
 			}
 			setLayoutsForNoProgress();
-			actionButton.setImage(JFaceResources
-					.getImage(CLEAR_FINISHED_JOB_KEY));
-			actionButton.setDisabledImage(JFaceResources
-					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
 
 		}
 
@@ -551,6 +547,8 @@ class ProgressInfoItem extends Composite {
 			else
 				taskEntries.clear();
 		}
+
+		setToolBarImages();
 	}
 
 	/**
@@ -562,7 +560,7 @@ class ProgressInfoItem extends Composite {
 
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getJob().getResult() == null) {
+			if (infos[i].getJob().getState() != Job.NONE) {
 				return false;
 			}
 		}
@@ -734,14 +732,16 @@ class ProgressInfoItem extends Composite {
 					((IAction) finalLink.getData(ACTION_KEY)).run();
 				}
 			});
-			
-			link.addListener(SWT.Resize, new Listener(){
-				/* (non-Javadoc)
+
+			link.addListener(SWT.Resize, new Listener() {
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
 				public void handleEvent(Event event) {
 					updateText((String) finalLink.getData(TEXT_KEY), finalLink);
-					
+
 				}
 			});
 			taskEntries.add(link);
@@ -765,13 +765,14 @@ class ProgressInfoItem extends Composite {
 
 	/**
 	 * Update the text in the link
+	 * 
 	 * @param taskString
 	 * @param link
 	 */
 	private void updateText(String taskString, Link link) {
 		taskString = Dialog.shortenText(taskString, link);
 
-		//Put in a hyperlink if there is an action
+		// Put in a hyperlink if there is an action
 		link.setText(link.getData(ACTION_KEY) == null ? taskString : NLS.bind(
 				"<a>{0}</a>", taskString));//$NON-NLS-1$
 	}
