@@ -222,7 +222,7 @@ public class PathTree {
 	/**
 	 * Clear all entries from the path tree.
 	 */
-	public void clear() {
+	public synchronized void clear() {
 		objects.clear();
 	}
 
@@ -230,7 +230,7 @@ public class PathTree {
 	 * Return whether the path tree is empty.
 	 * @return whether the path tree is empty
 	 */
-	public boolean isEmpty() {
+	public synchronized boolean isEmpty() {
 		return objects.isEmpty();
 	}
 
@@ -238,7 +238,7 @@ public class PathTree {
 	 * Return the paths in this tree that contain diffs.
 	 * @return the paths in this tree that contain diffs.
 	 */
-	public IPath[] getPaths() {
+	public synchronized IPath[] getPaths() {
 		List result = new ArrayList();
 		for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
 			IPath path = (IPath) iter.next();
@@ -253,7 +253,7 @@ public class PathTree {
 	 * Return all the values contained in this path tree.
 	 * @return all the values in the tree
 	 */
-	public Collection values() {
+	public synchronized Collection values() {
 		List result = new ArrayList();
 		for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
 			IPath path = (IPath) iter.next();
