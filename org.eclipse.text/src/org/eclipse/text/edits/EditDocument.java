@@ -82,9 +82,7 @@ class EditDocument implements IDocument {
 	}
 
 	public String get(int offset, int length) throws BadLocationException {
-		char[] result= new char[length];
-		fBuffer.getChars(offset, offset + length, result, 0);
-		return new String(result);
+		return fBuffer.substring(offset, offset + length);
 	}
 
 	public char getChar(int offset) throws BadLocationException {
