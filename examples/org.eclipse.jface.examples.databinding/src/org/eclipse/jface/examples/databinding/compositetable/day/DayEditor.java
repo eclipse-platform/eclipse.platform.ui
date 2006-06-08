@@ -1387,8 +1387,11 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 
 	private boolean eventRowIsVisible(int eventRow) {
-		if (compositeTable.getTopRow() <= eventRow) {
-			return true;
+		int topRow = compositeTable.getTopRow();
+		if (topRow <= eventRow) {
+			if (eventRow < compositeTable.getNumRowsVisible() - topRow) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -1413,7 +1416,8 @@ public class DayEditor extends Composite implements IEventEditor {
 	}
 	
 	private Rectangle getTimeSliceBounds(int day, int eventRow, Control[] gridRows) {
-		TimeSlice rowObject = (TimeSlice) gridRows[eventRow - compositeTable.getTopRow()];
+		int row = eventRow - compositeTable.getTopRow();
+		TimeSlice rowObject = (TimeSlice) gridRows[row];
 		Control slot = rowObject.getColumnControl(day);
 		return getBoundsInDayEditorCoordinates(slot);
 	}
