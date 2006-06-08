@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -41,6 +41,11 @@ public class BasicAliasTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(BasicAliasTest.class);
+		
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new BasicAliasTest("testDeepLink"));
+//		suite.addTest(new BasicAliasTest("testCreateDeleteLink"));
+//		return suite;
 	}
 
 	public BasicAliasTest() {
@@ -492,13 +497,28 @@ public class BasicAliasTest extends ResourceTest {
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("2.2", linkChild.exists());
 
+			final AliasManager aliasManager = ((Workspace) getWorkspace()).getAliasManager();
 			//force AliasManager to restart (simulates a shutdown/startup)
-			((Workspace) getWorkspace()).getAliasManager().startup(null);
+			aliasManager.startup(null);
 
 			folderChild.delete(IResource.NONE, getMonitor());
 			assertTrue("3.1", !linkChild.exists());
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("3.2", linkChild.exists());
+			
+			//delete the project that contains the links
+			IFile fileInLinkedProject = pLinked.getFile("fileInLinkedProject.txt");
+			createFileInFileSystem(((Resource)fileInLinkedProject).getStore(), getRandomContents());
+			try {
+				getWorkspace().getRoot().delete(IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				e.printStackTrace();
+				//failure expected here because it is out of sync
+			}
+			
+			//ensure aliases are gone (bug 144458)
+			final IResource[] aliases = aliasManager.computeAliases(folder, ((Folder)folder).getStore());
+			assertNull("4.0", aliases);
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
