@@ -356,7 +356,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -365,7 +365,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The severity markerGrouping is provided in the org.eclipse.uiide plug-in by default.
       </documentation>
    </annotation>
 
