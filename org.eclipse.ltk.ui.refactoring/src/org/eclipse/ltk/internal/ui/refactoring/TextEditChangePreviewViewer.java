@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.Viewer;
@@ -86,6 +87,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 						fImage.dispose();
 				}
 			});
+			Dialog.applyDialogFont(this);
 		}
 		public void setLabel(String label) {
 			fLabel= label;
