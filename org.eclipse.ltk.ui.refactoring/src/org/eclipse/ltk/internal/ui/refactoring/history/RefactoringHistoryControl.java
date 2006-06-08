@@ -38,6 +38,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -78,6 +79,38 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
  * @since 3.2
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
+
+	/** Label for the refactoring history tree viewer */
+	protected final class RefactoringHistoryLabel extends CLabel {
+
+		/**
+		 * Creates a new refactoring history label.
+		 * 
+		 * @param parent
+		 *            the parent control
+		 * @param style
+		 *            the style
+		 */
+		public RefactoringHistoryLabel(final Composite parent, final int style) {
+			super(parent, style);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public Point computeSize(final int wHint, final int hHint, final boolean changed) {
+			return super.computeSize(wHint, Math.max(24, hHint), changed);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public Color getForeground() {
+			if (isEnabled())
+				return super.getForeground();
+			return getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		}
+	}
 
 	/** Checkbox tree viewer for the refactoring history */
 	protected final class RefactoringHistoryTreeViewer extends CheckboxTreeViewer {
@@ -145,7 +178,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		}
 
 		/**
-		 * Reconciles the checkstate of the specified element and dependencies.
+		 * Reconciles the check state of the specified element and dependencies.
 		 * 
 		 * @param element
 		 *            the changed element
@@ -167,7 +200,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		}
 
 		/**
-		 * Reconciles the checkstate of the specified element and dependencies.
+		 * Reconciles the check state of the specified element and dependencies.
 		 * 
 		 * @param element
 		 *            the changed element
@@ -252,11 +285,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	private final Set fCheckedDescriptors= new HashSet();
 
-	/** The comment field */
-	private Text fCommentField= null;
-
 	/** The refactoring history control configuration to use */
 	protected final RefactoringHistoryControlConfiguration fControlConfiguration;
+
+	/** The detail field */
+	private Text fDetailField= null;
+
+	/** The detail label */
+	private Label fDetailLabel= null;
 
 	/** The history pane */
 	protected CompareViewerPane fHistoryPane= null;
@@ -342,14 +378,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
-		final CLabel label= new CLabel(fHistoryPane, SWT.NONE) {
-
-			public final Point computeSize(final int wHint, final int hHint, final boolean changed) {
-				return super.computeSize(wHint, Math.max(24, hHint), changed);
-			}
-		};
-		fHistoryPane.setTopLeft(label);
-
+		fHistoryPane.setTopLeft(new RefactoringHistoryLabel(fHistoryPane, SWT.NONE));
 		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
@@ -396,11 +425,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected void createDetailLabel(final Composite parent) {
 		Assert.isNotNull(parent);
-		final Label label= new Label(parent, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
-		label.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
+		fDetailLabel= new Label(parent, SWT.HORIZONTAL | SWT.LEFT | SWT.WRAP);
+		fDetailLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_comment_viewer_label);
 		final GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan= 1;
-		label.setLayoutData(data);
+		fDetailLabel.setLayoutData(data);
 	}
 
 	/**
@@ -420,11 +449,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		composite.setLayout(layout);
 		createDetailLabel(composite);
 		createSelectionLabel(composite);
-		fCommentField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
-		fCommentField.setText(fControlConfiguration.getCommentCaption());
+		fDetailField= new Text(composite, SWT.BORDER | SWT.FLAT | SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		fDetailField.setText(fControlConfiguration.getCommentCaption());
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.horizontalSpan= getDetailColumns();
-		fCommentField.setLayoutData(data);
+		fDetailField.setLayoutData(data);
 		return composite;
 	}
 
@@ -619,10 +648,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			if (history != null) {
 				final int total= history.getDescriptors().length;
 				final int checked= fCheckedDescriptors.size();
-				if (total > 0 && fControlConfiguration.isCheckableViewer())
-					fSelectionLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
-				else
-					fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
+				if (fSelectionLabel.isEnabled()) {
+					if (total > 0 && fControlConfiguration.isCheckableViewer())
+						fSelectionLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
+					else
+						fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
+				} else
+					fSelectionLabel.setText(""); //$NON-NLS-1$
 			}
 		}
 	}
@@ -659,7 +691,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 						String comment= descriptor.getComment();
 						if ("".equals(comment)) //$NON-NLS-1$
 							comment= RefactoringUIMessages.RefactoringHistoryControl_no_comment;
-						fCommentField.setText(comment);
+						fDetailField.setText(comment);
 					}
 					return Status.OK_STATUS;
 				}
@@ -667,7 +699,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			job.setSystem(true);
 			job.schedule();
 		}
-		fCommentField.setText(fControlConfiguration.getCommentCaption());
+		fDetailField.setText(fControlConfiguration.getCommentCaption());
 	}
 
 	/**
@@ -677,6 +709,13 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		final RefactoringHistory history= getInput();
 		if (history != null && fHistoryViewer instanceof RefactoringHistoryTreeViewer)
 			((RefactoringHistoryTreeViewer) fHistoryViewer).reconcileCheckState(history);
+	}
+
+	/**
+	 * Reconciles the selection state of the control.
+	 */
+	public void reconcileSelectionState() {
+		fHistoryViewer.setSelection(new StructuredSelection(fSelectedDescriptors.toArray()), true);
 	}
 
 	/**
@@ -740,6 +779,36 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	}
 
 	/**
+	 * Sets the enablement of the detail pane.
+	 */
+	protected void setHistoryControlEnablement() {
+		boolean enable= false;
+		final RefactoringHistory history= (RefactoringHistory) fHistoryViewer.getInput();
+		if (history != null) {
+			final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
+			if (proxies.length > 0)
+				enable= true;
+		}
+		if (fDetailField != null)
+			fDetailField.setEnabled(enable);
+		if (fDetailLabel != null)
+			fDetailLabel.setEnabled(enable);
+		if (fHistoryPane != null)
+			fHistoryPane.setEnabled(enable);
+		if (fSelectionLabel != null)
+			fSelectionLabel.setEnabled(enable);
+		if (enable) {
+			fDetailField.setText(fControlConfiguration.getCommentCaption());
+			if (fSelectionLabel != null)
+				fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
+		} else {
+			fDetailField.setText(""); //$NON-NLS-1$
+			if (fSelectionLabel != null)
+				fSelectionLabel.setText(""); //$NON-NLS-1$
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void setInput(final RefactoringHistory history) {
@@ -751,6 +820,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			if (provider != null) {
 				provider.inputChanged(fHistoryViewer, null, history);
 				setExpandedState();
+				setHistoryControlEnablement();
 			}
 		}
 	}
