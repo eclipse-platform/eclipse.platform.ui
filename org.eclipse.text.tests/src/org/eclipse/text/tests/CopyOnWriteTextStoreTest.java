@@ -28,7 +28,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 
 	private static class COWTextStore extends CopyOnWriteTextStore {
 		COWTextStore() {
-			super(new GapTextStore(50, 300));
+			super(new GapTextStore());
 		}
 		ITextStore getStore() {
 			return fTextStore;

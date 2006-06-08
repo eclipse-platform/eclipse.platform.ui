@@ -28,7 +28,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 	}
 
 	protected void setUp() {
-		fText= new GapTextStore(50, 300);
+		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\r\n" });
 		set("x\r\nx\r\nx\r\nx\r\nx\r\n");
 	}

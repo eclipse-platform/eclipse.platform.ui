@@ -29,7 +29,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 	}
 
 	protected void setUp() {
-		fText= new GapTextStore(50, 300);
+		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\n" });
 		set("x\nx\nx\nx\nx\n");
 	}
@@ -233,7 +233,7 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 	}
 
 	public void testMultipleNewlines() throws Exception {
-		fText= new GapTextStore(50, 300);
+		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\n" });
 		set("x\n\nx\nx\n\nx\nx\n");
 

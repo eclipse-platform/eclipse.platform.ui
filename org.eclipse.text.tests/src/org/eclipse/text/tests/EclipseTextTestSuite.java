@@ -35,6 +35,8 @@ public class EclipseTextTestSuite {
 		suite.addTest(PositionUpdatingCornerCasesTest.suite());
 		suite.addTest(TextEditTests.suite());
 		suite.addTest(GapTextTest.suite());
+		suite.addTest(AdaptiveGapTextTest.suite());
+		suite.addTest(GapTextStoreTest.suite());
 		suite.addTest(ChildDocumentTest.suite());
 		suite.addTest(ProjectionTestSuite.suite());
 		suite.addTest(LinkTestSuite.suite());
