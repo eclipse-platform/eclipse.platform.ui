@@ -94,7 +94,7 @@ public final class DataBindingContext {
 	/**
 	 * Returns a new data binding context on which the given factories have been
 	 * registered using
-	 * {@link DataBindingContext#addUpdatableFactory(IUpdatableFactory)}. The
+	 * {@link DataBindingContext#addObservableFactory(IObservableFactory)}. The
 	 * factories will be added in the order given.
 	 * 
 	 * @param observableFactories
@@ -110,7 +110,7 @@ public final class DataBindingContext {
 	/**
 	 * Returns a new data binding context on which the given factories have been
 	 * registered using
-	 * {@link DataBindingContext#addUpdatableFactory(IUpdatableFactory)}. The
+	 * {@link DataBindingContext#addObservableFactory(IObservableFactory)}. The
 	 * factories will be added in the order given.
 	 * 
 	 * @param observableFactories
@@ -384,11 +384,11 @@ public final class DataBindingContext {
 	 * @return IObservable for the given description
 	 */
 	public IObservable createObservable(Object description) {
-		IObservable updatable = doCreateObservable(description, this);
-		if (updatable != null) {
-			createdObservables.add(updatable);
+		IObservable observable = doCreateObservable(description, this);
+		if (observable != null) {
+			createdObservables.add(observable);
 		}
-		return updatable;
+		return observable;
 	}
 
 	/**
@@ -427,8 +427,8 @@ public final class DataBindingContext {
 	 */
 	public void dispose() {
 		for (Iterator it = createdObservables.iterator(); it.hasNext();) {
-			IObservable updatable = (IObservable) it.next();
-			updatable.dispose();
+			IObservable observable = (IObservable) it.next();
+			observable.dispose();
 		}
 	}
 
@@ -445,7 +445,7 @@ public final class DataBindingContext {
 			return parent.doCreateObservable(description,
 					thisDatabindingContext);
 		}
-		throw new BindingException("could not find updatable for " //$NON-NLS-1$
+		throw new BindingException("could not find observable for " //$NON-NLS-1$
 				+ description);
 	}
 

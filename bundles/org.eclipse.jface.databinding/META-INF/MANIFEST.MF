@@ -2,10 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface.databinding
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.internal.databinding.internal;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.beans;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.observable;x-internal:=true,

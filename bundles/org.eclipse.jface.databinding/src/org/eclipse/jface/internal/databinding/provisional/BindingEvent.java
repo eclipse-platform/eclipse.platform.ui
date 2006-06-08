@@ -123,6 +123,18 @@ public class BindingEvent {
 	 * remove operation.
 	 */
 	public static final int EVENT_REMOVE = 3;
+	
+	/**
+	 * A constant indicating that this event is occuring during a lazy list
+	 * insert operation.
+	 */
+	public static final int EVENT_LAZY_INSERT = 4;
+	
+	/**
+	 * A constant indicating that this event is occuring during a lazy list
+	 * delete operation.
+	 */
+	public static final int EVENT_LAZY_DELETE = 5;
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the

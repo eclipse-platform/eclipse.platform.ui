@@ -27,5 +27,5 @@ public abstract class EventContentProvider {
 	 * @param day The day
 	 * @param controls The controls to refresh
 	 */
-	abstract public void refresh(Date day, Calendarable[] controls);
+	abstract public void refresh(Date day, CalendarableItem[] controls);
 }

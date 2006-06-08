@@ -43,6 +43,7 @@ public class MultiMappingAndSetBinding extends Binding {
 
 	private final IObservableSet targetSet;
 
+	
 	/**
 	 * @param context
 	 * @param targetSet
@@ -67,6 +68,18 @@ public class MultiMappingAndSetBinding extends Binding {
 		updateTargetFromModel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
+	 */
+	public void dispose() {
+		target.dispose();
+		targetSet.dispose();
+		model.dispose();
+		modelSet.dispose();
+		
+		disposed = true;
+	}
+	
 	private final ISetChangeListener targetChangeListener = new ISetChangeListener() {
 		public void handleSetChange(IObservableSet source, SetDiff diff) {
 		}

@@ -105,5 +105,19 @@ public abstract class Binding {
 	 * 
 	 */
 	public abstract void updateTargetFromModel();
+	
+	/**
+	 * Dispose all observables managed by the current Binding
+	 */
+	public abstract void dispose();
+
+	protected boolean disposed = false;
+	
+	/**
+	 * @return true if the binding has been disposed.  false otherwise.
+	 */
+	public boolean isDisposed() {
+		return disposed;
+	}
 
 }

@@ -19,12 +19,17 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Represents a time slice that is the same time but may span several days.
@@ -72,14 +77,17 @@ public class TimeSlice extends Composite {
 				preferredWidth = new Integer(children[0].computeSize(
 						SWT.DEFAULT, SWT.DEFAULT).x);
 			}
-			children[0]
-					.setBounds(0, 0, preferredWidth.intValue(), parentSize.y);
+			children[0].setBounds(0, 0, preferredWidth.intValue(), parentSize.y);
 
 			// layout the rest of the controls
-			int controlWidth = (parentSize.x - preferredWidth.intValue())
-					/ (children.length - 1);
-			int extraWidth = (parentSize.x - preferredWidth.intValue())
-					% (children.length - 1);
+			int controlWidth = 0;
+			int extraWidth = 0;
+			if (children.length >= 2) {
+				controlWidth = (parentSize.x - preferredWidth.intValue())
+						/ (children.length - 1);
+				extraWidth = (parentSize.x - preferredWidth.intValue())
+						% (children.length - 1);
+			}
 			int leftPosition = preferredWidth.intValue();
 
 			for (int i = 1; i < children.length; i++) {
@@ -95,17 +103,67 @@ public class TimeSlice extends Composite {
 		}
 	}
 
-	private LinkedList days = new LinkedList();
-
 	private CLabel timeLabel = null;
 
+	private LinkedList columns = new LinkedList();
+
 	/**
+	 * @return Returns the columns.
+	 */
+	public LinkedList getColumns() {
+		return columns;
+	}
+	
+	/**
+	 * Returns the control that implements the specified column.
+	 * 
+	 * @param column The column number.
+	 * @return Control the SWT control that implements this column.
+	 */
+	public Control getColumnControl(int column) {
+		return (Control) columns.get(column);
+	}
+	
+	/**
+	 * Return the column number of the specified widget.
+	 * 
+	 * @param widget the TimeSlot widget
+	 * @return the column number of the specified TimeSlot within this TimeSlice.
+	 */
+	public int getControlColumn(Widget widget) {
+		int columnNumber = 0;
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			if (columnsIter.next() == widget) {
+				return columnNumber;
+			}
+			++columnNumber;
+		}
+		throw new IllegalArgumentException("Unrecognized widget passed to getControlColumn");
+	}
+
+	/**
+	 * Constructor TimeSlice. Construct a TimeSlice control, passing the parent
+	 * and style bits.
+	 * 
 	 * @param parent
+	 *            The SWT parent object.
 	 * @param style
+	 *            The set of style bits this control accepts. Currently SWT.NONE.
 	 */
 	public TimeSlice(Composite parent, int style) {
-		super(parent, style);
+		super(parent, SWT.NULL);
 		initialize();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.setMenu(menu);
+		}
 	}
 
 	/**
@@ -117,11 +175,27 @@ public class TimeSlice extends Composite {
 		Integer preferredWidth = new Integer(timeLabel.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT, false).x + 5);
 		timeLabel.setLayoutData(preferredWidth);
+		timeLabel.setText("");
 		setBackground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
-		days.addLast(new TimeSlot(this, SWT.NONE));
 		setSize(new Point(537, 16));
 		setLayout(new TimeSliceAcrossTimeLayout());
+	}
+
+	private boolean headerControl = false;
+
+	/**
+	 * @return Returns the headerControl.
+	 */
+	public boolean isHeaderControl() {
+		return headerControl;
+	}
+
+	/**
+	 * @param headerControl The headerControl to set.
+	 */
+	public void setHeaderControl(boolean headerControl) {
+		this.headerControl = headerControl;
 	}
 
 	private int numberOfColumns = 1;
@@ -142,7 +216,6 @@ public class TimeSlice extends Composite {
 	 * the beginning of the control's life cycle, and the value passed must be
 	 * >1.
 	 * <p>
-	 * 
 	 * Calling this method more than once results in undefined behavior.
 	 * 
 	 * @param numberOfColumns
@@ -150,9 +223,19 @@ public class TimeSlice extends Composite {
 	 */
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
-		for (int i = numberOfColumns - 1; i > 0; --i) {
-			days.add(new TimeSlot(this, SWT.NONE));
+		Control[] tabStops = new Control[numberOfColumns];
+		for (int i = numberOfColumns; i > 0; --i) {
+			if (headerControl) {
+				CLabel control = new CLabel(this, SWT.SHADOW_OUT | SWT.BORDER | SWT.CENTER);
+				tabStops[numberOfColumns-i] = control;
+				columns.add(control);
+			} else {
+				TimeSlot control = new TimeSlot(this, SWT.NONE);
+				tabStops[numberOfColumns-i] = control;
+				columns.add(control);
+			}
 		}
+		setTabList(tabStops);
 	}
 
 	private Date currentTime = new Date();
@@ -172,9 +255,14 @@ public class TimeSlice extends Composite {
 		if (currentTime == null) {
 			timeLabel.setImage(allDayImage);
 			timeLabel.setText("");
+			setAllDayEventOnDays(true);
 			return;
 		}
+		
+		setAllDayEventOnDays(false);
 		timeLabel.setImage(null);
+		
+		setTimeOnDays(currentTime);
 		
 		this.currentTime = currentTime;
 		Calendar calendar = new GregorianCalendar();
@@ -185,19 +273,103 @@ public class TimeSlice extends Composite {
 			DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT);
 			String time = df.format(currentTime);
 			timeLabel.setText(time);
-			setHourStartOnDays(true);
 		} else {
 			timeLabel.setText("");
-			setHourStartOnDays(false);
+		}
+	}
+	
+	private void setTimeOnDays(Date currentTime) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.setTime(currentTime);
+			}
 		}
 	}
 
-	private void setHourStartOnDays(boolean isHourStart) {
-		for (Iterator daysIter = days.iterator(); daysIter.hasNext();) {
-			TimeSlot day = (TimeSlot) daysIter.next();
-			day.setHourStart(isHourStart);
+	private void setAllDayEventOnDays(boolean isAllDayEvent) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.setAllDay(isAllDayEvent);
+			}
 		}
 	}
 
+	/**
+	 * @see org.eclipse.swt.widgets.Control#addFocusListener
+	 * 
+	 * @param listener
+	 */
+	public void addCellFocusListener(FocusListener listener) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.addFocusListener(listener);
+			}
+		}
+	}
+	
+	/**
+	 * @see org.eclipse.swt.widgets.Control#removeFocusListener
+	 * @param listener
+	 */
+	public void removeCellFocusListener(FocusListener listener) {
+		for (Iterator daysIter = columns.iterator(); daysIter.hasNext();) {
+			Object dayCandidate = daysIter.next();
+			if (dayCandidate instanceof TimeSlot) {
+				TimeSlot day = (TimeSlot) dayCandidate;
+				day.removeFocusListener(listener);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void addKeyListener(KeyListener listener) {
+		super.addKeyListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.addKeyListener(listener);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void removeKeyListener(KeyListener listener) {
+		super.removeKeyListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.removeKeyListener(listener);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void addMouseListener(MouseListener listener) {
+		super.addMouseListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.addMouseListener(listener);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		super.removeMouseListener(listener);
+		for (Iterator columnsIter = columns.iterator(); columnsIter.hasNext();) {
+			TimeSlot cell = (TimeSlot) columnsIter.next();
+			cell.removeMouseListener(listener);
+		}
+	}
+	
 } // @jve:decl-index=0:visual-constraint="10,10"
 

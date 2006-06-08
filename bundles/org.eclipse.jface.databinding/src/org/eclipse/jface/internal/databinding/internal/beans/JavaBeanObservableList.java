@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
 import org.eclipse.jface.util.Assert;
 
@@ -26,7 +27,7 @@ import org.eclipse.jface.util.Assert;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableList extends ObservableList {
+public class JavaBeanObservableList extends ObservableList implements ILazyListElementProvider {
 
 	private final Object object;
 
@@ -44,7 +45,7 @@ public class JavaBeanObservableList extends ObservableList {
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
-
+	
 	private ListenerSupport collectionListenSupport = new ListenerSupport(
 			collectionListener);
 
@@ -106,3 +107,4 @@ public class JavaBeanObservableList extends ObservableList {
 	}
 
 }
+

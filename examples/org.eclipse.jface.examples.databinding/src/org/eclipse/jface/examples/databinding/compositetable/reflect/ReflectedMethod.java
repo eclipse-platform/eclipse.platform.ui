@@ -62,11 +62,23 @@ public class ReflectedMethod {
         if (method == null)
             return null;
         try {
+        	if (!method.isAccessible()) {
+        		method.setAccessible(true);
+        	}
         	return method.invoke(subject, params);
         } catch (Exception e) {
             return null;
         }
     }
+
+	/**
+	 * Method getType.  Returns the return type of the method.
+	 * 
+	 * @return The return type or null if none.
+	 */
+	public Class getType() {
+		return method.getReturnType();
+	}
 }
 
 

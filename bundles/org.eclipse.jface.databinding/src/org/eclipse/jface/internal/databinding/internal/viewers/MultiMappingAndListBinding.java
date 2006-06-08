@@ -43,7 +43,7 @@ public class MultiMappingAndListBinding extends Binding {
 	private IObservableList modelList;
 
 	private final IObservableList targetList;
-
+	
 	/**
 	 * @param context
 	 * @param targetList
@@ -68,6 +68,18 @@ public class MultiMappingAndListBinding extends Binding {
 		updateTargetFromModel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
+	 */
+	public void dispose() {
+		target.dispose();
+		targetList.dispose();
+		model.dispose();
+		modelList.dispose();
+		
+		disposed = true;
+	}
+	
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {
 		public void handleListChange(IObservableList source, ListDiff diff) {
 		}

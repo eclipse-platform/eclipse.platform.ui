@@ -17,7 +17,9 @@ import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.IDeleteHandler;
 import org.eclipse.jface.examples.databinding.compositetable.IInsertHandler;
 import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider;
-import org.eclipse.jface.examples.databinding.compositetable.IRowFocusListener;
+import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
+import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
+import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
@@ -46,6 +48,18 @@ public class CompositeTableTest {
 		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
 		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
 		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Jane", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Frank", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Joe", "1234", "Wheaton", "IL"));
+		personList.add(new Person("Chet", "1234", "Wheaton", "IL"));
 		personList.add(new Person("Wilbur", "1234", "Wheaton", "IL"));
 		personList.add(new Person("Elmo", "1234", "Wheaton", "IL"));
 	}
@@ -62,10 +76,17 @@ public class CompositeTableTest {
 		table.addDeleteHandler(deleteHandler);
 		table.addInsertHandler(insertHandler);
 		table.addRowFocusListener(rowListener);
+		table.addScrollListener(scrollListener);
 		table.setNumRowsInCollection(personList.size());
 		createHeader();
 		createRow();
 	}
+	
+	private ScrollListener scrollListener = new ScrollListener() {
+		public void tableScrolled(ScrollEvent scrollEvent) {
+			System.out.println(scrollEvent);
+		}
+	};
 	
 	private IRowContentProvider rowContentProvider = new IRowContentProvider() {
 		public void refresh(CompositeTable table, int currentObjectOffset, Control row) {

@@ -136,6 +136,7 @@ public class TextObservableValue extends AbstractVetoableValue {
 
 	public void dispose() {
 		if (!text.isDisposed()) {
+			text.removeKeyListener(keyListener);
 			if (updatePolicy != SWT.None) {
 				text.removeListener(updatePolicy, updateListener);
 			}

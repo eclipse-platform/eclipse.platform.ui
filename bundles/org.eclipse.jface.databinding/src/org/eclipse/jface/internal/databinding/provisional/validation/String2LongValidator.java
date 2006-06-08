@@ -11,39 +11,18 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.validation;
 
-import org.eclipse.jface.internal.databinding.internal.BindingMessages;
-
-
 /**
- * LongValidator.  Validate String to Long/long data input
+ * IntegerValidator.  Validate String to Long data input
  */
-public class String2LongValidator implements IValidator {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
-	 */
-	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-            return null;
-
-        return ValidationError.error(getHint());
-	}
+public class String2LongValidator extends String2LongPrimitiveValidator {
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
-	 */
-	public ValidationError isValid(Object value) {
-        try {
-            Long.parseLong((String)value);
-            return null;
-        } catch (Throwable t) {
-            return ValidationError.error(getHint());
-        }
-    }    
-
-	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
+     */
+    public ValidationError isValid(Object value) {
+       if ("".equals(value)) { //$NON-NLS-1$
+          return null;
+       }
+       return super.isValid(value);
+    }
 }

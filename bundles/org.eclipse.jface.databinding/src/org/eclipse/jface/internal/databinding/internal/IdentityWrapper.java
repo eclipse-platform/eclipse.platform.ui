@@ -31,7 +31,7 @@ public class IdentityWrapper {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj.getClass() != IdentityWrapper.class) {
+		if (obj == null || obj.getClass() != IdentityWrapper.class) {
 			return false;
 		}
 		return o == ((IdentityWrapper) obj).o;

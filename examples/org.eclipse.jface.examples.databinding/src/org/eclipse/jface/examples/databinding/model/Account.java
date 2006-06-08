@@ -12,6 +12,8 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.Date;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
+
 public class Account extends ModelObject {
 
 	private String country;

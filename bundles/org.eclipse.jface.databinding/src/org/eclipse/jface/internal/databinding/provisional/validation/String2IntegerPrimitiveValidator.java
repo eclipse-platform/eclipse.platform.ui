@@ -15,9 +15,9 @@ import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 /**
- * IntValidator.  Validate String to int/Integer data input
+ * IntValidator.  Validate String to int data input
  */
-public class String2IntValidator implements IValidator {
+public class String2IntegerPrimitiveValidator implements IValidator {
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)

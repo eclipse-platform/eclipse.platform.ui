@@ -27,6 +27,21 @@ import java.lang.reflect.Proxy;
  * @author djo
  */
 public class DuckType implements InvocationHandler {
+   
+   /**
+    * Interface DuckType#Wrapper.  An interface for DuckType proxies that
+    * allows clients to access the proxied value.  The value returned by
+    * calling DuckType#implement always implements this interface.
+    */
+   public static interface Wrapper {
+      /**
+       * Method duckType_GetWrappedValue.  Returns the proxied value.
+       * 
+       * @return The proxied value.
+       */
+      public Object duckType_GetWrappedValue();
+   }
+   
 	/**
      * Causes object to implement the interfaceToImplement and returns
      * an instance of the object implementing interfaceToImplement even
@@ -42,7 +57,7 @@ public class DuckType implements InvocationHandler {
 	 */
 	public static Object implement(Class interfaceToImplement, Object object) {
 		return Proxy.newProxyInstance(interfaceToImplement.getClassLoader(), 
-				new Class[] {interfaceToImplement}, new DuckType(object));
+				new Class[] {interfaceToImplement, Wrapper.class}, new DuckType(object));
 	}
     
     /**
@@ -76,7 +91,32 @@ public class DuckType implements InvocationHandler {
 	protected Class objectClass;
 	
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+      if (method.getName().equals("equals") && args != null && args.length == 1) {
+         return new Boolean(equals(args[0]));
+      }
+      if (method.getName().equals("hashCode") && args == null) {
+         return new Integer(hashCode());
+      }
+      if (method.getName().equals("duckType_GetWrappedValue") && args == null) {
+         return object;
+      }
 		Method realMethod = objectClass.getMethod(method.getName(), method.getParameterTypes());
+      if (!realMethod.isAccessible()) {
+         realMethod.setAccessible(true);
+      }
 		return realMethod.invoke(object, args);
 	}
+   
+   public boolean equals(Object obj) {
+      if (obj instanceof Wrapper) {
+         Wrapper proxy = (Wrapper) obj;
+         Object wrappedValue = proxy.duckType_GetWrappedValue();
+         return wrappedValue.equals(object);
+      }
+      return obj == this || super.equals(obj) || object.equals(obj);
+   }
+   
+   public int hashCode() {
+      return object.hashCode();
+   }
 }

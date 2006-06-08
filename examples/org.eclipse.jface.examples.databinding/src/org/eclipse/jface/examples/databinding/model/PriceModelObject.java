@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
+
 
 public class PriceModelObject extends ModelObject {
 	

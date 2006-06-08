@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.databinding.provisional;
 
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 
@@ -29,6 +30,8 @@ public class BindSpec {
 	private IConverter[] targetToModelConverters = new IConverter[1];;
 
 	private IValidator[] targetValidators = new IValidator[1];
+	
+	private LazyInsertDeleteProvider lazyInsertDeleteProvider = new LazyInsertDeleteProvider();
 
 	private IDomainValidator domainValidator;
 
@@ -94,6 +97,36 @@ public class BindSpec {
 		this.modelUpdatePolicy = modelUpdatePolicy;
 		this.validatePolicy = validatePolicy;
 		this.targetUpdatePolicy = targetUpdatePolicy;
+	}
+
+	/**
+	 * Creates a bind spec with the given converters, validators, and update
+	 * policies.
+	 * 
+	 * @param modelToTargetConverter
+	 * @param targetToModelConverter
+	 * @param targetValidator
+	 * @param domainValidator
+	 * @param modelUpdatePolicy
+	 * @param validatePolicy
+	 * @param targetUpdatePolicy
+	 * @param lazyInsertDeleteProvider 
+	 * 
+	 */
+	public BindSpec(IConverter[] modelToTargetConverter,
+			IConverter[] targetToModelConverter, IValidator[] targetValidator,
+			IDomainValidator domainValidator, Integer modelUpdatePolicy,
+			Integer validatePolicy, Integer targetUpdatePolicy,
+			LazyInsertDeleteProvider lazyInsertDeleteProvider) {
+		
+		this.modelToTargetConverters = modelToTargetConverter;
+		this.targetToModelConverters = targetToModelConverter;
+		this.targetValidators = targetValidator;
+		this.domainValidator = domainValidator;
+		this.modelUpdatePolicy = modelUpdatePolicy;
+		this.validatePolicy = validatePolicy;
+		this.targetUpdatePolicy = targetUpdatePolicy;
+		this.lazyInsertDeleteProvider = lazyInsertDeleteProvider;
 	}
 
 	/**
@@ -350,6 +383,24 @@ public class BindSpec {
 	 */
 	public BindSpec setValidatePolicy(Integer validatePolicy) {
 		this.validatePolicy = validatePolicy;
+		return this;
+	}
+
+	
+	/**
+	 * @return Returns the lazyInsertDeleteProvider.
+	 */
+	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
+		return lazyInsertDeleteProvider;
+	}
+	
+
+	/**
+	 * @param lazyInsertDeleteProvider The lazyInsertDeleteProvider to set.
+	 */
+	public BindSpec setLazyInsertDeleteProvider(
+			LazyInsertDeleteProvider lazyInsertDeleteProvider) {
+		this.lazyInsertDeleteProvider = lazyInsertDeleteProvider;
 		return this;
 	}
 

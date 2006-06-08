@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.examples.databinding.model.ModelObject;
+import org.eclipse.jface.examples.databinding.ModelObject;
 
 public class Person extends ModelObject {
 	

@@ -11,30 +11,24 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.conversion;
 
-import org.eclipse.jface.internal.databinding.internal.BindingMessages;
 
 
 
 /**
  * ConvertString2Boolean.
  */
-public class ConvertString2Boolean implements IConverter {
+public class ConvertString2Boolean extends ConvertString2BooleanPrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-        String s = (String) source;
-        if (s.equals(BindingMessages.getString("Yes")) || s.equals(BindingMessages.getString("yes")) || s.equals(BindingMessages.getString("true")) || s.equals(BindingMessages.getString("True"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            return Boolean.TRUE;
-        if (s.equals(BindingMessages.getString("No")) || s.equals(BindingMessages.getString("no")) || s.equals(BindingMessages.getString("false")) || s.equals(BindingMessages.getString("False")))    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-            return Boolean.FALSE;
-        
-		throw new IllegalArgumentException(s + " is not a legal boolean value"); //$NON-NLS-1$
-	}
-
-	public Object getFromType() {
-		return String.class;
+		String sourceString = (String) source;
+		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
+			return null;
+		} else {
+			return super.convert(source);
+        }
 	}
 
 	public Object getToType() {

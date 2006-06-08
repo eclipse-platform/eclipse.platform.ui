@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * Class CompositeTable. n. (1) An SWT virtual table control that extends
@@ -121,7 +123,6 @@ import org.eclipse.swt.widgets.Layout;
  * 
  * @author djo
  * @since 3.2
- * TODO: eliminate flicker when scrolling backwards
  */
 public class CompositeTable extends Canvas {
 
@@ -143,6 +144,7 @@ public class CompositeTable extends Canvas {
 
 	private Control rowControl = null;
 
+	// TODO: on public API methods that reference contentPane, make sure it's not null before doing anything
 	private InternalCompositeTable contentPane = null;
 
 	/**
@@ -309,6 +311,7 @@ public class CompositeTable extends Canvas {
 				rowConstructor = finalChildren[0].getClass().getConstructor(
 						new Class[] { Composite.class, Integer.TYPE });
 			} catch (Exception e) {
+				throw new RuntimeException("Unable to get constructor object for header or row", e);
 			}
 		} else {
 			try {
@@ -319,6 +322,7 @@ public class CompositeTable extends Canvas {
 						new Class[] { Composite.class, Integer.TYPE });
 				rowControl = finalChildren[1];
 			} catch (Exception e) {
+				throw new RuntimeException("Unable to get constructor object for header or row", e);
 			}
 		}
 
@@ -346,7 +350,11 @@ public class CompositeTable extends Canvas {
 		numChildrenLastTime = children.length;
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
-				getParent().layout(true);
+				if (!CompositeTable.this.isDisposed()) {
+					if (!getParent().isDisposed()) {
+						getParent().layout(true);
+					}
+				}
 			}
 		});
 	}
@@ -526,32 +534,32 @@ public class CompositeTable extends Canvas {
 		}
 	}
 
-	boolean gridLinesOn = true;
+	boolean linesVisible = true;
 
 	/**
-	 * Method isGridLinesOn. Returns if the CompositeTable will draw grid lines
+	 * Method getLinesVisible. Returns if the CompositeTable will draw grid lines
 	 * on the header and row Composite objects. This property is ignored if the
 	 * programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
 	 * @return true if the CompositeTable will draw grid lines; false otherwise.
 	 */
-	public boolean isGridLinesOn() {
-		return gridLinesOn;
+	public boolean getLinesVisible() {
+		return linesVisible;
 	}
 
 	/**
-	 * Method setGridLinesOn. Sets if the CompositeTable will draw grid lines on
+	 * Method setLinesVisible. Sets if the CompositeTable will draw grid lines on
 	 * the header and row Composite objects. This property is ignored if the
 	 * programmer has set a layout manager on the header and/or the row
 	 * prototype objects.
 	 * 
-	 * @param gridLinesOn
+	 * @param linesVisible
 	 *            true if the CompositeTable will draw grid lines; false
 	 *            otherwise.
 	 */
-	public void setGridLinesOn(boolean gridLinesOn) {
-		this.gridLinesOn = gridLinesOn;
+	public void setLinesVisible(boolean linesVisible) {
+		this.linesVisible = linesVisible;
 	}
 
 	String insertHint = "Press <Ctrl-INSERT> to insert new data."; //$NON-NLS-1$
@@ -710,6 +718,18 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
+	 * Makes sure that the focused row is visible
+	 * 
+	 * @return true if the display needed to be scrolled; false otherwise
+	 */
+	public boolean makeFocusedRowVisible() {
+		if (contentPane != null) {
+			return contentPane.makeFocusedRowVisible();
+		}
+		return false;
+	}
+	
+	/**
 	 * Method refreshAllRows. Refresh all visible rows in the CompositeTable
 	 * from the original data.
 	 */
@@ -781,12 +801,49 @@ public class CompositeTable extends Canvas {
 	public Control getCurrentRowControl() {
 		return contentPane.getCurrentRowControl();
 	}
+	
+	/**
+	 * Method getRowControls. Returns an array of SWT controls where each
+	 * control represents a row control in the CompositeTable's current scrolled
+	 * position. If CompositeTable is resized, scrolled, such that the rows that
+	 * the CompositeTable control is displaying change in any way, the array
+	 * that is returned by this method will become out of date and need to be
+	 * retrieved again.
+	 * 
+	 * @return Control[] An array of SWT Control objects, each representing an
+	 *         SWT row object.
+	 */
+	public Control[] getRowControls() {
+		return contentPane.getRowControls();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		if (contentPane != null) {
+			contentPane.setMenu(menu);
+		}
+	}
+	
+	/**
+	 * Method getControlRow.  Given a row control, returns its row number
+	 * relative to the topRow.
+	 * 
+	 * @param rowControl The row object to find
+	 * @return The row number of the rowControl relative to the topRow (0-based)
+	 * @throws IllegalArgumentException if rowControl is not currently visible
+	 */
+	public int getControlRow(Control rowControl) {
+		return contentPane.getControlRow(rowControl);
+	}
 
 	/**
 	 * Method getSelection. Returns the currently-selected (column, row) pair
 	 * where the row specifies the offset from the top of the table window. In
 	 * order to get the current row in the underlying data structure, use
-	 * getSelection().y + getCurrentRow().
+	 * getSelection().y + getTopRow().
 	 * 
 	 * @return the currently-selected (column, row) pair where the row specifies
 	 *         the offset from the top of the table window.
@@ -981,7 +1038,7 @@ public class CompositeTable extends Canvas {
 	 *            the rowConstructionListener to add.
 	 */
 	public void addRowConstructionListener(
-			IRowConstructionListener rowConstructionListener) {
+			RowConstructionListener rowConstructionListener) {
 		rowConstructionListeners.add(rowConstructionListener);
 	}
 
@@ -994,7 +1051,7 @@ public class CompositeTable extends Canvas {
 	 *            the rowConstructionListener to remove.
 	 */
 	public void removeRowConstructionListener(
-			IRowConstructionListener rowConstructionListener) {
+			RowConstructionListener rowConstructionListener) {
 		rowConstructionListeners.remove(rowConstructionListener);
 	}
 
@@ -1027,6 +1084,61 @@ public class CompositeTable extends Canvas {
 	 */
 	public void setDeleteEnabled(boolean deleteEnabled) {
 		this.deleteEnabled = deleteEnabled;
+	}
+	
+	LinkedList scrollListeners = new LinkedList();
+	
+	/**
+	 * Method addScrollListener.  Adds the specified scroll listener to the
+	 * list of listeners that will be notified when this CompositeTable control
+	 * scrolls the top-visible row.  This event is not fired when the 
+	 * CompositeTable is resized.
+	 * 
+	 * @param scrollListener the ScrollListener to add.
+	 */
+	public void addScrollListener(ScrollListener scrollListener) {
+		scrollListeners.add(scrollListener);
+	}
+	
+	/**
+	 * Method removeScrollListener.  Removes the specified scroll listener from the
+	 * list of listeners that will be notified when this CompositeTable control
+	 * scrolls the top-visible row.
+	 * 
+	 * @param scrollListener the ScrollListener to remove.
+	 */
+	public void removeScrollListener(ScrollListener scrollListener) {
+		scrollListeners.remove(scrollListener);
+	}
+
+	private boolean traverseOnTabsEnabled = true;
+	
+	/**
+	 * Method isTraverseOnTabsEnabled. Returns true if Tab and Shift-tab cause
+	 * the focus to wrap from the end of the table back to the beginning and
+	 * Enter causes the focus to advance. Returns false otherwise.
+	 * <p>
+	 * This property defaults to true.
+	 * 
+	 * @return true if CompositeTable is handling Tab, Shift-tab, and Enter key
+	 *         behavior; false otherwise.
+	 */
+	public boolean isTraverseOnTabsEnabled() {
+		return traverseOnTabsEnabled;
+	}
+
+	/**
+	 * Method setTraverseOnTabsEnabled. Sets if Tab and Shift-tab cause
+	 * the focus to wrap from the end of the table back to the beginning and
+	 * Enter causes the focus to advance.
+	 * <p>
+	 * This property defaults to true.
+	 * 
+	 * @param enabled true if CompositeTable is handling Tab, Shift-tab, and Enter key
+	 *         behavior; false otherwise.
+	 */
+	public void setTraverseOnTabsEnabled(boolean enabled) {
+		this.traverseOnTabsEnabled = enabled;
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

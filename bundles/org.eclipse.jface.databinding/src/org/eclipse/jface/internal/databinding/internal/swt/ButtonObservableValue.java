@@ -60,7 +60,7 @@ public class ButtonObservableValue extends AbstractObservableValue {
 	}
 
 	public Object getValueType() {
-		return boolean.class;
+		return Boolean.class;
 	}
 
 }

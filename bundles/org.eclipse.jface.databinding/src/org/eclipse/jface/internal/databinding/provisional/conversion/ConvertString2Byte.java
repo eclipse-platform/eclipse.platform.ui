@@ -17,21 +17,18 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 /**
  * ConvertString2Byte.
  */
-public class ConvertString2Byte implements IConverter {
+public class ConvertString2Byte extends ConvertString2BytePrimitive {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-        try {
-            return new Byte(Byte.parseByte((String) source));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("String2Byte: " + e.getMessage() + ": " + source); //$NON-NLS-1$ //$NON-NLS-2$
+		String sourceString = (String) source;
+		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
+			return null;
+		} else {
+			return super.convert(source);
         }
-	}
-
-	public Object getFromType() {
-		return String.class;
 	}
 
 	public Object getToType() {

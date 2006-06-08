@@ -11,35 +11,18 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.validation;
 
-import org.eclipse.jface.internal.databinding.internal.BindingMessages;
-
-
 /**
- * FloatValidator.  Verify string to float data conversion
+ * IntegerValidator.  Validate String to Float data input
  */
-public class String2FloatValidator implements IValidator {
+public class String2FloatValidator extends String2FloatPrimitiveValidator {
     
-	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*\\.?[0-9]*([0-9]+[e|E]\\-?([0-9]+\\.)?[0-9]*)?")) //$NON-NLS-1$
-            return null;
-
-        return ValidationError.error(getHint());
-	}
-    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
+     */
     public ValidationError isValid(Object value) {
-        try {
-            Float.parseFloat((String)value);
-            return null;
-        } catch (Exception e) {
-            return ValidationError.error(getHint());
-        }
+       if ("".equals(value)) { //$NON-NLS-1$
+          return null;
+       }
+       return super.isValid(value);
     }
-
-	private String getHint() {
-		return BindingMessages.getString("Validate_Like") +  //$NON-NLS-1$
-		BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
-		+ Float.MIN_VALUE + 
-		", " + Float.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 }

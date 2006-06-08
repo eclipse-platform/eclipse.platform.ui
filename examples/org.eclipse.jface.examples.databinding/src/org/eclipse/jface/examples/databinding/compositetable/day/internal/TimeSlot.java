@@ -10,11 +10,21 @@
  ******************************************************************************/
 package org.eclipse.jface.examples.databinding.compositetable.day.internal;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -40,12 +50,17 @@ public class TimeSlot extends Canvas {
 	private boolean focusControl = false;
 
 	private final Color WHITE;
-	private final Color BLACK;
-	private final Color CELL_BACKGROUND;
+	private final Color CELL_BACKGROUND_LIGHT;
+	private final Color CELL_BACKGROUND_WHITE;
 	private final Color CELL_BORDER_EMPHASIZED;
 	private final Color CELL_BORDER_LIGHT;
+	private final Color TIME_BAR_COLOR;
+	private final Color FOCUS_RUBBERBAND;
 
-	private final int TIME_BAR_WIDTH = 6;
+	/**
+	 * Width of the bar between events
+	 */
+	public static final int TIME_BAR_WIDTH = 3;
 
 	/**
 	 * Constructor EmptyTablePlaceholder. Construct an EmptyTablePlaceholder
@@ -63,18 +78,22 @@ public class TimeSlot extends Canvas {
 		addFocusListener(focusListener);
 		addPaintListener(paintListener);
 		addDisposeListener(disposeListener);
+		addKeyListener(keyListener);
+		addMouseListener(mouseListener);
 
 		Display display = Display.getCurrent();
 
 		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
-		BLACK = display.getSystemColor(SWT.COLOR_BLACK);
 
 		// Bluish color scheme by default; change as necessary.
-		CELL_BACKGROUND = new Color(display, 250, 250, 255);
+		CELL_BACKGROUND_LIGHT = new Color(display, 247, 247, 250);
+		CELL_BACKGROUND_WHITE = new Color(display, 255, 255, 255);
 		CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
 		CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
+		TIME_BAR_COLOR = new Color(display, 170, 170, 190);
+		FOCUS_RUBBERBAND = new Color(display, 100, 100, 170);
 
-		setBackground(CELL_BACKGROUND);
+		setBackground(CELL_BACKGROUND_LIGHT);
 	}
 
 	/**
@@ -85,12 +104,30 @@ public class TimeSlot extends Canvas {
 			removeTraverseListener(traverseListener);
 			removeFocusListener(focusListener);
 			removePaintListener(paintListener);
+			removeMouseListener(mouseListener);
+			removeKeyListener(keyListener);
 			removeDisposeListener(disposeListener);
 
 			// Dispose colors here
-			CELL_BACKGROUND.dispose();
+			CELL_BACKGROUND_LIGHT.dispose();
+			CELL_BACKGROUND_WHITE.dispose();
 			CELL_BORDER_EMPHASIZED.dispose();
 			CELL_BORDER_LIGHT.dispose();
+			TIME_BAR_COLOR.dispose();
+			FOCUS_RUBBERBAND.dispose();
+		}
+	};
+	
+	private KeyListener keyListener = new KeyAdapter() {
+		public void keyPressed(KeyEvent e) {
+			switch (e.keyCode) {
+			case SWT.ARROW_LEFT:
+				traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+				return;
+			case SWT.ARROW_RIGHT:
+				traverse(SWT.TRAVERSE_TAB_NEXT);
+				return;
+			}
 		}
 	};
 
@@ -129,17 +166,24 @@ public class TimeSlot extends Canvas {
 				gc.setBackground(WHITE);
 				gc.setForeground(WHITE);
 				gc.fillRectangle(0, 0, TIME_BAR_WIDTH, controlSize.y);
-				gc.setForeground(BLACK);
+				gc.setForeground(CELL_BORDER_LIGHT);
+				int lineStyle = gc.getLineStyle();
+				gc.setLineStyle(SWT.LINE_DOT);
 				gc.drawLine(TIME_BAR_WIDTH + 1, 0, TIME_BAR_WIDTH + 1,
 						controlSize.y);
+				gc.setLineStyle(lineStyle);
+				gc.setForeground(TIME_BAR_COLOR);
 				gc.drawLine(controlSize.x - 1, 0, controlSize.x - 1,
 						controlSize.y);
-				if (hourStart) {
+				if (isMinutesAfterHour(0)) {
 					gc.setForeground(CELL_BORDER_EMPHASIZED);
 				} else {
 					gc.setForeground(CELL_BORDER_LIGHT);
 				}
-				gc.drawLine(TIME_BAR_WIDTH + 2, 0, controlSize.x - 2, 0);
+//				gc.drawLine(TIME_BAR_WIDTH + 2, 0, controlSize.x - 2, 0);
+				if (isMinutesAfterHour(0) || isMinutesAfterHour(30) && !isAllDay()) {
+					gc.drawLine(0, 0, controlSize.x, 0);
+				}
 			} finally {
 				gc.setBackground(oldBackground);
 				gc.setForeground(oldForeground);
@@ -152,13 +196,14 @@ public class TimeSlot extends Canvas {
 				if (focusControl) {
 					gc.setLineStyle(SWT.LINE_DASH);
 					gc.setLineWidth(FOCUS_LINE_WIDTH);
+					gc.setForeground(FOCUS_RUBBERBAND);
 					Point parentSize = getSize();
-					gc.drawRectangle(TIME_BAR_WIDTH + FOCUS_LINE_WIDTH,
-									FOCUS_LINE_WIDTH, parentSize.x - TIME_BAR_WIDTH - 4,
-									parentSize.y - 3);
+					gc.drawRectangle(FOCUS_LINE_WIDTH,
+							FOCUS_LINE_WIDTH, parentSize.x - 4,
+							parentSize.y - 3);
 				}
 
-				gc.setForeground(CELL_BACKGROUND);
+				gc.setForeground(CELL_BACKGROUND_LIGHT);
 			} finally {
 				gc.setForeground(oldForeground);
 				gc.setLineStyle(oldLineStyle);
@@ -189,22 +234,53 @@ public class TimeSlot extends Canvas {
 		public void keyTraversed(TraverseEvent e) {
 		}
 	};
-
-	private boolean hourStart = true;
+	
+	private MouseListener mouseListener = new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			setFocus();
+		}
+	};
 
 	/**
-	 * @param isHourStart
+	 * @param minute The minute to check
+	 *  
+	 * @return true if the time falls on the specified minute of the hour.
+	 * false otherwise.
 	 */
-	public void setHourStart(boolean isHourStart) {
-		this.hourStart = isHourStart;
-		redraw();
+	public boolean isMinutesAfterHour(int minute) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(time);
+		return calendar.get(Calendar.MINUTE) == minute;
 	}
+	
+	private boolean allDay = false;
+	
+	/**
+	 * @param isAllDayEvent
+	 */
+	public void setAllDay(boolean isAllDayEvent) {
+		this.allDay = isAllDayEvent;
+		if (isAllDayEvent) {
+			setBackground(CELL_BACKGROUND_WHITE);
+		} else {
+			setBackground(CELL_BACKGROUND_LIGHT);
+		}
+	}
+	
+	/**
+	 * @return Returns the allDay.
+	 */
+	public boolean isAllDay() {
+		return allDay;
+	}
+	
+	private Date time = new Date();
 
 	/**
-	 * @return true if the current day represents the start of an hour; false
-	 *         otherwise.
+	 * @param currentTime
 	 */
-	public boolean isHourStart() {
-		return hourStart;
+	public void setTime(Date currentTime) {
+		this.time = currentTime;
+		redraw();
 	}
 }

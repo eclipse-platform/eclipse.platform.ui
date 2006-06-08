@@ -11,39 +11,18 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.validation;
 
-import org.eclipse.jface.internal.databinding.internal.BindingMessages;
-
-
 /**
- * ShortValidator.  Validate String to Short data input
+ * IntegerValidator.  Validate String to Short data input
  */
-public class String2ShortValidator implements IValidator {
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
-	 */
-	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-            return null;
-
-        return ValidationError.error(getHint());
-	}
+public class String2ShortValidator extends String2ShortPrimitiveValidator {
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.databinding.validator.IValidator#isValid(java.lang.Object)
      */
     public ValidationError isValid(Object value) {
-        try {
-            Short.parseShort((String)value);
-            return null;
-        } catch (Throwable t) {
-            return ValidationError.error(getHint());
-        }
+       if ("".equals(value)) { //$NON-NLS-1$
+          return null;
+       }
+       return super.isValid(value);
     }
-
-	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Short.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Short.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 }

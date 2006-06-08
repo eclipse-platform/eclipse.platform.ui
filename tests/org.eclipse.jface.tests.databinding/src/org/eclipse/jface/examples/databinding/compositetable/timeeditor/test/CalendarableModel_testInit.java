@@ -15,7 +15,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.examples.databinding.compositetable.timeeditor.Calendarable;
+import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableModel;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider;
@@ -44,12 +44,12 @@ public class CalendarableModel_testInit extends TestCase {
 			};
 		};
 		
-		cm.setDayEventCountProvider(ecp);
+		cm.setEventCountProvider(ecp);
 		assertNoRefreshCalled();
 		cm.setTimeBreakdown(1, 2);
 		assertNoRefreshCalled();
 		cm.setEventContentProvider(new EventContentProvider() {
-			public void refresh(Date day, Calendarable[] controls) {
+			public void refresh(Date day, CalendarableItem[] controls) {
 			}});
 		assertNoRefreshCalled();
 		cm.setStartDate(new Date());
@@ -79,6 +79,24 @@ public class CalendarableModel_testInit extends TestCase {
 			fail("IllegalArgumentException expected");
 		} catch(IllegalArgumentException e) {
 			//success
+		}
+	}
+	
+	public void testColumnWithinDayIsInitializedForOneDay() throws Exception {
+		final int NUM_DAYS=1;
+		cm.setTimeBreakdown(NUM_DAYS, 4);
+		assertColumnWithinDayIsInitialized(NUM_DAYS);
+	}
+
+	public void testColumnWithinDayIsInitializedForSeveralDays() throws Exception {
+		final int NUM_DAYS=5;
+		cm.setTimeBreakdown(NUM_DAYS, 4);
+		assertColumnWithinDayIsInitialized(NUM_DAYS);
+	}
+
+	private void assertColumnWithinDayIsInitialized(final int NUM_DAYS) {
+		for (int i=0; i < NUM_DAYS; ++i) {
+			assertEquals("It's initialized", -1, cm.getNumberOfColumnsWithinDay(i));
 		}
 	}
 }

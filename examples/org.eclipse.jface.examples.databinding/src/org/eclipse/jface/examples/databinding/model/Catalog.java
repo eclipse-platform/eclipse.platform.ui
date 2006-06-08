@@ -12,6 +12,8 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.*;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
+
 public class Catalog extends ModelObject {
 
 	private Category[] categories = new Category[0];
