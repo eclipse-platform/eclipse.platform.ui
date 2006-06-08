@@ -311,7 +311,6 @@ public class WorkbenchMessages extends NLS {
 	// Wizards
 	// ==============================================================================
 	public static String NewWizard_title;
-	public static String NestedContext_0;
 	public static String NewWizardNewPage_description;
 	public static String NewWizardNewPage_wizardsLabel;
 	public static String NewWizardNewPage_showAll;
@@ -323,7 +322,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String NewWizardsRegistryReader_otherCategory;
 	public static String NewWizardDropDown_text;
-	public static String WizardsGeneralCategory_label;
 	
 	public static String WorkbenchWizard_errorMessage;
 	public static String WorkbenchWizard_errorTitle;
@@ -512,7 +510,6 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_unknownEditorIDMessage;
 	public static String EditorManager_errorOpeningExternalEditor;
 	public static String EditorManager_unableToOpenExternalEditor;
-	public static String EditorManager_unableToOpenEditors;
 	public static String EditorManager_operationFailed;
 	public static String EditorManager_saveChangesQuestion;
 	public static String EditorManager_closeWithoutPromptingOption;
@@ -588,7 +585,6 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	// Workbench
 	// ==============================================================================
-	public static String Startup_DefaultProductName;
 	public static String Startup_Loading;
 	public static String Startup_Loading_Workbench;
 	public static String Startup_Done;
@@ -613,7 +609,6 @@ public class WorkbenchMessages extends NLS {
 	public static String PartPane_closeOthers;
 	public static String PartPane_closeAll;
 	public static String PartPane_newEditor;
-	public static String EditorManager_unableToRestoreEditorTitle;
 	public static String PluginAction_operationNotAvailableMessage;
 	public static String PluginAction_disabledMessage;
 	public static String ActionDescriptor_invalidLabel;
@@ -810,11 +805,7 @@ public class WorkbenchMessages extends NLS {
 	public static String FastViewBar_view_orientation;
 	public static String FastViewBar_horizontal;
 	public static String FastViewBar_vertical;
-	public static String FastViewBar_dock_on;
-	public static String FastViewBar_Left;
 	public static String FastViewBar_0;
-	public static String FastViewBar_Right;
-	public static String FastViewBar_Bottom;
 
 	public static String WorkbenchPlugin_extension;
 
@@ -835,12 +826,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String Dynamic_resetPerspectiveMessage;
 	public static String Dynamic_resetPerspectiveTitle;
-
-	//==============================================================
-	// Part Support
-
-	public static String PartSite_needsWidgetsError;
-	public static String PartFactory_wrongtype;
 
 	//==============================================================
 	// Undo/Redo Support
@@ -868,7 +853,6 @@ public class WorkbenchMessages extends NLS {
 	// Heap Status
 
 	public static String HeapStatus_status;
-	public static String HeapStatus_Error;
 	public static String HeapStatus_widthStr;
 	public static String HeapStatus_memoryToolTip;
 	public static String HeapStatus_meg;
@@ -912,13 +896,11 @@ public class WorkbenchMessages extends NLS {
     
     // Trim Menu item labels
     public static String TrimCommon_DockOn;
-    public static String TrimCommon_ShowTrim;
     public static String TrimCommon_Left;
     public static String TrimCommon_Right;
     public static String TrimCommon_Bottom;
     public static String TrimCommon_Top;
     public static String TrimCommon_Close;
-    public static String TrimCommon_Immediate;
 
     // Trim area Display Names
     public static String TrimCommon_Main_TrimName;
@@ -938,7 +920,6 @@ public class WorkbenchMessages extends NLS {
     public static String FastViewBar_show_view;
     
     // Content assist support
-    public static String ContentAssist_Cue_Description;
     public static String ContentAssist_Cue_Description_Key;
 
 

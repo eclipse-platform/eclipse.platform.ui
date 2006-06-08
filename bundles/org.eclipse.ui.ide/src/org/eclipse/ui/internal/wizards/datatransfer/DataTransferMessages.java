@@ -30,7 +30,6 @@ public class DataTransferMessages extends NLS {
 	public static String DataTransfer_refresh;
 	public static String DataTransfer_cannotOverwrite;
 	public static String DataTransfer_emptyString;
-	public static String DataTransfer_scanningChildren;
 	public static String DataTransfer_scanningMatching;
 	public static String DataTransfer_information;
 

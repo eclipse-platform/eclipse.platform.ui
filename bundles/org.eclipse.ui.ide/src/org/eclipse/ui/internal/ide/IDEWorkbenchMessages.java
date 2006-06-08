@@ -51,8 +51,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenWorkspaceAction_toolTip;
 	public static String OpenWorkspaceAction_errorTitle;
 	public static String OpenWorkspaceAction_errorMessage;
-	public static String CreateProjectAction_text;
-	public static String CreateProjectAction_toolTip;
 	public static String NewProjectAction_text;
 	public static String NewProjectAction_toolTip;
 	public static String NewExampleAction_text;
@@ -78,9 +76,6 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- Navigate Menu ---
 	public static String Workbench_navigate;
 	public static String Workbench_goTo;
-
-	public static String OpenWorkspaceFileAction_errorTitle;
-	public static String OpenWorkspaceFileAction_errorMessage;
 
 	public static String Workbench_showIn;
 
@@ -306,26 +301,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String MoveFilesAndFoldersOperation_problemMessage;
 	public static String MoveFilesAndFoldersOperation_operationTitle;
 
-
-	// ==============================================================================
-	// Capability selection group
-	// ==============================================================================
-	public static String ProjectCapabilitySelectionGroup_categories;
-	public static String ProjectCapabilitySelectionGroup_capabilities;
-	public static String ProjectCapabilitySelectionGroup_description;
-	public static String ProjectCapabilitySelectionGroup_grayItems;
-	public static String ProjectCapabilitySelectionGroup_disabledLabel;
-	public static String ProjectCapabilitySelectionGroup_errorTitle;
-	public static String ProjectCapabilitySelectionGroup_disabledCapability;
-	public static String ProjectCapabilitySelectionGroup_invalidCapability;
-	public static String ProjectCapabilitySelectionGroup_missingPrereqs;
-	public static String ProjectCapabilitySelectionGroup_requiredPrereq;
-	public static String ProjectCapabilitySelectionGroup_requiredPrereqs;
-	public static String ProjectCapabilitySelectionGroup_membershipConflict;
-	public static String ProjectCapabilitySelectionGroup_membershipPrereqConflict;
-
-	public static String Capability_nameMissing;
-
 	public static String ICategory_other;
 
 	public static String WizardDataTransfer_existsQuestion;
@@ -338,25 +313,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String NewProjectWizard_windowTitle;
 	public static String NewProjectWizard_title;
 	public static String NewProjectWizard_errorTitle;
-	public static String NewProjectWizard_invalidCapabilities;
 	public static String NewProjectWizard_noWizard;
 
 	public static String CreateProjectWizard_errorTitle;
 	public static String CreateProjectWizard_internalError;
 	public static String CreateProjectWizard_caseVariantExistsError;
 
-	public static String RemoveCapabilityWizard_errorMessage;
-	public static String RemoveCapabilityWizard_internalError;
-
-	public static String WizardNewProjectCapabilityPage_description;
-	public static String WizardNewProjectCapabilityPage_noCapabilities;
 	public static String WizardProjectReviewPage_description;
 	public static String WizardProjectConfigurePage_description;
-
-	public static String UpdateProjectCapabilityWizard_windowTitle;
-	public static String UpdateProjectCapabilityWizard_title;
-	public static String UpdateProjectCapabilityWizard_errorTitle;
-	public static String UpdateProjectCapabilityWizard_noWizard;
 
 	public static String WizardStepGroup_stepsLabel;
 	public static String MultiStepReviewWizardPage_detailsLabel;
@@ -367,21 +331,6 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String CreateProjectStep_label;
 	public static String CreateProjectStep_details;
-
-	public static String InstallCapabilityStep_label;
-
-	public static String RemoveCapabilityStep_label;
-	public static String RemoveCapabilityStep_defaultDescription0;
-	public static String RemoveCapabilityStep_defaultDescription1;
-	public static String RemoveCapabilityStep_defaultDescription2;
-
-	public static String ProjectCapabilitySimpleSelectionPage_description;
-	public static String ProjectCapabilitySimpleSelectionPage_title;
-	public static String ProjectCapabilitySimpleSelectionPage_windowTitle;
-	public static String ProjectCapabilitySimpleSelectionPage_capabilityExist;
-	public static String ProjectCapabilitySimpleSelectionPage_capabilityRequired;
-	public static String ProjectCapabilitySimpleSelectionPage_capabilityMissing;
-	public static String ProjectCapabilitySimpleSelectionPage_capabilitySet;
 
 	// --- Import ---
 	public static String WizardImportPage_specifyFolder;
@@ -591,17 +540,6 @@ public class IDEWorkbenchMessages extends NLS {
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
-
-	// --- Project Capabilities ---
-	public static String ProjectCapabilityPropertyPage_chooseCapabilities;
-	public static String ProjectCapabilityPropertyPage_noCapabilities;
-	public static String ProjectCapabilityPropertyPage_errorTitle;
-	public static String ProjectCapabilityPropertyPage_internalError;
-	public static String ProjectCapabilityPropertyPage_invalidSelection;
-
-	public static String ProjectCapabilityEditingPropertyPage_add;
-	public static String ProjectCapabilityEditingPropertyPage_remove;
-	public static String ProjectCapabilityPropertyPage_capabilityRequired;
 
 	// ==============================================================================
 	// Editors

@@ -72,8 +72,6 @@ public class ResourceNavigatorMessages extends NLS {
 	public static String DragAdapter_title;
 	public static String DragAdapter_checkDeleteMessage;
 
-	public static String LocalSelectionTransfer_errorMessage;
-
 	public static String CopyToClipboardProblemDialog_title;
 	public static String CopyToClipboardProblemDialog_message;
 
