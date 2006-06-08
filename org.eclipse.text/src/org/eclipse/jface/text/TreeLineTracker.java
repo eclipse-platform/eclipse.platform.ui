@@ -32,6 +32,12 @@ import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
  * <p>
  * This class must be subclassed.
  * </p>
+ * <p>
+ * <strong>Performance:</strong> The query operations perform in <i>O(log n)</i> where <var>n</var>
+ * is the number of lines in the document. The modification operations roughly perform in <i>O(l *
+ * log n)</i> where <var>n</var> is the number of lines in the document and <var>l</var> is the
+ * sum of the number of removed, added or modified lines.
+ * </p>
  * 
  * @since 3.2
  */
