@@ -44,11 +44,8 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
 
 /**
- * Control which is capable of selecting elements of a refactoring history. The
+ * Control which is capable of browsing elements of a refactoring history. The
  * refactoring history can be sorted by project or by timestamps.
- * <p>
- * This control expects a control configuration with a checkable tree viewer.
- * </p>
  * 
  * @since 3.2
  */
@@ -74,8 +71,8 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 			provider.setSortProjects(true);
 			fHistoryViewer.setSorter(fViewerSorter);
 			fHistoryViewer.refresh(false);
-			setExpandedState();
 			reconcileCheckState();
+			reconcileSelectionState();
 			fSortProjects.setChecked(true);
 			fSortTimestamps.setChecked(false);
 		}
@@ -89,8 +86,8 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 			provider.setSortProjects(false);
 			fHistoryViewer.setSorter(null);
 			fHistoryViewer.refresh(false);
-			setExpandedState();
 			reconcileCheckState();
+			reconcileSelectionState();
 			fSortTimestamps.setChecked(true);
 			fSortProjects.setChecked(false);
 		}
@@ -357,6 +354,22 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 			return extended.isSortProjects();
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setHistoryControlEnablement() {
+		super.setHistoryControlEnablement();
+		boolean enable= false;
+		final RefactoringHistory history= (RefactoringHistory) fHistoryViewer.getInput();
+		if (history != null) {
+			final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
+			if (proxies.length > 0)
+				enable= true;
+		}
+		fSortProjects.setEnabled(enable);
+		fSortTimestamps.setEnabled(enable);
 	}
 
 	/**
