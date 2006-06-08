@@ -17,8 +17,7 @@ import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -45,7 +44,7 @@ import org.eclipse.osgi.util.NLS;
  *  -  when projects are deleted, opened, closed, or moved 
  *  - when linked resources are created, deleted, or moved.
  */
-public class AliasManager implements IManager, ILifecycleListener {
+public class AliasManager implements IManager, ILifecycleListener, IResourceChangeListener {
 	public class AddToCollectionDoit implements Doit {
 		Collection collection;
 
@@ -279,10 +278,28 @@ public class AliasManager implements IManager, ILifecycleListener {
 	protected final HashSet aliases = new HashSet();
 
 	/**
+	 * The set of resources that have had structure changes that might
+	 * invalidate the locations map or aliased projects set.  These will be
+	 * updated incrementally on the next alias request.
+	 */
+	private final Set changedLinks = new HashSet();
+
+	/**
+	 * This flag is true when projects have been created or deleted and the
+	 * location map has not been updated accordingly.
+	 */
+	private boolean changedProjects = false;
+
+	/**
 	 * The Doit class used for finding aliases.
 	 */
 	private final FindAliasesDoit findAliases = new FindAliasesDoit();
 
+	/**
+	 * This maps IFileStore ->IResource, associating a file system location
+	 * with the projects and/or linked resources that are rooted at that location.
+	 */
+	protected final LocationMap locationsMap = new LocationMap();
 	/**
 	 * The total number of resources in the workspace that are not in the default
 	 * location. This includes all linked resources, including linked resources
@@ -293,18 +310,6 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 */
 	private int nonDefaultResourceCount = 0;
 
-	/**
-	 * This maps IFileStore ->IResource, associating a file system location
-	 * with the projects and/or linked resources that are rooted at that location.
-	 */
-	protected final LocationMap locationsMap = new LocationMap();
-
-	/**
-	 * The set of resources that have had structure changes that might
-	 * invalidate the locations map or aliased projects set.  These will be
-	 * updated incrementally on the next alias request.
-	 */
-	private final Set structureChanges = new HashSet();
 	/**
 	 * The suffix object is also used only during the computeAliases method.
 	 * In this case it is a field because it is referenced from an inner class
@@ -318,12 +323,6 @@ public class AliasManager implements IManager, ILifecycleListener {
 
 	public AliasManager(Workspace workspace) {
 		this.workspace = workspace;
-	}
-
-	private void addToLocationsMap(IResource link, IFileStore location) {
-		if (location != null)
-			if (locationsMap.add(location, link))
-				nonDefaultResourceCount++;
 	}
 
 	private void addToLocationsMap(IProject project) {
@@ -351,6 +350,12 @@ public class AliasManager implements IManager, ILifecycleListener {
 		}
 	}
 
+	private void addToLocationsMap(IResource link, IFileStore location) {
+		if (location != null)
+			if (locationsMap.add(location, link))
+				nonDefaultResourceCount++;
+	}
+
 	/**
 	 * Builds the table of aliased projects from scratch.
 	 */
@@ -376,6 +381,29 @@ public class AliasManager implements IManager, ILifecycleListener {
 		for (int i = 0; i < projects.length; i++) {
 			addToLocationsMap(projects[i]);
 		}
+	}
+
+	/**
+	 * A project alias needs updating.  If the project location has been deleted,
+	 * then the project should be deleted from the workspace.  This differs
+	 * from the refresh local strategy, but operations performed from within
+	 * the workspace must never leave a resource out of sync.
+	 * @param project The project to check for deletion
+	 * @param location The project location
+	 * @return <code>true</code> if the project has been deleted, and <code>false</code> otherwise
+	 * @exception CoreException
+	 */
+	private boolean checkDeletion(Project project, IFileStore location) throws CoreException {
+		if (project.exists() && !location.fetchInfo().exists()) {
+			//perform internal deletion of project from workspace tree because
+			// it is already deleted from disk and we can't acquire a different
+			//scheduling rule in this context (none is needed because we are
+			//within scope of the workspace lock)
+			Assert.isTrue(workspace.getWorkManager().getLock().getDepth() > 0);
+			project.deleteResource(false, null);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -475,35 +503,22 @@ public class AliasManager implements IManager, ILifecycleListener {
 		 * next alias request.
 		 */
 		switch (event.kind) {
-			case LifecycleEvent.PRE_PROJECT_CLOSE :
-			case LifecycleEvent.PRE_PROJECT_DELETE :
-				removeFromLocationsMap((IProject) event.resource);
-				//fall through
-			case LifecycleEvent.PRE_PROJECT_CREATE :
-			case LifecycleEvent.PRE_PROJECT_OPEN :
-				structureChanges.add(event.resource);
-				break;
 			case LifecycleEvent.PRE_LINK_DELETE :
 				Resource link = (Resource) event.resource;
 				if (link.isLinked())
 					removeFromLocationsMap(link, link.getStore());
 				//fall through
 			case LifecycleEvent.PRE_LINK_CREATE :
-				structureChanges.add(event.resource);
+				changedLinks.add(event.resource);
 				break;
-			case LifecycleEvent.PRE_PROJECT_COPY :
 			case LifecycleEvent.PRE_LINK_COPY :
-				structureChanges.add(event.newResource);
-				break;
-			case LifecycleEvent.PRE_PROJECT_MOVE :
-				removeFromLocationsMap((IProject) event.resource);
-				structureChanges.add(event.newResource);
+				changedLinks.add(event.newResource);
 				break;
 			case LifecycleEvent.PRE_LINK_MOVE :
 				link = (Resource) event.resource;
 				if (link.isLinked())
 					removeFromLocationsMap(link, link.getStore());
-				structureChanges.add(event.newResource);
+				changedLinks.add(event.newResource);
 				break;
 		}
 	}
@@ -519,11 +534,18 @@ public class AliasManager implements IManager, ILifecycleListener {
 		boolean noAliases = !aliasedProjects.contains(project);
 
 		//now update any structure changes and check again if an update is needed
-		if (!structureChanges.isEmpty()) {
+		if (hasStructureChanges()) {
 			updateStructureChanges();
 			noAliases &= nonDefaultResourceCount <= 0 || !aliasedProjects.contains(project);
 		}
 		return noAliases;
+	}
+
+	/**
+	 * Returns whether there are any structure changes that we have not yet processed.
+	 */
+	private boolean hasStructureChanges() {
+		return changedProjects || !changedLinks.isEmpty();
 	}
 
 	/**
@@ -586,11 +608,21 @@ public class AliasManager implements IManager, ILifecycleListener {
 				nonDefaultResourceCount--;
 	}
 
+	public void resourceChanged(IResourceChangeEvent event) {
+		final IResourceDelta delta = event.getDelta();
+		if (delta == null)
+			return;
+		//invalidate location map if there are added or removed projects.
+		if (delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED).length > 0)
+			changedProjects = true;
+	}
+
 	/* (non-Javadoc)
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
 	public void shutdown(IProgressMonitor monitor) {
-		// do nothing
+		workspace.removeResourceChangeListener(this);
+		locationsMap.clear();
 	}
 
 	/* (non-Javadoc)
@@ -598,6 +630,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 */
 	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);
+		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		buildLocationsMap();
 		buildAliasedProjectsSet();
 	}
@@ -638,46 +671,32 @@ public class AliasManager implements IManager, ILifecycleListener {
 	}
 
 	/**
-	 * A project alias needs updating.  If the project location has been deleted,
-	 * then the project should be deleted from the workspace.  This differs
-	 * from the refresh local strategy, but operations performed from within
-	 * the workspace must never leave a resource out of sync.
-	 * @param project The project to check for deletion
-	 * @param location The project location
-	 * @return <code>true</code> if the project has been deleted, and <code>false</code> otherwise
-	 * @exception CoreException
-	 */
-	private boolean checkDeletion(Project project, IFileStore location) throws CoreException {
-		if (project.exists() && !location.fetchInfo().exists()) {
-			//perform internal deletion of project from workspace tree because
-			// it is already deleted from disk and we can't acquire a different
-			//scheduling rule in this context (none is needed because we are
-			//within scope of the workspace lock)
-			Assert.isTrue(workspace.getWorkManager().getLock().getDepth() > 0);
-			project.deleteResource(false, null);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Process any structural changes that have occurred since the last alias
 	 * request.
 	 */
 	private void updateStructureChanges() {
 		boolean hadChanges = false;
-		for (Iterator it = structureChanges.iterator(); it.hasNext();) {
-			IResource resource = (IResource) it.next();
+		if (changedProjects) {
+			//if a project is added or removed, just recompute the whole world
+			changedProjects = false;
 			hadChanges = true;
-			if (!resource.isAccessible())
-				continue;
-			if (resource.getType() == IResource.PROJECT)
-				addToLocationsMap((IProject) resource);
-			else if (resource.isLinked())
-				addToLocationsMap(resource, ((Resource) resource).getStore());
+			buildLocationsMap();
+		} else {
+			//incrementally update location map for changed links
+			for (Iterator it = changedLinks.iterator(); it.hasNext();) {
+				IResource resource = (IResource) it.next();
+				hadChanges = true;
+				if (!resource.isAccessible())
+					continue;
+				if (resource.getType() == IResource.PROJECT)
+					addToLocationsMap((IProject) resource);
+				else if (resource.isLinked())
+					addToLocationsMap(resource, ((Resource) resource).getStore());
+			}
 		}
-		structureChanges.clear();
+		changedLinks.clear();
 		if (hadChanges)
 			buildAliasedProjectsSet();
+		changedProjects = false;
 	}
 }
