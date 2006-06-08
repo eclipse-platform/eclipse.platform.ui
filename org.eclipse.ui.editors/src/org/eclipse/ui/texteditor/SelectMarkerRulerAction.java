@@ -11,25 +11,23 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -41,6 +39,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -62,8 +61,6 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	private IVerticalRulerInfo fRuler;
 	/** The associated editor. */
 	private ITextEditor fTextEditor;
-	/** The cached list of markers including a given vertical ruler location. */
-	private List fMarkers;
 	/** The action's resource bundle. */
 	private ResourceBundle fBundle;
 	/** The prefix for resource bundle lookups. */
@@ -108,8 +105,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		fMarkers= getMarkers();
-		setEnabled(!fMarkers.isEmpty());
+		setEnabled(hasMarkers());
 	}
 
 	/*
@@ -117,7 +113,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	public void run() {
 
-		IMarker marker= chooseMarker(fMarkers);
+		IMarker marker= chooseMarker(getMarkers());
 		if (marker == null)
 			return;
 
@@ -304,6 +300,31 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	}
 
 	/**
+	 * Checks whether a position includes the ruler's line of activity.
+	 *
+	 * @param position the position to be checked
+	 * @param document the document the position refers to
+	 * @param line the line of the last ruler activity
+	 * @return <code>true</code> if the line is included by the given position
+	 * @since 3.3
+	 */
+	private boolean includesLine(Position position, IDocument document, int line) {
+
+		if (position != null) {
+			try {
+				int markerLine= document.getLineOfOffset(position.getOffset());
+				if (line == markerLine)
+					return true;
+				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
+				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
+			} catch (BadLocationException x) {
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Handles core exceptions. This implementation logs the exceptions
 	 * with the workbench plug-in and shows an error dialog.
 	 *
@@ -330,31 +351,96 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns all markers which include the ruler's line of activity.
 	 *
-	 * @return a list with all markers which include the ruler's line of activity
+	 * @return an unmodifiable list with all markers which include the ruler's line of activity
+	 *         (element type: {@link IMarker})
 	 */
 	protected List getMarkers() {
+		final IResource resource= getResource();
+		if (resource == null || !resource.exists())
+			return Collections.EMPTY_LIST;
 
-		List markers= new ArrayList();
+		final IDocument document= getDocument();
+		if (document == null)
+			return Collections.EMPTY_LIST;
 
-		IResource resource= getResource();
-		IDocument document= getDocument();
-		AbstractMarkerAnnotationModel model= getAnnotationModel();
+		final AbstractMarkerAnnotationModel model= getAnnotationModel();
+		if (model == null)
+			return Collections.EMPTY_LIST;
 
-		if (resource != null && model != null && resource.exists()) {
-			try {
-				IMarker[] allMarkers= resource.findMarkers(null, true, IResource.DEPTH_ZERO);
-				if (allMarkers != null) {
-					for (int i= 0; i < allMarkers.length; i++) {
-						if (includesRulerLine(model.getMarkerPosition(allMarkers[i]), document)) {
-							markers.add(allMarkers[i]);
-						}
-					}
+		final IMarker[] allMarkers;
+		try {
+			allMarkers= resource.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch (CoreException x) {
+			handleCoreException(x, TextEditorMessages.SelectMarkerRulerAction_getMarker);
+			return Collections.EMPTY_LIST;
+		}
+
+		if (allMarkers.length == 0)
+			return Collections.EMPTY_LIST;
+
+		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
+		List markers= null;
+		for (Iterator it= model.getAnnotationIterator(); it.hasNext();) {
+			Annotation annotation= (Annotation) it.next();
+			if (annotation instanceof MarkerAnnotation) {
+				Position position= model.getPosition(annotation);
+				if (includesLine(position, document, activeLine)) {
+					if (markers == null)
+						markers= new ArrayList(10);
+
+					markers.add(((MarkerAnnotation) annotation).getMarker());
 				}
-			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.SelectMarkerRulerAction_getMarker);
 			}
 		}
 
-		return markers;
+		if (markers == null)
+			return Collections.EMPTY_LIST;
+
+		return Collections.unmodifiableList(markers);
+	}
+
+	/**
+	 * Returns all markers which include the ruler's line of activity.
+	 *
+	 * @return an unmodifiable list with all markers which include the ruler's line of activity
+	 *         (element type: {@link IMarker})
+	 * @since 3.3
+	 */
+	protected boolean hasMarkers() {
+		final IResource resource= getResource();
+		if (resource == null || !resource.exists())
+			return false;
+
+		final IDocument document= getDocument();
+		if (document == null)
+			return false;
+
+		final AbstractMarkerAnnotationModel model= getAnnotationModel();
+		if (model == null)
+			return false;
+
+		final IMarker[] allMarkers;
+		try {
+			allMarkers= resource.findMarkers(null, true, IResource.DEPTH_ZERO);
+		} catch (CoreException x) {
+			handleCoreException(x, TextEditorMessages.SelectMarkerRulerAction_getMarker);
+			return false;
+		}
+
+		if (allMarkers.length == 0)
+			return false;
+
+		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
+		for (Iterator it= model.getAnnotationIterator(); it.hasNext();) {
+			Annotation annotation= (Annotation) it.next();
+			if (annotation instanceof MarkerAnnotation) {
+				Position position= model.getPosition(annotation);
+				if (includesLine(position, document, activeLine)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

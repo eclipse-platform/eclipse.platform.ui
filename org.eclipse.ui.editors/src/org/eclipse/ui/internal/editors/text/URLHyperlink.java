@@ -29,7 +29,6 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 	
 	private String fURLString;
-	private IWebBrowser fBrowser;
 	
 	/**
 	 * Creates a new URL hyperlink.
@@ -40,15 +39,6 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 	public URLHyperlink(IRegion region, String urlString) {
 		super(region, urlString);
 		fURLString= urlString;
-		
-		// Create the browser
-		IWorkbenchBrowserSupport support= PlatformUI.getWorkbench().getBrowserSupport();
-		try {
-			fBrowser= support.createBrowser(null);
-		} catch (PartInitException e) {
-			EditorsPlugin.logErrorStatus("Could not create Web browser for URLHyperlink", e.getStatus()); //$NON-NLS-1$
-			fBrowser= null;
-		}
 	}
 	
 	/*
@@ -56,13 +46,19 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 	 * @since 3.1
 	 */
 	public void open() {
-		if (fBrowser == null) {
+		// Create the browser
+		IWorkbenchBrowserSupport support= PlatformUI.getWorkbench().getBrowserSupport();
+		IWebBrowser browser;
+		try {
+			browser= support.createBrowser(null);
+		} catch (PartInitException e) {
+			EditorsPlugin.logErrorStatus("Could not create Web browser for URLHyperlink", e.getStatus()); //$NON-NLS-1$
 			super.open();
 			return;
 		}
-		
+
 		try {
-			fBrowser.openURL(new URL(fURLString));
+			browser.openURL(new URL(fURLString));
 		} catch (PartInitException e) {
 			super.open();
 		} catch (MalformedURLException e) {
