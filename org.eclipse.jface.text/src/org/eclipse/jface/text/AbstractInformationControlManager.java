@@ -785,7 +785,7 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
 
-		Rectangle displayBounds= fSubjectControl.getDisplay().getClientArea();
+		Rectangle displayBounds= fSubjectControl.getMonitor().getClientArea();
 
 		Point upperLeft;
 		Anchor testAnchor= fAnchor;
@@ -901,7 +901,7 @@ abstract public class AbstractInformationControlManager {
 
 			informationControl.setLocation(location);
 			
-			Rectangle displayBounds= fSubjectControl.getDisplay().getClientArea();
+			Rectangle displayBounds= fSubjectControl.getMonitor().getClientArea();
 			
 			// Make sure it fits on the screen
 			boolean resize= false;

@@ -85,8 +85,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				return;
 			}
 
-			if (fSensitiveToTextChanges || event.getDocumentEvent() == null)
+			boolean viewerCompletelyShown= isViewerCompletelyShown();
+			if (viewerCompletelyShown || fSensitiveToTextChanges || event.getDocumentEvent() == null)
 				postRedraw();
+			fSensitiveToTextChanges= viewerCompletelyShown;
 		}
 	}
 
@@ -641,8 +643,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.2
 	 */
 	void doPaint(GC gc, ILineRange visibleLines) {
-		fSensitiveToTextChanges= isViewerCompletelyShown();
-
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		Display display= fCachedTextWidget.getDisplay();
 		

@@ -570,7 +570,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			location= fContentAssistSubjectControlAdapter.getControl().toDisplay(location);
 
 			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			Rectangle displayBounds= shell.getMonitor().getClientArea();
 
 			location.y= location.y - shellBounds.height;
 
@@ -587,7 +587,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			location= fContentAssistSubjectControlAdapter.getControl().toDisplay(location);
 
 			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			Rectangle displayBounds= shell.getMonitor().getClientArea();
 
 			location.y= location.y + fContentAssistSubjectControlAdapter.getLineHeight();
 			shiftHorizontalLocation(location, shellBounds, displayBounds);
@@ -605,7 +605,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			p= parent.toDisplay(p);
 
 			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			Rectangle displayBounds= shell.getMonitor().getClientArea();
 			shiftHorizontalLocation(p, shellBounds, displayBounds);
 			shiftVerticalLocation(p, shellBounds, displayBounds);
 
