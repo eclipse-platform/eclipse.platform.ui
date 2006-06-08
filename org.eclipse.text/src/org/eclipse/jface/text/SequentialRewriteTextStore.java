@@ -22,6 +22,7 @@ import java.util.LinkedList;
  * by applying the patch commands to the source text store.
  *
  * @since 2.0
+ * @deprecated since 3.3 as {@link GapTextStore} performs better even for sequential rewrite scenarios
  */
 public class SequentialRewriteTextStore implements ITextStore {
 
