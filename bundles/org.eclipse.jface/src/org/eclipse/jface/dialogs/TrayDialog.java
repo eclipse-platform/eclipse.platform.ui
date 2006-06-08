@@ -153,7 +153,7 @@ public abstract class TrayDialog extends Dialog {
     	layout.marginHeight = 0;
     	layout.horizontalSpacing = 0;
     	composite.setLayout(layout);
-    	composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    	composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
     	composite.setFont(parent.getFont());
 
 		// create help control if needed
