@@ -108,6 +108,13 @@ public class EditMask {
 	}
 	
 	/**
+	 * @return the underlying Text control used by EditMask
+	 */
+	public Text getControl() {
+		return this.text;
+	}
+	
+	/**
 	 * Set the edit mask string on the edit mask control.
 	 * 
 	 * @param editMask The edit mask string
