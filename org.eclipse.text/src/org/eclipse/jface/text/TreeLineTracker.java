@@ -152,20 +152,6 @@ abstract class TreeLineTracker implements ILineTracker {
 	 */
 	private Node fRoot= new Node(0, NO_DELIM);
 
-	/*
-	 * Hints storing a line's offset / line index. Replace with a thread-local cache for multi
-	 * threading.
-	 */
-	/**
-	 * The line offset of the line last queried with {@link #nodeByOffset(int, int[])}.
-	 */
-//	private int lineHint;
-	/**
-	 * The character offset of the line last queried with  {@link #nodeByOffset(int, int[])} or
-	 * {@link #nodeByLine(int, int[])}.
-	 */
-//	private int offsetHint;
-	
 	/**
 	 * Creates a new line tracker.
 	 */
@@ -207,8 +193,7 @@ abstract class TreeLineTracker implements ILineTracker {
     }
 
 	/**
-	 * Returns the node (line) including a certain offset. <code>hints[0]</code> is set to the offset
-	 * and <code>hints[1]</code> to the line number of the returned line. If the offset is between two
+	 * Returns the node (line) including a certain offset. If the offset is between two
 	 * lines, the line starting at <code>offset</code> is returned.
 	 * <p>
 	 * This means that for offsets smaller than the length, the following holds:
@@ -224,11 +209,10 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * </p>
 	 * 
 	 * @param offset a document offset
-	 * @param hints the hint array with offset and line number
 	 * @return the line starting at or containing <code>offset</code>
 	 * @throws BadLocationException if the offset is invalid
 	 */
-	private Node nodeByOffset(final int offset, int[] hints) throws BadLocationException {
+	private Node nodeByOffset(final int offset) throws BadLocationException {
 		/*
 		 * Works for any binary search tree.
 		 */
@@ -247,37 +231,26 @@ abstract class TreeLineTracker implements ILineTracker {
 				line+= node.line;
 				if (remaining < node.length
 						|| remaining == node.length && node.right == null) { // last line
-					hints[0]= offset - remaining;
-					hints[1]= line;
-					return node;
+					break;
 				}
 				remaining -= node.length;
 				line ++;
 				node= node.right;
 			}
 		}
+		
+		return node;
 	}
 	/**
-	 * Returns the line number for the given offset. If the offset is between
-	 * two lines, the line starting at <code>offset</code> is returned.
-	 * <p>
-	 * This means that for offsets smaller than the length, the following holds:
-	 * </p>
-	 * <p>
-	 * <code>line.offset <= offset < line.offset + offset.length</code>.
-	 * </p>
-	 * <p>
-	 * If <code>offset</code> is the document length, then this is true:
-	 * </p>
-	 * <p>
-	 * <code>offset= line.offset + line.length</code>.
-	 * </p>
+	 * Returns the line number for the given offset. If the offset is between two lines, the line
+	 * starting at <code>offset</code> is returned. The last line is returned if
+	 * <code>offset</code> is equal to the document length.
 	 * 
 	 * @param offset a document offset
 	 * @return the line number starting at or containing <code>offset</code>
 	 * @throws BadLocationException if the offset is invalid
 	 */
-	private int lineOfOffset(final int offset) throws BadLocationException {
+	private int lineByOffset(final int offset) throws BadLocationException {
 		/*
 		 * Works for any binary search tree.
 		 */
@@ -305,16 +278,14 @@ abstract class TreeLineTracker implements ILineTracker {
 	}
 	
 	/**
-	 * Returns the node (line) with the given line number. <code>hints[0]</code> is set to the offset
-	 * of the returned line. Note that the last line is always incomplete, i.e. has the
-	 * {@link #NO_DELIM} delimiter.
+	 * Returns the node (line) with the given line number. Note that the last line is always
+	 * incomplete, i.e. has the {@link #NO_DELIM} delimiter.
 	 * 
 	 * @param line a line number
-	 * @param offsetHint the offset hint array
 	 * @return the line with the given line number
 	 * @throws BadLocationException if the line is invalid
 	 */
-	private Node nodeByLine(final int line, int[] offsetHint) throws BadLocationException {
+	private Node nodeByLine(final int line) throws BadLocationException {
 		/*
 		 * Works for any binary search tree.
 		 */
@@ -326,11 +297,8 @@ abstract class TreeLineTracker implements ILineTracker {
 			if (node == null)
 				fail(line);
 			
-			if (remaining == node.line) {
-				if (offsetHint != null)
-					offsetHint[0]= offset + node.offset;
-				return node;
-			}
+			if (remaining == node.line)
+				break;
 			if (remaining < node.line) {
 				node= node.left;
 			} else {
@@ -339,6 +307,8 @@ abstract class TreeLineTracker implements ILineTracker {
 				node= node.right;
 			}
 		}
+		
+		return node;
 	}
 	
 	/**
@@ -627,16 +597,36 @@ abstract class TreeLineTracker implements ILineTracker {
 	public final void replace(int offset, int length, String text) throws BadLocationException {
 		if (ASSERT) checkTree();
 		
-		int[] hints= new int[2];
-		Node first= nodeByOffset(offset, hints);
+		// Inlined nodeByOffset as we need both node and offset
+		int remaining= offset;
+		Node first= fRoot;
+		final int firstNodeOffset;
+		
+		while (true) {
+			if (first == null)
+				fail(offset);
+			
+			if (remaining < first.offset) {
+				first= first.left;
+			} else {
+				remaining -= first.offset;
+				if (remaining < first.length
+						|| remaining == first.length && first.right == null) { // last line
+					firstNodeOffset= offset - remaining;
+					break;
+				}
+				remaining -= first.length;
+				first= first.right;
+			}
+		}
+		// Inline nodeByOffset end
 		if (ASSERT) Assert.isTrue(first != null);
-		int firstNodeOffset= hints[0];
 		
 		Node last;
 		if (offset + length < firstNodeOffset + first.length)
 			last= first;
 		else
-			last= nodeByOffset(offset + length, hints);
+			last= nodeByOffset(offset + length);
 		if (ASSERT) Assert.isTrue(last != null);
 		
 		int firstLineDelta= firstNodeOffset + first.length - offset;
@@ -673,16 +663,23 @@ abstract class TreeLineTracker implements ILineTracker {
 			String remDelim= node.delimiter;
 			
 			// join the first line with the first added
-			int firstLength= info.delimiterIndex + info.delimiterLength;
-			int delta= firstLength - firstLineDelta;
+			int consumed= info.delimiterIndex + info.delimiterLength;
+			int delta= consumed - firstLineDelta;
 			updateLength(node, delta);
 			node.delimiter= info.delimiter;
 
-			int[] consumed= new int[1];
-			node= addLines(node, text, firstLength, consumed);
+			// Inline addlines start 
+			info= nextDelimiterInfo(text, consumed);
+			while (info != null) {
+				int lineLen= info.delimiterIndex - consumed + info.delimiterLength;
+				node= insertAfter(node, lineLen, info.delimiter);
+				consumed += lineLen;
+				info= nextDelimiterInfo(text, consumed);
+			}
+			// Inline addlines end 
 
 			// add remaining chunk merged with last (incomplete) additional line
-			insertAfter(node, remainder + text.length() - consumed[0], remDelim);
+			insertAfter(node, remainder + text.length() - consumed, remDelim);
 		}
 	}
 	
@@ -721,40 +718,25 @@ abstract class TreeLineTracker implements ILineTracker {
 		} else {
 			
 			// join the first line with the first added
-			int firstLength= info.delimiterIndex + info.delimiterLength;
-			updateLength(node, firstLength - firstLineDelta);
+			int consumed= info.delimiterIndex + info.delimiterLength;
+			updateLength(node, consumed - firstLineDelta);
 			node.delimiter= info.delimiter;
 			length -= firstLineDelta;
 
-			int[] consumed= new int[1];
-			addLines(node, text, firstLength, consumed);
+			// Inline addLines start
+			info= nextDelimiterInfo(text, consumed);
+			while (info != null) {
+				int lineLen= info.delimiterIndex - consumed + info.delimiterLength;
+				node= insertAfter(node, lineLen, info.delimiter);
+				consumed += lineLen;
+				info= nextDelimiterInfo(text, consumed);
+			}
+			// Inline addLines end
 			
-			// merge last (incomplete) line with with last node
-			updateLength(last, text.length() - consumed[0] - length);
+			updateLength(last, text.length() - consumed - length);
 		}
 	}
 
-	/**
-	 * Inserts the intermediate lines in added.lengths, starting at 1, up to but not including the last.
-	 * 
-	 * @param node the node to insert after
-	 * @param text the added text
-	 * @param offset the (relative) offset into text that has been consumed
-	 * @param consumed out parameter holding the amount of characters consumed from <code>text</code>
-	 * @return the last inserted node, the originally passed node if no line was added
-	 */
-	private Node addLines(Node node, String text, int offset, int[] consumed) {
-		DelimiterInfo info= nextDelimiterInfo(text, offset);
-		while (info != null) {
-			int length= info.delimiterIndex - offset + info.delimiterLength;
-			node= insertAfter(node, length, info.delimiter);
-			offset += length;
-			info= nextDelimiterInfo(text, offset);
-		}
-		consumed[0]= offset;
-		return node;
-	}
-	
 	/**
 	 * Joins two consecutive node lines, additionally adjusting the resulting length of the combined
 	 * line by <code>delta</code>. The first node gets deleted.
@@ -1086,7 +1068,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
 	 */
 	public final String getLineDelimiter(int line) throws BadLocationException {
-		Node node= nodeByLine(line, null);
+		Node node= nodeByLine(line);
 		return node.delimiter == NO_DELIM ? null : node.delimiter;
 	}
 
@@ -1126,8 +1108,8 @@ abstract class TreeLineTracker implements ILineTracker {
 		if (length == 0)
 			return 1;
 
-		int startLine= lineOfOffset(offset);
-		int endLine= lineOfOffset(offset + length);
+		int startLine= lineByOffset(offset);
+		int endLine= lineByOffset(offset + length);
 		
 		return endLine - startLine + 1;
 	}
@@ -1143,7 +1125,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineLength(int)
 	 */
 	public final int getLineLength(int line) throws BadLocationException {
-		Node node= nodeByLine(line, null);
+		Node node= nodeByLine(line);
 		return node.length;
 	}
 
@@ -1151,26 +1133,67 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public final int getLineNumberOfOffset(int offset) throws BadLocationException {
-		return lineOfOffset(offset);
+		return lineByOffset(offset);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
 	 */
-	public final IRegion getLineInformationOfOffset(int offset) throws BadLocationException {
-		int[] hints= new int[2];
-		Node node= nodeByOffset(offset, hints);
-		return new Region(hints[0], node.pureLength());
+	public final IRegion getLineInformationOfOffset(final int offset) throws BadLocationException {
+		// Inline nodeByOffset start as we need both node and offset
+		int remaining= offset;
+		Node node= fRoot;
+		final int lineOffset;
+		
+		while (true) {
+			if (node == null)
+				fail(offset);
+			
+			if (remaining < node.offset) {
+				node= node.left;
+			} else {
+				remaining -= node.offset;
+				if (remaining < node.length
+						|| remaining == node.length && node.right == null) { // last line
+					lineOffset= offset - remaining;
+					break;
+				}
+				remaining -= node.length;
+				node= node.right;
+			}
+		}
+		// Inline nodeByOffset end
+		return new Region(lineOffset, node.pureLength());
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
 	 */
 	public final IRegion getLineInformation(int line) throws BadLocationException {
-		int[] offsetHint= new int[1];
 		try {
-			Node node= nodeByLine(line, offsetHint);
-			return new Region(offsetHint[0], node.pureLength());
+			// Inline nodeByLine start
+			int remaining= line;
+			int offset= 0;
+			Node node= fRoot;
+			
+			while (true) {
+				if (node == null)
+					fail(line);
+				
+				if (remaining == node.line) {
+					offset += node.offset;
+					break;
+				}
+				if (remaining < node.line) {
+					node= node.left;
+				} else {
+					remaining -= node.line + 1;
+					offset += node.offset + node.length;
+					node= node.right;
+				}
+			}
+			// Inline nodeByLine end
+			return new Region(offset, node.pureLength());
 		} catch (BadLocationException x) {
 			/*
 			 * FIXME: this really strange behavior is mandated by the previous line tracker
@@ -1178,9 +1201,32 @@ abstract class TreeLineTracker implements ILineTracker {
 			 * LineTrackerTest3#testFunnyLastLineCompatibility().
 			 */
 			if (line > 0 && line == getNumberOfLines()) {
-				Node last= nodeByLine(line - 1, offsetHint);
+				line= line - 1;
+				// Inline nodeByLine start
+				int remaining= line;
+				int offset= 0;
+				Node node= fRoot;
+				
+				while (true) {
+					if (node == null)
+						fail(line);
+					
+					if (remaining == node.line) {
+						offset+= node.offset;
+						break;
+					}
+					if (remaining < node.line) {
+						node= node.left;
+					} else {
+						remaining -= node.line + 1;
+						offset += node.offset + node.length;
+						node= node.right;
+					}
+				}
+				Node last= node;
+				// Inline nodeByLine end
 				if (last.length > 0)
-					return new Region(offsetHint[0] + last.length, 0);
+					return new Region(offset + last.length, 0);
 			}
 			throw x;
 		}
@@ -1274,7 +1320,7 @@ abstract class TreeLineTracker implements ILineTracker {
 		checkTreeStructure(fRoot);
 		
 		try {
-			checkTreeOffsets(nodeByOffset(0, new int[2]), new int[] {0, 0}, null);
+			checkTreeOffsets(nodeByOffset(0), new int[] {0, 0}, null);
 		} catch (BadLocationException x) {
 			throw new AssertionError();
 		}
