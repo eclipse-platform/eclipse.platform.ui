@@ -11,7 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +23,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -70,15 +76,33 @@ public class CommitAction extends CVSModelProviderAction implements IPropertyCha
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void execute() {
-    	final ResourceTraversal [][] traversals = new ResourceTraversal[][] { null };
+    	final List resources = new ArrayList();
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						traversals[0] = getResourceTraversals(getStructuredSelection(), monitor);
+						ResourceTraversal[] traversals = getResourceTraversals(getStructuredSelection(), monitor);
+						IDiff[] diffs = getSynchronizationContext().getDiffTree().getDiffs(traversals);
+						for (int i = 0; i < diffs.length; i++) {
+							IDiff diff = diffs[i];
+							if (hasLocalChange(diff)) {
+								IResource resource = ResourceDiffTree.getResourceFor(diff);
+								if (resource != null)
+									resources.add(resource);
+							}
+						}
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
+				}
+
+				private boolean hasLocalChange(IDiff diff) {
+					if (diff instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) diff;
+						return twd.getDirection() == IThreeWayDiff.OUTGOING 
+							|| twd.getDirection() ==  IThreeWayDiff.CONFLICTING;
+					}
+					return false;
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -86,10 +110,10 @@ public class CommitAction extends CVSModelProviderAction implements IPropertyCha
 		} catch (InterruptedException e) {
 			// Ignore
 		}
-		if (traversals[0] != null) {
+		if (!resources.isEmpty()) {
 	        Shell shell= getConfiguration().getSite().getShell();
 	        try {
-	            CommitWizard.run(getConfiguration().getSite().getPart(), shell, traversals[0]);
+	            CommitWizard.run(getConfiguration().getSite().getPart(), shell, (IResource[]) resources.toArray(new IResource[resources.size()]));
 	        } catch (CVSException e) {
 	            CVSUIPlugin.log(e);
 	        }

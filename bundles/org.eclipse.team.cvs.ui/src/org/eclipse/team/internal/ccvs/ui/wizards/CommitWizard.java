@@ -298,16 +298,22 @@ public class CommitWizard extends ResizableWizard {
         fParticipant.dispose();
         super.dispose();
     }
-
-    public static void run(Shell shell, IResource [] resources) throws CVSException {
+    
+    public static void run(IWorkbenchPart part, Shell shell, IResource [] resources) throws CVSException {
         try {
-			run(shell, new CommitWizard(resources));
+			CommitWizard commitWizard = new CommitWizard(resources);
+			commitWizard.setPart(part);
+			run(shell, commitWizard);
 		} catch (OperationCanceledException e) {
 			// Ignore
 		}
     }
     
-    public static void run(Shell shell, SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
+    private void setPart(IWorkbenchPart part) {
+		this.part = part;
+	}
+
+	public static void run(Shell shell, SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
         try {
 			run(shell, new CommitWizard(infos, jobListener));
 		} catch (OperationCanceledException e) {
@@ -327,7 +333,7 @@ public class CommitWizard extends ResizableWizard {
     				}
     			}
     		});
-			run(shell, resources[0]);
+			run(part, shell, resources[0]);
 		} catch (OperationCanceledException e) {
 			// Ignore
 		} catch (InvocationTargetException e) {

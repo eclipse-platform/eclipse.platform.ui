@@ -253,7 +253,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 				Display.getCurrent().asyncExec(new Runnable() {
 					public void run() {
 						try {
-							CommitWizard.run(parentShell, new IResource[] { syncPage.getProject() });
+							CommitWizard.run(null, parentShell, new IResource[] { syncPage.getProject() });
 						} catch (CVSException e) {
 							//TODO:handle
 						}
