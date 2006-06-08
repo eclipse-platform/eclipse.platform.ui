@@ -11,13 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,7 +29,8 @@ import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.mappings.*;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
@@ -47,7 +46,7 @@ public class SyncAction extends WorkspaceTraversalAction {
 	public void execute(IAction action) throws InvocationTargetException {
 		// First, see if there is a single file selected
 		IFile file = getSelectedFile();
-		if (file != null) {
+		if (file != null && isOKToShowSingleFile(file)) {
 			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), file, getTargetPage());
 			return;
 		}
@@ -84,8 +83,8 @@ public class SyncAction extends WorkspaceTraversalAction {
 			participant.refresh(resources, getTargetPart().getSite());
 		}
 	}
-    
-    private boolean isShowModelSync() {
+
+	private static boolean isShowModelSync() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC);
 	}
 
@@ -129,6 +128,48 @@ public class SyncAction extends WorkspaceTraversalAction {
         return (IProject[]) cvsProjects.toArray(new IProject[cvsProjects.size()]);
     }
 
+    /**
+     * Return whether it is OK to open the selected file directly in a compare editor.
+     * It is not OK to show the single file if the file is part of a logical model element
+     * that spans files.
+     * @param file the file
+     * @return whether it is OK to open the selected file directly in a compare editor
+     */
+    public static boolean isOKToShowSingleFile(IFile file) {
+		if (!isShowModelSync())
+			return true;
+		IModelProviderDescriptor[] descriptors = ModelProvider.getModelProviderDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
+			IModelProviderDescriptor descriptor = descriptors[i];
+			try {
+				IResource[] resources = descriptor.getMatchingResources(new IResource[] { file });
+				if (resources.length > 0) {
+					ModelProvider provider = descriptor.getModelProvider();
+					// Technically, we should us the remote context to determine if multiple resources are involved.
+					// However, we do not have a progress monitor so we'll just use a local context since,
+					// it is unlikely that a model element will consist of one file locally but multiple files remotely
+					ResourceMapping[] mappings = provider.getMappings(file, ResourceMappingContext.LOCAL_CONTEXT, null);
+					for (int j = 0; j < mappings.length; j++) {
+						ResourceMapping mapping = mappings[j];
+						ResourceTraversal[] traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, null);
+						for (int k = 0; k < traversals.length; k++) {
+							ResourceTraversal traversal = traversals[k];
+							IResource[] tResources = traversal.getResources();
+							for (int index = 0; index < tResources.length; index++) {
+								IResource tr = tResources[index];
+								if (!tr.equals(file))
+									return false;
+							}
+						}
+					}
+				}
+			} catch (CoreException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+		return true;
+	}
+    
     /**
 	 * Refresh the subscriber directly and show the resulting synchronization state in a compare editor. If there
 	 * is no difference the user is prompted.

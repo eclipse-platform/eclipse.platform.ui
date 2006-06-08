@@ -39,7 +39,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 			return;
 		
 		IFile file = getSelectedFile();
-		if (file != null) {
+		if (file != null && SyncAction.isOKToShowSingleFile(file)) {
 			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
 			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
 			compareSubscriber.dispose();
