@@ -433,7 +433,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
 	public final Object getModifiedElement() {
-		return new Object[] { fFile};
+		return fFile;
 	}
 
 	/*
