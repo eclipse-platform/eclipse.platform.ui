@@ -366,8 +366,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (info.isSet(ICoreConstants.M_LINK)) {
 				ProjectDescription description = ((Project) target.getProject()).internalGetDescription();
 				if (description != null) {
-					setLocation(target, info, description.getLinkLocationURI(target.getProjectRelativePath()));
-					return info.getFileStoreRoot();
+					final URI linkLocation = description.getLinkLocationURI(target.getProjectRelativePath());
+					//if we can't determine the link location, fall through to parent resource
+					if (linkLocation != null) {
+						setLocation(target, info, linkLocation);
+						return info.getFileStoreRoot();
+					}
 				}
 			}
 		}
