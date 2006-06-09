@@ -29,7 +29,7 @@ package org.eclipse.jface.text;
  * tracker; the first modification after a {@link #set(String) set} incurs the cost to transform the
  * document structures to efficiently handle updates.
  * </p>
- * See {@link GapTextStore} and {@link TreeLineTracker} for algorithmic behavior of the used
+ * See {@link GapTextStore} and <code>TreeLineTracker</code> for algorithmic behavior of the used
  * document structures.
  * <p>
  * </p>
