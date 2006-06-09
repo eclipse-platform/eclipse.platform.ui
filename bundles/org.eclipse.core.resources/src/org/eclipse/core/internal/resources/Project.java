@@ -1067,9 +1067,12 @@ public class Project extends Container implements IProject {
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 			ProjectDescription description = getLocalManager().read(this, false);
 			//links can only be created if the project is open
+			IStatus result = null;
 			if (isOpen())
-				reconcileLinks(description);
+				result = reconcileLinks(description);
 			internalSetDescription(description, true);
+			if (result != null && !result.isOK())
+				throw new CoreException(result);
 		} finally {
 			ProjectDescription.isReading = false;
 		}
