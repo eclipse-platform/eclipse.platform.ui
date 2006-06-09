@@ -252,6 +252,11 @@ public class IOConsole extends TextConsole {
         inputStream = null;
     }
 
+    /**
+     * Returns the encoding for this console
+     * @return the encoding set for this console (possibly null)
+     * @since 3.2
+     */
 	public String getEncoding() {
 		return fEncoding;
 	}
