@@ -666,7 +666,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             try {
                 byte[] b = new byte[1024];
                 int read = 0;
-                while (read >= 0) {
+                while (fInput != null && read >= 0) {
                     read = fInput.read(b);
                     if (read > 0) {
                         String s = new String(b, 0, read);
