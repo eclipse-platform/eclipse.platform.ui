@@ -11,8 +11,9 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import java.io.IOException;
-import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -29,20 +30,16 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.contexts.EnabledSubmission;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -67,16 +64,14 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     private IConsoleView fView;
     
     private EOFHandler fEOFHandler;
-    private EnabledSubmission fEnabledSubmission;
-    private HandlerSubmission fHandlerSubmission;
+    private String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$;
+    private IContextActivation fActivatedContext;
+    private IHandlerActivation fActivatedHandler;
 	/**
 	 * Handler to send EOF
 	 */	
 	private class EOFHandler extends AbstractHandler {
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
-		 */
-		public Object execute(Map parameter) throws ExecutionException {
+        public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
             IStreamsProxy proxy = getProcess().getStreamsProxy();
             if (proxy instanceof IStreamsProxy2) {
                 IStreamsProxy2 proxy2 = (IStreamsProxy2) proxy;
@@ -85,8 +80,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
                 } catch (IOException e1) {
                 }
             }
-			return null;
-		}
+            return null;
+        }
 		
 	}    
     		
@@ -112,8 +107,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         
         // create handler and submissions for EOF
         fEOFHandler = new EOFHandler();
-        fEnabledSubmission = new EnabledSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.console"); //$NON-NLS-1$
-        fHandlerSubmission = new HandlerSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.commands.eof", fEOFHandler, Priority.MEDIUM); //$NON-NLS-1$
+//        fHandlerSubmission = new HandlerSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.commands.eof", fEOFHandler, Priority.MEDIUM); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -229,11 +223,11 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void activated() {
         // add EOF submissions
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.addEnabledSubmission(fEnabledSubmission);
-		commandSupport.addHandlerSubmission(fHandlerSubmission);
+        IWorkbenchPartSite site = fView.getSite();
+        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
+        IContextService contextService = (IContextService)site.getService(IContextService.class);
+        fActivatedContext = contextService.activateContext(fContextId);
+        fActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -241,10 +235,10 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void deactivated() {
         // remove EOF submissions
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		commandSupport.removeHandlerSubmission(fHandlerSubmission);
-		contextSupport.removeEnabledSubmission(fEnabledSubmission);
+        IWorkbenchPartSite site = fView.getSite();
+        IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
+        IContextService contextService = (IContextService)site.getService(IContextService.class);
+        handlerService.deactivateHandler(fActivatedHandler);
+		contextService.deactivateContext(fActivatedContext);
     }
 }
