@@ -1211,7 +1211,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						handleDebugElementSelection(lastViewTab, (IDebugElement)elem);
 					}
 				}
-				else
+				else if (!selection.isEmpty())
 				{
 					if (lastViewTab != null)
 						lastViewTab.setEnabled(false);
