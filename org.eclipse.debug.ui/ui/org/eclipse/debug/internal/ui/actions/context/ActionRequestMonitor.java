@@ -10,19 +10,51 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.context;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 /**
  * Plain request monitor for actions. Has no result.
  * 
  * @since 3.2
- *
+ * 
  */
 public class ActionRequestMonitor extends AbstractRequestMonitor {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
-	public void done() {
-		// nothing to do
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.runtime.IProgressMonitor#done()
+     */
+    public void done() {
+        final IStatus status = getStatus();
+        if (status != null) {
+            switch (status.getSeverity()) {
+            case IStatus.ERROR:
+                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
+                    }
+                });
+                break;
+            case IStatus.WARNING:
+                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        MessageDialog.openWarning(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
+                    }
+                });
+                break;
+            case IStatus.INFO:
+                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        MessageDialog.openInformation(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
+                    }
+                });
+                break;
+            }
+        }
+    }
 
 }
