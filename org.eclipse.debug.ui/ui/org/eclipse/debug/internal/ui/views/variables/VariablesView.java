@@ -347,7 +347,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private HashMap fSelectionStates = new MRUMap(20);
 	
 	/**
-	 * The last known viewer state. Used to init the expansion/selection
+	 * The last known viewer state. Used to initialize the expansion/selection
 	 * in the variables view when there is no state to go on for the
 	 * current stack frame being displayed.
 	 */
@@ -380,12 +380,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	
 	/**
-	 * the pref name for the view part of the sashform
+	 * the preference name for the view part of the sash form
 	 * @since 3.2 
 	 */
 	protected static final String SASH_VIEW_PART = DebugUIPlugin.getUniqueIdentifier() + ".SASH_VIEW_PART"; //$NON-NLS-1$
 	/**
-	 * thepref name for the details part of the sashform
+	 * the preference name for the details part of the sash form
 	 * @since 3.2
 	 */
 	protected static final String SASH_DETAILS_PART = DebugUIPlugin.getUniqueIdentifier() + ".SASH_DETAILS_PART"; //$NON-NLS-1$
@@ -416,7 +416,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
 	/** The arguments for the position label pattern. */
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
-	/** Whether logical structuers are showing */
+	/** Whether logical structures are showing */
     private boolean fShowLogical;
 
 	/**
@@ -446,6 +446,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void setViewerInput(Object context) {
 		
 		getDetailViewer().setEditable(context != null);
+		if (context == null) {
+			setDetails(""); //$NON-NLS-1$
+		}
 		
 		Object current= getViewer().getInput();
 		
@@ -479,7 +482,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @param state viewer state
 	 */
 	protected void cacheViewerState(Object input, AbstractViewerState state) {
-		// generate a key for the input based on its hashcode, we don't
+		// generate a key for the input based on its hash code, we don't
 		// want to maintain reference real model objects preventing GCs.
 		fSelectionStates.put(generateKey(input), state);
 	}
@@ -725,7 +728,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	/**
-	 * Create the widgetry for the details viewer.
+	 * Create the widgets for the details viewer.
 	 */
 	protected void createDetailsViewer() {
 		// Create & configure a SourceViewer
@@ -865,7 +868,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 
-		// register the context menu such that other plugins may contribute to it
+		// register the context menu such that other plug-ins may contribute to it
 		getSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, getDetailViewer().getSelectionProvider());		
 		addContextMenuManager(menuMgr);
 	}
@@ -946,7 +949,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	} 
 	
 	/**
-	 * Creates this editor's undo/redo actions.
+	 * Creates this editor's undo/re-do actions.
 	 * <p>
 	 * Subclasses may override or extend.</p>
 	 *
@@ -957,7 +960,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		disposeUndoRedoAction(ITextEditorActionConstants.REDO);
 		IUndoContext undoContext= getUndoContext();
 		if (undoContext != null) {
-			// Use actions provided by global undo/redo
+			// Use actions provided by global undo/re-do
 			
 			// Create the undo action
 			OperationHistoryActionHandler undoAction= new UndoActionHandler(getSite(), undoContext);
@@ -965,7 +968,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 			setAction(ITextEditorActionConstants.UNDO, undoAction);
 
-			// Create the redo action.
+			// Create the re-do action.
 			OperationHistoryActionHandler redoAction= new RedoActionHandler(getSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
 			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
@@ -1157,21 +1160,13 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * detail pane.
 	 */
 	protected void populateDetailPaneFromSelection(final IStructuredSelection selection) {
-        WorkbenchJob wJob = new WorkbenchJob("Populate Details Pane") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-                getDetailDocument().set(""); //$NON-NLS-1$        
-				return Status.OK_STATUS;
-			}
-        };
-        wJob.setSystem(true);
-        wJob.schedule();
-        
+        setDetails(""); //$NON-NLS-1$
 		try {
 			if (!selection.isEmpty()) {
 				IValue val = null;
 				Object obj = selection.getFirstElement();
 				if (obj instanceof IndexedVariablePartition) {
-					// no details for parititions
+					// no details for partitions
 					return;
 				}
                 
@@ -1183,14 +1178,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				if (val == null) {
 					return;
 				}			
-				// workaroud for bug 12938
+				// workaround for bug 12938
 				if (fValueSelection != null && fValueSelection.equals(selection)) {
 					return;
 				}
 				
                 final IValue finalVal = val;
                 
-                wJob = new WorkbenchJob("Populate Details Pane"){ //$NON-NLS-1$
+                WorkbenchJob wJob = new WorkbenchJob("Populate Details Pane"){ //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
                         getDetailDocument().set(""); //$NON-NLS-1$
                         setDebugModel(finalVal.getModelIdentifier());
@@ -1206,16 +1201,22 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				wJob.schedule();
 			} 
 		} catch (DebugException de) {
-			wJob = new WorkbenchJob("Populate Details Pane") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					getDetailDocument().set(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18);
-					return Status.OK_STATUS;
-				}
-				
-			};
-			wJob.setSystem(true);
-			wJob.schedule();
+			setDetails(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18);
 		}				
+	}
+
+	/**
+	 * Clears the detail pane
+	 */
+	private void setDetails(final String value) {
+		WorkbenchJob wJob = new WorkbenchJob("Populate Details Pane") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+                getDetailDocument().set(value);        
+				return Status.OK_STATUS;
+			}
+        };
+        wJob.setSystem(true);
+        wJob.schedule();
 	}
 	
 	/**
@@ -1333,8 +1334,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	/**
-	 * Returns the sashform
-	 * @return the current sashform
+	 * Returns the sash form
+	 * @return the current sash form
 	 */
 	protected SashForm getSashForm() {
 		return fSashForm;

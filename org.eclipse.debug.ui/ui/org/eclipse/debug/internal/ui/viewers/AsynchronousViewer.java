@@ -249,7 +249,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	protected synchronized void inputChanged(Object input, Object oldInput) {
 		fPendingSelection = null;
-		fCurrentSelection = null;
+		if (fCurrentSelection != null) {
+			updateSelection(new StructuredSelection());
+			fCurrentSelection = null;
+		}
 		if (fUpdatePolicy == null) {
 			fUpdatePolicy = createUpdatePolicy();
             fUpdatePolicy.init(this);
