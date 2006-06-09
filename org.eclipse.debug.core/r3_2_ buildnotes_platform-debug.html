@@ -1,0 +1,601 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Platform Debug Release Notes</title>
+</head>
+<body>
+<h1> Eclipse 3.2 Debug Platform Build Notes&nbsp;</h1>
+
+<h2>RC7 - June 2, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=144551">144551</a>: Collapse All tooltip in the Breakpoint View says &quot;Collapse Al&quot;<br>
+
+<h2>RC6 - May 26, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143297">143297</a>: Terminate and Relaunch only works asynchronously<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143096">143096</a>: TVT3.2:TCT644: TR: Migrate button truncated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=143812">143812</a>: [Memory View] Memory View's tree viewer handles any terminate event<br>
+
+<h2>RC5 - May 19, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139839">139839</a>: [source lookup] disconnect from PDE source locator<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141908">141908</a>: Memory Leak in debugger<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141895">141895</a>: Step keybindings not working in Ant debugger.<br>
+
+<h2>RC4 - May 12, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138389">138389</a>: Large memory leak in launch configuration dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141324">141324</a>: NPE in JDIDebugTarget.getRootThreadGroups()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=141189">141189</a>: No version range specified when requiring bundles<br>
+
+<h2>RC3 - May 05, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136223">136223</a>: Suspended thread does not show stackframe/missing thread labels<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138527">138527</a>: Actions under the &quot;Run&quot; menu are incorrectly enabled at startup<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139530">139530</a>: SWTException when workbench is shut down<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139718">139718</a>: Got internal error for &quot;Retrieving labels&quot; when displaying my JSP variable<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139853">139853</a>: NPE in asynch tree viewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139859">139859</a>: selection lost while traversing tree<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136416">136416</a>: Terminated threads appearing in debug view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139562">139562</a>: Regression...Launch Dialogs lose default button handling<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139576">139576</a>: unable to get the 'value' column back in variables view<br>
+
+<h2>RC2 - April 28, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131930">131930</a>: New Variables view is hard to use<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136478">136478</a>: IllegalArgumentException in ProcessPropertyPage<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138468">138468</a>: special characters should be escaped in var view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138220">138220</a>: Using 0424-0010, I got org.eclipse.core.commands.common.NotDefinedException<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123842">123842</a>: IndexedVariablePartition has no children in InspectPopup.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126725">126725</a>: &quot;Find&quot; in virtual trees<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126724">126724</a>: Copy Stack/Variables in virtual tree<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137782">137782</a>: Index out of bounds exception in clear()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136671">136671</a>: Mnemonic conflict on "Common" Launch Configuration tab<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136917">136917</a>: Console view doesn't get opened in the current window<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137212">137212</a>: Launch Dialogs won't save data<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137511">137511</a>: Launch Dialogs won't close<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130201">130201</a>: Debug view doesn't select the last stopped thread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109611">109611</a>: System environment variables are not propagated into External tools<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136623">136623</a>: prompt to delete shared configs not needed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137379">137379</a>: Assert error from actions when wrappering JDT debug elements.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135093">135093</a>: 'Errors in Project' dialog should have 'Yes' as default button<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134612">134612</a>: shared location dialog does not persist size/location<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134287">134287</a>: Junit View autosave class(es) used in test<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130208">130208</a>: Widget disposed in AsynchronousTreeModelViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137836">137836</a>: Step Filters action do not use StepFiltersAdapter<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138186">138186</a>: Deadlock after inspecting a value (Ctrl+Shift+I)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137569">137569</a>: Remove ICU4J dependency for org.eclipse.core.variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108039">108039</a>: Detail pane setting not remembered if debug views are controlled by context<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120620">120620</a>: Static variables show up twice in Find Variables Dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133750">133750</a>: Copy variables action should include columns to copy values of variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137923">137923</a>: Delete Launch Configurations dialog problems<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138002">138002</a>: ModelDelta using ArrayList that only contains 1 element<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128452">128452</a>: Race Condition on Auto-Removal of terminated Launches<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128289">128289</a>: [memory view] added mem block  not selected in mem view tree<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130572">130572</a>: [Memory View] Do not show Previous and Next Page actions for IMemoryBlock<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139051">139051</a>: Remove unused 'background' function in old debug action<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120200">120200</a>: Stepping performance deteriorates for testcase with many variables<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126725">126725</a>: Find" in virtual trees<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134833">134833</a>: Thread Change events not handled properly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136439">136439</a>: Terminate All should be disabled on startup<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133422">133422</a>: [Memory View] SwitchMemoryBlock does not list all available memory blocks if the node is collapsed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135275">135275</a>: [Memory View] Formatting sometimes not synchronized<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=136646">136646</a>: [Memory View] Memory View takes focus whenever a rendering is added<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133755">133755</a>: Columns settings not remembered for Registers View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137308">137308</a>: [Memory View] Need changes in table rendering resulted from changes with underlying table viewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138011">138011</a>: [Memory View] Format causes boundary alignment to be incorrect<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=139024">139024</a>: Ant JRE tab has clipped widgets on the bottom<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138660">138660</a>: [Memory View] Firing state change event for memory block does not update labels<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138729">138729</a>: [Memory View] Need to  be able to turn off address boundary alignment<br>
+
+<h2>RC1 - April 13, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=101754">101754</a>: [EditorMgmt] Debug view opens wrong editor if more than one editor is registered for given file type.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135629">135629</a>: undo/redo in variable view details pane<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134871">134871</a>: StackOverflowError using AsynchronousViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133632">133632</a>: Please add &quot;do not ask again&quot; to &quot;errors in project&quot; dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134177">134177</a>: Step Actions still check for IStep interface<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134324">134324</a>: infinite &quot;do you wish to save?&quot; dialogs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=17360">17360</a>: Should specify default shared config location<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134186">134186</a>: [Memory View] Workbench gets really slow after formatting to 1 byte per row<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134408">134408</a>: DBCS3.2: errors on the Variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110215">110215</a>: Apply button has no effect after having modified launch configuration arguments<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135514">135514</a>: BreakpointConditionEditor disposes global action handler<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133563">133563</a>: Edit Source Lookup action available on non-existant config<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127894">127894</a>: Debug Exception when selecting the launch after refactor<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=114727">114727</a>: DebugException after renaming a type and switching to debug perspective<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135877">135877</a>: Warning in latest nightly build<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135770">135770</a>: need to adopt ICU4J APIs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133379">133379</a>: Bad console pattern listener breaks launching<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127157">127157</a>: Deleting &gt; 1 project results in &gt; 1 prompt to delete configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134746">134746</a>: Pressing ENTER key while editing program or VM arguments runs the app and doesn't insert a new line.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131368">131368</a>: [Memory View] AddMemoryBlockAction and GoToAddressAction  should get debug context from service<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131830">131830</a>: [Memory View] AbstractAsyncTableRendering shows pending forever<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133864">133864</a>: [Memory View] Columns not sized properly first memory rendering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134886">134886</a>: [Memory View] Copy and Print actions only copy/print what's visible<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135031">135031</a>: [Memory View] Lose last line of buffer for IMemoryBlock after format<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135119">135119</a>: [Memory View] Reset does not position the base address to the top of the view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135274">135274</a>: [Memory View] Text rendering should render memory byte-by-byte for invalid data<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134092">134092</a>: NPE in LaunchConfigurationsDialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135897">135897</a>: [Memory View] All tab labels show address if creating more than one rendering at the same time<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135914">135914</a>: [Memory View] TableRenderingModel only considers values when marking a byte as changed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133857">133857</a>: Expansion not maintained in Registers View when switching between stackframes<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129247">129247</a>: [Memory View] Format Dialog is too small<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134603">134603</a>: [Memory View]MonitorMemoryBlockDialog is too small<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=134348">134348</a>: Footprint fattening from StackFrameSourceDisplayAdapter<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131920">131920</a>: Variables view unusably small<br>
+
+<h2>3.2 Milestone 6 - March 31, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132896">132896</a>: Improve perspective description and display on launch dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133752">133752</a>: Unexpected filtering in the launch configuration dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132929">132929</a>: LCD Filtering is whacked<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132860">132860</a>: launch config resource filter assumes resource mapping is project<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133553">133553</a>: prompt for delete breakpoints and working sets enabled when nothing selected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133705">133705</a>: Error out of date in Launch dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133712">133712</a>: Typing in filter text in launch dialog does not work as expected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132936">132936</a>: Resizeable launch configuration migration dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130852">130852</a>: NPE from async tree viewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132342">132342</a>: [Memory View] Need more enhancements in offset mode for GoToAddressAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133371">133371</a>: [Memory View] SwitchMemoryBlockAction calls model on UI thread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=133877">133877</a>: [Memory View] Viewer contribution of AddMemoryRenderingActionDelegate does not work properly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106790">106790</a>: Resume button is incorrectly enabled when the IProcess is selected<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131179">131179</a>: Show Column action has no effect in Registers View and Expressions View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132044">132044</a>: ArrayIndexOutOfBound exception in Variables View if show column is off<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132150">132150</a>: Suspend action is always disabled<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127147">127147</a>: [Memory View] Allow user to enter &quot;go to address&quot; in an address bar from a rendering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105733">105733</a>: TVT 3.1 - TCT 531 - Poor grammar in &quot;Run Eclipse Application&quot; and &quot;Profile Eclipse Application&quot;<br>
+
+<h2>March 21, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132953">132953</a>: DBCS3.2: unstable Breakpoint export<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131818">131818</a>: [Column Adapters] Widget disposed error closing down workbench<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131765">131765</a>: Columns disappear when resumig to breakpoint<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131842">131842</a>: Remove workaround for bug 95832<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131922">131922</a>: index out of bounds handling cell selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131587">131587</a>: launch config dialog has different appearance than the rest of eclipse<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131173">131173</a>: &quot;show columns&quot; setting not persisted<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130534">130534</a>: Need collapse option for launch config management<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132054">132054</a>: NPE in JavaBreakpointPropertiesAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=118072">118072</a>: [flex-hierarchy] Setting color to null in label adapter does nothing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127066">127066</a>: debug capability interfaces should be async<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106205">106205</a>: [plan item] Enhance the debug platform<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131816">131816</a>: [Memory View] Sync properties id need to be defined in AbstractAsyncTableRendering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132027">132027</a>: [Memory View] Rendering View Pane is blank if the tree viewer is hidden<br>
+
+<h2>March 14, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131032">131032</a>: org.eclipse.debug.ui.BreakpointOrganizers shutdown problem<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131174">131174</a>: background color for changed value should be user pref<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=131212">131212</a>: Need factory adapter for IModelSelectionPolicyAdapter<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=103811">103811</a>: cannot delete a breakpoint working set<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=79713">79713</a>: Persist/restore expansion state in the LCD<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125292">125292</a>: red X = delete   black X = clear<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129757">129757</a>: view menu polishing: use 'Layout' submenu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130750">130750</a>: cheese in LCD<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130663">130663</a>: Warn when console pattern matcher missing enablement expression<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=102943">102943</a>: [Memory View] F1 help for Memory View does not work correctly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108590">108590</a>: [Memory View] Add mnemonic to pull down menu items<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=99866">99866</a>: [Memory View] Labels on the Memory Monitors Pane is truncated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120758">120758</a>: [Memory View] Non-auto load mode does not load memory properly if row size is not boundary aligned<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127327">127327</a>: [Memory View] Rendering shows blank lines when re-synchronizing<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130370">130370</a>: [Memory View] Add Layout submenu in Memory View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129761">129761</a>: [Memory View] memory view UI issues<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125374">125374</a>: support trees with columns<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130775">130775</a>: [Memory View] TableCursor magically appears again<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130941">130941</a>: [Memory View] swt exception  when debug session is terminated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130953">130953</a>: [Memory View] Create provisional APIs<br>
+
+<h2>March 7, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130431">130431</a>: A lot of characters in a line of output crashes Eclipse<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129762">129762</a>: initial focus in launch dialog should be on tree, not filter coolbar<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124257">124257</a>: LCD insists on saving<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128991">128991</a>: NPE in DebugPlugin<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127873">127873</a>: Actions incorrectly enabled in Debug view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128685">128685</a>: Resume action enabled after all processes terminated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129577">129577</a>: separate viewer model and widgets<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=79912">79912</a>: Bad sizing in LaunchConfigurationsDialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130373">130373</a>: Bad sizing on the LaunchConfigurationPropertiesDialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129381">129381</a>: LaunchView will never return a ShowInContext<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130767">130767</a>: In 3.1/3.2, ExecutionArguments class unexpectedly returns surrounding double-quotes<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130828">130828</a>: Breakpoints View go to file icon is gone.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130397">130397</a>: [Memory View] widget disposed exception when debug session terminates<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=130555">130555</a>: [Memory View] Cursor unexpectedly disappears<br>
+
+<h2>February 28, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124799">124799</a>: Discouraged references on legitimate API methods<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127926">127926</a>: Discouraged access to &quot;getContainer()&quot; from &quot;FolderSourceContainer&quot;<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106406">106406</a>: Preference not saved when launching with compile error<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128383">128383</a>: BreakpointOrganzierLabelProvider extends internal UI class but does not use it<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128610">128610</a>: DBCS32: exported breakpoints file isn't UTF-8 encoded<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128978">128978</a>: Add an &quot;Are You Sure?&quot; check to &quot;Remove All&quot; action in Expressions View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128553">128553</a>: NPE when launching Ant launch config<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128534">128534</a>: Use FilteredTree in launch configuration dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129351">129351</a>: Mismatched selection in Launch Configuration Dialog after rename<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=121747">121747</a>: [flex-hierarchy] investigate jface TreeSelection and TreePath<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=129379">129379</a>: Incorrect logic in BreakpointTypeOrganizer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128494">128494</a>: Organize manifests<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127331">127331</a>: [Memory View] Changing color setting has no effect until refresh<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127460">127460</a>: [Memory View] Create empty groups in context menu for AbstractAsyncTableRendering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127371">127371</a>: [Memory View] #supportsValueModification calls on UI thread<br>
+
+<h2>3.2 M5 - February 17, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123653">123653</a>: Ctrl-Shift-D does not work  in dialogs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127914">127914</a>: Export Breakpoints Table does not use Dialog Font<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127581">127581</a>: NPE attempting selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124274">124274</a>: debug keybindings not active on first launch<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127067">127067</a>: Instruction pointer images should be API<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126630">126630</a>: Deadlock while building<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=121454">121454</a>: Console synchronization problem<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105235">105235</a>: TVT 3.1: TCT479 - mnemonic char in middle of DBCS menu label<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117103">117103</a>: Suspending the target manually does not expand it.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126667">126667</a>: Copy stack behavior differs when showing thread groups<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=68394">68394</a>: [view management] debug view stays when debug session finishes<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=87612">87612</a>: Automated tests for debug view management<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119512">119512</a>: [flex-hierarchy] AsynchronousTreeViewer.add(..) requires UI Thread.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124203">124203</a>: View management with respect to debug context manager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126790">126790</a>: Variables view update problems<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117491">117491</a>: Debug event handlers no more<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119512">119512</a>: [flex-hierarchy] AsynchronousTreeViewer.add(..) requires UI Thread.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126666">126666</a>: NPE in target on latest code<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126726">126726</a>: Show Monitors not working<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125236">125236</a>: Missing context help<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=95791">95791</a>: [view management] Context enablement efficiency<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127106">127106</a>: suspend trigger not created for subsequent launches<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127130">127130</a>: ConsoleDocumentAdapter.repairLines needs review<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=66576">66576</a>: perspectives pref page tab does not take activities into accoutn<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126963">126963</a>: Terminate action in console context menu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126964">126964</a>: &quot;Remove Launch&quot; action in console context menu<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126884">126884</a>: Terminology: 'Perspectives' vs. 'Perspective Switching'<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125375">125375</a>: Cancel does not cancel launch<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126439">126439</a>: SelectAllExpressionsAction leakage<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127334">127334</a>: Turning off filter checked launch configuration types fails<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127305">127305</a>: apply revert buttons appear always<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127246">127246</a>: NPE in ViewContextService.perspectiveChanged<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126733">126733</a>: Debug view toolbar actions initially enabled<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127307">127307</a>: empty logical structure dance<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127937">127937</a>: Leak: LaunchSuspendTrigger is not disposed properly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127903">127903</a>: Terminate all has no effect<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125536">125536</a>: selection not revealed when item not populated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127458">127458</a>: NPE attempting selection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127918">127918</a>: Refresh Tab displaying incorrect error message<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127932">127932</a>: Widget is disposed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127473">127473</a>: NPE in  Launch View context provider<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127190">127190</a>: Duplication of stack in Debug View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127757">127757</a>: missing thread in debug view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127946">127946</a>: Leak: ConsoleView never deregistered from the ConsoleManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127886">127886</a>: NPE on importing Ant breakpoints<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=90164">90164</a>: [Memory View] Highlight/Colourize Changed Values<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106424">106424</a>: [Memory View] Move memory view update to background thread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120031">120031</a>: [Memory View] Need to allow clients to customize labels in SwitchMemoryBlockAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120126">120126</a>: [Memory View] RenderingViewPane does not set selection to new memory block<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128096">128096</a>: [Memory View] Selection in tree view pane not maintained properly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120443">120443</a>: [Memory View] Reset Monitor action does not run<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=127368">127368</a>: [Memory View] NPE in synchronization service when Memory View is closed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128292">128292</a>: launch config type viewer is showing private config types<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128144">128144</a>: Launch view should support legacy &quot;workbench adapters&quot;<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128210">128210</a>: Cannot expand items in the Variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=128314">128314</a>: NPE after clicking in stack<br>
+
+<h2>February 7, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126024">126024</a>: Launch config filter for external tools<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126114">126114</a>: Launch Configuraiton dialog filter count does not update<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123163">123163</a>: AsynchronousTreeViewer should use SWT.VIRTUAL.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120863">120863</a>: Support Ctrl modifier on console hyperlinks<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=121106">121106</a>: no need for IModelDelta.CHANGE flag<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=122743">122743</a>: ToggleBreakpointAction must implement IUpdate<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124040">124040</a>: debug/inspect popups require ITextViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125490">125490</a>: Debug view not populated when a breakpoint is reached<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125771">125771</a>: unable to create method breakpoints in external source<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126106">126106</a>: popup dialog API changes<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=126165">126165</a>: Snipptet editor's 'documentSetup' extension violates spec<br>
+
+<h2>January 31, 2006</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>Added API to consolePatternMatchListeners extension to support the use of
+    string variable substitution in pattern matchers. See extension point documentation.</li>
+  <li>Added API to delegate watch expression creation to debug model via IWatchExpressionFactoryAdapter.
+    Allows a debugger to override default watch expression creation based on a
+    variable's name.</li>
+</ul>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119488">119488</a>: java stack trace hyperlinks not .java agnostic<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124257">124257</a>: LCD insists on saving<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125244">125244</a>: ResourceException while running Debug test suite<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=12134">12134</a>: Closing a project should disable run and debug.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125005">125005</a>: renaming a project prompts for deleting launch configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=115044">115044</a>: Filter launch configurations to current working set<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125361">125361</a>: spelling error in Configure Details Area dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=125054">125054</a>: FIlter menu mnuemonic should be letters not numbers<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124160">124160</a>: step actions become disabled<br>
+
+<h2>January 24, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124171">124171</a>: Launch configuration filters prefs page: glitches in labels<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123861">123861</a>: Selection remains on filtered config<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124170">124170</a>: Launch configuration filters: pulldown menu on filter button<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124181">124181</a>: Invalid Thread Access in LaunchConfigurationsDialog<br>
+
+<h2>January 17, 2006</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>New API to export and import breakpoints. The new API classes ExportBreakpointsOperation
+    and ImportBreakpointsOperation can be found in org.eclipse.debug.ui.actions.</li>
+</ul>
+
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=19521">19521</a>: Launching classes from closed projects<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=122882">122882</a>: Mnemonic change on debug launch page: &quot;De&amp;bug&quot; conflicts with &quot;&amp;Browse&quot; buttons<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=114521">114521</a>: Still too hard to customize the coloring of the executing line<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123820">123820</a>: typo in AbstractSourceLookupDirector javadoc<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=113772">113772</a>: removing a project should remove launcher-entry as well<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123627">123627</a>: Filter count on LCD not accurate<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123630">123630</a>: CCE pressing Aply in Launch config pref page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123635">123635</a>: run/debug latest fails when filtered<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123680">123680</a>: FIlter count not updated with action<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123858">123858</a>: LCD main page needs updating<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123663">123663</a>: Launch history should support Capabilities<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123862">123862</a>: keywords for Launch Configurations pref page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123889">123889</a>: LCD not setting dialog font for preferences dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123956">123956</a>: Font not propegated to child widgets<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123440">123440</a>: DebugPopup and InspectPopup need javadoc/since 3.2<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=124017">124017</a>: NPE after deleting config from LCD<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111530">111530</a>: update dialog size/position persistance<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123847">123847</a>: Remote Java App - Debug Run Configuration - throws IndexOutOfBoundsException<br>
+
+<h2>January 10, 2006</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>Insturction pointer annotataions can be overriden in part or whole by having a debug
+     model presentation implement <code>IInstructionPointerPresentation</code>. This allows
+     specification of the entire annotation object, and annotation type + text, or an
+     image + text.</li>
+</ul>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=122908">122908</a>: pref pages missing context help<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=121681">121681</a>: CCE in breakpoints export wizard.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=116316">116316</a>: &quot;Source lookup error&quot; logged<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=122646">122646</a>: Use IStructuredSelection instead of StructuredSelection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111017">111017</a>: default tab width for MessageConsole changed from 8 to 0 in 3.1<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=116060">116060</a>: MessageConsoleStream.println synchronization hazard<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117946">117946</a>: InstantiationException from ConsoleRemoveLaunchAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119306">119306</a>: [flex-hierarchy] LaunchView autoExpand() creates TreePath with hard coded hierarchy<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=122166">122166</a>: Watch does Inspect in 3.2M4<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=123327">123327</a>: Need API to import / export breakpoints programatically<br>
+
+<h2>3.2 M4</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120677">120677</a>: Terminating a debug launch does not deactivate the debugging context<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108568">108568</a>: Debug console test failure<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120028">120028</a>: ConcurrentModificationException in DecorationManager when stepping<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=121092">121092</a>: DefaultUpdate policy ignores EXPAND and SELECT deltas for unchanged items<br>
+
+<h2>December 12, 2005</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>The &quot;source not found&quot; editor and editor input have become API.
+    See <code>CommonSourceNotFoundEditor</code> and <code>CommonSourceNotFoundEditorInput</code>.</li>
+  <li>The &quot;changed value color&quot; has become API. See <code>IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR</code>
+    and <code>DebugUITools.getPreferenceColor(id)</code>.</li>
+</ul>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120683">120683</a>: Please stop using ListenerList from org.eclipse.core.commands<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119447">119447</a>: SaveScopeResourcesHandler needs check for Private configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117098">117098</a>: Thread not selected on class loading breakpoint hit<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=92901">92901</a>: Popup control should be installed once on each control<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106419">106419</a>: [Memory View] Improve user experience for adding new memory blocks<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=100081">100081</a>: [Memory View] Support for address space in Memory View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106422">106422</a>: [Memory View] Improvement to Memory Monitor View Pane<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=118075">118075</a>: CommonSourceNotFoundEditor needs to be public<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106421">106421</a>: [Memory View] Initial column size preference should be stored by debug target<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112412">112412</a>: Make access to change variable colour preference public<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117093">117093</a>: [flex-hierarchy] Drop to frame doesn't clear old current line annotations.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117082">117082</a>: [flex-hierarchy] expressions don't show errors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=119391">119391</a>: Many NPEs in DebugTargetProxy.containsEvent<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120010">120010</a>: combine IModelDelat and IModelDeltaNode<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108828">108828</a>: Drag and Drop in Breakpoints view shows misleading drop affordance<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=120447">120447</a>: prompted to save scrapbook editor before exeucting expression<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117072">117072</a>: [flex-hierarchy] suspend event may occurr before proxy installed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=113410">113410</a>: null fTabFolderForMemoryBlock in RenderingViewPane.memoryBlocksAdded<br>
+
+<h2>December 6, 2005</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>New API action for enabling/disabling breakpoints in editor ruler - RulerEnableDisableBreakpointActionDelegate.</li>
+  <li>New abstract API action for action working on breakpoints in editor ruler
+    - RulerBreakpointAction.</li>
+  <li>API to retrieve images and browsers for source containers added to DebugUITools.</li>
+  <li>API for overriding default instruction pointer annotations - see IInstructionPointerPresentation.</li>
+</ul>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=63058">63058</a>: Adding lots of favorites needs busy cursor<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=97706">97706</a>: [Memory View] Need to make some more Memory View  related contants/methods public<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=88914">88914</a>: [Memory View] Provide UI and API to configure the addressable size.<br>
+
+<h2>November 29, 2005</h2>
+<h3>Enhancements</h3>
+<ul>
+  <li>API has been added to retrieve images and browsers for source container
+    types. See DebugUITools.</li>
+</ul>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117945">117945</a>: [flexible hierarchy] ClassCastException when trying to get active context<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117386">117386</a>: [flex-hierarchy] expand over rides previous expands<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112792">112792</a>: NPE in TextConsoleViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=89429">89429</a>: Make the SourceLookupUIUtils class public<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117720">117720</a>: SelectAll and Copy actions not available in Registers View<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=118082">118082</a>: Deadlock between VariablesViewer and DefaultVariableViewModelProxy<br>
+
+<h2>November 22, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=114845">114845</a>: 'Terminate and relaunch' action is enabled for non-relaunchable configs<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=115874">115874</a>: Import and Export icons for Breakpoints are backwards.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117057">117057</a>: [flex-hierarchy] NPE in RemoveAllTerminatedAction<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117090">117090</a>: [flex-hierarchy] terminated threads appear in debug view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=82850">82850</a>: Variable is not updated in the variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106150">106150</a>: Variables view is constantly updating which results in 100% CPU usage<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109943">109943</a>: Expressions view calls expensive IValue.getVariables() instead of cheap IValue.hasVariables()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110206">110206</a>: Variables view won't collapse<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117101">117101</a>: [flex-hierarchy] select/expand states not cleared from cache<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117155">117155</a>: [flex-hierarchy] Threads not updated when target resumed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=114617">114617</a>: [Memory View] Tooltip not updated propertly at column 0 in AbstractTableRendering<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=100273">100273</a>: [Memory View]: Preference Table Renderings UI bug<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117095">117095</a>: [flex-hierarchy] resuming one thread does not select next suspended thread<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=117106">117106</a>: [flex-hierarchy] null tree path with manually expanding thread<br>
+
+<h2>November 8, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=115195">115195</a>: Debug manifests reference a deprecated header<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=115155">115155</a>: Link to perspective preferences<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=90031">90031</a>: [Memory View] Adjust the Number of Columns in the Memory View<br>
+
+<h2>October 31, 2005</h2>
+<h3>Enhancements</h3>
+<ol>
+  <li>Consoles can provide context specfic F1 help. Console implementations should
+    override <code>AbstractConsole.getHelpContextId()</code> to hook appropriate
+    help. If not provided, the generic help for the console view is displayed.</li>
+</ol>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112625">112625</a>: Launcher : Bad default value with the variable ${string_prompt}<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112670">112670</a>: Can't toggle selection of treeitem in variables view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=113837">113837</a>: breakpoints import and export wizards should be categorized<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112503">112503</a>: Cannot change the background color of the 'Display' view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112553">112553</a>: ConcurrentModificationException in BreakpointManager<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112771">112771</a>: Add API to allow specific context help in Text Consoles<br>
+
+<h2>October 25, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=112648">112648</a>: Breakpoint import/export references java constant<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=113378">113378</a>: incorrect neumonic on Launching preference page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111633">111633</a>: API clarification needed for getWorkingCopy()<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111739">111739</a>: [Contributions] matchesContentType check does not take base-type into account<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106567">106567</a>: [Memory View] Provide hover support in table renderings<br>
+
+<h2>October 18, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110080">110080</a>: breakpoint import updates breakpoint view for each breakpoint<br>
+
+<h2>October 11, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111485">111485</a>: perspective page fails when new launch types are added<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=103462">103462</a>: Stacktrace-Hyperlink works only for one link per line<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111437">111437</a>: hyperlinks not updated<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109491">109491</a>: Exception in log<br>
+
+<h2>October 4, 2005</h2>
+<h3>Enhancements</h3>
+<ol>
+  <li>The perspective settings associated with launch configurations have been
+    centralized on the &quot;Run/Debug &gt; Perspectives&quot; preference page.
+    Previously the perspective settings were controlled via the launch configuration
+    dialog. The &quot;Perspectives&quot; tab has been replaced with a &quot;Getting
+    Started&quot; tab that explains how to create a new configuration.</li>
+</ol>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110928">110928</a>: mneumonic conflict on preference page<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=79709">79709</a>: Centralize launching preferences<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110075">110075</a>: Embedded breakpoints view with nested groups does not update check marks properly<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=111079">111079</a>: debug/run button active with multiple selection<br>
+
+<h2>September 21, 2005</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110078">110078</a>: acclerator conflict in breakpoint import<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=110074">110074</a>: Breakpoints are not added to default breakpoint working set<br>
+
+<h2>September 19, 2005</h2>
+<h3>Enhancements</h3>
+<ol>
+  <li><strong>Remove a single console</strong>: An action has been added to the console
+  toolbar to remove the associated launch/console.</li>
+</ol>
+
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109008">109008</a>: breakpoint import/export polish items<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=103731">103731</a>: breakpoint working set settings lost on project close/open<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=102270">102270</a>: Console: Close just one window?<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109009">109009</a>: Tests for breakpoint import/export<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=109777">109777</a>: import/export breakpoints test failure<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=102526">102526</a>: Find/Replace in Console window does not go to proper place of matches when window  has fixed width<br>
+
+<h2>September 13, 2005</h2>
+<h3>Enhancements</h3>
+<ol>
+  <li><strong>Breakpoint import and export</strong>: Breakpoints can be exported
+    and imported from the local file system. Actions are available in the context
+    menu of the Breakpoints view to export/import, as well as in the general import/export
+    wizard. </li>
+</ol>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=41057">41057</a>: Option to export and import break points at the Breakpoints view<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=86114">86114</a>: Breakpoint working set wizard should show breakpoints in hierarchical fashion<br>
+
+<h2>September 6, 2005</h2>
+<h3>Enhancements</h3>
+<ol>
+  <li><strong>System properties as launch variables</strong>: A new string variable
+    &quot;${system_property:name}&quot; was added to the debug platform that resolves
+    to the value of a system property in the Eclipse SDK runtime. The variable
+    accepts a system property name as an argument and a selection dialog allows
+    the user to select from known system properties.</li>
+</ol>
+
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108323">108323</a>: expose system properties as variables in the launching framework<br>
+
+
+<h2>Aug 30, 2005 </h2>
+
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=107488">107488</a>: [Memory View] Table rendering stop updating when new memory blocks are added<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108307">108307</a>: remove coupling between breakpoints view and content provider<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105356">105356</a>: TVT 3.1 - TCT 428 - Mnemonic Error<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=107383">107383</a>: testCaseSensitiveQualifiedSourceLookup failure<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=108126">108126</a>: NPE when bringing Registers View to the top<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=107739">107739</a>: [Memory View] Rendering View Pane does not pin display on first new memory block.<br>
+
+<h2>Aug 8, 2005 </h2>
+<h3>Enhancements</h3>
+<ol>
+  <li><strong>API addition:</strong><code> IDebugUIConstants.PREF_MAX_DETAIL_LENGTH</code>.
+    The user preference controlling the maximum length of strings displayed in
+    the Variables view detail area has been made public API. In previous builds
+    the preference was internal.</li>
+</ol>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=106178">106178</a>: Remove uneccessary NLS tags<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=89471">89471</a>: [polish] Installed JRE pref page: Source attach &amp; jdoc loc should be configurable in default<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=104852">104852</a>: Debug View  changes focus on removal of terminated launch forcing editor popup<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=104675">104675</a>: large byte[] variabls expand into too much memory<br>
+
+
+<h2>Aug 2, 2005 </h2>
+<h3>Enhancements</h3>
+<ol>
+  <li>Added NL support for images.</li>
+</ol>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=103381">103381</a>: Infinite viewer expand/restore when recursive data structure expanded<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105071">105071</a>: Incorrect handling for debugger's continue-launch-despite-compile-errors dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=105264">105264</a>: [BIDI] need to add $nl$/ to icon paths for reversed icons<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=104573">104573</a>: Resource Tree Locked error while saving shared Eclipse Application launch config<br>
+
+<h2>July 26, 2005 </h2>
+<h3>
+Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=98147">98147</a>: Variables View does not show all children if same instance is expanded twice<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=99416">99416</a>: Evaluation in context of superclass fails to resolve instvar in subclass<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=100543">100543</a>: TextConsoleViewer should not subclass TextViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=100480">100480</a>: Duplicate launch configuration leads to bogus launch configuration<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=102537">102537</a>: org.eclipse.ui.console.consolePageParticipants API information<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=99753">99753</a>: Debug use of new Boolean(boolean)<br>
+</body>
+</html>
