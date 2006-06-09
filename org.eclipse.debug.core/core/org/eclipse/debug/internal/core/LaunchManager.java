@@ -578,12 +578,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private ListenerList fListeners= new ListenerList();
 	
 	/**
-	 * lets us store that last resource delta we processed, that way if the same one comes in we can cut down the work
-	 * @since 3.2
-	 */
-	private IResourceDelta fLastDelta = null;
-	
-	/**
 	 * Collection of "plural" listeners.
 	 * @since 2.1
 	 */
@@ -1909,23 +1903,20 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				if(children.length > 0) {
 					//collect child resources that are projects and have been deleted, but not moved
 					//don't process the same delta for deleting multiple projects
-					if(fLastDelta != delta) {
-						fLastDelta = delta;
-						ArrayList projs = new ArrayList();
-						IResource res = null;
-						for (int i = 0; i < children.length; i++) {
-							if(children[i].getFlags() != IResourceDelta.MOVED_TO) {
-								res = children[i].getResource();
-								if(res != null && res instanceof IProject) {
-									projs.add(res);
-								}
+					ArrayList projs = new ArrayList();
+					IResource res = null;
+					for (int i = 0; i < children.length; i++) {
+						if(children[i].getFlags() != IResourceDelta.MOVED_TO) {
+							res = children[i].getResource();
+							if(res != null && res instanceof IProject) {
+								projs.add(res);
 							}
 						}
-						if(projs.size() > 0) {
-							IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-							handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
-							projs.clear();
-						}
+					}
+					if(projs.size() > 0) {
+						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+						handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
+						projs.clear();
 					}
 				}
 			    LaunchManagerVisitor visitor = getDeltaVisitor();
