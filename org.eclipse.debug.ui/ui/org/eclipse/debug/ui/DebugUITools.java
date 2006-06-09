@@ -234,13 +234,16 @@ public class DebugUITools {
 				context = launches[launches.length - 1];
 			}
 		}
+        
 		if (context instanceof IDebugElement) {
 			return ((IDebugElement)context).getDebugTarget().getProcess();
 		}
-		if (context instanceof IProcess) {
+		
+        if (context instanceof IProcess) {
 			return (IProcess)context;
 		}
-		if (context instanceof ILaunch) {
+		
+        if (context instanceof ILaunch) {
 			ILaunch launch= (ILaunch)context;
 			IDebugTarget target= launch.getDebugTarget();
 			if (target != null) {
@@ -254,6 +257,11 @@ public class DebugUITools {
 				return ps[ps.length - 1];
 			}
 		}
+        
+        if (context != null) {
+            return (IProcess) context.getAdapter(IProcess.class);
+        }
+        
 		return null;
 	}
 
