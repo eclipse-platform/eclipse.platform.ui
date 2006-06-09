@@ -251,4 +251,8 @@ public class IOConsole extends TextConsole {
         }
         inputStream = null;
     }
+
+	public String getEncoding() {
+		return fEncoding;
+	}
 }

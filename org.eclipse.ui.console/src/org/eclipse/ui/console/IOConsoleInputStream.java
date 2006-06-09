@@ -12,6 +12,7 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -156,7 +157,17 @@ public class IOConsoleInputStream extends InputStream {
      * @param text the text to append to the buffer.
      */
     public synchronized void appendData(String text) {
-        byte[] newData = text.getBytes();
+    	String encoding = console.getEncoding();
+        byte[] newData;
+        if (encoding!=null)
+			try {
+				newData = text.getBytes(encoding);
+			} catch (UnsupportedEncodingException e) {
+				newData = text.getBytes();	
+			}
+		else
+        	newData = text.getBytes();
+        
         while(input.length-size < newData.length) {
             growArray();
         }
