@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
 
@@ -96,7 +97,11 @@ public class JavaBeanObservableMultiMapping extends
 	private Object doGetMappingValue(Object element,
 			PropertyDescriptor propertyDescriptor) {
 		try {
-			return propertyDescriptor.getReadMethod().invoke(element,
+			Method readMethod = propertyDescriptor.getReadMethod();
+			if (!readMethod.isAccessible()) {
+				readMethod.setAccessible(true);
+			}
+			return readMethod.invoke(element,
 					new Object[0]);
 		} catch (Exception e) {
 			Policy.getLog().log(
