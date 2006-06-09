@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Hello, databinding.  Bind from a GUI back to a Model but don't worry about
- * updating the GUI if the model changes.
+ * Hello, databinding.  Bind changes in a GUI to a Model object but don't worry 
+ * about propogating changes from the Model to the GUI.
  * <p>
  * Illustrates the basic Model-ViewModel-Binding-View architecture typically 
  * used in data binding applications.
