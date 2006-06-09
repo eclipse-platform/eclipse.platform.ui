@@ -32,8 +32,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Hello, databinding.  Illustrates the basic Model-ViewModel-Binding-View
- * architecture used in data binding applications.
+ * Hello, databinding.  Bind from a GUI back to a Model but don't worry about
+ * updating the GUI if the model changes.
+ * <p>
+ * Illustrates the basic Model-ViewModel-Binding-View architecture typically 
+ * used in data binding applications.
  */
 public class Snippet000 {
 	public static void main(String[] args) {
