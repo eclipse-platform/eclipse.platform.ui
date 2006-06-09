@@ -120,6 +120,12 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     private Map fColumnSizes = new HashMap();
     
     /**
+     * Map of column presentation ids to an array of integers representing the column order
+     * for that presentation, or <code>null</code> if default.
+     */
+    private Map fColumnOrder = new HashMap();
+    
+    /**
      * Map of column presentation id to whether columns should be displayed
      * for that presentation (the user can toggle columns on/off when a 
      * presentation is optional.
@@ -130,6 +136,11 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	 * Memento type for column sizes. Sizes are keyed by colunm presentation id 
 	 */
 	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
+	/**
+	 * Memento type for the column order for a presentation context.
+	 * A memento is created for each colunm presentation
+	 */
+	private static final String COLUMN_ORDER = "COLUMN_ORDER";     //$NON-NLS-1$	
 	/**
 	 * Memento type for the visible columns for a presentation context.
 	 * A memento is created for each colunm presentation keyed by column number
@@ -160,6 +171,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 		 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
 		 */
 		public void controlMoved(ControlEvent e) {
+			persistColumnOrder();
 		}
 
 		/* (non-Javadoc)
@@ -616,6 +628,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 				}
 				column.setData(id);
 			}
+	    	int[] order = (int[]) fColumnOrder.get(presentation.getId());
+	    	if (order != null) {
+	    		tree.setColumnOrder(order);
+	    	}
 	    	tree.setHeaderVisible(true);
 	    	tree.setLinesVisible(true);
 	    	presentationContext.setColumns(getVisibleColumns());
@@ -670,6 +686,28 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 			Object id = treeColumn.getData();
 			fColumnSizes.put(id, new Integer(treeColumn.getWidth()));
 		}
+    }
+    
+    /**
+     * Persists column ordering
+     */
+    protected void persistColumnOrder() {
+    	IColumnPresentation presentation = getColumnPresentation();
+    	if (presentation != null) {
+	    	Tree tree = getTree();
+	    	int[] order = tree.getColumnOrder();
+	    	if (order.length > 0) {
+	    		for (int i = 0; i < order.length; i++) {
+					if (i != order[i]) {
+						// non default order
+						fColumnOrder.put(presentation.getId(), order);
+						return;
+					}
+				}
+	    	}
+	    	// default order
+	    	fColumnOrder.remove(presentation.getId());
+    	}
     }
     
     /**
@@ -876,9 +914,15 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 
     	if (widget instanceof TreeItem && !widget.isDisposed()) {
 			TreeItem item = (TreeItem) widget;
-			item.clearAll(true);
+			int itemCount = item.getItemCount();
+			for (int i = 0; i < itemCount; i++) {
+				item.clear(i, false);
+			}
 		} else {
-			fTree.clearAll(true);
+			int itemCount = fTree.getItemCount();
+			for (int i = 0; i < itemCount; i++) {
+				fTree.clear(i, false);
+			}
 		}
     }
     
@@ -892,9 +936,9 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
   
        	if (parent instanceof TreeItem && !parent.isDisposed()) {
     		TreeItem item = (TreeItem) parent;
-    		item.clear(childIndex, true);
+    		item.clear(childIndex, false);
     	} else {
-    		fTree.clear(childIndex, true);
+    		fTree.clear(childIndex, false);
     	}
 	}
 
@@ -1260,6 +1304,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	public void setVisibleColumns(String[] ids) {
 		IColumnPresentation presentation = getColumnPresentation();
 		if (presentation != null) {
+			fColumnOrder.remove(presentation.getId());
 			fVisibleColumns.remove(presentation.getId());
 			if (ids != null) {
 				// put back in table if not default
@@ -1316,6 +1361,19 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 				}
 			}
 		}
+		if (!fColumnOrder.isEmpty()) {
+			Iterator iterator = fColumnOrder.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Entry) iterator.next();
+				String id = (String) entry.getKey();
+				IMemento orderMemento = memento.createChild(COLUMN_ORDER, id);
+				int[] order = (int[]) entry.getValue();
+				orderMemento.putInteger(SIZE, order.length);
+				for (int i = 0; i < order.length; i++) {
+					orderMemento.putInteger(COLUMN+Integer.toString(i), order[i]);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -1328,7 +1386,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	}
 	
 	/**
-	 * Initializes veiwer state from the memento
+	 * Initializes viewer state from the memento
 	 * 
 	 * @param memento
 	 */
@@ -1365,7 +1423,20 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 				fVisibleColumns.put(id, columns);
 			}
 		}
-		
+		mementos = memento.getChildren(COLUMN_ORDER);
+		for (int i = 0; i < mementos.length; i++) {
+			IMemento child = mementos[i];
+			String id = child.getID();
+			Integer integer = child.getInteger(SIZE);
+			if (integer != null) {
+				int length = integer.intValue();
+				int[] order = new int[length];
+				for (int j = 0; j < length; j++) {
+					order[j] = child.getInteger(COLUMN+Integer.toString(j)).intValue();
+				}
+				fColumnOrder.put(id, order);
+			}
+		}
 	}
 
 	/**
@@ -1496,7 +1567,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	/**
 	 * Toggles columns on/off for the current column presentation, if any.
 	 * 
-	 * @param show whether to show columns if the current input suppports
+	 * @param show whether to show columns if the current input supports
 	 * 	columns
 	 */
 	public void setShowColumns(boolean show) {
@@ -1549,6 +1620,8 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	protected void nodeContainerChanged(ModelNode node) {
 		Widget widget = findItem(node);
 		if (widget != null && !widget.isDisposed()) {
+			int childCount = node.getChildCount();
+			setItemCount(widget, childCount);
 			if (node.isContainer()) {
 				if (widget instanceof TreeItem) {
 					if (((TreeItem)widget).getExpanded()) {
@@ -1563,11 +1636,45 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	}
 	
 	/**
+	 * Notification a node's children have changed.
+	 * Updates the child count for the parent's widget
+	 * and clears children to be updated.
+	 * 
+	 * @param parentNode
+	 */
+	protected void nodeChildrenChanged(ModelNode parentNode) {
+		Widget widget = findItem(parentNode);
+		if (widget != null && !widget.isDisposed()) {
+			int childCount = parentNode.getChildCount();
+			setItemCount(widget, childCount);
+			TreeItem[] items = null;
+			if (widget instanceof TreeItem) {
+				TreeItem treeItem = (TreeItem) widget;
+				if (treeItem.getExpanded()) {
+					items = treeItem.getItems();
+				}
+			} else {
+				items = ((Tree)widget).getItems();
+			}
+			if (items != null) {
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].getExpanded()) {
+						update(items[i], i);
+					} else {
+						clearChild(widget, i);
+					}
+				}
+			}
+			attemptPendingUpdates();
+		}		
+	}	
+	
+	/**
 	 * Collects label results.
 	 * 
 	 * @param monitor progress monitor
 	 * @param element element to start collecting at, including all children
-	 * @param taskName label for prorgress monitor main task
+	 * @param taskName label for progress monitor main task
 	 * 
 	 * @return results or <code>null</code> if cancelled
 	 */
