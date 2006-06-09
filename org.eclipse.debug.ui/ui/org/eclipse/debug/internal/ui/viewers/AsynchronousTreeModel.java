@@ -291,7 +291,6 @@ public class AsynchronousTreeModel extends AsynchronousModel {
 					}
 				}
 		    	getTreeViewer().nodeContainerChanged(node);
-		    	getViewer().nodeChildrenChanged(node);
 			}
 		});
     	

@@ -1031,13 +1031,22 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
 	public void handleEvent(final Event event) {		
-		Item item = (Item) event.item;
+		update((Item)event.item, event.index);
+    }
+	
+	/**
+	 * Update the given item.
+	 * 
+	 * @param item item to update
+	 * @param index index of item in parent's children
+	 */
+	protected void update(Item item, int index) {
 		restoreLabels(item);
 		int level = 0;
 		
-		Widget parentItem = getParentWidget(event.item);
+		Widget parentItem = getParentWidget(item);
 		if (DEBUG_VIEWER) {
-			DebugUIPlugin.debug("SET DATA [" + event.index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
+			DebugUIPlugin.debug("SET DATA [" + index + "]: " + parentItem);  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		ModelNode node = null;
 		// first, see if the parent element is in the model
@@ -1050,8 +1059,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					Widget parentWidget = findItem(parentNode);
 					if (parentWidget == parentItem) {
 			        	ModelNode[] childrenNodes = parentNode.getChildrenNodes();
-			        	if (childrenNodes != null && event.index < childrenNodes.length) {
-			        		node = childrenNodes[event.index];
+			        	if (childrenNodes != null && index < childrenNodes.length) {
+			        		node = childrenNodes[index];
 			        	}
 					}
 				}
@@ -1060,15 +1069,15 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 
 		// otherwise, build a path to the model node
 		if (node == null) {
-			setNodeIndex(event.index, level);
+			setNodeIndex(index, level);
 			while (parentItem instanceof Item) {
 				level++;
 				Widget parent = getParentWidget(parentItem);
-				int index = indexOf(parent, parentItem);
-				if (index < 0) {
+				int pindex = indexOf(parent, parentItem);
+				if (pindex < 0) {
 					return;
 				}
-				setNodeIndex(index, level);
+				setNodeIndex(pindex, level);
 				parentItem = parent;
 			}
 			
@@ -1087,9 +1096,9 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 					}
 					return;
 				}
-				int index = getNodeIndex(i);
-				if (index < childrenNodes.length) {
-					node = childrenNodes[index];
+				int pindex = getNodeIndex(i);
+				if (pindex < childrenNodes.length) {
+					node = childrenNodes[pindex];
 				} else {
 					if (DEBUG_VIEWER) {
 						DebugUIPlugin.debug("\tFAILED - no children nodes for " + node); //$NON-NLS-1$
@@ -1102,8 +1111,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		
 		// map the node to the element and refresh it
 		if (node != null) {
-			mapElement(node, event.item);
-    		event.item.setData(node.getElement());
+			mapElement(node, item);
+    		item.setData(node.getElement());
     		if (DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\titem mapped: " + node); //$NON-NLS-1$
     		}
@@ -1112,8 +1121,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			if (DEBUG_VIEWER) {
 				DebugUIPlugin.debug("\tFAILED - unable to find corresponding node"); //$NON-NLS-1$
 			}
-		}
-    }
+		}		
+	}
 	
 	/**
 	 * Sets the index of a child node being mapped at the given expansion level
