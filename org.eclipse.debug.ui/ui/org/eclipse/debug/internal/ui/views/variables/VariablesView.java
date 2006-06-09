@@ -71,6 +71,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Assert;
@@ -126,6 +127,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
@@ -892,7 +894,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
-		getSite().getKeyBindingService().registerAction(textAction);
+        
+        ActionHandler actionHandler = new ActionHandler(textAction);
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+        handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(VariablesViewMessages.VariablesView_Select__All_5, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
