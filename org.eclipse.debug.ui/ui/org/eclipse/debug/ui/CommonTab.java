@@ -496,7 +496,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void updateEncoding(ILaunchConfiguration configuration) {
 	    String encoding = null;
 	    try {
-	        encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+	        encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
         } catch (CoreException e) {
         }
         
@@ -721,7 +721,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		if(fAltEncodingButton.getSelection()) {
 		    encoding = fEncodingCombo.getText();
 		}
-		configuration.setAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, encoding);
+		configuration.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, encoding);
 		boolean captureOutput = false;
 		if (fConsoleOutput.getSelection()) {
 		    captureOutput = true;

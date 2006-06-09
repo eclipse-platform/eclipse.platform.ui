@@ -12,6 +12,7 @@
 package org.eclipse.debug.ui;
 
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
  
 /**
@@ -875,8 +876,9 @@ public interface IDebugUIConstants {
 	 * from {@link org.eclipse.ui.WorkbenchEncoding}.
 	 * 
 	 * @since 3.1
+     * @deprecated 3.2 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
 	 */
-	public static final String ATTR_CONSOLE_ENCODING = PLUGIN_ID + ".ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
+	public static final String ATTR_CONSOLE_ENCODING = DebugPlugin.ATTR_CONSOLE_ENCODING;
 	
 	/**
 	 * Launch configuration boolean attribute specifying whether output from the launched process will

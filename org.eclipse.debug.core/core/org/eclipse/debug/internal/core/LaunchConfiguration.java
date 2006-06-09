@@ -598,6 +598,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 		}
 		
+		String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+		launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);
 		
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();

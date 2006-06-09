@@ -44,12 +44,12 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * Creates a <code>StreamsProxy</code> on the streams
 	 * of the given system process.
 	 */
-	public StreamsProxy(Process process) {
+	public StreamsProxy(Process process, String encoding) {
 		if (process == null) {
 			return;
 		}
-		fOutputMonitor= new OutputStreamMonitor(process.getInputStream());
-		fErrorMonitor= new OutputStreamMonitor(process.getErrorStream());
+		fOutputMonitor= new OutputStreamMonitor(process.getInputStream(), encoding);
+		fErrorMonitor= new OutputStreamMonitor(process.getErrorStream(), encoding);
 		fInputMonitor= new InputStreamMonitor(process.getOutputStream());
 		fOutputMonitor.startMonitoring();
 		fErrorMonitor.startMonitoring();

@@ -103,7 +103,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     private boolean fAllocateConsole = true;
 
     private boolean fStreamsClosed = false;
-
+    
     /**
      * Proxy to a console document
      */
@@ -573,14 +573,21 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          *      org.eclipse.debug.core.model.IStreamMonitor)
          */
         public void streamAppended(String text, IStreamMonitor monitor) {
+            String encoding = getEncoding();
             if (fFlushed) {
                 try {
                     if (fStream != null) {
-                        fStream.write(text);
+                    	if (encoding == null)
+                    		fStream.write(text);
+                    	else 
+                    		fStream.write(text.getBytes(encoding));
                     }
                     if (fFileOutputStream != null) {
                         synchronized (fFileOutputStream) {
-                            fFileOutputStream.write(text.getBytes());
+                        	if (encoding == null)
+                        		fFileOutputStream.write(text.getBytes());
+                        	else 
+                        		fFileOutputStream.write(text.getBytes(encoding));
                         }
                     }
                 } catch (IOException e) {

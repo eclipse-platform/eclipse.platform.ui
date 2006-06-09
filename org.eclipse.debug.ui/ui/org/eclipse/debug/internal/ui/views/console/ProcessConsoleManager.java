@@ -145,7 +145,7 @@ public class ProcessConsoleManager implements ILaunchListener {
                 String encoding = null;
                 try {
                     if (launchConfiguration != null) {
-                        encoding = launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+                        encoding = launchConfiguration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
                     }
                 } catch (CoreException e) {
                 }

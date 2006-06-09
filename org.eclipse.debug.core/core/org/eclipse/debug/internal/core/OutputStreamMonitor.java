@@ -68,13 +68,16 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	private boolean fKilled= false;
 	
     private long lastSleep;
+
+	private String fEncoding;
     
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
 	 */
-	public OutputStreamMonitor(InputStream stream) {
+	public OutputStreamMonitor(InputStream stream, String encoding) {
         fStream = new BufferedInputStream(stream, 8192);
+        fEncoding = encoding;
 		fContents= new StringBuffer();
 	}
 
@@ -137,7 +140,12 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				}
 				read= fStream.read(bytes);
 				if (read > 0) {
-					String text= new String(bytes, 0, read);
+					String text;
+					if (fEncoding != null) {
+						text = new String(bytes, 0, read, fEncoding);
+					} else {
+						text = new String(bytes, 0, read);
+					}
 					synchronized (this) {
 						if (isBuffered()) {
 							fContents.append(text);
