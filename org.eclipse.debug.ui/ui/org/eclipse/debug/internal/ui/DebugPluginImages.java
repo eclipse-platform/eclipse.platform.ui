@@ -302,9 +302,11 @@ public class DebugPluginImages {
 	 *		this plugin class.
 	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
-	public static ImageRegistry initializeImageRegistry() {
-		imageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
-		declareImages();
+	public synchronized static ImageRegistry initializeImageRegistry() {
+		if (imageRegistry == null) {
+			imageRegistry = new ImageRegistry(DebugUIPlugin.getStandardDisplay());
+			declareImages();
+		}
 		return imageRegistry;
 	}
 
