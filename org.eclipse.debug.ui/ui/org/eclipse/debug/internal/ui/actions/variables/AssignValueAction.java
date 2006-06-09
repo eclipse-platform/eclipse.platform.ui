@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
@@ -23,15 +21,21 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.StatusInfo;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action which assigns a value to a variable from the detail pane
@@ -40,6 +44,7 @@ import org.eclipse.ui.actions.SelectionProviderAction;
 public class AssignValueAction extends SelectionProviderAction {
 	private VariablesView variablesView;
 	private ISourceViewer detailsViewer;
+    private IHandlerActivation fHandlerActivation;
 
 	public AssignValueAction(VariablesView varView, ISourceViewer detailViewer) {
 		super(varView.getViewer(), ActionMessages.AssignValueAction_1); 
@@ -47,10 +52,20 @@ public class AssignValueAction extends SelectionProviderAction {
 		variablesView = varView;
 		detailsViewer = detailViewer;
 		setEnabled(false);
-		variablesView.getSite().getKeyBindingService().registerAction(this);
+		IWorkbenchPartSite site = variablesView.getSite();
+        IHandlerService service = (IHandlerService) site.getService(IHandlerService.class);
+        ActionHandler handler = new ActionHandler(this);
+        fHandlerActivation = service.activateHandler(getActionDefinitionId(), handler);
 	}
 		
-	/* (non-Javadoc)
+	public void dispose() {
+        IWorkbenchPartSite site = variablesView.getSite();
+        IHandlerService service = (IHandlerService) site.getService(IHandlerService.class);
+        service.deactivateHandler(fHandlerActivation);
+        super.dispose();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
