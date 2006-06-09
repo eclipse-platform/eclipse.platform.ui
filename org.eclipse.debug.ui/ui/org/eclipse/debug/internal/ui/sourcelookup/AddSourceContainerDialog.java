@@ -145,13 +145,15 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		//single selection dialog, so take first item in array
 		//there will always be a selected item since we set it with viewer.setSelection
 		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
-		ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
-		if (browser != null) {
-			ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-			if(results != null) {
-				fSourceContainerViewer.addEntries(results);
-			}
-		}
+        if (type != null) {
+            ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
+            if (browser != null) {
+                ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
+                if (results != null) {
+                    fSourceContainerViewer.addEntries(results);
+                }
+            }
+        }
 		super.okPressed();
 	}
 	
