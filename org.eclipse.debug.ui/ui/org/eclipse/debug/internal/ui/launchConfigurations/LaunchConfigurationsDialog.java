@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -69,7 +68,6 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -86,6 +84,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * The dialog used to edit and launch launch configurations.
@@ -507,7 +507,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         gridLayout.marginHeight = 5;
         gridLayout.marginWidth = 5;
         viewFormContents.setLayout(gridLayout);
-        viewFormContents.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
+        viewFormContents.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fLaunchConfigurationView = new LaunchConfigurationView(getLaunchGroup(), createViewerFilters());
 		fLaunchConfigurationView.createLaunchDialogControl(viewFormContents);
 		
