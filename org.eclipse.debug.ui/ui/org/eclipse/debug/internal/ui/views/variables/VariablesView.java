@@ -96,6 +96,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -1379,6 +1380,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (id != fDebugModelIdentifier) {
 			fDebugModelIdentifier = id;
 			configureDetailsViewer();	
+			// force actions to initialize
+			getVariablesViewSelectionProvider().fireSelectionChanged(new SelectionChangedEvent(
+					getVariablesViewer(), new StructuredSelection(new Object())));
+			getVariablesViewSelectionProvider().fireSelectionChanged(new SelectionChangedEvent(
+					getVariablesViewer(), getSelectionProvider().getSelection()));
 		} else {
 			updateAction("ContentAssist"); //$NON-NLS-1$
 		}
