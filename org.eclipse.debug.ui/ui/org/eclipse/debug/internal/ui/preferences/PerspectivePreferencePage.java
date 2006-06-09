@@ -340,39 +340,41 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		if(launchmodes != null) {
 			for(Iterator iter = launchmodes.keySet().iterator(); iter.hasNext();) {
 				String modekey = (String)iter.next();
-				String persp = (String)launchmodes.get(modekey);
-	       // build label
-				label = new Label(fComboPlaceHolder, SWT.NONE);
-				label.setFont(font);
-				gd = new GridData(GridData.BEGINNING);
-				label.setLayoutData(gd);
 				ILaunchMode mode = fLManager.getLaunchMode(modekey);
-				String clabel = mode.getLabel();
-				//resolve conflict with Default and Debug mneumonics bug 122882
-				if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
-					clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
+				if(mode != null) {
+					String persp = (String)launchmodes.get(modekey);
+		       // build label
+					label = new Label(fComboPlaceHolder, SWT.NONE);
+					label.setFont(font);
+					gd = new GridData(GridData.BEGINNING);
+					label.setLayoutData(gd);
+					String clabel = mode.getLabel();
+					//resolve conflict with Default and Debug mneumonics bug 122882
+					if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
+						clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
+					}
+					label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { clabel }));
+				// build combobox
+					Combo combo = new Combo(fComboPlaceHolder, SWT.READ_ONLY);
+					combo.setFont(font);
+					combo.setItems(fPerspectiveLabels);
+					combo.setData(modekey);
+					gd = new GridData(GridData.BEGINNING);
+					combo.setLayoutData(gd);
+					if(persp.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
+						persp = DebugPreferencesMessages.PerspectivePreferencePage_4;
+					}
+					else {
+						IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(persp);
+						persp = (desc != null ? desc.getLabel() : DebugPreferencesMessages.PerspectivePreferencePage_4);
+					}
+					combo.setText(persp);
+					combo.addSelectionListener(fSelectionAdapter);
 				}
-				label.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_3, new String[] { clabel }));
-			// build combobox
-				Combo combo = new Combo(fComboPlaceHolder, SWT.READ_ONLY);
-				combo.setFont(font);
-				combo.setItems(fPerspectiveLabels);
-				combo.setData(modekey);
-				gd = new GridData(GridData.BEGINNING);
-				combo.setLayoutData(gd);
-				if(persp.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
-					persp = DebugPreferencesMessages.PerspectivePreferencePage_4;
-				}//end if
-				else {
-					IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(persp);
-					persp = (desc != null ? desc.getLabel() : DebugPreferencesMessages.PerspectivePreferencePage_4);
-				}//end else
-				combo.setText(persp);
-				combo.addSelectionListener(fSelectionAdapter);
-			}//end for
+			}
 		}
 		fPerspectiveComp.layout();
-	}// buildComboBoxes
+	}
 
 	/**
 	 * Handles the change in selection from the launch configuration listing
@@ -498,7 +500,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		Label lbl = new Label(composite, SWT.LEFT + SWT.WRAP);
 		lbl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridData)lbl.getLayoutData()).widthHint = LABEL_WIDTH_HINT;
-		lbl.setText(MessageFormat.format(DebugPreferencesMessages.PerspectivePreferencePage_5, null));
+		lbl.setText(DebugPreferencesMessages.PerspectivePreferencePage_5);
 		
 		Composite comp = new Composite(composite, SWT.FILL);
 		comp.setLayout(new GridLayout(2, false));
