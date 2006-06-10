@@ -119,12 +119,14 @@ public class TextObservableValue extends AbstractVetoableValue {
 		text.addKeyListener(keyListener);
 		shellListener = new ShellAdapter() {
 			public void shellClosed(ShellEvent e) {
-				String oldValue = bufferedValue;
-				String newValue = text.getText();
-
-				if (!newValue.equals(oldValue)) {
-					fireValueChange(Diffs.createValueDiff(oldValue,
-							newValue));
+				if (!text.isDisposed()) {
+					String oldValue = bufferedValue;
+					String newValue = text.getText();
+	
+					if (!newValue.equals(oldValue)) {
+						fireValueChange(Diffs.createValueDiff(oldValue,
+								newValue));
+					}
 				}
 			}
 		};
