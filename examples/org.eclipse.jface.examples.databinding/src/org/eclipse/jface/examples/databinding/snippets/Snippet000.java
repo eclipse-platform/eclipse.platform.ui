@@ -52,7 +52,7 @@ public class Snippet000 {
 		}
 		
 		// Print the results
-		System.out.println(viewModel.getPerson().getName());
+		System.out.println("person.getName() = " + viewModel.getPerson().getName());
 	}
 	
 	// The data model class.  This is normally a persistent class of some sort.
