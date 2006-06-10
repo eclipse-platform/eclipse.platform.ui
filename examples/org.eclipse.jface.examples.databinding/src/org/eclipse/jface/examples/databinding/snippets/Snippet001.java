@@ -131,10 +131,10 @@ public class Snippet001 {
 	
 	// The View's model--the root of our GUI's Model graph
 	//
-	// Typically each GUI has its own ViewModel class.  This class is 
-	// responsible for getting the objects to edit from the DAO.  Since
-	// this snippet doesn't have any persistent objects to retrieve,  
-	// this ViewModel just instantiates a model to edit.
+	// Typically each View class has a corresponding ViewModel class.  
+	// The ViewModel is responsible for getting the objects to edit from the 
+	// DAO.  Since this snippet doesn't have any persistent objects to 
+	// retrieve, this ViewModel just instantiates a model to edit.
 	// 
 	// This ViewModel also implements JavaBean bound properties.
 	static class ViewModel extends AbstractModelObject {
