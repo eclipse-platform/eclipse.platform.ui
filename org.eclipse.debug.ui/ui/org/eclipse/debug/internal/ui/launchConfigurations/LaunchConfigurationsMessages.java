@@ -86,12 +86,9 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_Close_1;
 	public static String LaunchConfigurationDialog_Revert_2;
 	public static String LaunchConfigurationDialog_Cancel_3;
-	public static String LaunchConfigurationDialog_Launch_Con_figurations__1;
 	public static String LaunchConfigurationsDialog_Error_1;
 	public static String LaunchConfigurationsDialog_Warning_2;
 	public static String LaunchConfigurationsDialog_Information_3;
-	public static String LaunchConfigurationsDialog_45;
-	public static String LaunchConfigurationManager_0;
 
 	public static String LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__does_not_specify_launch_configuration_type_1;
 	public static String LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__refers_to_non_existant_launch_configuration_type__1__2;
@@ -177,13 +174,9 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String FavoritesDialog_8;
 
-	public static String LaunchConfigurationTabGroupViewer_7;
-
 	public static String LaunchConfigurationsDialog_0;
 
 	public static String LaunchConfigurationsDialog_1;
-
-	public static String LaunchConfigurationsDialog_2;
 
 	public static String LaunchConfigurationsDialog_4;
 

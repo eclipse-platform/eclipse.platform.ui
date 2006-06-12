@@ -101,7 +101,6 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchConfigurationType_9;
 	public static String LaunchConfigurationType_10;
 
-	public static String MemoryRenderingManager_ErrorMsg;
 	public static String WatchExpression_0;
 	public static String NullStreamsProxy_0;
 

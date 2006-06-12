@@ -48,7 +48,6 @@ public class DebugUIMessages extends NLS {
 	public static String InstructionPointerAnnotation_0;
 	public static String InstructionPointerAnnotation_1;
 
-	public static String PopupInformationControl_1;
 	public static String DefaultLabelProvider_17;
 
 	//
@@ -57,7 +56,6 @@ public class DebugUIMessages extends NLS {
 	public static String AddMemoryBlockAction_title;
 	public static String AddMemoryBlockAction_tooltip;
 	public static String AddMemoryBlockAction_failed;
-	public static String AddMemoryBlockAction_expressionEvalFailed;
 	public static String AddMemoryBlockAction_input_invalid;
 	public static String AddMemoryRenderingDialog_Memory_Monitor;
 	public static String AddMemoryRenderingAction_Add_renderings;
@@ -70,30 +68,20 @@ public class DebugUIMessages extends NLS {
 	public static String AddMemoryRenderingDialog_Unknown;
 	public static String RemoveMemoryBlockAction_title;
 	public static String RemoveMemoryBlockAction_tooltip;
-	public static String RemoveMemoryRenderingAction_Unknown;
 	public static String MemoryViewCellModifier_failure_title;
 	public static String MemoryViewCellModifier_failed;
 	public static String MemoryViewCellModifier_data_is_invalid;
-	public static String MemoryViewCellModifier_data_is_too_long;
 	public static String ResetMemoryBlockAction_title;
 	public static String ResetMemoryBlockAction_tootip;
-	public static String ResetMemoryBlockAction_Failed_to_Reset;
-	public static String ResetMemoryBlockAction_Failed_to_reset_to_base_address;
 	public static String GoToAddressAction_title;
 	public static String GoToAddressAction_Go_to_address_failed;
 	public static String GoToAddressAction_Address_is_invalid;
-	public static String GoToAddressAction_tooltip;
-	public static String FormatColumnAction_unit;
-	public static String FormatColumnAction_units;
-	public static String SetColumnSizeDefaultAction_Set_as_default;
 	public static String CopyViewToClipboardAction_title;
 	public static String CopyViewToClipboardAction_tooltip;
 	public static String PrintViewTabAction_title;
 	public static String PrintViewTabAction_tooltip;
 	public static String PrintViewTabAction_jobtitle;
 	public static String ReformatAction_title;
-	public static String SetDefaultColumnSizePrefAction_DefaultColumnSize;
-	public static String SetDefaultColumnSizePrefAction_SetDefaultColumnSize;
 
 	//
 	// Dialog
@@ -105,17 +93,12 @@ public class DebugUIMessages extends NLS {
 	public static String GoToAddressDialog_GoToAddress;
 	public static String CodePagesPrefDialog_1;
 	public static String CodePagesPrefDialog_2;
-	public static String CodePagesPrefDialog_3;
 	public static String CodePagesPrefDialog_4;
-	public static String CodePagesPrefDialog_5;
 	public static String CodePagesPrefDialog_6;
 	public static String CodePagesPrefDialog_7;
 	public static String CodePagesPrefDialog_8;
 	public static String CodePagesPrefDialog_9;
 	public static String CodePagesPrefDialog_0;
-	public static String CodePagesPrefDialog_10;
-	public static String CodePagesPrefDialog_11;
-	public static String CodePagesPrefDialog_13;
 
 	//
 	// View Tab
@@ -130,45 +113,30 @@ public class DebugUIMessages extends NLS {
 	//
 	// Views
 	//
-	public static String MemoryRenderingView_Failed_to_create_rendering;
-	public static String MemoryRenderingView_Failed_to_create_the_selected_rendering;
-	public static String RenderingViewPane_NoViewTabFactory;
-	public static String RenderingViewPane_Failed_To_Create_Rendering;
 	public static String RemoveMemoryRenderingAction_Remove_rendering;
-	public static String RenderingViewPane_Failed_To_Create_Selected_Rendering;
-	public static String RemoveMemoryRenderingAction_Remove_monitor;
 	public static String EmptyViewTab_Unable_to_create;
-	public static String EmptyViewTab_Unknown;
 	public static String CreateRenderingTab_Memory_monitor;
 	public static String CreateRenderingTab_Select_renderings_to_create;
 	public static String CreateRenderingTab_Add_renderings;
 	public static String CreateRenderingTab_0;
 	public static String CreateRenderingTab_1;
 	public static String CreateRenderingTab_2;
-	public static String CreateRenderingTab_3;
-	public static String CreateRenderingTab_4;
 	public static String CreateRendering_0;
 	public static String CreateRendering_1;
-	public static String CreateRenderingTab_Create_memory_rendering;
 
 	//
 	// Managers
 	//
-	public static String MemoryRenderingManager_ErrorTitle;
-	public static String MemoryRenderingManager_ErrorMsg;
 	public static String ShowAddressColumnAction_0;
 	public static String ShowAddressColumnAction_1;
 	public static String ImageDescriptorRegistry_0;
 	public static String ErrorRendering_0;
-	public static String AbstractTableRendering_0;
 	public static String AbstractTableRendering_1;
 	public static String AbstractTableRendering_2;
 	public static String AbstractTableRendering_3;
 	public static String AbstractTableRendering_4;
-	public static String AbstractTableRendering_5;
 	public static String AbstractTableRendering_6;
 	public static String AbstractTableRendering_8;
-	public static String AbstractTableRendering_9;
 	public static String AbstractTableRendering_10;
 	public static String AbstractTableRendering_11;
 	public static String AbstractTableRendering_12;
@@ -178,8 +146,6 @@ public class DebugUIMessages extends NLS {
 	public static String AbstractTableRendering_20;
 	public static String SetPaddedStringDialog_0;
 	public static String SetPaddedStringDialog_1;
-	public static String SetPaddedStringDialog_3;
-	public static String SetPaddedStringDialog_4;
 
 
 	public static String TableRenderingPropertiesPage_1;
@@ -207,7 +173,6 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingPropertiesPage_25;
 	public static String TableRenderingPropertiesPage_26;
 	public static String TableRenderingPrefAction_0;
-	public static String TableRenderingPreferencePage_0;
 	public static String TableRenderingPreferencePage_1;
 	public static String TableRenderingPreferencePage_2;
 	public static String TableRenderingPreferencePage_3;
@@ -215,11 +180,7 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingContentProvider_0;
 	public static String TableRenderingContentProvider_1;
 	public static String TableRenderingContentProvider_2;
-	public static String AddMemoryBlocksComposite_0;
-	public static String AddMemoryBlocksComposite_1;
-	public static String AddMemoryBlocksComposite_2;
 	public static String SwitchMemoryBlockAction_0;
-	public static String SwitchMemoryBlockAction_3;
 	public static String ResetMemoryBlockPreferencePage_0;
 	public static String ResetMemoryBlockPreferencePage_1;
 	public static String ResetMemoryBlockPreferencePage_2;
@@ -238,15 +199,12 @@ public class DebugUIMessages extends NLS {
 	public static String FormatTableRenderingAction_13;
 	public static String FormatTableRenderingAction_15;
 	public static String FormatTableRenderingAction_16;
-	public static String TableRenderingPreferencePage_5;
-	public static String TableRenderingPreferencePage_6;
 	public static String FormatTableRenderingDialog_0;
 	public static String FormatTableRenderingDialog_1;
 	public static String FormatTableRenderingDialog_2;
 	public static String FormatTableRenderingDialog_3;
 	public static String FormatTableRenderingDialog_4;
 	public static String FormatTableRenderingDialog_5;
-	public static String AbstractAsyncTableRendering_0;
 	public static String AbstractAsyncTableRendering_1;
 	public static String CreateRendering_2;
 	public static String SetPaddedStringPreferencePage_0;
@@ -257,7 +215,6 @@ public class DebugUIMessages extends NLS {
 	public static String GoToAddressComposite_0;
 	public static String GoToAddressComposite_1;
 	public static String GoToAddressComposite_2;
-	public static String GoToAddressComposite_3;
 	public static String GoToAddressComposite_4;
 	public static String GoToAddressComposite_5;
 	public static String GoToAddressComposite_6;

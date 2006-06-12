@@ -15,11 +15,6 @@ import org.eclipse.osgi.util.NLS;
 public class VariablesViewMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages";//$NON-NLS-1$
 
-	public static String find_replace_action_label;
-	public static String find_replace_action_tooltip;
-	public static String find_replace_action_image;
-	public static String find_replace_action_description;
-
 	public static String VariablesView__Copy_8;
 	public static String VariablesView__Paste_14;
 	public static String VariablesView__error_occurred_retrieving_value__18;
@@ -38,7 +33,6 @@ public class VariablesViewMessages extends NLS {
 
 	public static String AvailableLogicalStructuresAction_0;
 	public static String AvailableLogicalStructuresAction_1;
-	public static String AvailableLogicalStructuresAction_2;
 
 	static {
 		// load message values from bundle file
