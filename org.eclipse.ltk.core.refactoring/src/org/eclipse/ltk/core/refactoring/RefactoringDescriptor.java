@@ -254,9 +254,13 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Returns the comment.
+	 * Returns the details comment.
+	 * <p>
+	 * This information is used in the user interface to show additional details
+	 * about the performed refactoring.
+	 * </p>
 	 * 
-	 * @return the comment, or the empty string
+	 * @return the details comment, or the empty string
 	 */
 	public final String getComment() {
 		return (fComment != null) ? fComment : ""; //$NON-NLS-1$
@@ -264,6 +268,9 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * Returns the description.
+	 * <p>
+	 * This information is used to label a refactoring in the user interface.
+	 * </p>
 	 * 
 	 * @return the description
 	 */
