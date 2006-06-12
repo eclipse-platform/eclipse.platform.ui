@@ -10,13 +10,23 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.jface.internal.databinding.provisional.Binding;
+import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.IBindingListener;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
+import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
+import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -24,17 +34,14 @@ import org.eclipse.swt.widgets.Combo;
  */
 public class ComboObservableValue extends AbstractObservableValue {
 
-	/**
-	 * 
-	 */
-
 	private final Combo combo;
-
 	private final String attribute;
-
 	private boolean updating = false;
-
 	private String currentValue;
+
+	private ComboObservableList items;
+	private WritableList itemsList;
+	protected boolean ignoreNextEvent = false;
 
 	/**
 	 * @param combo
@@ -43,14 +50,14 @@ public class ComboObservableValue extends AbstractObservableValue {
 	public ComboObservableValue(Combo combo, String attribute) {
 		this.combo = combo;
 		this.attribute = attribute;
-
+		
 		if (attribute.equals(SWTProperties.SELECTION)
 				|| attribute.equals(SWTProperties.TEXT)) {
 			this.currentValue = combo.getText();
 			combo.addModifyListener(new ModifyListener() {
 
 				public void modifyText(ModifyEvent e) {
-					if (!updating) {
+					if (!updating && !ignoreNextEvent) {
 						String oldValue = currentValue;
 						currentValue = ComboObservableValue.this.combo
 								.getText();
@@ -109,6 +116,44 @@ public class ComboObservableValue extends AbstractObservableValue {
 				|| attribute.equals(SWTProperties.SELECTION),
 				"unexpected attribute: " + attribute); //$NON-NLS-1$
 		return String.class;
+	}
+
+	/**
+	 * @return a WritableList bound to the items property
+	 */
+	public IObservableList getItems() {
+		if (items == null) {
+			items = new ComboObservableList(combo);
+			DataBindingContext dbc = new DataBindingContext();
+			itemsList = new WritableList(String.class);
+			dbc.addBindSupportFactory(new DefaultBindSupportFactory());
+			dbc.addBindingFactory(new DefaultBindingFactory());
+			Binding binding = dbc.bind(items, itemsList, null);
+			binding.addBindingEventListener(new IBindingListener() {
+				public ValidationError bindingEvent(BindingEvent e) {
+					if ((e.copyType == BindingEvent.EVENT_COPY_TO_MODEL || 
+							e.copyType == BindingEvent.EVENT_COPY_TO_TARGET) &&
+							e.pipelinePosition == BindingEvent.PIPELINE_AFTER_GET &&
+							!ignoreNextEvent)
+					{
+						ignoreNextEvent = true;
+						final String oldText = combo.getText();
+						Display.getCurrent().asyncExec(new Runnable() {
+							public void run() {
+								combo.setText(oldText);
+								Display.getCurrent().asyncExec(new Runnable() {
+									public void run() {
+										ignoreNextEvent = false;
+									}
+								});
+							}
+						});
+					}
+					return null;
+				}
+			});
+		}
+		return itemsList;
 	}
 
 }

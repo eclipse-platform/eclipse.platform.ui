@@ -28,19 +28,13 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Abstract base class of the JFace binding scenario test classes.
  */
-
 abstract public class ScenariosTestCase extends TestCase {
 
 	private Composite composite;
-
 	private DataBindingContext dbc;
-
-	private Display display;
-
+	protected Display display;
 	private boolean disposeDisplay = false;
-
-	private Shell shell;
-
+	protected Shell shell;
 	protected Text dummyText;
 
 	private SWTObservableFactory swtObservableFactory;

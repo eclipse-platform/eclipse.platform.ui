@@ -67,7 +67,6 @@ public class ComboScenarios extends ScenariosTestCase {
 		cviewer = new ComboViewer(combo);
 
 		catalog = SampleData.CATALOG_2005; // Lodging source
-
 	}
 
 	protected void tearDown() throws Exception {

@@ -83,6 +83,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ButtonControlScenario.class);
 		// Test each of the basic JFace controls
 		addTestSuite(ComboViewerScenario.class);
+		addTestSuite(ComboUpdatingTest.class);
 		addTestSuite(ListViewerScenario.class);
 		if (BindingTestSuite.failingTestsDisabled(this))
 			return;

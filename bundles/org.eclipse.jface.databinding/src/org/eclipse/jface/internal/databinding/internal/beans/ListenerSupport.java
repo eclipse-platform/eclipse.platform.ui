@@ -77,6 +77,9 @@ public class ListenerSupport {
 		}
 		if (addPropertyChangeListenerMethod != null) {
 			try {
+				if (!addPropertyChangeListenerMethod.isAccessible()) {
+					addPropertyChangeListenerMethod.setAccessible(true);
+				}
 				addPropertyChangeListenerMethod.invoke(target,
 						new Object[] { listener });
 				elementsListenedTo.add(new IdentityWrapper(target));
