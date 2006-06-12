@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Widget;
  * At the second level, user may select a city to associate with the selected<br>
  * person or edit the person's name.
  */
-public class Snippet001 {
+public class Snippet001NestedSelectionWithCombo {
 	public static void main(String[] args) {
 		ViewModel viewModel = new ViewModel();
 		Shell shell = new View(viewModel).createShell();
