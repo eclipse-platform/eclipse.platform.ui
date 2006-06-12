@@ -20,6 +20,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -165,7 +166,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
             }
         }
-        return sb.toString();
+        return TextProcessor.process(sb.toString(), TextProcessor.getDefaultDelimiters() + "]");//$NON-NLS-1$
     }
 
     /**
