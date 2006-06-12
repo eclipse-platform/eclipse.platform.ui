@@ -38,8 +38,8 @@ public class DebugUIMessages extends NLS {
 
 	public static String SwitchMemoryBlockAction_4;
 
+    public static String WorkingDirectoryStatusHandler_0;
 	public static String WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
-	public static String WorkingDirectoryStatusHandler_Eclipse_is_not_able_to_set_the_working_directory_specified_by_the_program_being_launched_as_the_current_runtime_does_not_support_working_directories__nContinue_launch_without_setting_the_working_directory__2;
 
 	public static String DebugUITools_3;
 	public static String DebugUITools_Error_1;

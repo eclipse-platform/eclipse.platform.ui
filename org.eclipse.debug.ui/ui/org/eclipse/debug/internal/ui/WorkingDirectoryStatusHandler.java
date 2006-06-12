@@ -29,7 +29,7 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1; 
-				String message= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_is_not_able_to_set_the_working_directory_specified_by_the_program_being_launched_as_the_current_runtime_does_not_support_working_directories__nContinue_launch_without_setting_the_working_directory__2; 
+				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0; 
 				result[0]= (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
 			}
 		});
