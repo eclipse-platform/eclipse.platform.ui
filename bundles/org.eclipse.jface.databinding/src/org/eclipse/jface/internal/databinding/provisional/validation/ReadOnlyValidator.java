@@ -38,7 +38,7 @@ public class ReadOnlyValidator implements IValidator {
 	 */
 	public ValidationError isPartiallyValid(Object fragment) {
 		// No changes are allowed
-		return ValidationError.error(BindingMessages.getString("Validate_NoChangeAllowed")); //$NON-NLS-1$
+		return ValidationError.error(BindingMessages.getString("Validate_NoChangeAllowedHelp")); //$NON-NLS-1$
 	}
 
     /* (non-Javadoc)
