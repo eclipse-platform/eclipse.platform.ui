@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -164,34 +165,7 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 	}
 	
 	protected String escapeSpecialChars(String label) {
-		if (label == null) {
-			return null;
-		}
-		StringBuffer escaped = new StringBuffer();
-		for (int i = 0; i < label.length(); i++) {
-			char c = label.charAt(i);
-			switch (c) {
-				case '\b':
-					escaped.append("\\b"); //$NON-NLS-1$
-					break;
-				case '\f':
-					escaped.append("\\f"); //$NON-NLS-1$
-					break;					
-				case '\n':
-					escaped.append("\\n"); //$NON-NLS-1$
-					break;
-				case '\r':
-					escaped.append("\\r"); //$NON-NLS-1$
-					break;
-				case '\t':
-					escaped.append("\\t"); //$NON-NLS-1$
-					break;
-				default:
-					escaped.append(c);
-					break;
-			}
-		}
-		return escaped.toString();
+		return DefaultLabelProvider.escapeSpecialChars(label);
 	}
 
 	

@@ -437,5 +437,105 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 	}
+	
+	/**
+	 * Returns the given string with special chars in escaped sequences.
+	 * 
+	 * @param label
+	 * @return the given string with special chars in escaped sequences
+	 * @since 3.3
+	 */
+	public static String escapeSpecialChars(String string) {
+		if (string == null) {
+			return null;
+		}
+		StringBuffer escaped = new StringBuffer();
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			switch (c) {
+				case '\b':
+					escaped.append("\\b"); //$NON-NLS-1$
+					break;
+				case '\f':
+					escaped.append("\\f"); //$NON-NLS-1$
+					break;					
+				case '\n':
+					escaped.append("\\n"); //$NON-NLS-1$
+					break;
+				case '\r':
+					escaped.append("\\r"); //$NON-NLS-1$
+					break;
+				case '\t':
+					escaped.append("\\t"); //$NON-NLS-1$
+					break;
+				case '\'':
+					escaped.append("\\\'"); //$NON-NLS-1$
+					break;
+				case '\\':
+					escaped.append("\\\\"); //$NON-NLS-1$
+					break;					
+				default:
+					escaped.append(c);
+					break;
+			}
+		}
+		return escaped.toString();
+	}	
+	
+	/**
+	 * Returns the string with escaped sequences replaced with single chars.
+	 * 
+	 * @param string
+	 * @return the string with escaped sequences replaced with single chars
+	 * @since 3.3
+	 */
+	public static String encodeEsacpedChars(String string) {
+		if (string == null) {
+			return null;
+		}
+		StringBuffer encoded = new StringBuffer();
+		if (string.length() == 1) {
+			return string;
+		}
+		for (int i = 0; i < string.length() - 1; i++) {
+			char c = string.charAt(i);
+			if (c == '\\') {
+				switch (string.charAt(i+1)) {
+					case 'b':
+						c= '\b';
+						i++;
+						break;
+					case 'f':
+						c= '\f';
+						i++;
+						break;
+					case 'n':
+						c= '\n';
+						i++;
+						break;
+					case 'r':
+						c= '\r';
+						i++;
+						break;
+					case 't':
+						c= '\t';
+						i++;
+						break;
+					case '\'':
+						c= '\'';
+						i++;
+						break;
+					case '\\':
+						c= '\\';
+						i++;
+						break;
+					default :
+						break;
+				}	
+			}
+			encoded.append(c);
+		}
+		return encoded.toString();		
+	}
 }
 

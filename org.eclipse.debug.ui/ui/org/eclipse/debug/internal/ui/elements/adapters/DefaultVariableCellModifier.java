@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.VariableValueEditorManager;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
@@ -52,7 +53,7 @@ public class DefaultVariableCellModifier implements ICellModifier {
 			if (element instanceof IVariable) {
 				IVariable variable = (IVariable) element;
 				try {
-					return variable.getValue().getValueString();
+					return DefaultLabelProvider.escapeSpecialChars(variable.getValue().getValueString());
 				} catch (DebugException e) {
 					DebugUIPlugin.log(e);
 				}
@@ -75,6 +76,9 @@ public class DefaultVariableCellModifier implements ICellModifier {
 					IWorkbenchPart part = fContext.getPart();
 					if (part != null) {
 						shell = part.getSite().getShell();
+					}
+					if (value instanceof String) {
+						value = DefaultLabelProvider.encodeEsacpedChars((String)value);
 					}
 					if (editor != null) {
 						if  (editor.saveVariable(variable, (String) value, shell)) {
