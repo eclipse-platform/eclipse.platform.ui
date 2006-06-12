@@ -10,95 +10,10 @@
 <body>
 
 <h1>
-Eclipse Platform Build Notes 3.2 Stream&nbsp;<br>
+Eclipse Platform Build Notes 3.3 Stream&nbsp;<br>
 LTK Core Refactoring</h1>
-<h3>3.2 M5, January 31, 2006</h3>
+<h3>3.3 M1, ???, 2006</h3>
 <h4>API</h4>
-LTK Core has started to leverage the new ResourceChangeValidator API released in Core/Resources.
-Plug/ins that implement a participant are requested to add their resource changes to the pre-delta.
-Participants can do so using the new class ResourceChangeChecker which superceeds the old
-ValidateEditChecker. The new checker can be accessed via the OperationContext passed to the 
-RefactoringParticipant#checkFinalConditions method (analog to the olde ValidateEditChecker).
-
-<h3>3.2 M5, January 26, 2006</h3>
-<h4>Implementation Changes</h4>
-The refactoring framework has been extended by scripting facilities. Refactorings which support scripting can now be exported
-from the refactoring history and saved in a refactoring script. These scripts can then be reapplied on a remote workspace.<p>
-There is a new extension point <code>org.eclipse.ltk.core.refactoring.refactoringContributions</code> which allows refactoring implementors
-to contribute a refactoring contribution, in order to make their refactorings scriptable. Refactorings contributed
-by this extension point appear in the platform refactoring history and are exportable in refactoring scripts.<p>
-Please consult the documentation of the extension point for further information.
-<h3>3.2 M4, December 7, 2005</h3>
-<h4>Implementation Changes</h4>
-Preliminary support for a refactoring-aware logical model support has been added:<p>
-    <strong>Note:</strong> This API is considered experimental and may undergo several changes until its final release.
-    </p>
-    <ul>
-      <li>org.eclipse.ltk.core.refactoring.model.AbstractRefactoringModelProvider
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.model.RefactoringDescriptorResourceMapping
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.model.RefactoringHistoryResourceMapping
-      </li>
-    </ul>
-<h3>3.2 M3, October 31, 2005</h3>
-<h4>Implementation Changes</h4>
-Preliminary support for a global refactoring history has been added:<p>
-    <strong>Note:</strong> This API is considered experimental and may undergo several changes until its final release.
-    </p>
-    <ul>
-      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringExecutionListener / RefactoringExecutionEvent
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener / RefactoringHistoryEvent
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy (former RefactoringDescriptorHandle)
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.IInitializableRefactoringComponent
-      </li>
-    </ul>
-<h3>3.2 M2, September 6, 2005</h3>
-<h4>Implementation Changes</h4>
-The management of a group category set has been moved from the <code>TextEditBasedChangeGroup</code>
-to a special text edit group <code>CategorizedTextEditGroup</code>.
-<h3>3.2 M2, August 30, 2005</h3>
-<h4>Implementation Changes</h4>
-Support for group categories for text edit based changes has been added. This support
-enables the refactoring preview wizard to filter the change tree against certain
-kinds of changes (for example all textual change in comments and strings). The relevant
-new API classes are: <code>GroupCategory</code>, <code>GroupCategorySet</code> as well as 
-the group category specific API additions on <code>TextEditBasedChange</code> and <code>
-TextEditBasedChangeGroup</code>.
-<h3>3.2 M2, August 23, 2005</h3>
-<h4>Implementation Changes</h4>
-<ul>
-  <li>New API has been added to support composite refactorings:
-    <ul>
-      <li>org.eclipse.ltk.core.refactoring.TextEditBasedChange
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.CompositeTextFileChange
-      </li>
-    </ul>
-  </li>
-  <p></p>
-    <li>Additionally, preliminary support to persist refactorings has been added:<p>
-    <strong>Note:</strong> This API is considered experimental and may undergo several changes until its final release.
-    </p>
-    <ul>
-      <li>org.eclipse.ltk.core.refactoring.participants.GenericRefactoringArguments
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.RefactoringDescriptor
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor
-      </li>
-      <li>org.eclipse.ltk.core.refactoring.Change#getRefactoringDescriptor()
-      </li>
-    </ul>
-  </li>
-</ul>
+<h4>Implementation</h4>
 </body>
 </html>
-
