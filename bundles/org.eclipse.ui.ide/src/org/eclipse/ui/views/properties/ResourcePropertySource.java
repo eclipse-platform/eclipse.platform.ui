@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.internal.views.properties.IDEPropertiesMessages;
 
 /**
@@ -155,14 +156,13 @@ public class ResourcePropertySource implements IPropertySource {
 			}
 
             return FILE_NOT_FOUND;
-        } else {
-            File localFile = location.toFile();
-            if (localFile.exists()) {
-                DateFormat format = new SimpleDateFormat();
-                return format.format(new Date(localFile.lastModified()));
-            }
-            return FILE_NOT_FOUND;
+        } 
+        File localFile = location.toFile();
+        if (localFile.exists()) {
+            DateFormat format = new SimpleDateFormat();
+            return format.format(new Date(localFile.lastModified()));
         }
+        return FILE_NOT_FOUND;
     }
 
     /* (non-Javadoc)
@@ -187,18 +187,17 @@ public class ResourcePropertySource implements IPropertySource {
         }
         if (location == null) {
             return FILE_NOT_FOUND;
-        } else {
-            String locationString = location.toOSString();
-            if (resolvedLocation != null && !isPathVariable(resource)) {
-                // No path variable used. Display the file not exist message 
-                // in the location. Fixes bug 33318. 
-                File file = resolvedLocation.toFile();
-                if (!file.exists()) {
-                    locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-                }
-            }
-            return locationString;
         }
+        String locationString = location.toOSString();
+        if (resolvedLocation != null && !isPathVariable(resource)) {
+            // No path variable used. Display the file not exist message 
+            // in the location. Fixes bug 33318. 
+            File file = resolvedLocation.toFile();
+            if (!file.exists()) {
+                locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+            }
+        }
+        return locationString;
     }
 
     /**
@@ -217,15 +216,14 @@ public class ResourcePropertySource implements IPropertySource {
 			}
 
             return FILE_NOT_FOUND;
-        } else {
-            String locationString = location.toOSString();
-            File file = location.toFile();
-
-            if (!file.exists()) {
-                locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-            }
-            return locationString;
         }
+        String locationString = location.toOSString();
+        File file = location.toFile();
+
+        if (!file.exists()) {
+            locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+        }
+        return locationString;
     }
 
     /* (non-Javadoc)
@@ -234,9 +232,8 @@ public class ResourcePropertySource implements IPropertySource {
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (isPathVariable(element)) {
 			return propertyDescriptorsLinkVariable;
-		} else {
-			return propertyDescriptors;
 		}
+		return propertyDescriptors;
     }
 
     /* (non-Javadoc)
@@ -247,17 +244,16 @@ public class ResourcePropertySource implements IPropertySource {
             return element.getName();
         }
         if (name.equals(IResourcePropertyConstants.P_PATH_RES)) {
-            return element.getFullPath().toString();
+            return TextProcessor.process(element.getFullPath().toString());
         }
         if (name.equals(IResourcePropertyConstants.P_LAST_MODIFIED_RES)) {
             return getDateStringValue(element);
         }
         if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
-            if (element.isReadOnly()) {
+            if (element.getResourceAttributes().isReadOnly()) {
 				return IDEPropertiesMessages.ResourceProperty_false;
-			} else {
-				return IDEPropertiesMessages.ResourceProperty_true;
-			}
+			} 
+			return IDEPropertiesMessages.ResourceProperty_true;
         }
         if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
             return String.valueOf(element.isDerived());
@@ -266,10 +262,10 @@ public class ResourcePropertySource implements IPropertySource {
             return String.valueOf(element.isLinked());
         }
         if (name.equals(IResourcePropertyConstants.P_LOCATION_RES)) {
-            return getLocationText(element);
+            return TextProcessor.process(getLocationText(element));
         }
         if (name.equals(IResourcePropertyConstants.P_RESOLVED_LOCATION_RES)) {
-            return getResolvedLocationText(element);
+            return TextProcessor.process(getResolvedLocationText(element));
         }
         return null;
     }
@@ -336,9 +332,8 @@ public class ResourcePropertySource implements IPropertySource {
         IPath location = resource.getLocation();
         if (location == null) {
 			return null;
-		} else {
-			return location.toFile();
 		}
+		return location.toFile();
     }
 
 }
