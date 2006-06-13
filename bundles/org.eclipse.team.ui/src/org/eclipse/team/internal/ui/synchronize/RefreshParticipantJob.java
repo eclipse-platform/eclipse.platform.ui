@@ -362,7 +362,10 @@ public abstract class RefreshParticipantJob extends Job {
 	 * of this job
 	 */
 	protected abstract int getChangeCount();
-	
+
+	protected abstract int getIncomingChangeCount();
+	protected abstract int getOutgoingChangeCount();
+    
 	private boolean isJobInFamilyRunning(Object family) {
 		Job[] jobs = Platform.getJobManager().find(family);
 		if (jobs != null && jobs.length > 0) {
@@ -383,20 +386,31 @@ public abstract class RefreshParticipantJob extends Job {
 		int numChanges = getChangeCount();
 		if (numChanges > 0) {
 			code = IRefreshEvent.STATUS_CHANGES;
+
+			int incomingChanges = getIncomingChangeCount();
+             String numIncomingChanges = incomingChanges==0 ? ""  //$NON-NLS-1$
+                 : NLS.bind(TeamUIMessages.RefreshCompleteDialog_incomingChanges, Integer.toString(incomingChanges));
+             
+			int outgoingChanges = getOutgoingChangeCount();
+			String numOutgoingChanges = outgoingChanges==0 ? ""  //$NON-NLS-1$
+                : NLS.bind(TeamUIMessages.RefreshCompleteDialog_outgoingChanges, Integer.toString(outgoingChanges));
+            
+			String sep = incomingChanges>0 && outgoingChanges>0 ? "; " : "";  //$NON-NLS-1$ //$NON-NLS-2$
+            
 			if (changeCount > 0) {
 			// New changes found
 				String numNewChanges = Integer.toString(changeCount);
 				if (changeCount == 1) {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); 
+				    text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges, numIncomingChanges, sep, numOutgoingChanges}))); 
 				} else {
-						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); 
-					}
+				    text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges, numIncomingChanges, sep, numOutgoingChanges}))); 
+				}
 			} else {
 				// Refreshed resources contain changes
 				if (numChanges == 1) {
-					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); 
+					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges), numIncomingChanges, sep, numOutgoingChanges}))); 
 				} else {
-					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); 
+					text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges), numIncomingChanges, sep, numOutgoingChanges}))); 
 				}
 			}
 		} else {

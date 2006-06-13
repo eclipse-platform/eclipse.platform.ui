@@ -295,6 +295,8 @@ public class TeamUIMessages extends NLS {
 	public static String RefreshCompleteDialog_changesPlural;
 	public static String RefreshCompleteDialog_newChangesSingular;
 	public static String RefreshCompleteDialog_newChangesPlural;
+	public static String RefreshCompleteDialog_incomingChanges;
+	public static String RefreshCompleteDialog_outgoingChanges;
 	public static String RefreshCompleteDialog_6;
 	public static String ConfigureRefreshScheduleDialog_0;
 	public static String ConfigureRefreshScheduleDialog_1;

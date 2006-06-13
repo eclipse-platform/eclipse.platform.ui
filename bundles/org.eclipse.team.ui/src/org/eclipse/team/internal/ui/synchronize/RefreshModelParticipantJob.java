@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.core.mapping.GroupProgressMonitor;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -79,6 +80,16 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 		return ((ModelSynchronizeParticipant)getParticipant()).getContext().getDiffTree().size();
 	}
 
+    protected int getIncomingChangeCount() {
+      IResourceDiffTree diffTree = ((ModelSynchronizeParticipant)getParticipant()).getContext().getDiffTree();
+      return (int) diffTree.countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK);
+    }
+    
+    protected int getOutgoingChangeCount() {
+      IResourceDiffTree diffTree = ((ModelSynchronizeParticipant)getParticipant()).getContext().getDiffTree();
+      return (int) diffTree.countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK);
+    }
+    
 	protected void handleProgressGroupSet(IProgressMonitor group, int ticks) {
 		this.group = group;
 		this.groupTicks = ticks;
