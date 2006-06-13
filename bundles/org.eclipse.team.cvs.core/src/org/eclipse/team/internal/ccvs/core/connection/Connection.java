@@ -41,11 +41,13 @@ public class Connection {
 	private ICVSRepositoryLocation fCVSRoot;
 	private boolean fIsEstablished;
 	private InputStream fResponseStream;
+	private String fServerEncoding;
 	private byte[] readLineBuffer = new byte[256];
 
 	public Connection(ICVSRepositoryLocation cvsroot, IServerConnection serverConnection) {
 		fCVSRoot = cvsroot;
 		this.serverConnection = serverConnection;
+		fServerEncoding = getEncoding(fCVSRoot);
 	}
 	
 	private static byte[] append(byte[] buffer, int index, byte b) {
@@ -146,7 +148,7 @@ public class Connection {
 				readLineBuffer = append(readLineBuffer, index++, (byte) r);
 			}
 
-			String result = new String(readLineBuffer, 0, index, getEncoding(fCVSRoot));
+			String result = new String(readLineBuffer, 0, index, fServerEncoding);
 			if (Policy.isDebugProtocol()) Policy.printProtocolLine(result);
 			return result;
 		} catch (IOException e) {
@@ -177,7 +179,7 @@ public class Connection {
 	 */
 	public void write(String s) throws CVSException {
         try {
-			write(s.getBytes(getEncoding(fCVSRoot)), false);
+			write(s.getBytes(fServerEncoding), false);
 		} catch (UnsupportedEncodingException e) {
 			throw new CVSException (e.getMessage());
 		}
@@ -196,7 +198,7 @@ public class Connection {
 	 */
 	public void writeLine(String s) throws CVSException {
 		try {
-			write(s.getBytes(getEncoding(fCVSRoot)), true);
+			write(s.getBytes(fServerEncoding), true);
 		} catch (UnsupportedEncodingException e) {
 			throw new CVSException (e.getMessage());
 		}
