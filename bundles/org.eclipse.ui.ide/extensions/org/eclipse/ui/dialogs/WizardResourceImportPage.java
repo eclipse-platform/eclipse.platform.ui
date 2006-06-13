@@ -90,6 +90,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     private static final String EMPTY_PROJECT_MESSAGE = IDEWorkbenchMessages.WizardImportPage_specifyProject;
     
     private static final String INACCESSABLE_FOLDER_MESSAGE = IDEWorkbenchMessages.WizardImportPage_folderMustExist;
+    
+    private static final String READ_ONLY_FOLDER_MESSAGE = IDEWorkbenchMessages.WizardImportpage_folderIsReadOnly;
 
     /**
      * Creates an import wizard page. If the initial resource selection 
@@ -511,6 +513,12 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
              setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
              return false;
         }
+        
+        if (container.getResourceAttributes().isReadOnly()){
+        	setErrorMessage(READ_ONLY_FOLDER_MESSAGE);
+        	return false;
+        }
+        
         if (container.getLocation() == null) {
           if (container.isLinked()) {
                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_undefinedPathVariable);
