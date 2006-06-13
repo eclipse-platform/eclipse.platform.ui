@@ -447,9 +447,9 @@ public class ThreeWaySynchronizer implements IFlushOperation {
 		try {
 			beginOperation();
 			byte[] syncBytes = internalGetSyncBytes(resource);
-			if (syncBytes == null) return 0;
+			if (syncBytes == null) return -1;
 			byte[] bytes = getSlot(syncBytes, 0);
-			if (bytes == null || bytes.length == 0) return 0;
+			if (bytes == null || bytes.length == 0) return -1;
 			return Long.parseLong(new String(bytes));
 		} finally {
 			endOperation();
