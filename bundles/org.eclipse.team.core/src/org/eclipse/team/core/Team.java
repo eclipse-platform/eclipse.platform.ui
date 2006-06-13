@@ -12,6 +12,7 @@ package org.eclipse.team.core;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -169,11 +170,12 @@ public final class Team {
 
 	private static IIgnoreInfo[] getIgnoreInfo(Map gIgnore) {
 		IIgnoreInfo[] result = new IIgnoreInfo[gIgnore.size()];
-		Iterator e = gIgnore.keySet().iterator();
+		Iterator e = gIgnore.entrySet().iterator();
 		int i = 0;
 		while (e.hasNext() ) {
-			final String pattern = (String)e.next();
-			final boolean enabled = ((Boolean)gIgnore.get(pattern)).booleanValue();
+			Map.Entry entry = (Entry) e.next();
+			final String pattern = (String) entry.getKey();
+			final boolean enabled = ((Boolean)entry.getValue()).booleanValue();
 			result[i++] = new IIgnoreInfo() {
 				private String p = pattern;
 				private boolean e1 = enabled;
@@ -191,14 +193,14 @@ public final class Team {
 	private synchronized static StringMatcher[] getStringMatchers() {
 		if (ignoreMatchers==null) {
 			IIgnoreInfo[] ignorePatterns = getAllIgnores();
-			Vector matchers = new Vector(ignorePatterns.length);
+			ArrayList matchers = new ArrayList(ignorePatterns.length);
 			for (int i = 0; i < ignorePatterns.length; i++) {
 				if (ignorePatterns[i].getEnabled()) {
 					matchers.add(new StringMatcher(ignorePatterns[i].getPattern(), true, false));
 				}
 			}
 			ignoreMatchers = new StringMatcher[matchers.size()];
-			matchers.copyInto(ignoreMatchers);
+			ignoreMatchers = (StringMatcher[]) matchers.toArray(ignoreMatchers);
 		}
 		return ignoreMatchers;
 	}
@@ -236,15 +238,17 @@ public final class Team {
 		}
 		// Now set into preferences
 		StringBuffer buf = new StringBuffer();
-		Iterator e = globalIgnore.keySet().iterator();
+		Iterator e = globalIgnore.entrySet().iterator();
 		while (e.hasNext()) {
-			String pattern = (String)e.next();
+			Map.Entry entry = (Entry) e.next();
+			String pattern = (String) entry.getKey();
+			Boolean value = (Boolean) entry.getValue();
 			boolean isCustom = (!pluginIgnore.containsKey(pattern)) ||
-				!((Boolean)pluginIgnore.get(pattern)).equals(globalIgnore.get(pattern));
+				!((Boolean)pluginIgnore.get(pattern)).equals(value);
 			if (isCustom) {
 				buf.append(pattern);
 				buf.append(PREF_TEAM_SEPARATOR);
-				boolean en = ((Boolean)globalIgnore.get(pattern)).booleanValue();
+				boolean en = value.booleanValue();
 				buf.append(en);
 				buf.append(PREF_TEAM_SEPARATOR);
 			}
