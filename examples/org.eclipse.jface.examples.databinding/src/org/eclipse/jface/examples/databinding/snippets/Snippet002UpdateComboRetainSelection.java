@@ -173,8 +173,8 @@ public class Snippet002UpdateComboRetainSelection {
 			DataBindingContext bindingContext = createContext(shell);
 			ComboObservableValue comboValue = (ComboObservableValue) bindingContext.createObservable(new Property(combo, SWTProperties.TEXT));
 			bindingContext.bind(comboValue.getItems(), new Property(viewModel, "choices"), null);
-//			bindingContext.bind(combo, new Property(viewModel, "choices", String.class, Boolean.TRUE), null);
 			bindingContext.bind(comboValue, new Property(viewModel, "text"), null);
+//			bindingContext.bind(combo, new Property(viewModel, "choices", String.class, Boolean.TRUE), null);
 			
 			// Open and return the Shell
 			shell.pack();

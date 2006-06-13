@@ -119,7 +119,21 @@ public class ComboObservableValue extends AbstractObservableValue {
 	}
 
 	/**
-	 * @return a WritableList bound to the items property
+	 * Returns an IObservableList that is bound to the Combo's items. The
+	 * difference between binding to this WritableList and binding to the items
+	 * directly is that when you update the items through this WritableList, the
+	 * ComboObservableValue will attempt to maintain the value of the Text
+	 * selection if at all possible. ie: If the set of Items after the refresh
+	 * still contain the same Text value as the set of Items had before the
+	 * refresh, the Text value will remain the same.
+	 * <p>
+	 * The only constraint with using this method is that if the Combo is *not*
+	 * SWT.READ_ONLY, you have to bind the ComboObservableValue itself *before*
+	 * you bind to the IObservableList returned by this method. If the Combo is
+	 * SWT.READ_ONLY, you have to bind the ComboObservableValue itself *after*
+	 * you bind to the IObservableList returned by this method.
+	 * 
+	 * @return an IObservableList bound to the items property
 	 */
 	public IObservableList getItems() {
 		if (items == null) {
