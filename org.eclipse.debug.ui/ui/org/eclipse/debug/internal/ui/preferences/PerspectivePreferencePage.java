@@ -165,11 +165,11 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				HashMap map = (HashMap) fTypeInformationMapping.get(fCurrentType);
 				if (map == null) {
 					map = new HashMap();
-				}// end if
+				}
 				map.put(combo.getData(), fPerspectiveIds.get(combo.getText()));
 				fTypeInformationMapping.put(fCurrentType, map);
-			}// end if
-		}// end widgetselected
+			}
+		}
 	};
 
 	/**
@@ -180,7 +180,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		setPreferenceStore(store);
 		setTitle(DebugPreferencesMessages.PerspectivePreferencePage_6);
 		setDescription(DebugPreferencesMessages.PerspectivePreferencePage_0);
-	}// end constructor
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -200,20 +200,20 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				if (perspective != null) {
 					if (perspective.equals(DebugPreferencesMessages.PerspectivePreferencePage_4)) {
 						perspective = IDebugUIConstants.PERSPECTIVE_NONE;
-					}// end if
-				}// end if
+					}
+				}
 				else {
 					perspective = IDebugUIConstants.PERSPECTIVE_NONE;
-				}//end else
+				}
 				fPmanager.setLaunchPerspective(typekey, modekey, perspective);
-			}// end for
-		}// end for
+			}
+		}
 		if(fCurrentType != null) {
 			store.setValue(LAST_SELECTED_CONFIGTYPE, fCurrentType.getName());
 		}
 		DebugUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
-	}// end performOK
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -295,10 +295,10 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				String mode = (String) modes.get(j);
 				String persp = fPmanager.getDefaultLaunchPerspective(types[i], mode);
 				map.put(mode, (persp != null ? persp : IDebugUIConstants.PERSPECTIVE_NONE));
-			}// end for
+			}
 			fTypeInformationMapping.put(types[i], map);
-		}// end for
-	}//setDefaultPerspective
+		}
+	}
 
 	/**
 	 * Finds the ILaunchConfiguration within the tree based on its text
@@ -312,10 +312,10 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		for (int i = 0; i < selection.length; i++) {
 			if (selection[i].getText().equals(last)) {
 				return selection[i];
-			}// end if
-		}// end for
+			}
+		}
 		return null;
-	}// end findLastSelected
+	}
 
 	/**
 	 * Builds all possible combo boxes per supported modes
@@ -324,7 +324,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		HashMap launchmodes = (HashMap) fTypeInformationMapping.get(type);
 		if (fComboPlaceHolder != null) {
 			fComboPlaceHolder.dispose();
-		}// end if
+		}
 		Font font = fPerspectiveComp.getFont();
 		fComboPlaceHolder = new Composite(fPerspectiveComp, SWT.NONE);
 		fComboPlaceHolder.setLayout(new GridLayout(2, false));
@@ -349,7 +349,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 					gd = new GridData(GridData.BEGINNING);
 					label.setLayoutData(gd);
 					String clabel = mode.getLabel();
-					//resolve conflict with Default and Debug mneumonics bug 122882
+				//resolve conflict with Default and Debug mneumonics bug 122882
 					if(clabel.equals(DebugPreferencesMessages.PerspectivePreferencePage_7)) {
 						clabel = DebugPreferencesMessages.PerspectivePreferencePage_8;
 					}
@@ -392,7 +392,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				buildComboBoxes(fCurrentType);
 			}
 		}
-	}// end handleLaunchConfigurationSelectionChanged
+	}
 
 	/**
 	 * Gets the perspective labels
@@ -408,8 +408,8 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		for (int i = 0; i < descriptors.length; i++) {
 			fPerspectiveLabels[i + 1] = descriptors[i].getLabel();
 			fPerspectiveIds.put(descriptors[i].getLabel(), descriptors[i].getId());
-		}// end for
-	}// end getPerspectiveLabels
+		}
+	}
 
 	/**
 	 * filters the list of labels based on capabilities
@@ -439,7 +439,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
-	}// end createSpacer
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -452,7 +452,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		setDefaultPerspectives();
 		buildComboBoxes(fCurrentType);
 		super.performDefaults();
-	}// end performdefaults
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
@@ -524,7 +524,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		fViewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
 						handleLaunchConfigurationSelectionChanged(event);
-					}//end selectionChanged
+					}
 				});
 		fPerspectiveComp = new Composite(comp, SWT.NONE);
 		fPerspectiveComp.setLayout(new GridLayout(1, true));
@@ -539,7 +539,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		
 		Dialog.applyDialogFont(composite);
 		return composite;
-	}// end createControl
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
@@ -559,5 +559,4 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		PlatformUI.getWorkbench().getActivitySupport().getActivityManager().removeActivityManagerListener(this);
 		super.dispose();
 	}
-
-}// end class
+}
