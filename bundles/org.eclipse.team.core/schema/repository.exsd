@@ -14,10 +14,10 @@ Repositories that extend this extension point can provide implementations for co
 A Repository type can also be specified in order to provide non-project specific funtionality such as a &lt;samp&gt;org.eclipse.team.core.ProjectSetCapability&lt;/samp&gt;.
 &lt;/p&gt;
 &lt;p&gt;
-Optionally, a repository provider type can designate that it can import projects from second provider, in the case where the second provider&apos;s plugin is not available in the current install. This is provided as a means to support the migration from one provider implementation to another where the resuse of the same id for the two providers was not possible.
+Optionally, a repository provider type can designate that it can import projects from a second provider, in the case where the second provider&apos;s plugin is not available in the current install. This is provided as a means to support the migration from one provider implementation to another where the resuse of the same id for the two providers was not possible.
 &lt;/p&gt;
 &lt;p&gt;
-A repository provider type can also specify one or more meta-file paths (delimited by comas) that are relative to a parent container. If an unsghared project or folder contains files that match all the meta-file paths associated with a repository definition, the method &lt;code&gt;RepositoryProviderType#metaFilesDetected&lt;/code&gt; will be invoked with the parent container as an argument. This is done to give the repository type a chance to mark the files team-private and potentially share the project as well. see the javadoc of the above mentioned method for more details.
+A repository provider type can also specify one or more meta-file paths (delimited by comas) that are relative to a parent container. If an unshared project or folder contains files that match all the meta-file paths associated with a repository definition, the method &lt;code&gt;RepositoryProviderType#metaFilesDetected&lt;/code&gt; will be invoked with the parent container as an argument. This is done to give the repository type a chance to mark the files team-private and potentially share the project as well. see the javadoc of the above mentioned method for more details.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -53,7 +53,7 @@ A repository provider type can also specify one or more meta-file paths (delimit
      &lt;samp&gt;org.eclipse.team.core.RepositoryProvider&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.team.core.RepositoryProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -64,21 +64,22 @@ A repository provider type can also specify one or more meta-file paths (delimit
      &lt;samp&gt;org.eclipse.team.core.RepositoryProviderType&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.team.core.RepositoryProviderType"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="canImportId" type="string">
             <annotation>
                <documentation>
-                  
+                  ID of another team provider this provider can import from
                </documentation>
             </annotation>
          </attribute>
          <attribute name="metaFilePaths" type="string">
             <annotation>
                <documentation>
-                  
+                  Comma separated list of file paths that are considered to be version control metadata.  If any of these files are detected in a newly imported
+                  project the provider&apos;s Repository Provider Type will be notified so the project can be mapped to the provider.
                </documentation>
             </annotation>
          </attribute>

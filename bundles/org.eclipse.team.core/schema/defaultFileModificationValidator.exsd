@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.team.core" id="defaultFileModificationValidator" name="Default File Modification Validator"/>
       </appInfo>
       <documentation>
-         This extension point is for external use only. It&apos;s purpose is to provide prompting for the overwriting of read-only resources using validateEdit on unshared projects.
+         This extension point is for internal use only. It&apos;s purpose is to provide prompting for the overwriting of read-only resources using validateEdit on unshared projects.
       </documentation>
    </annotation>
 
@@ -40,7 +40,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IFileModificationValidator"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -35,6 +35,11 @@ Providers may provide an extension for this extension point.  No code beyond the
    </element>
 
    <element name="ignore">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="pattern"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="pattern" type="string" use="required">
             <annotation>
