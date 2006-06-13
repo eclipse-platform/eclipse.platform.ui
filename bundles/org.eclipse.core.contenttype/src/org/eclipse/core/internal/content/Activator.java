@@ -128,6 +128,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer {
 
 	public void removedService(ServiceReference reference, Object service) {
 		// registry is unavailable; remove the change listener
-		ContentTypeManager.removeRegistryChangeListener((IExtensionRegistry) service); 
+		ContentTypeManager.removeRegistryChangeListener((IExtensionRegistry) service);
+		bundleContext.ungetService(reference);
 	}
 }
