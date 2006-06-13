@@ -202,16 +202,22 @@ public class UpdateContentCachingService {
 					if ( ! e.isNoTagException() && e.containsErrors())
 						throw e;
 					return false;
-				} else if (status.getSeverity() == IStatus.ERROR)
+				} else if (status.getSeverity() == IStatus.ERROR && isReportableError(status)) {
 					throw new CVSException(status);
-				else 
-					CVSProviderPlugin.log (new CVSException(status));
+				}
 			}
 		} finally {
 			session.close();
 			monitor.done();
 		}
 		return true;
+	}
+
+	private boolean isReportableError(IStatus status) {
+		return CVSStatus.isInternalError(status) 
+			|| status.getCode() == TeamException.UNABLE
+        	|| status.getCode() == CVSStatus.INVALID_LOCAL_RESOURCE_PATH
+        	|| status.getCode() == CVSStatus.RESPONSE_HANDLING_FAILURE;
 	}
 
 	private LocalOption[] getLocalOptions() {
