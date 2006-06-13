@@ -37,9 +37,9 @@ import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
  */
 public class NonSyncMergePart extends PageSaveablePart {
 	
-	private final NoSyncModelMergePage page;
+	private final NonSyncModelMergePage page;
 
-	protected NonSyncMergePart(Shell shell, CompareConfiguration compareConfiguration, NoSyncModelMergePage page) {
+	protected NonSyncMergePart(Shell shell, CompareConfiguration compareConfiguration, NonSyncModelMergePage page) {
 		super(shell, compareConfiguration);
 		this.page = page;
 	}

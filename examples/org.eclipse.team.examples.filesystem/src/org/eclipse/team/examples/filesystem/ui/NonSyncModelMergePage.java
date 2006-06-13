@@ -36,7 +36,7 @@ import org.eclipse.ui.part.Page;
 /**
  * This class provides the page for the {@link NonSyncMergePart}.
  */
-public class NoSyncModelMergePage extends Page {
+public class NonSyncModelMergePage extends Page {
 	
 	IMergeContext context;
 	private TreeViewer viewer;
@@ -138,7 +138,7 @@ public class NoSyncModelMergePage extends Page {
 		}
 	}
 	
-	public NoSyncModelMergePage(IMergeContext context) {
+	public NonSyncModelMergePage(IMergeContext context) {
 		super();
 		this.context = context;
 	}

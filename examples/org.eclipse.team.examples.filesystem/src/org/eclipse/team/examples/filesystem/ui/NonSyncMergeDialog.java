@@ -28,7 +28,7 @@ import org.eclipse.team.ui.SaveablePartDialog;
 public class NonSyncMergeDialog extends SaveablePartDialog {
 
 	public static void openFor(NonSyncModelMergeOperation operation) {
-		NoSyncModelMergePage page = new NoSyncModelMergePage((IMergeContext) operation.getContext());
+		NonSyncModelMergePage page = new NonSyncModelMergePage((IMergeContext) operation.getContext());
 		NonSyncMergePart part = new NonSyncMergePart(operation.getShell(), new CompareConfiguration(), page);
 		NonSyncMergeDialog dialog = new NonSyncMergeDialog(operation.getShell(), part);
 		dialog.open();
