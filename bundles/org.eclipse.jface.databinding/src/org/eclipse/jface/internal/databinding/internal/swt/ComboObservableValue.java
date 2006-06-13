@@ -151,15 +151,9 @@ public class ComboObservableValue extends AbstractObservableValue {
 							!ignoreNextEvent)
 					{
 						ignoreNextEvent = true;
-						final String oldText = combo.getText();
 						Display.getCurrent().asyncExec(new Runnable() {
 							public void run() {
-								combo.setText(oldText);
-								Display.getCurrent().asyncExec(new Runnable() {
-									public void run() {
-										ignoreNextEvent = false;
-									}
-								});
+								ignoreNextEvent = false;
 							}
 						});
 					}

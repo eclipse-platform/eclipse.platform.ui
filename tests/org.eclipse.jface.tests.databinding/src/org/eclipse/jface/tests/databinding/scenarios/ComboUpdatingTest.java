@@ -123,7 +123,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			++position;
 		}
 		assertEquals("Should find value of text", "Apple", text);
-		assertEquals("Should find value of combo.getText()", "Apple", comboEditable.getText());
+		assertEquals("Should find value of combo.getText()", "", comboEditable.getText());
 		comboEditable.setText("Banana");
 		spinEventLoop(0);
 		assertEquals("Should find value of text", "Banana", text);
@@ -168,7 +168,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			++position;
 		}
 		assertEquals("Should find value of text", "Hello, world", text);
-		assertEquals("Should find value of combo.getText()", "Hello, world", comboEditable.getText());
+		assertEquals("Should find value of combo.getText()", "", comboEditable.getText());
 		comboEditable.setText("Banana");
 		spinEventLoop(0);
 		assertEquals("Should find value of text", "Banana", text);
