@@ -212,10 +212,9 @@ public class WizardZipFileResourceImportPage1 extends
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
                     if (element.isPopulated()) {
 						return getChildren(element).length > 0;
-					} else {
-                        //If we have not populated then wait until asked
-                        return true;
-                    }
+					} 
+                    //If we have not populated then wait until asked
+                    return true;
                 }
                 return false;
             }
@@ -416,9 +415,8 @@ public class WizardZipFileResourceImportPage1 extends
             setMessage(SOURCE_EMPTY_MESSAGE);
             enableButtonGroup(false);
             return false;
-        } else {
-            enableButtonGroup(true);
-            return true;
-        }
+        } 
+        enableButtonGroup(true);
+        return true;
     }
 }
