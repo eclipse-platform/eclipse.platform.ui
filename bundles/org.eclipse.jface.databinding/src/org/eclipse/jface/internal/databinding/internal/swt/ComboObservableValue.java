@@ -63,6 +63,8 @@ public class ComboObservableValue extends AbstractObservableValue {
 								.getText();
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								currentValue));
+					} else {
+						ignoreNextEvent = false;
 					}
 				}
 			});
