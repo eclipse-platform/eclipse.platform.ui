@@ -148,7 +148,7 @@ public abstract class AntObject {
 	
 	/**
 	 * Returns the URI namespace that this Ant object should live in.
-	 * Defaults value is <code>null</code>
+	 * Default value is <code>null</code>
 	 * 
 	 * @return The URI that this Ant object should live in
      * @since 3.2
