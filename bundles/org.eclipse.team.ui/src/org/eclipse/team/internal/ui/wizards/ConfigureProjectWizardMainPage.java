@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ui.wizards;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -147,6 +146,16 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				getWizard().getContainer().showPage(getNextPage());
+			}
+		});
+		viewer.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (e1 instanceof ConfigurationWizardElement && e2 instanceof ConfigurationWizardElement) {
+					ConfigurationWizardElement wizard1 = (ConfigurationWizardElement) e1;
+					ConfigurationWizardElement wizard2 = (ConfigurationWizardElement) e2;
+					return wizard1.getLabel(wizard1).compareToIgnoreCase(wizard2.getLabel(wizard2));
+				}
+				return super.compare(viewer, e1, e2);
 			}
 		});
 		
