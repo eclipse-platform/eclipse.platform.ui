@@ -68,7 +68,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	/**
 	 * Create a saveable part.
 	 * @param shell the shell for the part
-	 * @param compareConfiguration the compare econfiguration
+	 * @param compareConfiguration the compare configuration
 	 */
 	protected PageSaveablePart(Shell shell, CompareConfiguration compareConfiguration){
 		this.shell = shell;
