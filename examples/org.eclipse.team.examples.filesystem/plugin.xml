@@ -174,6 +174,13 @@
                id="org.eclipse.team.examples.filesystem.get">
          </action>
          <action
+               label="Merge"
+               tooltip="Merge"
+               class="org.eclipse.team.examples.filesystem.ui.MergeAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.examples.filesystem.merge">
+         </action>
+         <action
                label="%Synchronize.name"
                tooltip="%Synchronize.tooltip"
                class="org.eclipse.team.examples.filesystem.ui.SynchronizeAction"

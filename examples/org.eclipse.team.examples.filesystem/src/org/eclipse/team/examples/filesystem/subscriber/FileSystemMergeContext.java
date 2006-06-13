@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.subscriber;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
+import org.eclipse.team.examples.filesystem.FileSystemPlugin;
 
 /**
  * A merge context for merging file system changes.
@@ -67,5 +70,23 @@ public class FileSystemMergeContext extends SubscriberMergeContext {
 		return ResourceDiffTree.getResourceFor(node).getProject();
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.provider.MergeContext#merge(org.eclipse.team.core.diff.IDiff, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus merge(IDiff diff, boolean ignoreLocalChanges, IProgressMonitor monitor) throws CoreException {
+		// Only attempt the merge for non-conflicts. The reason we do this
+		// is because the file system provider doesn't really have the proper base
+		// so merging conflicts doesn't work properly
+		if (!ignoreLocalChanges) {
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (diff instanceof IThreeWayDiff && resource instanceof IFile) {
+				IThreeWayDiff twd = (IThreeWayDiff) diff;
+				if (twd.getDirection() == IThreeWayDiff.CONFLICTING) {
+					return new MergeStatus(FileSystemPlugin.ID, "Cannot merge conflicting files", new IFile[] { (IFile)resource });
+				}
+			}
+		}
+		return super.merge(diff, ignoreLocalChanges, monitor);
+	}
+	
 }
