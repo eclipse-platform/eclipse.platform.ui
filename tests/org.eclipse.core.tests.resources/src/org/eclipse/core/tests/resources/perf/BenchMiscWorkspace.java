@@ -21,9 +21,9 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class BenchMiscWorkspace extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(BenchMiscWorkspace.class);
-		//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
-		//		suite.addTest(new BenchMiscWorkspace("benchNoOp"));
-		//		return suite;
+//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
+//		suite.addTest(new BenchMiscWorkspace("testGetProject"));
+//		return suite;
 	}
 
 	/**
@@ -63,5 +63,16 @@ public class BenchMiscWorkspace extends ResourceTest {
 				}
 			}
 		}.run(this, 10, 100000);
+	}
+	
+	public void testGetProject() {
+		new PerformanceTestRunner() {
+			protected void test() {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				for (int i = 0; i < 2000; i++)
+					root.getProject(Integer.toString(i));
+			}
+		}.run(this, 10, 1000);
+		
 	}
 }
