@@ -336,7 +336,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardImportPage_specifyFolder;
 	public static String WizardImportPage_specifyProject;
 	public static String WizardImportPage_folderMustExist;
-	public static String WizardImportpage_folderIsReadOnly;
 	public static String WizardImportPage_errorDialogTitle;
 	public static String WizardImportPage_folder;
 	public static String WizardImportPage_browseLabel;
@@ -400,8 +399,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_errorTitle;
 	public static String WizardNewFolderCreationPage_internalErrorTitle;
 	public static String WizardNewFolder_internalError;
-	public static String WizardNew_readOnlyError;
-	
+
 	// --- New File ---
 	public static String WizardNewFileCreationPage_progress;
 	public static String WizardNewFileCreationPage_errorTitle;

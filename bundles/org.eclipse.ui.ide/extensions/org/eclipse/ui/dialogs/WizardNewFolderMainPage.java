@@ -15,11 +15,9 @@ package org.eclipse.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -490,18 +488,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             }
             valid = false;
         }
-        
-        IPath containerPath = resourceGroup.getContainerFullPath();
-        IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-        if (workspace.getRoot().exists(containerPath)){
-        	IResource resource = workspace.getRoot().findMember(containerPath);
-        	IContainer container = (IContainer) resource;
-        	if (container.getResourceAttributes().isReadOnly()){
-        		setErrorMessage(IDEWorkbenchMessages.WizardNew_readOnlyError);
-        		valid = false;
-        	}
-        }
-        
+
         IStatus linkedResourceStatus = null;
         if (valid) {
             linkedResourceStatus = validateLinkedResource();
