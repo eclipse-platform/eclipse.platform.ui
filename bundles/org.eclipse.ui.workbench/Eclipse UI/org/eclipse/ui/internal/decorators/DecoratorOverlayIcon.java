@@ -31,6 +31,7 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     // the size
     private Point size;
 
+
     /**
      * OverlayIcon constructor.
      * 
@@ -110,4 +111,12 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
     protected Point getSize() {
         return size;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.CompositeImageDescriptor#getTransparentPixel()
+     */
+    protected int getTransparentPixel() {
+    	return base.getImageData().transparentPixel;
+    }
+
 }
