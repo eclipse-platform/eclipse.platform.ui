@@ -51,6 +51,8 @@ public class ProgressManagerUtil {
 	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
 
 	static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+	
+	static final QualifiedName INFRASTRUCTURE_PROPERTY = new QualifiedName(WorkbenchPlugin.PI_WORKBENCH,"INFRASTRUCTURE_PROPERTY");//$NON-NLS-1$
 
 	private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 

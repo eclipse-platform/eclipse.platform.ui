@@ -117,7 +117,7 @@ public class Policy {
     /**
      * Whether or not to show system jobs at all times.
      */
-    public static boolean DEBUG_SHOW_SYSTEM_JOBS = DEFAULT;
+    public static boolean DEBUG_SHOW_ALL_JOBS = DEFAULT;
     
     /**
      * Whether or not to resolve images as they are declared.
@@ -165,7 +165,7 @@ public class Policy {
             DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
             DEBUG_OPERATIONS = getDebugOption("/trace/operations"); //$NON-NLS-1$
             DEBUG_OPERATIONS_VERBOSE = getDebugOption("/trace/operations.verbose"); //$NON-NLS-1$
-            DEBUG_SHOW_SYSTEM_JOBS = getDebugOption("/debug/showSystemJobs"); //$NON-NLS-1$
+            DEBUG_SHOW_ALL_JOBS = getDebugOption("/debug/showAllJobs"); //$NON-NLS-1$
             DEBUG_STALE_JOBS = getDebugOption("/debug/job.stale"); //$NON-NLS-1$
             DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform
                     .getDebugOption(PlatformUI.PLUGIN_ID

@@ -3,8 +3,8 @@
 # Turn on debugging for the org.eclipse.ui plugin.
 org.eclipse.ui/debug=false
 
-# Show system jobs in all dialogs
-org.eclipse.ui/debug/showSystemJobs=false
+# Show all jobs in dialogs and the progress view including the support jobs
+org.eclipse.ui/debug/showAllJobs=false
 
 #Report if a stale job was found
 org.eclipse.ui/debug/job.stale=false
@@ -138,5 +138,7 @@ org.eclipse.ui/listeners/IWorkbenchWindow.IPartListener2=false
 
 # Enable logging of events fired from an IWorkbenchWindow to an IPageListener
 org.eclipse.ui/listeners/IWorkbenchWindow.IPageListener=false
+
+
 
 
