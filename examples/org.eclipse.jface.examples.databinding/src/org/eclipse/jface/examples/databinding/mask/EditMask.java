@@ -341,7 +341,7 @@ public class EditMask {
 					selection += selectionDelta;
 				}
 				
-				// If the user hits <end>, bounce then back to the end of their actual input
+				// If the user hits <end>, bounce them back to the end of their actual input
 				int firstIncompletePosition = editMaskParser.getFirstIncompleteInputPosition();
 				if (firstIncompletePosition > 0 && selection > firstIncompletePosition)
 					selection = firstIncompletePosition;
