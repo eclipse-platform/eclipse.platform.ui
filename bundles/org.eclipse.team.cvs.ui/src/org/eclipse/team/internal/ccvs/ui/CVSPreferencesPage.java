@@ -323,7 +323,16 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			++index;
 		}	
 	
-		COMPRESSION_LABELS= new String [] { CVSUIMessages.CVSPreferencesPage_0, CVSUIMessages.CVSPreferencesPage_1, CVSUIMessages.CVSPreferencesPage_2, CVSUIMessages.CVSPreferencesPage_3, CVSUIMessages.CVSPreferencesPage_4, CVSUIMessages.CVSPreferencesPage_5, CVSUIMessages.CVSPreferencesPage_6, CVSUIMessages.CVSPreferencesPage_7, CVSUIMessages.CVSPreferencesPage_8, CVSUIMessages.CVSPreferencesPage_9 }; //         
+		COMPRESSION_LABELS = new String[] { CVSUIMessages.CVSPreferencesPage_0,
+				CVSUIMessages.CVSPreferencesPage_1,
+				CVSUIMessages.CVSPreferencesPage_2,
+				CVSUIMessages.CVSPreferencesPage_3,
+				CVSUIMessages.CVSPreferencesPage_4,
+				CVSUIMessages.CVSPreferencesPage_5,
+				/* CVSUIMessages.CVSPreferencesPage_6,  // Disallow 6 through 9 due to server bug (see bug 15724)
+				CVSUIMessages.CVSPreferencesPage_7,
+				CVSUIMessages.CVSPreferencesPage_8,
+				CVSUIMessages.CVSPreferencesPage_9 */};      
 		COMPRESSION_VALUES= new Integer [COMPRESSION_LABELS.length];
 		for (int i = 0; i < COMPRESSION_VALUES.length; i++) {
 			COMPRESSION_VALUES[i]= new Integer(i);
