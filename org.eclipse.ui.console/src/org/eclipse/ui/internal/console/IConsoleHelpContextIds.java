@@ -26,8 +26,14 @@ public interface IConsoleHelpContextIds {
 	
 	// Actions
 	public static final String CLEAR_CONSOLE_ACTION = PREFIX + "clear_console_action_context"; //$NON-NLS-1$
-	public static final String CONSOLE_SCROLL_LOCK_ACTION = PREFIX + "console_scroll_lock_action_context"; //$NON-NLS-1$	
-		
+	public static final String CONSOLE_SCROLL_LOCK_ACTION = PREFIX + "console_scroll_lock_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_SELECT_ALL_ACTION = PREFIX + "console_select_all_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_COPY_ACTION = PREFIX + "copy_to_clipboard_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_CUT_ACTION = PREFIX + "console_cut_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_PASTE_ACTION = PREFIX + "console_paste_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_FIND_REPLACE_ACTION = PREFIX + "console_find_replace_action_context"; //$NON-NLS-1$
+	
+	
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
 

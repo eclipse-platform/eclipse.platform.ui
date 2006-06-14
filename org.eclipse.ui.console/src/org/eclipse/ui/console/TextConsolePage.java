@@ -49,6 +49,7 @@ import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 import org.eclipse.ui.internal.console.ConsoleResourceBundleMessages;
 import org.eclipse.ui.internal.console.FollowHyperlinkAction;
+import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -252,31 +253,37 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected void createActions() {
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
-		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip); 
+		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_SELECT_ALL_ACTION);
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.CUT);
 		action.configureAction(ConsoleMessages.TextConsolePage_CutText, ConsoleMessages.TextConsolePage_CutDescrip, ConsoleMessages.TextConsolePage_CutDescrip);  
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_CUT_ACTION);
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.COPY);
 		action.configureAction(ConsoleMessages.TextConsolePage_CopyText, ConsoleMessages.TextConsolePage_CopyDescrip, ConsoleMessages.TextConsolePage_CopyDescrip);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_COPY_ACTION);
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.PASTE);
 		action.configureAction(ConsoleMessages.TextConsolePage_PasteText, ConsoleMessages.TextConsolePage_PasteDescrip, ConsoleMessages.TextConsolePage_PasteDescrip); 
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_PASTE_ACTION);
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
 		fClearOutputAction = new ClearOutputAction(fConsole);
         
         ResourceBundle bundle = ConsoleResourceBundleMessages.getBundle();
-		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action_", fConsoleView)); //$NON-NLS-1$
+        FindReplaceAction fraction = new FindReplaceAction(bundle, "find_replace_action_", fConsoleView); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(fraction, IConsoleHelpContextIds.CONSOLE_FIND_REPLACE_ACTION);
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), fraction);
 
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
