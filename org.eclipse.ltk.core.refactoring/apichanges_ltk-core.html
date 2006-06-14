@@ -10,14 +10,14 @@
 </head>
 <body>
 <p>This document lists the API changes that occurred between
-R3.1 and R3.2 and
-how to migrate from the R3.1 API to the R3.2 API.
+R3.2 and R3.3 and
+how to migrate from the R3.2 API to the R3.3 API.
 </p>
 <table border="0" cellpadding="2" cellspacing="5" width="100%">
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>LTK Core Refactoring -
-Breaking API changes from R3.1 to R3.2</b></font> <br>
+Breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
     <tr>
@@ -32,124 +32,15 @@ Breaking API changes from R3.1 to R3.2</b></font> <br>
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>LTK Core Refactoring -
-Non-breaking API changes from R3.1 to R3.2</b></font> <br>
+Non-breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
     <tr>
-      <td>New API for refactoring history and scripting support in package <code>org.eclipse.ltk.core.refactoring.history</code>:
-      <ul>
-      <li><code>IRefactoringExecutionListener</code></li>
-      <li><code>IRefactoringHistoryListener</code></li>
-      <li><code>IRefactoringHistoryService</code></li>
-      <li><code>RefactoringExecutionEvent</code></li>
-      <li><code>RefactoringHistory</code></li>
-      <li><code>RefactoringHistoryEvent</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>New API for model integration of refactorings in package <code>org.eclipse.ltk.core.refactoring.model</code>:
-      <ul>
-         <li><code>AbstractRefactoringDescriptorResourceMapping</code></li>
-         <li><code>AbstractRefactoringHistoryResourceMapping</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>New API for refactoring history and scripting support added in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>      
-         <li><code>RefactoringContribution</code></li>
-         <li><code>ChangeDescriptor</code></li>
-         <li><code>RefactoringChangeDescriptor</code></li>
-         <li><code>RefactoringDescriptor</code></li>
-         <li><code>RefactoringDescriptorProxy</code></li>
-         <li><code>RefactoringSessionDescriptor</code></li>
-         <li><code>Change#getDescriptor()</code></li>
-         <li><code>CompositeChange#getDescriptor()</code></li>
-         <li><code>PerformRefactoringHistoryOperation</code></li>
-         <li><code>IRefactoringCoreStatusCodes#MISSING_REFACTORING_HISTORY_VERSION</code></li>
-         <li><code>IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR</code></li>
-         <li><code>IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR</code></li>
-         <li><code>IRefactoringCoreStatusCodes#UNSUPPORTED_REFACTORING_HISTORY_VERSION</code></li>
-         <li><code>RefactoringCore#ID_PLUGIN</code></li>
-         <li><code>RefactoringCore#getHistoryService()</code></li>
-         <li><code>RefactoringCore#getRefactoringContribution(String)</code></li>
-         <li><code>RefactoringStatusEntry#toStatus()</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-    <td>New API for refactoring ticks support added in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>RefactoringTickProvider</code></li>
-         <li><code>CheckConditionsOperation#getTicks(RefactoringTickProvider)</code></li>
-         <li><code>Refactoring#getRefactoringTickProvider()</code></li>
-         <li><code>Refactoring#doGetRefactoringTickProvider()</code></li>
-      </ul>
-      </td>
-    </tr>
-     <tr>
-      <td>New API for refactoring preview filter support added in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>CategorizedTextEditGroup</code></li>
-         <li><code>GroupCategory</code></li>
-         <li><code>GroupCategorySet</code></li>
-      </ul>
-      </td>
-    </tr>
-     <tr>
-      <td>New API for element mapping in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>IResourceMapper</code></li>
-         <li><code>GroupCategory</code></li>
-         <li><code>GroupCategorySet</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>New API for multi state text file changes in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>MultiStateTextFileChange</code></li>
-         <li><code>TextEditBasedChange</code></li>
-         <li><code>TextEditBasedChangeGroup</code></li>
-         <li><code>TextChange#getPreviewContent(TextEditBasedChangeGroup[], IRegion, boolean, int, IProgressMonitor)</code></li>
-         <li><code>TextFileChange#isDocumentAcquired()</code></li>
-      </ul>
-      </td>
-    </tr>
-     <tr>
-      <td>New API for participant filtering in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>IParticipantDescriptorFilter</code></li>
-         <li><code>ParticipantManager#loadCopyParticipants(RefactoringStatus, RefactoringProcessor, Object, CopyArguments, IParticipantDescriptorFilter, String, ShareableParticipants)</code></li>
-         <li><code>ParticipantManager#loadCreateParticipants(RefactoringStatus, RefactoringProcessor, Object, CreateArguments, IParticipantDescriptorFilter, String, ShareableParticipants)</code></li>
-         <li><code>ParticipantManager#loadDeleteParticipants(RefactoringStatus, RefactoringProcessor, Object, DeleteArguments, IParticipantDescriptorFilter, String, ShareableParticipants)</code></li>
-         <li><code>ParticipantManager#loadMoveParticipants(RefactoringStatus, RefactoringProcessor, Object, MoveArguments, IParticipantDescriptorFilter, String, ShareableParticipants)</code></li>
-         <li><code>ParticipantManager#loadRenameParticipants(RefactoringStatus, RefactoringProcessor, Object, RenameArguments, IParticipantDescriptorFilter, String, ShareableParticipants)</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>New API for operation validation in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>ResourceChangeChecker</code></li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>New API for debug support in package <code>org.eclipse.ltk.core.refactoring</code>:
-      <ul>
-         <li><code>RefactoringArguments#toString()</code></li>
-         <li><code>CopyArguments#toString()</code></li>
-         <li><code>CreateArguments#toString()</code></li>
-         <li><code>DeleteArguments#toString()</code></li>
-         <li><code>MoveArguments#toString()</code></li>
-         <li><code>RenameArguments#toString()</code></li>
-      </ul>
+      <td>
+      None
       </td>
     </tr>
   </tbody>
 </table>
-<p> </p>
 </body>
 </html>
