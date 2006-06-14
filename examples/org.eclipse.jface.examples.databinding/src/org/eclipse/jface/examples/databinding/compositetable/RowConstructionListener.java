@@ -14,7 +14,7 @@ package org.eclipse.jface.examples.databinding.compositetable;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * Class IRowConstructionListener. An "interface" for objects that need to
+ * Class RowConstructionListener. An "interface" for objects that need to
  * listen to row object construction events.
  * 
  * @author djo
