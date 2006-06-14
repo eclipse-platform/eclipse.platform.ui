@@ -71,7 +71,7 @@ import org.eclipse.swt.widgets.Text;
  * Here's the basic idea of how the current implementation works (the actual 
  * implementation is slightly more abstracted and complicated than this):
  * 
- * We always let the verify event pass if the user typed a new digit or selected/deleted anything.
+ * We always let the verify event pass if the user typed a new character or selected/deleted anything.
  * During the verify event, we post an async runnable.
  * Inside that async runnable, we:
  *   - Remember the selection position
