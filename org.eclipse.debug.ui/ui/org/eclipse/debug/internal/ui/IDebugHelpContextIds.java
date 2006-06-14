@@ -49,6 +49,7 @@ public interface IDebugHelpContextIds {
     public static final String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
     public static final String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$
     public static final String CONSOLE_REMOVE_LAUNCH = PREFIX + "console_remove_launch_context"; //$NON-NLS-1$;
+    public static final String CONSOLE_SHOW_PREFERENCES = PREFIX + "console_show_preferences_action_context"; //$NON-NLS-1$
     public static final String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
     public static final String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
     public static final String MEMORY_VIEW_PANE_ORIENTATION_ACTION = PREFIX + "memory_view_pane_orientation_action_context"; //$NON-NLS-1$

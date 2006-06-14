@@ -32,7 +32,7 @@ public interface IConsoleHelpContextIds {
 	public static final String CONSOLE_CUT_ACTION = PREFIX + "console_cut_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_PASTE_ACTION = PREFIX + "console_paste_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_FIND_REPLACE_ACTION = PREFIX + "console_find_replace_action_context"; //$NON-NLS-1$
-	
+	public static final String CONSOLE_OPEN_LINK_ACTION = PREFIX + "console_open_link_action_context"; //$NON-NLS-1$
 	
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$

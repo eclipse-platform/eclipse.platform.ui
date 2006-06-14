@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.TextConsoleViewer;
 
@@ -29,9 +30,9 @@ public class FollowHyperlinkAction extends Action {
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
 	    super(ConsoleMessages.FollowHyperlinkAction_0); 
 		setToolTipText(ConsoleMessages.FollowHyperlinkAction_1); 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_LINK_ACTION);
 		this.viewer = consoleViewer;
 	}
-	
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#isEnabled()

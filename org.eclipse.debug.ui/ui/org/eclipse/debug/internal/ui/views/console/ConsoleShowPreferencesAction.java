@@ -35,9 +35,7 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
      * 
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
-    public void init(IViewPart view) {
-        // do nothing
-    }
+    public void init(IViewPart view) {}
 
     /*
      * (non-Javadoc)

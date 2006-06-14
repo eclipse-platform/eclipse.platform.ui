@@ -2223,7 +2223,8 @@ M4 = Platform-specific fourth key
                 tooltip="%ConsolePreferencesAction.tooltip"
                 class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
                 menubarPath="preferences"
-                id="org.eclipse.debug.ui.consolePreferencesAction"/>                
+                id="org.eclipse.debug.ui.consolePreferencesAction"
+                helpContextId="console_show_preferences_action_context"/>                
        </viewerContribution>
     </extension>
     <extension
