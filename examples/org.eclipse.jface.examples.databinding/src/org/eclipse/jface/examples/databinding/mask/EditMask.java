@@ -302,7 +302,6 @@ public class EditMask {
 		public void verifyText(VerifyEvent e) {
 			oldSelection = selection;
 			selection = text.getSelection().x;
-			String currentText = text.getText();
 			if (!updating)
 				Display.getCurrent().asyncExec(updateTextField);
 		}
@@ -312,14 +311,16 @@ public class EditMask {
 		public void run() {
 			updating = true;
 			try {
-				Boolean oldIsComplete = new Boolean(editMaskParser.isComplete());
+				if (!text.isDisposed()) {
+					Boolean oldIsComplete = new Boolean(editMaskParser.isComplete());
 				
-				editMaskParser.setInput(text.getText());
-				text.setText(editMaskParser.getFormattedResult());
-				String newRawText = editMaskParser.getRawResult();
+					editMaskParser.setInput(text.getText());
+					text.setText(editMaskParser.getFormattedResult());
+					String newRawText = editMaskParser.getRawResult();
 				
-				updateSelectionPosition(newRawText);
-				firePropertyChangeEvents(oldIsComplete, newRawText);					
+					updateSelectionPosition(newRawText);
+					firePropertyChangeEvents(oldIsComplete, newRawText);
+				}
 			} finally {
 				updating = false;
 			}
