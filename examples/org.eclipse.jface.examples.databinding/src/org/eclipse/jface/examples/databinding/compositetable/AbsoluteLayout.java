@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Layout;
  * A layout manager that lays out child controls in absolute positions.  
  * Each control's bounds is specified by setting an SWT Rectangle
  * object specifying the control's bounds into the control's layout data.
+ * <p>
+ * Use this layout manager whenever you would have used a null layout
+ * previously.
  * 
  * @since 3.2
  */
