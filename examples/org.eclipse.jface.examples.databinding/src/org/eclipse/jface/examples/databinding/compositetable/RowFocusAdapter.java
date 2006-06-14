@@ -27,8 +27,6 @@ public class RowFocusAdapter implements IRowFocusListener {
 	 */
 	public void arrive(CompositeTable sender, int currentObjectOffset,
 			Control newRow) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -36,8 +34,6 @@ public class RowFocusAdapter implements IRowFocusListener {
 	 */
 	public void depart(CompositeTable sender, int currentObjectOffset,
 			Control row) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +41,6 @@ public class RowFocusAdapter implements IRowFocusListener {
 	 */
 	public boolean requestRowChange(CompositeTable sender,
 			int currentObjectOffset, Control row) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
