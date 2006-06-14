@@ -58,6 +58,9 @@ See propertyPages and preferencePages.
                <documentation>
                   The human readable label of the keyword
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
