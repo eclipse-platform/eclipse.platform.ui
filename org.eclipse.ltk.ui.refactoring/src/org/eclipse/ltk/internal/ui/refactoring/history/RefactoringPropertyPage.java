@@ -57,6 +57,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -231,9 +232,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final IProject project= getCurrentProject();
 				if (project != null) {
-					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (context == null)
-						context= PlatformUI.getWorkbench().getProgressService();
+					final IRunnableContext context= new ProgressMonitorDialog(getShell());
 					final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 					MessageDialogWithToggle dialog= null;
 					if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !fHistoryControl.getInput().isEmpty()) {
@@ -250,9 +249,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
-					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (context == null)
-						context= PlatformUI.getWorkbench().getProgressService();
+					final IRunnableContext context= new ProgressMonitorDialog(getShell());
 					final IProject project= getCurrentProject();
 					if (project != null) {
 						final Shell shell= getShell();
@@ -273,9 +270,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				public final void widgetSelected(final SelectionEvent event) {
 					final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
 					if (selection.length > 0) {
-						IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (context == null)
-							context= PlatformUI.getWorkbench().getProgressService();
+						final IRunnableContext context= new ProgressMonitorDialog(getShell());
 						RefactoringHistoryEditHelper.promptRefactoringDetails(context, fHistoryControl, selection[0]);
 					}
 				}

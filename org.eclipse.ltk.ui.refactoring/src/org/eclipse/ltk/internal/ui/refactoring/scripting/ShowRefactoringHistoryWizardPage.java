@@ -45,6 +45,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -224,11 +225,8 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 			public final void widgetSelected(final SelectionEvent event) {
 				final RefactoringDescriptorProxy[] selection= fHistoryControl.getCheckedDescriptors();
 				if (selection.length > 0) {
-					IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (context == null)
-						context= PlatformUI.getWorkbench().getProgressService();
-
 					final Shell shell= getShell();
+					final IRunnableContext context= new ProgressMonitorDialog(shell);
 					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, selection.length), new IRefactoringHistoryProvider() {
 
 						public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
