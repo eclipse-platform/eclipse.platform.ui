@@ -22,6 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryIntTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryLongPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryShortPrimitiveTest;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryTest;
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;

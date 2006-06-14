@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.tests.databinding;
+package org.eclipse.jface.internal.databinding.provisional.factories;
 
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 
