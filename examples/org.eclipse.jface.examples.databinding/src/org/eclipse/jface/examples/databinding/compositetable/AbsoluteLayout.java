@@ -59,6 +59,9 @@ public class AbsoluteLayout extends Layout {
 		Control[] children = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Rectangle bounds = (Rectangle) children[i].getLayoutData();
+			if (bounds == null) {
+				continue;
+			}
 			children[i].setBounds(bounds);
 		}
 	}
