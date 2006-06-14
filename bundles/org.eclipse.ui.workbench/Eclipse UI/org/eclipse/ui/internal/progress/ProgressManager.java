@@ -411,12 +411,6 @@ public class ProgressManager extends ProgressProvider implements
 				jobs.remove(event.getJob());
 				// Only refresh if we are showing it
 				removeJobInfo(info);
-				// If there are no more left then refresh all on the last
-				// displayed one.
-				if (hasNoRegularJobInfos()
-						&& !isNonDisplayableJob(event.getJob(), false)) {
-					refreshAll();
-				}
 			}
 
 			/*
@@ -823,24 +817,6 @@ public class ProgressManager extends ProgressProvider implements
 				return true;
 			}
 			return false;
-		}
-	}
-
-	/**
-	 * Return true if there are no jobs or they are all debug.
-	 * 
-	 * @return boolean
-	 */
-	private boolean hasNoRegularJobInfos() {
-		synchronized (jobs) {
-			Iterator iterator = jobs.keySet().iterator();
-			while (iterator.hasNext()) {
-				Job next = (Job) iterator.next();
-				if (!isNonDisplayableJob(next, false)) {
-					return false;
-				}
-			}
-			return true;
 		}
 	}
 
