@@ -698,8 +698,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			};
 			job.setSystem(true);
 			job.schedule();
-		}
-		fDetailField.setText(fControlConfiguration.getCommentCaption());
+		} else
+			fDetailField.setText(fControlConfiguration.getCommentCaption());
 	}
 
 	/**
