@@ -161,6 +161,7 @@ public class PathTest extends RuntimeTest {
 		assertEquals("7.0", new Path("/foo/bar"), new Path("/foo").append("//bar"));
 		assertEquals("7.1", new Path("/foo/bar/test"), new Path("/foo").append("bar//test"));
 		assertEquals("7.2", new Path("//foo/bar"), new Path("//foo").append("bar"));
+		assertEquals("7.3", new Path("/bar"), Path.ROOT.append("//bar"));
 
 		//append empty path does nothing
 		assertEquals("8.0", fore, fore.append(Path.ROOT));
