@@ -268,7 +268,15 @@ public class IWorkspaceRootTest extends ResourceTest {
 	public void testGetContainerForLocation() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		assertEquals("1.0", root, root.getContainerForLocation(root.getLocation()));
-
+	}
+	
+	/**
+	 * Tests the AP method getFile(IPath)
+	 */
+	public void testGetFile() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IFile file = root.getFile(new Path("//P1/a.txt"));
+		assertTrue("1.0", !file.getFullPath().isUNC());
 	}
 
 	/**
