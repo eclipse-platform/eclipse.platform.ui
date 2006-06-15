@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -150,7 +151,9 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 					fPaneImage.dispose();
 			}
 		});
-		
+
+		Dialog.applyDialogFont(parent);
+
 		fSourceViewer= createSourceViewer(fForm);
 		fSourceViewer.setEditable(false);
 		fForm.setContent(fSourceViewer.getControl());
