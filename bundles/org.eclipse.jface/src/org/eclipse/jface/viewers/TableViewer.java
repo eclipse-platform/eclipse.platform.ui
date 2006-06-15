@@ -72,7 +72,7 @@ public class TableViewer extends StructuredViewer {
 		 * by the content provider or by addition.
 		 * This will not be populated by an ILazyStructuredContentProvider
 		 * as an ILazyStructuredContentProvider is only queried
-		 * on the virtual callabck.
+		 * on the virtual callback.
 		 */
 		private Object[] cachedElements = new Object[0];
 		/**
