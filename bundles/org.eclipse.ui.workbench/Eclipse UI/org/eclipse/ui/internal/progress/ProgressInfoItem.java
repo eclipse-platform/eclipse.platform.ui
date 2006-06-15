@@ -251,7 +251,7 @@ class ProgressInfoItem extends Composite {
 
 			}
 		});
-		setToolBarImages();
+		updateToolBarValues();
 
 		FormData progressData = new FormData();
 		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
@@ -547,7 +547,7 @@ class ProgressInfoItem extends Composite {
 				taskEntries.clear();
 		}
 
-		setToolBarImages();
+		updateToolBarValues();
 	}
 
 	/**
@@ -625,15 +625,16 @@ class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the images in the toolbar based on whether the receiver is finished
-	 * or not.
+	 * or not. Also update tooltips if required.
 	 * 
 	 */
-	private void setToolBarImages() {
+	private void updateToolBarValues() {
 		if (isCompleted()) {
 			actionButton.setImage(JFaceResources
 					.getImage(CLEAR_FINISHED_JOB_KEY));
 			actionButton.setDisabledImage(JFaceResources
 					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
+			actionButton.setToolTipText(ProgressMessages.NewProgressView_ClearJobToolTip);
 		} else {
 			actionButton.setImage(JFaceResources.getImage(STOP_IMAGE_KEY));
 			actionButton.setDisabledImage(JFaceResources
@@ -643,7 +644,8 @@ class ProgressInfoItem extends Composite {
 		JobInfo[] infos = getJobInfos();
 
 		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].isCanceled()) {
+			//Only disable if there is an unresponsive operation
+			if (infos[i].isCanceled() && !isCompleted()) {
 				actionButton.setEnabled(false);
 				return;
 			}

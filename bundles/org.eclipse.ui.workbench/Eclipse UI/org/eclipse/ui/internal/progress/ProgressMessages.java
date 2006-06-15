@@ -56,6 +56,7 @@ public class ProgressMessages extends NLS {
 	public static String NewProgressView_RemoveJobToolTip;
 	public static String NewProgressView_RemoveAllJobsToolTip;
 	public static String NewProgressView_CancelJobToolTip;
+	public static String NewProgressView_ClearJobToolTip;
 	public static String NewProgressView_errorDialogTitle;
 	public static String NewProgressView_errorDialogMessage;
 	public static String ProgressAnimationItem_tasks;
