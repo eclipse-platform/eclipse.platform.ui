@@ -133,51 +133,48 @@ public class AnalyzerDescriptor {
 	}
 
 	/**
-	 * Checks whether analyzer is compatible with a given analyzer
+	 * Checks whether analyzer is compatible with a given analyzer. The ID has
+	 * the form [plugin_id]#[plugin_version]?locale=[locale], for example:
+	 * org.eclipse.help.base#3.1.0?locale=ru
 	 * 
 	 * @param analyzerId
 	 *            id of analyzer used in the past by the index; id has a form:
-	 *            pluginID#pluginVersion
+	 *            [plugin.id]#[version]?locale=[locale]
 	 * @return true when it is known that given analyzer is compatible with this
 	 *         analyzer
 	 */
 	public boolean isCompatible(String analyzerId) {
-		// if (id.equals(analyzerId)) {
-		// return true;
-		// }
-		// when we run in a locale e.g. ru_RU
-		// and prebuilt index from a language of that locale, all countries
-		// e.g. org.eclipse.help.base#3.1.0?locale=ru then indexes might be
-		// compatible
-		// for analyzers from org.eclipse.help.base plug-in this is true.
-		
-		if (id.startsWith(analyzerId)) {
+		if (analyzerId != null) {
+			// parse the id
+			int numberSignIndex = analyzerId.indexOf('#');
+			int questionMarkIndex = analyzerId.indexOf('?', numberSignIndex);
+			String pluginId = analyzerId.substring(0, numberSignIndex);
+			String version = analyzerId.substring(numberSignIndex + 1, questionMarkIndex);
+			String locale = analyzerId.substring(questionMarkIndex + 1 + "locale=".length()); //$NON-NLS-1$
+			
+			// plugin compatible?
+			// must both be org.eclipse.help.base
+			String thisPluginId = id.substring(0, id.indexOf('#'));
+			if (!HelpBasePlugin.PLUGIN_ID.equals(pluginId) || !HelpBasePlugin.PLUGIN_ID.equals(thisPluginId)) {
+				return false;
+			}
+			
+			// version compatible?
+			// must both be >= 3.1
+			Version vA = getVersion(id);
+			Version vB = new Version(version);
+			Version v3_1 = new Version(3, 1, 0);
+			if (vA.compareTo(v3_1) < 0 && vB.compareTo(v3_1) < 0) {
+				return false;
+			}
+			
+			// locale compatible?
+			// first part must be equal (first two chars)
+			if (!lang.substring(0, 2).equals(locale.substring(0, 2))) {
+				return false;
+			}
 			return true;
 		}
-		// no direct match - try compatible
-		String prefix = HelpBasePlugin.PLUGIN_ID + "#"; //$NON-NLS-1$
-		if (analyzerId.startsWith(prefix) && 
-				id.startsWith(prefix)) {
-			// no changes in analyzers between 3.1 and 3.2
-			Version aidVersion = getVersion(analyzerId);
-			Version idVersion = getVersion(id);
-			if (idVersion.getMajor()==3 &&
-					aidVersion.getMajor()==3 &&
-					idVersion.getMinor()>=1 &&
-					aidVersion.getMinor()>=1)
-				return true;
-		}
-		
-		// analyzers between some versions of org.eclipse.help plugin
-		// are compatible (logic unchanged), index can be preserved between
-		// them
-		// in 3.0 index has been moved so cannot be reused
-		//		if (analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
-		//			&& analyzerId.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0
-		//			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#2.0.1") >= 0
-		//			&& id.compareTo(HelpBasePlugin.PLUGIN_ID + "#3.0.0") <= 0) {
-		//			return true;
-		//		}
 		return false;
 	}
 	
