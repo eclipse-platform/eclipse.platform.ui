@@ -80,7 +80,7 @@ public interface IDebugHelpContextIds {
 	public static final String SINGLE_LAUNCH_CONFIGURATION_DIALOG = PREFIX + "single_launch_configuration_dialog"; //$NON-NLS-1$
 	public static final String VARIABLE_SELECTION_DIALOG = PREFIX + "variable_selection_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_SOURCELOOKUP_DIALOG = PREFIX + "edit_source_lookup_path_dialog";//$NON-NLS-1$
-	public static final String SOURCELOOKUP_TAB = PREFIX + "source_container_lookup_tab";//$NON-NLS-1$
+	public static final String SOURCELOOKUP_TAB = PREFIX + "launch_configuration_dialog_source_tab";//$NON-NLS-1$
 	public static final String ADD_SOURCE_CONTAINER_DIALOG = PREFIX + "add_source_container_dialog";//$NON-NLS-1$
 	public static final String ADD_PROJECT_CONTAINER_DIALOG = PREFIX + "project_source_container_dialog";//$NON-NLS-1$
 	public static final String ADD_FOLDER_CONTAINER_DIALOG = PREFIX + "folder_source_container_dialog";//$NON-NLS-1$

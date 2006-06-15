@@ -47,6 +47,7 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.SOURCELOOKUP_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginWidth = 0;
 		topLayout.marginHeight = 0;
@@ -62,7 +63,6 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 200;
 		gd.widthHint = 250;
 		Dialog.applyDialogFont(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp,IDebugHelpContextIds.SOURCELOOKUP_TAB);
 	}
 	
 	/* (non-Javadoc)
