@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,10 +23,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -53,10 +53,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Dialog for organizing favorite launch configurations
  */
-public class FavoritesDialog extends Dialog {
+public class FavoritesDialog extends TrayDialog {
 	
 	/**
 	 * Table of favorite launch configurations
@@ -272,6 +274,15 @@ public class FavoritesDialog extends Dialog {
 		getShell().setText(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_1, new String[]{getModeLabel()})); 
 		createFavoritesArea(composite);
 		return composite;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.ORGANIZE_FAVORITES_DIALOG);
+		return contents;
 	}
 
 	/**

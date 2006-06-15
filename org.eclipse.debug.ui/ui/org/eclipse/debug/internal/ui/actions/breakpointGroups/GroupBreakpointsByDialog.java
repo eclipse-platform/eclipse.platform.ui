@@ -15,11 +15,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -46,13 +48,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog which presents available breakpoint groupings to
  * the user and allows them to specify which they'd like
  * to use and in what order they should be applied.
  */
-public class GroupBreakpointsByDialog extends Dialog {
+public class GroupBreakpointsByDialog extends TrayDialog {
 	
 	private BreakpointsView fView;
 	
@@ -129,6 +132,15 @@ public class GroupBreakpointsByDialog extends Dialog {
 		return parentComposite;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.GROUP_BREAKPOINTS_DIALOG);
+		return contents;
+	}
+
 	/**
 	 * Divides the available breakpoint container factories into the
 	 * appropriate viewers ("available" or "selected").
