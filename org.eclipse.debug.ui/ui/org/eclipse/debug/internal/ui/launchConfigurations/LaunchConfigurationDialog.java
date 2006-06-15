@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -52,6 +53,13 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	 */
 	protected String getTitleAreaTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Modify_attributes_and_launch__1; 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.SINGLE_LAUNCH_CONFIGURATION_DIALOG;
 	}
 	
 	/* (non-Javadoc)

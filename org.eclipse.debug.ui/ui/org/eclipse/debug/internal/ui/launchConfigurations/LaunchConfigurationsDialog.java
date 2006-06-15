@@ -431,7 +431,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		initializeContent();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), getHelpContextId());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), getHelpContextId());
 		return contents;
 	}
 	
