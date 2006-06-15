@@ -206,6 +206,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 						wsContainer = (IContainer) obj;
 					else if (obj instanceof IFile) {
 						IFile tempFile = (IFile) obj;
+						wsContainer = tempFile.getParent();
 						wsFilenameText.setText(tempFile.getName());
 					}
 				}
