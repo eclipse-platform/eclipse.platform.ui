@@ -17,6 +17,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -64,6 +66,15 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.setLayout(layout);
 		control.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
+		
+		control.addFocusListener(new FocusAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusGained(FocusEvent e) {
+				setFocus();
+			}
+		});
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);

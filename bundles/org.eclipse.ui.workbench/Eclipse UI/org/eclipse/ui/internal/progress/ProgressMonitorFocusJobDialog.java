@@ -100,7 +100,11 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			}
 		});
 		runInWorkspace.setCursor(arrowCursor);
-		createCancelButton(parent);
+
+		cancel = createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
+		cancel.setCursor(arrowCursor);
+		
 		createDetailsButton(parent);
 	}
 
@@ -117,12 +121,12 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				//first of all, make sure this listener is removed
+				// first of all, make sure this listener is removed
 				event.getJob().removeJobChangeListener(this);
 				if (!PlatformUI.isWorkbenchRunning()) {
 					return;
 				}
-				//nothing to do if the dialog is already closed
+				// nothing to do if the dialog is already closed
 				if (getShell() == null) {
 					return;
 				}
@@ -257,23 +261,27 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (currentShell == null) {
 					display = Display.getDefault();
 				} else {
-					if(currentShell.isDisposed())//Don't bother if it has been closed
+					if (currentShell.isDisposed())// Don't bother if it has
+													// been closed
 						return;
 					display = currentShell.getDisplay();
 				}
 
-				display.asyncExec(new Runnable(){
-					/* (non-Javadoc)
+				display.asyncExec(new Runnable() {
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
 						if (alreadyClosed) {
-							return;//Check again as the async  may come too late
+							return;// Check again as the async may come too
+									// late
 						}
 						Shell shell = getShell();
-						if(shell != null && shell.isDisposed()) 
-							return;						
-						
+						if (shell != null && shell.isDisposed())
+							return;
+
 						runnable.run();
 					}
 				});
@@ -365,12 +373,12 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	public int open() {
 		int result = super.open();
 
-		//add a listener that will close the dialog when the job completes.
+		// add a listener that will close the dialog when the job completes.
 		IJobChangeListener listener = createCloseListener();
 		job.addJobChangeListener(listener);
 		if (job.getState() == Job.NONE) {
-			//if the job completed before we had a chance to add
-			//the listener, just remove the listener and return
+			// if the job completed before we had a chance to add
+			// the listener, just remove the listener and return
 			job.removeJobChangeListener(listener);
 			finishedRun();
 			cleanUpFinishedJob();
@@ -383,12 +391,13 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 * Opens this dialog for the duration that the given job is running.
 	 * 
 	 * @param jobToWatch
-	 * @param originatingShell The shell this request was
-	 * created from. Do not block on this shell.
+	 * @param originatingShell
+	 *            The shell this request was created from. Do not block on this
+	 *            shell.
 	 */
-	public void show(Job jobToWatch,final Shell originatingShell) {
+	public void show(Job jobToWatch, final Shell originatingShell) {
 		job = jobToWatch;
-		//after the dialog is opened we can get access to its monitor
+		// after the dialog is opened we can get access to its monitor
 		job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.TRUE);
 
 		ProgressManager.getInstance().progressFor(job).addProgressListener(
@@ -396,8 +405,8 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 		setOpenOnRun(false);
 		aboutToRun();
-		//start with a quick busy indicator. Lock the UI as we
-		//want to preserve modality
+		// start with a quick busy indicator. Lock the UI as we
+		// want to preserve modality
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(),
 				new Runnable() {
 					public void run() {
@@ -405,12 +414,14 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 							Thread
 									.sleep(ProgressManagerUtil.SHORT_OPERATION_TIME);
 						} catch (InterruptedException e) {
-							//Do not log as this is a common operation from the lock listener
+							// Do not log as this is a common operation from the
+							// lock listener
 						}
 					}
 				});
 
-		WorkbenchJob openJob = new WorkbenchJob(ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) { 
+		WorkbenchJob openJob = new WorkbenchJob(
+				ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -418,20 +429,20 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				//if the job is done at this point, we don't need the dialog
+				// if the job is done at this point, we don't need the dialog
 				if (job.getState() == Job.NONE) {
 					finishedRun();
 					cleanUpFinishedJob();
 					return Status.CANCEL_STATUS;
 				}
 
-				//now open the progress dialog if nothing else is
-				if (!ProgressManagerUtil
-						.safeToOpen(ProgressMonitorFocusJobDialog.this,originatingShell)) {
+				// now open the progress dialog if nothing else is
+				if (!ProgressManagerUtil.safeToOpen(
+						ProgressMonitorFocusJobDialog.this, originatingShell)) {
 					return Status.CANCEL_STATUS;
 				}
 
-				//Do not bother if the parent is disposed
+				// Do not bother if the parent is disposed
 				if (getParentShell() != null && getParentShell().isDisposed()) {
 					return Status.CANCEL_STATUS;
 				}
@@ -461,7 +472,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Control area = super.createDialogArea(parent);
-		//Give the job info as the initial details
+		// Give the job info as the initial details
 		getProgressMonitor().setTaskName(
 				ProgressManager.getInstance().getJobInfo(this.job)
 						.getDisplayString());
