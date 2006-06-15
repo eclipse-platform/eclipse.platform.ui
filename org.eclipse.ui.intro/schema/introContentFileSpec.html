@@ -16,12 +16,12 @@
 <p>
 <h6 class=CaptionFigColumn id=header>Description: </h6>This document describes the intro content file structure as a series of DTD fragments.</p>
 <p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
-<p class=code id=dtd>&lt;!ELEMENT <a name="e.introContent">introContent</a> (<a href="#e.page">page</a> | <a href="#e.group">group</a> | <a href="#e.extensionContent">extensionContent</a>)&gt;</p>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.introContent">introContent</a> (<a href="#e.page">page</a> | <a href="#e.group">group</a> | <a href="#e.extensionContent">extensionContent</a>)+&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, and extensions to anchor points defined in other configurations.</p>
 <br><br>
-<p class=code id=dtd>&lt;!ELEMENT <a name="e.page">page</a> (<a href="#e.group">group</a>* | <a href="#e.link">link</a>* | <a href="#e.text">text</a>* | <a href="#e.head">head</a>* | <a href="#e.img">img</a>* | <a href="#e.include">include</a>* | <a href="#e.html">html</a>* | <a href="#e.title">title</a>? | <a href="#e.anchor">anchor</a>* | <a href="#e.contentProvider">contentProvider</a>*)&gt;</p>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.page">page</a> (<a href="#e.group">group</a> | <a href="#e.link">link</a> | <a href="#e.text">text</a> | <a href="#e.head">head</a> | <a href="#e.img">img</a> | <a href="#e.include">include</a> | <a href="#e.html">html</a> | <a href="#e.title">title</a> | <a href="#e.anchor">anchor</a> | <a href="#e.contentProvider">contentProvider</a>)+&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST page</p>
 <p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>url&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>alt-style&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) <p class=code id=dtdAttlist>content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>shared-style&nbsp;(true | false) <p class=code id=dtdAttlist>bgImage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
 <p></p>
@@ -56,7 +56,7 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
 <li><b>shared-style</b> - a boolean flag that controls the addition of the shared style into this page's list of styles. If <code>true</code> (the default), the shared style is added to this page's styles. If <code>false</code>, the shared style defined in the Intro configuration will not be injected into the styles of this page.</li>
 <li><b>bgImage</b> - an optional URL of the image to use as a background for this group</li>
 </ul>
-<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.group">group</a> (<a href="#e.group">group</a>* | <a href="#e.link">link</a>* | <a href="#e.text">text</a>* | <a href="#e.img">img</a>* | <a href="#e.include">include</a>* | <a href="#e.html">html</a>* | <a href="#e.anchor">anchor</a>* | <a href="#e.contentProvider">contentProvider</a>*)&gt;</p>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.group">group</a> (<a href="#e.group">group</a> | <a href="#e.link">link</a> | <a href="#e.text">text</a> | <a href="#e.img">img</a> | <a href="#e.include">include</a> | <a href="#e.html">html</a> | <a href="#e.anchor">anchor</a> | <a href="#e.contentProvider">contentProvider</a>)+&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST group</p>
 <p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) <p class=code id=dtdAttlist>computed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>bgImage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
 <p></p>
@@ -83,7 +83,7 @@ This markup is only to be used with an HTML based intro part implementation. It 
 <li><b>src</b> - relative or absolute URL to a file containing HTML to include directly into the HTML head section. If the content contains substitution segments of the form $plugin:plugin_id$ then they will be replaced with the absolute path to the plugin with id plugin_id.</li>
 <li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file containing the head snippet. Default is UTF-8. Since 3.0.1</li>
 </ul>
-<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.title">title</a> EMPTY&gt;</p>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.title">title</a> (#PCDATA)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST title</p>
 <p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;</p>
 <p></p>
@@ -190,7 +190,7 @@ will process the message parameter as "This is a message".<br>
 <li><b>style-id</b> - A means to classifiy this link into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
 </ul>
-<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.text">text</a> EMPTY&gt;</p>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.text">text</a> (#PCDATA)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST text</p>
 <p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;</p>
 <p></p>

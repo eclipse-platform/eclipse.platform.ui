@@ -17,7 +17,7 @@
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="page"/>
             <element ref="group"/>
             <element ref="extensionContent"/>
@@ -43,17 +43,17 @@ The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="text" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="head" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="img" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="title" minOccurs="0" maxOccurs="1"/>
-            <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="contentProvider" minOccurs="0" maxOccurs="unbounded"/>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="group"/>
+            <element ref="link"/>
+            <element ref="text"/>
+            <element ref="head"/>
+            <element ref="img"/>
+            <element ref="include"/>
+            <element ref="html"/>
+            <element ref="title"/>
+            <element ref="anchor"/>
+            <element ref="contentProvider"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -142,15 +142,15 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="text" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="img" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="contentProvider" minOccurs="0" maxOccurs="unbounded"/>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="group"/>
+            <element ref="link"/>
+            <element ref="text"/>
+            <element ref="img"/>
+            <element ref="include"/>
+            <element ref="html"/>
+            <element ref="anchor"/>
+            <element ref="contentProvider"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -631,7 +631,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="text"/>
             <element ref="group"/>
             <element ref="link"/>
