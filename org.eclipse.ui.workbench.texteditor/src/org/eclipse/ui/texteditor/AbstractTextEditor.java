@@ -118,7 +118,6 @@ import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
@@ -4938,8 +4937,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 
 		ISelection selection= getSelectionProvider().getSelection();
-		if (selection instanceof TextSelection) {
-			TextSelection textSelection= (TextSelection) selection;
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection) selection;
 			if (textSelection.getOffset() != 0 || textSelection.getLength() != 0)
 				markInNavigationHistory();
 		}
