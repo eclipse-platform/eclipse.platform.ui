@@ -20,8 +20,10 @@ import org.eclipse.jface.internal.databinding.provisional.observable.list.IObser
  */
 public interface ILazyListElementProvider extends IObservableList {
 	/**
-	 * @param position
-	 * @return
+	 * @param position The 0-based position in the receiver's collection
+	 * of the object to retrieve.
+	 * 
+	 * @return The requested object.
 	 */
 	abstract public Object get(int position);
 }

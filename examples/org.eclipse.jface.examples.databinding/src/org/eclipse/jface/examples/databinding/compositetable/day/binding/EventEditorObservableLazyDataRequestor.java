@@ -1,4 +1,5 @@
-/******************************************************************************* * Copyright (c) 2006 The Pampered Chef and others.
+/******************************************************************************* 
+ * Copyright (c) 2006 The Pampered Chef and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +42,6 @@ import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListEl
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 import org.eclipse.swt.SWT;
 
 /**
@@ -256,7 +256,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	}
 	
 	/**
-	 * @param description
+	 * @param d
 	 */
 	public EventEditorObservableLazyDataRequestor(EventEditorBindingDescription d) {
 		super();
@@ -305,16 +305,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		return false;
 	}
 	
-	private IObservableValue createObservableIfNotNull(DataBindingContext dbc, Object target, String propertyName) {
-		if (target == null) {
-			throw new IllegalArgumentException("Target cannot be null");
-		}
-		if (propertyName == null) {
-			return null;
-		}
-		return (IObservableValue) dbc.createObservable(new Property(target, propertyName));
-	}
-
 	private List elementProviders = new ArrayList();
 	
 	/* (non-Javadoc)
@@ -556,13 +546,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 	}
 
-	private Object getProperty(Object source, String propertyName) {
-		if (propertyName != null) {
-			return new ReflectedProperty(source, propertyName).get();
-		}
-		return null;
-	}
-	
 	protected void bindCalendarableItemProperties(
 			CalendarableItem item, 
 			Object sourceElement,

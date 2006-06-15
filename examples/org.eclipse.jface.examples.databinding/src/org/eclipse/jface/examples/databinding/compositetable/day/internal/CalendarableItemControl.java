@@ -83,7 +83,7 @@ public class CalendarableItemControl extends Canvas  {
 		BORDER_COLOR = new Color(display, 215, 215, 245);
 		SELECTED_BORDER_COLOR = new Color(display, 220, 220, 220);
 		SELECTED_BACKGROUND_COLOR = new Color(display, 245, 245, 230);
-		BACKGROUND_COLOR = new Color(display, 240, 240, 255);
+		BACKGROUND_COLOR = new Color(display, 235, 235, 255);
 
 		initialize();
 	}

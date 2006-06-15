@@ -83,13 +83,20 @@ public interface ILazyDataRequestor extends IObservable {
 	void removeInsertDeleteProvider(LazyInsertDeleteProvider p);
 
 	/**
-	 * @param position
-	 * @param element
+	 * Notifies the receiver that the specified element was added to the observed
+	 * list at the specified position.
+	 * 
+	 * @param position The position to insert the object
+	 * @param element The object to insert
 	 */
 	void add(int position, Object element);
 
 	/**
-	 * @param position
+	 * Notifies the receiver that the object at the specified position was
+	 * removed from the observed list.
+	 * 
+	 * @param position The position where the delete occurred
+	 * @return The removed object
 	 */
 	Object remove(int position);
 }
