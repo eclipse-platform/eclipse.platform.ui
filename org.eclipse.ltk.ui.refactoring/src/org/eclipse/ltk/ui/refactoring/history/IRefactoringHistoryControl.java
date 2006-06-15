@@ -18,11 +18,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 
+import org.eclipse.ltk.ui.refactoring.RefactoringUI;
+
 /**
  * Control which is capable of displaying parts of a refactoring history.
  * <p>
  * Clients of this interface should call <code>createControl</code> before
  * calling <code>setInput</code>.
+ * </p>
+ * <p>
+ * An instanceof of a refactoring history control may be obtained by calling
+ * {@link RefactoringUI#createRefactoringHistoryControl(org.eclipse.swt.widgets.Composite, RefactoringHistoryControlConfiguration)}.
  * </p>
  * <p>
  * Note: this interface is not intended to be implemented by clients.

@@ -18,7 +18,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.history.BrowseRefactoringHistoryControl;
+import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 
 import org.eclipse.swt.SWT;
@@ -55,7 +55,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	protected static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
 
 	/** The refactoring history control */
-	private BrowseRefactoringHistoryControl fHistoryControl= null;
+	private SortableRefactoringHistoryControl fHistoryControl= null;
 
 	/** The refactoring script location control */
 	private RefactoringScriptLocationControl fLocationControl= null;
@@ -91,7 +91,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				return ScriptingMessages.CreateRefactoringScriptWizardPage_select_caption;
 			}
 		};
-		fHistoryControl= new BrowseRefactoringHistoryControl(composite, configuration) {
+		fHistoryControl= new SortableRefactoringHistoryControl(composite, configuration) {
 
 			protected final void handleDeselectAll() {
 				super.handleDeselectAll();

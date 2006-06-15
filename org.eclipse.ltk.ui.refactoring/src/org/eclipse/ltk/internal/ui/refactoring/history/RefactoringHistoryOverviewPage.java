@@ -47,7 +47,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
 	/** The refactoring history control */
-	private BrowseRefactoringHistoryControl fHistoryControl= null;
+	private SortableRefactoringHistoryControl fHistoryControl= null;
 
 	/** The refactoring history */
 	private final RefactoringHistory fRefactoringHistory;
@@ -91,7 +91,7 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		final Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		fHistoryControl= new BrowseRefactoringHistoryControl(composite, fControlConfiguration) {
+		fHistoryControl= new SortableRefactoringHistoryControl(composite, fControlConfiguration) {
 
 			protected void createBottomButtonBar(final Composite control) {
 				// No button bar

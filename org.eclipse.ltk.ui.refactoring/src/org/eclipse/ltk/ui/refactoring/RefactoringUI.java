@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-
-import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
-import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -27,29 +19,64 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
 import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryControl;
+import org.eclipse.ltk.internal.ui.refactoring.history.SortableRefactoringHistoryControl;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.Dialog;
+
+import org.eclipse.ltk.ui.refactoring.history.IRefactoringHistoryControl;
+import org.eclipse.ltk.ui.refactoring.history.ISortableRefactoringHistoryControl;
+import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
- * Central access point to access resources managed by the refactoring
- * UI plug-in.
- * <p> 
+ * Central access point to access resources managed by the refactoring UI
+ * plug-in.
+ * <p>
  * Note: this class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
  */
 public class RefactoringUI {
-	
-	private RefactoringUI() {
-		// no instance
-	}
-	
+
 	/**
-	 * Creates a control capable of presenting a refactoring history. Clients
-	 * of this method can assume that the returned composite is an instance of
+	 * Creates a light-weight dialog to present a {@link RefactoringStatus} to
+	 * the user. The following values are returned from the dialogs open method:
+	 * <ul>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
+	 * if the user has pressed the continue button.</li>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
+	 * if the user has pressed the cancel button.</li>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}:
+	 * if the user has pressed the back button.</li>
+	 * </ul>
+	 * 
+	 * @param status
+	 *            the status to present
+	 * @param parent
+	 *            the parent shell of the dialog. May be <code>null</code> if
+	 *            the dialog is a top-level dialog
+	 * @param windowTitle
+	 *            the dialog's window title
+	 * @return a dialog to present a refactoring status.
+	 * 
+	 * @since 3.2
+	 */
+	public static Dialog createLightWeightStatusDialog(RefactoringStatus status, Shell parent, String windowTitle) {
+		return new RefactoringStatusDialog(status, parent, windowTitle, false, true);
+	}
+
+	/**
+	 * Creates a control capable of presenting a refactoring history. Clients of
+	 * this method can assume that the returned composite is an instance of
 	 * {@link IRefactoringHistoryControl}.
 	 * 
-	 * @param parent the parent control
-	 * @param configuration the refactoring history control configuration
+	 * @param parent
+	 *            the parent control
+	 * @param configuration
+	 *            the refactoring history control configuration
 	 * @return the refactoring history control
 	 * 
 	 * @since 3.2
@@ -59,23 +86,27 @@ public class RefactoringUI {
 	}
 
 	/**
-	 * Creates a dialog to present a {@link RefactoringStatus} to the user. The following values are 
-	 * returned from the dialogs open method: 
+	 * Creates a dialog to present a {@link RefactoringStatus} to the user. The
+	 * following values are returned from the dialogs open method:
 	 * <ul>
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
-	 *       if the user has pressed the continue button.</li> 
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
-	 *       if the user has pressed the cancel button.</li>
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}: 
-	 *       if the user has pressed the back button.</li>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
+	 * if the user has pressed the continue button.</li>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
+	 * if the user has pressed the cancel button.</li>
+	 * <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}:
+	 * if the user has pressed the back button.</li>
 	 * </ul>
 	 * 
-	 * @param status the status to present
-	 * @param parent the parent shell of the dialog. May be <code>null</code>
-	 *  if the dialog is a top-level dialog
-	 * @param windowTitle the dialog's window title
-	 * @param backButton if <code>true</code> the dialog will contain a back button;
-	 *  otherwise no back button will be present.
+	 * @param status
+	 *            the status to present
+	 * @param parent
+	 *            the parent shell of the dialog. May be <code>null</code> if
+	 *            the dialog is a top-level dialog
+	 * @param windowTitle
+	 *            the dialog's window title
+	 * @param backButton
+	 *            if <code>true</code> the dialog will contain a back button;
+	 *            otherwise no back button will be present.
 	 * @return a dialog to present a refactoring status.
 	 */
 	public static Dialog createRefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton) {
@@ -83,63 +114,65 @@ public class RefactoringUI {
 	}
 
 	/**
-	 * Creates a light-weight dialog to present a {@link RefactoringStatus} to the user. The following values are 
-	 * returned from the dialogs open method: 
-	 * <ul>
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
-	 *       if the user has pressed the continue button.</li> 
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
-	 *       if the user has pressed the cancel button.</li>
-	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}: 
-	 *       if the user has pressed the back button.</li>
-	 * </ul>
+	 * Creates a dialog capable of presenting the given refactoring wizard.
+	 * Clients of this method can assume that the returned dialog is an instance
+	 * of {@link org.eclipse.jface.wizard.IWizardContainer IWizardContainer}.
+	 * However the dialog is not necessarily an instance of
+	 * {@link org.eclipse.jface.wizard.WizardDialog WizardDialog}.
 	 * 
-	 * @param status the status to present
-	 * @param parent the parent shell of the dialog. May be <code>null</code>
-	 *  if the dialog is a top-level dialog
-	 * @param windowTitle the dialog's window title
-	 * @return a dialog to present a refactoring status.
+	 * @param wizard
+	 *            the refactoring wizard to create a dialog for
+	 * @param parent
+	 *            the parent of the created dialog or <code>null</code> to
+	 *            create a top-level dialog
 	 * 
-	 * @since 3.2
+	 * @return the dialog
 	 */
-	public static Dialog createLightWeightStatusDialog(RefactoringStatus status, Shell parent, String windowTitle) {
-		return new RefactoringStatusDialog(status, parent, windowTitle, false, true);
-	}
-	
-	/**
-	 * Creates a dialog capable of presenting the given refactoring wizard. Clients of
-	 * this method can assume that the returned dialog is an instance of 
-	 * {@link org.eclipse.jface.wizard.IWizardContainer IWizardContainer}. However the 
-	 * dialog is not necessarily an instance of {@link org.eclipse.jface.wizard.WizardDialog
-	 * WizardDialog}.
-	 * 
-	 * @param wizard the refactoring wizard to create a dialog for
-	 * @param parent the parent of the created dialog or <code>null</code> to create a top-level dialog
-	 * 
-	 * @return the dialog 
-	 */
-	/* package */ static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
+	/* package */static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
 		Dialog result;
 		if (wizard.needsWizardBasedUserInterface())
 			result= new RefactoringWizardDialog(parent, wizard);
-		else 
+		else
 			result= new RefactoringWizardDialog2(parent, wizard);
 		return result;
 	}
-	
+
 	/**
-	 * Creates a special perform change operations that knows how to batch
-	 * undo operations in open editors into one undo object. The operation
-	 * batches the undo operations for those editors that implement the
-	 * interface {@link org.eclipse.jface.text.IRewriteTarget}.
+	 * Creates a control capable of presenting a refactoring history. Clients of
+	 * this method can assume that the returned composite is an instance of
+	 * {@link ISortableRefactoringHistoryControl}.
 	 * 
-	 * @param change the change to perform
+	 * @param parent
+	 *            the parent control
+	 * @param configuration
+	 *            the refactoring history control configuration
+	 * @return the refactoring history control
 	 * 
-	 * @return a special perform change operation that knows how to batch
-	 *  undo operations for open editors if they implement <code>IRewriteTarget
+	 * @since 3.3
+	 */
+	public static Composite createSortableRefactoringHistoryControl(Composite parent, RefactoringHistoryControlConfiguration configuration) {
+		return new SortableRefactoringHistoryControl(parent, configuration);
+	}
+
+	/**
+	 * Creates a special perform change operations that knows how to batch undo
+	 * operations in open editors into one undo object. The operation batches
+	 * the undo operations for those editors that implement the interface
+	 * {@link org.eclipse.jface.text.IRewriteTarget}.
+	 * 
+	 * @param change
+	 *            the change to perform
+	 * 
+	 * @return a special perform change operation that knows how to batch undo
+	 *         operations for open editors if they implement
+	 *         <code>IRewriteTarget
 	 *  </code>
 	 */
 	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
 		return new UIPerformChangeOperation(null, change, null);
-	}	
+	}
+
+	private RefactoringUI() {
+		// no instance
+	}
 }

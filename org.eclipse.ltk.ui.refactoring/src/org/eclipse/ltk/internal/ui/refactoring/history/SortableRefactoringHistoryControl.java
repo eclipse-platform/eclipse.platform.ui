@@ -39,6 +39,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import org.eclipse.ltk.ui.refactoring.history.ISortableRefactoringHistoryControl;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryContentProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
@@ -49,7 +50,7 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
  * 
  * @since 3.2
  */
-public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
+public class SortableRefactoringHistoryControl extends RefactoringHistoryControl implements ISortableRefactoringHistoryControl {
 
 	/** The empty descriptors constant */
 	private static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= {};
@@ -107,7 +108,7 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	 * @param configuration
 	 *            the refactoring history control configuration to use
 	 */
-	public BrowseRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
+	public SortableRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
 
 		addDisposeListener(new DisposeListener() {
@@ -332,20 +333,14 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
-	 * Is sorting by date enabled?
-	 * 
-	 * @return <code>true</code> if it is enabled, <code>false</code>
-	 *         otherwise
+	 * {@inheritDoc}
 	 */
 	public boolean isSortByDate() {
 		return !isSortByProjects();
 	}
 
 	/**
-	 * Is sorting by projects enabled?
-	 * 
-	 * @return <code>true</code> if it is enabled, <code>false</code>
-	 *         otherwise
+	 * {@inheritDoc}
 	 */
 	public boolean isSortByProjects() {
 		final IContentProvider provider= fHistoryViewer.getContentProvider();
@@ -384,14 +379,14 @@ public class BrowseRefactoringHistoryControl extends RefactoringHistoryControl {
 	}
 
 	/**
-	 * Sorts the refactorings by date.
+	 * {@inheritDoc}
 	 */
 	public void sortByDate() {
 		fSortTimestamps.run();
 	}
 
 	/**
-	 * Sorts the refactorings by projects.
+	 * {@inheritDoc}
 	 */
 	public void sortByProjects() {
 		fSortProjects.run();
