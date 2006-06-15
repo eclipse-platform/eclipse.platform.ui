@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -62,6 +63,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Geometry;
 
 /**
  * The standard implementation of the <code>IContentAssistant</code> interface. Usually, clients
@@ -549,49 +551,76 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 		}
 
-		protected void shiftHorizontalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
-			if (location.x + shellBounds.width > displayBounds.width)
-				location.x= displayBounds.width - shellBounds.width;
+		/**
+		 * Moves <code>point</code> such that <code>rectangle</code> does not overlap with the
+		 * given <code>bounds</code>. All coordinates must have the same reference.
+		 * 
+		 * @param point the point to move if needed
+		 * @param shellSize the size of the shell that may be moved
+		 * @param bounds the bounds
+		 * @since 3.3
+		 */
+		protected void shiftLocation(Point point, Point shellSize, Rectangle bounds) {
+			if (point.x + shellSize.x > bounds.x + bounds.width)
+				point.x= bounds.x + bounds.width - shellSize.x;
 
-			if (location.x < displayBounds.x)
-				location.x= displayBounds.x;
-		}
-
-		protected void shiftVerticalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
-			if (location.y + shellBounds.height > displayBounds.height)
-				location.y= displayBounds.height - shellBounds.height;
-
-			if (location.y < displayBounds.y)
-				location.y= displayBounds.y;
+			if (point.x < bounds.x)
+				point.x= bounds.x;
+			
+			if (point.y + shellSize.y > bounds.y + bounds.height)
+				point.y= bounds.y + bounds.height - shellSize.y;
+			
+			if (point.y < bounds.y)
+				point.y= bounds.y;
 		}
 
 		protected Point getAboveLocation(Shell shell, int offset) {
 			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
-			location= fContentAssistSubjectControlAdapter.getControl().toDisplay(location);
+			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
+			location= subjectControl.toDisplay(location);
 
-			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getMonitor().getClientArea();
+			Display display= subjectControl.getDisplay();
+			Monitor monitor= getClosestMonitor(display, location);
+			Point shellSize= shell.getSize();
+			location.y= location.y - shellSize.y;
+			Rectangle displayBounds= monitor.getClientArea();
 
-			location.y= location.y - shellBounds.height;
-
-			shiftHorizontalLocation(location, shellBounds, displayBounds);
-			shiftVerticalLocation(location, shellBounds, displayBounds);
+			shiftLocation(location, shellSize, displayBounds);
 
 			return location;
 		}
 
+		/**
+		 * Returns the display coordinates for <code>shell</code> such that it appears
+		 * right below <code>offset</code>. The returned {@link Point} is one line height
+		 * below the caret location described by <code>offset</code>, but always so that
+		 * the shell will not overlap with any monitor bounds. 
+		 * 
+		 * @param shell the shell to compute the placement for
+		 * @param offset the caret offset in the subject control
+		 * @return the point right below <code>offset</code> in display coordinates
+		 * @since 3.3
+		 */
 		protected Point getBelowLocation(Shell shell, int offset) {
+			// compute the optimal location
 			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
-			if (location.x < 0) location.x= 0;
-			if (location.y < 0) location.y= 0;
-			location= fContentAssistSubjectControlAdapter.getControl().toDisplay(location);
-
-			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getMonitor().getClientArea();
-
 			location.y= location.y + fContentAssistSubjectControlAdapter.getLineHeight();
-			shiftHorizontalLocation(location, shellBounds, displayBounds);
-			shiftVerticalLocation(location, shellBounds, displayBounds);
+
+			// constrain the location within the bounds of the subject control
+			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
+			Point subjectSize= subjectControl.getSize();
+			Rectangle subjectBounds= new Rectangle(0, 0, subjectSize.x, subjectSize.y);
+			shiftLocation(location, new Point(0, 0), subjectBounds);
+
+			// convert to display coordinates
+			location= subjectControl.toDisplay(location);
+			
+			// constrain the location within the monitor
+			Display display= subjectControl.getDisplay();
+			Monitor monitor= getClosestMonitor(display, location);
+			Rectangle monitorBounds= monitor.getClientArea();
+			Point shellSize= shell.getSize();
+			shiftLocation(location, shellSize, monitorBounds);
 
 			return location;
 		}
@@ -604,10 +633,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			p= parent.toDisplay(p);
 
-			Rectangle shellBounds= shell.getBounds();
-			Rectangle displayBounds= shell.getMonitor().getClientArea();
-			shiftHorizontalLocation(p, shellBounds, displayBounds);
-			shiftVerticalLocation(p, shellBounds, displayBounds);
+			Point shellSize= shell.getSize();
+			Monitor monitor= getClosestMonitor(parent.getDisplay(), p);
+			Rectangle displayBounds= monitor.getClientArea();
+			shiftLocation(p, shellSize, displayBounds);
 
 			return p;
 		}
@@ -628,6 +657,44 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					break;
 			}
+		}
+		
+		/**
+		 * Copied from org.eclipse.jface.window.Window.
+		 * Returns the monitor whose client area contains the given point. If no
+		 * monitor contains the point, returns the monitor that is closest to the
+		 * point. If this is ever made public, it should be moved into a separate
+		 * utility class.
+		 * 
+		 * @param toSearch
+		 *            point to find (display coordinates)
+		 * @param toFind
+		 *            point to find (display coordinates)
+		 * @return the montor closest to the given point
+		 */
+		private Monitor getClosestMonitor(Display toSearch, Point toFind) {
+			int closest = Integer.MAX_VALUE;
+
+			Monitor[] monitors = toSearch.getMonitors();
+			Monitor result = monitors[0];
+
+			for (int idx = 0; idx < monitors.length; idx++) {
+				Monitor current = monitors[idx];
+
+				Rectangle clientArea = current.getClientArea();
+
+				if (clientArea.contains(toFind)) {
+					return current;
+				}
+
+				int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+				if (distance < closest) {
+					closest = distance;
+					result = current;
+				}
+			}
+
+			return result;
 		}
 	}
 
@@ -722,7 +789,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private String fLastErrorMessage;
 
 	private Closer fCloser;
-	private LayoutManager fLayoutManager;
+	LayoutManager fLayoutManager;
 	private AutoAssistListener fAutoAssistListener;
 	private InternalListener fInternalListener;
 	private CompletionProposalPopup fProposalPopup;
@@ -1241,6 +1308,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void layout(int type, int visibleOffset) {
 		fLayoutManager.layout(type, visibleOffset);
+	}
+	
+	/**
+	 * Returns the layout manager.
+	 * 
+	 * @return the layout manager
+	 * @since 3.3
+	 */
+	LayoutManager getLayoutManager() {
+		return fLayoutManager;
 	}
 
 	/**

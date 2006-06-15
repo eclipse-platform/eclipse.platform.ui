@@ -968,12 +968,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private Point getLocation() {
 		int caret= fContentAssistSubjectControlAdapter.getCaretOffset();
-		Point p= fContentAssistSubjectControlAdapter.getLocationAtOffset(caret);
-		if (p.x < 0) p.x= 0;
-		if (p.y < 0) p.y= 0;
-		p= new Point(p.x, p.y + fContentAssistSubjectControlAdapter.getLineHeight());
-		p= fContentAssistSubjectControlAdapter.getControl().toDisplay(p);
-		return p;
+		return fContentAssistant.getLayoutManager().getBelowLocation(fProposalShell, caret);
 	}
 
 	/**
