@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
+import com.ibm.icu.text.MessageFormat;
+
 import java.lang.reflect.InvocationTargetException;
 import java.text.ChoiceFormat;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -258,6 +259,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	/** The number of successfully executed refactorings */
 	private int fExecutedRefactorings= 0;
 
+	/** Can the wizard be finished after fatal errors occurred in headless mode? */
+	private boolean fHeadlessErrorStatus= false;
+
 	/** Are we currently in method <code>addPages</code>? */
 	private boolean fInAddPages= false;
 
@@ -482,8 +486,16 @@ public class RefactoringHistoryWizard extends Wizard {
 	public boolean canFinish() {
 		final IWizardPage page= getContainer().getCurrentPage();
 		if (page == fErrorPage) {
+			if (fHeadlessErrorStatus)
+				return true;
 			final RefactoringStatus status= fErrorPage.getStatus();
-			return status == null || !status.hasFatalError();
+			final boolean fatal= status != null && status.hasFatalError();
+			if (isLastRefactoring() && fDescriptorProxies.length > 1) {
+				if (fatal)
+					fHeadlessErrorStatus= true;
+				return true;
+			}
+			return !fatal;
 		}
 		return true;
 	}
@@ -997,6 +1009,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
+		if (fHeadlessErrorStatus)
+			return true;
 		if (fOverviewPage != null)
 			fOverviewPage.performFinish();
 		final IWizardContainer wizard= getContainer();
@@ -1109,6 +1123,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final RefactoringStatus result= operation.getExecutionStatus();
 			if (!result.isOK()) {
+				fHeadlessErrorStatus= true;
 				fErrorPage.setStatus(result);
 				fErrorPage.setNextPageDisabled(true);
 				fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_finish_error_title);

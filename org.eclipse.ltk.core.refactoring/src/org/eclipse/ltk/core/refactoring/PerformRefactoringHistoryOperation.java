@@ -138,29 +138,33 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 		final IRefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.connect();
-			for (int index= 0; index < proxies.length && !fExecutionStatus.hasFatalError(); index++) {
+			for (int index= 0; index < proxies.length; index++) {
 				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null) {
 					Refactoring refactoring= null;
+					RefactoringStatus status= new RefactoringStatus();
 					try {
-						refactoring= createRefactoring(descriptor, fExecutionStatus);
-					} catch (CoreException exception) {
-						fExecutionStatus.merge(RefactoringStatus.create(exception.getStatus()));
-					}
-					if (refactoring != null) {
-						final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 						try {
-							final RefactoringStatus status= aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							if (!status.hasFatalError())
-								ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							else
-								fExecutionStatus.merge(status);
-						} finally {
-							refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							refactoring= createRefactoring(descriptor, status);
+						} catch (CoreException exception) {
+							status.merge(RefactoringStatus.create(exception.getStatus()));
 						}
-						fExecutionStatus.merge(operation.getConditionStatus());
-						if (!fExecutionStatus.hasFatalError())
-							fExecutionStatus.merge(operation.getValidationStatus());
+						if (refactoring != null && !status.hasFatalError()) {
+							final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
+							try {
+								status.merge(aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+								if (!status.hasFatalError()) {
+									ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+									status.merge(operation.getConditionStatus());
+									if (!status.hasFatalError())
+										status.merge(operation.getValidationStatus());
+								}
+							} finally {
+								refactoringPerformed(refactoring, new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							}
+						}
+					} finally {
+						fExecutionStatus.merge(status);
 					}
 				}
 			}
