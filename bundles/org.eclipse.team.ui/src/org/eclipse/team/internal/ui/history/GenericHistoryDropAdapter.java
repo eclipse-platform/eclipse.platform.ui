@@ -11,7 +11,6 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.part.PluginDropAdapter;
@@ -56,9 +55,8 @@ public class GenericHistoryDropAdapter extends PluginDropAdapter {
 			if (sources.length == 0)
 				return false;
 			IResource resource = sources[0];
-			if (!(resource instanceof IFile))
-				return false;
-
+			//Allow all resources types through to the view, the individual pages can decide
+			//which ones to handle
 			view.itemDropped(resource, true);
 
 			return true;
