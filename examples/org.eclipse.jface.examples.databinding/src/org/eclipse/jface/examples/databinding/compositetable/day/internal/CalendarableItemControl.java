@@ -15,7 +15,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
@@ -122,6 +125,13 @@ public class CalendarableItemControl extends Canvas  {
 	 * @param text
 	 */
 	public void setText(String text) {
+		if (text == null) {
+			text = "";
+			Exception e = new Exception();
+			Policy.getLog().log(
+					new Status(IStatus.WARNING, Policy.JFACE, IStatus.ERROR,
+							"setText(null) not permitted--changing to empty string", e));
+		}
 		label.setText(text);
 	}
 		
