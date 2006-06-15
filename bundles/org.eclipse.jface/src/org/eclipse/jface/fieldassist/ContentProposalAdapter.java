@@ -1433,14 +1433,14 @@ public class ContentProposalAdapter {
 	 * the proposal popup while it is open.
 	 * 
 	 * @param filterStyle
-	 *            a constant indicating how keystrokes in the proposal popup
-	 *            affect filtering of the proposals shown.
-	 *            <code>FILTER_NONE</code> specifies that no filtering will
-	 *            occur in the content proposal list as keys are typed.
+	 *            a constant indicating how keystrokes received in the proposal 
+	 *            popup affect filtering of the proposals shown.
+	 *            <code>FILTER_NONE</code> specifies that no automatic filtering 
+	 *            of the content proposal list will occur as keys are typed.
 	 *            <code>FILTER_CUMULATIVE</code> specifies that the content of
 	 *            the popup will be filtered by a string containing all the
 	 *            characters typed since the popup has been open.
-	 *            <code>FILTER_CHARACTER</code> specifies the content of the
+	 *            <code>FILTER_CHARACTER</code> specifies that the content of the
 	 *            popup will be filtered by the most recently typed character.
 	 */
 	public void setFilterStyle(int filterStyle) {
