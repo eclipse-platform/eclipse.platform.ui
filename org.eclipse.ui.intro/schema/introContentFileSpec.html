@@ -205,14 +205,14 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.img">img</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST img</p>
-<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>alt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;</p>
+<p class=code id=dtdAttlist>src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>alt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 An image that represents intro content and not presentation (as opposed to decoration images defined in styles).</p>
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
-<li><b>id</b> - unique identifier of this image</li>
 <li><b>src</b> - the file to load the image from</li>
+<li><b>id</b> - unique identifier of this image</li>
 <li><b>alt</b> - the alternative text to use when the image can not be loaded and as tooltip text for the image.</li>
 <li><b>style-id</b> - A means to classifiy this image into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>

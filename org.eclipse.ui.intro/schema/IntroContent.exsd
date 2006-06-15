@@ -454,17 +454,17 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  unique identifier of this image
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="src" type="string" use="required">
             <annotation>
                <documentation>
                   the file to load the image from
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique identifier of this image
                </documentation>
             </annotation>
          </attribute>
