@@ -1430,13 +1430,20 @@ public class ContentProposalAdapter {
 
 	/**
 	 * Set the integer style that indicates how keystrokes affect the content of
-	 * the proposal popup while it is open.
+	 * the proposal popup while it is open.  Popup-based filtering is useful for
+	 * narrowing and navigating the list of proposals provided once the popup is 
+	 * open.  Filtering of the proposals will occur even when the control content
+	 * is not affected by user typing.  Note that automatic filtering is not used to
+	 * achieve content-sensitive filtering such as auto-completion. Filtering that is
+	 * sensitive to changes in the control content should be performed by the
+	 * supplied {@link IContentProposalProvider}.
 	 * 
 	 * @param filterStyle
 	 *            a constant indicating how keystrokes received in the proposal 
 	 *            popup affect filtering of the proposals shown.
 	 *            <code>FILTER_NONE</code> specifies that no automatic filtering 
-	 *            of the content proposal list will occur as keys are typed.
+	 *            of the content proposal list will occur as keys are typed in the
+	 *            popup.
 	 *            <code>FILTER_CUMULATIVE</code> specifies that the content of
 	 *            the popup will be filtered by a string containing all the
 	 *            characters typed since the popup has been open.
