@@ -151,11 +151,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private boolean fInitializingTabs = false;
 
 	/**
-	 * Controls when the redraw flag is set on the visible area
-	 */
-	private boolean fRedraw = true;
-
-	/**
 	 * The description of the currently selected launch configuration or
 	 * launch configuration type or <code>null</code> if none.
 	 */
@@ -199,8 +194,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Dispose the active tab group, if any.
 	 */
 	protected void disposeTabGroup() {
-		if (getTabGroup() != null) {
-			getTabGroup().dispose();
+		if (fTabGroup != null) {
+			fTabGroup.dispose();
 			fTabGroup = null;
 			fTabType = null;
 		}
@@ -482,12 +477,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			getActiveTab().performApply(getWorkingCopy());
 			updateButtons();
 			// update error ticks
+			CTabItem item = null;
+			boolean error = false;
 			for (int i = 0; i < tabs.length; i++) {
-				ILaunchConfigurationTab tab = tabs[i];
-				tab.isValid(getWorkingCopy());
-				boolean error = tab.getErrorMessage() != null;
-				CTabItem item = fTabFolder.getItem(i);
-				setTabIcon(item, error, tab);
+				tabs[i].isValid(getWorkingCopy());
+				error = tabs[i].getErrorMessage() != null;
+				item = fTabFolder.getItem(i);
+				setTabIcon(item, error, tabs[i]);
 			}		
 		}
 	}
@@ -541,6 +537,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		Runnable r = new Runnable() {
 			public void run() {
 				try {
+					fVisibleArea.setRedraw(false);
 					if (fInput instanceof ILaunchConfiguration) {
 						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
 						fOriginal = configuration;
@@ -554,11 +551,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 						setNoInput();
 						refreshStatus();
 					}
-					setRedraw(true);
 				} catch (CoreException ce) {
 					errorDialog(ce);
 					setNoInput();
-					setRedraw(true);
+				}
+				finally {
+					fVisibleArea.setRedraw(true);
 				}
 			}
 		};
@@ -609,16 +607,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         
     }
     
-	/**
-	 * Sets if the 
-	 * @param b
-	 */
-	private void setRedraw(boolean b) {
-		if (fRedraw != b) {
-			fRedraw = b;
-			fVisibleArea.setRedraw(fRedraw);
-		}	
-	}	
 	/**
 	 * Displays tabs for the current working copy
 	 */
@@ -734,8 +722,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Create the tabs in the configuration edit area for the given tab group.
 	 */
 	private void showTabsFor(ILaunchConfigurationTabGroup tabGroup) {
-		// turn off redraw
-		setRedraw(false);
 		// Dispose the current tabs
 		disposeExistingTabs();
 
@@ -745,6 +731,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
 		CTabItem tab = null;
 		String name = EMPTY_STRING;
+		Control control = null;
 		for (int i = 0; i < tabs.length; i++) {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
 			name = tabs[i].getName();
@@ -752,10 +739,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
 			}
 			tab.setText(name);
-			Image image = tabs[i].getImage();
-			tab.setImage(image);
+			tab.setImage(tabs[i].getImage());
 			tabs[i].createControl(tab.getParent());
-			Control control = tabs[i].getControl();
+			control = tabs[i].getControl();
 			if (control != null) {
 				tab.setControl(control);
 			}

@@ -53,7 +53,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -864,19 +863,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
  		Object input = getTabViewer().getInput();
  		Object newInput = null;
- 		ISelection selection = event.getSelection();
+ 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
  		if (!selection.isEmpty()) {
- 			if (selection instanceof IStructuredSelection) {
- 				Button button = getButton(ID_LAUNCH_BUTTON);
- 				IStructuredSelection structuredSelection = (IStructuredSelection)selection;
- 				if (structuredSelection.size() == 1) {
- 					newInput = structuredSelection.getFirstElement();
- 					button.setEnabled(true);
- 				}
- 				else {
- 					button.setEnabled(false);
- 				}
- 			}
+			if (selection.size() == 1) {
+				newInput = selection.getFirstElement();
+			}
  		}
  		if (!isEqual(input, newInput)) {
  			LaunchConfigurationTabGroupViewer viewer = getTabViewer();
