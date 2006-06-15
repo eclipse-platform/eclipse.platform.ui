@@ -47,6 +47,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -117,6 +118,9 @@ public class DayEditor extends Composite implements IEventEditor {
 			final int numberOfDivisionsInHour) {
 		
 		compositeTable = new CompositeTable(this, SWT.NONE);
+		if (background != null) {
+			compositeTable.setBackground(background);
+		}
 		compositeTable.setTraverseOnTabsEnabled(false);
 		
 		if (!headerDisabled) {
@@ -1489,6 +1493,19 @@ public class DayEditor extends Composite implements IEventEditor {
 
 	public void setDefaultEventDuration(int defaultEventDuration) {
 		this.defaultEventDuration = defaultEventDuration;
+	}
+	
+	private Color background = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color color) {
+		super.setBackground(color);
+		this.background = color;
+		if (compositeTable != null) {
+			compositeTable.setBackground(color);
+		}
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
