@@ -94,7 +94,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 
 	protected void handleResume(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
-		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT);
+		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.SELECT);
 		thread = getNextSuspendedThread();
 		if (thread != null) {
 			fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE);

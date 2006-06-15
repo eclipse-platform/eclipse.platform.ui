@@ -12,6 +12,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
@@ -72,4 +74,21 @@ public class ProcessProxy extends EventHandlerModelProxy {
         return new DebugEventHandler[] {fProcessEventHandler};
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
+	 */
+	public void installed() {
+		// select process if in run mode
+		IProcess process = fProcess;
+		if (process != null) {
+			ILaunch launch = process.getLaunch();
+			if (launch != null && ILaunchManager.RUN_MODE.equals(launch.getLaunchMode())) {
+				// select the process
+				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+				ModelDelta node = delta.addNode(process.getLaunch(), IModelDelta.NO_CHANGE);
+				node = node.addNode(process, IModelDelta.SELECT);
+				fireModelChanged(delta);					
+			}
+		}
+	}
 }
