@@ -92,7 +92,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		} else {
 			headerDisabled = false;
 		}
-		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 	
 	/* (non-Javadoc)
