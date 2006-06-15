@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
@@ -41,6 +40,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
@@ -107,7 +107,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         
         // create handler and submissions for EOF
         fEOFHandler = new EOFHandler();
-//        fHandlerSubmission = new HandlerSubmission(IConsoleConstants.ID_CONSOLE_VIEW, page.getSite().getShell(), null, "org.eclipse.debug.ui.commands.eof", fEOFHandler, Priority.MEDIUM); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -223,7 +222,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void activated() {
         // add EOF submissions
-        IWorkbenchPartSite site = fView.getSite();
+        IPageSite site = fPage.getSite();
         IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
         IContextService contextService = (IContextService)site.getService(IContextService.class);
         fActivatedContext = contextService.activateContext(fContextId);
@@ -235,7 +234,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void deactivated() {
         // remove EOF submissions
-        IWorkbenchPartSite site = fView.getSite();
+        IPageSite site = fPage.getSite();
         IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
         IContextService contextService = (IContextService)site.getService(IContextService.class);
         handlerService.deactivateHandler(fActivatedHandler);
