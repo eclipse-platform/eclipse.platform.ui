@@ -53,7 +53,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 
 /**
@@ -68,7 +67,6 @@ public class DayEditor extends Composite implements IEventEditor {
 	private List recycledCalendarableEventControls = new LinkedList();
 	protected TimeSlice daysHeader = null;
 	private final boolean headerDisabled;
-	private Menu controlMenu;
 	private int defaultEventDuration;
 	
 	
@@ -934,25 +932,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		selectionChangeListeners.remove(l);
 	}
 
-
-	private class DayEditorLayout extends Layout {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
-		 */
-		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-			return new Point(wHint, hHint);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
-		 */
-		protected void layout(Composite composite, boolean flushCache) {
-			Rectangle bounds = DayEditor.this.getBounds();
-			compositeTable.setBounds(0, 0, bounds.width, bounds.height);
-			layoutEventControls();
-		}
-	}
-
 	/**
 	 * @return Returns the defaultStartHour.
 	 */
@@ -1000,7 +979,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public void setStartDate(Date startDate) {
 		List removedDays = model.setStartDate(startDate);
-		computeEventRowsForNewDays(startDate);
+		computeEventRowsForNewDays();
 		if (daysHeader != null) {
 			refreshColumnHeaders(daysHeader.getColumns());
 		}
@@ -1232,7 +1211,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	}
 	
-	private void computeEventRowsForNewDays(Date startDate) {
+	private void computeEventRowsForNewDays() {
 		EventLayoutComputer dayModel = new EventLayoutComputer(model.getNumberOfDivisionsInHour());
 		for (int dayOffset=0; dayOffset < model.getNumberOfDays(); ++dayOffset) {
 			if (model.getNumberOfColumnsWithinDay(dayOffset) == -1) {
@@ -1351,7 +1330,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		int startRow = calendarable.getUpperLeftPositionInDayRowCoordinates().y;
 		int endRow = calendarable.getLowerRightPositionInDayRowCoordinates().y;
 		
-		if (timedEventIsVisible(calendarable, firstVisibleRow, lastVisibleRow, startRow, endRow)) {
+		if (timedEventIsVisible(firstVisibleRow, lastVisibleRow, startRow, endRow)) {
 			int clippingStyle = SWT.NULL;
 			
 			if (startRow < firstVisibleRow) {
@@ -1400,7 +1379,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		return false;
 	}
 	
-	private boolean timedEventIsVisible(CalendarableItem calendarable, int firstVisibleRow, int lastVisibleRow, int startRow, int endRow) {
+	private boolean timedEventIsVisible(int firstVisibleRow, int lastVisibleRow, int startRow, int endRow) {
 		if (startRow < firstVisibleRow && endRow < firstVisibleRow)
 			return false;
 		
@@ -1487,10 +1466,21 @@ public class DayEditor extends Composite implements IEventEditor {
 		recycledCalendarableEventControls.add(control);
 	}
 
+	/**
+	 * Returns the default duration of a new event, in hours.
+	 * 
+	 * @return int the number of hours a new event occupies by default.
+	 */
 	public int getDefaultEventDuration() {
 		return defaultEventDuration;
 	}
 
+	/**
+	 * Sets the default duration of a new event, in hours.
+	 * 
+	 * @param defaultEventDuration
+	 *            int the number of hours a new event occupies by default.
+	 */
 	public void setDefaultEventDuration(int defaultEventDuration) {
 		this.defaultEventDuration = defaultEventDuration;
 	}
