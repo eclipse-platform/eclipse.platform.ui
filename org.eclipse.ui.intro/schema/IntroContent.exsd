@@ -142,7 +142,7 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
+         <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="group"/>
             <element ref="link"/>
             <element ref="text"/>
@@ -199,6 +199,20 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
             <annotation>
                <documentation>
                   an optional URL of the image to use as a background for this group
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="expandable" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  specifies whether or not the group can be expanded and collapsed. Defaults to false if not specified. If true, the expanded attribute will be consulted to determine whether or not the group should be expanded by default or not.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="expanded" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  specifies whether the expandable group should be expanded by default or not. Defaults to false (collapsed) if not specified. This only applies to expandable groups (where expandable was set to true). Has no effect otherwise.
                </documentation>
             </annotation>
          </attribute>

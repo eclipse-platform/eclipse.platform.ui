@@ -56,9 +56,9 @@ Since 3.1, if the content of the external file is XHTML 1.0, then the page is re
 <li><b>shared-style</b> - a boolean flag that controls the addition of the shared style into this page's list of styles. If <code>true</code> (the default), the shared style is added to this page's styles. If <code>false</code>, the shared style defined in the Intro configuration will not be injected into the styles of this page.</li>
 <li><b>bgImage</b> - an optional URL of the image to use as a background for this group</li>
 </ul>
-<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.group">group</a> (<a href="#e.group">group</a> | <a href="#e.link">link</a> | <a href="#e.text">text</a> | <a href="#e.img">img</a> | <a href="#e.include">include</a> | <a href="#e.html">html</a> | <a href="#e.anchor">anchor</a> | <a href="#e.contentProvider">contentProvider</a>)+&gt;</p>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.group">group</a> (<a href="#e.group">group</a> | <a href="#e.link">link</a> | <a href="#e.text">text</a> | <a href="#e.img">img</a> | <a href="#e.include">include</a> | <a href="#e.html">html</a> | <a href="#e.anchor">anchor</a> | <a href="#e.contentProvider">contentProvider</a>)*&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST group</p>
-<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) <p class=code id=dtdAttlist>computed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>bgImage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) <p class=code id=dtdAttlist>computed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>bgImage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>expandable&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>expanded&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Used to group related content, content that should have similar style applied, or content that will be included together in other pages.</p>
@@ -70,6 +70,8 @@ Used to group related content, content that should have similar style applied, o
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
 <li><b>computed</b> - if <code>true</code>, the children of this group will be provided by the intro configurer at run time. It is advised not to define any children statically in this case.</li>
 <li><b>bgImage</b> - an optional URL of the image to use as a background for this group</li>
+<li><b>expandable</b> - specifies whether or not the group can be expanded and collapsed. Defaults to false if not specified. If true, the expanded attribute will be consulted to determine whether or not the group should be expanded by default or not.</li>
+<li><b>expanded</b> - specifies whether the expandable group should be expanded by default or not. Defaults to false (collapsed) if not specified. This only applies to expandable groups (where expandable was set to true). Has no effect otherwise.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.head">head</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST head</p>
