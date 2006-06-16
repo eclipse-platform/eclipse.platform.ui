@@ -715,7 +715,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 * Reconciles the selection state of the control.
 	 */
 	public void reconcileSelectionState() {
-		fHistoryViewer.setSelection(new StructuredSelection(fSelectedDescriptors.toArray()), true);
+		final RefactoringHistoryNode[] nodes= new RefactoringHistoryNode[fSelectedDescriptors.size()];
+		int index= 0;
+		for (final Iterator iterator= fSelectedDescriptors.iterator(); iterator.hasNext(); index++) {
+			final RefactoringDescriptorProxy descriptor= (RefactoringDescriptorProxy) iterator.next();
+			nodes[index]= new RefactoringHistoryEntry(null, descriptor);
+			fHistoryViewer.expandToLevel(nodes[index], AbstractTreeViewer.ALL_LEVELS);
+		}
+		fHistoryViewer.setSelection(new StructuredSelection(nodes), true);
 	}
 
 	/**
@@ -748,9 +755,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			fCheckedDescriptors.clear();
 			fCheckedDescriptors.addAll(Arrays.asList(descriptors));
 			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
-			final RefactoringHistoryNode[] nodes= new RefactoringHistoryNode[descriptors.length];
-			for (int index= 0; index < descriptors.length; index++)
-				nodes[index]= new RefactoringHistoryEntry(null, descriptors[index]);
 			final RefactoringHistory history= RefactoringHistoryControl.this.getInput();
 			if (history != null)
 				viewer.reconcileCheckState(history);
