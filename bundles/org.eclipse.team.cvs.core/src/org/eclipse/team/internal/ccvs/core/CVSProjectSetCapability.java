@@ -93,7 +93,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		buffer.append(module);
 		buffer.append(","); //$NON-NLS-1$
 				
-		String projectName = folder.getName();
+		String projectName = project.getName();
 		buffer.append(projectName);
 		CVSTag tag = syncInfo.getTag();
 		if (tag != null) {
