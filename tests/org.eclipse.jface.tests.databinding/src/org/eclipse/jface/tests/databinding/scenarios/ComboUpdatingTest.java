@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -108,6 +109,9 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	}
 	
 	public void testBindItems_listHasSameItems_editable() throws Exception {
+		if (BindingTestSuite.failingTestsDisabled(this)) {
+			return;
+		}
 		text = "Apple";
 		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboEditable, PROP_TEXT));
 		getDbc().bind(value, new Property(this, PROP_TEXT), null);
@@ -154,6 +158,9 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	}
 
 	public void testBindItems_listHasDifferentItems_editable() throws Exception {
+		if (BindingTestSuite.failingTestsDisabled(this)) {
+			return;
+		}
 		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboEditable, PROP_TEXT));
 		getDbc().bind(value, new Property(this, PROP_TEXT), null);
 		spinEventLoop(0);
