@@ -291,8 +291,18 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	{
 		public void contextActivated(ISelection selection, IWorkbenchPart part) {
 			
-			if (selection instanceof IStructuredSelection)
+			if (selection.isEmpty() && fRetrieval != null)
 			{
+				saveViewerState();
+				fRetrieval = null;
+				if (fTreeViewer != null)
+					fTreeViewer.setInput(fRetrieval);
+				updateActionsEnablement();
+				return;
+			}
+			
+			if (selection instanceof IStructuredSelection)
+			{		
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				if (obj instanceof IAdaptable)
 				{
@@ -301,14 +311,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 					if (retrieval != null && fTreeViewer != null && retrieval != fRetrieval)
 					{
 						// save current setting
-						if (fRetrieval != null)
-						{
-							MemoryViewerState state = (MemoryViewerState)fViewerState.get(fRetrieval);
-							if (state == null)
-								state = new MemoryViewerState(fTreeViewer);
-							state.saveState(fTreeViewer);
-							fViewerState.put(fRetrieval, state);
-						}
+						saveViewerState();
 						
 						// set new setting
 						fRetrieval = retrieval;
@@ -322,6 +325,20 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 					}
 					updateActionsEnablement();
 				}
+			}
+		}
+
+		/**
+		 * 
+		 */
+		private void saveViewerState() {
+			if (fRetrieval != null && fTreeViewer != null)
+			{
+				MemoryViewerState state = (MemoryViewerState)fViewerState.get(fRetrieval);
+				if (state == null)
+					state = new MemoryViewerState(fTreeViewer);
+				state.saveState(fTreeViewer);
+				fViewerState.put(fRetrieval, state);
 			}
 		}
 
