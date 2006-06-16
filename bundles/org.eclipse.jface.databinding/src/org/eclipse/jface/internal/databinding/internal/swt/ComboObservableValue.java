@@ -136,6 +136,8 @@ public class ComboObservableValue extends AbstractObservableValue {
 	 * you bind to the IObservableList returned by this method.
 	 * 
 	 * @return an IObservableList bound to the items property
+	 * 
+	 * TODO this hack was put in as a temporary workaround for bug 147128
 	 */
 	public IObservableList getItems() {
 		if (items == null) {
