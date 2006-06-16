@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * This is the plugin class for the file system examples. It provides the following:
@@ -46,6 +47,7 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	// This static field will hold the singleton instance of the plugin class
 	private static FileSystemPlugin plugin;
 	
+	private PessimisticFilesystemProviderPlugin pessPlugin;
 	/**
 	 * Override the standard plugin constructor.
 	 * 
@@ -56,7 +58,7 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		// record this instance as the singleton
 		plugin = this;
 		// Instanctiate pessimistic provider
-		new PessimisticFilesystemProviderPlugin(descriptor);
+		pessPlugin = new PessimisticFilesystemProviderPlugin(descriptor);
 	}
 	
 	/**
@@ -112,6 +114,21 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 			display= Display.getDefault();
 		}
 		return display;		
+	}
+	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		//Call startup on the Pessimistic Plugin
+		pessPlugin.startup();
+	}
+	
+	public void stop(BundleContext context) throws Exception {
+		try {
+			if (pessPlugin != null)
+				pessPlugin.shutdown();
+		} finally {
+			super.stop(context);
+		}
 	}
 }
 

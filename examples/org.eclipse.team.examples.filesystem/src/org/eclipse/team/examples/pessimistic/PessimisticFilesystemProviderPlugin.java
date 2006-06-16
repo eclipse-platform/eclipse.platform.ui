@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic;
  
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -64,7 +69,9 @@ public class PessimisticFilesystemProviderPlugin extends AbstractUIPlugin {
 	/**
 	 * Initializes the default preferences for this plugin.
 	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
+	protected void initializeDefaultPreferences() {
+		IPreferenceStore store = getPreferenceStore();
+	
 		store.setDefault(
 			IPessimisticFilesystemConstants.PREF_CHECKED_IN_FILES_EDITED,
 			IPessimisticFilesystemConstants.OPTION_PROMPT);
@@ -102,6 +109,7 @@ public class PessimisticFilesystemProviderPlugin extends AbstractUIPlugin {
 	public void startup() throws CoreException {
 		fListener= new ResourceChangeListener();
 		fListener.startup();
+		initializeDefaultPreferences();
 		super.startup();
 	}
 
