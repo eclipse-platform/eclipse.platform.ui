@@ -146,4 +146,8 @@ public class CVSURI {
 		
 		return path;
 	}
+
+	public ICVSRepositoryLocation getRepository() {
+		return repository;
+	}
 }

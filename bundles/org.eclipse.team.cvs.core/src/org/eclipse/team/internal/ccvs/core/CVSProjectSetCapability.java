@@ -71,19 +71,23 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * @return the project reference (not <code>null</code>)
 	 * @throws CVSException
 	 */
-	private String asReference(IProject project) throws TeamException {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("1.0,"); //$NON-NLS-1$
-				
+	private String asReference(IProject project) throws TeamException {	
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		CVSWorkspaceRoot root = provider.getCVSWorkspaceRoot();
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
 		location.setUserMuteable(true);
+		ICVSFolder folder = root.getLocalRoot();
+		return asReference(location, folder, project);
+	}
+	
+	private String asReference(CVSRepositoryLocation location, ICVSFolder folder, IProject project) throws TeamException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("1.0,"); //$NON-NLS-1$
+
 		String repoLocation = location.getLocation();
 		buffer.append(repoLocation);
 		buffer.append(","); //$NON-NLS-1$
 				
-		ICVSFolder folder = root.getLocalRoot();
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 		String module = syncInfo.getRepository();
 		buffer.append(module);
@@ -527,27 +531,52 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	public String getProject(String referenceString) {
-		// TODO Auto-generated method stub
-		return super.getProject(referenceString);
-	}
-	
-	public URI getURI(String referenceString) {
-	
 		//team provider, cvs folder, project name
 		StringTokenizer tokenizer = new StringTokenizer(referenceString, ","); //$NON-NLS-1$
 		String version = tokenizer.nextToken();
 		// If this is a newer version, then ignore it
 		if (!version.equals("1.0")) //$NON-NLS-1$
-			return super.getURI(referenceString);
-		
+			return null;
+		try {
+			LoadInfo info = new LoadInfo(tokenizer);
+			return info.getProject().getName();
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
+	}
+	
+	public URI getURI(String referenceString) {
+		//team provider, cvs folder, project name
+		StringTokenizer tokenizer = new StringTokenizer(referenceString, ","); //$NON-NLS-1$
+		String version = tokenizer.nextToken();
+		// If this is a newer version, then ignore it
+		if (!version.equals("1.0")) //$NON-NLS-1$
+			return null;
 		try {
 			LoadInfo info = new LoadInfo(tokenizer);
 			CVSURI cvsURI = new CVSURI(info.repositoryLocation,new Path(info.module),info.tag);
 			return cvsURI.toURI();
-		} catch (CVSException e) {	
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return null;
 		}
-		
-		return super.getURI(referenceString);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.ProjectSetCapability#asReference(java.net.URI, java.lang.String)
+	 */
+	public String asReference(URI uri, String projectName) {
+		try {
+			CVSURI cvsURI = CVSURI.fromUri(uri);
+			ICVSRepositoryLocation location = cvsURI.getRepository();
+			ICVSFolder folder = cvsURI.toFolder();
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			return asReference((CVSRepositoryLocation)location, folder, project);
+		} catch (TeamException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
 	}
 
 }

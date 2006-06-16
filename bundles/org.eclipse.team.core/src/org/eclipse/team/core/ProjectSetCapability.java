@@ -309,6 +309,7 @@ public abstract class ProjectSetCapability {
 	 * @param uri the uri that identifies the location of the project in the repository.
 	 * @param projectName the name of the project.
 	 * @return the reference string representing a project that can be loaded into the workspace
+	 * or <code>null</code> if the URI and name cannot be translated into a reference string
 	 * @since 3.2
 	 */
 	public String asReference(URI uri, String projectName) {
