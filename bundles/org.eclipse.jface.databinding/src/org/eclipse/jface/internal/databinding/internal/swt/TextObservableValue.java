@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds (bug 135446)
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
+import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -25,17 +27,54 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 1.0
+ * {@link IObservable} implementation that wraps a {@link Text} widget. The time
+ * at which listeners should be notified about changes to the text is specified
+ * on construction.
  * 
+ * <dl>
+ * <dt>Events:</dt>
+ * <dd> If the update event type (specified on construction) is
+ * <code>SWT.Modify</code> a value change event will be fired on every key
+ * stroke. If the update event type is <code>SWT.FocusOut</code> a value
+ * change event will be fired on focus out. When in either mode if the user is
+ * entering text and presses [Escape] the value will be reverted back to the
+ * last value set using doSetValue(). Regardless of the update event type a
+ * value changing event will fire on verify to enable vetoing of changes.</dd>
+ * </dl>
+ * 
+ * @since 1.0
  */
 public class TextObservableValue extends AbstractVetoableValue {
 
+	/**
+	 * {@link Text} widget that this is being observed.
+	 */
 	private final Text text;
 
+	/**
+	 * Flag to track when the model is updating the widget. When
+	 * <code>true</code> the handlers for the SWT events should not process
+	 * the event as this would cause an infinite loop.
+	 */
 	private boolean updating = false;
 
-	private int updatePolicy;
+	/**
+	 * SWT event that on firing this observable will fire change events to its
+	 * listeners.
+	 */
+	private int updateEventType;
 
+	/**
+	 * Valid types for the {@link #updateEventType}.
+	 */
+	private static final int[] validUpdateEventTypes = new int[] { SWT.Modify,
+			SWT.FocusOut, SWT.NONE };
+
+	/**
+	 * Last value set using doSetValue(), or null. This is maintained so that
+	 * when entering text if the consumer were to press [Escape] the value can
+	 * be reverted back to the last known externally-set value.
+	 */
 	private String bufferedValue;
 
 	private Listener updateListener = new Listener() {
@@ -46,9 +85,9 @@ public class TextObservableValue extends AbstractVetoableValue {
 
 				// If we are updating on focus lost then when we fire the change
 				// event change the buffered value
-				if (updatePolicy == SWT.FocusOut) {
+				if (updateEventType == SWT.FocusOut) {
 					bufferedValue = text.getText();
-					
+
 					if (!newValue.equals(oldValue)) {
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								newValue));
@@ -62,26 +101,47 @@ public class TextObservableValue extends AbstractVetoableValue {
 	};
 
 	private VerifyListener verifyListener;
+
 	private KeyListener keyListener;
+
 	private ShellListener shellListener;
 
 	/**
+	 * Constructs a new instance bound to the given <code>text</code> widget
+	 * and configured to fire change events to its listeners at the time of the
+	 * <code>updateEventType</code>.
+	 * 
 	 * @param text
-	 * @param updatePolicy
+	 * @param updateEventType
+	 *            SWT event constant as to what SWT event to update the model in
+	 *            response to. Appropriate values are: <code>SWT.Modify</code>,
+	 *            <code>SWT.FocusOut</code>, <code>SWT.NONE</code>.
+	 * @throws IllegalArgumentException
+	 *             if <code>updateEventType</code> is an incorrect type.
 	 */
-	public TextObservableValue(final Text text, int updatePolicy) {
-		this.text = text;
-		this.updatePolicy = updatePolicy;
-		if (updatePolicy != SWT.None) {
-			text.addListener(updatePolicy, updateListener);
+	public TextObservableValue(final Text text, int updateEventType) {
+		if (text == null)
+			throw new IllegalArgumentException("The 'text' parameter is null."); //$NON-NLS-1$
+		boolean eventValid = false;
+		for (int i = 0; !eventValid && i < validUpdateEventTypes.length; i++) {
+			eventValid = (updateEventType == validUpdateEventTypes[i]);
 		}
-		// If the update policy is TIME_EARLY then the model is notified of
+		if (!eventValid) {
+			throw new IllegalArgumentException(
+					"UpdateEventType [" + updateEventType + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		this.text = text;
+		this.updateEventType = updateEventType;
+		if (updateEventType != SWT.None) {
+			text.addListener(updateEventType, updateListener);
+		}
+		// If the update policy is SWT.Modify then the model is notified of
 		// changed on key stroke by key stroke
 		// When escape is pressed we need to rollback to the previous value
 		// which is done with a key listener, however
 		// the bufferedValue (the last remembered change value) must be changed
 		// on focus lost
-		if (updatePolicy == SWT.Modify) {
+		if (updateEventType == SWT.Modify) {
 			text.addListener(SWT.FocusOut, new Listener() {
 				public void handleEvent(Event event) {
 					if (!updating) {
@@ -122,7 +182,7 @@ public class TextObservableValue extends AbstractVetoableValue {
 				if (!text.isDisposed()) {
 					String oldValue = bufferedValue;
 					String newValue = text.getText();
-	
+
 					if (!newValue.equals(oldValue)) {
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								newValue));
@@ -133,6 +193,15 @@ public class TextObservableValue extends AbstractVetoableValue {
 		text.getShell().addShellListener(shellListener);
 	}
 
+	/**
+	 * Sets the bound {@link Text Text's} text to the passed <code>value</code>.
+	 * 
+	 * @param value
+	 *            new value, String expected
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue#doSetValue(java.lang.Object)
+	 * @throws ClassCastException
+	 *             if the value is anything other than a String
+	 */
 	public void doSetValue(final Object value) {
 		try {
 			updating = true;
@@ -143,10 +212,21 @@ public class TextObservableValue extends AbstractVetoableValue {
 		}
 	}
 
+	/**
+	 * Returns the current value of the {@link Text}.
+	 * 
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue#doGetValue()
+	 */
 	public Object doGetValue() {
 		return text.getText();
 	}
 
+	/**
+	 * Returns the type of the value from {@link #doGetValue()}, i.e.
+	 * String.class
+	 * 
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue#getValueType()
+	 */
 	public Object getValueType() {
 		return String.class;
 	}
@@ -154,8 +234,8 @@ public class TextObservableValue extends AbstractVetoableValue {
 	public void dispose() {
 		if (!text.isDisposed()) {
 			text.removeKeyListener(keyListener);
-			if (updatePolicy != SWT.None) {
-				text.removeListener(updatePolicy, updateListener);
+			if (updateEventType != SWT.None) {
+				text.removeListener(updateEventType, updateListener);
 			}
 			text.removeVerifyListener(verifyListener);
 			text.getShell().removeShellListener(shellListener);
