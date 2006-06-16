@@ -879,29 +879,6 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Get the proposals from the proposal provider. The provider may or may
-		 * not filter the proposals based on the specified filter text.
-		 */
-		private IContentProposal[] getProposals(String filterString) {
-			if (proposalProvider == null || !isValid()) {
-				return null;
-			}
-			int position = insertionPos;
-			if (position == -1) {
-				position = getControlContentAdapter().getCursorPosition(
-						getControl());
-			}
-			String contents = getControlContentAdapter().getControlContents(
-					getControl());
-			IContentProposal[] proposals = proposalProvider.getProposals(
-					contents, position);
-			if (filterStyle != FILTER_NONE) {
-				return filterProposals(proposals, filterString);
-			}
-			return proposals;
-		}
-
-		/*
 		 * Show the proposal description in a secondary popup.
 		 */
 		private void showProposalDescription(String description) {
@@ -973,7 +950,17 @@ public class ContentProposalAdapter {
 		 * caches. Repopulate the popup if it is open.
 		 */
 		private void recomputeProposals(String filterText) {
-			setProposals(getProposals(filterText));
+			IContentProposal [] allProposals = getProposals();
+			// If the non-filtered proposal list is empty, we should
+			// close the popup.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
+			if (allProposals.length == 0) {
+				proposals = allProposals;
+				close();
+			} else {
+				// Keep the popup open, but filter by any provided filter text
+				setProposals(filterProposals(allProposals, filterText));
+			}
 		}
 
 		/*
@@ -1356,7 +1343,11 @@ public class ContentProposalAdapter {
 	 * 
 	 */
 	public void setAutoActivationCharacters(char[] autoActivationCharacters) {
-		this.autoActivateString = new String(autoActivationCharacters);
+		if (autoActivationCharacters == null) {
+			this.autoActivateString = null;
+		} else {
+			this.autoActivateString = new String(autoActivationCharacters);
+		}
 	}
 
 	/**
@@ -1636,63 +1627,13 @@ public class ContentProposalAdapter {
 					 * autoactivation characters.
 					 */
 					if (e.character != 0) {
-						boolean autoActivated = false;
 						// Auto-activation characters were specified. Check
 						// them.
 						if (autoActivateString != null) {
 							if (autoActivateString.indexOf(e.character) >= 0) {
-								autoActivated = true;
+								e.doit = propagateKeys;
+								autoActivate();
 							}
-							// Auto-activation characters were not specified. If
-							// there was no key stroke specified, assume
-							// activation for alphanumeric characters.
-						} else if (triggerKeyStroke == null
-								&& Character.isLetterOrDigit(e.character)) {
-							autoActivated = true;
-						}
-						/*
-						 * When autoactivating, we check the autoactivation
-						 * delay.
-						 */
-						if (autoActivated) {
-							e.doit = propagateKeys;
-
-							if (autoActivationDelay > 0) {
-								Runnable runnable = new Runnable() {
-									public void run() {
-										receivedKeyDown = false;
-										try {
-											Thread.sleep(autoActivationDelay);
-										} catch (InterruptedException e) {
-										}
-										if (!isValid() || receivedKeyDown) {
-											return;
-										}
-										getControl().getDisplay().syncExec(
-												new Runnable() {
-													public void run() {
-														openProposalPopup(true);
-													}
-												});
-									}
-								};
-								Thread t = new Thread(runnable);
-								t.start();
-							} else {
-								// Since we do not sleep, we must open the popup
-								// in an async exec. This is necessary because
-								// the cursor position and other important info
-								// changes as a result of this event occurring.
-								getControl().getDisplay().asyncExec(
-										new Runnable() {
-											public void run() {
-												if (isValid()) {
-													openProposalPopup(true);
-												}
-											}
-										});
-							}
-
 						} else {
 							// No autoactivation occurred, so record the key down
 							// as a means to interrupt any autoactivation that is
@@ -1702,6 +1643,20 @@ public class ContentProposalAdapter {
 					}
 					break;
 
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
+				// Given that we will close the popup when there are no valid
+			    // proposals, we must reopen it when there are.  Normally, the
+				// keydown event handling will catch all the cases where it
+				// should reopen.  But when autoactivation should occur on all
+			    // content changes, we check it here after keys have been processed.
+				case SWT.Modify:
+					if (triggerKeyStroke == null && autoActivateString  == null) {
+						if (DEBUG) {
+							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
+						}
+						autoActivate();
+					}
+					break;
 				default:
 					break;
 				}
@@ -1734,6 +1689,7 @@ public class ContentProposalAdapter {
 		};
 		control.addListener(SWT.KeyDown, controlListener);
 		control.addListener(SWT.Traverse, controlListener);
+		control.addListener(SWT.Modify, controlListener);
 
 		if (DEBUG) {
 			System.out
@@ -1758,6 +1714,9 @@ public class ContentProposalAdapter {
 				recordCursorPosition();  // must be done before getting proposals
 				IContentProposal[] proposals = getProposals();
 				if (proposals.length > 0) {
+					if (DEBUG) {
+						System.out.println("POPUP OPENED BY PRECEDING EVENT"); //$NON-NLS-1$
+					}
 					recordCursorPosition();
 					popup = new ContentProposalPopup(null, proposals);
 					popup.open();
@@ -1880,5 +1839,49 @@ public class ContentProposalAdapter {
 		IContentProposal[] proposals = proposalProvider.getProposals(
 				contents, position);
 		return proposals;
+	}
+	
+	/**
+	 * Autoactivation has been triggered.
+	 * Open the popup using any specified delay.
+	 */
+	private void autoActivate() {
+		if (autoActivationDelay > 0) {
+			Runnable runnable = new Runnable() {
+				public void run() {
+					receivedKeyDown = false;
+					try {
+						Thread.sleep(autoActivationDelay);
+					} catch (InterruptedException e) {
+					}
+					if (!isValid() || receivedKeyDown) {
+						return;
+					}
+					getControl().getDisplay().syncExec(
+							new Runnable() {
+								public void run() {
+									openProposalPopup(true);
+								}
+							});
+				}
+			};
+			Thread t = new Thread(runnable);
+			t.start();
+		} else {
+			// Since we do not sleep, we must open the popup
+			// in an async exec. This is necessary because
+			// this method may be called in the middle of handling
+			// some event that will cause the cursor position or
+			// other important info to change as a result of this
+			// event occurring.
+			getControl().getDisplay().asyncExec(
+					new Runnable() {
+						public void run() {
+							if (isValid()) {
+								openProposalPopup(true);
+							}
+						}
+					});
+		}
 	}
 }
