@@ -22,6 +22,7 @@ import org.eclipse.jface.tests.databinding.swt.ComboObservableCollectionTest;
 import org.eclipse.jface.tests.databinding.swt.ListObservableCollectionTest;
 import org.eclipse.jface.tests.databinding.swt.ObservableCollectionViewerTest;
 import org.eclipse.jface.tests.databinding.swt.TableViewerObservableCollectionTest;
+import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -85,6 +86,7 @@ public class BindingScenariosTestSuite extends TestSuite {
 		addTestSuite(ComboViewerScenario.class);
 		addTestSuite(ComboUpdatingTest.class);
 		addTestSuite(ListViewerScenario.class);
+		addTestSuite(TextObservableValueTests.class);
 		if (BindingTestSuite.failingTestsDisabled(this))
 			return;
 		addTestSuite(CComboObservableCollectionTest.class);
