@@ -7,17 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 137877
  *******************************************************************************/
+
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 import org.eclipse.jface.internal.databinding.internal.viewers.AbstractListViewerObservableCollectionWithLabels;
-import org.eclipse.jface.internal.databinding.internal.viewers.StructuredViewerObservableValue;
+import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.viewers.TableViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.viewers.AbstractListViewer;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
 /**
@@ -29,11 +31,12 @@ import org.eclipse.jface.viewers.TableViewer;
  * <li>org.eclipse.jface.databinding.PropertyDescription - depending on the
  * property description's object and property ID:
  * <ul>
- * <li>object instanceof StructuredViewer, property ID is
- * ViewersProperties.SINGLE_SELECTION - denoting the viewer's (single) selection</li>
- * <li>object instanceof TableViewer, property ID is ViewersProperties.CONTENT</li>
+ * <li>object instanceof ISelectionProvider, property ID is
+ * {@link ViewersProperties#SINGLE_SELECTION}</li>
+ * <li>object instanceof TableViewer, property ID is
+ * {@link ViewersProperties#CONTENT}</li>
  * <li>object instanceof AbstractListViewer, property ID is
- * ViewersProperties.CONTENT</li>
+ * {@link ViewersProperties#CONTENT}</li>
  * </ul>
  * </li>
  * </ul>
@@ -62,19 +65,15 @@ final public class ViewersObservableFactory implements IObservableFactory {
 		if (description instanceof Property) {
 			Object object = ((Property) description).getObject();
 			Object attribute = ((Property) description).getPropertyID();
-			if (object instanceof StructuredViewer
+			if (object instanceof ISelectionProvider
 					&& ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
-				return new StructuredViewerObservableValue(
-						(StructuredViewer) object, (String) attribute);
+				return new SelectionProviderSingleSelectionObservableValue(
+						(ISelectionProvider) object);
 			} else if (object instanceof AbstractListViewer
-					&& ViewersProperties.SINGLE_SELECTION.equals(attribute))
-				return new StructuredViewerObservableValue(
-						(AbstractListViewer) object, (String) attribute);
-			else if (object instanceof AbstractListViewer
-					&& ViewersProperties.CONTENT.equals(attribute))
+					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new AbstractListViewerObservableCollectionWithLabels(
 						(AbstractListViewer) object);
-			else if (object instanceof TableViewer
+			} else if (object instanceof TableViewer
 					&& ViewersProperties.CONTENT.equals(attribute)) {
 				return new TableViewerObservableCollectionWithLabels(
 						(TableViewer) object);
