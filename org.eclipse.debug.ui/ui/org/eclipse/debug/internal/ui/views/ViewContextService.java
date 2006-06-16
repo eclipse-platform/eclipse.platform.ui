@@ -132,6 +132,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         fgBaseDebugViewIds.add(IConsoleConstants.ID_CONSOLE_VIEW);
     }
     
+    private static String[] EMPTY_IDS = new String[0];
+    
     /**
      * View bindings for a debug context
      */
@@ -140,13 +142,15 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	// context id
     	private String fId;
     	
-    	// list of view bindings specific to this context
-    	private List fViewBindings = new ArrayList();
+    	// list of view bindings id's specific to this context
+    	private String[] fViewBindingIds = EMPTY_IDS;
     	
     	// all bindings including inherited bindings, top down in activation order
-    	private String[] fAllViewBindingIds= null;
+    	private String[] fAllViewBindingIds = null;
     	// associated binding to activate
-    	private Map fAllViewIdToBindings = null;
+    	private Map fAllViewIdToBindings = new HashMap();
+    	// all context id's in this context hierarchy (top down order)
+    	private String[] fAllConetxtIds = null;
 
     	// id of parent context
     	private String fParentId;
@@ -175,7 +179,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 * @param binding view binding to add
     	 */
     	public void addBinding(ViewBinding binding) {
-    		fViewBindings.add(binding);
+    		String[] newBindings = new String[fViewBindingIds.length + 1];
+    		System.arraycopy(fViewBindingIds, 0, newBindings, 0, fViewBindingIds.length);
+    		newBindings[fViewBindingIds.length] = binding.getViewId();
+    		fAllViewIdToBindings.put(binding.getViewId(), binding);
+    		fViewBindingIds = newBindings;
     	}
     	
     	/**
@@ -205,30 +213,37 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	 */
     	public void activateChain(IWorkbenchPage page) {
     		initializeChain();
-    		DebugContextViewBindings context = this;
-    		while (context != null) {
-    			addActivated(context.getId());
-    			context = context.getParentContext();
-    		}
-			setActive(page.getPerspective(), getId());
-    		for (int i = 0; i < fAllViewBindingIds.length; i++) {
-				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(fAllViewBindingIds[i]);
-				binding.activated(page);
-			}
-    	}
+    		doActivation(page, fAllViewBindingIds, fAllConetxtIds);
+    	}	
     	
     	/**
-    	 * Activates the views in this context only.
+    	 * Activates the view bindings for the specified views and the 
+    	 * specified contexts in the given page.
+    	 *  
+    	 * @param page page to activate views in
+    	 * @param viewIds id's of views to activate
+    	 * @param contextIds associated contexts that are activated
     	 */
-    	public void activate(IWorkbenchPage page) {
-    		addActivated(getId());
+    	private void doActivation(IWorkbenchPage page, String[] viewIds, String[] contextIds) {
+    		// note activation of all the relevant contexts
+    		for (int i = 0; i < contextIds.length; i++) {
+				addActivated(contextIds[i]);
+			}
+    		// set the active context to be this
     		setActive(page.getPerspective(), getId());
-    		Iterator bindings = fViewBindings.iterator();
-    		while (bindings.hasNext()) {
-    			ViewBinding binding = (ViewBinding) bindings.next();
-    			binding.activated(page);
-    		}
-    	}    	
+    		// activate the view bindings
+    		for (int i = 0; i < viewIds.length; i++) {
+				String viewId = viewIds[i];
+				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+				binding.activated(page);
+			}
+    		// bring most relevant views to top
+    		for (int i = 0; i < viewIds.length; i++) {
+				String viewId = viewIds[i];
+				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+				binding.checkZOrder(page, fAllViewBindingIds);
+			}
+    	}
     	
     	/**
     	 * Builds the top down ordered list of bindings for this context allowing sub-contexts
@@ -237,7 +252,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     	private synchronized void initializeChain() {
     		if (fAllViewBindingIds == null) {
     			List orderedIds = new ArrayList();
-    			fAllViewIdToBindings = new HashMap();
     			List contexts = new ArrayList();
     			DebugContextViewBindings context = this;
     			while (context != null) {
@@ -245,16 +259,22 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
     				context = context.getParentContext();
     			}
     			Iterator iterator = contexts.iterator();
+    			fAllConetxtIds = new String[contexts.size()];
+    			int pos = 0;
     			while (iterator.hasNext()) {
     				DebugContextViewBindings bindings = (DebugContextViewBindings) iterator.next();
-    				Iterator views = bindings.fViewBindings.iterator();
-    				while (views.hasNext()) {
-    					ViewBinding binding = (ViewBinding) views.next();
-    					if (!fAllViewIdToBindings.containsKey(binding.getViewId())) {
-    						orderedIds.add(binding.getViewId());
+    				fAllConetxtIds[pos] = bindings.getId();
+    				pos++;
+    				for (int i = 0; i < bindings.fViewBindingIds.length; i++) {
+						String viewId = bindings.fViewBindingIds[i];
+    					if (bindings == this) {
+    						orderedIds.add(viewId);
     					}
-    					fAllViewIdToBindings.put(binding.getViewId(), binding);
-    				}
+    					if (!fAllViewIdToBindings.containsKey(viewId)) {
+    						orderedIds.add(viewId);
+    						fAllViewIdToBindings.put(viewId, bindings.fAllViewIdToBindings.get(viewId));
+    					}
+					}
     			}
     			fAllViewBindingIds = (String[]) orderedIds.toArray(new String[orderedIds.size()]);
     		}
@@ -270,11 +290,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			if (isActiveContext(getId())) {
 				setActive(page.getPerspective(), null);
 			}
-			Iterator bindings = fViewBindings.iterator();
-    		while (bindings.hasNext()) {
-    			ViewBinding binding = (ViewBinding) bindings.next();
-    			binding.deactivated(page);
-    		}   		
+			for (int i = 0; i < fViewBindingIds.length; i++) {
+				String viewId = fViewBindingIds[i];
+				ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
+				binding.deactivated(page);
+			}
     	}
     	
     	/**
@@ -311,14 +331,14 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * @param alreadyDone views already done
          */
         public void saveBindings(Document document, Element root, Set alreadyDone) {
-        	Iterator iterator = fViewBindings.iterator();
-        	while (iterator.hasNext()) {
-        		ViewBinding binding = (ViewBinding) iterator.next();
-        		if (!alreadyDone.contains(binding.getViewId())) {
-        			alreadyDone.add(binding.getViewId());
+        	for (int i = 0; i < fViewBindingIds.length; i++) {
+				String viewId = fViewBindingIds[i];
+        		if (!alreadyDone.contains(viewId)) {
+        			alreadyDone.add(viewId);
+        			ViewBinding binding = (ViewBinding) fAllViewIdToBindings.get(viewId);
         			binding.saveBindings(document, root);
         		}
-        	}
+			}
         }    	
     }
     
@@ -444,10 +464,39 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                     } finally {
                         fIgnoreChanges = false;
                     }
-                    // TODO: bring to top if less relevant view is on top open
                 }
             }
         }
+        
+        /**
+         * Context has been activated. Check the view stack to see if this view
+         * should be made visible.
+         * 
+         * @param page
+         */
+        public void checkZOrder(IWorkbenchPage page, String[] relevantViews) {
+        	// see if view is open already
+        	IViewPart part = page.findView(getViewId());
+        	if (part != null) {
+        		IViewPart[] viewStack = page.getViewStack(part);
+        		if (viewStack != null && viewStack.length > 0) {
+        			String top = viewStack[0].getSite().getId();
+        			for (int i = 0; i < relevantViews.length; i++) {
+						if (relevantViews[i].equals(top)) {
+							// a relevant view is visible
+							return;
+						}
+					}
+        			// an irrelevant view is visible
+                    try {
+                        fIgnoreChanges = true;
+                        page.bringToTop(part);
+                    } finally {
+                        fIgnoreChanges = false;
+                    }
+        		}
+        	}
+        }        
         
         /**
          * Context has been deactivated, close as required.
@@ -700,7 +749,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 											// ensure last context gets top priority
 											if (!contexts.hasNext()) {
 												if (!isActiveContext(contextId)) {
-													activate(contextId);
+													activateChain(contextId);
 												}
 											}
 										}
@@ -888,24 +937,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			}
 		}
 	}	
-	
-	/**
-	 * Activates the given context in the active perspective.
-	 * 
-	 * @param contextId
-	 */
-	private void activate(String contextId) {
-		IWorkbenchPage page = fWindow.getActivePage();
-		if (page != null) {
-			IPerspectiveDescriptor perspective = page.getPerspective();
-			if (perspective != null) {
-				DebugContextViewBindings bindings= (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
-				if (bindings != null) {
-					bindings.activate(page);
-				}
-			}
-		}
-	}
 	
 	/**
 	 * Sets the active context in the given perspective, or removes
