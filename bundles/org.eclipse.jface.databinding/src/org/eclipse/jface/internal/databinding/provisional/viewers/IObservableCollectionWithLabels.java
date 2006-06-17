@@ -16,7 +16,15 @@ import org.eclipse.jface.internal.databinding.provisional.observable.IObservable
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 
 /**
- * @since 3.2
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients should
+ * instead subclass one of the classes that implement this interface. Note that
+ * direct implementers of this interface outside of the framework will be broken
+ * in future releases when methods are added to this interface.
+ * </p>
+ * 
+ * @since 1.0
  * 
  */
 public interface IObservableCollectionWithLabels extends IObservableCollection {
@@ -32,7 +40,7 @@ public interface IObservableCollectionWithLabels extends IObservableCollection {
 	public void updateElements(Object[] elements);
 
 	/**
-	 * @param converters 
+	 * @param converters
 	 */
 	public void setModelToTargetConverters(IConverter[] converters);
 

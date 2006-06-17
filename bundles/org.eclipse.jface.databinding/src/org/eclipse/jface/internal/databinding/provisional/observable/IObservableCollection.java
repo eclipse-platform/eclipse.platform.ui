@@ -14,7 +14,14 @@ package org.eclipse.jface.internal.databinding.provisional.observable;
 /**
  * Marker interface for observable collections.
  * 
- * @since 3.2
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients should
+ * instead subclass one of the classes that implement this interface. Note that
+ * direct implementers of this interface outside of the framework will be broken
+ * in future releases when methods are added to this interface.
+ * </p>
+ * 
+ * @since 1.0
  */
 public interface IObservableCollection extends IObservable {
 

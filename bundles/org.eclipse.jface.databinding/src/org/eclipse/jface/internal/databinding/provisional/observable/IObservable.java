@@ -13,6 +13,13 @@ package org.eclipse.jface.internal.databinding.provisional.observable;
 /**
  * An object with state that allows to listen for state changes.
  * 
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients should
+ * instead subclass one of the classes that implement this interface. Note that
+ * direct implementers of this interface outside of the framework will be broken
+ * in future releases when methods are added to this interface.
+ * </p>
+ * 
  * @since 1.0
  * 
  */
@@ -20,26 +27,30 @@ public interface IObservable {
 
 	/**
 	 * Adds the given change listener to the list of change listeners.
+	 * 
 	 * @param listener
 	 */
 	public void addChangeListener(IChangeListener listener);
 
 	/**
-	 * Removes the given change listener from the list of change listeners.
-	 * Has no effect if the given listener is not registered as a change listener.
+	 * Removes the given change listener from the list of change listeners. Has
+	 * no effect if the given listener is not registered as a change listener.
+	 * 
 	 * @param listener
 	 */
 	public void removeChangeListener(IChangeListener listener);
 
 	/**
 	 * Adds the given stale listener to the list of stale listeners.
+	 * 
 	 * @param listener
 	 */
 	public void addStaleListener(IStaleListener listener);
 
 	/**
-	 * Removes the given stale listener from the list of stale listeners.
-	 * Has no effect if the given listener is not registered as a stale listener.
+	 * Removes the given stale listener from the list of stale listeners. Has no
+	 * effect if the given listener is not registered as a stale listener.
+	 * 
 	 * @param listener
 	 */
 	public void removeStaleListener(IStaleListener listener);
@@ -53,13 +64,15 @@ public interface IObservable {
 	 * 
 	 * @return true if this observable's state is stale and will change soon.
 	 * 
-	 * @TrackedGetter - implementers must call {@link ObservableTracker#getterCalled(IObservable)}.
+	 * @TrackedGetter - implementers must call
+	 *                {@link ObservableTracker#getterCalled(IObservable)}.
 	 */
 	public boolean isStale();
-	
+
 	/**
-	 * Disposes of this observable object, removing all listeners registered with this
-	 * object, and all listeners this object might have registered on other objects. 
+	 * Disposes of this observable object, removing all listeners registered
+	 * with this object, and all listeners this object might have registered on
+	 * other objects.
 	 */
 	public void dispose();
 }
