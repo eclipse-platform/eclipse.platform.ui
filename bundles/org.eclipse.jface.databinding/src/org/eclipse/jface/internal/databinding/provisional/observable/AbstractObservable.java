@@ -13,7 +13,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * @since 1.0
@@ -53,12 +52,6 @@ public abstract class AbstractObservable implements IObservable {
 			listenerList = (Collection) changeListeners;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			changeListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -74,7 +67,7 @@ public abstract class AbstractObservable implements IObservable {
 		if (changeListeners instanceof Collection) {
 			Collection listenerList = (Collection) changeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				changeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();
@@ -103,12 +96,6 @@ public abstract class AbstractObservable implements IObservable {
 			listenerList = (Collection) staleListeners;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			staleListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -124,7 +111,7 @@ public abstract class AbstractObservable implements IObservable {
 		if (staleListeners instanceof Collection) {
 			Collection listenerList = (Collection) staleListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				staleListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();

@@ -14,7 +14,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable.list;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
@@ -69,11 +68,6 @@ public abstract class AbstractObservableList extends AbstractList implements
 			listChangeListeners = listenerList;
 		}
 
-		if (listenerList.size() > 16) {
-			listenerList = new HashSet(listenerList);
-			listChangeListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -90,7 +84,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		if (listChangeListeners instanceof Collection) {
 			Collection listenerList = (Collection) listChangeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				listChangeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();
@@ -143,12 +137,6 @@ public abstract class AbstractObservableList extends AbstractList implements
 			listenerList = (Collection) changeListeners;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			changeListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -164,7 +152,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		if (changeListeners instanceof Collection) {
 			Collection listenerList = (Collection) changeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				changeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();
@@ -193,12 +181,6 @@ public abstract class AbstractObservableList extends AbstractList implements
 			listenerList = (Collection) staleListeners;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			staleListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -214,7 +196,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		if (staleListeners instanceof Collection) {
 			Collection listenerList = (Collection) staleListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				staleListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();

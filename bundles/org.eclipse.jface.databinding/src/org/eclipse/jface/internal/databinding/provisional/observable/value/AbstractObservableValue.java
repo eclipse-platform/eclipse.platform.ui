@@ -13,8 +13,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable.value;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-
 import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.ObservableTracker;
 
@@ -35,11 +33,6 @@ abstract public class AbstractObservableValue extends AbstractObservable
 			if (!hadListeners) {
 				firstListenerAdded();
 			}
-		} else if (valueChangeListeners.size() > 16) {
-			HashSet listenerList = new HashSet();
-			listenerList.addAll(valueChangeListeners);
-			valueChangeListeners = listenerList;
-			valueChangeListeners.add(listener);
 		} else {
 			valueChangeListeners.add(listener);
 		}
@@ -50,7 +43,7 @@ abstract public class AbstractObservableValue extends AbstractObservable
 			return;
 		}
 		valueChangeListeners.remove(listener);
-		if (valueChangeListeners.size() == 0) {
+		if (valueChangeListeners.isEmpty()) {
 			valueChangeListeners = null;
 		}
 		if (!hasListeners()) {

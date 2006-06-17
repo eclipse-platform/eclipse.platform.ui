@@ -13,7 +13,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable.set;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -64,12 +63,6 @@ public abstract class ObservableSet extends AbstractObservable implements
 			setChangeListeners = listenerList;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			setChangeListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -86,7 +79,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 		if (setChangeListeners instanceof Collection) {
 			Collection listenerList = (Collection) setChangeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				setChangeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();

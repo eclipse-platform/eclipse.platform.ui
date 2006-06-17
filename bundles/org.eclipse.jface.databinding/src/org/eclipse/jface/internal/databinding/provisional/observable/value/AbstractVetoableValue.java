@@ -12,7 +12,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable.value;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 
@@ -44,17 +43,14 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 			if (!hadListeners) {
 				firstListenerAdded();
 			}
-		} else if (valueChangingListeners.size() > 16) {
-			HashSet listenerList = new HashSet();
-			listenerList.addAll(valueChangingListeners);
-			valueChangingListeners = listenerList;
+		} else {
 			valueChangingListeners.add(listener);
 		}
 	}
 
 	public void removeValueChangingListener(IValueChangingListener listener) {
 		valueChangingListeners.remove(listener);
-		if (valueChangingListeners.size() == 0) {
+		if (valueChangingListeners.isEmpty()) {
 			valueChangingListeners = null;
 		}
 		if (!hasListeners()) {

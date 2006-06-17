@@ -13,8 +13,6 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-
 import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
 
@@ -50,12 +48,6 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 			listenerList = (Collection) mappingChangeListeners;
 		}
 	
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			mappingChangeListeners = listenerList;
-		}
-	
 		listenerList.add(listener);
 	}
 
@@ -71,7 +63,7 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 		if (mappingChangeListeners instanceof Collection) {
 			Collection listenerList = (Collection) mappingChangeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				mappingChangeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();

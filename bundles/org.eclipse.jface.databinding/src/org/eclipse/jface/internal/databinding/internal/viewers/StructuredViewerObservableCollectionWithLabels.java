@@ -103,12 +103,6 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 			setChangeListeners = listenerList;
 		}
 
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			setChangeListeners = listenerList;
-		}
-
 		listenerList.add(listener);
 	}
 
@@ -125,7 +119,7 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 		if (setChangeListeners instanceof Collection) {
 			Collection listenerList = (Collection) setChangeListeners;
 			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
+			if (listenerList.isEmpty()) {
 				setChangeListeners = null;
 				if (!hasListeners()) {
 					lastListenerRemoved();
