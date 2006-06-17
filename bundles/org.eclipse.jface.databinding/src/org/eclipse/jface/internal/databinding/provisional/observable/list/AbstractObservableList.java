@@ -29,6 +29,10 @@ import org.eclipse.jface.internal.databinding.provisional.observable.ObservableT
 public abstract class AbstractObservableList extends AbstractList implements
 		IObservableList {
 
+	/**
+	 * Points to an instance of IListChangeListener or a Collection of
+	 * IListChangeListener
+	 */
 	private Object listChangeListeners;
 
 	/**
@@ -39,7 +43,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of
-	 * IChangeListener
+	 * IStaleListener
 	 */
 	private Object staleListeners = null;
 
@@ -133,6 +137,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 			listenerList = new ArrayList();
 			listenerList.add(l);
+			changeListeners = listenerList;
 		} else {
 			listenerList = (Collection) changeListeners;
 		}
@@ -177,6 +182,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 			listenerList = new ArrayList();
 			listenerList.add(l);
+			staleListeners = listenerList;
 		} else {
 			listenerList = (Collection) staleListeners;
 		}

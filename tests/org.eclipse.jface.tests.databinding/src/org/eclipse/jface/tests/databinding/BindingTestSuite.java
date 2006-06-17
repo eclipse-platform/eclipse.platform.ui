@@ -28,6 +28,7 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPri
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.viewers.ViewersObservableFactoryTest;
 
 public class BindingTestSuite extends TestSuite {
@@ -63,6 +64,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 		addTestSuite(ViewersObservableFactoryTest.class);
+		addTestSuite(AbstractObservableTest.class);
 	}
 
 	/**

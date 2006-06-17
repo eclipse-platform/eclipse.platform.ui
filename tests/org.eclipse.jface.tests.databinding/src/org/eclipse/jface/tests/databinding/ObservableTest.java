@@ -78,7 +78,6 @@ public class ObservableTest extends TestCase {
 		Mocks.reset(changeListenerMock);
 		changeListenerMock.handleChange(null);
 		Mocks.startChecking(changeListenerMock);
-		observable.addChangeListener(changeListenerMock);
 		observable.fireChange(null, null);
 		Mocks.verify(changeListenerMock);
 

@@ -48,6 +48,7 @@ public abstract class AbstractObservable implements IObservable {
 
 			listenerList = new ArrayList();
 			listenerList.add(l);
+			changeListeners = listenerList;
 		} else {
 			listenerList = (Collection) changeListeners;
 		}
@@ -92,6 +93,7 @@ public abstract class AbstractObservable implements IObservable {
 
 			listenerList = new ArrayList();
 			listenerList.add(l);
+			staleListeners = listenerList;
 		} else {
 			listenerList = (Collection) staleListeners;
 		}
@@ -144,17 +146,17 @@ public abstract class AbstractObservable implements IObservable {
 			return;
 		}
 
-		if (staleListeners instanceof IChangeListener) {
-			((IChangeListener) staleListeners).handleChange(this);
+		if (staleListeners instanceof IStaleListener) {
+			((IStaleListener) staleListeners).handleStale(this);
 			return;
 		}
 
-		Collection changeListenerCollection = (Collection) staleListeners;
+		Collection staleListenerCollection = (Collection) staleListeners;
 
-		IChangeListener[] listeners = (IChangeListener[]) (changeListenerCollection)
-				.toArray(new IChangeListener[changeListenerCollection.size()]);
+		IStaleListener[] listeners = (IStaleListener[]) (staleListenerCollection)
+				.toArray(new IStaleListener[staleListenerCollection.size()]);
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].handleChange(this);
+			listeners[i].handleStale(this);
 		}
 	}
 

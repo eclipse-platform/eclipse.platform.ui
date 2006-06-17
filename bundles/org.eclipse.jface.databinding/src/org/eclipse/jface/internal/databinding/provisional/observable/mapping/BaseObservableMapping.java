@@ -44,6 +44,7 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 	
 			listenerList = new ArrayList();
 			listenerList.add(l);
+			mappingChangeListeners = listenerList;
 		} else {
 			listenerList = (Collection) mappingChangeListeners;
 		}
