@@ -533,6 +533,22 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
         viewForm.setContent(viewFormContents);
+		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
+			public boolean getConfirmation() {
+				int status = shouldSaveCurrentConfig();
+				if(status == IDialogConstants.YES_ID) {
+					fTabViewer.handleApplyPressed();
+					return true;
+				}
+				else if(status == IDialogConstants.NO_ID) {
+					fTabViewer.handleRevertPressed();
+					return true;
+				}
+				return false;
+			}
+		};
+		getDuplicateAction().setConfirmationRequestor(requestor);
+		getNewAction().setConfirmationRequestor(requestor);
 		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleLaunchConfigurationSelectionChanged(event);

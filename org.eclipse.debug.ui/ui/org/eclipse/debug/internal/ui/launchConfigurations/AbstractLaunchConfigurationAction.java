@@ -29,6 +29,24 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	private String fMode;
 	
 	/**
+	 * Allows a requestor to abort this action.
+	 */
+	public interface IConfirmationRequestor {
+		/**
+		 * Returns whether this action should proceed. Confirmation is requested
+		 * when an action is run.
+		 * 
+		 * @return whether this action should proceed
+		 */
+		public boolean getConfirmation();
+	}
+	
+	/**
+	 * This action's confirmation requestor or <code>null</code> if none
+	 */
+	private IConfirmationRequestor fConfirmationRequestor;
+	
+	/**
 	 * The viewer this action is working on
 	 */
 	private Viewer fViewer;
@@ -72,6 +90,11 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public final void run() {
+		if (fConfirmationRequestor != null) {
+			if (!fConfirmationRequestor.getConfirmation()) {
+				return;
+			}
+		}
 		Runnable r = new Runnable() {
 			/**
 			 * @see java.lang.Runnable#run()
@@ -81,6 +104,15 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
+	}
+	
+	/**
+	 * Sets this action's confirmation requestor.
+	 * 
+	 * @param confirmationRequestor
+	 */
+	public void setConfirmationRequestor(IConfirmationRequestor confirmationRequestor) {
+		fConfirmationRequestor = confirmationRequestor;
 	}
 	
 	/**
