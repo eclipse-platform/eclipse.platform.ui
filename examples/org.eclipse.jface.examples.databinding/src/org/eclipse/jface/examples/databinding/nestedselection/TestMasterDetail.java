@@ -13,6 +13,9 @@ package org.eclipse.jface.examples.databinding.nestedselection;
 
 import java.util.Date;
 
+import org.eclipse.jface.examples.databinding.model.SimpleOrder;
+import org.eclipse.jface.examples.databinding.model.SimplePerson;
+import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
@@ -186,13 +189,13 @@ public class TestMasterDetail {
 		display.dispose();
 	}
 
-	Model model = new Model();
+	SimpleModel model = new SimpleModel();
 
 	private void bind(Control parent) {
 		DataBindingContext dbc = BindingFactory.createContext(parent);
 		TableViewer peopleViewer = new TableViewer(personsTable);
 		dbc.bind(peopleViewer, new TableModelDescription(new Property(model,
-				"personList", Person.class, Boolean.TRUE), new Object[] {
+				"personList", SimplePerson.class, Boolean.TRUE), new Object[] {
 				"name", "state" }), null);
 
 		IObservable selectedPerson = dbc.createObservable(new Property(
@@ -209,7 +212,7 @@ public class TestMasterDetail {
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
 		dbc.bind(ordersViewer, new TableModelDescription(new Property(
-				selectedPerson, "orders", Order.class, Boolean.TRUE),
+				selectedPerson, "orders", SimpleOrder.class, Boolean.TRUE),
 				new Object[] { "orderNumber", "date" }), null);
 		
 		IObservable selectedOrder = dbc.createObservable(new Property(ordersViewer, ViewersProperties.SINGLE_SELECTION));

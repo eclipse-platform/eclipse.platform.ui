@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.examples.databinding;
 
+import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.examples.databinding.nestedselection.BindingFactory;
-import org.eclipse.jface.examples.databinding.nestedselection.Person;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
@@ -41,7 +41,7 @@ public class HelloWorld {
 		dbc.bind(combo, list, null);
 		combo.select(0);
 		Text text = new Text(shell, SWT.BORDER);
-		Person person = new Person("Boris", "1234 Carling Ave", "Ottawa",
+		SimplePerson person = new SimplePerson("Boris", "1234 Carling Ave", "Ottawa",
 				"Canada");
 		dbc.bind(text, new Property(person, "name"), null);
 		// shell.setLayout(new GridLayout(2, false));

@@ -9,7 +9,7 @@
  *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.examples.databinding.nestedselection;
+package org.eclipse.jface.examples.databinding.model;
 
 import java.util.Date;
 
@@ -17,7 +17,7 @@ import java.util.Date;
  * @since 1.0
  *
  */
-public class Order {
+public class SimpleOrder {
 
 	private int orderNumber;
 	private Date date;
@@ -54,7 +54,7 @@ public class Order {
 	 * @param i
 	 * @param date
 	 */
-	public Order(int i, Date date) {
+	public SimpleOrder(int i, Date date) {
 		this.orderNumber = i;
 		this.date = date;
 	}

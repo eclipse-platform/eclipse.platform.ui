@@ -8,8 +8,9 @@
  *
  * Contributors:
  *     David Orme     - Initial API and implementation
+ *     Brad Reynolds (bug 139407)
  */
-package org.eclipse.jface.examples.databinding.nestedselection;
+package org.eclipse.jface.examples.databinding.model;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
 
-public class Person extends ModelObject {
+public class SimplePerson extends ModelObject {
 	
 	private String name = "";
 	private String address = "";
@@ -26,7 +27,7 @@ public class Person extends ModelObject {
 	
 	private List orders = new LinkedList();
 	
-	public Person(String name, String address, String city, String state) {
+	public SimplePerson(String name, String address, String city, String state) {
 		this.name = name;
 		this.address = address;
 		this.city = city;
@@ -34,11 +35,11 @@ public class Person extends ModelObject {
 		
 		int numOrders = (int) (Math.random() * 5);
 		for (int i=0; i < numOrders; ++i) {
-			orders.add(new Order(i, new Date()));
+			orders.add(new SimpleOrder(i, new Date()));
 		}
 	}
 	
-	public Person() {}
+	public SimplePerson() {}
 
 	/**
 	 * @return Returns the address.
@@ -96,7 +97,7 @@ public class Person extends ModelObject {
 	 * @param state The state to set.
 	 */
 	public void setState(String state) {
-		this.state = state;
+		firePropertyChange("state", this.state, this.state = state); //$NON-NLS-1$
 	}
 	
 	/**
