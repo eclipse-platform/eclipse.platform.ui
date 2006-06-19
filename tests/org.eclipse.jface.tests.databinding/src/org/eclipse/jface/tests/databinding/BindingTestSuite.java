@@ -50,6 +50,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DatabindingContextTest.class);
 		addTestSuite(DefaultBindSupportFactoryTest.class);
 		addTestSuite(IDiffsTest.class);
+		addTestSuite(BindSpecTests.class);
 		// addTestSuite(ObservableCollectionTest.class);
 		addTestSuite(SelectionAwareObservableCollectionTest.class);
 		addTest(BindingScenariosTestSuite.suite());
