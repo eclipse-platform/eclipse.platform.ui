@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds (bug 146435)
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.util;
 
@@ -153,7 +154,36 @@ public class Mocks {
 			currentCallHistory.add(methodCall);
 			Class returnType = method.getReturnType();
 			if (returnType.isPrimitive() && void.class != returnType) {
-				return returnType.newInstance();
+				Object result = null;
+				Object returnValue = methodCall.getReturnValue();
+
+				if (returnType == boolean.class) {
+					result = (returnValue != null) ? (Boolean) returnValue
+							: Boolean.FALSE;
+				} else if (returnType == byte.class) {
+					result = (returnValue != null) ? (Byte) returnValue
+							: new Byte((byte) 0);
+				} else if (returnType == char.class) {
+					result = (returnValue != null) ? (Character) returnValue
+							: new Character((char) 0);
+				} else if (returnType == short.class) {
+					result = (returnValue != null) ? (Short) returnValue
+							: new Short((short) 0);
+				} else if (returnType == int.class) {
+					result = (returnValue != null) ? (Integer) returnValue
+							: new Integer(0);
+				} else if (returnType == long.class) {
+					result = (returnValue != null) ? (Long) returnValue
+							: new Long(0);
+				} else if (returnType == float.class) {
+					result = (returnValue != null) ? (Float) returnValue
+							: new Float(0);
+				} else if (returnType == double.class) {
+					result = (returnValue != null) ? (Double) returnValue
+							: new Double(0);
+				}
+
+				return result;
 			}
 			return methodCall.getReturnValue();
 		}
