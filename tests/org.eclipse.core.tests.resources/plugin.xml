@@ -59,6 +59,11 @@
       <run class="org.eclipse.core.tests.internal.builders.CustomTriggerBuilder"/>
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="clearmarkersbuilder" name="Clear Markers Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.ClearMarkersBuilder"/>
+    </builder>
+  </extension>
   
 <extension
       id="simpleNature"
