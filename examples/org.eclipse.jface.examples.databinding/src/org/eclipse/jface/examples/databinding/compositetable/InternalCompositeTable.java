@@ -1184,6 +1184,16 @@ public class InternalCompositeTable extends Composite implements Listener {
 							false);
 				}
 			}
+		} else {
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+				if (currentColumn >= sender.getNumColumns() - 1) {
+					e.detail = SWT.TRAVERSE_NONE;
+				}
+			} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+				if (currentColumn == 0) {
+					e.detail = SWT.TRAVERSE_NONE;
+				}
+			}
 		}
 	}
 
