@@ -177,8 +177,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 
 	private boolean viewPinned;
 
-	public final static String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
-
 	/**
 	 * Refreshes the global actions for the active page.
 	 */

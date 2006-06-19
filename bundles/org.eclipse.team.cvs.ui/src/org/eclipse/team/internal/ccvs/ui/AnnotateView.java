@@ -27,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.ui.history.IHistoryPage;
+import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -155,7 +156,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 
 		// Get hook to the HistoryView
 				
-		historyView = (GenericHistoryView) page.showView(GenericHistoryView.VIEW_ID);
+		historyView = (GenericHistoryView) page.showView(IHistoryView.VIEW_ID);
 		historyView.showHistoryFor((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
 	}
 	

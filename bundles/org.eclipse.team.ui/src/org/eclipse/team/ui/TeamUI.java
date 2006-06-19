@@ -12,7 +12,6 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.history.IHistoryView;
@@ -81,8 +80,8 @@ public class TeamUI {
 	 */
 	public static IHistoryView getHistoryView() {
 		try {
-			TeamUIPlugin.getActivePage().showView(GenericHistoryView.VIEW_ID);
-			return (IHistoryView) TeamUIPlugin.getActivePage().findView(GenericHistoryView.VIEW_ID);
+			TeamUIPlugin.getActivePage().showView(IHistoryView.VIEW_ID);
+			return (IHistoryView) TeamUIPlugin.getActivePage().findView(IHistoryView.VIEW_ID);
 		} catch (PartInitException e) {
 		}
 

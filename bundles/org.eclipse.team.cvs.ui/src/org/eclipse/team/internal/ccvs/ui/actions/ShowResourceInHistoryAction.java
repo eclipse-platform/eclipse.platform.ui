@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.ui.history.IHistoryView;
 
 public class ShowResourceInHistoryAction extends WorkspaceAction {
 	/*
@@ -31,7 +32,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.VIEW_ID);
+				GenericHistoryView view = (GenericHistoryView)showView(IHistoryView.VIEW_ID);
 				if (view != null) {
 					view.itemDropped(resources[0],true);
 				}

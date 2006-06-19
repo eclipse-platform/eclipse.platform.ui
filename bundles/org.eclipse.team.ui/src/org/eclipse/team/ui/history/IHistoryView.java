@@ -24,7 +24,11 @@ import org.eclipse.team.core.history.IFileHistory;
  * @see IHistoryPage
  */
 public interface IHistoryView {
-
+	/**
+	 * The id for this view
+	 */
+	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the history page that is currently being displayed by the
 	 * history view.

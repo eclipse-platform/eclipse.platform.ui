@@ -23,6 +23,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.ui.history.IHistoryView;
 
 public class ShowHistoryAction extends CVSAction {
 	/**
@@ -64,7 +65,7 @@ public class ShowHistoryAction extends CVSAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				GenericHistoryView view = (GenericHistoryView)showView(GenericHistoryView.VIEW_ID);
+				GenericHistoryView view = (GenericHistoryView)showView(IHistoryView.VIEW_ID);
 				if (view != null) {
 					view.itemDropped(files[0], true);
 				}

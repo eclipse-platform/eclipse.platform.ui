@@ -43,6 +43,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.ui.history.IHistoryPage;
+import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -106,7 +107,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 						final IWorkbenchPage page= getPart().getSite().getPage();
 						final GenericHistoryView historyView;
 						try {
-							historyView= (GenericHistoryView) page.showView(GenericHistoryView.VIEW_ID);
+							historyView= (GenericHistoryView) page.showView(IHistoryView.VIEW_ID);
 							historyView.showHistoryFor(fCVSResource.getIResource());
 							IHistoryPage historyPage = historyView.getHistoryPage();
 							if (historyPage instanceof CVSHistoryPage){
@@ -117,7 +118,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 							if (provider != null) {
 								final ISelectionChangedListener selectionListener= new ISelectionChangedListener() {
 									public void selectionChanged(SelectionChangedEvent event) {
-										GenericHistoryView historyView= (GenericHistoryView) page.findView(GenericHistoryView.VIEW_ID);
+										GenericHistoryView historyView= (GenericHistoryView) page.findView(IHistoryView.VIEW_ID);
 										if (historyView == null)
 											return; // user has manually closed the view after it being originally open -> don't reopen
 
