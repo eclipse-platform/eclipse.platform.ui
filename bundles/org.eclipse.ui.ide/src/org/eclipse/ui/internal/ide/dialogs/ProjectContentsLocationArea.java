@@ -13,12 +13,11 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -382,20 +381,19 @@ public class ProjectContentsLocationArea {
 			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 		}
 
-		if (existingProject == null) {
-			IPath projectPath = new Path(locationFieldContents);
-			if (Platform.getLocation().isPrefixOf(projectPath)) {
-				return IDEWorkbenchMessages.WizardNewProjectCreationPage_defaultLocationError;
-			}
+		//create a dummy project for the purpose of validation if necessary
+		IProject project = existingProject;
+		if (project == null) {
+			String name = new Path(locationFieldContents).lastSegment();
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		}
+		IStatus locationStatus = project.getWorkspace()
+				.validateProjectLocationURI(project, newPath);
 
-		} else {
-			IStatus locationStatus = existingProject.getWorkspace()
-					.validateProjectLocationURI(existingProject, newPath);
-
-			if (!locationStatus.isOK()) {
-				return locationStatus.getMessage();
-			}
-
+		if (!locationStatus.isOK()) {
+			return locationStatus.getMessage();
+		}
+		if (existingProject != null) {
 			URI projectPath = existingProject.getLocationURI();
 			if (projectPath != null && URIUtil.equals(projectPath, newPath)) {
 				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;

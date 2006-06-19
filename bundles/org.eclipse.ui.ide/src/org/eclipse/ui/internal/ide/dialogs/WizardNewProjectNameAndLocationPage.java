@@ -430,12 +430,6 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
             setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_locationError);
             return false;
         }
-        if (!useDefaults
-                && Platform.getLocation().isPrefixOf(
-                        new Path(locationFieldContents))) {
-            setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_defaultLocationError);
-            return false;
-        }
 
         if (getProjectHandle().exists()) {
             setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);

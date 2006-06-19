@@ -378,7 +378,6 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- New Project ---
 	public static String WizardNewProjectCreationPage_description;
 	public static String WizardNewProjectCreationPage_locationError;
-	public static String WizardNewProjectCreationPage_defaultLocationError;
 	public static String WizardNewProjectCreationPage_projectNameEmpty;
 	public static String WizardNewProjectCreationPage_projectLocationEmpty;
 	public static String WizardNewProjectCreationPage_projectExistsMessage;
