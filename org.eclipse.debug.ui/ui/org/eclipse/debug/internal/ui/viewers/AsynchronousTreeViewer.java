@@ -1224,8 +1224,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
         if (widget instanceof TreeItem) {
             TreeItem item = (TreeItem) widget;
             if (!item.isDisposed()) {
-                item.setText(text);
-                item.setData(OLD_LABEL, text);
+            	if (text != null) {
+	                item.setText(text);
+	                item.setData(OLD_LABEL, text);
+            	}
                 Image[] images = getImages(image);
 				item.setImage(images);
                 item.setData(OLD_IMAGE, images);
