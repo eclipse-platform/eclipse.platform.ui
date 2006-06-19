@@ -13,10 +13,10 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -57,6 +57,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -69,6 +71,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration tab which allows the user to choose the targets
@@ -333,7 +337,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		label.setFont(font);
 		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Check_targets_to_e_xecute__1);
 				
-		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
+		final Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
 		
 		GridData data= new GridData(GridData.FILL_BOTH);
 		int availableRows= availableRows(parent);
@@ -352,11 +356,30 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		tableLayout.addColumnData(weightData);		
 		table.setLayout(tableLayout);
 
-		TableColumn column1= new TableColumn(table, SWT.NULL);
+		final TableColumn column1= new TableColumn(table, SWT.NULL);
 		column1.setText(AntLaunchConfigurationMessages.AntTargetsTab_Name_5);
 			
-		TableColumn column2= new TableColumn(table, SWT.NULL);
+		final TableColumn column2= new TableColumn(table, SWT.NULL);
 		column2.setText(AntLaunchConfigurationMessages.AntTargetsTab_Description_6);
+		
+
+		//TableLayout only sizes columns once. If showing the targets
+		//tab as the initial tab, the dialog isn't open when the layout
+		//occurs and the column size isn't computed correctly. Need to
+		//recompute the size of the columns once all the parent controls 
+		//have been created/sized.
+		//HACK Bug 139190 
+		getShell().addShellListener(new ShellAdapter() {
+			public void shellActivated(ShellEvent e) {
+				int tableWidth = table.getSize().x;
+				if (tableWidth > 0) {
+					int c1 = tableWidth / 3;
+					column1.setWidth(c1);
+					column2.setWidth(tableWidth - c1);
+				}
+				getShell().removeShellListener(this);
+			}
+		});
 		
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
