@@ -10,14 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-
 import java.io.*;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -457,23 +452,18 @@ public class SyncFileWriter {
 	 */
 	private static String readFirstLine(IFile file) throws CVSException {
 		try {
-            BufferedReader reader = null;;
-    		if (file.exists()) {
-                reader = new BufferedReader(new InputStreamReader(file.getContents(true)), 512);
-            } else {
-                File ioFile = file.getLocation().toFile();
-                if (ioFile.exists()) {
-                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(ioFile)), 512);
-                }
+			InputStream in = getInputStream(file);
+			if (in != null) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in), 512);
+				try {
+					String line = reader.readLine();
+					if (line == null) return ""; //$NON-NLS-1$
+					return line;
+				} finally {
+					reader.close();
+				}
             }
-            if (reader == null) return null;
-			try {
-				String line = reader.readLine();
-				if (line == null) return ""; //$NON-NLS-1$
-				return line;
-			} finally {
-				reader.close();
-			}
+            return null;
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		} catch (CoreException e) {
@@ -485,6 +475,27 @@ public class SyncFileWriter {
 			throw CVSException.wrapException(e);
 		}
 	}
+
+	private static InputStream getInputStream(IFile file) throws CoreException, FileNotFoundException {
+		if (file.exists()) {
+		    return file.getContents(true);
+		}
+		
+		URI uri = file.getLocationURI();
+		if (uri != null) {
+			IFileStore store = EFS.getStore(uri);
+			if (store != null) {
+				return store.openInputStream(EFS.NONE, null);
+			}
+		}
+		
+	    File ioFile = file.getLocation().toFile();
+	    if (ioFile != null && ioFile.exists()) {
+	        return new FileInputStream(ioFile);
+	    }
+
+		return null;
+	}
 	
 	/*
 	 * Reads all lines of the specified file.
@@ -492,28 +503,21 @@ public class SyncFileWriter {
 	 */
 	private static String[] readLines(IFile file) throws CVSException {
 		try {
-            BufferedReader reader = null;;
-            if (file.exists()) {
-                // Peform a forced read (ignoring out-of-sync)
-                reader = new BufferedReader(new InputStreamReader(file.getContents(true)));
-            } else {
-                File ioFile = file.getLocation().toFile();
-                if (ioFile.exists()) {
-                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(ioFile)), 512);
-                }
-            }
-            if (reader == null) return null;
-			
-			List fileContentStore = new ArrayList();
-			try {
-				String line;
-				while ((line = reader.readLine()) != null) {
-					fileContentStore.add(line);
+			InputStream in = getInputStream(file);
+			if (in != null) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in), 512);
+				List fileContentStore = new ArrayList();
+				try {
+					String line;
+					while ((line = reader.readLine()) != null) {
+						fileContentStore.add(line);
+					}
+					return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
+				} finally {
+					reader.close();
 				}
-				return (String[]) fileContentStore.toArray(new String[fileContentStore.size()]);
-			} finally {
-				reader.close();
 			}
+			return null;
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		} catch (CoreException e) {
