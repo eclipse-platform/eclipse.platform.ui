@@ -710,8 +710,14 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	public void setNumRowsInCollection(int numRowsInCollection) {
 		this.topRow = 0;
-		if (currentRow > 0) {
-			currentRow = 0;
+		if (topRow + currentRow > numRowsInCollection) {
+			if (topRow < numRowsInCollection) {
+				currentRow = numRowsInCollection - topRow;
+			} else {
+				topRow = numRowsInCollection - 1;
+				currentRow = 0;
+			}
+			deferredSetFocus(getCurrentRowControl(), false);
 		}
 		this.numRowsInCollection = numRowsInCollection;
 		updateVisibleRows();
