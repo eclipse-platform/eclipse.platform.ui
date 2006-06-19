@@ -40,7 +40,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -996,10 +996,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Button editButton = new Button(buttonBar, SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		editButton.setText(Util.translateString(RESOURCE_BUNDLE, "buttonEdit")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, editButton.computeSize(
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		editButton.setLayoutData(gridData);
-		editButton.setText(Util.translateString(RESOURCE_BUNDLE, "buttonEdit")); //$NON-NLS-1$
 		editButton.addSelectionListener(new SelectionListener() {
 
 			/*
@@ -1025,11 +1025,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 		final Button buttonExport = new Button(buttonBar, SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonExport.setText(Util.translateString(RESOURCE_BUNDLE,
+				"buttonExport")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonExport.computeSize(
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonExport.setLayoutData(gridData);
-		buttonExport.setText(Util.translateString(RESOURCE_BUNDLE,
-				"buttonExport")); //$NON-NLS-1$
 		buttonExport.addSelectionListener(new SelectionListener() {
 
 			/*
@@ -1408,7 +1408,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				}
 			}
 		};
-		Platform.run(runnable);
+		SafeRunner.run(runnable);
 	}
 
 	/**
