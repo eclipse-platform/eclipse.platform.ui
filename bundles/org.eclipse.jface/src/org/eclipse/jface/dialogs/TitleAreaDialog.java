@@ -714,4 +714,14 @@ public class TitleAreaDialog extends TrayDialog {
         int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
         setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
     } 
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#close()
+     */
+    public boolean close() {
+        boolean result = super.close();
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=144556
+        messageArea = null;
+        return result;
+    }
 }
