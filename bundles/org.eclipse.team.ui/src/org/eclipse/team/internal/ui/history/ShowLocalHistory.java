@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
@@ -40,7 +41,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {try {
-							IViewPart view = targetPart.getSite().getPage().showView("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
+							IViewPart view = targetPart.getSite().getPage().showView(IHistoryView.VIEW_ID); //$NON-NLS-1$
 							if (view instanceof GenericHistoryView){
 								GenericHistoryView historyView =(GenericHistoryView) view;
 								historyView.itemDropped(resource,true);
