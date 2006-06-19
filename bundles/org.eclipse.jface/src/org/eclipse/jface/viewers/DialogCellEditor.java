@@ -227,7 +227,9 @@ public abstract class DialogCellEditor extends CellEditor {
                 }
             }
         });
-
+        
+        button.addFocusListener(getButtonFocusListener());
+        
         button.addSelectionListener(new SelectionAdapter() {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -314,7 +316,7 @@ public abstract class DialogCellEditor extends CellEditor {
 				 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
 				 */
 				public void focusLost(FocusEvent e) {
-					fireApplyEditorValue();
+					DialogCellEditor.this.focusLost();
 				}
     		};
     	}
