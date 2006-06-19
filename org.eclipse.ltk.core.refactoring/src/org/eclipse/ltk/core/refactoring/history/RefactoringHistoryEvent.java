@@ -47,13 +47,13 @@ public final class RefactoringHistoryEvent {
 
 	/**
 	 * Event type indicating that a refactoring descriptor has been popped from
-	 * the history (value 2)
+	 * the history stack (value 2)
 	 */
 	public static final int POPPED= 2;
 
 	/**
 	 * Event type indicating that a refactoring descriptor has been pushed to
-	 * the history (value 1)
+	 * the history stack (value 1)
 	 */
 	public static final int PUSHED= 1;
 
