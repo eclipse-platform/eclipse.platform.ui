@@ -33,31 +33,32 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 */
 	public static final String ID_DELETE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DELETE_ACTION"; //$NON-NLS-1$
 	
-	class Confirmation implements IConfirmationRequestor {
-		/**
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractLaunchConfigurationAction.IConfirmationRequestor#getConfirmation()
-		 */
-		public boolean getConfirmation() {
-			IStructuredSelection selection = getStructuredSelection();
-			// Make the user confirm the deletion
-			String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; // 
-			return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage); 
-		}
-
-	}
-	
 	/**
 	 * Constructs an action to delete launch configuration(s) 
 	 */
 	public DeleteLaunchConfigurationAction(Viewer viewer, String mode) {
 		super(LaunchConfigurationsMessages.DeleteLaunchConfigurationAction_Dele_te_1, viewer, mode); 
-		setConfirmationRequestor(new Confirmation());
 	}
 
+	/**
+	 * Determines if the action can delete the select launch configuration(s) or not
+	 * @return true if the selected launch configuration(s) can be deleted or not
+	 * @since 3.3
+	 */
+	protected boolean shouldDelete() {
+		IStructuredSelection selection = getStructuredSelection();
+		// Make the user confirm the deletion
+		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configurations__1 : LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_delete_the_selected_launch_configuration__2; // 
+		return MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Confirm_Launch_Configuration_Deletion_3, dialogMessage); 
+	}
+	
 	/**
 	 * @see AbstractLaunchConfigurationAction#performAction()
 	 */
 	protected void performAction() {
+		if(!shouldDelete()) {
+			return;
+		}
 		IStructuredSelection selection = getStructuredSelection();
 
 		getViewer().getControl().setRedraw(false);
