@@ -232,22 +232,31 @@ public abstract class MarkerView extends TableView {
 				} else {// Reexpand the old categories
 					MarkerCategory[] categories = getMarkerAdapter()
 							.getCategories();
-					if (categories != null) {
-						if (categories.length == 1)// Expand if there is only
+					if (categories == null)
+						categoriesToExpand.clear();
+					else {
+						if (categories.length == 1) {// Expand if there is
+							// only
 							// one
 							getViewer().expandAll();
-						else {
+							categoriesToExpand.clear();
+							categoriesToExpand.add(categories[0].getName());
+						} else {
+							Collection newCategories = new HashSet();
 							for (int i = 0; i < categories.length; i++) {
 								MarkerCategory category = categories[i];
 								if (categoriesToExpand.contains(category
 										.getName())) {
 									getViewer().expandToLevel(category,
 											AbstractTreeViewer.ALL_LEVELS);
+									newCategories.add(category.getName());
 								}
+
 							}
+							categoriesToExpand = newCategories;
 						}
 					}
-					categoriesToExpand.clear();
+
 				}
 			}
 
@@ -272,6 +281,9 @@ public abstract class MarkerView extends TableView {
 						new StructuredSelection(newSelection.toArray()), true);
 				preservedSelection.clear();
 			}
+			if (getViewer().getTree().getItemCount() > 0)
+				getViewer().getTree().setTopItem(
+						getViewer().getTree().getItem(0));
 
 			return Status.OK_STATUS;
 		}
