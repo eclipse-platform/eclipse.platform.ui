@@ -604,6 +604,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Rectangle caret= getCaretRectangle(offset);
 			Monitor monitor= getClosestMonitor(display, caret);
 			Rectangle bounds= monitor.getClientArea();
+			Geometry.moveInside(caret, bounds);
 			
 			int spaceAbove= caret.y - bounds.y;
 			int caretLowerY= caret.y + caret.height;
@@ -639,7 +640,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Rectangle caret= getCaretRectangle(offset);
 			Monitor monitor= getClosestMonitor(display, caret);
 			Rectangle bounds= monitor.getClientArea();
-			
+			Geometry.moveInside(caret, bounds);
+
 			int spaceAbove= caret.y - bounds.y;
 			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
 			Rectangle rect;
