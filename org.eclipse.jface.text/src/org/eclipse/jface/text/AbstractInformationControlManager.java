@@ -21,8 +21,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -94,12 +96,24 @@ abstract public class AbstractInformationControlManager {
 	 * Constitutes entities to enumerate anchors for the layout of the information control.
 	 */
 	public static final class Anchor {
-		private Anchor() {
+		private final int fFlag;
+		private Anchor(int flag) {
+			fFlag= flag;
+		}
+		/**
+		 * Returns the SWT direction flag. One of {@link SWT#BOTTOM}, {@link SWT#TOP},
+		 * {@link SWT#LEFT}, {@link SWT#RIGHT}, {@link SWT#CENTER},
+		 * 
+		 * @return the SWT direction flag
+		 * @since 3.3
+		 */
+		int getSWTFlag() {
+			return fFlag;
 		}
 	}
 
 	/** Internal anchor list. */
-	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };
+	private final static Anchor[] ANCHORS= { new Anchor(SWT.TOP), new Anchor(SWT.BOTTOM), new Anchor(SWT.LEFT), new Anchor(SWT.RIGHT) };
 
 	/** Anchor representing the top of the information area */
 	public final static Anchor ANCHOR_TOP=  ANCHORS[0];
@@ -113,7 +127,7 @@ abstract public class AbstractInformationControlManager {
 	 * Anchor representing the middle of the subject control
 	 * @since 2.1
 	 */
-	public final static Anchor ANCHOR_GLOBAL= new Anchor();
+	public final static Anchor ANCHOR_GLOBAL= new Anchor(SWT.CENTER);
 
 	/**
 	 * Dialog store constant for the location's x-coordinate.
@@ -643,30 +657,28 @@ abstract public class AbstractInformationControlManager {
 	 * @return the display location of the information control
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
-
-		if (ANCHOR_GLOBAL == anchor) {
-			Point subjectControlSize= fSubjectControl.getSize();
-			Point location= new Point(subjectControlSize.x / 2, subjectControlSize.y / 2);
-			location.x -= (controlSize.x / 2);
-			location.y -= (controlSize.y / 2);
-			return fSubjectControl.toDisplay(location);
-		}
-
 		int xShift= 0;
 		int yShift= 0;
 
-		if (ANCHOR_BOTTOM == anchor) {
-			xShift= fMarginX;
-			yShift= subjectArea.height + fMarginY;
-		} else if (ANCHOR_RIGHT == anchor) {
-			xShift= fMarginX + subjectArea.width;
-			yShift= fMarginY;
-		} else if (ANCHOR_TOP == anchor) {
-			xShift= fMarginX;
-			yShift= -controlSize.y - fMarginY;
-		} else if (ANCHOR_LEFT == anchor) {
-			xShift= -controlSize.x - fMarginX;
-			yShift= fMarginY;
+		switch (anchor.getSWTFlag()) {
+			case SWT.CENTER:
+				Point subjectControlSize= fSubjectControl.getSize();
+				Point location= new Point(subjectControlSize.x / 2, subjectControlSize.y / 2);
+				location.x -= (controlSize.x / 2);
+				location.y -= (controlSize.y / 2);
+				return fSubjectControl.toDisplay(location);
+			case SWT.BOTTOM:
+				yShift= subjectArea.height + fMarginY;
+				break;
+			case SWT.RIGHT:
+				xShift= fMarginX + subjectArea.width;
+				break;
+			case SWT.TOP:
+				yShift= -controlSize.y - fMarginY;
+				break;
+			case SWT.LEFT:
+				xShift= -controlSize.x - fMarginX;
+				break;
 		}
 
 		boolean isRTL= fSubjectControl != null && (fSubjectControl.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
@@ -675,7 +687,48 @@ abstract public class AbstractInformationControlManager {
 
 		return  fSubjectControl.toDisplay(new Point(subjectArea.x + xShift, subjectArea.y + yShift));
 	}
+	
+	/**
+	 * Computes the area available for an information control given an anchor and the subject area
+	 * within <code>bounds</code>.
+	 * 
+	 * @param subjectArea the subject area
+	 * @param bounds the bounds
+	 * @param anchor the anchor at the subject area
+	 * @return the area available at the given anchor relative to the subject area, confined to the
+	 *         monitor's client area
+	 * @since 3.3
+	 */
+	protected Rectangle computeAvailableArea(Rectangle subjectArea, Rectangle bounds, Anchor anchor) {
+		Rectangle area;
+		switch (anchor.getSWTFlag()) {
+			case SWT.CENTER:
+				area= bounds;
+				break;
+			case SWT.BOTTOM:
+				int y= subjectArea.y + subjectArea.height + fMarginY;
+				area= new Rectangle(bounds.x, y, bounds.width, bounds.y + bounds.height - y);
+				break;
+			case SWT.RIGHT:
+				int x= subjectArea.x + subjectArea.width + fMarginX;
+				area= new Rectangle(x, bounds.y, bounds.x + bounds.width - x, bounds.height);
+				break;
+			case SWT.TOP:
+				area= new Rectangle(bounds.x, bounds.y, bounds.width, subjectArea.y - bounds.y - fMarginY);
+				break;
+			case SWT.LEFT:
+				area= new Rectangle(bounds.x, bounds.y, subjectArea.x - bounds.x - fMarginX, bounds.height);
+				break;
+			default:
+				Assert.isLegal(false);
+				return null;
+		}
 
+		// Don't return negative areas if the subjectArea overlaps with the monitor bounds.
+		area.intersect(bounds);
+		return area;
+	}
+	
 	/**
 	 * Checks whether a control of the given size at the given location would be completely visible
 	 * in the given display area when laid out by using the given anchor. If not, this method tries
@@ -784,21 +837,93 @@ abstract public class AbstractInformationControlManager {
 	 * @return the computed location of the information control
 	 */
 	protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
-
-		Rectangle displayBounds= fSubjectControl.getMonitor().getClientArea();
+		Rectangle subjectAreaDisplayRelative= Geometry.toDisplay(fSubjectControl, subjectArea);
 
 		Point upperLeft;
 		Anchor testAnchor= fAnchor;
+		Rectangle bestBounds= null;
+		int bestArea= Integer.MIN_VALUE;
+		Anchor bestAnchor= null;
 		do {
 
 			upperLeft= computeLocation(subjectArea, controlSize, testAnchor);
-			if (updateLocation(upperLeft, controlSize, displayBounds, testAnchor))
-				break;
+			Monitor monitor= getClosestMonitor(subjectAreaDisplayRelative, testAnchor);
+			if (updateLocation(upperLeft, controlSize, monitor.getClientArea(), testAnchor))
+				return upperLeft;
+			
+			// compute available area for this anchor and update if better than best
+			Rectangle available= computeAvailableArea(subjectAreaDisplayRelative, monitor.getClientArea(), testAnchor);
+			Rectangle proposed= new Rectangle(upperLeft.x, upperLeft.y, controlSize.x, controlSize.y);
+			available.intersect(proposed);
+			int area= available.width * available.height;
+			if (area > bestArea) {
+				bestArea= area;
+				bestBounds= available;
+				bestAnchor= testAnchor;
+			}
+			
 			testAnchor= getNextFallbackAnchor(testAnchor);
 
 		} while (testAnchor != fAnchor && testAnchor != null);
+		
+		// no anchor is perfect - select the one with larges area and set the size to not overlap with the subjectArea
+		if (bestAnchor != ANCHOR_GLOBAL)
+			Geometry.set(controlSize, Geometry.getSize(bestBounds));
+		return Geometry.getLocation(bestBounds);
+	}
+	
+	/**
+	 * Gets the closest monitor given an anchor and the subject area.
+	 * 
+	 * @param area the subject area
+	 * @param anchor the anchor
+	 * @return the monitor closest to the edge of <code>area</code> defined by
+	 *         <code>anchor</code>
+	 * @since 3.3
+	 */
+	private Monitor getClosestMonitor(Rectangle area, Anchor anchor) {
+		Point center;
+		if (ANCHOR_GLOBAL == anchor)
+			center= Geometry.centerPoint(area);
+		else 
+			center= Geometry.centerPoint(Geometry.getExtrudedEdge(area, 0, anchor.getSWTFlag()));
+		return getClosestMonitor(fSubjectControl.getDisplay(), Geometry.createRectangle(center, new Point(0, 0)));
+	}
 
-		return upperLeft;
+	/**
+	 * Copied from org.eclipse.jface.window.Window. Returns the monitor whose client area contains
+	 * the given point. If no monitor contains the point, returns the monitor that is closest to the
+	 * point. If this is ever made public, it should be moved into a separate utility class.
+	 * 
+	 * @param display the display to search for monitors
+	 * @param rectangle the rectangle to find the closest monitor for (display coordinates)
+	 * @return the montor closest to the given point
+	 * @since 3.3
+	 */
+	private Monitor getClosestMonitor(Display display, Rectangle rectangle) {
+		int closest = Integer.MAX_VALUE;
+
+		Point toFind= Geometry.centerPoint(rectangle);
+		Monitor[] monitors = display.getMonitors();
+		Monitor result = monitors[0];
+
+		for (int idx = 0; idx < monitors.length; idx++) {
+			Monitor current = monitors[idx];
+
+			Rectangle clientArea = current.getClientArea();
+
+			if (clientArea.contains(toFind)) {
+				return current;
+			}
+
+			int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+			if (distance < closest) {
+				closest = distance;
+				result = current;
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -871,52 +996,31 @@ abstract public class AbstractInformationControlManager {
 
 			if (bounds != null) {
 				if (bounds.x > -1 && bounds.y > -1)
-					location= new Point(bounds.x, bounds.y);
+					location= Geometry.getLocation(bounds);
 
 				if (bounds.width > -1 && bounds.height > -1)
-					size= new Point(bounds.width, bounds.height);
+					size= Geometry.getSize(bounds);
 			}
 
 			if (size == null)
 				size= informationControl.computeSizeHint();
 
-			if (fEnforceAsMinimalSize) {
-				if (size.x < sizeConstraints.x)
-					size.x= sizeConstraints.x;
-				if (size.y < sizeConstraints.y)
-					size.y= sizeConstraints.y;
-			}
-
-			if (fEnforceAsMaximalSize) {
-				if (size.x > sizeConstraints.x)
-					size.x= sizeConstraints.x;
-				if (size.y > sizeConstraints.y)
-					size.y= sizeConstraints.y;
-			}
-
-			informationControl.setSize(size.x, size.y);
+			if (fEnforceAsMinimalSize)
+				size= Geometry.max(size, sizeConstraints);
+			if (fEnforceAsMaximalSize)
+				size= Geometry.min(size, sizeConstraints);
 
 			if (location == null)
 				location= computeInformationControlLocation(subjectArea, size);
 
-			informationControl.setLocation(location);
-			
-			Rectangle displayBounds= fSubjectControl.getMonitor().getClientArea();
-			
 			// Make sure it fits on the screen
-			boolean resize= false;
-			if (location.x + size.x > displayBounds.x + displayBounds.width) {
-				size.x= Math.max(0, displayBounds.x + displayBounds.width - location.x);
-				resize= true;
-			}
-			if (location.y + size.y > displayBounds.y + displayBounds.height) {
-				size.y= Math.max(0, displayBounds.y + displayBounds.height - location.y);
-				resize= true;
-			}
-				
-			if (resize)
-				informationControl.setSize(size.x, size.y);
-
+			Rectangle controlBounds= Geometry.createRectangle(location, size);
+			Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), controlBounds).getClientArea();
+			controlBounds.intersect(monitorBounds);
+			
+			informationControl.setLocation(location);
+			informationControl.setSize(size.x, size.y);
+			
 			showInformationControl(subjectArea);
 		}
 	}

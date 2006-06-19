@@ -410,7 +410,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		fDelay= delay;
 		setAnchor(ANCHOR_RIGHT);
 		setFallbackAnchors(new Anchor[] { ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
-		setMargins(0, 0); // margin is set depending on the anchor in computeLocation
+	    
+	    /*
+		 * Adjust the location by one pixel towards the proposal popup, so that the single pixel
+		 * border of the additional info popup overlays with the border of the popup. This avoids
+		 * having a double black line.
+		 */
+	    int spacing= -1;
+		setMargins(spacing, spacing); // see also adjustment in #computeLocation
 	}
 
 	/*
@@ -528,23 +535,6 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 	    Point location= super.computeLocation(subjectArea, controlSize, anchor);
 	    
-	    /*
-		 * Adjust the location by one pixel towards the proposal popup, so that the single pixel
-		 * border of the additional info popup overlays with the border of the popup. This avoids
-		 * having a double black line.
-		 */
-	    int spacing= -1;
-
-	    if (ANCHOR_BOTTOM == anchor) {
-	    	location.y += spacing;
-	    } else if (ANCHOR_RIGHT == anchor) {
-	    	location.x += spacing;
-	    } else if (ANCHOR_TOP == anchor) {
-	    	location.y -= spacing;
-	    } else if (ANCHOR_LEFT == anchor) {
-	    	location.x -= spacing;
-	    }
-
 	    /*
 		 * The location is computed using subjectControl.toDisplay(), which does not include the
 		 * trim of the subject control. As we want the additional info popup aligned with the outer

@@ -35,6 +35,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.util.Geometry;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -531,6 +533,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.pack();
 			fSize= fProposalShell.getSize();
 		}
+		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 
 		fProposalShell.addControlListener(new ControlListener() {
 
@@ -573,7 +576,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 		});
 
 		fProposalTable.setHeaderVisible(false);
-		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 		
 		addCommandSupport(fProposalTable);
 	}
@@ -968,7 +970,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private Point getLocation() {
 		int caret= fContentAssistSubjectControlAdapter.getCaretOffset();
-		return fContentAssistant.getLayoutManager().getBelowOrAboveLocation(fProposalShell, caret);
+		Rectangle location= fContentAssistant.getLayoutManager().computeBoundsBelowAbove(fProposalShell, fSize == null ? fProposalShell.getSize() : fSize, caret);
+		return Geometry.getLocation(location);
 	}
 
 	/**

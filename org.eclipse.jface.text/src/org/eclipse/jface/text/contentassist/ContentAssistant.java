@@ -474,7 +474,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-				shell.setLocation(getBelowOrAboveLocation(shell, offset));
+				shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
 			} else {
 				switch (fProposalPopupOrientation) {
 					case PROPOSAL_REMOVE: {
@@ -482,13 +482,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 						// proposal selector beneath the cursor line.
 						fShells[LAYOUT_CONTEXT_SELECTOR].dispose();
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setLocation(getBelowOrAboveLocation(shell, offset));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
 						break;
 					}
 					case PROPOSAL_OVERLAY: {
 						// Overlay the tip selector with the proposal selector.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setLocation(getBelowOrAboveLocation(shell, offset));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
 						break;
 					}
 					case PROPOSAL_STACKED: {
@@ -505,7 +505,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void layoutContextSelector(int offset) {
 			// Always place the context selector beneath the cursor line.
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
-			shell.setLocation(getBelowOrAboveLocation(shell, offset));
+			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
 
 			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
@@ -534,13 +534,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				case CONTEXT_INFO_ABOVE: {
 					// Place the popup above the cursor line.
 					Shell shell= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					shell.setLocation(getAboveLocation(shell, offset));
+					shell.setBounds(computeBoundsAboveBelow(shell, shell.getSize(), offset));
 					break;
 				}
 				case CONTEXT_INFO_BELOW: {
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					parent.setLocation(getBelowOrAboveLocation(parent, offset));
+					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset));
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -552,8 +552,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		/**
-		 * Moves <code>point</code> such that <code>rectangle</code> does not overlap with the
-		 * given <code>bounds</code>. All coordinates must have the same reference.
+		 * Moves <code>point</code> such that <code>rectangle</code> does not bleed outside of
+		 * <code>bounds</code>. All coordinates must have the same reference.
 		 * 
 		 * @param point the point to move if needed
 		 * @param shellSize the size of the shell that may be moved
@@ -574,90 +574,97 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				point.y= bounds.y;
 		}
 
-		protected Point getAboveLocation(Shell shell, int offset) {
-			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
-			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
-			Display display= subjectControl.getDisplay();
-			Point shellSize= shell.getSize();
-			// get the monitor of the caret location
-			Monitor monitor= getClosestMonitor(display, location);
+		protected Rectangle constrainHorizontally(Rectangle rect, Rectangle bounds) {
+			// clip width
+			if (rect.width > bounds.width)
+				rect.width= bounds.width;
 			
-			location.y= location.y - shellSize.y;
-			// constrain the location such that it overlaps with the bounds of the subject control
-			Point subjectSize= subjectControl.getSize();
-			Rectangle subjectBounds= new Rectangle(-shellSize.x, -shellSize.y, subjectSize.x + 2 * shellSize.x, subjectSize.y + 2 * shellSize.y);
-			constrainLocation(location, shellSize, subjectBounds);
-
-			// convert to display coordinates
-			location= subjectControl.toDisplay(location);
+			if (rect.x + rect.width > bounds.x + bounds.width)
+				rect.x= bounds.x + bounds.width - rect.width;
+			if (rect.x < bounds.x)
+				rect.x= bounds.x;
 			
-			// constrain the location within the monitor
-			Rectangle displayBounds= monitor.getClientArea();
-			constrainLocation(location, shellSize, displayBounds);
-
-			return location;
+			return rect;
 		}
-
+		
 		/**
-		 * Returns the display coordinates for <code>shell</code> such that it appears
-		 * right below <code>offset</code>, or above it if below is not suitable.
+		 * Returns the display bounds for <code>shell</code> such that it appears right above
+		 * <code>offset</code>, or below it if above is not suitable. The returned bounds lie
+		 * within the monitor at the caret location and never overlap with the caret line.
 		 * 
 		 * @param shell the shell to compute the placement for
+		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
 		 * @return the point right below <code>offset</code> in display coordinates
 		 * @since 3.3
 		 */
-		protected Point getBelowOrAboveLocation(Shell shell, int offset) {
-			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
+		protected Rectangle computeBoundsAboveBelow(Shell shell, Point preferred, int offset) {
 			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
-			location= subjectControl.toDisplay(location);
-			Rectangle subjectRectangle= new Rectangle(location.x, location.y, 1, fContentAssistSubjectControlAdapter.getLineHeight());
-			Point shellSize= shell.getSize();
+			Display display= subjectControl.getDisplay();
+			Rectangle caret= getCaretRectangle(offset);
+			Monitor monitor= getClosestMonitor(display, caret);
+			Rectangle bounds= monitor.getClientArea();
 			
-			Point below= getBelowLocation(shell, offset);
-			if (!new Rectangle(below.x, below.y, shellSize.x, shellSize.y).intersects(subjectRectangle))
-				return below;
+			int spaceAbove= caret.y - bounds.y;
+			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
+			Rectangle rect;
+			if (spaceAbove >= preferred.y)
+				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
+			else if (spaceBelow >= preferred.y)
+				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, preferred.y);
+			// we can't fit in the preferred size - squeeze into larger area
+			else if (spaceBelow <= spaceAbove)
+				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
+			else
+				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
 			
-			Point above= getAboveLocation(shell, offset);
-			if (!new Rectangle(above.x, above.y, shellSize.x, shellSize.y).intersects(subjectRectangle))
-				return above;
-			return below; // default
+			return constrainHorizontally(rect, bounds);
 		}
-		
+
 		/**
-		 * Returns the display coordinates for <code>shell</code> such that it appears
-		 * right below <code>offset</code>. The returned {@link Point} is one line height
-		 * below the caret location described by <code>offset</code>, but always so that
-		 * the shell will not overlap with any monitor bounds. 
+		 * Returns the display bounds for <code>shell</code> such that it appears right below
+		 * <code>offset</code>, or above it if below is not suitable. The returned bounds lie
+		 * within the monitor at the caret location and never overlap with the caret line.
 		 * 
 		 * @param shell the shell to compute the placement for
+		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
 		 * @return the point right below <code>offset</code> in display coordinates
+		 * @since 3.3
 		 */
-		protected Point getBelowLocation(Shell shell, int offset) {
-			// compute the optimal location
-			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
-			location.y= location.y + fContentAssistSubjectControlAdapter.getLineHeight();
-			Point shellSize= shell.getSize();
-
-			// constrain the location such that it overlaps with the bounds of the subject control
+		protected Rectangle computeBoundsBelowAbove(Shell shell, Point preferred, int offset) {
 			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
-			Point subjectSize= subjectControl.getSize();
-			Rectangle subjectBounds= new Rectangle(-shellSize.x, -shellSize.y, subjectSize.x + 2 * shellSize.x, subjectSize.y + 2 * shellSize.y);
-			constrainLocation(location, shellSize, subjectBounds);
-
-			// convert to display coordinates
-			location= subjectControl.toDisplay(location);
-			
-			// constrain the location within the monitor
 			Display display= subjectControl.getDisplay();
-			Monitor monitor= getClosestMonitor(display, location);
-			Rectangle monitorBounds= monitor.getClientArea();
-			constrainLocation(location, shellSize, monitorBounds);
-
-			return location;
+			Rectangle caret= getCaretRectangle(offset);
+			Monitor monitor= getClosestMonitor(display, caret);
+			Rectangle bounds= monitor.getClientArea();
+			
+			int spaceAbove= caret.y - bounds.y;
+			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
+			Rectangle rect;
+			if (spaceBelow >= preferred.y)
+				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, preferred.y);
+			else if (spaceAbove >= preferred.y)
+				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
+			// we can't fit in the preferred size - squeeze into larger area
+			else if (spaceBelow >= spaceAbove)
+				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
+			else
+				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
+			
+			return constrainHorizontally(rect, bounds);
 		}
 
+		private Rectangle getCaretRectangle(int offset) {
+			Point location= fContentAssistSubjectControlAdapter.getLocationAtOffset(offset);
+			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
+			Point controlSize= subjectControl.getSize();
+			constrainLocation(location, new Point(0, 0), new Rectangle(0, 0, controlSize.x, controlSize.y));
+			location= subjectControl.toDisplay(location);
+			Rectangle subjectRectangle= new Rectangle(location.x, location.y, 1, fContentAssistSubjectControlAdapter.getLineHeight());
+			return subjectRectangle;
+		}
+		
 		protected Point getStackedLocation(Shell shell, Shell parent) {
 			Point p= parent.getLocation();
 			Point size= parent.getSize();
@@ -667,7 +674,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			p= parent.toDisplay(p);
 
 			Point shellSize= shell.getSize();
-			Monitor monitor= getClosestMonitor(parent.getDisplay(), p);
+			Monitor monitor= getClosestMonitor(parent.getDisplay(), new Rectangle(p.x, p.y, 0, 0));
 			Rectangle displayBounds= monitor.getClientArea();
 			constrainLocation(p, shellSize, displayBounds);
 
@@ -701,13 +708,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * 
 		 * @param toSearch
 		 *            point to find (display coordinates)
-		 * @param toFind
-		 *            point to find (display coordinates)
+		 * @param rectangle
+		 *            rectangle to find (display coordinates)
 		 * @return the montor closest to the given point
 		 */
-		private Monitor getClosestMonitor(Display toSearch, Point toFind) {
+		private Monitor getClosestMonitor(Display toSearch, Rectangle rectangle) {
 			int closest = Integer.MAX_VALUE;
 
+			Point toFind= Geometry.centerPoint(rectangle);
 			Monitor[] monitors = toSearch.getMonitors();
 			Monitor result = monitors[0];
 
