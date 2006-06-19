@@ -1981,7 +1981,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		try {
 			for(int i = 0; i < launches.length; i++) {
 				for(int j = 0; j < configs.length; j++) {
-					if(launches[i].getLaunchConfiguration().equals(configs[j]) & launches[i].canTerminate()) {
+					if(configs[j].equals(launches[i].getLaunchConfiguration()) & launches[i].canTerminate()) {
 						launches[i].terminate();
 					}
 				}
