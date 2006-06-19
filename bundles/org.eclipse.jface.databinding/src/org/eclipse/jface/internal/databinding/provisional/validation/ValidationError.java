@@ -38,29 +38,29 @@ public class ValidationError {
 	public final String message;
 	
 	/**
-	 * A convenience factory for error ValidationResults representing errors.
+	 * A convenience factory for {@link #ERROR} ValidationErrors.
 	 * 
 	 * @param message The error message
-	 * @return A new ValidationResult representing the error
+	 * @return A new ValidationError representing the error
 	 */
 	public static ValidationError error(String message) {
 		return new ValidationError(ERROR, message);
 	}
 	
 	/**
-	 * A convenience factory for warning ValidationResults.
+	 * A convenience factory for {@link #WARNING} ValidationErrors.
 	 * 
 	 * @param message The warning message
-	 * @return A new ValidationResult representing the warning
+	 * @return A new ValidationError representing the warning
 	 */
 	public static ValidationError warning(String message) {
 		return new ValidationError(WARNING, message);
 	}
 	
 	/**
-	 * Construct a ValidationResult with an arbitrary status and error message.
+	 * Construct a ValidationError with a status and error message.
 	 * 
-	 * @param status One of the constants in ValidationResult.
+	 * @param status either {@link #WARNING} or {@link #ERROR}
 	 * @param message An error message string or warning.
 	 */
 	public ValidationError(int status, String message) {
