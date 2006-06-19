@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds (bug 136532)
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -166,8 +168,23 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 		return added;
 	}
 
+	/**
+	 * Adds items contained in <code>c</code> that didn't previously exist in
+	 * the viewer. This check is based on object equality. If new entries are to
+	 * be added list change events and set change events are fired before the
+	 * items are added to the viewer.
+	 * 
+	 * @param c items to be added
+	 * @return success <code>true</code> if items were added to the list
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener
+	 */
 	public boolean addAll(Collection c) {
-		Set adds = new HashSet();
+		if (c == null)
+			throw new IllegalArgumentException("The 'c' parameter is null."); //$NON-NLS-1$
+		
+		// List of items being added to the viewer.
+		List adds = new LinkedList();
 		List listAdds = new ArrayList();
 		Iterator it = c.iterator();
 		while (it.hasNext()) {
@@ -182,7 +199,8 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 		if (adds.size() > 0) {
 			fireListChange(Diffs.createListDiff((ListDiffEntry[]) listAdds
 					.toArray(new ListDiffEntry[listAdds.size()])));
-			fireSetChange(Diffs.createSetDiff(adds, Collections.EMPTY_SET));
+			fireSetChange(Diffs.createSetDiff(new HashSet(adds),
+					Collections.EMPTY_SET));
 			// add to viewer after firing
 			addToViewer(adds.toArray());
 			return true;

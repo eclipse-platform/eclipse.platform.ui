@@ -27,6 +27,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.SVOCWLTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.viewers.ViewersObservableFactoryTest;
@@ -63,6 +64,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
+		addTestSuite(SVOCWLTest.class);
 		addTestSuite(ViewersObservableFactoryTest.class);
 		addTestSuite(AbstractObservableTest.class);
 	}
