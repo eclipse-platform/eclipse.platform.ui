@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
@@ -356,7 +357,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoText.setText(frame.fInformation.getInformationDisplayString());
 		if (fTextPresentation != null)
 			TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-		resize();
+		resize(frame.fVisibleOffset);
 
 		if (initial) {
 			if (fContentAssistant.addContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP)) {
@@ -411,7 +412,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		fContextInfoPopup= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		fContextInfoPopup.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
-		fContextInfoText= new StyledText(fContextInfoPopup, SWT.MULTI | SWT.READ_ONLY);
+		fContextInfoText= new StyledText(fContextInfoPopup, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 
 		Color c= fContentAssistant.getContextInformationPopupBackground();
 		if (c == null)
@@ -427,15 +428,25 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Resizes the context information popup.
 	 *
+	 * @param offset the caret offset
 	 * @since 2.0
 	 */
-	private void resize() {
+	private void resize(int offset) {
 		Point size= fContextInfoText.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		size.x += 3;
+		final int TEXT_PAD= 0;
+		final int BORDER_PAD= 2;
+		final int PAD= TEXT_PAD + BORDER_PAD;
+		size.x += PAD;
+		Rectangle bounds= fContentAssistant.getLayoutManager().computeBoundsAboveBelow(fContextInfoPopup, size, offset);
+		if (bounds.width < size.x)
+			// we don't fit on the screen - try again and wrap
+			size= fContextInfoText.computeSize(bounds.width - PAD, SWT.DEFAULT, true);
+		
+		size.x += TEXT_PAD;
 		fContextInfoText.setSize(size);
 		fContextInfoText.setLocation(1,1);
-		size.x += 2;
-		size.y += 2;
+		size.x += BORDER_PAD;
+		size.y += BORDER_PAD;
 		fContextInfoPopup.setSize(size);
 	}
 
@@ -803,7 +814,7 @@ class ContextInformationPopup implements IContentAssistListener {
 							hideContextInfoPopup(); // loop variant: reduces the number of contexts on the stack
 						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
 							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-							resize();
+							resize(offset);
 							break;
 						} else
 							break;

@@ -606,17 +606,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Rectangle bounds= monitor.getClientArea();
 			
 			int spaceAbove= caret.y - bounds.y;
-			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
+			int caretLowerY= caret.y + caret.height;
+			int spaceBelow= bounds.y + bounds.height - caretLowerY;
 			Rectangle rect;
 			if (spaceAbove >= preferred.y)
 				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
 			else if (spaceBelow >= preferred.y)
-				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, preferred.y);
+				rect= new Rectangle(caret.x, caretLowerY, preferred.x, preferred.y);
 			// we can't fit in the preferred size - squeeze into larger area
 			else if (spaceBelow <= spaceAbove)
 				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
 			else
-				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
+				rect= new Rectangle(caret.x, caretLowerY, preferred.x, spaceBelow);
 			
 			return constrainHorizontally(rect, bounds);
 		}
