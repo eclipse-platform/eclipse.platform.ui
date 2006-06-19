@@ -24,6 +24,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
+import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code>.
@@ -414,8 +415,18 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * Subclass should override to provide the appropriate rule.
 	 * @see org.eclipse.team.core.mapping.IMergeContext#getMergeRule(IDiff)
 	 */
-	public ISchedulingRule getMergeRule(IDiff node) {
-		return getDiffTree().getResource(node);
+	public ISchedulingRule getMergeRule(IDiff diff) {
+		IResource resource = getDiffTree().getResource(diff);
+		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		ISchedulingRule rule;
+		if (!resource.exists()) {
+			rule = ruleFactory.createRule(resource);
+		} else if (SyncInfoToDiffConverter.getRemote(diff) == null){
+			rule = ruleFactory.deleteRule(resource);
+		} else {
+			rule = ruleFactory.modifyRule(resource);
+		}
+		return rule;
 	}
 	
 	/* (non-Javadoc)
