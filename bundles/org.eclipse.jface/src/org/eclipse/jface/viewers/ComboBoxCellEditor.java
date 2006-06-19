@@ -130,6 +130,8 @@ public class ComboBoxCellEditor extends CellEditor {
 
         comboBox = new CCombo(parent, getStyle());
         comboBox.setFont(parent.getFont());
+        
+        populateComboBoxItems();
 
         comboBox.addKeyListener(new KeyAdapter() {
             // hook key pressed - see PR 14201  
