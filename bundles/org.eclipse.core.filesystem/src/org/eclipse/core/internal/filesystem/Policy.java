@@ -47,10 +47,6 @@ public class Policy {
 		System.out.println(buffer.toString());
 	}
 
-	public static void error(int code) throws CoreException {
-		error(code, null, null);
-	}
-
 	public static void error(int code, String message) throws CoreException {
 		error(code, message, null);
 	}
@@ -58,14 +54,6 @@ public class Policy {
 	public static void error(int code, String message, Throwable exception) throws CoreException {
 		int severity = code == 0 ? 0 : 1 << (code % 100 / 33);
 		throw new CoreException(new Status(severity, PI_FILE_SYSTEM, code, message, exception));
-	}
-
-	public static void error(int code, Throwable exception) throws CoreException {
-		error(code, null, exception);
-	}
-
-	public static void log(int severity, String message) {
-		log(severity, message, null);
 	}
 
 	public static void log(int severity, String message, Throwable t) {
@@ -111,13 +99,5 @@ public class Policy {
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
-	}
-
-	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		if (monitor instanceof NullProgressMonitor)
-			return monitor;
-		return new SubProgressMonitor(monitor, ticks, style);
 	}
 }

@@ -18,32 +18,6 @@ public class Convert {
 	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 
 	/**
-	 * Converts the string argument to a byte array.
-	 */
-	public static String fromUTF8(byte[] b) {
-		String result;
-		try {
-			result = new String(b, "UTF8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			result = new String(b);
-		}
-		return result;
-	}
-
-	/**
-	 * Converts the string argument to a byte array.
-	 */
-	public static byte[] toUTF8(String s) {
-		byte[] result;
-		try {
-			result = s.getBytes("UTF8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			result = s.getBytes();
-		}
-		return result;
-	}
-
-	/**
 	 * Performs conversion of a long value to a byte array representation.
 	 *
 	 * @see #bytesToLong(byte[])
@@ -79,7 +53,7 @@ public class Convert {
 
 		// See method convertLongToBytes(long) for algorithm details.	
 		for (int i = 0; i < value.length; i++) {
-			// Left shift has no effect thru first iteration of loop.
+			// Left shift has no effect through first iteration of loop.
 			longValue <<= 8;
 			longValue ^= value[i] & 0xFF;
 		}
