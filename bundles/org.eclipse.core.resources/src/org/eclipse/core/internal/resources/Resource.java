@@ -1292,7 +1292,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
-	 * @see IResource#move(IPath, boolean, IProgressMonitor)
+	 * @see IFile#move(IPath, boolean, boolean, IProgressMonitor)
+	 * @see IFolder#move(IPath, boolean, boolean, IProgressMonitor)
 	 */
 	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
