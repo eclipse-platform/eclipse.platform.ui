@@ -55,13 +55,6 @@ public class ResourceAttributeTest extends ResourceTest {
 		resource.setResourceAttributes(attributes);
 	}
 
-	private void setReadOnly(IResource resource, boolean value) throws CoreException {
-		ResourceAttributes attributes = resource.getResourceAttributes();
-		assertNotNull("setReadOnly for null attributes", attributes);
-		attributes.setReadOnly(value);
-		resource.setResourceAttributes(attributes);
-	}
-
 	public void testAttributeArchive() {
 		// archive bit only implemented on windows
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
@@ -217,23 +210,19 @@ public class ResourceAttributeTest extends ResourceTest {
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
 
-		try {
-			// file
-			assertTrue("1.0", !file.getResourceAttributes().isReadOnly());
-			setReadOnly(file, true);
-			assertTrue("1.2", file.getResourceAttributes().isReadOnly());
-			setReadOnly(file, false);
-			assertTrue("1.4", !file.getResourceAttributes().isReadOnly());
+		// file
+		assertTrue("1.0", !file.getResourceAttributes().isReadOnly());
+		setReadOnly(file, true);
+		assertTrue("1.2", file.getResourceAttributes().isReadOnly());
+		setReadOnly(file, false);
+		assertTrue("1.4", !file.getResourceAttributes().isReadOnly());
 
-			// folder
-			assertTrue("2.0", !project.getResourceAttributes().isReadOnly());
-			setReadOnly(project, true);
-			assertTrue("2.2", project.getResourceAttributes().isReadOnly());
-			setReadOnly(project, false);
-			assertTrue("2.4", !project.getResourceAttributes().isReadOnly());
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
+		// folder
+		assertTrue("2.0", !project.getResourceAttributes().isReadOnly());
+		setReadOnly(project, true);
+		assertTrue("2.2", project.getResourceAttributes().isReadOnly());
+		setReadOnly(project, false);
+		assertTrue("2.4", !project.getResourceAttributes().isReadOnly());
 
 		/* remove trash */
 		try {
