@@ -15,7 +15,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import junit.framework.Assert;
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Helper class for accessing classes and members which cannot
@@ -24,7 +25,7 @@ import junit.framework.Assert;
  * 
  * @since 3.1
  */
-public class Accessor extends Assert {
+public class Accessor {
 	
 	/** The class to access. */
 	private Class fClass;
@@ -40,8 +41,8 @@ public class Accessor extends Assert {
 	 * @param clazz the class
 	 */
 	public Accessor(Object instance, Class clazz) {
-		assertNotNull(instance);
-		assertNotNull(clazz);
+		org.eclipse.core.runtime.Assert.isNotNull(instance);
+		Assert.isNotNull(clazz);
 		fInstance= instance;
 		fClass= clazz;
 	}
@@ -56,9 +57,9 @@ public class Accessor extends Assert {
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 */
 	public Accessor(Object instance, String className, ClassLoader classLoader) {
-		assertNotNull(instance);
-		assertNotNull(className);
-		assertNotNull(classLoader);
+		Assert.isNotNull(instance);
+		Assert.isNotNull(className);
+		Assert.isNotNull(classLoader);
 		fInstance= instance;
 		try {
 			fClass= Class.forName(className, true, classLoader);
@@ -109,7 +110,7 @@ public class Accessor extends Assert {
 		} catch (NoSuchMethodException e2) {
 			fail();
 		}
-		assertNotNull(constructor);
+		Assert.isNotNull(constructor);
 		constructor.setAccessible(true);
 		try {
 			fInstance= constructor.newInstance(constructorArgs);
@@ -176,7 +177,7 @@ public class Accessor extends Assert {
 		} catch (NoSuchMethodException ex) {
 			fail();
 		}
-		assertNotNull(method);
+		Assert.isNotNull(method);
 		method.setAccessible(true);
 		try {
 			return method.invoke(fInstance, arguments);
@@ -318,9 +319,13 @@ public class Accessor extends Assert {
 		int length= objects.length;
 		Class[] classes= new Class[length];
 		for (int i= 0; i < length; i++) {
-			assertNotNull(objects[i]);
+			Assert.isNotNull(objects[i]);
 			classes[i]= objects[i].getClass();
 		}
 		return classes;
+	}
+	
+	private void fail() {
+		Assert.isTrue(false);
 	}
 }
