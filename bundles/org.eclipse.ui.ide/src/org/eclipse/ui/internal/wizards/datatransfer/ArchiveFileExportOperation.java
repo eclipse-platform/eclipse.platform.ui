@@ -228,15 +228,6 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
     }
 
     /**
-     *	Answer the error table
-     *
-     *	@return Vector of IStatus
-     */
-    public List getResult() {
-        return errorTable;
-    }
-
-    /**
      * Returns the status of the operation.
      * If there were any errors, the result is a status object containing
      * individual status objects for each error.

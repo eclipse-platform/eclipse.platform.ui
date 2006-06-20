@@ -54,17 +54,6 @@ public class WizardZipFileResourceExportPage1 extends
         super(name, selection);
     }
 
-    /**
-     * Create an instance of this class.
-     * 
-     * @param selection the selection
-     */
-    public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
-        this("zipFileExportPage1", selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.ZipExport_exportTitle);
-        setDescription(DataTransferMessages.ZipExport_description);
-    }
-
     /** (non-Javadoc)
      * Method declared on IDialogPage.
      */

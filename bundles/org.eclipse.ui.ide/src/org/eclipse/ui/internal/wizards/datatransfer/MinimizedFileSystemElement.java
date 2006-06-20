@@ -68,13 +68,6 @@ public class MinimizedFileSystemElement extends FileSystemElement {
     }
 
     /**
-     * Return whether or not population has not happened for the receiver.
-     */
-    boolean notPopulated() {
-        return !this.populated;
-    }
-
-    /**
      * Populate the files and folders of the receiver using the suppliec structure provider.
      * @param provider org.eclipse.ui.wizards.datatransfer.IImportStructureProvider
      */

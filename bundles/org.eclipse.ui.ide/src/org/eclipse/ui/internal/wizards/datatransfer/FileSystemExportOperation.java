@@ -66,28 +66,6 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
     /**
      *  Create an instance of this class.  Use this constructor if you wish to
-     *  export specific resources without a common parent resource
-     */
-    public FileSystemExportOperation(List resources, String destinationPath,
-            IOverwriteQuery overwriteImplementor) {
-        super();
-
-        // Eliminate redundancies in list of resources being exported
-        Iterator elementsEnum = resources.iterator();
-        while (elementsEnum.hasNext()) {
-            IResource currentResource = (IResource) elementsEnum.next();
-            if (isDescendent(resources, currentResource)) {
-				elementsEnum.remove(); //Remove currentResource
-			}
-        }
-
-        resourcesToExport = resources;
-        path = new Path(destinationPath);
-        overwriteCallback = overwriteImplementor;
-    }
-
-    /**
-     *  Create an instance of this class.  Use this constructor if you wish to
      *  recursively export a single resource
      */
     public FileSystemExportOperation(IResource res, String destinationPath,
@@ -107,14 +85,6 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
             String destinationPath, IOverwriteQuery overwriteImplementor) {
         this(res, destinationPath, overwriteImplementor);
         resourcesToExport = resources;
-    }
-
-    /**
-     * Add a new entry to the error table with the passed information
-     */
-    protected void addError(String message, Throwable e) {
-        errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-                message, e));
     }
 
     /**
@@ -186,7 +156,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 // not safe to show a dialog
                 // should never happen because the file system export wizard ensures that the
                 // single resource chosen for export is both existent and accessible
-                errorTable.add(e);
+                errorTable.add(e.getStatus());
             }
         }
     }
