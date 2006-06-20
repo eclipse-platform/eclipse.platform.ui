@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -346,8 +347,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 		((ProgressInfoItem) widget).refresh();
 
+		//Update the minimum size
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		control.setSize(size);
+		size.x += IDialogConstants.HORIZONTAL_SPACING;
+		size.y += IDialogConstants.VERTICAL_SPACING;
+
 		scrolled.setMinSize(size);
 	}
 
