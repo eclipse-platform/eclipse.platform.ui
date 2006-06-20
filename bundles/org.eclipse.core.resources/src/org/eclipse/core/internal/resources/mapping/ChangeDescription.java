@@ -13,7 +13,6 @@ package org.eclipse.core.internal.resources.mapping;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * A description of the changes found in a delta
@@ -26,10 +25,6 @@ public class ChangeDescription {
 	private List copiedRoots = new ArrayList();
 	private List movedRoots = new ArrayList();
 	private List removedRoots = new ArrayList();
-
-	public static String getMessageFor(String messageTemplate, IResource resource) {
-		return NLS.bind(messageTemplate, resource.getFullPath().toString());
-	}
 
 	private IResource createSourceResource(IResourceDelta delta) {
 		IPath sourcePath = delta.getMovedFromPath();

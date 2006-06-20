@@ -93,16 +93,6 @@ public class KeyedHashSet {
 		elementCount = 0;
 	}
 
-	public Object[] elements(Object[] result) {
-		int j = 0;
-		for (int i = 0; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element != null)
-				result[j++] = element;
-		}
-		return result;
-	}
-
 	/**
 	 * The array isn't large enough so double its size and rehash
 	 * all its current values.
@@ -124,37 +114,6 @@ public class KeyedHashSet {
 				elements[hash] = element;
 			}
 		}
-	}
-
-	/**
-	 * Returns the set element with the given id, or null
-	 * if not found.
-	 */
-	public KeyedElement get(KeyedElement key) {
-		if (elementCount == 0)
-			return null;
-		int hash = hash(key);
-
-		// search the last half of the array
-		for (int i = hash; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return null;
-			if (element.compare(key))
-				return element;
-		}
-
-		// search the beginning of the array
-		for (int i = 0; i < hash - 1; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return null;
-			if (element.compare(key))
-				return element;
-		}
-
-		// nothing found so return null
-		return null;
 	}
 
 	/**
@@ -190,10 +149,6 @@ public class KeyedHashSet {
 
 	private int hash(KeyedElement key) {
 		return Math.abs(key.getKeyHashCode()) % elements.length;
-	}
-
-	public boolean isEmpty() {
-		return elementCount == 0;
 	}
 
 	private int keyHash(Object key) {

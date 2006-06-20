@@ -86,21 +86,4 @@ public class Convert {
 
 		return longValue;
 	}
-
-	/**
-	 * Calling String.getBytes() creates a new encoding object and other garbage.
-	 * This can be avoided by calling String.getBytes(String encoding) instead.
-	 */
-	public static byte[] toPlatformBytes(String target) {
-		if (defaultEncoding == null)
-			return target.getBytes();
-		// try to use the default encoding
-		try {
-			return target.getBytes(defaultEncoding);
-		} catch (UnsupportedEncodingException e) {
-			// null the default encoding so we don't try it again
-			defaultEncoding = null;
-			return target.getBytes();
-		}
-	}
 }

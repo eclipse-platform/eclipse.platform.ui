@@ -569,10 +569,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		sourceStore.move(destination, storeFlags, monitor);
 	}
 
-	public void move(IResource source, IResource destination, int flags, IProgressMonitor monitor) throws CoreException {
-		move(source, getStore(destination), flags, monitor);
-	}
-
 	/**
 	 * Returns a resource path to the given local location. Returns null if
 	 * it is not under a project's location.

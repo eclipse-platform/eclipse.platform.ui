@@ -177,21 +177,6 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	/*
-	 * Return the corresponding IFile for the given preference node, or null
-	 * if it cannot be calculated.
-	 */
-	static IFile getFile(IEclipsePreferences node) {
-		String path = node.absolutePath();
-		String projectName = getSegment(path, 2);
-		if (projectName == null)
-			return null;
-		String qualifier = getSegment(path, 3);
-		if (qualifier == null)
-			return null;
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(projectName).append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
-	}
-
-	/*
 	 * Return the preferences file for the given folder and qualifier.
 	 */
 	static IFile getFile(IFolder folder, String qualifier) {

@@ -574,34 +574,6 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		} while (searchLocation != null);
 	}
 
-	private void removeFromLocationsMap(IProject project) {
-		//remove this project and all linked children from the location table
-		IFileStore location = ((Resource) project).getStore();
-		if (location != null)
-			locationsMap.remove(location, project);
-		ProjectDescription description = ((Project) project).internalGetDescription();
-		if (description == null)
-			return;
-		if (description.getLocationURI() != null)
-			nonDefaultResourceCount--;
-		HashMap links = description.getLinks();
-		if (links == null)
-			return;
-		for (Iterator it = links.values().iterator(); it.hasNext();) {
-			LinkDescription linkDesc = (LinkDescription) it.next();
-			IResource link;
-			if (linkDesc.getType() == IResource.FILE)
-				link = project.getFile(linkDesc.getProjectRelativePath());
-			else
-				link = project.getFolder(linkDesc.getProjectRelativePath());
-			try {
-				removeFromLocationsMap(link, EFS.getStore(linkDesc.getLocationURI()));
-			} catch (CoreException e) {
-				//ignore links with invalid locations
-			}
-		}
-	}
-
 	private void removeFromLocationsMap(IResource link, IFileStore location) {
 		if (location != null)
 			if (locationsMap.remove(location, link))
@@ -688,9 +660,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				hadChanges = true;
 				if (!resource.isAccessible())
 					continue;
-				if (resource.getType() == IResource.PROJECT)
-					addToLocationsMap((IProject) resource);
-				else if (resource.isLinked())
+				if (resource.isLinked())
 					addToLocationsMap(resource, ((Resource) resource).getStore());
 			}
 		}

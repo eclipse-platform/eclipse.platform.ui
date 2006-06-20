@@ -116,10 +116,6 @@ public class Policy {
 		System.out.println(buffer.toString());
 	}
 
-	public static void log(int severity, String message) {
-		log(severity, message, null);
-	}
-
 	public static void log(int severity, String message, Throwable t) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
