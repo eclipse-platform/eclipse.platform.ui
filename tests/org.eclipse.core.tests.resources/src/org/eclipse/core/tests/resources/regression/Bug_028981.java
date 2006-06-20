@@ -22,8 +22,8 @@ import org.eclipse.core.tests.resources.ResourceVisitorVerifier;
  * Resource#accept doesn't obey member flags for the traversal entry point.
  */
 
-public class Bug_28981 extends ResourceTest {
-	public Bug_28981(String name) {
+public class Bug_028981 extends ResourceTest {
+	public Bug_028981(String name) {
 		super(name);
 	}
 
@@ -115,6 +115,6 @@ public class Bug_28981 extends ResourceTest {
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_28981.class);
+		return new TestSuite(Bug_028981.class);
 	}
 }

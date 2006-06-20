@@ -24,17 +24,17 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * that is only a case change, where the move fails due to another handle being
  * open on a file in the hierarchy, would cause deletion of the source.
  */
-public class Bug_29851 extends ResourceTest {
+public class Bug_029851 extends ResourceTest {
 
 	public static Test suite() {
-		return new TestSuite(Bug_29851.class);
+		return new TestSuite(Bug_029851.class);
 	}
 
-	public Bug_29851() {
+	public Bug_029851() {
 		super();
 	}
 
-	public Bug_29851(String name) {
+	public Bug_029851(String name) {
 		super(name);
 	}
 

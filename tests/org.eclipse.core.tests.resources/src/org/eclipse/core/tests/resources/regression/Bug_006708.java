@@ -10,51 +10,53 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
+import java.io.ByteArrayInputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
-/**
- * A parent container (projects and folders) would become out-of-sync if any of
- * its children could not be deleted for some reason. These platform-
- * specific test cases ensure that it does not happen.
- */
-public class Bug_98740 extends ResourceTest {
+public class Bug_006708 extends ResourceTest {
+	/**
+	 * Constructor for Bug_6708.
+	 */
+	public Bug_006708() {
+		super();
+	}
 
-	public Bug_98740(String name) {
+	/**
+	 * Constructor for Bug_6708.
+	 * @param name
+	 */
+	public Bug_006708(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_98740.class);
+		return new TestSuite(Bug_006708.class);
 	}
-	
+
 	public void testBug() {
-		IProject project = getWorkspace().getRoot().getProject("Bug98740");
-		ensureExistsInWorkspace(project, true);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
 		try {
-			project.close(getMonitor());
+			IProject sourceProj = workspace.getRoot().getProject("P1");
+			sourceProj.create(null);
+			sourceProj.open(null);
+			IFile source = sourceProj.getFile("Source.txt");
+			source.create(new ByteArrayInputStream("abcdef".getBytes()), false, null);
+
+			IProject destProj = workspace.getRoot().getProject("P2");
+			destProj.create(null);
+			destProj.open(null);
+			IFile dest = destProj.getFile("Dest.txt");
+
+			source.copy(dest.getFullPath(), false, null);
+			dest.setContents(new ByteArrayInputStream("ghijkl".getBytes()), false, true, null);
 		} catch (CoreException e) {
-			fail("0.99", e);
-		}
-		try {
-			project.members();
-			fail("1.0");
-		} catch (CoreException e) {
-			//should fail
-		}
-		try {
-			IResourceVisitor visitor = new IResourceVisitor() {
-				public boolean visit(IResource resource) {
-					return true;
-				}
-			};
-			project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
-			fail("2.0");
-		} catch (CoreException e) {
-			//should fail
+			fail("1.0", e);
 		}
 	}
 }
+

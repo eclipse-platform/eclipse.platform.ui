@@ -26,16 +26,16 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Note: this is similar to Bug_32076, which deals with failure to move in
  * the non case-change scenario.
  */
-public class Bug_25457 extends ResourceTest {
+public class Bug_025457 extends ResourceTest {
 	public static Test suite() {
-		return new TestSuite(Bug_25457.class);
+		return new TestSuite(Bug_025457.class);
 	}
 
-	public Bug_25457() {
+	public Bug_025457() {
 		super();
 	}
 
-	public Bug_25457(String name) {
+	public Bug_025457(String name) {
 		super(name);
 	}
 

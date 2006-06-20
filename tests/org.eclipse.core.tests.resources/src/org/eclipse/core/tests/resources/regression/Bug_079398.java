@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 //NOTE: Should not hook this test up until the corresponding bug is fixed. 
-public class Bug_79398 extends ResourceTest {
+public class Bug_079398 extends ResourceTest {
 
-	public Bug_79398(String name) {
+	public Bug_079398(String name) {
 		super(name);
 	}
 	

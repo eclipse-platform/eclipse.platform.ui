@@ -31,21 +31,21 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
+		suite.addTest(Bug_006708.suite());
+		suite.addTest(Bug_025457.suite());
+		suite.addTest(Bug_026294.suite());
+		suite.addTest(Bug_027271.suite());
+		suite.addTest(Bug_028981.suite());
+		suite.addTest(Bug_029116.suite());
+		suite.addTest(Bug_029671.suite());
+		suite.addTest(Bug_029851.suite());
+		suite.addTest(Bug_032076.suite());
+		suite.addTest(Bug_044106.suite());
+		suite.addTest(Bug_098740.suite());
 		suite.addTest(Bug_126104.suite());
 		suite.addTest(Bug_127562.suite());
 		suite.addTest(Bug_132510.suite());
 		suite.addTest(Bug_147232.suite());
-		suite.addTest(Bug_25457.suite());
-		suite.addTest(Bug_26294.suite());
-		suite.addTest(Bug_27271.suite());
-		suite.addTest(Bug_28981.suite());
-		suite.addTest(Bug_29116.suite());
-		suite.addTest(Bug_29671.suite());
-		suite.addTest(Bug_29851.suite());
-		suite.addTest(Bug_32076.suite());
-		suite.addTest(Bug_44106.suite());
-		suite.addTest(Bug_6708.suite());
-		suite.addTest(Bug_98740.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());

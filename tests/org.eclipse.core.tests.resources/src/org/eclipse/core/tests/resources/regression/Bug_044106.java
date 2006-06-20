@@ -23,17 +23,17 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * symbolic link on Linux actually deleted the files that it pointed too rather
  * than just the link itself.
  */
-public class Bug_44106 extends ResourceTest {
+public class Bug_044106 extends ResourceTest {
 
 	public static Test suite() {
-		return new TestSuite(Bug_44106.class);
+		return new TestSuite(Bug_044106.class);
 	}
 
-	public Bug_44106() {
+	public Bug_044106() {
 		super();
 	}
 
-	public Bug_44106(String name) {
+	public Bug_044106(String name) {
 		super(name);
 	}
 

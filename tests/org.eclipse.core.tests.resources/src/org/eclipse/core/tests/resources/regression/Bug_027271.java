@@ -22,13 +22,13 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * variable manager. 
  */
 
-public class Bug_27271 extends ResourceTest {
+public class Bug_027271 extends ResourceTest {
 
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
 
 	private Preferences preferences;
 
-	public Bug_27271(String name) {
+	public Bug_027271(String name) {
 		super(name);
 	}
 
@@ -52,7 +52,7 @@ public class Bug_27271 extends ResourceTest {
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_27271.class);
+		return new TestSuite(Bug_027271.class);
 	}
 
 	public void testBug() {

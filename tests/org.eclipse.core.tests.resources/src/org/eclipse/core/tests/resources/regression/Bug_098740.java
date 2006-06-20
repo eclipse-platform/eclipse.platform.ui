@@ -12,48 +12,49 @@ package org.eclipse.core.tests.resources.regression;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
- * Test regression of bug 29116.  In this bug, triggering a builder during
- * installation of a nature caused an assertion failure.
+ * A parent container (projects and folders) would become out-of-sync if any of
+ * its children could not be deleted for some reason. These platform-
+ * specific test cases ensure that it does not happen.
  */
-public class Bug_29116 extends ResourceTest {
-	public Bug_29116() {
-		super();
-	}
+public class Bug_098740 extends ResourceTest {
 
-	public Bug_29116(String name) {
+	public Bug_098740(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_29116.class);
+		return new TestSuite(Bug_098740.class);
 	}
-
+	
 	public void testBug() {
-		// Create some resource handles
-		IProject project = getWorkspace().getRoot().getProject("PROJECT");
-
+		IProject project = getWorkspace().getRoot().getProject("Bug98740");
+		ensureExistsInWorkspace(project, true);
 		try {
-			// Create and open a project
-			project.create(getMonitor());
-			project.open(getMonitor());
+			project.close(getMonitor());
 		} catch (CoreException e) {
-			fail("1.0", e);
+			fail("0.99", e);
 		}
-
-		// Create and set a build spec for the project
 		try {
-			IProjectDescription desc = project.getDescription();
-			desc.setNatureIds(new String[] {NATURE_29116});
-			project.setDescription(desc, getMonitor());
+			project.members();
+			fail("1.0");
 		} catch (CoreException e) {
-			fail("2.0", e);
+			//should fail
+		}
+		try {
+			IResourceVisitor visitor = new IResourceVisitor() {
+				public boolean visit(IResource resource) {
+					return true;
+				}
+			};
+			project.accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE);
+			fail("2.0");
+		} catch (CoreException e) {
+			//should fail
 		}
 	}
-
 }

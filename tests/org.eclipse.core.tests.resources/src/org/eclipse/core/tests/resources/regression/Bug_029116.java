@@ -10,53 +10,50 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import java.io.ByteArrayInputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
-public class Bug_6708 extends ResourceTest {
-	/**
-	 * Constructor for Bug_6708.
-	 */
-	public Bug_6708() {
+/**
+ * Test regression of bug 29116.  In this bug, triggering a builder during
+ * installation of a nature caused an assertion failure.
+ */
+public class Bug_029116 extends ResourceTest {
+	public Bug_029116() {
 		super();
 	}
 
-	/**
-	 * Constructor for Bug_6708.
-	 * @param name
-	 */
-	public Bug_6708(String name) {
+	public Bug_029116(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_6708.class);
+		return new TestSuite(Bug_029116.class);
 	}
 
 	public void testBug() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
 
 		try {
-			IProject sourceProj = workspace.getRoot().getProject("P1");
-			sourceProj.create(null);
-			sourceProj.open(null);
-			IFile source = sourceProj.getFile("Source.txt");
-			source.create(new ByteArrayInputStream("abcdef".getBytes()), false, null);
-
-			IProject destProj = workspace.getRoot().getProject("P2");
-			destProj.create(null);
-			destProj.open(null);
-			IFile dest = destProj.getFile("Dest.txt");
-
-			source.copy(dest.getFullPath(), false, null);
-			dest.setContents(new ByteArrayInputStream("ghijkl".getBytes()), false, true, null);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-	}
-}
 
+		// Create and set a build spec for the project
+		try {
+			IProjectDescription desc = project.getDescription();
+			desc.setNatureIds(new String[] {NATURE_29116});
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+	}
+
+}

@@ -25,18 +25,18 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * When moving a resource "x" from parent "a" to parent "b", if "x" or any of 
  * its children can't be deleted, both "a" and "b" become out-of-sync and resource info is lost.
  */
-public class Bug_32076 extends ResourceTest {
+public class Bug_032076 extends ResourceTest {
 
-	public Bug_32076() {
+	public Bug_032076() {
 		super("");
 	}
 
-	public Bug_32076(String name) {
+	public Bug_032076(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_32076.class);
+		return new TestSuite(Bug_032076.class);
 	}
 
 	public void testFileBugOnWindows() {

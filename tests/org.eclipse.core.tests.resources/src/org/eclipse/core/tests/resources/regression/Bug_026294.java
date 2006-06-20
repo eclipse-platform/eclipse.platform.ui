@@ -22,14 +22,14 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * its children could not be deleted for some reason. These platform-
  * specific test cases ensure that it does not happen.
  */
-public class Bug_26294 extends ResourceTest {
+public class Bug_026294 extends ResourceTest {
 
-	public Bug_26294(String name) {
+	public Bug_026294(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		return new TestSuite(Bug_26294.class);
+		return new TestSuite(Bug_026294.class);
 	}
 
 	/**

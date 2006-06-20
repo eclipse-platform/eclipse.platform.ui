@@ -22,9 +22,9 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests regression of bug 97608 - error restoring workspace
  * after writing marker with value that is too long.
  */
-public class Bug_97608 extends ResourceTest {
+public class Bug_097608 extends ResourceTest {
 	public static Test suite() {
-		return new TestSuite(Bug_97608.class);
+		return new TestSuite(Bug_097608.class);
 	}
 
 	/**
