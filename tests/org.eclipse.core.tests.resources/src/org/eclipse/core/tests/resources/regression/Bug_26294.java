@@ -33,7 +33,7 @@ public class Bug_26294 extends ResourceTest {
 	}
 
 	/**
-	 * Tries to delete an open project containing an irremovable file.
+	 * Tries to delete an open project containing an unremovable file.
 	 * Works only for Windows.
 	 */
 	public void _testDeleteOpenProjectWindows() {
@@ -106,11 +106,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("2.7.0", project.isSynchronized(IResource.DEPTH_ZERO));
 			assertTrue("2.7.1", project.isSynchronized(IResource.DEPTH_INFINITE));
 
-			try {
-				input.close();
-			} catch (IOException e) {
-				fail("3.0", e);
-			}
+			assertClose(input);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -127,10 +123,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("6.0", !projectRoot.exists());
 		} finally {
 			try {
-				if (input != null)
-					input.close();
-			} catch (IOException e) {
-				fail("7.0", e);
+				assertClose(input);
 			} finally {
 				if (projectRoot != null)
 					ensureDoesNotExistInFileSystem(projectRoot);
@@ -160,9 +153,9 @@ public class Bug_26294 extends ResourceTest {
 			projectRoot = project.getLocation().toFile();
 
 			// marks folder as read-only so its files cannot be deleted on Linux
-			folder.setReadOnly(true);
+			setReadOnly(folder, true);
 
-			IFile projectFile = project.getFile(new Path(".project"));
+			IFile projectFile = project.getFile(".project");
 			assertTrue("1.2", projectFile.exists());
 			assertTrue("1.3", projectFile.isSynchronized(IResource.DEPTH_INFINITE));
 
@@ -179,7 +172,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("2.6", !projectFile.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 
-			folder.setReadOnly(false);
+			setReadOnly(folder, false);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -197,14 +190,14 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("6.0", !projectRoot.exists());
 		} finally {
 			if (folder != null && folder.exists())
-				folder.setReadOnly(false);
+				setReadOnly(folder, false);
 			if (projectRoot != null)
 				ensureDoesNotExistInFileSystem(projectRoot);
 		}
 	}
 
 	/**
-	 * Tries to delete a closed project containing an irremovable file.
+	 * Tries to delete a closed project containing an unremovable file.
 	 * Works only for Windows.
 	 */
 	public void testDeleteClosedProjectWindows() {
@@ -249,14 +242,7 @@ public class Bug_26294 extends ResourceTest {
 			}
 			assertTrue("2.1", project.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
-
-			try {
-				input.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				fail("3.0", ioe);
-			}
-
+			assertClose(input);
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
 				project.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
@@ -282,7 +268,7 @@ public class Bug_26294 extends ResourceTest {
 	}
 
 	/**
-	 * Tries to delete a closed project containing an irremovable file.
+	 * Tries to delete a closed project containing an unremovable file.
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
@@ -304,7 +290,7 @@ public class Bug_26294 extends ResourceTest {
 			projectRoot = project.getLocation().toFile();
 
 			// marks folder as read-only so its files cannot be removed on Linux
-			folder.setReadOnly(true);
+			setReadOnly(folder, true);
 
 			try {
 				project.close(getMonitor());
@@ -321,7 +307,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("2.1", project.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 
-			folder.setReadOnly(false);
+			setReadOnly(folder, false);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -336,14 +322,14 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("6.0", !projectRoot.exists());
 		} finally {
 			if (folder != null && folder.exists())
-				folder.setReadOnly(false);
+				setReadOnly(folder, false);
 			if (projectRoot != null)
 				ensureDoesNotExistInFileSystem(projectRoot);
 		}
 	}
 
 	/**
-	 * Tries to delete a folder containing an irremovable file.
+	 * Tries to delete a folder containing an unremovable file.
 	 * Works only for Windows.
 	 */
 	public void testDeleteFolderWindows() {
@@ -382,12 +368,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("2.5", folder.exists());
 			assertTrue("2.7", folder.isSynchronized(IResource.DEPTH_INFINITE));
 
-			try {
-				input.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				fail("3.0", ioe);
-			}
+			assertClose(input);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -402,10 +383,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("5.4", folder.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
 			try {
-				if (input != null)
-					input.close();
-			} catch (IOException e) {
-				fail("7.0", e);
+				assertClose(input);
 			} finally {
 				if (projectRoot != null)
 					ensureDoesNotExistInFileSystem(projectRoot);
@@ -436,7 +414,7 @@ public class Bug_26294 extends ResourceTest {
 			projectRoot = project.getLocation().toFile();
 
 			// marks sub-folder as read-only so its files cannot be removed on Linux
-			subFolder.setReadOnly(true);
+			setReadOnly(subFolder, true);
 
 			try {
 				folder.delete(IResource.FORCE, getMonitor());
@@ -450,7 +428,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("2.5", folder.exists());
 			assertTrue("2.7", folder.isSynchronized(IResource.DEPTH_INFINITE));
 
-			subFolder.setReadOnly(false);
+			setReadOnly(subFolder, false);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -466,7 +444,7 @@ public class Bug_26294 extends ResourceTest {
 			assertTrue("5.5", folder.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
 			if (subFolder != null && subFolder.exists())
-				subFolder.setReadOnly(false);
+				setReadOnly(subFolder, false);
 			if (projectRoot != null)
 				ensureDoesNotExistInFileSystem(projectRoot);
 		}
