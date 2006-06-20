@@ -340,7 +340,7 @@ public class Bug_032076 extends ResourceTest {
 			}
 
 			// mark sub-folder as read-only so its immediate children cannot be removed on Linux
-			roFolder.setReadOnly(true);
+			setReadOnly(roFolder, true);
 			try {
 				sourceFile.move(destinationFile.getFullPath(), IResource.FORCE, getMonitor());
 				fail("2.0");
@@ -422,7 +422,7 @@ public class Bug_032076 extends ResourceTest {
 			}
 
 			// mark sub-folder as read-only so its immediate children cannot be removed on Linux
-			roFolder.setReadOnly(true);
+			setReadOnly(roFolder, true);
 
 			try {
 				roFolder.move(destinationParent.getFullPath().append(roFolder.getName()), IResource.FORCE, getMonitor());
