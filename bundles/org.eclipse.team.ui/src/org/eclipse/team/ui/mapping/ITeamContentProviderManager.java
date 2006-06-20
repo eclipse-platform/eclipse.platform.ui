@@ -100,5 +100,15 @@ public interface ITeamContentProviderManager {
 	 *         mappings in the given scope
 	 */
 	public String[] getContentProviderIds(ISynchronizationScope scope);
+	
+	/**
+	 * Enable the given content descriptors, disabling all others.
+	 * This method will fire a {@link ITeamContentProviderManager#PROP_ENABLED_MODEL_PROVIDERS} 
+	 * property change event to any registered listeners.
+	 * @param descriptors the descriptors to be enabled.
+	 * @see ITeamContentProviderDescriptor#isEnabled()
+	 * @since 3.3
+	 */
+	public void setEnabledDescriptors(ITeamContentProviderDescriptor[] descriptors);
 
 }

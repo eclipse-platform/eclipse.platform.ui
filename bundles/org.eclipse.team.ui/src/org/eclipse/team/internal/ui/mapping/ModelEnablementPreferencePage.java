@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
 import org.eclipse.core.resources.mapping.ModelProvider;
@@ -29,8 +24,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.registry.TeamContentProviderDescriptor;
-import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
@@ -146,10 +139,18 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 	}
 	
 	public boolean performOk() {
-		boolean changed = false;
 		Object[] checked = tableViewer.getCheckedElements();
 		Set nowEnabled = new HashSet();
 		nowEnabled.addAll(Arrays.asList(checked));
+		if (hasDescriptorEnablementChanged(checked)) {
+			TeamUI.getTeamContentProviderManager().setEnabledDescriptors(
+					(ITeamContentProviderDescriptor[]) nowEnabled.toArray(new ITeamContentProviderDescriptor[nowEnabled.size()]));
+			previosulyEnabled = nowEnabled;
+		}
+		return true;
+	}
+
+	private boolean hasDescriptorEnablementChanged(Object[] checked) {
 		ITeamContentProviderDescriptor[] descriptors = TeamUI.getTeamContentProviderManager().getDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			ITeamContentProviderDescriptor descriptor = descriptors[i];
@@ -162,17 +163,10 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 				}
 			}
 			if (descriptor.isEnabled() != enable) {
-				((TeamContentProviderDescriptor)descriptor).setEnabled(enable);
-				changed = true;
+				return true;
 			}
 		}
-		if (changed) {
-			((TeamContentProviderManager)TeamUI.getTeamContentProviderManager()).enablementChanged(
-					(ITeamContentProviderDescriptor[]) previosulyEnabled.toArray(new ITeamContentProviderDescriptor[previosulyEnabled.size()]),
-					(ITeamContentProviderDescriptor[]) nowEnabled.toArray(new ITeamContentProviderDescriptor[nowEnabled.size()]));
-			previosulyEnabled = nowEnabled;
-		}
-		return true;
+		return false;
 	}
 	
 	protected void performDefaults() {

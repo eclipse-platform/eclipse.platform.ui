@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.registry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -115,5 +112,23 @@ public class TeamContentProviderManager implements ITeamContentProviderManager {
 	
 	public void enablementChanged(ITeamContentProviderDescriptor[] oldEnabled, ITeamContentProviderDescriptor[] newEnabled) {
 		firePropertyChange(new PropertyChangeEvent(this, PROP_ENABLED_MODEL_PROVIDERS, oldEnabled, newEnabled));
+	}
+	
+	public void setEnabledDescriptors(ITeamContentProviderDescriptor[] descriptors) {
+		List previouslyEnabled = new ArrayList();
+		for (Iterator iter = this.descriptors.values().iterator(); iter.hasNext();) {
+			TeamContentProviderDescriptor descriptor = (TeamContentProviderDescriptor) iter.next();
+			if (descriptor.isEnabled()) {
+				previouslyEnabled.add(descriptor);
+				descriptor.setEnabled(false);
+			}
+		}
+		for (int i = 0; i < descriptors.length; i++) {
+			TeamContentProviderDescriptor descriptor = (TeamContentProviderDescriptor)descriptors[i];
+			descriptor.setEnabled(true);
+		}
+		enablementChanged(
+				(ITeamContentProviderDescriptor[]) previouslyEnabled.toArray(new ITeamContentProviderDescriptor[previouslyEnabled.size()]),
+				descriptors);
 	}
 }

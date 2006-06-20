@@ -31,8 +31,6 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.registry.TeamContentProviderDescriptor;
-import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
@@ -321,15 +319,18 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 			public void linkActivated(HyperlinkEvent e) {
 				ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)getConfiguration().getParticipant();
 				ModelProvider[] providers = participant.getEnabledModelProviders();
+				Set toEnable = new HashSet();
+				toEnable.addAll(Arrays.asList(descriptors));
 				for (int i = 0; i < providers.length; i++) {
 					ModelProvider provider = providers[i];
 					ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
-					if (desc != null && !desc.isEnabled())
-						((TeamContentProviderDescriptor)desc).setEnabled(true);
+					if (desc != null && !desc.isEnabled()) {
+						toEnable.add(desc);
+					}
 				}
-				((TeamContentProviderManager)TeamUI.getTeamContentProviderManager()).enablementChanged(
-						descriptors,
-						getEnabledContentDescriptors());
+				TeamUI.getTeamContentProviderManager().setEnabledDescriptors(
+						(ITeamContentProviderDescriptor[]) toEnable
+								.toArray(new ITeamContentProviderDescriptor[toEnable.size()]));
 				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE );
 
 			}
