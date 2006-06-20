@@ -28,35 +28,10 @@ public class TarEntry implements Cloneable
 	public static final int FILE = '0';
 
 	/**
-	 * Entry type for hard links.
-	 */
-	public static final int LINK = '1';
-	
-	/**
-	 * Entry type for symbolic links.
-	 */
-	public static final int SYMLINK = '2';
-	
-	/**
-	 * Entry type for character device nodes.
-	 */
-	public static final int CHAR_DEVICE = '3';
-	
-	/**
-	 * Entry type for block device nodes.
-	 */
-	public static final int BLOCK_DEVICE = '4';
-	
-	/**
 	 * Entry type for directories.
 	 */
 	public static final int DIRECTORY = '5';
 	
-	/**
-	 * Entry type for FIFO files.
-	 */
-	public static final int FIFO = '6';
-
 	/**
 	 * Create a new TarEntry for a file of the given name at the
 	 * given position in the file.
