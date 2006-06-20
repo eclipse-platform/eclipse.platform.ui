@@ -83,96 +83,17 @@ public interface IIDEHelpContextIds {
     public static final String SCRUB_LOCAL_ACTION = PREFIX
             + "scrub_local_action_context"; //$NON-NLS-1$
 
-    public static final String SET_PAGE_ACTION = PREFIX
-            + "set_page_action_context"; //$NON-NLS-1$
-
-    public static final String ABOUT_ACTION = PREFIX + "about_action_context"; //$NON-NLS-1$
-
-    public static final String CLOSE_ALL_ACTION = PREFIX
-            + "close_all_action_context"; //$NON-NLS-1$
-
-    public static final String LOCK_TOOLBAR_ACTION = PREFIX
-            + "lock_toolbar_action_context"; //$NON-NLS-1$
-
-    public static final String CLOSE_PAGE_ACTION = PREFIX
-            + "close_page_action_context"; //$NON-NLS-1$
-
-    public static final String CLOSE_PART_ACTION = PREFIX
-            + "close_part_action_context"; //$NON-NLS-1$
-
-    public static final String EDIT_ACTION_SETS_ACTION = PREFIX
-            + "edit_action_sets_action_context"; //$NON-NLS-1$
-
-    public static final String EDIT_PERSPECTIVES_ACTION = PREFIX
-            + "edit_perspectives_action_context"; //$NON-NLS-1$
-
     public static final String GLOBAL_INCREMENTAL_BUILD_ACTION = PREFIX
             + "global_incremental_build_action_context"; //$NON-NLS-1$
 
     public static final String GLOBAL_FULL_BUILD_ACTION = PREFIX
             + "global_full_build_action_context"; //$NON-NLS-1$
 
-    public static final String DELETE_RETARGET_ACTION = PREFIX
-            + "delete_retarget_action_context"; //$NON-NLS-1$
-
-    public static final String CLOSE_ALL_PAGES_ACTION = PREFIX
-            + "close_all_pages_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_NEW_PAGE_ACTION = PREFIX
-            + "open_new_page_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_NEW_WINDOW_ACTION = PREFIX
-            + "open_new_window_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_PREFERENCES_ACTION = PREFIX
-            + "open_preferences_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_NEW_ACTION = PREFIX
-            + "open_new_action_context"; //$NON-NLS-1$
-
-    public static final String NEXT_PAGE_ACTION = PREFIX
-            + "next_page_action_context"; //$NON-NLS-1$
-
     public static final String QUICK_START_ACTION = PREFIX
             + "quick_start_action_context"; //$NON-NLS-1$
 
     public static final String TIPS_AND_TRICKS_ACTION = PREFIX
             + "tips_and_tricks_action_context"; //$NON-NLS-1$
-
-    public static final String QUIT_ACTION = PREFIX + "quit_action_context"; //$NON-NLS-1$
-
-    public static final String RESET_PERSPECTIVE_ACTION = PREFIX
-            + "reset_perspective_action_context"; //$NON-NLS-1$
-
-    public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX
-            + "target_editors_visibility_action_context"; //$NON-NLS-1$
-
-    public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX
-            + "switch_to_perspective_action_context"; //$NON-NLS-1$
-
-    public static final String SHOW_VIEW_ACTION = PREFIX
-            + "show_view_action_context"; //$NON-NLS-1$
-
-    public static final String SHOW_VIEW_OTHER_ACTION = PREFIX
-            + "show_view_other_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_PERSPECTIVE_ACTION = PREFIX
-            + "open_perspective_action_context"; //$NON-NLS-1$
-
-    public static final String OPEN_PERSPECTIVE_OTHER_ACTION = PREFIX
-            + "open_perspective_other_action_context"; //$NON-NLS-1$
-
-    public static final String CLOSE_ALL_SAVED_ACTION = PREFIX
-            + "close_all_saved_action_context"; //$NON-NLS-1$
-
-    public static final String SHOW_VIEW_MENU_ACTION = PREFIX
-            + "show_view_menu_action_context"; //$NON-NLS-1$
-
-    public static final String WORKBENCH_EDITORS_ACTION = PREFIX
-            + "workbench_editors_action_context"; //$NON-NLS-1$
-
-    public static final String NEW_WIZARD_SHORTCUT_ACTION = PREFIX
-            + "new_wizard_shortcut_action_context"; //$NON-NLS-1$
 
     public static final String TEXT_CUT_ACTION = PREFIX
             + "text_cut_action_context"; //$NON-NLS-1$
@@ -196,9 +117,6 @@ public interface IIDEHelpContextIds {
    public static final String PROJECT_LOCATION_SELECTION_DIALOG = PREFIX
             + "project_location_selection_dialog_context"; //$NON-NLS-1$
 
-    public static final String SHOW_PROJECT_PERSPECTIVE_DIALOG = PREFIX
-            + "show_project_perspective_dialog_context"; //$NON-NLS-1$
-
     public static final String CONTAINER_SELECTION_DIALOG = PREFIX
             + "container_selection_dialog_context"; //$NON-NLS-1$
 
@@ -208,13 +126,8 @@ public interface IIDEHelpContextIds {
     public static final String RESOURCE_SELECTION_DIALOG = PREFIX
             + "resource_selection_dialog_context"; //$NON-NLS-1$
 
-    public static final String GOTO_LINE_DIALOG = PREFIX
-            + "goto_line_dialog_context"; //$NON-NLS-1$	
-
     public static final String DELETE_PROJECT_DIALOG = PREFIX
             + "delete_project_dialog_context"; //$NON-NLS-1$
-
-    public static final String FILTER_DIALOG = PREFIX + "filter_dialog_context"; //$NON-NLS-1$
 
     public static final String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX
             + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
@@ -233,9 +146,6 @@ public interface IIDEHelpContextIds {
     public static final String PATH_VARIABLE_SELECTION_DIALOG = PREFIX
             + "path_variable_selection_dialog"; //$NON-NLS-1$
 
-    public static final String EXIT_PROMPT_ON_CLOSE_LAST_WINDOW = PREFIX
-            + "exit_prompt_on_close_last_window"; //$NON-NLS-1$
-
     public static final String SAVE_AS_DIALOG = PREFIX
     + "save_as_dialog_context"; //$NON-NLS-1$
 
@@ -251,21 +161,12 @@ public interface IIDEHelpContextIds {
     public static final String FILE_STATES_PREFERENCE_PAGE = PREFIX
             + "file_states_preference_page_context"; //$NON-NLS-1$
 
-    public static final String COMPARE_VIEWERS_PREFERENCE_PAGE = PREFIX
-            + "compare_viewers_preference_page_context"; //$NON-NLS-1$
-
-   public static final String FONT_PREFERENCE_PAGE = PREFIX
-            + "font_preference_page_context"; //$NON-NLS-1$
-
     public static final String LINKED_RESOURCE_PREFERENCE_PAGE = PREFIX
             + "linked_resource_preference_page_context"; //$NON-NLS-1$
 
     // Property pages
     public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX
             + "project_reference_property_page_context"; //$NON-NLS-1$
-
-    public static final String PROJECT_CAPABILITY_PROPERTY_PAGE = PREFIX
-            + "project_capability_property_page_context"; //$NON-NLS-1$
 
     public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX
             + "resource_info_property_page_context"; //$NON-NLS-1$
@@ -276,15 +177,6 @@ public interface IIDEHelpContextIds {
 
     public static final String NEW_PROJECT_REFERENCE_WIZARD_PAGE = PREFIX
             + "new_project_reference_wizard_page_context"; //$NON-NLS-1$
-
-    public static final String NEW_PROJECT_CAPABILITY_WIZARD_PAGE = PREFIX
-            + "new_project_capability_wizard_page_context"; //$NON-NLS-1$
-
-    public static final String NEW_PROJECT_REVIEW_WIZARD_PAGE = PREFIX
-            + "new_project_review_wizard_page_context"; //$NON-NLS-1$
-
-    public static final String NEW_PROJECT_CONFIGURE_WIZARD_PAGE = PREFIX
-            + "new_project_configure_wizard_page_context"; //$NON-NLS-1$
 
     public static final String NEW_FOLDER_WIZARD_PAGE = PREFIX
             + "new_folder_wizard_page_context"; //$NON-NLS-1$
@@ -311,7 +203,4 @@ public interface IIDEHelpContextIds {
 
    public static final String NEW_PROJECT_WIZARD = PREFIX
    	+ "new_project_wizard_context"; //$NON-NLS-1$
-
-    public static final String UPDATE_CAPABILITY_WIZARD = PREFIX
-            + "update_capability_wizard_context"; //$NON-NLS-1$
 }
