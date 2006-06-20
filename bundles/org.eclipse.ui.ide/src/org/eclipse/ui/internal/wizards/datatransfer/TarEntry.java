@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ package org.eclipse.ui.internal.wizards.datatransfer;
  */
 public class TarEntry implements Cloneable
 {	
-	String name, linkdest, username, groupname;
-	long mode, time, size;
-	int type, uid, gid, major, minor;
+	private String name;
+	private long mode, time, size;
+	private int type;
 	int filepos;
 
 	/**
@@ -82,45 +82,6 @@ public class TarEntry implements Cloneable
 	}
 
 	/**
-	 * Create a copy of the given TarEntry.
-	 * 
-	 * @param e entry to copy from
-	 */
-	public TarEntry(TarEntry e) {
-		name = e.name;
-		mode = e.mode;
-		linkdest = e.linkdest;
-		username = e.username;
-		groupname = e.groupname;
-		time = e.time;
-		size = e.size;
-		type = e.type;
-		uid = e.uid;
-		gid = e.gid;
-		major = e.major;
-		minor = e.minor;
-		filepos = e.filepos;
-	}
-
-	/**
-	 * If this file is a device inode, returns its major number.
-	 * 
-	 * @return major number of the device
-	 */
-	public int getDeviceMajor() {
-		return major;
-	}
-
-	/**
-	 * If this file is a device inode, returns its minor number.
-	 * 
-	 * @return minor number of the device
-	 */
-	public int getDeviceMinor() {
-		return minor;
-	}
-
-	/**
 	 * Returns the type of this file, one of FILE, LINK, SYM_LINK,
 	 * CHAR_DEVICE, BLOCK_DEVICE, DIRECTORY or FIFO.
 	 * 
@@ -128,35 +89,6 @@ public class TarEntry implements Cloneable
 	 */
 	public int getFileType() {
 		return type;
-	}
-
-	/**
-	 * Returns the group ID of the file.
-	 * 
-	 * @return group ID
-	 */
-	public int getGroupID() {
-		return gid;
-	}
-
-	/**
-	 * Returns the name of the group.  If not null, this should be used
-	 * in favour of the group ID should an equivalent group be found.
-	 * 
-	 * @return group name
-	 */
-	public String getGroupName() {
-		return groupname;
-	}
-
-	/**
-	 * If this file represents a symbolic link or hard link, this is
-	 * its destination path.
-	 * 
-	 * @return link destination
-	 */
-	public String getLinkDestination() {
-		return linkdest;
 	}
 
 	/**
@@ -197,46 +129,6 @@ public class TarEntry implements Cloneable
 	}
 
 	/**
-	 * Returns the user ID of the owner of this file.
-	 * 
-	 * @return userid
-	 */
-	public int getUserID() {
-		return uid;
-	}
-	
-	/**
-	 * Returns the name of the user that owns this file.  If not null,
-	 * this should be used in favour of the user ID should an
-	 * equivalent user be found.
-	 * 
-	 * @return user name
-	 */
-	public String getUserName() {
-		return username;
-	}
-
-	/**
-	 * Sets the major number of the device if this entry represents a device
-	 * inode.
-	 * 
-	 * @param major
-	 */
-	public void setDeviceMajor(int major) {
-		this.major = major;
-	}
-
-	/**
-	 * Sets the minor number of the device if this entry represents a device
-	 * inode.
-	 * 
-	 * @param minor
-	 */
-	public void setDeviceMinor(int minor) {
-		this.minor = minor;
-	}
-
-	/**
 	 * Sets the type of the file, one of FILE, LINK, SYMLINK, CHAR_DEVICE,
 	 * BLOCK_DEVICE, or DIRECTORY.
 	 * 
@@ -244,34 +136,6 @@ public class TarEntry implements Cloneable
 	 */
 	public void setFileType(int type) {
 		this.type = type;
-	}
-
-	/**
-	 * Sets the group ID of this file.
-	 * 
-	 * @param gid
-	 */
-	public void setGroupID(int gid) {
-		this.gid = gid;
-	}
-
-	/**
-	 * Sets the name of the group of this file.
-	 * 
-	 * @param groupname
-	 */
-	public void setGroupName(String groupname) {
-		this.groupname = groupname;
-	}
-
-	/**
-	 * If this file represents a symbolic or hard link, sets the path name
-	 * of the destination.
-	 * 
-	 * @param linkdest
-	 */
-	public void setLinkDestination(String linkdest) {
-		this.linkdest = linkdest;
 	}
 
 	/**
@@ -300,23 +164,5 @@ public class TarEntry implements Cloneable
 	 */
 	public void setTime(long time) {
 		this.time = time;
-	}
-
-	/**
-	 * Sets the user ID of the owner of this file.
-	 * 
-	 * @param uid
-	 */
-	public void setUserID(int uid) {
-		this.uid = uid;
-	}
-
-	/**
-	 * Sets the name of the user who owns this file.
-	 * 
-	 * @param username
-	 */
-	public void setUserName(String username) {
-		this.username = username;
 	}
 }
