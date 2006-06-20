@@ -257,6 +257,10 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		
 		ITextSelection textSelection = (ITextSelection) selectionProvider.getSelection();
         if (textSelection == null) return;
+        
+        if (!(selection instanceof CVSAnnotateBlock))
+        	return;
+        
 		CVSAnnotateBlock listSelection = (CVSAnnotateBlock) selection.getFirstElement();
         if (listSelection == null) return;
 
