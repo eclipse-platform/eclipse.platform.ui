@@ -116,7 +116,6 @@ public class DataTransferMessages extends NLS {
 	public static String FileExport_toDirectory;
 
 	public static String ZipExport_compressContents;
-	public static String ZipExport_description;
 	public static String ZipExport_destinationLabel;
 	public static String ZipExport_mustBeFile;
 	public static String ZipExport_alreadyExists;

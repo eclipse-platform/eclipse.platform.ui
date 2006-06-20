@@ -301,8 +301,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String MoveFilesAndFoldersOperation_problemMessage;
 	public static String MoveFilesAndFoldersOperation_operationTitle;
 
-	public static String ICategory_other;
-
 	public static String WizardDataTransfer_existsQuestion;
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;
 	public static String WizardDataTransfer_exceptionMessage;
