@@ -45,8 +45,6 @@ public class ResourceAndContainerGroup implements Listener {
 
     public static final int PROBLEM_RESOURCE_EXIST = 2;
 
-    public static final int PROBLEM_RESOURCE_CONTAINS_SEPARATOR = 3;
-
     public static final int PROBLEM_PATH_INVALID = 4;
 
     public static final int PROBLEM_CONTAINER_EMPTY = 5;
