@@ -36,8 +36,10 @@ public class ReflectedMethod {
         this.subject = subject;
         method = null;
         try {
-        	method = subject.getClass().getDeclaredMethod(methodName, paramTypes);
-        } catch (Exception e) {}
+        	method = subject.getClass().getMethod(methodName, paramTypes);
+        } catch (Exception e) {
+        	System.out.println(e);
+        }
     }
     
     /**
