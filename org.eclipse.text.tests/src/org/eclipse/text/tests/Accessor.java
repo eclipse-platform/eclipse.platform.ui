@@ -73,7 +73,7 @@ public class Accessor extends Assert {
 	 * Creates an accessor for the given class.
 	 * <p>
 	 * In order to get the type information from the given
-	 * arguments they must all be instanc eof Object. Use
+	 * arguments they must all be instanceof Object. Use
 	 * {@link #Accessor(String, ClassLoader, Class[], Object[])} if this
 	 * is not the case.</p>
 	 * 
