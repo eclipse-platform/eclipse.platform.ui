@@ -326,7 +326,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	}
 
 	/**
-	 * Sets the comment of this refactoring.
+	 * Sets the details comment of this refactoring.
 	 * <p>
 	 * Note: This API must not be called from outside the refactoring framework.
 	 * </p>
