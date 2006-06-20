@@ -12,8 +12,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import com.ibm.icu.text.DateFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -45,11 +43,6 @@ public final class Util {
 	private static DateFormat format;
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
-
-	static final ConcreteMarker[] EMPTY_CONCRETE_MARKER_ARRAY = new ConcreteMarker[0];
-
-	protected static final Collection EMPTY_COLLECTION = Arrays
-			.asList(new MarkerNode[0]);
 
 	/**
 	 * Get the propery called property from the marker. If it is not found
@@ -264,27 +257,6 @@ public final class Util {
 
 		return JFaceResources.getResources().createImageWithDefault(
 				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
-
-	}
-
-	/**
-	 * Return the text for severity
-	 * 
-	 * @param severity
-	 * @return String
-	 */
-	public static String getSeverityText(int severity) {
-		if (severity == IMarker.SEVERITY_ERROR) {
-			return MarkerMessages.propertiesDialog_errorLabel;
-		}
-		if (severity == IMarker.SEVERITY_WARNING) {
-			return MarkerMessages.propertiesDialog_warningLabel;
-		}
-		if (severity == IMarker.SEVERITY_INFO) {
-			return MarkerMessages.propertiesDialog_infoLabel;
-		}
-
-		return EMPTY_STRING;
 
 	}
 

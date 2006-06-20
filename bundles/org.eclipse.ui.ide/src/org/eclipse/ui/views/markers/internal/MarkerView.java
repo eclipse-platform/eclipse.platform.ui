@@ -1478,15 +1478,6 @@ public abstract class MarkerView extends TableView {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.views.markers.internal.TableView#sorterChanged()
-	 */
-	protected void sorterChanged() {
-		getViewer().refresh();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#showBusy(boolean)
 	 */
 	public void showBusy(boolean busy) {
