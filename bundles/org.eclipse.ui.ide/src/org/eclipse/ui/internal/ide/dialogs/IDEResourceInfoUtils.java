@@ -221,39 +221,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Return a String that indicates the size of the supplied file.
 	 * 
-	 * @param file
-	 * @return String
-	 */
-	public static String getSizeString(IFile file) {
-		if (!file.isLocal(IResource.DEPTH_ZERO)) {
-			return NOT_LOCAL_TEXT;
-		}
-
-		URI location = file.getLocationURI();
-		if (location == null) {
-			if (file.isLinked()) {
-				return MISSING_PATH_VARIABLE_TEXT;
-			}
-
-			return NOT_EXIST_TEXT;
-		}
-
-		IFileInfo info = getFileInfo(location);
-		if (info == null) {
-			return UNKNOWN_LABEL;
-		}
-
-		if (info.exists()) {
-			return NLS.bind(BYTES_LABEL, Long.toString(info.getLength()));
-		}
-
-		return NOT_EXIST_TEXT;
-
-	}
-
-	/**
-	 * Return a String that indicates the size of the supplied file.
-	 * 
 	 * @param resource
 	 * @return String
 	 */
