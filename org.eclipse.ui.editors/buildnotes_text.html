@@ -19,12 +19,24 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 ========== Eclipse Build Input June 20th 2006 ==========<br>
 <pre>
 - bug fixing
+- AbstractInformationControlManager#computeInformationControlLocation will no longer use the 
+  lowest priority anchor in the case that the proposed information control size does not fit 
+  with any of the anchors. Instead, it uses AbstractInformationControlManager#computeAvailableArea
+  to see which anchor offers the largest intersection with the proposed control size. In addition,
+  the control size and location are adjusted such that the information control does not overlap 
+  with the subject area (unless the anchor is ANCHOR_GLOBAL) and does not bleed over the monitor edges.
 </pre>
 <br>
 <br>
 ========== Eclipse Build Input June 13th 2006 ==========<br>
 <pre>
 - bug fixing
+- rewrite of GapTextStore which improves random replace operations as less re-allocations
+  occur. This allows to deprecate SequentialRewriteTextStore as its performance is not better than
+  the new GapTextStore. Users of SequentialRewriteTextStore should simply use GapTextStore instead; consequently,
+  the default IDocument implementation (Document) no longer does text store switching
+  when a sequential rewrite session starts or ends. Also, the existing constructor of GapTextStore has
+  been deprecated.
 </pre>
 <br>
 <br>
