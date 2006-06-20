@@ -18,7 +18,6 @@ import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.osgi.util.NLS;
 
 public class UniversalUniqueIdentifier implements java.io.Serializable {
 
@@ -58,17 +57,10 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	public static final int CLOCK_SEQUENCE_HIGH_AND_RESERVED = 8;
 	public static final int CLOCK_SEQUENCE_LOW = 9;
 	public static final int NODE_ADDRESS_START = 10;
-	public static final int NODE_ADDRESS_STOP = 13;
 	public static final int HOST_ADDRESS_BYTE_SIZE = 4;
 	public static final int NODE_ADDRESS_BYTE_SIZE = 6;
 
 	public static final int BYTE_MASK = 0xFF;
-
-	public static final int MOST_SIGINIFICANT_BIT_MASK = 0x80;
-
-	public static final int MOST_SIGNIFICANT_TWO_BITS_MASK = 0xC0;
-
-	public static final int MOST_SIGNIFICANT_THREE_BITS_MASK = 0xE0;
 
 	public static final int HIGH_NIBBLE_MASK = 0xF0;
 
@@ -77,9 +69,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	public static final int SHIFT_NIBBLE = 4;
 
 	public static final int ShiftByte = 8;
-	public static final int PrintStringSize = 32;
-//	public static final int[] PrintStringDashPositions = new int[] {8, 13, 18, 23};
-//	public static final char[] ValidPrintStringCharacters = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', '-'};
 
 	/**
 	 UniversalUniqueIdentifier default constructor returns a
@@ -105,36 +94,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		fBits = new byte[BYTES_SIZE];
 		if (byteValue.length >= BYTES_SIZE)
 			System.arraycopy(byteValue, 0, fBits, 0, BYTES_SIZE);
-	}
-
-	/**
-	 Construct an instance whose internal representation is defined by the given string.  
-	 The format of the string is that of the <code>toString()</code> instance method.
-
-	 <p>It is useful to compare the <code>fromHex(String)</code> method in the
-	 Java class <code>HexConverter</code>.
-
-	 @see       #toString()
-	 */
-	public UniversalUniqueIdentifier(String string) {
-		// Check to ensure it is a String of the right length.
-		// do not use Assert to avoid having to call Policy.bind ahead of time
-		if (string.length() != PrintStringSize)
-			Assert.isTrue(false, NLS.bind(Messages.utils_wrongLength, string));
-
-		char[] newChars = string.toCharArray();
-
-		// Convert to uppercase.
-		for (int i = 0; i < newChars.length; i++)
-			newChars[i] = Character.toUpperCase(newChars[i]);
-
-		// LoadUp a new instance.
-		for (int i = 0; i < BYTES_SIZE; i++) {
-			int characterOffset = i * 2;
-			int hi = Character.digit(newChars[characterOffset], 16);
-			int lo = Character.digit(newChars[characterOffset + 1], 16);
-			fBits[i] = new Integer((hi * 16 + lo)).byteValue();
-		}
 	}
 
 	private void appendByteString(StringBuffer buffer, byte value) {
@@ -252,62 +211,12 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		}
 	}
 
-	public byte[] getNode() {
-		byte[] nodeValue = new byte[HOST_ADDRESS_BYTE_SIZE];
-
-		System.arraycopy(fBits, NODE_ADDRESS_START, nodeValue, 0, HOST_ADDRESS_BYTE_SIZE);
-		return nodeValue;
-	}
-
 	private static byte[] getNodeAddress() {
 		return nodeAddress;
 	}
 
-	public int getVariant() {
-		byte flags = fBits[CLOCK_SEQUENCE_HIGH_AND_RESERVED];
-
-		if ((flags & MOST_SIGINIFICANT_BIT_MASK) == 0) {
-			// HP/Apollo NCS 1.x and DEC RPC Version 1.
-			return (0);
-		}
-
-		if ((flags & MOST_SIGNIFICANT_TWO_BITS_MASK) == MOST_SIGINIFICANT_BIT_MASK) {
-			// HP/DEC OSF 'DEC UID Architecture Functional Specification Version X1.0.4' from NCS 2.0.
-			return (1);
-		}
-
-		if ((flags & MOST_SIGNIFICANT_THREE_BITS_MASK) == MOST_SIGNIFICANT_TWO_BITS_MASK) {
-			// Microsoft GUID
-			return (2);
-		}
-
-		if ((flags & MOST_SIGNIFICANT_THREE_BITS_MASK) == MOST_SIGNIFICANT_THREE_BITS_MASK) {
-			// reserved
-			return (3);
-		}
-
-		// unknown
-		return (-1);
-	}
-
 	public int hashCode() {
 		return fBits[0] + fBits[3] + fBits[7] + fBits[11] + fBits[15];
-	}
-
-	/**
-	 * Tests to see if the receiver is anonymous.
-	 * <p>
-	 * If the receiver was constrcted from a string or bytes it
-	 * may not really be anonymous.<p>
-	 *
-	 * @return boolean true if the receiver is anonymous
-	 */
-	public boolean isAnonymous() {
-		return isUndefined() || ((getNode()[0] & MOST_SIGINIFICANT_BIT_MASK) == MOST_SIGINIFICANT_BIT_MASK);
-	}
-
-	public boolean isUndefined() {
-		return this.equals(UniversalUniqueIdentifier.newUndefined());
 	}
 
 	/**
