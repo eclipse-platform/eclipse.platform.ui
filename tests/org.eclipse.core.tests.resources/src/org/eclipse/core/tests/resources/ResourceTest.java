@@ -884,6 +884,17 @@ public abstract class ResourceTest extends CoreTest {
 		}
 	}
 
+	protected void setReadOnly(IResource target, boolean value) {
+		ResourceAttributes attributes = target.getResourceAttributes();
+		assertNotNull("setReadOnly for null attributes", attributes);
+		attributes.setReadOnly(value);
+		try {
+			target.setResourceAttributes(attributes);
+		} catch (CoreException e) {
+			fail("ResourceTest#setReadOnly", e);
+		}
+	}
+
 	protected void setReadOnly(IFileStore target, boolean value) {
 		assertTrue("setReadOnly.1", usingNatives());
 		IFileInfo fileInfo = target.fetchInfo();
