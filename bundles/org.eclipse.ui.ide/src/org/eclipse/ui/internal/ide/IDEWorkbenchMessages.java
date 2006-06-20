@@ -310,28 +310,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardTransferPage_selectAll;
 	public static String WizardTransferPage_deselectAll;
 
-	public static String NewProjectWizard_windowTitle;
-	public static String NewProjectWizard_title;
-	public static String NewProjectWizard_errorTitle;
-	public static String NewProjectWizard_noWizard;
-
-	public static String CreateProjectWizard_errorTitle;
-	public static String CreateProjectWizard_internalError;
-	public static String CreateProjectWizard_caseVariantExistsError;
-
-	public static String WizardProjectReviewPage_description;
-	public static String WizardProjectConfigurePage_description;
-
-	public static String WizardStepGroup_stepsLabel;
-	public static String MultiStepReviewWizardPage_detailsLabel;
-	public static String MultiStepReviewWizardPage_instructionNextLabel;
-	public static String MultiStepReviewWizardPage_instructionFinishLabel;
-
-	public static String MultiStepWizard_finishLabel;
-
-	public static String CreateProjectStep_label;
-	public static String CreateProjectStep_details;
-
 	// --- Import ---
 	public static String WizardImportPage_specifyFolder;
 	public static String WizardImportPage_specifyProject;
@@ -375,19 +353,10 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- New Example ---
 	public static String NewExample_title;
 
-	// --- New Project ---
-	public static String WizardNewProjectCreationPage_description;
-	public static String WizardNewProjectCreationPage_locationError;
 	public static String WizardNewProjectCreationPage_projectNameEmpty;
 	public static String WizardNewProjectCreationPage_projectLocationEmpty;
 	public static String WizardNewProjectCreationPage_projectExistsMessage;
-	public static String WizardNewProjectCreationPage_projectLocationExistsMessage;
-	public static String WizardNewProjectCreationPage_projectContentsLabel;
-	public static String WizardNewProjectCreationPage_useDefaultLabel;
 	public static String WizardNewProjectCreationPage_nameLabel;
-	public static String WizardNewProjectCreationPage_directoryLabel;
-	public static String WizardNewProjectCreationPage_locationLabel;
-	public static String WizardNewProjectCreationPage_browseLabel;
 	public static String WizardNewProjectReferences_title;
 
 	// --- New Folder ---
@@ -593,14 +562,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ProjectLocationSelectionDialog_locationError;
 	public static String ProjectLocationSelectionDialog_selectionTitle;
 	public static String ProjectLocationSelectionDialog_useDefaultLabel;
-
-	public static String ProjectPerspectiveChoiceDialog_title;
-	public static String ProjectPerspectiveChoiceDialog_choosePerspective;
-	public static String ProjectPerspectiveChoiceDialog_options;
-	public static String ProjectPerspectiveChoiceDialog_newWindow;
-	public static String ProjectPerspectiveChoiceDialog_sameWindow;
-	public static String ProjectPerspectiveChoiceDialog_errorTitle;
-	public static String ProjectPerspectiveChoiceDialog_errorMessage;
 
 	public static String ResourceSelectionDialog_title;
 	public static String ResourceSelectionDialog_message;
