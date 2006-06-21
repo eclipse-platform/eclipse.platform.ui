@@ -120,13 +120,7 @@ public/*final*/class WorkbenchImages {
     	gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
     	gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
     	
-    	Shape viewMenuShape = new Shape(3);
-    	viewMenuShape.add(1,1);
-    	viewMenuShape.add(10,1);
-    	viewMenuShape.add(6,5);
-    	viewMenuShape.add(5,5);
-    	
-	    int[] shapeArray = viewMenuShape.getData();
+	    int[] shapeArray = new int[] {1, 1, 10, 1, 6, 5, 5, 5};
 	    gc.fillPolygon(shapeArray);
 	    gc.drawPolygon(shapeArray);
 	    
