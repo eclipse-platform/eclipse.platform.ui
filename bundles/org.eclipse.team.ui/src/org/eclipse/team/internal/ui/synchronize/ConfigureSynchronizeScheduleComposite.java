@@ -7,23 +7,33 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 54630
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * A composite that allows editing a subscriber refresh schedule. A validator can be used to allow
- * containers to show page completiong.
+ * containers to show page completion.
  * 
  * @since 3.0
  */
@@ -69,10 +79,18 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createMainDialogArea(Composite parent) {
+		GC gc = new GC(parent);
+		gc.setFont(JFaceResources.getDialogFont());
+		FontMetrics	fontMetrics = gc.getFontMetrics();
+		gc.dispose();
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		gridLayout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
+		gridLayout.verticalSpacing = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING);
 		setLayout(gridLayout);
-		setLayoutData(new GridData());
+		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		Composite area = this;
 
 		createWrappingLabel(area, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_1, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, schedule.getParticipant().getName()) }), 0, 2); 
@@ -118,6 +136,10 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 			composite.setLayoutData(gridData);
 			final GridLayout gridLayout_1 = new GridLayout();
 			gridLayout_1.numColumns = 3;
+			gridLayout_1.marginWidth = 0;
+			gridLayout_1.marginHeight = 0;
+			gridLayout_1.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
+			gridLayout_1.verticalSpacing = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING);
 			composite.setLayout(gridLayout_1);
 			{
 				final Label label = new Label(composite, SWT.NONE);
@@ -131,6 +153,19 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 				time.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						updateEnablements();
+					}
+				});
+				time.addVerifyListener(new VerifyListener() {
+					public void verifyText(VerifyEvent e) {
+						String string = e.text;
+						char [] chars = new char [string.length ()];
+						string.getChars (0, chars.length, chars, 0);
+						for (int i=0; i<chars.length; i++) {
+							if (!('0' <= chars [i] && chars [i] <= '9')) {
+								e.doit = false;
+								return;
+							}
+						}
 					}
 				});
 			}
@@ -148,13 +183,17 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 */
 	public void saveValues() {
 		int hours = hoursOrSeconds.getSelectionIndex();
-		long seconds = Long.parseLong(time.getText());
-		if(hours == 0) {
-			seconds = seconds * 3600;
-		} else {
-			seconds = seconds * 60;
+		try {
+			long seconds = Long.parseLong(time.getText());
+			if(hours == 0) {
+				seconds = seconds * 3600;
+			} else {
+				seconds = seconds * 60;
+			}
+			schedule.setRefreshInterval(seconds);
+		} catch (NumberFormatException e) {
+			// keep old value
 		}
-		schedule.setRefreshInterval(seconds);
 		if(schedule.isEnabled() != enableBackgroundRefresh.getSelection()) {
 			schedule.setEnabled(enableBackgroundRefresh.getSelection(), true /* allow to start */);
 		}
@@ -173,16 +212,20 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#updateEnablements()
 	 */
 	public void updateEnablements() {
-		try {
-			long number = Long.parseLong(time.getText());
-			if(number <= 0) {
-				validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
-			} else {
-				validator.setComplete(null);
-			}
-		} catch (NumberFormatException e) {
-			validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_8); 
-		}	
+		if (userRefreshOnly.getSelection()) {
+			validator.setComplete(null);
+		} else {
+			try {
+				long number = Long.parseLong(time.getText());
+				if(number <= 0) {
+					validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_7); 
+				} else {
+					validator.setComplete(null);
+				}
+			} catch (NumberFormatException e) {
+				validator.setComplete(TeamUIMessages.ConfigureRefreshScheduleDialog_8); 
+			}	
+		}
 		time.setEnabled(enableBackgroundRefresh.getSelection());
 		hoursOrSeconds.setEnabled(enableBackgroundRefresh.getSelection());
 	}
