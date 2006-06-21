@@ -13,7 +13,6 @@ package org.eclipse.team.ui;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
@@ -25,9 +24,6 @@ import org.eclipse.ui.PartInitException;
  * This class is not intended to be subclassed or instantiated by clients
  */
 public class TeamUI {
-
-	// manages synchronize participants
-	private static ISynchronizeManager synchronizeManager;
 	
 	/**
 	 * Property constant indicating the global ignores list has changed. 
@@ -47,10 +43,7 @@ public class TeamUI {
 	 * @since 3.0
 	 */
 	public static ISynchronizeManager getSynchronizeManager() {
-		if (synchronizeManager == null) {
-			synchronizeManager = new SynchronizeManager();
-		}
-		return synchronizeManager;
+		return TeamUIPlugin.getPlugin().getSynchronizeManager();
 	}
 
 	/**

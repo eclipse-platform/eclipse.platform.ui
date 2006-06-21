@@ -13,12 +13,7 @@ package org.eclipse.team.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -40,10 +35,8 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamStateProvider;
-import org.eclipse.team.ui.synchronize.TeamStateProvider;
-import org.eclipse.team.ui.synchronize.SubscriberTeamStateProvider;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -72,6 +65,9 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private WorkspaceTeamStateProvider provider;
 
 	private Map decoratedStateProviders = new HashMap();
+	
+	// manages synchronize participants
+	private SynchronizeManager synchronizeManager;
 	
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -228,7 +224,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		try {
-			((SynchronizeManager)TeamUI.getSynchronizeManager()).dispose();
+			if (synchronizeManager != null)
+				synchronizeManager.dispose();
 		} finally {
 			super.stop(context);
 		}
@@ -436,5 +433,12 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		if (provider == null)
 			provider = new WorkspaceTeamStateProvider();
 		return provider;
+	}
+	
+	public ISynchronizeManager getSynchronizeManager() {
+		if (synchronizeManager == null) {
+			synchronizeManager = new SynchronizeManager();
+		}
+		return synchronizeManager;
 	}
 }
