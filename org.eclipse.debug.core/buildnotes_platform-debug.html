@@ -9,6 +9,18 @@
 <body>
 <h1> Eclipse 3.3 Debug Platform Build Notes&nbsp;</h1>
 
+<h2>Summary of API changes in 3.3</h2>
+<ul>
+  <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute specifies the encoding
+   used by the console. When unspecified the default system encoding is used. This constant replaces
+   the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>   
+</ul>
+
+<h2>June 27, 2006</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132616">132616</a>: [console] Console corrupts UTF-8<br>
+
 <h2>June 20, 2006</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=67370">67370</a>: [console] F1 help missing - Console view<br>
