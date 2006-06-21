@@ -151,9 +151,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private NavigationHistory navigationHistory = new NavigationHistory(this);
 
-    //for dynamic UI - saving state for editors, views and perspectives
-    private HashMap stateMap = new HashMap();
-    
     /**
      * If we're in the process of activating a part, this points to the new part.
      * Otherwise, this is null.
@@ -2019,13 +2016,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
-    /**
-     * Returns the unprotected window.
-     */
-    protected WorkbenchWindow getUnprotectedWindow() {
-        return window;
-    }
-
     /*
      * Returns the view factory.
      */
@@ -3747,16 +3737,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return perspList.getOpenedPerspectives();
     }
 	
-    /**
-     * Returns the perspectives in activation order (oldest first).
-     * 
-     * @return all open Perspective objects
-     * @since 3.1
-     */
-    /*package*/Perspective [] getSortedInternalPerspectives() {
-        return perspList.getSortedPerspectives();
-    }
-		
 	/**
 	 * Checks perspectives in the order they were activiated
 	 * for the specfied part.  The first sorted perspective 
@@ -4293,11 +4273,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             }
         }
-    }
-
-    //for dynamic UI
-    protected HashMap getStateMap() {
-        return stateMap;
     }
 
     //for dynamic UI
