@@ -467,15 +467,6 @@ public class PerspectiveHelper {
     }
 
     /**
-     * Open the tracker to allow the user to move the specified part using
-     * keyboard.
-     */
-    public void openTracker(ViewPane pane) {
-        DragUtil
-                .performDrag(pane, DragUtil.getDisplayBounds(pane.getControl()));
-    }
-
-    /**
      * Answer a list of the PartPlaceholder objects.
      */
     private PartPlaceholder[] collectPlaceholders() {

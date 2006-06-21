@@ -122,12 +122,6 @@ public class DragUtil {
     }
 
     public static boolean performDrag(final Object draggedItem,
-            Rectangle sourceBounds) {
-        return performDrag(draggedItem, sourceBounds, Display.getDefault()
-                .getCursorLocation(), false);
-    }
-
-    public static boolean performDrag(final Object draggedItem,
             Rectangle sourceBounds, Point initialLocation, boolean allowSnapping) {
 
         IDropTarget target = dragToTarget(draggedItem, sourceBounds,

@@ -393,14 +393,6 @@ public class Perspective {
     }
 
     /**
-     * Open the tracker to allow the user to move
-     * the specified part using keyboard.
-     */
-    public void openTracker(ViewPane pane) {
-        presentation.openTracker(pane);
-    }
-
-    /**
      * See IWorkbenchPage.
      */
     public IViewReference[] getViewReferences() {

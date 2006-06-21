@@ -1503,18 +1503,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Open the tracker to allow the user to move the specified part using
-     * keyboard.
-     * @param pane the pane to track
-     */
-    public void openTracker(ViewPane pane) {
-        Perspective persp = getActivePerspective();
-        if (persp != null) {
-			persp.openTracker(pane);
-		}
-    }
-
-    /**
      * This is called by child objects after a part has been added to the page.
      * The page will in turn notify its listeners. 
      */
