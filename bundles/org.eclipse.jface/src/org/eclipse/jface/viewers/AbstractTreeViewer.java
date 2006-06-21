@@ -1172,7 +1172,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected abstract Item[] getSelection(Control control);
 
-    /* (non-Javadoc) Method declared on StructuredViewer. */
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
+     */
     protected List getSelectionFromWidget() {
         Widget[] items = getSelection(getControl());
         ArrayList list = new ArrayList(items.length);
@@ -2397,6 +2399,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
             }
         }
+        
         for (int i = 0; i < min; ++i) {
             Item item = items[i];
             Object newElement = elementChildren[i];
@@ -2405,13 +2408,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 associate(newElement, item);
                 updatePlus(item, newElement);
                 updateItem(item, newElement);
-                // Restore expanded state for items that changed position.
-                // Make sure setExpanded is called after updatePlus, since
-                // setExpanded(false) fails if item has no children.
-                // Need to call setExpanded for both expanded and unexpanded
-                // cases
-                // since the expanded state can change either way.
-                setExpanded(item, expanded.containsKey(newElement));
             } else {
                 // old and new elements are equal
                 updatePlus(item, newElement);
@@ -2420,7 +2416,19 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
             }
         }
-
+        
+        // Restore expanded state for items that changed position.
+        // Make sure setExpanded is called after updatePlus, since
+        // setExpanded(false) fails if item has no children.
+        // Need to call setExpanded for both expanded and unexpanded
+        // cases since the expanded state can change either way.
+        // This needs to be done in a second loop, see bug 148025.
+        for (int i = 0; i < min; ++i) {
+        	Item item = items[i];
+        	Object newElement = elementChildren[i];
+			setExpanded(item, expanded.containsKey(newElement)); 
+		}
+        
         // add any remaining elements
         if (min < elementChildren.length) {
             for (int i = min; i < elementChildren.length; ++i) {
