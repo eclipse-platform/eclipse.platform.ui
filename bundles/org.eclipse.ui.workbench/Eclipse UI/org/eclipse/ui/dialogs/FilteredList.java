@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionListener;
@@ -752,5 +754,26 @@ public IStatus runInUIThread(IProgressMonitor monitor) {
 	 */
 	public void setLabelProvider(ILabelProvider labelProvider) {
 		this.fLabelProvider = labelProvider;
+	}
+	
+	/**
+	 * Returns the accessible object for the receiver.
+	 * If this is the first time this object is requested,
+	 * then the object is created and returned.
+	 *
+	 * @return the accessible object
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 * 
+	 * @see Accessible#addAccessibleListener
+	 * @see Accessible#addAccessibleControlListener
+	 * 
+	 * @since 3.3
+	 */
+	public Accessible getAccessible() {
+		return fList.getAccessible();
 	}
 }
