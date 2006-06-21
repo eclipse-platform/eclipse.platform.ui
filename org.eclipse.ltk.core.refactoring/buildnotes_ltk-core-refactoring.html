@@ -14,6 +14,12 @@ Eclipse Platform Build Notes 3.3 Stream&nbsp;<br>
 LTK Core Refactoring</h1>
 <h3>3.3 M1, ???, 2006</h3>
 <h4>API</h4>
-<h4>Implementation Changes</h4>
+<ul>
+<li>
+New API has been introduced on RefactoringContribution. Clients are now able to call createDescriptor() without any arguments, which returns a language-specific
+customizable refactoring descriptor. The refactoring descriptor can then be used to create a ready-to-be-executed refactoring. This mechanism provides refactoring tooling
+implementers with a uniform API to provide instantiation of refactorings.
+</li>
+</ul>
 </body>
 </html>
