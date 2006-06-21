@@ -103,6 +103,26 @@ public class Update extends Command {
 	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
 		List newOptions = new ArrayList(Arrays.asList(localOptions));
 		
+		if (shouldRetrieveAbsentDirectories(session) && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
+			newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		}
+
+		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && ! PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
+			if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
+				newOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
+			}
+		}
+		localOptions = (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
+		return super.filterLocalOptions(session, globalOptions, localOptions);
+	}
+	
+	/**
+	 * Return whether the update command should retrieve absent directories.
+	 * @param session the session
+	 * @return whether the update command should retrieve absent directories
+	 */
+	protected boolean shouldRetrieveAbsentDirectories(Session session) {
 		// Look for absent directories if enabled and the option is not already included
 		IResource resource = null;
 		RepositoryProvider provider = null;
@@ -112,8 +132,8 @@ public class Update extends Command {
 			if (resource != null) {
 				provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 				if (provider != null) {
-					if (((CVSTeamProvider)provider).getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
-						newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+					if (((CVSTeamProvider)provider).getFetchAbsentDirectories()) {
+						return true;
 					}
 				}
 			}
@@ -122,19 +142,11 @@ public class Update extends Command {
 		}
 		// If there is no provider, use the global setting
 		if (provider == null) {
-			if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories() && ! RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
-				newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+			if (CVSProviderPlugin.getPlugin().getFetchAbsentDirectories()) {
+				return true;
 			}
 		}
-		
-		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && ! PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
-			if (! DO_NOT_CHANGE.isElementOf(globalOptions)) {
-				newOptions.add(Command.PRUNE_EMPTY_DIRECTORIES);
-			}
-		}
-		localOptions = (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
-		return super.filterLocalOptions(session, globalOptions, localOptions);
+		return false;
 	}
 	
 	/**

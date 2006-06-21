@@ -13,10 +13,12 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -24,7 +26,8 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * This class can be used to fetch and cache file contents for remote files.
@@ -35,8 +38,17 @@ public class UpdateContentCachingService {
 	private ICVSFolder remoteRoot;
 	private final CVSTag tag;
 	private final int depth;
+	private boolean fetchAbsentDirectories = true;
 
 	public class SandboxUpdate extends Update {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.client.Update#shouldRetrieveAbsentDirectories(org.eclipse.team.internal.ccvs.core.client.Session)
+		 */
+		protected boolean shouldRetrieveAbsentDirectories(Session session) {
+			return fetchAbsentDirectories;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.internal.ccvs.core.client.Command#commandFinished(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption[], org.eclipse.team.internal.ccvs.core.client.Command.LocalOption[], org.eclipse.team.internal.ccvs.core.ICVSResource[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IStatus)
 		 */
@@ -59,7 +71,7 @@ public class UpdateContentCachingService {
 	
 	/**
 	 * This class overrides the "Created" handler in order to configure the remote file
-	 * to recieve and cache the contents
+	 * to receive and cache the contents
 	 */
 	public class SandboxUpdatedHandler extends UpdatedHandler {
 		public SandboxUpdatedHandler(int type) {
@@ -102,6 +114,7 @@ public class UpdateContentCachingService {
 		try {
 			RemoteFolder tree = buildBaseTree(repository, root, tag, Policy.subMonitorFor(monitor, 50));
 			UpdateContentCachingService service = new UpdateContentCachingService(repository, tree, tag, depth);
+			service.setFetchAbsentDirectories(getFetchAbsentDirectories(root));
 			if (!service.cacheFileContents(Policy.subMonitorFor(monitor, 50)))
 				return null;
 			return tree;
@@ -110,6 +123,27 @@ public class UpdateContentCachingService {
 		}
 	}
 	
+	private void setFetchAbsentDirectories(boolean fetchAbsentDirectories) {
+		this.fetchAbsentDirectories = fetchAbsentDirectories;
+	}
+
+	private static boolean getFetchAbsentDirectories(ICVSFolder root) {
+		IResource resource = root.getIResource();
+		if (resource != null) {
+			IProject project = resource.getProject();
+			RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+			if (provider instanceof CVSTeamProvider) {
+				CVSTeamProvider cp = (CVSTeamProvider) provider;
+				try {
+					return cp.getFetchAbsentDirectories();
+				} catch (CVSException e) {
+					CVSProviderPlugin.log(e);
+				}
+			}
+		}
+		return CVSProviderPlugin.getPlugin().getFetchAbsentDirectories();
+	}
+
 	private static RemoteFolder buildBaseTree(final CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor progress) throws CVSException {
 		try {
 			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag) {
@@ -227,6 +261,9 @@ public class UpdateContentCachingService {
 		
 		if (depth != IResource.DEPTH_INFINITE )
 			options.add(Command.DO_NOT_RECURSE);
+		
+		if (fetchAbsentDirectories)
+			options.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
 		
 		if (!options.isEmpty())
 			return (LocalOption[]) options.toArray(new LocalOption[options.size()]);

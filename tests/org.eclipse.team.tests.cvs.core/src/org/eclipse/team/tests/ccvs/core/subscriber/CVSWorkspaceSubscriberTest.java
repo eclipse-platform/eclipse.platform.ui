@@ -1339,4 +1339,28 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
     		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(option);
     	}
     }
+    
+    public void testDisabledDirectoryDiscovery() throws CoreException {
+    	// Create a project and disable new directory discovery
+    	IProject project = createProject(new String[] { "file1.txt"});
+    	setFetchAbsentDirectories(project, false);
+    	
+    	IProject copy = checkoutCopy(project, "-copy");
+    	addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, true);
+    	
+    	// The new subfolder (folder2) and its contents should not have sync info (i.e. in_sync)
+		assertSyncEquals("testDisabledDirectoryDiscovery", project,
+				new String[] {"file1.txt", "added.txt", "folder2/", "folder2/added.txt" },
+				true, new int[] { 
+				SyncInfo.IN_SYNC,
+				SyncInfo.INCOMING | SyncInfo.ADDITION,
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC
+		});
+    }
+
+	private void setFetchAbsentDirectories(IProject project, boolean fetch) throws CVSException {
+		RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+		((CVSTeamProvider) provider).setFetchAbsentDirectories(fetch);
+	}
 }
