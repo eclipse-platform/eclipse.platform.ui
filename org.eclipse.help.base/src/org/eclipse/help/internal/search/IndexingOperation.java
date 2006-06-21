@@ -398,7 +398,25 @@ class IndexingOperation {
 		//Add documents from global search participants
 		LuceneSearchParticipant[] participants = BaseHelpSystem.getSearchManager().getGlobalParticipants();
 		for (int j=0; j<participants.length; j++) {
-			Set set = participants[j].getAllDocuments(index.getLocale());
+			String participantId;
+			try {
+				participantId = participants[j].getId();
+			}
+			catch (Throwable t) {
+				// log the error and skip this participant
+				HelpBasePlugin.logError("Failed to get help search participant id for: " + participants[j].getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
+			Set set;
+			try {
+				set = participants[j].getAllDocuments(index.getLocale());
+			}
+			catch (Throwable t) {
+				// log the error and skip this participant
+				HelpBasePlugin.logError("Failed to retrieve documents from one of the help search participants: " + participants[j].getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
+			
 			for (Iterator docs = set.iterator(); docs.hasNext();) {
 				String doc = (String) docs.next();
 				String id = null;
@@ -417,7 +435,7 @@ class IndexingOperation {
 					continue;
 				}
 
-				URL url = SearchIndex.getIndexableURL(index.getLocale(), doc, id, participants[j].getId());
+				URL url = SearchIndex.getIndexableURL(index.getLocale(), doc, id, participantId);
 				if (url != null) {
 					addedDocs.add(url);
 				}

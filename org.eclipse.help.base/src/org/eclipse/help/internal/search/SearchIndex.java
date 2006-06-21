@@ -1038,7 +1038,14 @@ public class SearchIndex implements ISearchIndex {
 		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager()
 				.getParticipant(pluginId, name);
 		if (participant != null) {
-			return participant.addDocument(this, pluginId, name, url, id, doc);
+			try {
+				return participant.addDocument(this, pluginId, name, url, id, doc);
+			}
+			catch (Throwable t) {
+				return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
+						"Error while adding document to search participant (addDocument()): " //$NON-NLS-1$
+						+ name + ", " + url + "for participant " + participant.getClass().getName(), t); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		// default to html
 		return htmlSearchParticipant.addDocument(this, pluginId, name, url, id, doc);

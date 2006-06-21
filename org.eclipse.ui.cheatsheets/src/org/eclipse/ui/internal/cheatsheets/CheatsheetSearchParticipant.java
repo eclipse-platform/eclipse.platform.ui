@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.cheatsheets;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement; 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.search.XMLSearchParticipant;
 import org.eclipse.jface.action.Action;
@@ -50,8 +50,16 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 			String fileName = element.getAttribute(CheatSheetRegistryReader.ATT_CONTENTFILE);
 			String id = element.getAttribute("id"); //$NON-NLS-1$
 			String pluginId = element.getContributor().getName();
-			fileName = resolveVariables(pluginId, fileName, locale);
-			set.add("/" + pluginId + "/" + fileName + "?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (isExtensionValid(fileName, id, pluginId)) {
+				try {
+					fileName = resolveVariables(pluginId, fileName, locale);
+					set.add("/" + pluginId + "/" + fileName + "?id=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				catch (Throwable t) {
+					// log and skip
+					CheatSheetPlugin.logError("Error parsing cheat sheet extension from plug-in " + pluginId + ", id " + id + ", file " + fileName, t); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+			}
 		}
 		return set;
 	}
@@ -115,6 +123,14 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 	public boolean open(String id) {
 		Action openAction = new OpenCheatSheetAction(id);
 		openAction.run();
+		return true;
+	}
+	
+	private static boolean isExtensionValid(String fileName, String id, String pluginId) {
+		if (fileName.indexOf('\\') != -1) {
+			CheatSheetPlugin.logError("Error in cheat sheet extension id " + id + " from plug-in " + pluginId + ": path should not contain back-slashes (\\): " + fileName + ". This cheat sheet will not be indexed for searching.", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			return false;
+		}
 		return true;
 	}
 }

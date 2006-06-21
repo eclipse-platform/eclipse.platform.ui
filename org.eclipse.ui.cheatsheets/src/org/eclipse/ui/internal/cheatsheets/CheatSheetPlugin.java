@@ -45,6 +45,8 @@ import org.osgi.framework.BundleContext;
 
 public class CheatSheetPlugin extends AbstractUIPlugin {
 
+	public final static String PLUGIN_ID = "org.eclipse.help.base"; //$NON-NLS-1$
+
 	//The shared instance of this plugin.
 	static CheatSheetPlugin plugin;
 
@@ -131,6 +133,17 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		return documentBuilder;
 	}
 
+	/**
+	 * Logs an Error message with an exception.
+	 */
+	public static synchronized void logError(String message, Throwable ex) {
+		if (message == null)
+			message = ""; //$NON-NLS-1$
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
+				message, ex);
+		CheatSheetPlugin.getPlugin().getLog().log(errorStatus);
+	}
+	
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		IPath path = ICONS_PATH.append(T_OBJ).append("cheatsheet_obj.gif");//$NON-NLS-1$
 		ImageDescriptor imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);

@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
@@ -110,8 +109,8 @@ public class SearchManager implements ITocsChangedListener {
 						participant = (LuceneSearchParticipant) obj;
 						participant.init(getId());
 					}
-				} catch (CoreException e) {
-					HelpPlugin.logError("Exception occurred creating Lucene search participant.", e); //$NON-NLS-1$
+				} catch (Throwable t) {
+					HelpPlugin.logError("Exception occurred creating Lucene search participant.", t); //$NON-NLS-1$
 				}
 			}
 			return participant;
@@ -141,8 +140,14 @@ public class SearchManager implements ITocsChangedListener {
 		}
 
 		public void clear() {
-			if (participant != null)
-				participant.clear();
+			if (participant != null) {
+				try {
+					participant.clear();
+				}
+				catch (Throwable t) {
+					HelpBasePlugin.logError("Error occured in search participant's clear() operation: " + participant.getClass().getName(), t); //$NON-NLS-1$
+				}
+			}
 		}
 	}
 
@@ -414,7 +419,14 @@ public class SearchManager implements ITocsChangedListener {
 		// must ask global search participants directly
 		LuceneSearchParticipant[] gps = getGlobalParticipants();
 		for (int i = 0; i < gps.length; i++) {
-			Set ids = gps[i].getContributingPlugins();
+			Set ids;
+			try {
+				ids = gps[i].getContributingPlugins();
+			}
+			catch (Throwable t) {
+				HelpBasePlugin.logError("Error getting the contributing plugins from help search participant: " + gps[i].getClass().getName() + ". skipping this one.", t); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
 			set.addAll(ids);
 		}
 		return set;

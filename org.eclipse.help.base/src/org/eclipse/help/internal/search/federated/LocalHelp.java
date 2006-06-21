@@ -94,6 +94,12 @@ public class LocalHelp implements ISearchEngine2 {
 		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(participantId);
 		if (participant==null)
 			return false;
-		return participant.open(id);
+		try {
+			return participant.open(id);
+		}
+		catch (Throwable t) {
+			HelpBasePlugin.logError("Error occured in search participant trying to open document with id: " + id + ", participant: " + participant.getClass().getName(), t); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
 	}
 }
