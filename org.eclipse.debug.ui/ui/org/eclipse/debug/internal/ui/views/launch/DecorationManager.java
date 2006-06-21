@@ -79,6 +79,9 @@ public class DecorationManager {
 	                    iterator.remove();
                     }
                 }
+                if (list.isEmpty()) {
+                	fDecorations.remove(target);
+                }
             }
         }
         Iterator iter = decorationsToRemove.iterator();

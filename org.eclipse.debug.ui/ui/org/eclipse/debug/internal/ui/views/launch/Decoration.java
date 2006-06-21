@@ -25,7 +25,7 @@ public abstract class Decoration {
 	/**
 	 * Returns the thread this decoration decorates.
 	 * 
-	 * @return thead associated with this decoration
+	 * @return thread associated with this decoration
 	 */
 	public abstract IThread getThread();
 
