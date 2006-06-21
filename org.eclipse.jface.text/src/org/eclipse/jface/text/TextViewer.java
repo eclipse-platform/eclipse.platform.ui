@@ -56,6 +56,8 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.internal.text.JFaceTextUtil;
@@ -1476,6 +1478,25 @@ public class TextViewer extends Viewer implements
 	protected void createControl(Composite parent, int styles) {
 
 		fTextWidget= createTextWidget(parent, styles);
+		
+		// Support scroll page upon MOD1+MouseWheel
+		fTextWidget.addListener(SWT.MouseWheel, new Listener() {
+			public void handleEvent(Event event) {
+				if (((event.stateMask & SWT.MOD1) == 0))
+					return;
+				
+				int topIndex= fTextWidget.getTopIndex();
+				int bottomIndex= JFaceTextUtil.getBottomIndex(fTextWidget);
+				
+				if (event.count > 0)
+					fTextWidget.setTopIndex(2 * topIndex - bottomIndex);
+				else
+					fTextWidget.setTopIndex(bottomIndex);
+				
+				updateViewportListeners(INTERNAL);
+			}
+		});
+		
 		fTextWidget.addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
