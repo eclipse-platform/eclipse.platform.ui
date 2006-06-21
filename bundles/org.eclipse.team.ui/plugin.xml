@@ -263,47 +263,45 @@
       </category>
       <command
             name="%Command.syncAll.name"
-            category="org.eclipse.team.ui.category.team"
+            categoryId="org.eclipse.team.ui.category.team"
             description="%Command.syncAll.description"
             id="org.eclipse.team.ui.synchronizeAll">
       </command>
       <command
             name="%Command.syncLast.name"
-            category="org.eclipse.team.ui.category.team"
+            categoryId="org.eclipse.team.ui.category.team"
             description="%Command.syncLast.description"
             id="org.eclipse.team.ui.synchronizeLast">
       </command>
       <command
-        name="%Synchronizing.perspective"
-        description="%Synchronizing.openPerspectiveDescription"
-        categoryId="org.eclipse.ui.category.perspectives"
-        id="org.eclipse.team.ui.TeamSynchronizingPerspective" />
+       		name="%Synchronizing.perspective"
+        	description="%Synchronizing.openPerspectiveDescription"
+        	categoryId="org.eclipse.ui.category.perspectives"
+        	id="org.eclipse.team.ui.TeamSynchronizingPerspective"/>
       <command
             name="%ViewCommand.synchronizeView.name"
             description="%ViewCommand.synchronizeView.description"
-            category="org.eclipse.ui.category.views"
-            id="org.eclipse.team.sync.views.SynchronizeView">
-      </command>
-      <keyBinding
-            string="Alt+Shift+Q Y"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.sync.views.SynchronizeView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Alt+Shift+Q Y"
-            scope="org.eclipse.ui.globalScope"
-            command=""
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Command+Alt+Q Y"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.sync.views.SynchronizeView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+            categoryId="org.eclipse.ui.category.views"
+            id="org.eclipse.team.sync.views.SynchronizeView"/>
+      <command
+            name="%ViewCommand.historyView.name"
+            description="%ViewCommand.historyView.description"
+            categoryId="org.eclipse.ui.category.views"
+            id="org.eclipse.team.ui.GenericHistoryView"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            sequence="M3+M2+Q Y"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.team.sync.views.SynchronizeView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M3+M2+Q Z"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.team.ui.GenericHistoryView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
 <!-- action sets -->
    <extension

@@ -287,15 +287,24 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		try {
 			action.setEnabled(isEnabled());
 		} catch (TeamException e) {
-			if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-				// Enable the action to allow the user to discover the problem
-				action.setEnabled(true);
-			} else {
-				action.setEnabled(false);
-				// We should not open a dialog when determining menu enablements so log it instead
-				TeamPlugin.log(e);
-			}
+			action.setEnabled(isEnabledForException(e));
 		}
+	}
+	
+	/**
+	 * If an exception occurs during enablement testing, this method is invoked
+	 * to determine if the action should be enabled or not.
+	 * @param exception the exception
+	 * @return whether the action should be enabled or not
+	 */
+	protected boolean isEnabledForException(TeamException exception) {
+		if (exception.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+			// Enable the action to allow the user to discover the problem
+			return true;
+		}
+		// We should not open a dialog when determining menu enablement so log it instead
+		TeamPlugin.log(exception);
+		return false;
 	}
 	
 	/*
