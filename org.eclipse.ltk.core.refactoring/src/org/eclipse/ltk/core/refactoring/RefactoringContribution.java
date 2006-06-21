@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 
 /**
  * Partial implementation of refactoring contribution objects which are capable
@@ -51,7 +52,13 @@ import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescr
  * returning a change object whose {@link Change#getDescriptor()} method has
  * been implemented to return a {@link RefactoringChangeDescriptor}
  * encapsulating {@link RefactoringDescriptor}.
+ * </p>
  * <p>
+ * Since 3.3, refactoring contributions may serve also as a uniform API to
+ * expose language-specific refactorings. Clients wishing to provide
+ * customizable refactoring descriptors may reimplement the method
+ * {@link #createDescriptor()}.
+ * </p>
  * Note: Clients which extend this class are required to reimplement the method
  * {@link #retrieveArgumentMap(RefactoringDescriptor)} in subclasses to capture
  * the state of a language-specific refactoring descriptor in a neutral
@@ -63,7 +70,39 @@ import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescr
 public abstract class RefactoringContribution {
 
 	/**
-	 * Creates a new refactoring descriptor.
+	 * Creates a new customizable refactoring descriptor, initialized with its
+	 * default values.
+	 * <p>
+	 * This method may be reimplemented to return a language-specified
+	 * refactoring descriptor which can be initialized using language-specific
+	 * features. Refactoring tool providers may reimplement this API in order to
+	 * provide a uniform API to expose refactoring functionality in the form of
+	 * refactoring descriptors.
+	 * </p>
+	 * <p>
+	 * Callers of this method are supposed to cast the resulting refactoring
+	 * descriptor to the corresponding language-specific refactoring descriptor
+	 * provided by the API of the refactoring tooling provider.
+	 * </p>
+	 * <p>
+	 * Note: this method is supposed to be reimplemented by clients.
+	 * </p>
+	 * 
+	 * @return the refactoring descriptor, or <code>null</code> if the
+	 *         refactoring represented by this contribution does not expose
+	 *         customizable refactoring descriptors
+	 * 
+	 * @see #createDescriptor(String, String, String, String, Map, int)
+	 * 
+	 * @since 3.3
+	 */
+	public RefactoringDescriptor createDescriptor() {
+		return null;
+	}
+
+	/**
+	 * Creates a new refactoring descriptor, initialized with the values
+	 * provided by the arguments of this method.
 	 * <p>
 	 * This method is used by the refactoring framework to create a
 	 * language-specific refactoring descriptor representing the refactoring
@@ -100,6 +139,25 @@ public abstract class RefactoringContribution {
 	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
 
 	/**
+	 * Returns the refactoring id for which this refactoring contribution has
+	 * been registered with the extension point. Implementations of
+	 * {@link #createDescriptor()} may use this method to initialize the
+	 * resulting refactoring descriptor with the id of this refactoring
+	 * contribution.
+	 * <p>
+	 * Note: this method is not intended to be extended or reimplemented by
+	 * clients.
+	 * </p>
+	 * 
+	 * @return the unique id of the refactoring
+	 * 
+	 * @since 3.3
+	 */
+	public String getId() {
+		return RefactoringContributionManager.getInstance().getRefactoringId(this);
+	}
+
+	/**
 	 * Retrieves the argument map of the specified refactoring descriptor.
 	 * <p>
 	 * This method is used by the refactoring framework to obtain
@@ -120,7 +178,7 @@ public abstract class RefactoringContribution {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * Subclasses must extend this method to provide more specific
+	 * Note: subclasses must extend this method to provide more specific
 	 * implementation in order to let the refactoring framework retrieve the
 	 * argument map from language-specific refactoring descriptors.
 	 * Implementations of this method must never return <code>null</code>.

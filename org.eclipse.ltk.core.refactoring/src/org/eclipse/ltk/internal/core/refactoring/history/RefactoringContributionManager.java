@@ -65,6 +65,14 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	private Map fContributionCache= null;
 
 	/**
+	 * The refactoring contribution cache (element type:
+	 * &lt;RefactoringContribution, <code>String&gt;</code>)
+	 * 
+	 * @since 3.3
+	 */
+	private Map fIdCache= null;
+
+	/**
 	 * Creates a new refactoring contribution manager.
 	 */
 	private RefactoringContributionManager() {
@@ -126,8 +134,34 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	public RefactoringContribution getRefactoringContribution(final String id) {
 		Assert.isNotNull(id);
 		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
-		if (fContributionCache == null) {
-			fContributionCache= new HashMap();
+		populateCache();
+		return (RefactoringContribution) fContributionCache.get(id);
+	}
+
+	/**
+	 * Returns the refactoring id for the specified refactoring contribution.
+	 * 
+	 * @param contribution
+	 *            the refactoring contribution
+	 * @return the corresonding refactoring id
+	 * 
+	 * @since 3.3
+	 */
+	public String getRefactoringId(final RefactoringContribution contribution) {
+		Assert.isNotNull(contribution);
+		populateCache();
+		return (String) fIdCache.get(contribution);
+	}
+
+	/**
+	 * Populates the refactoring contribution cache if necessary.
+	 * 
+	 * @since 3.3
+	 */
+	private void populateCache() {
+		if (fContributionCache == null || fIdCache == null) {
+			fContributionCache= new HashMap(32);
+			fIdCache= new HashMap(32);
 			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CONTRIBUTIONS_EXTENSION_POINT);
 			for (int index= 0; index < elements.length; index++) {
 				final IConfigurationElement element= elements[index];
@@ -142,6 +176,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 								if (fContributionCache.get(attributeId) != null)
 									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
 								fContributionCache.put(attributeId, implementation);
+								fIdCache.put(implementation, attributeId);
 							} else
 								RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_creation_error, new String[] { point, attributeId}));
 						} catch (CoreException exception) {
@@ -153,7 +188,6 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 					RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_attribute, new String[] { point, ATTRIBUTE_ID}));
 			}
 		}
-		return (RefactoringContribution) fContributionCache.get(id);
 	}
 
 	/**
@@ -161,5 +195,6 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 */
 	public void registryChanged(final IRegistryChangeEvent event) {
 		fContributionCache= null;
+		fIdCache= null;
 	}
 }

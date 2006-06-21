@@ -35,9 +35,20 @@ Breaking API changes from R3.2 to R3.3</b></font> <br>
 Non-breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
-    <tr>
-      <td>
-      None
+     <tr>
+      <td>New API for copy and paste refactorings in package <code>org.eclipse.ltk.core.refactoring.participants</code>:
+      <ul>
+         <li><code>ReorgExecutionLog#isRenamed(Object)</code></li>
+         <li><code>ReorgExecutionLog#isProcessed(Object)</code></li>
+      </ul>
+      </td>
+    </tr>
+     <tr>
+      <td>New API for creating customizable refactoring descriptors in package <code>org.eclipse.ltk.core.refactoring</code>:
+      <ul>
+         <li><code>RefactoringContribution#createDescriptor()</code></li>
+         <li><code>RefactoringContribution#getId()</code></li>
+      </ul>
       </td>
     </tr>
   </tbody>
