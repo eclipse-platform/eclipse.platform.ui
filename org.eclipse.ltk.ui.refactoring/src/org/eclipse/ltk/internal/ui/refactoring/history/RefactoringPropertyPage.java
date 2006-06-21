@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
@@ -40,6 +41,7 @@ import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
 
 import org.eclipse.swt.SWT;
@@ -437,9 +439,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			service.connect();
 			try {
 				final Shell shell= getShell();
-				context.run(false, true, new IRunnableWithProgress() {
+				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
 
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					public void run(final IProgressMonitor monitor) throws CoreException {
 						try {
 							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
 							try {
@@ -454,7 +456,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 										}
 									});
 								} else
-									throw new InvocationTargetException(exception);
+									throw exception;
 							}
 							final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 							shell.getDisplay().syncExec(new Runnable() {
@@ -468,7 +470,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							monitor.done();
 						}
 					}
-				});
+				}, project));
 			} catch (InvocationTargetException exception) {
 				RefactoringUIPlugin.log(exception);
 			} catch (InterruptedException exception) {
