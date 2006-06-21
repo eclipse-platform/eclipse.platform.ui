@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,33 @@ public class ReorgExecutionLog {
 	public boolean isCanceled() {
 		return fCanceled;
 	}
-	
+
+	/**
+	 * Returns <code>true</code> if the specified element has been processed;
+	 * otherwise <code>false</code>
+	 * 
+	 * @param element
+	 *            the element to test
+	 * @return whether the specified element has been processed
+	 * @since 3.3
+	 */
+	public boolean isProcessed(Object element) {
+		return fProcessedElements.contains(element);
+	}
+
+	/**
+	 * Returns <code>true</code> if the specified element has been renamed;
+	 * otherwise <code>false</code>
+	 * 
+	 * @param element
+	 *            the element to test
+	 * @return whether the specified element has been renamed
+	 * @since 3.3
+	 */
+	public boolean isRenamed(Object element) {
+		return fNewNames.keySet().contains(element);
+	}
+
 	/**
 	 * Logs that the given element got processed by the
 	 * refactoring
