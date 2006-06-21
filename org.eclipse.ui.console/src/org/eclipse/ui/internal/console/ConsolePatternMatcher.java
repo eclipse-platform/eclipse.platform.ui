@@ -61,109 +61,107 @@ public class ConsolePatternMatcher implements IDocumentListener {
          */
         protected IStatus run(IProgressMonitor monitor) {
 			IDocument doc = fConsole.getDocument();
-			synchronized (doc) {
-				String text = null;
-				int prevBaseOffset = -1;
-				if (doc != null && !monitor.isCanceled()) {
-					int endOfSearch = doc.getLength();
-					int indexOfLastChar = endOfSearch;
-					if (indexOfLastChar > 0) {
-						indexOfLastChar--;
+			String text = null;
+			int prevBaseOffset = -1;
+			if (doc != null && !monitor.isCanceled()) {
+				int endOfSearch = doc.getLength();
+				int indexOfLastChar = endOfSearch;
+				if (indexOfLastChar > 0) {
+					indexOfLastChar--;
+				}
+				int lastLineToSearch = 0;
+				int offsetOfLastLineToSearch = 0;
+				try {
+					lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
+					offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
+				} catch (BadLocationException e) {
+					// perhaps the buffer was re-set
+					return Status.OK_STATUS;
+				}
+				for (int i = 0; i < fPatterns.size(); i++) {
+					if (monitor.isCanceled()) {
+						break;
 					}
-					int lastLineToSearch = 0;
-					int offsetOfLastLineToSearch = 0;
-					try {
-						lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
-						offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
-					} catch (BadLocationException e) {
-						// perhaps the buffer was re-set
-						return Status.OK_STATUS;
-					}
-					for (int i = 0; i < fPatterns.size(); i++) {
-						if (monitor.isCanceled()) {
-							break;
-						}
-						CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) fPatterns.get(i);
-						int baseOffset = notifier.end;
-						int lengthToSearch = endOfSearch - baseOffset;
-						if (lengthToSearch > 0) {
-							try {
-								if (prevBaseOffset != baseOffset) {
-									// reuse the text string if possible
-									text = doc.get(baseOffset, lengthToSearch);
-								}
-								Matcher reg = notifier.pattern.matcher(text);
-								Matcher quick = null;
-								if (notifier.qualifier != null) {
-									quick = notifier.qualifier.matcher(text);
-								}
-								int startOfNextSearch = 0;
-								int endOfLastMatch = -1;
-								int lineOfLastMatch = -1;
-								while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
-									if (quick != null) {
-										if (quick.find(startOfNextSearch)) {
-											// start searching on the beginning
-											// of the line where the potential
-											// match was found, or after the
-											// last match on the same line
-											int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
-											if (lineOfLastMatch == matchLine) {
-												startOfNextSearch = endOfLastMatch;
-											} else {
-												startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
-											}
-										} else {
-											startOfNextSearch = lengthToSearch;
-										}
-									}
-									if (startOfNextSearch < 0) {
-										startOfNextSearch = 0;
-									}
-									if (startOfNextSearch < lengthToSearch) {
-										if (reg.find(startOfNextSearch)) {
-											endOfLastMatch = reg.end();
-											lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
-											int regStart = reg.start();
-											IPatternMatchListener listener = notifier.listener;
-											if (listener != null && !monitor.isCanceled()) {
-												listener.matchFound(new PatternMatchEvent(fConsole, baseOffset + regStart, endOfLastMatch - regStart));
-											}
+					CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) fPatterns.get(i);
+					int baseOffset = notifier.end;
+					int lengthToSearch = endOfSearch - baseOffset;
+					if (lengthToSearch > 0) {
+						try {
+							if (prevBaseOffset != baseOffset) {
+								// reuse the text string if possible
+								text = doc.get(baseOffset, lengthToSearch);
+							}
+							Matcher reg = notifier.pattern.matcher(text);
+							Matcher quick = null;
+							if (notifier.qualifier != null) {
+								quick = notifier.qualifier.matcher(text);
+							}
+							int startOfNextSearch = 0;
+							int endOfLastMatch = -1;
+							int lineOfLastMatch = -1;
+							while ((startOfNextSearch < lengthToSearch) && !monitor.isCanceled()) {
+								if (quick != null) {
+									if (quick.find(startOfNextSearch)) {
+										// start searching on the beginning
+										// of the line where the potential
+										// match was found, or after the
+										// last match on the same line
+										int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
+										if (lineOfLastMatch == matchLine) {
 											startOfNextSearch = endOfLastMatch;
 										} else {
-											startOfNextSearch = lengthToSearch;
+											startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
 										}
+									} else {
+										startOfNextSearch = lengthToSearch;
 									}
 								}
-								// update start of next search to the last line
-								// searched
-								// or the end of the last match if it was on the
-								// line that
-								// was last searched
-								if (lastLineToSearch == lineOfLastMatch) {
-									notifier.end = baseOffset + endOfLastMatch;
-								} else {
-									notifier.end = offsetOfLastLineToSearch;
+								if (startOfNextSearch < 0) {
+									startOfNextSearch = 0;
 								}
-							} catch (BadLocationException e) {
-								ConsolePlugin.log(e);
+								if (startOfNextSearch < lengthToSearch) {
+									if (reg.find(startOfNextSearch)) {
+										endOfLastMatch = reg.end();
+										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
+										int regStart = reg.start();
+										IPatternMatchListener listener = notifier.listener;
+										if (listener != null && !monitor.isCanceled()) {
+											listener.matchFound(new PatternMatchEvent(fConsole, baseOffset + regStart, endOfLastMatch - regStart));
+										}
+										startOfNextSearch = endOfLastMatch;
+									} else {
+										startOfNextSearch = lengthToSearch;
+									}
+								}
 							}
+							// update start of next search to the last line
+							// searched
+							// or the end of the last match if it was on the
+							// line that
+							// was last searched
+							if (lastLineToSearch == lineOfLastMatch) {
+								notifier.end = baseOffset + endOfLastMatch;
+							} else {
+								notifier.end = offsetOfLastLineToSearch;
+							}
+						} catch (BadLocationException e) {
+							ConsolePlugin.log(e);
 						}
-						prevBaseOffset = baseOffset;
 					}
-				}
-
-				if (fFinalMatch) {
-					disconnect();
-					fConsole.matcherFinished();
-				} else if (fScheduleFinal) {
-					fFinalMatch = true;
-					schedule();
+					prevBaseOffset = baseOffset;
 				}
 			}
 
-            return Status.OK_STATUS;
-        }
+			if (fFinalMatch) {
+				disconnect();
+				fConsole.matcherFinished();
+			} else if (fScheduleFinal) {
+				fFinalMatch = true;
+				schedule();
+			}
+
+			return Status.OK_STATUS;
+		}
 
         public boolean belongsTo(Object family) {
             return family == fConsole;
