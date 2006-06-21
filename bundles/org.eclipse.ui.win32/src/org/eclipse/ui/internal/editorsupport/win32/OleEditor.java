@@ -191,6 +191,9 @@ public class OleEditor extends EditorPart {
     private static final String OLE_CREATE_EXCEPTION_MESSAGE = OleMessages
             .getString("OleEditor.oleCreationExceptionMessage"); //$NON-NLS-1$
 
+    private static final String OLE_CREATE_EXCEPTION_REASON = OleMessages
+            .getString("OleEditor.oleCreationExceptionReason"); //$NON-NLS-1$
+
     private static final String SAVE_ERROR_TITLE = OleMessages
             .getString("OleEditor.savingTitle"); //$NON-NLS-1$
 
@@ -241,9 +244,9 @@ public class OleEditor extends EditorPart {
 
             IStatus errorStatus = new Status(IStatus.ERROR,
                     WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
-                    OLE_CREATE_EXCEPTION_MESSAGE, exception);
-            ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, errorStatus
-                    .getMessage(), errorStatus);
+                    OLE_CREATE_EXCEPTION_REASON, exception);
+            //ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_REASON, errorStatus);
+            ErrorDialog.openError(null, OLE_EXCEPTION_TITLE, OLE_CREATE_EXCEPTION_MESSAGE, errorStatus);
             return;
         }
         clientSite.setBackground(JFaceColors.getBannerBackground(clientFrame
