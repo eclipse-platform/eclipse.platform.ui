@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.console;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,7 +43,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     
     int[] offsets = new int[5000];
     int[] lengths = new int[5000];
-    private int regionCount = 0;
+    private int regionCount = 1;
+    private Pattern pattern = Pattern.compile("$", Pattern.MULTILINE); //$NON-NLS-1$
     
     
     public ConsoleDocumentAdapter(int width) {
@@ -278,11 +281,13 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         changeEvent.newCharCount = (event.fText == null ? 0 : event.fText.length());
         
         int first = getLineAtOffset(event.fOffset);
-        int last = getLineAtOffset(event.fOffset + event.fLength);
-        changeEvent.replaceLineCount= last - first;
-        
-        changeEvent.newLineCount = countLines(event.fText);
-        
+        int lOffset = Math.max(event.fOffset + event.fLength - 1, 0);
+		int last = getLineAtOffset(lOffset);
+        changeEvent.replaceLineCount = Math.max(last - first, 0);
+     
+        int newLineCount = countNewLines(event.fText);
+		changeEvent.newLineCount = newLineCount >= 0 ? newLineCount : 0;
+
         if (changeEvent.newLineCount > offsets.length-regionCount) {
             growRegionArray(changeEvent.newLineCount);
         }
@@ -303,47 +308,44 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         lengths = newLengths;
     }
 
-    /**
-     * Counts the number of lines the viewer's text widget will need to use to 
-     * display the String
-     * @return The number of lines necessary to display the string in the viewer.
-     */
-    private int countLines(String line) {
+    private int countNewLines(String string) {
 		int count = 0;
 		
-		int lastDelimiter = 0;
-		for (int i = 0; i < line.length(); i++) {
-			char c = line.charAt(i);
-			if (c == '\n') {
-				count++;
-				if (consoleWidth > 0) {
-					count += (i-lastDelimiter)/consoleWidth;
-				}
-				lastDelimiter = i;
-			} else if (c == '\r') {
-				count++;
-				if (consoleWidth > 0) {
-					count += (i-lastDelimiter)/consoleWidth;
-				}
-				if (i+1 < line.length()) {
-					char next = line.charAt(i+1);
-					if (next == '\n') {
-						i++;
-					}
-				}
-				lastDelimiter = i;
-			}
-		}
-		
-		if (lastDelimiter < line.length()) {
+		if (string.length() == 0) return 0;
+
+		// work around to
+		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
+		// see bug 84641
+		if (string.endsWith("\r")) { //$NON-NLS-1$
+			int len = string.length();
+			int index = len >= 2 ? len - 2 : 0;
+			string = string.substring(0, index);
 			count++;
-			if (consoleWidth > 0) {
-				count += (line.length()-lastDelimiter)/consoleWidth;
-			}
 		}
 		
+		int lastIndex = 0;
+		int index = 0;
+		
+		Matcher matcher = pattern.matcher(string);
+		
+		while (matcher.find()) {
+			index = matcher.start();
+			
+			if (index == 0)
+				count++;
+			else if (index!=string.length())
+				count++;
+			
+			if (consoleWidth > 0) {
+				int lineLen = index - lastIndex + 1;
+				if (index == 0) lineLen += lengths[regionCount-1];
+				count += lineLen/consoleWidth;
+			}
+			
+			lastIndex = index;
+		}
 		return count;
-    }
+	}
 
 
     /* (non-Javadoc)
