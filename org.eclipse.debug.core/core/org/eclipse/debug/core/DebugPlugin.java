@@ -527,7 +527,7 @@ public class DebugPlugin extends Plugin {
 				if (handler instanceof IStatusHandler) {
 					return (IStatusHandler)handler;
 				}
-				invalidStatusHandler(null, MessageFormat.format(DebugCoreMessages.DebugPlugin_Registered_status_handler__0__does_not_implement_required_interface_IStatusHandler__1, new String[] {config.getDeclaringExtension().getUniqueIdentifier()})); 
+				invalidStatusHandler(null, MessageFormat.format("Registered status handler {0} does not implement required interface IStatusHandler.", new String[] {config.getDeclaringExtension().getUniqueIdentifier()}));  //$NON-NLS-1$
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -931,13 +931,13 @@ public class DebugPlugin extends Plugin {
 			} else {
 				// invalid process factory
 				String badDefiner= infos[i].getContributor().getName();
-				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_31, new String[] {badDefiner, id}), null)); 
+				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format("Invalid process factory extension contributed by {0}; id: {1}", new String[] {badDefiner, id}), null));  //$NON-NLS-1$
 			}
 		}			
 	}
 	
 	private void invalidStatusHandler(Exception e, String id) {
-		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_Invalid_status_handler_extension___0__2, new String[] {id}), e)); 
+		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format("Invalid status handler extension: {0}", new String[] {id}), e));  //$NON-NLS-1$
 	}
 	
 	/**
@@ -1069,11 +1069,11 @@ public class DebugPlugin extends Plugin {
 		public void handleException(Throwable exception) {
 			switch (fMode) {
 				case NOTIFY_FILTERS:
-					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_filtering_debug_events__3, exception); 
+					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred while filtering debug events.", exception);  //$NON-NLS-1$
 					log(status);
 					break;
 				case NOTIFY_EVENTS:				
-					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_An_exception_occurred_while_dispatching_debug_events__2, exception); 
+					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred while dispatching debug events.", exception);  //$NON-NLS-1$
 					log(status);
 					break;
 			}

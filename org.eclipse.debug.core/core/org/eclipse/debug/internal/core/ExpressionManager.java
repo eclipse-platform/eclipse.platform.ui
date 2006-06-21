@@ -479,7 +479,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.ExpressionManager_An_exception_occurred_during_expression_change_notification__1, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -541,7 +541,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.ExpressionManager_An_exception_occurred_during_expression_change_notification__1, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 

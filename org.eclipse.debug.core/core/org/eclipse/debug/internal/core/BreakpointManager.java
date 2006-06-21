@@ -238,18 +238,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			String markerType = elements[i].getAttribute(MARKER_TYPE);
 			String className = elements[i].getAttribute(CLASS);
 			if (markerType == null) {
-				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.BreakpointManager_Breakpoint_extension__0__missing_required_attribute__markerType_1, new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()})); 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: markerType", new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
 			} else if (className == null){
-				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.BreakpointManager_Breakpoint_extension__0__missing_required_attribute__class_2, new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()})); 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$
 			} else {
 				fBreakpointExtensions.put(markerType, elements[i]);
 			}
 		}
-	}
-	
-	private void invalidBreakpointExtension(String message) {
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, null);
-		DebugPlugin.log(status);
 	}
 
 	/**
@@ -415,7 +410,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				breakpoint = (IBreakpoint)object;
 				breakpoint.setMarker(marker);
 			} else {
-				invalidBreakpointExtension(MessageFormat.format(DebugCoreMessages.BreakpointManager_Class__0__specified_by_breakpoint_extension__1__does_not_implement_required_interface_IBreakpoint__3, new String[]{config.getAttribute(CLASS), config.getDeclaringExtension().getUniqueIdentifier()})); 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{config.getAttribute(CLASS), config.getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
 			}
 			return breakpoint;		
 		} catch (CoreException e) {
@@ -782,7 +777,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.BreakpointManager_An_exception_occurred_during_breakpoint_change_notification__4, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -846,7 +841,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.BreakpointManager_An_exception_occurred_during_breakpoint_change_notification__5, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -949,7 +944,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.BreakpointManager_An_exception_occurred_during_breakpoint_change_notification__5, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 

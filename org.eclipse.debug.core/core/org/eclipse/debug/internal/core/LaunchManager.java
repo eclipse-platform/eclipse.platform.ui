@@ -166,7 +166,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_configuration_change_notification__3, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch configuration change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -223,7 +223,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -396,7 +396,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_An_exception_occurred_during_launch_change_notification__1, exception); 
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
@@ -1501,7 +1501,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_launch_configuration_comparator_extension_defined_by_plug_in__0____attribute_not_specified_1, new String[] {configurationElement.getContributor().getName()}), null); 
+					MessageFormat.format("Invalid launch configuration comparator extension defined by plug-in {0} - attribute not specified.", new String[] {configurationElement.getContributor().getName()}), null);  //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -1606,7 +1606,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.LaunchManager_Invalid_source_locator_extentsion_defined_by_plug_in____0_______id___not_specified_12, new String[] {configurationElement.getContributor().getName()} ), null);  
+					MessageFormat.format("Invalid source locator extension defined by plug-in \"{0}\": \"id\" not specified.", new String[] {configurationElement.getContributor().getName()} ), null);   //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
