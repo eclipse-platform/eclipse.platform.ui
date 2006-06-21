@@ -1172,7 +1172,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected abstract Item[] getSelection(Control control);
 
-    /* (non-Javadoc) Method declared on StructuredViewer. */
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
+     */
     protected List getSelectionFromWidget() {
         Widget[] items = getSelection(getControl());
         ArrayList list = new ArrayList(items.length);
@@ -2397,6 +2399,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
             }
         }
+        
+        ArrayList expandedItems = new ArrayList();
+        ArrayList collapsedItems = new ArrayList();
         for (int i = 0; i < min; ++i) {
             Item item = items[i];
             Object newElement = elementChildren[i];
@@ -2411,7 +2416,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 // Need to call setExpanded for both expanded and unexpanded
                 // cases
                 // since the expanded state can change either way.
-                setExpanded(item, expanded.containsKey(newElement));
+                if(expanded.containsKey(newElement))
+                	expandedItems.add(item);
+                else
+                	collapsedItems.add(item);
+               
             } else {
                 // old and new elements are equal
                 updatePlus(item, newElement);
@@ -2420,7 +2429,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                 }
             }
         }
-
+        
+        for (Iterator iter = expandedItems.iterator(); iter.hasNext();) {
+			setExpanded((Item) iter.next(), true); 
+			
+		}
+        
+        for (Iterator iter = collapsedItems.iterator(); iter.hasNext();) {
+			setExpanded((Item) iter.next(), false); 
+			
+		}
+        
         // add any remaining elements
         if (min < elementChildren.length) {
             for (int i = min; i < elementChildren.length; ++i) {
