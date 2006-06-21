@@ -668,11 +668,11 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			xml = generatePerspectiveXML();
 			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);			
 		} catch (IOException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
 		} catch (TransformerException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus(LaunchConfigurationsMessages.PerspectiveManager_9, e)); 
+			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
 		}
 	}
 	

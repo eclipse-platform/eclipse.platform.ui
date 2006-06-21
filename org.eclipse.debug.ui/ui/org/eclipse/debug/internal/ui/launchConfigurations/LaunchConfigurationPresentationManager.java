@@ -83,7 +83,7 @@ public class LaunchConfigurationPresentationManager {
 			if (typeId == null) {
 				IExtension ext = groups[i].getDeclaringExtension();
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__does_not_specify_launch_configuration_type_1, (new String[] {ext.getUniqueIdentifier()})), null); 
+					 MessageFormat.format("Launch configuration tab group extension {0} does not specify launch configuration type.", (new String[] {ext.getUniqueIdentifier()})), null);  //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 			} else {
 				// verify it references a valid launch configuration type
@@ -91,7 +91,7 @@ public class LaunchConfigurationPresentationManager {
 				if (lct == null) {
 					IExtension ext = groups[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_Launch_configuration_tab_group_extension__0__refers_to_non_existant_launch_configuration_type__1__2, (new String[] {ext.getUniqueIdentifier(), typeId})), null); 
+					 MessageFormat.format("Launch configuration tab group extension {0} refers to non-existent launch configuration type {1}.", (new String[] {ext.getUniqueIdentifier(), typeId})), null);  //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 				}
 			}

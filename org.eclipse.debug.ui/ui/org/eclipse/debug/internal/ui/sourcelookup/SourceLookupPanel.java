@@ -350,7 +350,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			}
 			else workingCopy = configuration;	
 			if(workingCopy == null) {
-				DebugUIPlugin.logErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
+				DebugUIPlugin.logErrorMessage("Error occurred - unable to apply source lookup path changes.");  //$NON-NLS-1$
 				return;
 			}
 			//set new values in director so memento returned is correct
