@@ -17,6 +17,9 @@ or not dynamic content producers are being called properly for files in doc.zip.
 below should always be filtered out by the dynamic content producer.
 </p>
 
+<p id="paragraphInZip">
+This paragraph comes from dynamicInZip.xhtml in doc.zip.
+</p>
 
 </body>
 </html>

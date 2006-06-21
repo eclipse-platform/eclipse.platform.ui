@@ -32,6 +32,9 @@ This paragraph, which has filter attribute "plugin!=my.invalid.plugin.id.012345"
 <p id="my.paragraph.id">
    This paragraph comes from <code>include.xhtml</code>.
 </p>
+<p id="paragraphInZip">
+This paragraph comes from dynamicInZip.xhtml in doc.zip.
+</p>
 
 </body>
 </html>
