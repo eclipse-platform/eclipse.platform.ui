@@ -160,12 +160,14 @@ public class CVSSSH2PreferencePage extends PreferencePage
     Composite group=new Composite(parent, SWT.NULL);
     GridLayout layout=new GridLayout();
     layout.numColumns=3;
+	layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
     group.setLayout(layout);
     GridData data = new GridData();
     data.horizontalAlignment = GridData.FILL;
     group.setLayoutData(data);
-
-    createSpacer(group, 3);
 
     ssh2HomeLabel=new Label(group, SWT.NONE);
     ssh2HomeLabel.setText(CVSSSH2Messages.CVSSSH2PreferencePage_23); 
@@ -256,6 +258,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
     Composite group=new Composite(parent, SWT.NULL);
     GridLayout layout=new GridLayout();
     layout.numColumns=3;
+	layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
     group.setLayout(layout);
     GridData gd = new GridData();
     gd.horizontalAlignment = GridData.FILL;
@@ -429,6 +435,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
     Composite buttons=new Composite(group, SWT.NONE);
     layout=new GridLayout(2, true);
     layout.marginWidth=0;
+	layout.marginHeight=0;
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
     buttons.setLayout(layout);
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
@@ -741,8 +749,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private Control createHostKeyManagementPage(Composite parent) {
     Composite group=new Composite(parent, SWT.NULL);
     GridLayout layout=new GridLayout();
-	layout.marginWidth = 0;
-	layout.marginHeight = 0;
+    layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 	layout.numColumns = 2;
     group.setLayout(layout);
     GridData gd = new GridData();
@@ -807,7 +817,10 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	
 	Composite buttons = new Composite(group, SWT.NULL);
 	buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-	buttons.setLayout(new GridLayout());
+	layout = new GridLayout();
+	layout.marginHeight=0;
+	layout.marginWidth=0;
+	buttons.setLayout(layout);
 
 	removeHostKeyButton = new Button(buttons, SWT.PUSH);
 	removeHostKeyButton.setText(CVSSSH2Messages.CVSSSH2PreferencePage_138);
@@ -1031,16 +1044,14 @@ class ExportDialog extends Dialog {
   }
 
   protected Control createDialogArea(Composite parent) {
-  	
-  	parent = new Composite(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 1;	
-	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
+  	initializeDialogUnits(parent);
     Composite main=new Composite(parent, SWT.NONE);
-    layout=new GridLayout();
-    layout.numColumns=3;
+    GridLayout layout=new GridLayout();
+    layout.numColumns=2;
+	layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
     main.setLayout(layout);
     main.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
@@ -1048,7 +1059,7 @@ class ExportDialog extends Dialog {
       Label messageLabel=new Label(main, SWT.WRAP);
       messageLabel.setText(message);
       GridData data=new GridData(GridData.FILL_HORIZONTAL);
-      data.horizontalSpan=3;
+      data.horizontalSpan=2;
       messageLabel.setLayoutData(data);
     }
 
@@ -1063,7 +1074,6 @@ class ExportDialog extends Dialog {
     field=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);
     data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
-    data.horizontalSpan=2;
     field.setLayoutData(data);
   }
 
@@ -1126,10 +1136,15 @@ class PassphraseDialog extends Dialog {
   }
 
   protected Control createDialogArea(Composite parent) {
+    initializeDialogUnits(parent);
     Composite main=new Composite(parent, SWT.NONE);
 
     GridLayout layout=new GridLayout();
     layout.numColumns=3;
+	layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
     main.setLayout(layout);
     main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -1142,6 +1157,7 @@ class PassphraseDialog extends Dialog {
     }
 
     createPassphraseFields(main);
+    Dialog.applyDialogFont(main);
     return main;
   }
 
