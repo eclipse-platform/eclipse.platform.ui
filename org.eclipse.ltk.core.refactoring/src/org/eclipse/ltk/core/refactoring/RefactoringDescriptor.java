@@ -148,27 +148,19 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	public static final int USER_CHANGE= 1 << 8;
 
-	/**
-	 * The comment, or <code>null</code> for no comment
-	 */
+	/** The comment of the refactoring, or <code>null</code> for no comment */
 	private String fComment;
 
-	/**
-	 * The description
-	 */
-	private final String fDescription;
+	/** The non-empty description of the refactoring */
+	private String fDescription;
 
-	/** The flags */
-	private final int fFlags;
+	/** The flags of the refactoring, or <code>NONE</code> */
+	private int fFlags;
 
-	/**
-	 * The project name, or <code>null</code> for no project
-	 */
+	/** The project name, or <code>null</code> for no project */
 	private String fProject;
 
-	/**
-	 * The unique id of the refactoring
-	 */
+	/** The unique id of the refactoring */
 	private final String fRefactoringId;
 
 	/**
@@ -197,6 +189,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	protected RefactoringDescriptor(final String id, final String project, final String description, final String comment, final int flags) {
 		Assert.isNotNull(id);
+		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
 		Assert.isNotNull(description);
 		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
 		Assert.isTrue(flags >= NONE);
@@ -328,27 +321,63 @@ public abstract class RefactoringDescriptor implements Comparable {
 	/**
 	 * Sets the details comment of this refactoring.
 	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
+	 * Note: This API must not be extended or reimplemented and should not be
+	 * called from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param comment
 	 *            the non-empty comment to set, or <code>null</code>
 	 */
-	public final void setComment(final String comment) {
+	public void setComment(final String comment) {
 		fComment= comment;
+	}
+
+	/**
+	 * Sets the description of this refactoring.
+	 * <p>
+	 * Note: This API must not be extended or reimplemented and should not be
+	 * called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param description
+	 *            the non-empty description of the refactoring to set
+	 * 
+	 * @since 3.3
+	 */
+	public void setDescription(final String description) {
+		Assert.isNotNull(description);
+		fDescription= description;
+	}
+
+	/**
+	 * Sets the flags of this refactoring.
+	 * <p>
+	 * Note: This API must not be extended or reimplemented and should not be
+	 * called from outside the refactoring framework.
+	 * </p>
+	 * 
+	 * @param flags
+	 *            the flags to set, or <code>NONE</code> to clear the flags
+	 * 
+	 * @since 3.3
+	 */
+	public void setFlags(final int flags) {
+		Assert.isTrue(flags >= NONE);
+		fFlags= flags;
 	}
 
 	/**
 	 * Sets the project name of this refactoring.
 	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
+	 * Note: This API must not be extended or reimplemented and should not be
+	 * called from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param project
 	 *            the non-empty project name to set, or <code>null</code> for
 	 *            the workspace
 	 */
-	public final void setProject(final String project) {
+	public void setProject(final String project) {
 		Assert.isLegal(project == null || !"".equals(project)); //$NON-NLS-1$
 		fProject= project;
 	}
@@ -357,13 +386,14 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Sets the time stamp of this refactoring. This method can be called only
 	 * once.
 	 * <p>
-	 * Note: This API must not be called from outside the refactoring framework.
+	 * Note: This API must not be extended or reimplemented and should not be
+	 * called from outside the refactoring framework.
 	 * </p>
 	 * 
 	 * @param stamp
 	 *            the time stamp to set
 	 */
-	public final void setTimeStamp(final long stamp) {
+	public void setTimeStamp(final long stamp) {
 		Assert.isTrue(stamp >= 0);
 		fTimeStamp= stamp;
 	}
