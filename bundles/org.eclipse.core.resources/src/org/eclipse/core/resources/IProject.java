@@ -60,12 +60,12 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </p>
 	 *
 	 * @param kind the kind of build being requested. Valid values are:
-	 *		<ul>
-	 * <li><code>FULL_BUILD</code>- indicates a full build.</li>
-	 * <li><code>INCREMENTAL_BUILD</code>- indicates a incremental build.
-	 * <li><code>CLEAN_BUILD</code>- indicates a clean request.  Clean does
-	 * not actually build anything, but rather discards all problems and build states.
-	 *		</ul>
+	 *	<ul>
+	 * <li>{@link IncrementalProjectBuilder#FULL_BUILD}- indicates a full build.</li>
+	 * <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}- indicates a incremental build.</li>
+	 * <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}- indicates a clean request.  Clean does
+	 * not actually build anything, but rather discards all problems and build states.</li>
+	 *	</ul>
 	 * @param builderName the name of the builder
 	 * @param args a table of builder-specific arguments keyed by argument name
 	 *		(key type: <code>String</code>, value type: <code>String</code>);
@@ -73,9 +73,9 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *		reporting is not desired
 	 * @exception CoreException if the build fails.
-	 *		The status contained in the exception may be a generic <code>BUILD_FAILED</code>
+	 *		The status contained in the exception may be a generic {@link IResourceStatus#BUILD_FAILED}
 	 *		code, but it could also be any other status code; it might
-	 *		also be a multi-status.
+	 *		also be a {@link MultiStatus}.
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * 

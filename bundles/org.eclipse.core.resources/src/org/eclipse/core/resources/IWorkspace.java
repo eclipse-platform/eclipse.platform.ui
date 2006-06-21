@@ -171,18 +171,18 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param kind the kind of build being requested. Valid values are
-	 * <ul>
-	 * <li><code>FULL_BUILD</code>- indicates a full build.</li>
-	 * <li><code>INCREMENTAL_BUILD</code>- indicates a incremental build.
-	 * <li><code>CLEAN_BUILD</code>- indicates a clean request. Clean does
-	 * not actually build anything, but rather discards all problems and build
-	 * states.
-	 * </ul>
+	 *	<ul>
+	 * <li>{@link IncrementalProjectBuilder#FULL_BUILD}- indicates a full build.</li>
+	 * <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}- indicates a incremental build.</li>
+	 * <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}- indicates a clean request.  Clean does
+	 * not actually build anything, but rather discards all problems and build states.</li>
+	 *	</ul>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
-	 * @exception CoreException if some of the builds fail. The status contained
-	 * in the exception is a multi-status with entries for the project builds
-	 * that failed.
+	 * @exception CoreException if the build fails.
+	 *		The status contained in the exception may be a generic {@link IResourceStatus#BUILD_FAILED}
+	 *		code, but it could also be any other status code; it might
+	 *		also be a {@link MultiStatus}.
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * 

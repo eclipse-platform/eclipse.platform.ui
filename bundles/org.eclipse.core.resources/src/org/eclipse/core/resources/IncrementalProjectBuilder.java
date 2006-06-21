@@ -30,21 +30,9 @@ import org.eclipse.core.runtime.*;
  * any parameter data specified in the declaring plug-in's manifest.
  */
 public abstract class IncrementalProjectBuilder extends InternalBuilder implements IExecutableExtension {
-	/*
-	 * ====================================================================
-	 * Constants related to build requests
-	 * ====================================================================
-	 */
 	/**
-	 * Build kind constant (value 10) indicating an incremental build request.
-	 * 
-	 * @see IProject#build(int, IProgressMonitor)
-	 * @see IProject#build(int, String, Map, IProgressMonitor)
-	 * @see IWorkspace#build(int, IProgressMonitor)
-	 */
-	public static final int INCREMENTAL_BUILD = 10;
-	/**
-	 * Build kind constant (value 6) indicating a full build request.
+	 * Build kind constant (value 6) indicating a full build request.  A full
+	 * build discards all previously built state and builds all resources again.
 	 * 
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
@@ -52,16 +40,35 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	public static final int FULL_BUILD = 6;
 	/**
-	 * Build kind constant (value 9) indicating an automatic build request.
-	 *  
+	 * Build kind constant (value 9) indicating an automatic build request.  When
+	 * autobuild is turned on, these builds are triggered automatically whenever
+	 * resources change.  Apart from the method by which autobuilds are triggered,
+	 * they otherwise operate like an incremental build.
+	 * 
+	 * @see IWorkspaceDescription#setAutoBuilding(boolean)
+	 * @see IWorkspace#isAutoBuilding()
 	 */
 	public static final int AUTO_BUILD = 9;
 	/**
-	 * Build kind constant (value 15) indicating a build clean request
+	 * Build kind constant (value 10) indicating an incremental build request.
+	 * Incremental builds use an {@link IResourceDelta} that describes what
+	 * resources have changed since the last build.  The builder calculates
+	 * what resources are affected by the delta, and rebuilds the affected resources.
 	 * 
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 * @see IWorkspace#build(int, IProgressMonitor)
+	 */
+	public static final int INCREMENTAL_BUILD = 10;
+	/**
+	 * Build kind constant (value 15) indicating a clean build request.  A clean
+	 * build discards any additional state that has  been computed as a result of 
+	 * previous builds, and returns the project to a clean slate.
+	 * 
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
+	 * @see IWorkspace#build(int, IProgressMonitor)
+	 * @see #clean(IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final int CLEAN_BUILD = 15;
@@ -70,8 +77,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Runs this builder in the specified manner. Subclasses should implement
 	 * this method to do the processing they require.
 	 * <p>
-	 * If the build kind is <code>INCREMENTAL_BUILD</code> or
-	 * <code>AUTO_BUILD</code>, the <code>getDelta</code> method can be
+	 * If the build kind is {@link #INCREMENTAL_BUILD} or
+	 * {@link #AUTO_BUILD}, the <code>getDelta</code> method can be
 	 * used during the invocation of this method to obtain information about
 	 * what changes have occurred since the last invocation of this method. Any
 	 * resource delta acquired is valid only for the duration of the invocation
@@ -100,17 +107,16 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * situations where failing the build by throwing <code>CoreException</code>
 	 * is the only option, a builder has a choice of how best to communicate the
 	 * problem back to the caller. One option is to use the
-	 * <code>BUILD_FAILED</code> status code along with a suitable message;
-	 * another is to use a multi-status containing finer-grained problem
+	 * {@link IResourceStatus#BUILD_FAILED} status code along with a suitable message;
+	 * another is to use a {@link MultiStatus} containing finer-grained problem
 	 * diagnoses.
 	 * </p>
 	 * 
 	 * @param kind the kind of build being requested. Valid values are
 	 * <ul>
-	 * <li><code>FULL_BUILD</code>- indicates a full build.</li>
-	 * <li><code>INCREMENTAL_BUILD</code>- indicates an incremental build.
-	 * </li>
-	 * <li><code>AUTO_BUILD</code>- indicates an automatically triggered
+	 * <li>{@link #FULL_BUILD} - indicates a full build.</li>
+	 * <li>{@link #INCREMENTAL_BUILD}- indicates an incremental build.</li>
+	 * <li>{@link #AUTO_BUILD} - indicates an automatically triggered
 	 * incremental build (autobuilding on).</li>
 	 * </ul>
 	 * @param args a table of builder-specific arguments keyed by argument name
@@ -129,7 +135,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Clean is an opportunity for a builder to discard any additional state that has 
 	 * been computed as a result of previous builds. It is recommended that builders 
 	 * override this method to delete all derived resources created by previous builds, 
-	 * and to remove all markers of type <code>IMarker.PROBLEM</code> that 
+	 * and to remove all markers of type {@link IMarker#PROBLEM} that 
 	 * were created by previous invocations of the builder. The platform will
 	 * take care of discarding the builder's last built state (there is no need
 	 * to call <code>forgetLastBuiltState</code>).
@@ -137,7 +143,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * This method is called as a result of invocations of
 	 * <code>IWorkspace.build</code> or <code>IProject.build</code> where
-	 * the build kind is <code>CLEAN_BUILD</code>.
+	 * the build kind is {@link #CLEAN_BUILD}.
 	 * <p>
 	 * This default implementation does nothing. Subclasses may override. 
 	 * <p>
@@ -170,7 +176,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public final void forgetLastBuiltState() {
 		super.forgetLastBuiltState();
 	}
-	
+
 	/**
 	 * Returns the build command associated with this builder.  The returned
 	 * command may or may not be in the build specification for the project
@@ -293,7 +299,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	/**
 	 * Sets initialization data for this builder.
 	 * <p>
-	 * This method is part of the <code>IExecutableExtension</code> interface.
+	 * This method is part of the {@link IExecutableExtension} interface.
 	 * </p>
 	 * <p>
 	 * Subclasses are free to extend this method to pick up initialization
