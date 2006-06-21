@@ -29,7 +29,7 @@ public class RefreshTagsAction extends CVSRepoViewAction {
 	/**
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	public boolean isEnabled() {
 		ICVSRepositoryLocation[] locations = getSelectedRepositoryLocations();
 		if (locations.length != 1) return false;
 		return true;

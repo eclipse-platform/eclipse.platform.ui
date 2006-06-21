@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -35,7 +34,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.RestoreFromRepositoryWizard;
 
 /**
@@ -135,12 +133,16 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 	/**
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		IResource[] resources = getSelectedResources();
 		if (resources.length != 1) return false;
 		if (resources[0].getType() == IResource.FILE) return false;
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resources[0]);
-		if (!folder.isCVSFolder()) return false;
+		try {
+			if (!folder.isCVSFolder()) return false;
+		} catch (CVSException e) {
+			return isEnabledForException(e);
+		}
 		return true;
 	}
 	

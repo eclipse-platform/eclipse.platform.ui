@@ -285,7 +285,7 @@ public abstract class WorkspaceAction extends CVSAction {
 	 * </ol>
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		
 		// allow the super to decide enablement. if the super doesn't know it will return false.
 		boolean enabled = super.isEnabled();
@@ -329,8 +329,13 @@ public abstract class WorkspaceAction extends CVSAction {
 			
 			// ensure that resource management state matches what the action requires
 			ICVSResource cvsResource = getCVSResourceFor(resource);
-			if (!isEnabledForCVSResource(cvsResource)) {
-				return false;
+			try {
+				if (!isEnabledForCVSResource(cvsResource)) {
+					return false;
+				}
+			} catch (CVSException e) {
+				if (!isEnabledForException(e))
+					return false;
 			}
 		}
 		// Ensure that there is no overlap between files and folders

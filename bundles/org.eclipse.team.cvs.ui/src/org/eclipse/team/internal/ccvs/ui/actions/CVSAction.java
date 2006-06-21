@@ -13,6 +13,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.commands.*;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -40,7 +42,6 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.commands.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 
@@ -123,7 +124,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 			// Handle the exception and any accumulated errors
 			handle(e);
 		} catch (InterruptedException e) {
-			// Show any problems that have occured so far
+			// Show any problems that have occurred so far
 			handle(null);
 		}  catch (TeamException e) {
 			// Handle the exception and any accumulated errors
@@ -133,7 +134,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	
 	/**
 	 * Return the command and retarget action id for this action. This is used to
-	 *match retargetable actions and allow keybindings.
+	 *match retargetable actions and allow key bindings.
 	 *
 	 * @return the id for this action
 	 * @since 3.1
@@ -151,7 +152,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		initializeRetargetAction(window);
 	}
 	
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		if(retargetAction != null && retargetAction.getActionHandler() != null) {
 			return retargetAction.isEnabled();
 		}
@@ -207,10 +208,10 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 
 	/**
 	 * This method gets invoked before the <code>CVSAction#execute(IAction)</code>
-	 * method. It can preform any prechecking and initialization required before 
-	 * the action is executed. Sunclasses may override but must invoke this
+	 * method. It can perform any prechecking and initialization required before 
+	 * the action is executed. Subclasses may override but must invoke this
 	 * inherited method to ensure proper initialization of this superclass is performed.
-	 * These included prepartion to accumulate IStatus and checking for dirty editors.
+	 * These included preparation to accumulate IStatus and checking for dirty editors.
 	 */
 	protected boolean beginExecution(IAction action) throws TeamException {
 		accumulatedStatus.clear();
@@ -229,8 +230,8 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 
 	/**
 	 * This method gets invoked after <code>CVSAction#execute(IAction)</code>
-	 * if no exception occured. Sunclasses may override but should invoke this
-	 * inherited method to ensure proper handling oy any accumulated IStatus.
+	 * if no exception occurred. Subclasses may override but should invoke this
+	 * inherited method to ensure proper handling of any accumulated IStatus.
 	 */
 	protected void endExecution() throws TeamException {
 		if ( ! accumulatedStatus.isEmpty()) {
@@ -257,15 +258,15 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	
 	/**
 	 * Return the title to be displayed on error dialogs.
-	 * Sunclasses should override to present a custon message.
+	 * Subclasses should override to present a custom message.
 	 */
 	protected String getErrorTitle() {
 		return CVSUIMessages.CVSAction_errorTitle; 
 	}
 	
 	/**
-	 * Return the title to be displayed on error dialogs when warnigns occur.
-	 * Sunclasses should override to present a custon message.
+	 * Return the title to be displayed on error dialogs when warnings occur.
+	 * Subclasses should override to present a custom message.
 	 */
 	protected String getWarningTitle() {
 		return CVSUIMessages.CVSAction_warningTitle; 
@@ -273,8 +274,8 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 
 	/**
 	 * Return the message to be used for the parent MultiStatus when 
-	 * mulitple errors occur during an action.
-	 * Sunclasses should override to present a custon message.
+	 * multiple errors occur during an action.
+	 * Subclasses should override to present a custom message.
 	 */
 	protected String getMultiStatusMessage() {
 		return CVSUIMessages.CVSAction_multipleProblemsMessage; 
@@ -284,7 +285,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * Return the status to be displayed in an error dialog for the given list
 	 * of non-OK status.
 	 * 
-	 * This method can be overridden bu subclasses. Returning an OK status will 
+	 * This method can be overridden but subclasses. Returning an OK status will 
 	 * prevent the error dialog from being shown.
 	 */
 	protected IStatus getStatusToDisplay(IStatus[] problems) {
@@ -301,15 +302,15 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	/**
 	 * Method that implements generic handling of an exception. 
 	 * 
-	 * Thsi method will also use any accumulated status when determining what
+	 * This method will also use any accumulated status when determining what
 	 * information (if any) to show the user.
 	 * 
-	 * @param exception the exception that occured (or null if none occured)
+	 * @param exception the exception that occurred (or null if none occurred)
 	 * @param status any status accumulated by the action before the end of 
-	 * the action or the exception occured.
+	 * the action or the exception occurred.
 	 */
 	protected void handle(Exception exception) {
-		// Get the non-OK statii
+		// Get the non-OK status
 		List problems = new ArrayList();
 		IStatus[] status = getAccumulatedStatus();
 		if (status != null) {
@@ -320,7 +321,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				}
 			}
 		}
-		// Handle the case where there are no problem statii
+		// Handle the case where there are no problem status
 		if (problems.size() == 0) {
 			if (exception == null) return;
 			handle(exception, getErrorTitle(), null);
@@ -351,7 +352,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 
 	/**
 	 * Convenience method for running an operation with the appropriate progress.
-	 * Any exceptions are propogated so they can be handled by the
+	 * Any exceptions are propagated so they can be handled by the
 	 * <code>CVSAction#run(IAction)</code> error handling code.
 	 * 
 	 * @param runnable  the runnable which executes the operation
@@ -635,7 +636,7 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	/**
 	 * This method is called by the platform UI framework when a command is run for
 	 * which this action is the handler. The handler doesn't have an explicit context, for
-	 * example unlike a view, editor, or workenchwindow actions, they are not initialized
+	 * example unlike a view, editor, or workbench window actions, they are not initialized
 	 * with a part. As a result when the action is run it will use the selection service
 	 * to determine to elements on which to perform the action.
 	 * <p>
@@ -647,56 +648,89 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	 * @return
 	 * @throws ExecutionException
 	 */
-	public Object execute(Map parameterValuesByName) throws ExecutionException {
-		try {
-			IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if(activeWorkbenchWindow!= null) {
-				IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-				if(activePage!= null) {
-					IWorkbenchPart part = activePage.getActivePart();
-					// If the action is run from within an editor, try and find the 
-					// file for the given editor.
-					if(part != null && part instanceof IEditorPart) {
-						IEditorInput input = ((IEditorPart)part).getEditorInput();
-                        IFile file = ResourceUtil.getFile(input);
-						if(file != null) {
-							selectionChanged((IAction)null, new StructuredSelection(file));
-						}
-					} else {						
-						// Fallback is to prime the action with the selection
-						selectionChanged((IAction)null, activePage.getSelection());
-					}
-					// Safe guard to ensure that the action is only run when enabled. 
-					if(isEnabled()) {
-						execute((IAction)null);
-					} else {
-						MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
-								CVSUIMessages.CVSAction_handlerNotEnabledTitle, 
-								CVSUIMessages.CVSAction_handlerNotEnabledMessage); 
-					}
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IEvaluationContext context = (IEvaluationContext) event
+				.getApplicationContext();
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
+		if (activeWorkbenchWindow != null) {
+			ISelection selection = getCurrentSelection(context);
+			if (selection != null) {
+				IWorkbenchPart part = getActivePart(context);
+				try {
+					execute(activeWorkbenchWindow,  part, selection);
+				} catch (InvocationTargetException e) {
+					throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
+				} catch (InterruptedException e) {
+					// Operation was canceled. Ignore
 				}
 			}
-		} catch (InvocationTargetException e) {
-			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
-		} catch (InterruptedException e) {
-			// Operation was cancelled. Ignore
-		} catch (TeamException e) {
-			throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
 		}
 		return null;
 	}
 
-	/**
-	 * No-op. These handlers don't have any interesting properties.
-	 * @return an empty attribute map
-	 * @since 3.1
-	 */
-	public Map getAttributeValuesByName() {
-		return new HashMap();
+	private ISelection getCurrentSelection(IEvaluationContext context) {
+		ISelection selection = (ISelection) context
+						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		if (selection != null)
+			return selection;
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
+		if (activeWorkbenchWindow != null) {
+			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+			if(activePage!= null) {
+				return activePage.getSelection();
+			}
+		}
+		return null;
+	}
+
+	private IWorkbenchPart getActivePart(IEvaluationContext context) {
+		IWorkbenchPart part = (IWorkbenchPart) context
+						.getVariable(ISources.ACTIVE_PART_NAME);
+		if (part != null)
+			return part;
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
+		if (activeWorkbenchWindow != null) {
+			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+			if(activePage!= null) {
+				return activePage.getActivePart();
+			}
+		}
+		return null;
+	}
+
+	private IWorkbenchWindow getActiveWorkbenchWindow(IEvaluationContext context) {
+		IWorkbenchWindow window = (IWorkbenchWindow) context
+						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		if (window != null)
+			return window;
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	}
+
+	private void execute(IWorkbenchWindow activeWorkbenchWindow, IWorkbenchPart part, ISelection selection) throws InvocationTargetException, InterruptedException {
+		// If the action is run from within an editor, try and find the 
+		// file for the given editor.
+		if(part != null && part instanceof IEditorPart) {
+			IEditorInput input = ((IEditorPart)part).getEditorInput();
+		    IFile file = ResourceUtil.getFile(input);
+			if(file != null) {
+				selectionChanged((IAction)null, new StructuredSelection(file));
+			}
+		} else {						
+			// Fallback is to prime the action with the selection
+			selectionChanged((IAction)null, selection);
+		}
+		// Safe guard to ensure that the action is only run when enabled. 
+		if(isEnabled()) {
+			execute((IAction)null);
+		} else {
+			MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
+					CVSUIMessages.CVSAction_handlerNotEnabledTitle, 
+					CVSUIMessages.CVSAction_handlerNotEnabledMessage); 
+		}
 	}
 
 	/**
-	 * No-op. These handlers won't have any interesting property changes. There is
+	 * These handlers won't have any interesting property changes. There is
 	 * no need to notify listeners.
 	 * @param handlerListener
 	 * @since 3.1
@@ -704,6 +738,13 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	public void removeHandlerListener(IHandlerListener handlerListener) {
 	}
 	public void addHandlerListener(IHandlerListener handlerListener) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.IHandler#isHandled()
+	 */
+	public boolean isHandled() {
+		return true;
 	}
     
     protected final ICVSResource getCVSResourceFor(IResource resource) {

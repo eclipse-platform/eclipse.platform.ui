@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 
 public class TagInRepositoryAction extends TagAction {
 
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		ICVSResource[] resources = getSelectedCVSResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {

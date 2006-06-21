@@ -17,12 +17,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 
 public class CopyRepositoryNameAction extends CVSAction {
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		return true;
 	}
 	public void execute(IAction action) {

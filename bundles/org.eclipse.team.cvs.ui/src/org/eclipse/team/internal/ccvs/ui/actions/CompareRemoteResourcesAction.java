@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
@@ -53,7 +52,7 @@ public class CompareRemoteResourcesAction extends CVSAction {
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		ICVSRemoteResource[] resources = getSelectedRemoteResources();
 		if (resources.length != 2) return false;
 		if (resources[0].isContainer() != resources[1].isContainer()) return false;

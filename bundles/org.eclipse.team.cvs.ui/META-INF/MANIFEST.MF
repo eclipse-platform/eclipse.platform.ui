@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.cvs.ui; singleton:=true
-Bundle-Version: 3.2.100.qualifier
+Bundle-Version: 3.3.0.qualifier
 Bundle-Activator: org.eclipse.team.internal.ccvs.ui.CVSUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -31,7 +31,8 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)";resolution:=op
  org.eclipse.team.cvs.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.compare;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui.navigator.resources;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  com.ibm.icu.util

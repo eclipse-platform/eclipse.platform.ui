@@ -59,7 +59,7 @@ public class CompareRemoteWithTagAction extends CVSAction {
 	/**
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	public boolean isEnabled() {
 		ICVSRemoteResource[] resources = getSelectedRemoteResources();
 		// Only support single select for now.
 		// Need to avoid overlap if multi-select is supported

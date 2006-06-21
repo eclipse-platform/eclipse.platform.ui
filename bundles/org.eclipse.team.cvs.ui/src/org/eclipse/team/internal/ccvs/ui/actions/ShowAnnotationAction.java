@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
@@ -83,11 +82,15 @@ public class ShowAnnotationAction extends WorkspaceAction {
     }
 
     /**
-	 * Ony enabled for single resource selection
+	 * Only enabled for single resource selection
 	 */
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		ICVSResource resource = getSingleSelectedCVSResource();
-		return (resource != null && ! resource.isFolder() && resource.isManaged());
+		try {
+			return (resource != null && ! resource.isFolder() && resource.isManaged());
+		} catch (CVSException e) {
+			return isEnabledForException(e);
+		}
 	}
 
 	/**
