@@ -117,9 +117,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		
 		String captureOutput = launch.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT);
 		fCaptureOutput = !("false".equals(captureOutput)); //$NON-NLS-1$
-		String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-		
-		fStreamsProxy= createStreamsProxy(encoding);
+
+		fStreamsProxy= createStreamsProxy();
 		fMonitor = new ProcessMonitorThread(this);
 		fMonitor.start();
 		launch.addProcess(this);
@@ -253,17 +252,17 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 	
 	/**
-	 * Returns the streams proxy associated with this process.
+	 * Creates and returns the streams proxy associated with this process.
 	 * 
 	 * @return streams proxy
 	 */
-	protected IStreamsProxy createStreamsProxy(String encoding) {
+	protected IStreamsProxy createStreamsProxy() {
 	    if (!fCaptureOutput) {
 	        return new NullStreamsProxy(getSystemProcess());
 	    }
-	    
+		String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);	    
 		return new StreamsProxy(getSystemProcess(), encoding);
-	}
+	}	
 	
 	/**
 	 * Fires a creation event.

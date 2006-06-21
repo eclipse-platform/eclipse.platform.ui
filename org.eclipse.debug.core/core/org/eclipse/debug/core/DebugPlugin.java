@@ -221,11 +221,12 @@ public class DebugPlugin extends Plugin {
      * This launch attribute designates the encoding to be used by the console
      * associated with the launch. When unspecified, the platform's default
      * encoding will be used.
-     * 
+     * <p>
      * Value of this constant is the same as the value of the old 
-     * IDebugUIConstants.ATTR_CONSOLE_ENCODING constant for backward compatibility.
-     * 
-     * @since 3.2
+     * <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code> constant for backward
+     * compatibility.
+     * </p>
+     * @since 3.3
      */
 	public static final String ATTR_CONSOLE_ENCODING = "org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 	

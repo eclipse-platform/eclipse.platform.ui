@@ -876,7 +876,7 @@ public interface IDebugUIConstants {
 	 * from {@link org.eclipse.ui.WorkbenchEncoding}.
 	 * 
 	 * @since 3.1
-     * @deprecated 3.2 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
+     * @deprecated in 3.3 Please use DebugPlugin.ATTR_CONSOLE_ENCODING instead.
 	 */
 	public static final String ATTR_CONSOLE_ENCODING = DebugPlugin.ATTR_CONSOLE_ENCODING;
 	
