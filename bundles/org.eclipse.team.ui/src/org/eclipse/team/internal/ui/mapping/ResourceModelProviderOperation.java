@@ -179,7 +179,7 @@ public abstract class ResourceModelProviderOperation extends SynchronizationOper
 	}
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
-		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		return ResourceModelTraversalCalculator.getTraversalCalculator(getConfiguration());
 	}
 	
 	private Object internalGetElement(Object elementOrPath) {

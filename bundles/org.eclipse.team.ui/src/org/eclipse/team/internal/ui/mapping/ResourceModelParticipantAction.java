@@ -82,7 +82,7 @@ public abstract class ResourceModelParticipantAction extends ModelParticipantAct
 	}
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
-		return (ResourceModelTraversalCalculator)getConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		return ResourceModelTraversalCalculator.getTraversalCalculator(getConfiguration());
 	}
 
 	/**

@@ -478,7 +478,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 	}
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
-		return (ResourceModelTraversalCalculator)getSynchronizePageConfiguration().getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		return ResourceModelTraversalCalculator.getTraversalCalculator(getSynchronizePageConfiguration());
 	}
 	
 	private ChangeSetContentProvider getContentProvider() {

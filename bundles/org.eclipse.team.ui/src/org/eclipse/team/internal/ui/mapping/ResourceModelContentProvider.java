@@ -356,10 +356,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 	
 	protected ResourceModelTraversalCalculator getTraversalCalculator() {
-		ISynchronizePageConfiguration configuration = getConfiguration();
-		if (configuration == null)
-			return ResourceModelTraversalCalculator.getDefault();
-		return (ResourceModelTraversalCalculator)configuration.getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		return ResourceModelTraversalCalculator.getTraversalCalculator(getConfiguration());
 	}
 	
 	protected boolean isVisible(IDiff diff) {

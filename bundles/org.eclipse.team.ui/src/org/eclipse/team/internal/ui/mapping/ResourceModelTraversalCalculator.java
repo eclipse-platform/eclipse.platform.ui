@@ -26,6 +26,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class ResourceModelTraversalCalculator {
 
@@ -343,6 +344,17 @@ public class ResourceModelTraversalCalculator {
 		if (instance == null)
 			instance = new ResourceModelTraversalCalculator();
 		return instance;
+	}
+	
+	public synchronized static ResourceModelTraversalCalculator getTraversalCalculator(ISynchronizePageConfiguration configuration) {
+		if (configuration == null)
+			return ResourceModelTraversalCalculator.getDefault();
+		ResourceModelTraversalCalculator tc = (ResourceModelTraversalCalculator)configuration.getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
+		if (tc == null) {
+			tc = ResourceModelTraversalCalculator.getDefault();
+			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, tc);
+		}
+		return tc;
 	}
 	
 }
