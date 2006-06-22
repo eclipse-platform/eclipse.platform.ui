@@ -241,7 +241,9 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 				if (projectNode == null) {
 					projectNode = createModelObject(getModelRoot(), local.getProject());
 				}
-				createModelObject(projectNode, local);
+				if (local.getProject() != local) {
+					createModelObject(projectNode, local);
+				}
 			}
 		} else {
 			// Either The folder node was added as the parent of a newly added out-of-sync file
