@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -30,6 +31,8 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class ProcessPropertyPage extends PropertyPage {
 
+	private static Font fHeadingFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
+	
 	/**
 	 * Constructor for ProcessPropertyPage
 	 */
@@ -54,7 +57,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		Label lbl = new Label(parent, SWT.NONE);
 		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_0);
 		lbl.setLayoutData(gd);
-		lbl.setFont(font);
+		lbl.setFont(fHeadingFont);
 		
 		Text text = new Text(parent, SWT.READ_ONLY);
 		text.setText(getTimeText(proc));
@@ -68,7 +71,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		lbl = new Label(parent, SWT.NONE);
 		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_1);
-		lbl.setFont(font);
+		lbl.setFont(fHeadingFont);
 		lbl.setLayoutData(gd);
 		
 		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
@@ -84,7 +87,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		lbl = new Label(parent, SWT.NULL);
 		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1); 
 		lbl.setLayoutData(gd);
-		lbl.setFont(font);
+		lbl.setFont(fHeadingFont);
 		
 		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
