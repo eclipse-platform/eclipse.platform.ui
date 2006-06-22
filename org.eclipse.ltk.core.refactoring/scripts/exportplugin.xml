@@ -6,7 +6,13 @@
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.ltk.core.refactoring" />
 		<property name="qualifier" value="zzz${DSTAMP}-${TSTAMP}" />
-		<property name="plugin_version"  value="_3.3.0.${qualifier}" />
+		
+		<tempfile property="plugin_version_file" suffix=".plugin_version.tmp" destdir="${destdir}"/>
+		<copy file="META-INF/MANIFEST.MF" tofile="${plugin_version_file}"/>
+		<replaceregexp file="${plugin_version_file}" match=".*Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier.*" replace="plugin_version=\1${qualifier}" flags="s" />
+		<property file="${plugin_version_file}"/>
+		<delete file="${plugin_version_file}" />
+		
 		<property name="dest"  value="${destdir}/${plugin}${plugin_version}" />
 		<property name="destjar"  value="${destdir}/${plugin}${plugin_version}.jar" />
 	</target>
