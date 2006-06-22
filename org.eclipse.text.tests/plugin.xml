@@ -3,8 +3,7 @@
    id="org.eclipse.text.tests"
    name="%Plugin.name"
    version="3.3.0.qualifier"
-   provider-name="%Plugin.providerName"
-   class="">
+   provider-name="%Plugin.providerName">
 
    <runtime>
       <library name="texttests.jar">
