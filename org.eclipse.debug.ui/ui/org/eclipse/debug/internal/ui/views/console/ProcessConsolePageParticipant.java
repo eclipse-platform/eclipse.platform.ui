@@ -28,7 +28,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
@@ -164,9 +165,15 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         IDebugTarget target = (IDebugTarget)process.getAdapter(IDebugTarget.class);
         ISelection selection = null;
         if (target == null) {
-            selection = new StructuredSelection(process);
+            selection = new TreeSelection(new TreePath(new Object[]{
+            		DebugPlugin.getDefault().getLaunchManager(),
+            		process.getLaunch(),
+            		process}));
         } else {
-            selection = new StructuredSelection(target);
+        	selection = new TreeSelection(new TreePath(new Object[]{
+            		DebugPlugin.getDefault().getLaunchManager(),
+            		target.getLaunch(),
+            		target}));
         }
         return new ShowInContext(null, selection);
     }
