@@ -145,7 +145,11 @@ public class ProcessPropertyPage extends PropertyPage {
 		String text = DebugPreferencesMessages.ProcessPropertyPage_3;
 		if(proc != null) {
 			String tmp = proc.getLabel();
-			text = tmp.substring(0, tmp.lastIndexOf("(")); //$NON-NLS-1$
+			int idx = tmp.lastIndexOf("("); //$NON-NLS-1$
+			if(idx < 0) {
+				idx = tmp.length();
+			}
+			text = tmp.substring(0, idx); 
 		}
 		return text;
 	}
@@ -164,8 +168,9 @@ public class ProcessPropertyPage extends PropertyPage {
 		if(proc != null) {
 			Pattern pattern = Pattern.compile("\\(.*\\)"); //$NON-NLS-1$
 			Matcher matcher = pattern.matcher(proc.getLabel());
-			matcher.find();
-			text = matcher.group(0);
+			if(matcher.find()) {
+				text = matcher.group(0);
+			}
 		}
 		return text;
 	}
