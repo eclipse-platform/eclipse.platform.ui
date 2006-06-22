@@ -16,7 +16,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
@@ -163,20 +163,6 @@ public class Snippet001NestedSelectionWithCombo {
 			this.viewModel = viewModel;
 		}
 		
-		// A standard createContext factory method.  Copy this into your app
-		// and modify it if you need to.
-		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContextFactory1().createContext();
-			
-			parent.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					context.dispose();
-				}
-			});
-			
-			return context;
-		}
-		
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
@@ -187,7 +173,7 @@ public class Snippet001NestedSelectionWithCombo {
 			Combo city = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
 			
 			// Bind it
-			DataBindingContext bindingContext = createContext(shell);
+			DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
 			
 			ListViewer peopleListViewer = new ListViewer(peopleList);
 			ComboViewer cityViewer = new ComboViewer(city);

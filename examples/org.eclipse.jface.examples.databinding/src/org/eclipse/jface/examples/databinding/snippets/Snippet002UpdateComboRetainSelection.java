@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.swt.SWT;
@@ -122,20 +122,6 @@ public class Snippet002UpdateComboRetainSelection {
 			this.viewModel = viewModel;
 		}
 		
-		// A standard createContext factory method.  Copy this into your app
-		// and modify it if you need to.
-		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContextFactory1().createContext();
-			
-			parent.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					context.dispose();
-				}
-			});
-			
-			return context;
-		}
-		
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
@@ -160,7 +146,8 @@ public class Snippet002UpdateComboRetainSelection {
 			System.out.println(viewModel.getText());
 			
 			// Bind it
-			DataBindingContext bindingContext = createContext(shell);
+			DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
+			
 			ComboObservableValue comboValue = (ComboObservableValue) bindingContext.createObservable(new Property(combo, SWTProperties.TEXT));
 			bindingContext.bind(comboValue.getItems(), new Property(viewModel, "choices"), null);
 			bindingContext.bind(comboValue, new Property(viewModel, "text"), null);

@@ -12,7 +12,7 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -90,20 +90,6 @@ public class Snippet000HelloWorld {
 			this.viewModel = viewModel;
 		}
 		
-		// A standard createContext factory method.  Copy this into your app
-		// and modify it if you need to.
-		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContextFactory1().createContext();
-			
-			parent.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					context.dispose();
-				}
-			});
-			
-			return context;
-		}
-		
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
@@ -112,7 +98,8 @@ public class Snippet000HelloWorld {
 			Text name = new Text(shell, SWT.BORDER);
 			
 			// Bind it
-			DataBindingContext bindingContext = createContext(shell);
+			DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
+			
 			Person person = viewModel.getPerson();
 			bindingContext.bind(name, new Property(person, "name"), null);
 			

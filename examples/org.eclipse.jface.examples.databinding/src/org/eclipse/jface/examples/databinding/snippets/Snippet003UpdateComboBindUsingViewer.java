@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -122,20 +122,6 @@ public class Snippet003UpdateComboBindUsingViewer {
 			this.viewModel = viewModel;
 		}
 		
-		// A standard createContext factory method.  Copy this into your app
-		// and modify it if you need to.
-		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContextFactory1().createContext();
-			
-			parent.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					context.dispose();
-				}
-			});
-
-			return context;
-		}
-		
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
@@ -161,7 +147,8 @@ public class Snippet003UpdateComboBindUsingViewer {
 			System.out.println(viewModel.getText());
 			
 			// Bind it
-			DataBindingContext bindingContext = createContext(shell);
+			DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
+			
 			bindingContext.bind(new Property(viewer, ViewersProperties.CONTENT),
 					new Property(viewModel, "choices"), null);
 			bindingContext.bind(new Property(viewer, ViewersProperties.SINGLE_SELECTION), 

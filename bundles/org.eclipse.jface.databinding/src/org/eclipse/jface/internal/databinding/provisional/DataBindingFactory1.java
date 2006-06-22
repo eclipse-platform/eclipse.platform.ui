@@ -22,6 +22,9 @@ import org.eclipse.jface.internal.databinding.provisional.factories.NestedObserv
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
 
@@ -40,7 +43,7 @@ import org.eclipse.swt.widgets.Widget;
  *  
  * @since 3.3
  */
-public class DataBindingContextFactory1 extends	AbstractDataBindingContextFactory {
+public class DataBindingFactory1 extends	AbstractDataBindingContextFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.AbstractDataBindingContextFactory#createContext()
@@ -62,4 +65,23 @@ public class DataBindingContextFactory1 extends	AbstractDataBindingContextFactor
 		});
 	}
 
+	/**
+	 * Creates, configures, and returns a new data binding context.
+	 * 
+	 * @param parentComposite
+	 *            when parentComposite is disposed, it will automatically
+	 *            dispose the DataBindingContext.
+	 * @return DataBindingContext a configured data binding context.
+	 */
+	public DataBindingContext createContext(Composite parentComposite) {
+		final DataBindingContext result = createContext();
+		
+		parentComposite.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				result.dispose();
+			}
+		});
+		
+		return result;
+	}
 }

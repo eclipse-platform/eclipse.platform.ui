@@ -82,7 +82,6 @@ public abstract class AbstractDataBindingContextFactory {
 	 */
 	protected abstract void configureContext(DataBindingContext context);
 	
-	
 	/**
 	 * Creates, configures, and returns a new data binding context.
 	 * 
