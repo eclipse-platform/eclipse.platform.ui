@@ -16,17 +16,10 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ListViewer;
@@ -40,7 +33,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Demonstrates nested selection.<br>
@@ -174,23 +166,13 @@ public class Snippet001NestedSelectionWithCombo {
 		// A standard createContext factory method.  Copy this into your app
 		// and modify it if you need to.
 		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContext();
+			final DataBindingContext context = new DataBindingContextFactory1().createContext();
 			
 			parent.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					context.dispose();
 				}
 			});
-
-			context.addObservableFactory(new NestedObservableFactory(context));
-			context.addObservableFactory(new BeanObservableFactory(context, null,
-					new Class[] { Widget.class }));
-			context.addObservableFactory(new SWTObservableFactory());
-			context.addObservableFactory(new ViewersObservableFactory());
-			context.addObservableFactory(new DefaultObservableFactory(context));
-			context.addBindSupportFactory(new DefaultBindSupportFactory());
-			context.addBindingFactory(new DefaultBindingFactory());
-			context.addBindingFactory(new ViewersBindingFactory());
 			
 			return context;
 		}

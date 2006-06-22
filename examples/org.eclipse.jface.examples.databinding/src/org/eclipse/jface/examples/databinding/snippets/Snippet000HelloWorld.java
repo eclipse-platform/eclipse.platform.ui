@@ -12,15 +12,8 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Hello, databinding.  Bind changes in a GUI to a Model object but don't worry 
@@ -101,23 +93,13 @@ public class Snippet000HelloWorld {
 		// A standard createContext factory method.  Copy this into your app
 		// and modify it if you need to.
 		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContext();
+			final DataBindingContext context = new DataBindingContextFactory1().createContext();
 			
 			parent.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					context.dispose();
 				}
 			});
-
-			context.addObservableFactory(new NestedObservableFactory(context));
-			context.addObservableFactory(new BeanObservableFactory(context, null,
-					new Class[] { Widget.class }));
-			context.addObservableFactory(new SWTObservableFactory());
-			context.addObservableFactory(new ViewersObservableFactory());
-			context.addObservableFactory(new DefaultObservableFactory(context));
-			context.addBindSupportFactory(new DefaultBindSupportFactory());
-			context.addBindingFactory(new DefaultBindingFactory());
-			context.addBindingFactory(new ViewersBindingFactory());
 			
 			return context;
 		}

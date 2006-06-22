@@ -17,15 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContextFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
@@ -39,7 +32,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Shows how to bind a Combo so that when update its items, the selection is
@@ -133,7 +125,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 		// A standard createContext factory method.  Copy this into your app
 		// and modify it if you need to.
 		private DataBindingContext createContext(Composite parent) {
-			final DataBindingContext context = new DataBindingContext();
+			final DataBindingContext context = new DataBindingContextFactory1().createContext();
 			
 			parent.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
@@ -141,16 +133,6 @@ public class Snippet003UpdateComboBindUsingViewer {
 				}
 			});
 
-			context.addObservableFactory(new NestedObservableFactory(context));
-			context.addObservableFactory(new BeanObservableFactory(context, null,
-					new Class[] { Widget.class }));
-			context.addObservableFactory(new SWTObservableFactory());
-			context.addObservableFactory(new ViewersObservableFactory());
-			context.addObservableFactory(new DefaultObservableFactory(context));
-			context.addBindSupportFactory(new DefaultBindSupportFactory());
-			context.addBindingFactory(new DefaultBindingFactory());
-			context.addBindingFactory(new ViewersBindingFactory());
-			
 			return context;
 		}
 		
