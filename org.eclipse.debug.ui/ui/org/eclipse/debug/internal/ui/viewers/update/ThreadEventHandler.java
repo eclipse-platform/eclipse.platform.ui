@@ -147,7 +147,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
 	}
 	
-	private ModelDelta buildRootDelta() {
+	protected ModelDelta buildRootDelta() {
 		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
 	}
 	

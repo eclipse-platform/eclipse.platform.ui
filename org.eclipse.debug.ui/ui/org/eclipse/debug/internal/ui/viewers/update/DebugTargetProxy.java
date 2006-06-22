@@ -60,7 +60,9 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
      * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
      */
     protected DebugEventHandler[] createEventHandlers() {
-        return new DebugEventHandler[] { new DebugTargetEventHandler(this), new ThreadEventHandler(this) };
+        ThreadEventHandler threadEventHandler = new ThreadEventHandler(this);
+		return new DebugEventHandler[] { new DebugTargetEventHandler(this), threadEventHandler,
+				new StackFrameEventHandler(this, threadEventHandler) };
     }
 
 	/* (non-Javadoc)

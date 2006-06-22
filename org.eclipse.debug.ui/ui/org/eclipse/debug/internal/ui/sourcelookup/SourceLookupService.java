@@ -61,7 +61,8 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {		
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {	
+		contextActivated(selection, part);
 	}
 
 	/* (non-Javadoc)
