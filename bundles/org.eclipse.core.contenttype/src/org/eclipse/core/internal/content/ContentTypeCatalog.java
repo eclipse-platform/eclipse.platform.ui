@@ -148,7 +148,7 @@ public final class ContentTypeCatalog {
 		final IContentType[][] result = new IContentType[][] {candidates};
 		SafeRunner.run(new ISafeRunnable() {
 			public void handleException(Throwable exception) {
-				// already logged in Platform#run()
+				// already logged in SafeRunner#run()
 				// default result is the original array
 				// nothing to be done
 			}
