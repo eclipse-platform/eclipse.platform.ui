@@ -58,6 +58,8 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	// plugin id
 	public static final String PLUGIN_ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	
+	public static final String TRIGGER_POINT_ID = "org.eclipse.team.ui.activityTriggerPoint"; //$NON-NLS-1$
+	
 	private static List propertyChangeListeners = new ArrayList(5);
 	
 	private Hashtable imageDescriptors = new Hashtable(20);

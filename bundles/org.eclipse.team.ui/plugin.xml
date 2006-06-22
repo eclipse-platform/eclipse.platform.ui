@@ -445,4 +445,14 @@
             storageMergerId="org.eclipse.team.ui.textStorageMerger"/>
    </extension>
 
+   <!-- *************** Activity Support **************** -->
+    <extension
+          point="org.eclipse.ui.activitySupport">
+      <triggerPoint id="org.eclipse.team.ui.activityTriggerPoint">
+         <hint
+               id="interactive"
+               value="true"/>
+      </triggerPoint>
+    </extension>
+    
 </plugin>

@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ui.wizards;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -26,11 +27,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.model.*;
 
@@ -59,6 +60,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page title
 	 * @param wizards  the wizards to populate the table with
+	 * @param disabledWizards the list of wizards that are disabled via capabilities
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards) {
 		this(pageName,title,titleImage,wizards,disabledWizards, TeamUIMessages.ConfigureProjectWizardMainPage_selectRepository); 
@@ -71,6 +73,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page title
 	 * @param wizards  the wizards to populate the table with
+	 * @param disabledWizards the list of wizards that are disabled via capabilities
 	 * @param description The string to use as a description label
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards, String description) {
@@ -192,9 +195,16 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 */
 	public IWizardPage getNextPage() {
 		if (selectedWizard == null) return null;
-		if(! WorkbenchActivityHelper.allowUseOf(((IStructuredSelection)viewer.getSelection()).getFirstElement())) return null;
+		if(! WorkbenchActivityHelper.allowUseOf(getTriggerPoint(), ((IStructuredSelection)viewer.getSelection()).getFirstElement())) return null;
 		return selectedWizard.getStartingPage();
 	}
+	
+	private ITriggerPoint getTriggerPoint() {
+		return PlatformUI.getWorkbench()
+			.getActivitySupport().getTriggerPointManager()
+			.getTriggerPoint(TeamUIPlugin.TRIGGER_POINT_ID);
+	}
+
 	/**
 	 * Set the workbench to the argument
 	 * 
