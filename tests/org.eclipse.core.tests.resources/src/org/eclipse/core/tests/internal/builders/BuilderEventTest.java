@@ -82,6 +82,19 @@ public class BuilderEventTest extends AbstractBuilderTest {
 		assertEquals("2.3", true, listener.hadPostBuild());
 		assertEquals("2.4", true, listener.hadPostChange());
 
+		//do a second incremental build and ensure we still get the events
+		listener.reset();
+		try {
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertEquals("2.0", getWorkspace(), listener.getSource());
+		assertEquals("2.1", IncrementalProjectBuilder.INCREMENTAL_BUILD, listener.getBuildKind());
+		assertEquals("2.2", true, listener.hadPreBuild());
+		assertEquals("2.3", true, listener.hadPostBuild());
+		assertEquals("2.4", true, listener.hadPostChange());
+
 		//do a full build and ensure we still get the event
 		listener.reset();
 		try {
