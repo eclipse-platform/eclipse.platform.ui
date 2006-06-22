@@ -275,7 +275,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 						ResourceStats.startNotify(listener);
 					SafeRunner.run(new ISafeRunnable() {
 						public void handleException(Throwable e) {
-							// exception logged in Platform#run
+							// exception logged in SafeRunner#run
 						}
 
 						public void run() throws Exception {
