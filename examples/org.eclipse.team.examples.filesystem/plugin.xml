@@ -546,6 +546,21 @@
                </or>
             </possibleChildren>
          </navigatorContent>
+         <actionProvider
+               class="org.eclipse.team.examples.model.ui.mapping.ThirdPartyActionProvider"
+               id="org.eclipse.team.examples.model.ThirdPartyActionProvider">
+            <enablement>
+               <adapt type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+            </enablement>
+         </actionProvider>
+      </extension>
+      <extension
+            point="org.eclipse.ui.navigator.viewer">
+         <viewerActionBinding viewerId="org.eclipse.team.cvs.ui.workspaceSynchronization">
+            <includes>
+               <actionExtension pattern="org.eclipse.team.examples.model.ThirdPartyActionProvider"/>
+            </includes>
+         </viewerActionBinding>
       </extension>
 
   
