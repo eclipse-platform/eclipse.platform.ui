@@ -20,9 +20,14 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
+import org.eclipse.debug.internal.ui.actions.SharedLaunchConfigAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.DebugUITools;
@@ -38,6 +43,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -162,6 +168,67 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		action.setEnabled(false);
 	}
 
+	/**
+	 * This method is used to determine if the selected object is in fact a shared launch
+	 * configuration that can be launched
+	 * @return true if the item is a shared ocnfig , false otherwise
+	 * @since 3.3
+	 */
+	private boolean isSharedConfig(Object receiver) {
+		if(receiver instanceof IFile) {
+			IFile file = (IFile) receiver;
+			String ext = file.getFileExtension();
+			if(ext == null) {
+				return false;
+			}
+			if(ext.equals("launch")) { //$NON-NLS-1$
+				ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(file);
+				if(config != null && config.exists()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * This method return if the editor input is from a shared java launch configuration file or not
+	 * @param receiver the editor input to examine
+	 * @return true if the editor input is from a shared launch configuration file, false otherwise.
+	 */
+	private boolean isSharedConfigEditorInput(Object receiver) {
+		if(receiver instanceof IFileEditorInput) {
+			IFileEditorInput input = (IFileEditorInput) receiver;
+			return isSharedConfig(input.getFile());
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the launch manager
+	 * @return the launch manager
+	 * @since 3.3
+	 */
+	private ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+	
+	/**
+	 * Prepares a SharedLaunchConfigAction and adds it to the current menu
+	 * @param file the file to get the launch configuration from
+	 * @param image the image for the action
+	 * @param menu the menu to add the new action to.
+	 * @since 3.3
+	 */
+	private void prepareSharedConfigAction(IFile file, Menu menu) {
+		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
+		if(config != null && config.exists()) {
+			IAction action = new SharedLaunchConfigAction(config, fMode, DebugUITools.getDefaultImageDescriptor(config));
+		    ActionContributionItem item= new ActionContributionItem(action);
+		    item.fill(menu, -1);
+		}
+	}
+	
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
@@ -172,6 +239,21 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		}
 		
 		IEvaluationContext context = createContext();
+		
+		//add in any selected shared configs before the rest of the items to launch as
+		//feature fix for 
+		if(!fSelection.isEmpty()) {
+			Object obj = fSelection.getFirstElement();
+			if(isSharedConfig(obj)) {
+				prepareSharedConfigAction((IFile)obj, menu);
+				new MenuItem(menu, SWT.SEPARATOR);
+			} 
+			else if(isSharedConfigEditorInput(obj)) {
+				prepareSharedConfigAction(((IFileEditorInput) obj).getFile(), menu);
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
+		}
+		
 		// gather all shortcuts and run their filters so that we only run the
 		// filters one time for each shortcut. Running filters can be expensive.
 		// Also, only *LOADED* plug-ins get their filters run.
