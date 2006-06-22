@@ -91,7 +91,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			final IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
 			ISafeRunnable job = new ISafeRunnable() {
 				public void handleException(Throwable exception) {
-					// already being logged in Platform#run()
+					// already being logged in SafeRunner#run()
 				}
 
 				public void run() throws Exception {

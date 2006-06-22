@@ -575,7 +575,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					throw (OperationCanceledException) e;
 				}
 				//ResourceStats.buildException(e);
-				// don't log the exception....it is already being logged in Platform#run
+				// don't log the exception....it is already being logged in SafeRunner#run
 
 				//add a generic message to the MultiStatus
 				String builderName = currentBuilder.getLabel();
