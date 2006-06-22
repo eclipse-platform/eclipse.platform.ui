@@ -137,10 +137,10 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				return;
 			isNotifying = true;
 			ResourceDelta delta = getDelta(lastState, type);
-			//don't broadcast POST_CHANGE or incremental build events if the delta is empty
+			//don't broadcast POST_CHANGE or autobuild events if the delta is empty
 			if (delta == null || delta.getKind() == 0) {
 				int trigger = event.getBuildKind();
-				if (trigger != IncrementalProjectBuilder.FULL_BUILD && trigger != IncrementalProjectBuilder.CLEAN_BUILD)
+				if (trigger == IncrementalProjectBuilder.AUTO_BUILD || trigger == 0)
 					return;
 			}
 			event.setDelta(delta);
