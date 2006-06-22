@@ -62,7 +62,7 @@ public class DirectExtensionCreate extends BaseExtensionRegistryRun {
 		// add second contribution in the same namespace
 		String extensionPointAltId = "DirectExtPointAlt"; //$NON-NLS-1$
 		String extensionPointAltLabel = "Second direct extension point"; //$NON-NLS-1$
-		((ExtensionRegistry) simpleRegistry).addExtensionPoint(extensionPointAltId, contributor, false, extensionPointAltLabel, extensionPointSchemaRef, userToken);
+		assertTrue(((ExtensionRegistry) simpleRegistry).addExtensionPoint(extensionPointAltId, contributor, false, extensionPointAltLabel, extensionPointSchemaRef, userToken));
 
 		IExtensionPoint extensionPointAlt = simpleRegistry.getExtensionPoint(qualifiedName(namespace, extensionPointAltId));
 		assertNotNull(extensionPointAlt);
@@ -103,7 +103,7 @@ public class DirectExtensionCreate extends BaseExtensionRegistryRun {
 
 		ConfigurationElementDescription description = new ConfigurationElementDescription(extensionName, new ConfigurationElementAttribute[] {prop1, prop2}, extensionValue, new ConfigurationElementDescription[] {childDesc1, childDesc2});
 
-		((ExtensionRegistry) simpleRegistry).addExtension(extensionId, contributor, false, extensionLabel, extensionPointId, description, userToken);
+		assertTrue(((ExtensionRegistry) simpleRegistry).addExtension(extensionId, contributor, false, extensionLabel, extensionPointId, description, userToken));
 
 		IExtension[] namespaceExtensions = simpleRegistry.getExtensions(namespace);
 		assertNotNull(namespaceExtensions);

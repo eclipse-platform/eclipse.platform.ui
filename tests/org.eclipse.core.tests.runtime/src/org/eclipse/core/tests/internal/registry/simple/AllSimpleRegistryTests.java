@@ -32,6 +32,7 @@ public class AllSimpleRegistryTests extends TestCase {
 		suite.addTest(XMLExtensionCreateEclipse.suite());
 		suite.addTest(DirectExtensionRemove.suite());
 		suite.addTest(MergeContribution.suite());
+		suite.addTest(DuplicatePoints.suite());
 		return suite;
 	}
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="testDuplicates.duplicateExtensionPoint" name="Test21" schema="schema.exsd"/>
+   <extension-point id="testDuplicates.nonDuplicateExtensionPoint" name="Test22" schema="schema.exsd"/>
+   <extension
+         id="testDuplicates.duplicateExtension"
+         point="testDuplicates.duplicateExtensionPoint">
+   </extension>
+   <extension
+         id="testDuplicates.nonDuplicateExtension"
+         point="testDuplicates.duplicateExtensionPoint">
+   </extension>
+
+</plugin>

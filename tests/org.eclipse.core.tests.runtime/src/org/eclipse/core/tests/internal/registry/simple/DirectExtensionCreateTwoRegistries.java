@@ -80,8 +80,8 @@ public class DirectExtensionCreateTwoRegistries extends BaseExtensionRegistryRun
 	}
 
 	private void fillRegistries(IContributor contributor) {
-		((ExtensionRegistry) theDeviceRegistryA).addExtensionPoint(extensionPointId, contributor, false, "LabelA", extensionPointSchemaRef, userToken); //$NON-NLS-1$
-		((ExtensionRegistry) theDeviceRegistryB).addExtensionPoint(extensionPointAltId, contributor, false, "LabelB", extensionPointSchemaRef, userToken); //$NON-NLS-1$
+		assertTrue(((ExtensionRegistry) theDeviceRegistryA).addExtensionPoint(extensionPointId, contributor, false, "LabelA", extensionPointSchemaRef, userToken)); //$NON-NLS-1$
+		assertTrue(((ExtensionRegistry) theDeviceRegistryB).addExtensionPoint(extensionPointAltId, contributor, false, "LabelB", extensionPointSchemaRef, userToken)); //$NON-NLS-1$
 	}
 
 	private void checkRegistries(String namespace) {
