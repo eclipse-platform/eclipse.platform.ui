@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Widget;
  *  
  * @since 3.3
  */
-public class DataBindingFactory1 extends	AbstractDataBindingContextFactory {
+public class DataBindingFactory1 extends AbstractDataBindingContextFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.AbstractDataBindingContextFactory#createContext()
