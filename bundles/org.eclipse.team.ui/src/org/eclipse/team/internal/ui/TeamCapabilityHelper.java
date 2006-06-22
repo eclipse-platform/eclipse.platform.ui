@@ -117,11 +117,21 @@ public class TeamCapabilityHelper {
     protected void processProject(IProject project, IWorkbenchActivitySupport workbenchActivitySupport) throws CoreException {
 		if (!project.isOpen())
 			return;
-		IActivityManager activityManager = workbenchActivitySupport
-				.getActivityManager();
 		String id = getProviderIdFor(project);
+		processRepositoryId(id, workbenchActivitySupport);
+	}
+
+    /**
+     * Helper method that enables the activities for the given repository provider.
+     * 
+     * @param id the repository provider id
+     * @param workbenchActivitySupport the activity support
+     */
+	public void processRepositoryId(String id, IWorkbenchActivitySupport workbenchActivitySupport) {
 		if (id == null)
 			return;
+		IActivityManager activityManager = workbenchActivitySupport
+		.getActivityManager();
 		Set activities = new HashSet(activityManager.getEnabledActivityIds());
 		boolean changed = false;
 

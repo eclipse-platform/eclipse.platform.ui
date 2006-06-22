@@ -37,6 +37,7 @@ import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -70,6 +71,8 @@ public class ProjectSetImporter {
 					try {
                         String id = (String)it.next();
                         List references = (List)map.get(id);
+                        TeamCapabilityHelper.getInstance().processRepositoryId(id, 
+                        		PlatformUI.getWorkbench().getActivitySupport());
                         RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
                         if (providerType == null) {
                             // The provider type is absent. Perhaps there is another provider that can import this type
