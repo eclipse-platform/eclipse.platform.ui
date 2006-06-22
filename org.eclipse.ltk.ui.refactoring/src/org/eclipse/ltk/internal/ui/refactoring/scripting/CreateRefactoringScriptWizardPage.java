@@ -54,6 +54,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	/** The sort dialog setting */
 	protected static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
 
+	/** Is the wizard page displayed for the first time? */
+	private boolean fFirstTime= true;
+
 	/** The refactoring history control */
 	private SortableRefactoringHistoryControl fHistoryControl= null;
 
@@ -118,7 +121,8 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(24);
 		fHistoryControl.setLayoutData(data);
-		fHistoryControl.setInput(fWizard.getRefactoringHistory());
+		final RefactoringHistory history= fWizard.getRefactoringHistory();
+		fHistoryControl.setInput(history);
 		fHistoryControl.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(final CheckStateChangedEvent event) {
@@ -164,6 +168,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			}
 		};
 		fLocationControl.loadHistory();
+		if (history == null || history.isEmpty())
+			setErrorMessage(ScriptingMessages.CreateRefactoringScriptWizardPage_no_refactorings);
+		fFirstTime= false;
 		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(parent);
@@ -194,5 +201,15 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		if (settings != null)
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
 		fLocationControl.saveHistory();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setErrorMessage(final String message) {
+		if (!fFirstTime)
+			super.setErrorMessage(message);
+		else
+			setMessage(message, NONE);
 	}
 }

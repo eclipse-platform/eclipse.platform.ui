@@ -52,6 +52,9 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	/** The apply refactoring script wizard page name */
 	private static final String PAGE_NAME= "ApplyRefactoringScriptWizardPage"; //$NON-NLS-1$
 
+	/** Is the wizard page displayed for the first time? */
+	private boolean fFirstTime= true;
+
 	/** The refactoring script location control */
 	private RefactoringScriptLocationControl fLocationControl= null;
 
@@ -70,6 +73,13 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		fWizard= wizard;
 		setTitle(ScriptingMessages.ApplyRefactoringScriptWizard_title);
 		setDescription(ScriptingMessages.ApplyRefactoringScriptWizard_description);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean canFlipToNextPage() {
+		return super.canFlipToNextPage();
 	}
 
 	/**
@@ -108,6 +118,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 		};
 		setPageComplete(false);
 		fLocationControl.loadHistory();
+		fFirstTime= false;
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_APPLY_SCRIPT_PAGE);
@@ -197,6 +208,16 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	public void setErrorMessage(final String message) {
+		if (!fFirstTime)
+			super.setErrorMessage(message);
+		else
+			setMessage(message, NONE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setVisible(final boolean visible) {
 		if (visible) {
 			final URI uri= fWizard.getRefactoringScript();
@@ -211,12 +232,5 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 			}
 		}
 		super.setVisible(visible);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean canFlipToNextPage() {
-		return super.canFlipToNextPage();
 	}
 }
