@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
@@ -25,15 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
  */
 public abstract class DebugEventHandler {
 	
-	private AbstractModelProxy fModelProxy;
-	
-	// debug flags
-	public static boolean DEBUG_DELTAS = false;
-	
-	static {
-		DEBUG_DELTAS = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/deltas")); //$NON-NLS-1$
-	} 	
+	private AbstractModelProxy fModelProxy;	
 
 	/**
 	 * Constructs an event handler for the given model proxy.
@@ -171,9 +161,6 @@ public abstract class DebugEventHandler {
 	protected void fireDelta(IModelDelta delta) {
 		AbstractModelProxy modelProxy = getModelProxy();
 		if (modelProxy != null) {
-			if (DEBUG_DELTAS) {
-				DebugUIPlugin.debug("FIRE DELTA: " + delta.toString()); //$NON-NLS-1$
-			}
 			modelProxy.fireModelChanged(delta);
 		}
 	}

@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 
@@ -27,6 +28,14 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	private IPresentationContext fContext;
 
 	private ListenerList fListeners = new ListenerList();
+	
+	// debug flags
+	public static boolean DEBUG_DELTAS = false;
+	
+	static {
+		DEBUG_DELTAS = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/deltas")); //$NON-NLS-1$
+	} 	
 
 	protected Object[] getListeners() {
 		synchronized (fListeners) {
@@ -59,6 +68,9 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	 */
 	public void fireModelChanged(final IModelDelta delta) {
 		Object[] listeners = getListeners();
+		if (DEBUG_DELTAS) {
+			DebugUIPlugin.debug("FIRE DELTA: " + delta.toString()); //$NON-NLS-1$
+		}
 		for (int i = 0; i < listeners.length; i++) {
 			final IModelChangedListener listener = (IModelChangedListener) listeners[i];
 			ISafeRunnable safeRunnable = new ISafeRunnable() {
