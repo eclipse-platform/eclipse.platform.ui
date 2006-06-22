@@ -229,7 +229,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if the check turns out to be unsuccessful
 	 */
-	private static void checkArgumentMap(final Map arguments) throws CoreException {
+	public static void checkArgumentMap(final Map arguments) throws CoreException {
 		Assert.isNotNull(arguments);
 		for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 			final Map.Entry entry= (Map.Entry) iterator.next();
@@ -258,6 +258,23 @@ public final class RefactoringHistoryManager {
 			return buffer.toString();
 		}
 		return string;
+	}
+
+	/**
+	 * Returns the argument map of the specified descriptor.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @return the argument map, or <code>null</code>
+	 */
+	public static Map getArgumentMap(final RefactoringDescriptor descriptor) {
+		Map arguments= null;
+		final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(descriptor.getID());
+		if (contribution != null)
+			arguments= contribution.retrieveArgumentMap(descriptor);
+		else if (descriptor instanceof DefaultRefactoringDescriptor)
+			arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
+		return arguments;
 	}
 
 	/**
@@ -569,12 +586,7 @@ public final class RefactoringHistoryManager {
 			try {
 				final String id= descriptor.getID();
 				transformer.beginRefactoring(id, descriptor.getTimeStamp(), descriptor.getProject(), descriptor.getDescription(), descriptor.getComment(), descriptor.getFlags());
-				Map arguments= null;
-				final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
-				if (contribution != null)
-					arguments= contribution.retrieveArgumentMap(descriptor);
-				else if (descriptor instanceof DefaultRefactoringDescriptor)
-					arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
+				final Map arguments= getArgumentMap(descriptor);
 				if (arguments != null) {
 					checkArgumentMap(arguments);
 					for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
@@ -661,12 +673,7 @@ public final class RefactoringHistoryManager {
 						long stamp= stamps ? current.getTimeStamp() : -1;
 						final String id= current.getID();
 						transformer.beginRefactoring(id, stamp, current.getProject(), current.getDescription(), current.getComment(), current.getFlags());
-						Map arguments= null;
-						final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(id);
-						if (contribution != null)
-							arguments= contribution.retrieveArgumentMap(current);
-						else if (current instanceof DefaultRefactoringDescriptor)
-							arguments= ((DefaultRefactoringDescriptor) current).getArguments();
+						final Map arguments= getArgumentMap(current);
 						if (arguments != null) {
 							checkArgumentMap(arguments);
 							for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {

@@ -156,6 +156,21 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		};
 
 		/**
+		 * Checks whether the refactoring descriptor is valid according to the
+		 * API of {@link RefactoringDescriptor}.
+		 * 
+		 * @param descriptor
+		 *            the refactoring descriptor to check
+		 * @throws CoreException
+		 *             if the refactoring descriptor is invalid
+		 */
+		private void checkDescriptor(final RefactoringDescriptor descriptor) throws CoreException {
+			final Map arguments= RefactoringHistoryManager.getArgumentMap(descriptor);
+			if (arguments != null)
+				RefactoringHistoryManager.checkArgumentMap(arguments);
+		}
+
+		/**
 		 * Returns the cached refactoring history manager for the specified
 		 * history location.
 		 * 
@@ -221,9 +236,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * 
 		 * @param descriptor
 		 *            the descriptor to push onto the stack
+		 * @throws CoreException
+		 *             if the refactoring descriptor is invalid
 		 */
-		private void push(final RefactoringDescriptor descriptor) {
+		private void push(final RefactoringDescriptor descriptor) throws CoreException {
 			Assert.isNotNull(descriptor);
+			checkDescriptor(descriptor);
 			fImplementation.addFirst(descriptor);
 			final int size= fImplementation.size();
 			if (size > MAX_UNDO_STACK)
@@ -391,18 +409,28 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 					}
 					case OperationHistoryEvent.DONE: {
-						if (fDescriptor != null) {
-							if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
-								if (fOverrideTimeStamp >= 0)
-									fDescriptor.setTimeStamp(fOverrideTimeStamp);
-								else
-									fDescriptor.setTimeStamp(System.currentTimeMillis());
+						try {
+							if (fDescriptor != null) {
+								if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
+									if (fOverrideTimeStamp >= 0)
+										fDescriptor.setTimeStamp(fOverrideTimeStamp);
+									else
+										fDescriptor.setTimeStamp(System.currentTimeMillis());
+								}
+								fUndoStack.push(fDescriptor);
+								fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
+								fDescriptor= null;
+							} else
+								fUndoStack.push(NO_REFACTORING);
+						} catch (CoreException exception) {
+							try {
+								fUndoStack.push(NO_REFACTORING);
+							} catch (CoreException impossible) {
+								// Cannot happen
+								Assert.isLegal(false);
 							}
-							fUndoStack.push(fDescriptor);
-							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
-							fDescriptor= null;
-						} else
-							fUndoStack.push(NO_REFACTORING);
+							RefactoringCorePlugin.log(exception);
+						}
 						break;
 					}
 					case OperationHistoryEvent.ABOUT_TO_UNDO: {
@@ -426,10 +454,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						break;
 					}
 					case OperationHistoryEvent.REDONE: {
-						fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
-						final RefactoringDescriptor descriptor= fUndoStack.peek();
-						if (descriptor != NO_REFACTORING)
-							fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						try {
+							fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
+							final RefactoringDescriptor descriptor= fUndoStack.peek();
+							if (descriptor != NO_REFACTORING)
+								fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						} catch (CoreException exception) {
+							// Cannot happen
+						}
 						break;
 					}
 				}
