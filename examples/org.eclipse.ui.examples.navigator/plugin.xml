@@ -20,7 +20,38 @@
    <!-- Declare the viewer configuration, and the default content/action bindings -->
    <extension
          point="org.eclipse.ui.navigator.viewer">
-      <viewer viewerId="org.eclipse.ui.examples.navigator.view"/>
+      <viewer viewerId="org.eclipse.ui.examples.navigator.view">
+         <popupMenu
+                allowsPlatformContributions="true"
+                id="org.eclipse.ui.examples.navigator.view#PopupMenu">  
+             <insertionPoint name="group.new"/>
+             <insertionPoint
+                   name="group.open"
+                   separator="true"/>
+             <insertionPoint name="group.openWith"/>   
+             <insertionPoint name="group.edit"
+                   separator="true"/>   
+             <insertionPoint name="group.reorganize" />         
+             <insertionPoint
+                   name="group.port"
+                   separator="true"/>     
+             <insertionPoint
+                   name="group.build"
+                   separator="true"/> 
+             <insertionPoint
+                   name="group.generate"
+                   separator="true"/> 
+             <insertionPoint
+                   name="group.search"
+                   separator="true"/>              
+             <insertionPoint
+                   name="additions"
+                   separator="true"/>              
+             <insertionPoint
+                   name="group.properties"
+                   separator="true"/>             
+          </popupMenu>
+      </viewer>
       <viewerContentBinding viewerId="org.eclipse.ui.examples.navigator.view">
          <includes>
             <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
@@ -83,8 +114,12 @@
                <instanceof value="org.eclipse.ui.examples.navigator.PropertiesTreeData"/> 
             </or>
          </possibleChildren>
+         <actionProvider
+               class="org.eclipse.ui.examples.navigator.actions.PropertyActionProvider"
+               id="org.eclipse.ui.examples.navigator.properties.actions.OpenProvider"/>
       </navigatorContent>
    </extension>
+   
    <!-- Bind the Properties content extension to the viewer -->
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -93,6 +128,25 @@
             <contentExtension pattern="org.eclipse.ui.examples.navigator.propertiesContent"/>
          </includes>
       </viewerContentBinding>
+   </extension>
+   
+   <!-- Contribute an Object Contribution to delete individual properties in the view -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.ui.examples.navigator.actions.propertiesResource"
+            objectClass="org.eclipse.ui.examples.navigator.PropertiesTreeData">
+         <action
+               class="org.eclipse.ui.examples.navigator.actions.DeletePropertyAction"
+               enablesFor="1"
+               helpContextId="org.eclipse.ui.edit.delete"
+               icon="icons/delete_obj.gif"
+               id="org.eclipse.ui.examples.navigator.actions.deleteProperty"
+               label="Delete Property"
+               menubarPath="group.edit"
+               tooltip="Delete a specific property"/>
+      </objectContribution> 
    </extension>
   
 </plugin>
