@@ -29,6 +29,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String DiffTreeChangesSection_13;
 
+	public static String DiffTreeChangesSection_14;
+
 	public static String DiffTreeChangesSection_3;
 
 	public static String DiffTreeChangesSection_4;
@@ -148,6 +150,18 @@ public class TeamUIMessages extends NLS {
 
 	public static String simpleInternal;
 	public static String exception;
+
+	public static String StartupPreferencePage_0;
+
+	public static String StartupPreferencePage_1;
+
+	public static String StartupPreferencePage_2;
+
+	public static String StartupPreferencePage_3;
+
+	public static String StartupPreferencePage_4;
+
+	public static String StartupPreferencePage_5;
 
 	public static String SyncInfoCompareInput_localLabel;
 	public static String SyncInfoCompareInput_localLabelExists;

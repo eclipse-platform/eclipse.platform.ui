@@ -11,21 +11,24 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScope;
@@ -365,9 +368,15 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.DiffTreeChangesSection_3, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) })); 
 
+		final boolean[] remember = new boolean[] { false };
+		final PreferenceStore store = (PreferenceStore) getConfiguration()
+			.getProperty(StartupPreferencePage.STARTUP_PREFERENCES);
 		Hyperlink link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_4, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+				if (remember[0] && store != null) {
+					store.putValue(StartupPreferencePage.PROP_STARTUP_ACTION, StartupPreferencePage.STARTUP_ACTION_POPULATE);
+				}
 				getHandler().initializeIfNeeded();
 			}
 		});
@@ -376,10 +385,31 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		link = getForms().createHyperlink(composite, TeamUIMessages.DiffTreeChangesSection_5, SWT.WRAP); 
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+				if (remember[0] && store != null) {
+					store.putValue(StartupPreferencePage.PROP_STARTUP_ACTION, StartupPreferencePage.STARTUP_ACTION_SYNCHRONIZE);
+				}
 				getConfiguration().getParticipant().run(getConfiguration().getSite().getPart());
 			}
 		});
 		getForms().getHyperlinkGroup().add(link);
+		
+		if (store != null) {
+			final Button rememberButton = getForms().createButton(composite, TeamUIMessages.DiffTreeChangesSection_14, SWT.CHECK);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			data.horizontalIndent=5;
+			data.verticalIndent=5;
+			data.widthHint = 100;
+			rememberButton.setLayoutData(data);
+			rememberButton.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					remember[0] = rememberButton.getSelection();
+				}
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// Do nothing
+				}
+			});
+		}
 		
 		return composite;
 	}

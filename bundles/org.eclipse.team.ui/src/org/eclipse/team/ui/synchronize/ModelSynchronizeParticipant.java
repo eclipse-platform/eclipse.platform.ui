@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +18,12 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.*;
+import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelEnablementPreferencePage;
 import org.eclipse.team.internal.ui.mapping.ModelSynchronizePage;
@@ -96,12 +99,18 @@ public class ModelSynchronizeParticipant extends
 	private static final String CTX_PARTICIPANT_MAPPINGS = TeamUIPlugin.ID + ".MODEL_PARTICIPANT_MAPPINGS"; //$NON-NLS-1$
 	private static final String CTX_MODEL_PROVIDER_ID = "modelProviderId"; //$NON-NLS-1$
 	private static final String CTX_MODEL_PROVIDER_MAPPINGS = "mappings"; //$NON-NLS-1$
+	private static final String CTX_STARTUP_ACTION = "startupAction"; //$NON-NLS-1$
 	
 	private SynchronizationContext context;
 	private boolean mergingEnabled = true;
 	protected SubscriberRefreshSchedule refreshSchedule;
 	private String description;
 	private SaveableComparison activeSaveable;
+	private PreferenceStore preferences = new PreferenceStore() {
+		public void save() throws IOException {
+			// Nothing to do. Preference will be saved with participant
+		}
+	};
 
 	private IPropertyListener dirtyListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
@@ -190,6 +199,8 @@ public class ModelSynchronizeParticipant extends
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 		configuration.setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT, getContext());
 		configuration.setProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE, getContext().getScope());
+		if (getHandler() != null)
+			configuration.setProperty(StartupPreferencePage.STARTUP_PREFERENCES, preferences);
 	}
 
 	/**
@@ -250,6 +261,25 @@ public class ModelSynchronizeParticipant extends
 	protected void initializeContext(SynchronizationContext context) {
 		this.context = context;
 		mergingEnabled = context instanceof IMergeContext;
+		SubscriberDiffTreeEventHandler handler = getHandler();
+		if (handler != null) {
+			preferences.setDefault(StartupPreferencePage.PROP_STARTUP_ACTION, StartupPreferencePage.STARTUP_ACTION_NONE);
+			if (isSynchronizeOnStartup()) {
+				run(null); // TODO: Would like to get the Sync view part if possible
+			} else if (isPopulateOnStartup()) {
+				handler.initializeIfNeeded();
+			}
+		}
+	}
+
+	private boolean isPopulateOnStartup() {
+		String pref = preferences.getString(StartupPreferencePage.PROP_STARTUP_ACTION);
+		return pref != null && pref.equals(StartupPreferencePage.STARTUP_ACTION_POPULATE);
+	}
+
+	private boolean isSynchronizeOnStartup() {
+		String pref = preferences.getString(StartupPreferencePage.PROP_STARTUP_ACTION);
+		return pref != null && pref.equals(StartupPreferencePage.STARTUP_ACTION_SYNCHRONIZE);
 	}
 
 	/**
@@ -408,6 +438,7 @@ public class ModelSynchronizeParticipant extends
 			settings.putString(CTX_DESCRIPTION, description);
 		refreshSchedule.saveState(settings.createChild(CTX_REFRESH_SCHEDULE_SETTINGS));
 		saveMappings(settings);
+		settings.putString(CTX_STARTUP_ACTION, preferences.getString(StartupPreferencePage.PROP_STARTUP_ACTION));
 	}
 
 	private void saveMappings(IMemento settings) {
@@ -432,6 +463,8 @@ public class ModelSynchronizeParticipant extends
 		super.init(secondaryId, memento);
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_PARTICIPANT_SETTINGS);
+			String startupAction = settings.getString(StartupPreferencePage.PROP_STARTUP_ACTION);
+			preferences.putValue(StartupPreferencePage.PROP_STARTUP_ACTION, startupAction);
 			ResourceMapping[] mappings = loadMappings(settings);
 			if (mappings.length == 0)
 				throw new PartInitException(NLS.bind(TeamUIMessages.ModelSynchronizeParticipant_0, getId()));
@@ -608,6 +641,9 @@ public class ModelSynchronizeParticipant extends
 				}
 			}
 		}
+		if (getHandler() != null) {
+			pages.add(new StartupPreferencePage(preferences));
+		}
 		return (PreferencePage[]) pages.toArray(new PreferencePage[pages.size()]);
 	}
 
@@ -620,6 +656,10 @@ public class ModelSynchronizeParticipant extends
 			}
 		}
 		return false;
+	}
+	
+	private SubscriberDiffTreeEventHandler getHandler() {
+		return (SubscriberDiffTreeEventHandler)Utils.getAdapter(context, SubscriberDiffTreeEventHandler.class);
 	}
 	
 }

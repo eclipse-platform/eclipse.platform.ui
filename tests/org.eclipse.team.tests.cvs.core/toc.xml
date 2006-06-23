@@ -56,6 +56,8 @@
             </topic>
             <topic label="Scenarios" href="html/sync00001.html">
             </topic>
+            <topic label="Restart Behavior" href="html/syncRestart00001.html">
+            </topic>
         </topic>
         <topic label="Commit" href="html/commit00001.html">
             <topic label="Committing Changes" href="html/commit00002.html">
