@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
@@ -227,15 +226,6 @@ public class IWorkspaceRootTest extends ResourceTest {
 		URI childLocation = linkStore.getChild(child.getName()).toURI();
 		result = root.findFilesForLocationURI(childLocation);
 		assertResources("2.1", child, result);
-	}
-
-	/**
-	 * Returns whether a given resource is in a case-sensitive file system.
-	 * @param resource
-	 * @return
-	 */
-	private boolean isCaseSensitive(IResource resource) {
-		return ((Resource)resource).getStore().getFileSystem().isCaseSensitive();
 	}
 
 	/**

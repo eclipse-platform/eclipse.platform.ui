@@ -905,4 +905,8 @@ public abstract class ResourceTest extends CoreTest {
 			fail("ResourceTest#setReadOnly", e);
 		}
 	}
+
+	protected boolean isCaseSensitive(IResource resource) {
+		return ((Resource)resource).getStore().getFileSystem().isCaseSensitive();
+	}
 }
