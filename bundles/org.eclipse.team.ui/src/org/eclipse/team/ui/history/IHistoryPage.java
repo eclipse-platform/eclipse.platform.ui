@@ -112,4 +112,11 @@ public interface IHistoryPage {
 	 * @return the history page site for this page
 	 */
 	public IHistoryPageSite getHistoryPageSite();
+	
+	/**
+	 * Called to allow IHistoryPage a chance to dispose of any widgets created 
+	 * for its page implementation
+	 *
+	 */
+	public void dispose();
 }

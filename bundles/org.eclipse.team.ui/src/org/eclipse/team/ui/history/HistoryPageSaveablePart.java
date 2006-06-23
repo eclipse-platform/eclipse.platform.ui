@@ -155,6 +155,6 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	public void dispose() {
 		super.dispose();
 		if (historyPage != null)
-			((HistoryPage)historyPage).dispose();
+			historyPage.dispose();
 	}
 }
