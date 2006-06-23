@@ -263,40 +263,33 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/**
-	 * Helper method that considers case insensitive file systems.
+	 * Checks that this resource does not exist.  If the file system is not case
+	 * sensitive, this method also checks for a case variant.
 	 */
 	protected void checkDoesNotExist() throws CoreException {
-		// should consider getting the ResourceInfo as a parameter to reduce tree lookups
-
-		//first check the tree for an exact case match
 		checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
-		if (Workspace.caseSensitive) {
-			return;
+	}
+
+	/**
+	 * Checks that this resource does not exist.  If the file system is not case
+	 * sensitive, this method also checks for a case variant.
+	 *
+	 * @exception CoreException if this resource exists
+	 */
+	public void checkDoesNotExist(int flags, boolean checkType) throws CoreException {
+		//if this exact resource exists we are done
+		if (exists(flags, checkType)) {
+			String message = NLS.bind(Messages.resources_mustNotExist, getFullPath());
+			throw new ResourceException(checkType ? IResourceStatus.RESOURCE_EXISTS : IResourceStatus.PATH_OCCUPIED, getFullPath(), message, null);
 		}
+		if (Workspace.caseSensitive)
+			return;
 		//now look for a matching case variant in the tree
 		IResource variant = findExistingResourceVariant(getFullPath());
 		if (variant == null)
 			return;
 		String msg = NLS.bind(Messages.resources_existsDifferentCase, variant.getFullPath());
 		throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
-	}
-
-	/**
-	 * Checks that this resource does not exist.  
-	 *
-	 * @exception CoreException if this resource exists
-	 */
-	public void checkDoesNotExist(int flags, boolean checkType) throws CoreException {
-		// See if there is any resource at all.  If none then we are happy.
-		if (!exists(flags, false))
-			return;
-		// We know there is something in the tree at this path.
-		// If we are checking type then go ahead and check the type.
-		// If there is nothing there of this resource's type, then return.
-		if ((checkType && !exists(flags, checkType)))
-			return;
-		String message = NLS.bind(Messages.resources_mustNotExist, getFullPath());
-		throw new ResourceException(checkType ? IResourceStatus.RESOURCE_EXISTS : IResourceStatus.PATH_OCCUPIED, getFullPath(), message, null);
 	}
 
 	/**
