@@ -62,9 +62,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new LinkedResourceTest("testCreateProjectWithDeepLinks"));
-		//		return suite;
+//				TestSuite suite = new TestSuite();
+//				suite.addTest(new LinkedResourceTest("testCreateLinkCaseVariant"));
+//				return suite;
 	}
 
 	public LinkedResourceTest() {
@@ -638,6 +638,28 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests creating a linked resource with the same name but different
+	 * case as an existing resource.  On case insensitive platforms this should fail.
+	 */
+	public void testCreateLinkCaseVariant() {
+		IFolder link = nonExistingFolderInExistingProject;
+		IFolder variant = link.getParent().getFolder(new Path(link.getName().toUpperCase()));
+		ensureExistsInWorkspace(variant, true);
+
+		try {
+			link.createLink(localFolder, IResource.NONE, getMonitor());
+			//should fail on case insensitive platforms
+			if (!isCaseSensitive(variant))
+				fail("1.0");
+		} catch (CoreException e) {
+			//should not fail on case sensitive platforms
+			if (isCaseSensitive(variant))
+				fail("1.1", e);
+		}
+
+	}
+
+	/**
 	 * Tests creating a linked resource by modifying the .project file directly.
 	 * This is a regression test for bug 63331.
 	 */
@@ -752,12 +774,12 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("0.99", e);
 			return;
 		}
-		
+
 		//everything should exist at this point
 		assertTrue("1.0", linkParent.exists());
 		assertTrue("1.1", link.exists());
 		assertTrue("1.2", linkChild.exists());
-		
+
 		//delete the parent of the link
 		try {
 			linkParent.delete(IResource.KEEP_HISTORY, getMonitor());
@@ -771,6 +793,7 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.2", !linkChild.exists());
 		assertTrue("2.3", childStore.fetchInfo().exists());
 	}
+
 	/**
 	 * Tests deleting and then recreating a project
 	 */
