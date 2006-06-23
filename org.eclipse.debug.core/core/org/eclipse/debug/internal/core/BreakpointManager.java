@@ -11,12 +11,13 @@
 package org.eclipse.debug.internal.core;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
@@ -49,9 +50,11 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The breakpoint manager manages all registered breakpoints
- * for the debug plugin. It is instantiated by the debug plugin at startup.
+ * for the debug plug-in. It is instantiated by the debug plug-in at startup.
  *
  * @see IBreakpointManager
  */
@@ -87,8 +90,22 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private Vector fBreakpoints= null;
 	
 	/**
+	 * A collection of breakpoint markers that have received a POST_CHANGE notification
+	 * that they have changed before a POST_BUILD notification of add. This allows us
+	 * to tell if a marker has been created & changed since the breakpoint has been
+	 * registered (see bug 138473).
+	 */
+	private Set fPostChangMarkersChanged = new HashSet();
+	
+	/**
+	 * A collection of breakpoint markers that have received a POST_BUILD notification
+	 * of being added.
+	 */
+	private Set fPostBuildMarkersAdded = new HashSet();
+	
+	/**
 	 * Collection of breakpoints being added currently. Used to 
-	 * suppress change notication of "REGISTERED" attribute when
+	 * suppress change notification of "REGISTERED" attribute when
 	 * being added.
 	 */
 	private List fSuppressChange = new ArrayList();
@@ -114,7 +131,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private ListenerList fBreakpointListeners= new ListenerList();
 		
 	/**
-	 * Collection of (multi) breakpoint listeners.
+	 * Collection of (plural) breakpoint listeners.
 	 */
 	private ListenerList fBreakpointsListeners= new ListenerList();	
 	
@@ -131,10 +148,74 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	
 	/**
 	 * Collection of breakpoint manager listeners which are
-	 * notified when this manager's enablement changes.
+	 * notified when this manager's state changes.
 	 */
 	private ListenerList fBreakpointManagerListeners= new ListenerList();
 
+	/**
+	 * Listens to POST_CHANGE notifications of breakpoint markers to detect when
+	 * a breakpoint is added & changed before the POST_BUILD add notification is
+	 * sent.
+	 */
+	class PostChangeListener implements IResourceChangeListener {
+		
+		private PostChangeVisitor fVisitor = new PostChangeVisitor();
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+		 */
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta delta= event.getDelta();
+			if (delta != null) {
+				try {
+					delta.accept(fVisitor);
+				} catch (CoreException ce) {
+					DebugPlugin.log(ce);
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * The listener
+	 */
+	private PostChangeListener fPostChangeListener = new PostChangeListener();
+	
+	class PostChangeVisitor implements IResourceDeltaVisitor {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			if (delta == null) {
+				return false;
+			}
+			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
+			for (int i= 0; i < markerDeltas.length; i++) {
+				IMarkerDelta markerDelta= markerDeltas[i];
+				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
+					switch (markerDelta.getKind()) {
+						case IResourceDelta.ADDED :
+							break;
+						case IResourceDelta.REMOVED :
+							break;
+						case IResourceDelta.CHANGED :
+							IMarker marker = markerDelta.getMarker();
+							synchronized (fPostChangMarkersChanged) {
+								if (!fPostBuildMarkersAdded.contains(marker)) {
+									fPostChangMarkersChanged.add(marker);
+								}
+							}
+							break;
+					}
+				}
+			}
+			return true;
+		}
+		
+	}
+	
 	/**
 	 * Constructs a new breakpoint manager.
 	 */
@@ -157,6 +238,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			IMarker marker= markers[i];
 			try {
 				IBreakpoint breakpoint = createBreakpoint(marker);
+				synchronized (fPostChangMarkersChanged) {
+					fPostBuildMarkersAdded.add(marker);
+				}
 				if (breakpoint.isRegistered()) {
 					added.add(breakpoint);
 				}
@@ -222,6 +306,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public void shutdown() {
 		getWorkspace().removeResourceChangeListener(this);
+		getWorkspace().removeResourceChangeListener(fPostChangeListener);
 		fBreakpointListeners = null;
         fBreakpointsListeners = null;
         fBreakpointManagerListeners = null;
@@ -313,6 +398,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			loadBreakpoints(getWorkspace().getRoot(), false);
 			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
+			getWorkspace().addResourceChangeListener(fPostChangeListener, IResourceChangeEvent.POST_CHANGE);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));
@@ -364,7 +450,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 							// if the breakpoint is being removed from the manager
 							// because the project is closing, the breakpoint should
 							// remain as registered, otherwise, the breakpoint should
-							// be marked as deregistered
+							// be marked as unregistered
 							IMarker marker = breakpoint.getMarker();
 							if (marker.exists()) {
 								IProject project = breakpoint.getMarker().getResource().getProject();
@@ -619,7 +705,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 					switch (markerDelta.getKind()) {
 						case IResourceDelta.ADDED :
-							handleAddBreakpoint(delta, markerDelta.getMarker());
+							handleAddBreakpoint(delta, markerDelta.getMarker(), markerDelta);
 							break;
 						case IResourceDelta.REMOVED :
 							handleRemoveBreakpoint(markerDelta.getMarker());
@@ -637,7 +723,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		/**
 		 * Wrapper for handling adds
 		 */
-		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker) {
+		protected void handleAddBreakpoint(IResourceDelta rDelta, IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// This breakpoint has actually been moved - already removed
 				// from the Breakpoint manager during the remove callback.
@@ -646,7 +732,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					fMoved.add(marker);
 				}
 			} else {
-				// do nothing - we do not add until explicitly added
+				// check if the an add & change have be combined into one add notification 
+				synchronized (fPostChangMarkersChanged) {
+					if (fPostChangMarkersChanged.contains(marker)) {
+						handleChangeBreakpoint(marker, mDelta);
+						fPostChangMarkersChanged.remove(marker);
+					}
+					fPostBuildMarkersAdded.add(marker);
+				}
 			}
 		}
 		
@@ -654,6 +747,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * Wrapper for handling removes
 		 */
 		protected void handleRemoveBreakpoint(IMarker marker) {
+			synchronized (fPostChangMarkersChanged) {
+				fPostChangMarkersChanged.remove(marker);
+				fPostBuildMarkersAdded.remove(marker);
+			}
 			IBreakpoint breakpoint= getBreakpoint(marker);
 			if (breakpoint != null) {
 				fRemoved.add(breakpoint);
@@ -664,7 +761,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * Wrapper for handling changes
 		 */
 		protected void handleChangeBreakpoint(IMarker marker, IMarkerDelta delta) {
-			final IBreakpoint breakpoint= getBreakpoint(marker);
+			IBreakpoint breakpoint= getBreakpoint(marker);
 			if (breakpoint != null && isRegistered(breakpoint) && !isChangeSuppressed(breakpoint)) {
 				fChanged.add(breakpoint);
 				fChangedDeltas.add(delta);
@@ -729,7 +826,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		// single listeners
 		getBreakpointNotifier().notify(bpArray, deltaArray, update);
 		
-		// multi listeners
+		// plural listeners
 		getBreakpointsNotifier().notify(bpArray, deltaArray, update);
 	}	
 
