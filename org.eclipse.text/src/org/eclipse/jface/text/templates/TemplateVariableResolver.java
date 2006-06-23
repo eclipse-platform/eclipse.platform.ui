@@ -154,14 +154,14 @@ public class TemplateVariableResolver {
 	}
 
 	/**
-	 * Sets the type.
+	 * Sets the type name.
 	 * <p>
 	 * This is a framework-only method that exists only so that resolvers
 	 * can be contributed via an extension point and that should not be called
 	 * in client code; use {@link #TemplateVariableResolver(String, String)} instead.
 	 * </p>
 	 *
-	 * @param type the type of this resolver
+	 * @param type the type name of this resolver
 	 */
 	public final void setType(String type) {
 		Assert.isNotNull(type);

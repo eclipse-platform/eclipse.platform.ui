@@ -235,26 +235,14 @@ public class TemplateContextType {
         for (int i= 0; i != variables.length; i++) {
             TemplateVariable variable= variables[i];
 
-			if (variable.isUnambiguous())
-				continue;
-
-			// remember old values
-			int[] oldOffsets= variable.getOffsets();
-			int oldLength= variable.getLength();
-			String oldValue= variable.getDefaultValue();
-
-			String type= variable.getType();
-			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
-			if (resolver == null)
-				resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
-			resolver.resolve(variable, context);
+			if (!variable.isResolved())
+				resolve(variable, context);
 
 			String value= variable.getDefaultValue();
-
-			if (!oldValue.equals(value))
-				// update buffer to reflect new value
-				for (int k= 0; k != oldOffsets.length; k++)
-					edits.add(new ReplaceEdit(oldOffsets[k], oldLength, value));
+			int[] offsets= variable.getOffsets();
+			// update buffer to reflect new value
+			for (int k= 0; k != offsets.length; k++)
+				edits.add(new ReplaceEdit(offsets[k], variable.getInitialLength(), value));
 
         }
 
@@ -268,6 +256,21 @@ public class TemplateContextType {
 
         buffer.setContent(document.get(), variables);
     }
+
+	/**
+	 * Resolves a single variable in a context. Resolving is delegated to the registered resolver.
+	 * 
+	 * @param variable the variable to resolve
+	 * @param context the context in which to resolve the variable
+	 * @since 3.3
+	 */
+	public void resolve(TemplateVariable variable, TemplateContext context) {
+		String type= variable.getType();
+		TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
+		if (resolver == null)
+			resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
+		resolver.resolve(variable, context);
+	}
 
 	private static List variablesToPositions(TemplateVariable[] variables) {
    		List positions= new ArrayList(5);

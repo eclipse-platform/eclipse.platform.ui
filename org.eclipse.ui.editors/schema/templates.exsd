@@ -73,7 +73,7 @@
                   A subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateContextType&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateContextType"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -120,7 +120,7 @@
                   A subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateVariableResolver&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateVariableResolver"/>
                </appInfo>
             </annotation>
          </attribute>

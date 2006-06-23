@@ -10,251 +10,268 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * The template translator translates a string into a template buffer. Regions
- * marked as variables are translated into <code>TemplateVariable</code>s.
+ * The template translator translates a string into a template buffer. Regions marked as variables
+ * are translated into <code>TemplateVariable</code>s.
  * <p>
- * The EBNF grammar of a valid string is as follows:</p>
+ * The EBNF grammar of a valid string is as follows:
+ * </p>
  * <p>
  * template := (text | escape)*. <br />
  * text := character - dollar. <br />
- * escape := dollar ('{' identifier '}' | dollar). <br />
+ * escape := dollar ('{' variable '}' | dollar). <br />
  * dollar := '$'. <br />
+ * variable := identifier | identifier ':' type. <br />
+ * type := qualifiedname | qualifiedname '(' arguments ')'. <br />
+ * arguments := (qualifiedname ',')* qualifiedname. <br />
+ * qualifiedname := (identifier '.')* identifier. <br />
  * </p>
  * <p>
- * Clients may extend the <code>createVariable</code> method of this class.
+ * Clients may only replace the <code>createVariable</code> method of this class.
  * </p>
- *
+ * 
  * @since 3.0
  */
 public class TemplateTranslator {
+	/**
+	 * Precompiled regex pattern for qualified names.
+	 * @since 3.3
+	 */
+	private static final Pattern PARAM_PATTERN= Pattern.compile("(?:\\w++\\.)*\\w++"); //$NON-NLS-1$
+	/**
+	 * Precompiled regex pattern for valid dollar escapes (dollar literals and variables) and
+	 * (invalid) single dollars.
+	 * @since 3.3
+	 */
+	private static final Pattern ESCAPE_PATTERN= Pattern.compile("\\$\\$|\\$\\{\\s*+(\\w*+)\\s*+(?::\\s*+((?:\\w++\\.)*\\w++)\\s*+(?:\\(\\s*+((?:(?:\\w++\\.)*\\w++\\s*+,\\s*+)*(?:\\w++\\.)*\\w++)\\s*+\\))?\\s*+)?\\}|\\$"); //$NON-NLS-1$
+	/**
+	 * @since 3.3
+	 */
+	private final class VariableDescription {
+		final List fOffsets= new ArrayList(5);
+		final String fName;
+		TemplateVariableType fType;
 
-	// states
-	private static final int TEXT= 0;
-	private static final int ESCAPE= 1;
-	private static final int IDENTIFIER= 2;
+		VariableDescription(String name, TemplateVariableType type) {
+			fName= name;
+			fType= type;
+		}
 
-	// tokens
-	private static final char ESCAPE_CHARACTER= '$';
-	private static final char IDENTIFIER_BEGIN= '{';
-	private static final char IDENTIFIER_END= '}';
+		void mergeType(TemplateVariableType type) throws TemplateException {
+			if (type == null)
+				return;
+			if (fType == null)
+				fType= type;
+			if (!type.equals(fType))
+				fail(TextTemplateMessages.getFormattedString("TemplateTranslator.error.incompatible.type", fName)); //$NON-NLS-1$
+		}
+	}
 
-	/** a buffer for the translation result string */
-    private final StringBuffer fBuffer= new StringBuffer();
-    /** position offsets of variables */
-    private final Vector fOffsets= new Vector();
-    /** position lengths of variables */
-    private final Vector fLengths= new Vector();
-
-	/** the current parsing state */
-    private int fState;
-    /** the last translation error */
-    private String fErrorMessage;
+	/** Last translation error. */
+	private String fErrorMessage;
+	/**
+	 * Used to ensure compatibility with subclasses overriding
+	 * {@link #createVariable(String, String, int[])}.
+	 * @since 3.3
+	 */
+	private TemplateVariableType fCurrentType;
 
 	/**
-	 * Returns an error message if an error occurred for the last translation,
-	 * <code>null</code> otherwise.
-	 *
-	 * @return the error message if an error occurred during the most recent
-	 *         translation, <code>null</code> otherwise
+	 * Returns an error message if an error occurred for the last translation, <code>null</code>
+	 * otherwise.
+	 * 
+	 * @return the error message if an error occurred during the most recent translation,
+	 *         <code>null</code> otherwise
 	 */
 	public String getErrorMessage() {
-	    return fErrorMessage;
+		return fErrorMessage;
 	}
 
 	/**
-	 * Translates a template to a <code>TemplateBuffer</code>. <code>null</code>
-	 * is returned if there was an error. <code>getErrorMessage()</code> retrieves the
-	 * associated error message.
-	 *
+	 * Translates a template to a <code>TemplateBuffer</code>. <code>null</code> is returned if
+	 * there was an error. <code>getErrorMessage()</code> retrieves the associated error message.
+	 * 
 	 * @param template the template to translate.
-	 * @return returns the template buffer corresponding to the string, <code>null</code>
-	 *         if there was an error.
+	 * @return returns the template buffer corresponding to the string
 	 * @see #getErrorMessage()
 	 * @throws TemplateException if translation failed
 	 */
 	public TemplateBuffer translate(Template template) throws TemplateException {
-		return translate(template.getPattern());
+		return parse(template.getPattern());
 	}
 
 	/**
-	 * Translates a template string to <code>TemplateBuffer</code>. <code>null</code>
-	 * is returned if there was an error. <code>getErrorMessage()</code> retrieves the
-	 * associated error message.
-	 *
+	 * Translates a template string to <code>TemplateBuffer</code>. <code>null</code> is
+	 * returned if there was an error. <code>getErrorMessage()</code> retrieves the associated
+	 * error message.
+	 * 
 	 * @param string the string to translate.
-	 * @return returns the template buffer corresponding to the string, <code>null</code>
-	 *         if there was an error.
+	 * @return returns the template buffer corresponding to the string
 	 * @see #getErrorMessage()
 	 * @throws TemplateException if translation failed
 	 */
 	public TemplateBuffer translate(String string) throws TemplateException {
-
-	    fBuffer.setLength(0);
-	    fOffsets.clear();
-	    fLengths.clear();
-	    fState= TEXT;
-	    fErrorMessage= null;
-
-		if (!parse(string))
-			throw new TemplateException(fErrorMessage);
-
-		switch (fState) {
-		case TEXT:
-			break;
-
-		// illegal
-		case ESCAPE:
-			throw new TemplateException(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
-
-		// illegal
-		case IDENTIFIER:
-			throw new TemplateException(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
-		}
-
-		int[] offsets= new int[fOffsets.size()];
-		int[] lengths= new int[fLengths.size()];
-
-		for (int i= 0; i < fOffsets.size(); i++) {
-			offsets[i]= ((Integer) fOffsets.get(i)).intValue();
-			lengths[i]= ((Integer) fLengths.get(i)).intValue();
-		}
-
-		String translatedString= fBuffer.toString();
-		TemplateVariable[] variables= findVariables(translatedString, offsets, lengths);
-
-		return new TemplateBuffer(translatedString, variables);
-	}
-
-	private TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
-
-		Map map= new HashMap();
-
-		for (int i= 0; i != offsets.length; i++) {
-		    int offset= offsets[i];
-		    int length= lengths[i];
-
-		    String content= string.substring(offset, offset + length);
-		    Vector vector= (Vector) map.get(content);
-		    if (vector == null) {
-		    	vector= new Vector();
-		    	map.put(content, vector);
-		    }
-		    vector.add(new Integer(offset));
-		}
-
-		TemplateVariable[] variables= new TemplateVariable[map.size()];
-		int k= 0;
-
-		Set keys= map.keySet();
-		for (Iterator i= keys.iterator(); i.hasNext(); ) {
-			String name= (String) i.next();
-			Vector vector= (Vector) map.get(name);
-
-			int[] offsets_= new int[vector.size()];
-			for (int j= 0; j != offsets_.length; j++)
-				offsets_[j]= ((Integer) vector.get(j)).intValue();
-
-			variables[k]= createVariable(name, name, offsets_);
-			k++;
-		}
-
-		return variables;
-	}
-
-	/**
-	 * Hook method to create new variables. Subclasses may override to supply their
-	 * custom variable type.
-	 * <p>
-	 * Clients may replace this method.
-	 * </p>
-	 *
-	 * @param type the type of the new variable.
-	 * @param name the name of the new variable.
-	 * @param offsets the offsets where the variable occurs in the template
-	 * @return a new instance of <code>TemplateVariable</code>
-	 */
-	protected TemplateVariable createVariable(String type, String name, int[] offsets) {
-		return new TemplateVariable(type, name, offsets);
+		return parse(string);
 	}
 
 	/**
 	 * Internal parser.
-	 *
+	 * 
 	 * @param string the string to parse
-	 * @return <code>true</code> if parsing was successful
+	 * @return the parsed <code>TemplateBuffer</code>
+	 * @throws TemplateException if the string does not conform to the template format
 	 */
-	private boolean parse(String string) {
+	private TemplateBuffer parse(String string) throws TemplateException {
+		
+		fErrorMessage= null;
+		final StringBuffer buffer= new StringBuffer(string.length());
+		final Matcher matcher= ESCAPE_PATTERN.matcher(string);
+		final Map variables= new LinkedHashMap();
+		
+		int complete= 0;
+		while (matcher.find()) {
+			// append any verbatim text
+			buffer.append(string.substring(complete, matcher.start()));
 
-		for (int i= 0; i != string.length(); i++) {
-		    char ch= string.charAt(i);
-
-			switch (fState) {
-			case TEXT:
-				switch (ch) {
-				case ESCAPE_CHARACTER:
-					fState= ESCAPE;
-					break;
-
-				default:
-					fBuffer.append(ch);
-					break;
-				}
-				break;
-
-			case ESCAPE:
-				switch (ch) {
-				case ESCAPE_CHARACTER:
-					fBuffer.append(ch);
-					fState= TEXT;
-					break;
-
-				case IDENTIFIER_BEGIN:
-					fOffsets.add(new Integer(fBuffer.length()));
-					fState= IDENTIFIER;
-					break;
-
-				default:
-					// illegal single escape character, but be tolerant
-					fErrorMessage= TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable"); //$NON-NLS-1$
-					fBuffer.append(ESCAPE_CHARACTER);
-					fBuffer.append(ch);
-					fState= TEXT;
-					return false;
-				}
-				break;
-
-			case IDENTIFIER:
-				switch (ch) {
-				case IDENTIFIER_END:
-					int offset= ((Integer) fOffsets.get(fOffsets.size() - 1)).intValue();
-					fLengths.add(new Integer(fBuffer.length() - offset));
-					fState= TEXT;
-					break;
-
-				default:
-					if (!Character.isUnicodeIdentifierStart(ch) &&
-						!Character.isUnicodeIdentifierPart(ch))
-					{
-						// illegal identifier character
-						fErrorMessage= TextTemplateMessages.getString("TemplateTranslator.error.invalid.identifier"); //$NON-NLS-1$
-						return false;
-					}
-
-					fBuffer.append(ch);
-					break;
-				}
-				break;
+			// check the escaped sequence
+			if ("$".equals(matcher.group())) { //$NON-NLS-1$
+				fail(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
+			} else if ("$$".equals(matcher.group())) { //$NON-NLS-1$
+				// escaped $
+				buffer.append('$');
+			} else {
+				// parse variable
+				String name= matcher.group(1);
+				String typeName= matcher.group(2);
+				String params= matcher.group(3);
+				TemplateVariableType type= createType(typeName, params);
+				
+				updateOrCreateVariable(variables, name, type, buffer.length());
+				
+				buffer.append(name);
 			}
+			complete= matcher.end();
 		}
+		// append remaining verbatim text
+		buffer.append(string.substring(complete));
 
-		return true;
+		TemplateVariable[] vars= createVariables(variables);
+		return new TemplateBuffer(buffer.toString(), vars);
 	}
 
+	private TemplateVariableType createType(String typeName, String paramString) {
+		if (typeName == null)
+			return null;
+
+		if (paramString == null)
+			return new TemplateVariableType(typeName);
+
+		final Matcher matcher= PARAM_PATTERN.matcher(paramString);
+		List params= new ArrayList(5);
+		while (matcher.find())
+			params.add(matcher.group());
+
+		return new TemplateVariableType(typeName, (String[]) params.toArray(new String[params.size()]));
+	}
+
+	private void fail(String message) throws TemplateException {
+		fErrorMessage= message;
+		throw new TemplateException(message);
+	}
+
+	/**
+	 * If there is no variable named <code>name</code>, a new variable with the given type, name
+	 * and offset is created. If one exists, the offset is added to the variable and the type is
+	 * merged with the existing type.
+	 * 
+	 * @param variables the variables by variable name
+	 * @param name the name of the variable
+	 * @param type the variable type, <code>null</code> for not defined
+	 * @param offset the buffer offset of the variable
+	 * @throws TemplateException if merging the type fails
+	 * @since 3.3
+	 */
+	private void updateOrCreateVariable(Map variables, String name, TemplateVariableType type, int offset) throws TemplateException {
+		VariableDescription varDesc= (VariableDescription) variables.get(name);
+		if (varDesc == null) {
+			varDesc= new VariableDescription(name, type);
+			variables.put(name, varDesc);
+		} else {
+			varDesc.mergeType(type);
+		}
+		varDesc.fOffsets.add(new Integer(offset));
+	}
+
+	/**
+	 * Creates proper {@link TemplateVariable}s from the variable descriptions.
+	 * 
+	 * @param variables the variable descriptions by variable name
+	 * @return the corresponding variables
+	 * @since 3.3
+	 */
+	private TemplateVariable[] createVariables(Map variables) {
+		TemplateVariable[] result= new TemplateVariable[variables.size()];
+		int idx= 0;
+		for (Iterator it= variables.values().iterator(); it.hasNext(); idx++) {
+			VariableDescription desc= (VariableDescription) it.next();
+			TemplateVariableType type= desc.fType == null ? new TemplateVariableType(desc.fName) : desc.fType;
+			int[] offsets= new int[desc.fOffsets.size()];
+			int i= 0;
+			for (Iterator intIt= desc.fOffsets.iterator(); intIt.hasNext(); i++) {
+				Integer offset= (Integer) intIt.next();
+				offsets[i]= offset.intValue();
+			}
+			fCurrentType= type;
+			/*
+			 * Call the deprecated version of createVariable. When not overridden, it will delegate
+			 * to the new version using fCurrentType.
+			 */
+			TemplateVariable var= createVariable(type.getName(), desc.fName, offsets);
+			result[idx]= var;
+		}
+		fCurrentType= null; // avoid dangling reference
+		return result;
+	}
+	
+	/**
+	 * Hook method to create new variables. Subclasses may override to supply their custom variable
+	 * type.
+	 * <p>
+	 * Clients may replace this method.
+	 * </p>
+	 * 
+	 * @param type the type of the new variable.
+	 * @param name the name of the new variable.
+	 * @param offsets the offsets where the variable occurs in the template
+	 * @return a new instance of <code>TemplateVariable</code>
+	 * @deprecated as of 3.3 use {@link #createVariable(TemplateVariableType, String, int[])} instead
+	 */
+	protected TemplateVariable createVariable(String type, String name, int[] offsets) {
+		return createVariable(fCurrentType, name, offsets);
+	}
+	
+	/**
+	 * Hook method to create new variables. Subclasses may override to supply their custom variable
+	 * type.
+	 * <p>
+	 * Clients may replace this method.
+	 * </p>
+	 * 
+	 * @param type the type of the new variable.
+	 * @param name the name of the new variable.
+	 * @param offsets the offsets where the variable occurs in the template
+	 * @return a new instance of <code>TemplateVariable</code>
+	 * @since 3.3
+	 */
+	protected TemplateVariable createVariable(TemplateVariableType type, String name, int[] offsets) {
+		return new TemplateVariable(type, name, name, offsets);
+	}
 }

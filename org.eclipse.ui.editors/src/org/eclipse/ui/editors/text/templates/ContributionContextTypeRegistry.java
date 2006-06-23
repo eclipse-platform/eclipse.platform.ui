@@ -161,8 +161,10 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			if (name == null)
 				name= id;
 
-			contextType.setId(id);
-			contextType.setName(name);
+			if (contextType.getId() == null)
+				contextType.setId(id);
+			if (contextType.getName() == null)
+				contextType.setName(name);
 
 			return contextType;
 		} catch (ClassCastException e) {
