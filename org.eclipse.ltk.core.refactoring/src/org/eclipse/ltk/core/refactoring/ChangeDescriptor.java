@@ -11,8 +11,8 @@
 package org.eclipse.ltk.core.refactoring;
 
 /**
- * Descriptor of a change object. These descriptor object may be used to
- * describe the effect of a {@link Change}. Subclassed may provide more
+ * Descriptor of a change object. These descriptor objects may be used to
+ * describe the effect of a {@link Change}. Subclasses may provide more
  * specific information about the represented change.
  * <p>
  * Note: this class is indented to be subclassed by clients to provide
