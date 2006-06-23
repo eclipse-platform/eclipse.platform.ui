@@ -222,11 +222,14 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	 */
 	private void prepareSharedConfigAction(IFile file, Menu menu) {
 		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
-		if(config != null && config.exists()) {
-			IAction action = new SharedLaunchConfigAction(config, fMode, DebugUITools.getDefaultImageDescriptor(config));
-		    ActionContributionItem item= new ActionContributionItem(action);
-		    item.fill(menu, -1);
-		}
+		try {
+            if(config != null && config.exists() && config.supportsMode(fMode)) {
+            	IAction action = new SharedLaunchConfigAction(config, fMode, DebugUITools.getDefaultImageDescriptor(config));
+                ActionContributionItem item= new ActionContributionItem(action);
+                item.fill(menu, -1);
+            }
+        } catch (CoreException e) {
+        }
 	}
 	
     /**
