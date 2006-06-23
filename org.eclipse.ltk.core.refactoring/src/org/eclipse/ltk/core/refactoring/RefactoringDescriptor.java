@@ -88,7 +88,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
-	 * Constant describing the API change flag (value: 1)
+	 * Constant describing the API change flag (value: <code>1</code>).
 	 * <p>
 	 * Clients should set this flag to indicate that the represented refactoring
 	 * may cause breaking API changes. If clients set the
@@ -100,7 +100,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 
 	/**
 	 * The unknown refactoring id (value:
-	 * org.eclipse.ltk.core.refactoring.unknown)
+	 * <code>org.eclipse.ltk.core.refactoring.unknown</code>).
 	 * <p>
 	 * This id is reserved by the refactoring framework to signal that a
 	 * refactoring has been performed which did not deliver a refactoring
@@ -114,7 +114,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public static final String ID_UNKNOWN= "org.eclipse.ltk.core.refactoring.unknown"; //$NON-NLS-1$
 
 	/**
-	 * Constant describing the multi change flag (value: 4)
+	 * Constant describing the multi change flag (value: <code>4</code>).
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
 	 * represented refactoring might causes changes in other files than the
@@ -124,11 +124,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	public static final int MULTI_CHANGE= 1 << 2;
 
-	/** Constant describing the absence of any flags (value: 0) */
+	/** Constant describing the absence of any flags (value: <code>0</code>). */
 	public static final int NONE= 0;
 
 	/**
-	 * Constant describing the structural change flag (value: 2)
+	 * Constant describing the structural change flag (value: <code>2</code>).
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
 	 * represented refactoring might be a structural change according to the
@@ -138,7 +138,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
 
 	/**
-	 * Constant describing the user flag (value: 256)
+	 * Constant describing the user flag (value: <code>256</code>).
 	 * <p>
 	 * This constant is not intended to be used in refactoring descriptors.
 	 * Clients should use the value of this constant to define user-defined
