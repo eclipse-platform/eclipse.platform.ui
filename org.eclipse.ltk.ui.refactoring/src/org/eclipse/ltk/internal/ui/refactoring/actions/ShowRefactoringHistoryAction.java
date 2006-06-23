@@ -10,17 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.scripting.ShowRefactoringHistoryWizard;
 
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.IWorkbenchWindow;
@@ -48,7 +56,28 @@ public final class ShowRefactoringHistoryAction implements IWorkbenchWindowActio
 	 */
 	public static void showRefactoringHistoryWizard(final IWorkbenchWindow window) {
 		Assert.isNotNull(window);
-		final IWizard wizard= new ShowRefactoringHistoryWizard();
+		final ShowRefactoringHistoryWizard wizard= new ShowRefactoringHistoryWizard();
+		IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (context == null)
+			context= PlatformUI.getWorkbench().getProgressService();
+		try {
+			context.run(false, true, new IRunnableWithProgress() {
+
+				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+					try {
+						service.connect();
+						wizard.setRefactoringHistory(service.getWorkspaceHistory(monitor));
+					} finally {
+						service.disconnect();
+					}
+				}
+			});
+		} catch (InvocationTargetException exception) {
+			RefactoringUIPlugin.log(exception);
+		} catch (InterruptedException exception) {
+			return;
+		}
 		final WizardDialog dialog= new WizardDialog(window.getShell(), wizard) {
 
 			protected final void createButtonsForButtonBar(final Composite parent) {

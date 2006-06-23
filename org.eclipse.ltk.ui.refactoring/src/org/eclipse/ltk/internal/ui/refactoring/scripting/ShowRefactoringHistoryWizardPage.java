@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
@@ -47,7 +43,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardPage;
 
@@ -217,6 +212,8 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		else
 			fHistoryControl.sortByDate();
 
+		fHistoryControl.setInput(fWizard.getRefactoringHistory());
+
 		final GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(24);
 		fHistoryControl.setLayoutData(data);
@@ -247,42 +244,10 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				}
 			});
 		}
-		IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (context == null)
-			context= PlatformUI.getWorkbench().getProgressService();
-		handleInputEvent(context);
 		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IRefactoringHelpContextIds.REFACTORING_SHOW_HISTORY_PAGE);
-	}
-
-	/**
-	 * Handles the input event.
-	 * 
-	 * @param context
-	 *            the runnable context to use
-	 */
-	private void handleInputEvent(final IRunnableContext context) {
-		Assert.isNotNull(context);
-		try {
-			context.run(false, false, new IRunnableWithProgress() {
-
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-					try {
-						service.connect();
-						fHistoryControl.setInput(service.getWorkspaceHistory(monitor));
-					} finally {
-						service.disconnect();
-					}
-				}
-			});
-		} catch (InvocationTargetException exception) {
-			RefactoringUIPlugin.log(exception);
-		} catch (InterruptedException exception) {
-			// Do nothing
-		}
 	}
 
 	/**

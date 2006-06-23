@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.scripting;
 
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
+
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
@@ -28,6 +32,9 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 
 	/** Has the wizard new dialog settings? */
 	private boolean fNewSettings;
+
+	/** The refactoring history */
+	private RefactoringHistory fRefactoringHistory;
 
 	/** The show refactoring history wizard page */
 	private final ShowRefactoringHistoryWizardPage fWizardPage;
@@ -59,6 +66,15 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 	}
 
 	/**
+	 * Returns the refactoring history to create a script from.
+	 * 
+	 * @return the refactoring history.
+	 */
+	public RefactoringHistory getRefactoringHistory() {
+		return fRefactoringHistory;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public boolean performFinish() {
@@ -71,4 +87,16 @@ public final class ShowRefactoringHistoryWizard extends Wizard {
 		fWizardPage.performFinish();
 		return true;
 	}
+
+	/**
+	 * Sets the refactoring history to use.
+	 * 
+	 * @param history
+	 *            the refactoring history to use
+	 */
+	public void setRefactoringHistory(final RefactoringHistory history) {
+		Assert.isNotNull(history);
+		fRefactoringHistory= history;
+	}
+
 }

@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
@@ -52,12 +51,9 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
-
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard to create a refactoring script.
@@ -101,27 +97,6 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		else {
 			fNewSettings= false;
 			setDialogSettings(section);
-		}
-		try {
-			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (context == null)
-				context= PlatformUI.getWorkbench().getProgressService();
-			context.run(false, false, new IRunnableWithProgress() {
-
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-					try {
-						service.connect();
-						fRefactoringHistory= service.getWorkspaceHistory(monitor);
-					} finally {
-						service.disconnect();
-					}
-				}
-			});
-		} catch (InvocationTargetException exception) {
-			RefactoringUIPlugin.log(exception);
-		} catch (InterruptedException exception) {
-			// Do nothing
 		}
 		fWizardPage= new CreateRefactoringScriptWizardPage(this);
 	}
@@ -355,6 +330,17 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		final IWizardContainer wizard= getContainer();
 		if (wizard.getCurrentPage() != null)
 			wizard.updateButtons();
+	}
+
+	/**
+	 * Sets the refactoring history to use.
+	 * 
+	 * @param history
+	 *            the refactoring history to use
+	 */
+	public void setRefactoringHistory(final RefactoringHistory history) {
+		Assert.isNotNull(history);
+		fRefactoringHistory= history;
 	}
 
 	/**
