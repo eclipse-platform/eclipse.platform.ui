@@ -10,7 +10,7 @@
 		<!-- define property ${plugin_version} by reading version from MANIFEST.MF: -->
 		<tempfile property="plugin_version_file" suffix=".plugin_version.tmp" destdir="${destdir}"/>
 		<copy file="META-INF/MANIFEST.MF" tofile="${plugin_version_file}"/>
-		<replaceregexp file="${plugin_version_file}" match=".*Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier.*" replace="plugin_version=\1${qualifier}" flags="s" />
+		<replaceregexp file="${plugin_version_file}" match=".*Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier.*" replace="plugin_version=_\1${qualifier}" flags="s" />
 		<property file="${plugin_version_file}"/>
 		<delete file="${plugin_version_file}" />
 		
