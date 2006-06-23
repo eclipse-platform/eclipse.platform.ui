@@ -4,8 +4,17 @@
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.ui" />
-		<property name="version"  value="_3.3.0" />
-		<property name="dest"  value="${destdir}/${plugin}${version}" />
+		<property name="qualifier" value="zzz${DSTAMP}-${TSTAMP}" />
+		
+		<!-- define property ${plugin_version} by reading version from MANIFEST.MF: -->
+		<tempfile property="plugin_version_file" suffix=".plugin_version.tmp" destdir="${destdir}"/>
+		<copy file="META-INF/MANIFEST.MF" tofile="${plugin_version_file}"/>
+		<replaceregexp file="${plugin_version_file}" match=".*Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier.*" replace="plugin_version=_\1${qualifier}" flags="s" />
+		<property file="${plugin_version_file}"/>
+		<delete file="${plugin_version_file}" />
+		
+		<property name="dest"  value="${destdir}/${plugin}${plugin_version}" />
+		<property name="destjar"  value="${destdir}/${plugin}${plugin_version}.jar" />
 	</target>
 
 	<target name="build" depends="init">
@@ -14,20 +23,33 @@
 
 	<target name="export" depends="build">
 		<mkdir dir="${destdir}" />
+		<delete file="${destjar}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
-		<jar 
-			jarfile="${dest}/ui.jar"
-			basedir="bin"
-		/>
-		<copy file="plugin.xml" todir="${dest}"/>
-		<copy file="plugin.properties" todir="${dest}"/>
-		<copy todir="${dest}/icons">
-			<fileset dir="icons" />
-		</copy>
-		<zip zipfile="${dest}/uisrc.zip">
-		    <fileset dir="src" />
-  		</zip>				
+		
+		<copy todir="${dest}/META-INF">
+			<fileset dir="META-INF" />
+		</copy>		
+		
+		<replaceregexp file="${dest}/META-INF/MANIFEST.MF" match="Bundle-Version: ((\d)+\.(\d)+\.(\d)+\.)qualifier" replace="Bundle-Version: \1${qualifier}" byline="true" />
+		
+		<zip zipfile="${destjar}">
+			<fileset dir=".">
+			  <include name="plugin.xml" />
+			  <include name="plugin.properties" />
+			  <include name="icons/**" />
+			  <include name=".options" />
+			  <include name="schema/**" />
+			  <include name="src/**" />
+			</fileset>
+			<fileset dir="bin" />
+			<fileset dir="${dest}">
+			  <include name="META-INF/**" />
+			</fileset>
+		</zip>
+		
+		<delete dir="${dest}" />
+		
 	</target>
 
 	<target name="exportAll">
