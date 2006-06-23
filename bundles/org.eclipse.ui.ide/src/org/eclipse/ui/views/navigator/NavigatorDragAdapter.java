@@ -26,6 +26,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Control;
@@ -51,13 +52,16 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 
     /**
      * Constructs a new drag adapter.
+     * @param provider The selection provider
      */
     public NavigatorDragAdapter(ISelectionProvider provider) {
         selectionProvider = provider;
     }
 
-    /*
-     * @see DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+    /**
+     * This implementation of {@link DragSourceListener#dragFinished(DragSourceEvent)}
+     * responds to a drag that has moved resources outside the Navigator by deleting
+     * the corresponding source resource.
      */
     public void dragFinished(DragSourceEvent event) {
         LocalSelectionTransfer.getInstance().setSelection(null);
@@ -115,8 +119,9 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
         }
     }
 
-    /*
-     * @see DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+    /**
+     * This implementation of {@link DragSourceListener#dragSetData(DragSourceEvent)}
+     * sets the drag event data based on the current selection in the Navigator.
      */
     public void dragSetData(DragSourceEvent event) {
         final int typeMask = IResource.FILE | IResource.FOLDER;
@@ -168,8 +173,10 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
         event.data = fileNames;
     }
 
-    /*
-     * @see DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
+    /**
+     * This implementation of {@link DragSourceListener#dragStart(DragSourceEvent)}
+     * allows the drag to start if the current Navigator selection contains resources
+     * that can be dragged.
      */
     public void dragStart(DragSourceEvent event) {
         lastDataType = null;
@@ -207,9 +214,6 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
             return null;
         }
         IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-        if (structuredSelection == null) {
-			return null;
-		}
 
         // loop through list and look for matching items
         Iterator itr = structuredSelection.iterator();
