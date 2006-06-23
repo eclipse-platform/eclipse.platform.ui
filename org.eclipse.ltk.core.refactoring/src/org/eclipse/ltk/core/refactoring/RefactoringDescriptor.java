@@ -189,10 +189,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	protected RefactoringDescriptor(final String id, final String project, final String description, final String comment, final int flags) {
 		Assert.isNotNull(id);
-		Assert.isTrue(!"".equals(id)); //$NON-NLS-1$
+		Assert.isLegal(!"".equals(id), "Refactoring id must not be empty"); //$NON-NLS-1$ //$NON-NLS-2$
+		Assert.isLegal(project == null || !"".equals(project), "Project must either be null or non-empty"); //$NON-NLS-1$ //$NON-NLS-2$
 		Assert.isNotNull(description);
-		Assert.isTrue(project == null || !"".equals(project)); //$NON-NLS-1$
-		Assert.isTrue(flags >= NONE);
+		Assert.isLegal(!"".equals(description), "Description must not be empty"); //$NON-NLS-1$//$NON-NLS-2$
+		Assert.isLegal(flags >= NONE, "Flags must be non-negative"); //$NON-NLS-1$
 		fRefactoringId= id;
 		fDescription= description;
 		fProject= project;
@@ -326,7 +327,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * </p>
 	 * 
 	 * @param comment
-	 *            the non-empty comment to set, or <code>null</code>
+	 *            the comment to set, or <code>null</code> for no comment
 	 */
 	public void setComment(final String comment) {
 		fComment= comment;
@@ -346,6 +347,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 */
 	public void setDescription(final String description) {
 		Assert.isNotNull(description);
+		Assert.isLegal(!"".equals(description), "Description must not be empty"); //$NON-NLS-1$ //$NON-NLS-2$
 		fDescription= description;
 	}
 
@@ -362,7 +364,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * @since 3.3
 	 */
 	public void setFlags(final int flags) {
-		Assert.isTrue(flags >= NONE);
+		Assert.isLegal(flags >= NONE, "Flags must be non-negative"); //$NON-NLS-1$
 		fFlags= flags;
 	}
 
@@ -378,7 +380,7 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 *            the workspace
 	 */
 	public void setProject(final String project) {
-		Assert.isLegal(project == null || !"".equals(project)); //$NON-NLS-1$
+		Assert.isLegal(project == null || !"".equals(project), "Project must either be null or non-empty"); //$NON-NLS-1$ //$NON-NLS-2$
 		fProject= project;
 	}
 
