@@ -15,9 +15,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -45,6 +49,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	protected void performAction() {
 		Object object = getStructuredSelection().getFirstElement();
 		ILaunchConfigurationType type= null;
+		// Construct a new config of the selected type
 		if (object instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config= (ILaunchConfiguration) object;
 			try {
@@ -58,7 +63,19 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 		}
 
 		try {
-			type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)).doSave();
+			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
+			ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc.getType(), getMode());
+			// this only works because this action is only present when the dialog is open
+			ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+			tabGroup.createTabs(dialog, dialog.getMode());
+			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+			for (int i = 0; i < tabs.length; i++) {
+				ILaunchConfigurationTab tab = tabs[i];
+				tab.setLaunchConfigurationDialog(dialog);
+			}
+			tabGroup.setDefaults(wc);
+			tabGroup.dispose();
+			wc.doSave();
 		} catch (CoreException e) {
 			errorDialog(e);
 			return;
