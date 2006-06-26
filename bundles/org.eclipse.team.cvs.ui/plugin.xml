@@ -921,6 +921,7 @@
                tooltip="%CVSActionSet.newTooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
                toolbarPath="actions"
+               definitionId="org.eclipse.team.cvs.ui.addLocation"
                id="org.eclipse.team.cvs.ui.actions.repoview.NewRepositoryAction">
          </action>
       </viewContribution>
@@ -1198,6 +1199,12 @@
             description="%ViewCommand.annotateView.description"
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.team.ccvs.ui.AnnotateView"/>
+     <!-- CVS View Actions -->
+    <command
+            name="%newLocation.namen"
+            description="%newLocation.descriptionn"
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            id="org.eclipse.team.cvs.ui.addLocation"/>
      <!-- CVS Menu Commands -->
       <command
             name="%CVSActionSet.checkoutLabel"
