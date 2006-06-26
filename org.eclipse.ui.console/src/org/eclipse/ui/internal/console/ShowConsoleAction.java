@@ -45,10 +45,9 @@ public class ShowConsoleAction extends Action {
 	 * @param console the console
 	 */
 	public ShowConsoleAction(IConsoleView view, IConsole console) {
-		super();
+		super(console.getName(), AS_RADIO_BUTTON);
 		fConsole = console;
 		fView = view;
-		setText(console.getName());
 		setImageDescriptor(console.getImageDescriptor());
 	}
 }
