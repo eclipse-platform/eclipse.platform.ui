@@ -189,13 +189,19 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	 */
     private boolean isMappedToCVS(ResourceMapping mapping) {
         IProject[] projects = mapping.getProjects();
+        boolean foundOne = false;
         for (int i = 0; i < projects.length; i++) {
             IProject project = projects[i];
-            if (getCVSProviderFor(project) != null) {
-                return true;
+            if (project != null) {
+	            RepositoryProvider provider = RepositoryProvider.getProvider(project);
+				if (provider instanceof CVSTeamProvider) {
+					foundOne = true;
+	            } else if (provider != null) {
+	            	return false;
+	            }
             }
         }
-        return false;
+        return foundOne;
     }
     
     public static CVSDecoration decorate(Object element, SynchronizationStateTester tester) throws CoreException {
