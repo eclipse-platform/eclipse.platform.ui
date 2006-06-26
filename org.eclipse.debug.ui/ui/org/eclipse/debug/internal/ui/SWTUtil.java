@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -165,6 +166,61 @@ public class SWTUtil {
     	g.setLayoutData(gd);
     	return g;
     }
+	
+	/**
+	 * Creates a Composite widget
+	 * @param parent the parent composite to add this composite to
+	 * @param columns the number of columns within the composite
+	 * @param hspan the horizontal span the composite should take up on the parent
+	 * @param fill the style for how this composite should fill into its parent
+	 * @return the new group
+	 * @since 3.3
+	 */
+	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill) {
+    	Composite g = new Composite(parent, SWT.NONE);
+    	g.setLayout(new GridLayout(columns, false));
+    	g.setFont(font);
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+    }
+	
+	/**
+	 * creates a vertical spacer for seperating components
+	 * @param comp
+	 * @param numlines
+	 * @since 3.3
+	 */
+	public static void createVerticalSpacer(Composite comp, int numlines) {
+		Label lbl = new Label(comp, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = numlines;
+		lbl.setLayoutData(gd);
+	}
+	
+	/**
+	 * Creates a Composite widget
+	 * @param parent the parent composite to add this composite to
+	 * @param columns the number of columns within the composite
+	 * @param hspan the horizontal span the composite should take up on the parent
+	 * @param fill the style for how this composite should fill into its parent
+	 * @param marginwidth the width of the margin to place around the composite (default is 5, specified by GridLayout)
+	 * @return the new group
+	 * @since 3.3
+	 */
+	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill, int marginwidth, int marginheight) {
+		Composite g = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(columns, false);
+		layout.marginWidth = marginwidth;
+		layout.marginHeight = marginheight;
+    	g.setLayout(layout);
+    	g.setFont(font);
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+	}
 	
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page

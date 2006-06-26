@@ -11,7 +11,6 @@
 package org.eclipse.debug.ui;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,6 +73,8 @@ import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration tab used to specify the location a launch configuration
@@ -185,19 +186,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void createSharedConfigComponent(Composite parent) {
 		Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_0, 3, 2, GridData.FILL_HORIZONTAL);
-		fLocalRadioButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_L_ocal_3);
+		Composite comp = SWTUtil.createComposite(group, parent.getFont(), 3, 3, GridData.FILL_BOTH, 0, 0);
+		fLocalRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_L_ocal_3);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fLocalRadioButton.setLayoutData(gd);
-		fSharedRadioButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_S_hared_4);
+		fSharedRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_S_hared_4);
 		fSharedRadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
 			}
 		});
-		fSharedLocationText = SWTUtil.createSingleText(group, 1);
+		fSharedLocationText = SWTUtil.createSingleText(comp, 1);
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
-		fSharedLocationButton = createPushButton(group, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
+		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -214,8 +216,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      */
     private void createOutputCaptureComponent(Composite parent) {
         Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
-        
-        fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_5); 
+        Composite comp = SWTUtil.createComposite(group, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
+        fConsoleOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_5); 
         GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
         gd.horizontalSpan = 5;
         fConsoleOutput.setLayoutData(gd);
@@ -225,7 +227,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             }
         });
         
-        fFileOutput = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_6); 
+        fFileOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_6); 
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
         fFileOutput.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -233,12 +235,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 updateLaunchConfigurationDialog();
             }
         });
-        fFileText = SWTUtil.createSingleText(group, 4);
+        fFileText = SWTUtil.createSingleText(comp, 4);
         fFileText.addModifyListener(fBasicModifyListener);
         
-        SWTUtil.createLabel(group, EMPTY_STRING, 2);
+        SWTUtil.createLabel(comp, EMPTY_STRING, 2);
         
-        fWorkspaceBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_12, null); 
+        fWorkspaceBrowse = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_12, null); 
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -254,7 +256,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.CommonTab_7, null);
+        fFileBrowse = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_7, null);
         fFileBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
@@ -265,7 +267,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        fVariables = createPushButton(group, LaunchConfigurationsMessages.CommonTab_9, null); 
+        fVariables = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_9, null); 
         fVariables.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
@@ -277,7 +279,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             }
             public void widgetDefaultSelected(SelectionEvent e) {}
         });
-        fAppend = createCheckButton(group, LaunchConfigurationsMessages.CommonTab_11); 
+        fAppend = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_11); 
         gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
         gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
