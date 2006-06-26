@@ -398,9 +398,10 @@ public class ModelSynchronizeParticipant extends
 		return new IRefreshable() {
 		
 			public RefreshParticipantJob createJob(String interval) {
+				String jobName = NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ModelSynchronizeParticipant.this.getName(), interval });
 				return new RefreshModelParticipantJob(ModelSynchronizeParticipant.this, 
-						TeamUIMessages.RefreshSchedule_14, 
-						NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { ModelSynchronizeParticipant.this.getName(), interval }),
+						jobName, 
+						jobName,
 						context.getScope().getMappings(),
 						new RefreshUserNotificationPolicy(ModelSynchronizeParticipant.this));
 			}
