@@ -72,7 +72,7 @@ public class StalenessTracker {
 			} else {
 				staleCount++;
 			}
-			staleMap.put(wrappedChild, new Boolean(newChildStale));
+			staleMap.put(wrappedChild, newChildStale ? Boolean.TRUE : Boolean.FALSE);
 		}
 		boolean newStale = staleCount > 0;
 		if (callback && (newStale != oldStale)) {

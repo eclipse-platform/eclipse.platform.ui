@@ -49,8 +49,9 @@ public class ControlObservableValue extends AbstractObservableValue {
 	}
 
 	public Object doGetValue() {
-		return new Boolean(attribute.equals(SWTProperties.ENABLED) ? control
-				.getEnabled() : control.getVisible());
+		boolean value = attribute.equals(SWTProperties.ENABLED) ? control
+				.getEnabled() : control.getVisible();
+		return value ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 	public Object getValueType() {

@@ -163,7 +163,7 @@ public class NestedObservableFactory implements IObservableFactory {
 				}
 				lastChildObservable = bindingContext
 						.createObservable(new Property(targetObject, nextDesc,
-								targetClazz, new Boolean(false)));
+								targetClazz, Boolean.FALSE));
 				targetObject = lastChildObservable;
 			}
 
@@ -174,7 +174,7 @@ public class NestedObservableFactory implements IObservableFactory {
 				Class clazz = nestedProperty.getTypes()[i];
 				lastChildObservable = bindingContext
 						.createObservable(new Property(targetObject, nextDesc,
-								clazz, new Boolean(false)));
+								clazz, Boolean.FALSE));
 				targetObject = lastChildObservable;
 			}
 		}

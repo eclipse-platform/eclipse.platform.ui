@@ -31,8 +31,8 @@ public class ButtonObservableValue extends AbstractObservableValue {
 		public void handleEvent(Event event) {
 			boolean oldSelectionValue = selectionValue;
 			selectionValue = button.getSelection();
-			fireValueChange(Diffs.createValueDiff(new Boolean(oldSelectionValue),
-					new Boolean(selectionValue)));
+			fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
+					selectionValue ? Boolean.TRUE : Boolean.FALSE));
 		}
 	};
 
@@ -51,12 +51,12 @@ public class ButtonObservableValue extends AbstractObservableValue {
 		selectionValue = value == null ? false : ((Boolean) value)
 				.booleanValue();
 		button.setSelection(selectionValue);
-		fireValueChange(Diffs.createValueDiff(new Boolean(oldSelectionValue),
-				new Boolean(selectionValue)));
+		fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
+				selectionValue ? Boolean.TRUE : Boolean.FALSE));
 	}
 
 	public Object doGetValue() {
-		return new Boolean(button.getSelection());
+		return button.getSelection() ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 	public Object getValueType() {
