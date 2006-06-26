@@ -497,7 +497,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (string.length() == 1) {
 			return string;
 		}
-		for (int i = 0; i < string.length() - 1; i++) {
+		for (int i = 0; i < string.length(); i++) {
 			char c = string.charAt(i);
 			if (c == '\\') {
 				switch (string.charAt(i+1)) {
