@@ -29,7 +29,7 @@ public interface IDocumentPartitioningListenerExtension2 {
 	 * This method replaces
 	 * {@link IDocumentPartitioningListener#documentPartitioningChanged(IDocument)}
 	 * and
-	 * {@link IDocumentPartitioningListenerExtension2#documentPartitioningChanged(DocumentPartitioningChangedEvent)}.
+	 * {@link IDocumentPartitioningListenerExtension#documentPartitioningChanged(IDocument, IRegion)}
 	 *
 	 * @param event the event describing the change
 	 * @see IDocument#addDocumentPartitioningListener(IDocumentPartitioningListener)
