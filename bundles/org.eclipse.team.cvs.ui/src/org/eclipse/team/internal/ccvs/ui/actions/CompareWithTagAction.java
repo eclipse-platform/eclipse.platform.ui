@@ -38,16 +38,7 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 		if (tag == null)
 			return;
 		
-		IFile file = getSelectedFile();
-		if (file != null && SyncAction.isOKToShowSingleFile(file)) {
-			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
-			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
-			compareSubscriber.dispose();
-			return;
-		}
-		
         // Create a subscriber that can cover all projects involved
-       
 		if (isShowModelSync()) {
 			final CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
 			ResourceMapping[] mappings = getCVSResourceMappings();
@@ -68,6 +59,13 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
 			participant.run(getTargetPart());
 		} else {
+			IFile file = getSelectedFile();
+			if (file != null && SyncAction.isOKToShowSingleFile(file)) {
+				CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
+				SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
+				compareSubscriber.dispose();
+				return;
+			}
 			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
 	        ResourceMapping[] resourceMappings = getCVSResourceMappings();
 			if (isLogicalModel(resourceMappings)) {

@@ -44,12 +44,6 @@ import org.eclipse.ui.*;
 public class SyncAction extends WorkspaceTraversalAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
-		// First, see if there is a single file selected
-		IFile file = getSelectedFile();
-		if (file != null && isOKToShowSingleFile(file)) {
-			showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), file, getTargetPage());
-			return;
-		}
 		if (isShowModelSync()) {
 			ResourceMapping[] mappings = getCVSResourceMappings();
 			if (mappings.length == 0)
@@ -60,6 +54,12 @@ public class SyncAction extends WorkspaceTraversalAction {
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			participant.run(getTargetPart());
 		} else {
+			// First, see if there is a single file selected
+			IFile file = getSelectedFile();
+			if (file != null && isOKToShowSingleFile(file)) {
+				showSingleFileComparison(getShell(), CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), file, getTargetPage());
+				return;
+			}
 	        IResource[] resources = getResourcesToCompare(getWorkspaceSubscriber());
 			if (resources == null || resources.length == 0) return;
 			// First check if there is an existing matching participant
