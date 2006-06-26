@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 /**
  * Test Suite for org.eclipse.text.
  * 
- * @since 3.0
+ * @since 3.3
  */
 public class TemplatesTestSuite {
 
