@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -428,8 +429,10 @@ public class RenameResourceAction extends WorkspaceAction {
                 IDEWorkbenchMessages.RenameResourceAction_inputDialogMessage,
                 resource.getName(), validator);
         dialog.setBlockOnOpen(true);
-        dialog.open();
-        return dialog.getValue();
+        int result = dialog.open();
+        if (result == Window.OK)
+        	return dialog.getValue();
+        return null;
     }
 
     /**
