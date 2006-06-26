@@ -497,7 +497,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				if (fHasBOM && CHARSET_UTF_8.equals(encoding))
 					out.write(IContentDescription.BOM_UTF_8);
 
-				out.write(bytes);
+				out.write(bytes, 0, bytesLength);
 				out.flush();
 			} catch (IOException x) {
 				IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
