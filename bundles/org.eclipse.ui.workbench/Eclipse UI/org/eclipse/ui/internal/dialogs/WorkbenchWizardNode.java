@@ -12,7 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
@@ -25,6 +25,7 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -32,9 +33,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * are used by wizard selection pages to allow the user to pick
  * from several available nested wizards.
  * <p>
- * <b>Subclasses</b> simply need to overide method <code>createWizard()</code>,
+ * <b>Subclasses</b> simply need to override method <code>createWizard()</code>,
  * which is responsible for creating an instance of the wizard it represents
- * AND ensuring that this wizard is the "right" type of wizard (eg.-
+ * AND ensuring that this wizard is the "right" type of wizard (e.g.-
  * New, Import, etc.).</p>
  */
 public abstract class WorkbenchWizardNode implements IWizardNode,
@@ -128,8 +129,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
         BusyIndicator.showWhile(parentWizardPage.getShell().getDisplay(),
                 new Runnable() {
                     public void run() {
-                        Platform.run(new SafeRunnable() {
-
+                        SafeRunner.run(new SafeRunnable() {
                             /**
                              * Add the exception details to status is one happens.
                              */
@@ -137,7 +137,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                                	IPluginContribution contribution = (IPluginContribution) wizardElement.getAdapter(IPluginContribution.class);
                                 statuses[0] = new Status(
                                         IStatus.ERROR,
-                                        contribution != null ? contribution.getPluginId() : null,
+                                        contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
                                         IStatus.OK,
                                         e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
                                         e);
