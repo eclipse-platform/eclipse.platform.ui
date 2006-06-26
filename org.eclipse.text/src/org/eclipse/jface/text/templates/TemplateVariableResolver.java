@@ -118,6 +118,7 @@ public class TemplateVariableResolver {
 			variable.setUnambiguous(false);
 		else
 			variable.setUnambiguous(isUnambiguous(context));
+		variable.setResolved(true);
 	}
 
 	/**
