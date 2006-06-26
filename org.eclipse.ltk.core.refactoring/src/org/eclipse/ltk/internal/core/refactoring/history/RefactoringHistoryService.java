@@ -94,7 +94,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * Creates a new no refactoring descriptor.
 		 */
 		private NoRefactoringDescriptor() {
-			super("org.eclipse.ltk.core.refactoring.none", null, "", null, RefactoringDescriptor.NONE); //$NON-NLS-1$ //$NON-NLS-2$
+			super("org.eclipse.ltk.core.refactoring.none", null, "N/A", null, RefactoringDescriptor.NONE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/**
