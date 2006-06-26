@@ -102,7 +102,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
 &lt;p&gt;Deprecated in 3.2. The objectClass should now be specified using the enablesFor of the receiver.&lt;/p&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" deprecated="true"/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
