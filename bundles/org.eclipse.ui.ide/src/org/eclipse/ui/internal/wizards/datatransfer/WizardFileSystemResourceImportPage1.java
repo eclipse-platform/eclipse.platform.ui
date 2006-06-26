@@ -210,6 +210,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 setAllSelections(true);
+                updateWidgetEnablements();
             }
         };
         selectAllButton.addSelectionListener(listener);
@@ -221,6 +222,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 setAllSelections(false);
+                updateWidgetEnablements();
             }
         };
         deselectAllButton.addSelectionListener(listener);
@@ -403,7 +405,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			return true;
 		}
 
-        displayErrorDialog(DataTransferMessages.FileImport_invalidSource);
+        setErrorMessage(DataTransferMessages.FileImport_invalidSource);
         sourceNameField.setFocus();
         return false;
     }
@@ -919,8 +921,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * Provided here to give access to inner classes.
      */
     protected void updateWidgetEnablements() {
-
         super.updateWidgetEnablements();
+        enableButtonGroup(ensureSourceIsValid());
     }
 
     /**
@@ -936,6 +938,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }
 
         if (sourceConflictsWithDestination(new Path(sourceDirectory.getPath()))) {
+        	setMessage(null);
             setErrorMessage(getSourceConflictMessage());
             enableButtonGroup(false);
             return false;
@@ -943,6 +946,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
         if (resourcesToExport.size() == 0){
+        	setMessage(null);
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
         	return false;
         }
