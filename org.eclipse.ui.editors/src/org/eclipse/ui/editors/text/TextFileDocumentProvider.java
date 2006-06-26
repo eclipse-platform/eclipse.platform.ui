@@ -155,6 +155,9 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
+	/**
+	 * @deprecated since 3.3 - do not use
+	 */
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5, IStorageDocumentProvider  {
 
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.NullProvider_error, null);
@@ -418,8 +421,6 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		Assert.isTrue(parentProvider instanceof IStorageDocumentProvider);
 
 		fParentProvider= parentProvider;
-		if (fParentProvider == null)
-			fParentProvider= new NullProvider();
 	}
 
 	/**
