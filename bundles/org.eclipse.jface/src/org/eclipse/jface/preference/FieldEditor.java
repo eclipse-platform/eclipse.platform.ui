@@ -326,7 +326,7 @@ public abstract class FieldEditor {
         if (oldValue == newValue) {
 			return;
 		}
-        fireValueChanged(property, new Boolean(oldValue), new Boolean(newValue));
+        fireValueChanged(property, oldValue ? Boolean.TRUE : Boolean.FALSE, newValue ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**

@@ -875,7 +875,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     private void saveEnableStateAndSet(Control w, Map h, String key,
             boolean enabled) {
         if (w != null) {
-            h.put(key, new Boolean(w.getEnabled()));
+            h.put(key, w.getEnabled() ? Boolean.TRUE : Boolean.FALSE);
             w.setEnabled(enabled);
         }
     }
@@ -883,7 +883,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     /**
      * Captures and returns the enabled/disabled state of the wizard dialog's
      * buttons and the tree of controls for the currently showing page. All
-     * these controls are disabled in the process, with the possible excepton of
+     * these controls are disabled in the process, with the possible exception of
      * the Cancel button.
      *
      * @param keepCancelEnabled <code>true</code> if the Cancel button should

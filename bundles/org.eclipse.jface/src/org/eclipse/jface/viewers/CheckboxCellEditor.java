@@ -101,7 +101,7 @@ public class CheckboxCellEditor extends CellEditor {
      * @return the Boolean checkbox value
      */
     protected Object doGetValue() {
-        return new Boolean(value);
+        return value ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /* (non-Javadoc)
