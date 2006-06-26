@@ -71,7 +71,7 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
         }
         
         if (propertyType == Boolean.class) {
-            return new Boolean(store.getBoolean(propertyId));
+            return store.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
         }
         
         if (propertyType == Double.class) {

@@ -61,7 +61,7 @@ public class TaskView extends MarkerView {
 				IMarker marker = ((ConcreteMarker) element).getMarker();
 
 				if (COMPLETION.equals(property)) {
-					return new Boolean(marker.getAttribute(IMarker.DONE, false));
+					return marker.getAttribute(IMarker.DONE, false) ? Boolean.TRUE : Boolean.FALSE;
 				}
 
 				if (IMarker.PRIORITY.equals(property)) {

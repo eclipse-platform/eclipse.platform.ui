@@ -101,7 +101,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
         }
 
         if (propertyType == Boolean.class) {
-            return new Boolean(targetTheme.getBoolean(propertyId));
+            return targetTheme.getBoolean(propertyId) ? Boolean.TRUE : Boolean.FALSE;
         }
         
         return null;

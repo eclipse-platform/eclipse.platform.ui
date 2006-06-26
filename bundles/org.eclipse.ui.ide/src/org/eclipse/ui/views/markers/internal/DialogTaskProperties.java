@@ -114,8 +114,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             public void widgetSelected(SelectionEvent e) {
                 if (getMarker() == null) {
                     Map initialAttributes = getInitialAttributes();
-                    initialAttributes.put(IMarker.DONE, new Boolean(
-                            completedCheckbox.getSelection()));
+                    initialAttributes.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
                 }
                 markDirty();
             }
@@ -175,7 +174,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
         }
         boolean completed = getCompleted();
-        initialAttributes.put(IMarker.DONE, new Boolean(completed));
+        initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
         completedCheckbox.setSelection(completed);
         super.updateDialogForNewMarker();
     }
@@ -196,7 +195,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
             priorityCombo.select(priorityCombo.indexOf(PRIORITY_NORMAL));
         }
         boolean completed = getCompleted();
-        initialAttributes.put(IMarker.DONE, new Boolean(completed));
+        initialAttributes.put(IMarker.DONE, completed ? Boolean.TRUE : Boolean.FALSE);
         completedCheckbox.setSelection(completed);
         super.updateDialogFromMarker();
     }
@@ -220,10 +219,10 @@ public class DialogTaskProperties extends DialogMarkerProperties {
     protected Map getMarkerAttributes() {
         Map attrs = super.getMarkerAttributes();
         attrs.put(IMarker.PRIORITY, new Integer(getPriorityFromDialog()));
-        attrs.put(IMarker.DONE, new Boolean(completedCheckbox.getSelection()));
+        attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
         Object userEditable = attrs.get(IMarker.USER_EDITABLE);
         if (userEditable == null || !(userEditable instanceof Boolean)) {
-            attrs.put(IMarker.USER_EDITABLE, new Boolean(true));
+            attrs.put(IMarker.USER_EDITABLE, Boolean.TRUE);
         }
         return attrs;
     }

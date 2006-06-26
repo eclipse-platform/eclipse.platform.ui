@@ -223,8 +223,7 @@ public class ScopedPreferenceStore extends EventManager implements
 		} else if (obj instanceof Long) {
 			return new Long(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		} else if (obj instanceof Boolean) {
-			return new Boolean(defaults
-					.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT));
+			return defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT) ? Boolean.TRUE : Boolean.FALSE;
 		} else {
 			return null;
 		}
@@ -804,8 +803,8 @@ public class ScopedPreferenceStore extends EventManager implements
 				getStorePreferences().putBoolean(name, value);
 			}
 			dirty = true;
-			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(
-					value));
+			firePropertyChangeEvent(name, oldValue ? Boolean.TRUE : Boolean.FALSE, 
+				value ? Boolean.TRUE : Boolean.FALSE);
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}

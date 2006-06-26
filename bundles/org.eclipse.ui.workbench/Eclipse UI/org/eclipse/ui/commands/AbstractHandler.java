@@ -100,13 +100,14 @@ public abstract class AbstractHandler extends
                 previousAttributes = new HashMap();
                 previousAttributes.putAll(getAttributeValuesByName());
                 if (handlerEvent.isEnabledChanged()) {
+                	Boolean disabled = !isEnabled() ? Boolean.TRUE: Boolean.FALSE;
                     previousAttributes
-                            .put("enabled", new Boolean(!isEnabled())); //$NON-NLS-1$
+                            .put("enabled", disabled); //$NON-NLS-1$
                 }
                 if (handlerEvent.isHandledChanged()) {
+                	Boolean notHandled = !isHandled() ? Boolean.TRUE: Boolean.FALSE;
                     previousAttributes.put(
-                            IHandlerAttributes.ATTRIBUTE_HANDLED, new Boolean(
-                                    !isHandled()));
+                            IHandlerAttributes.ATTRIBUTE_HANDLED, notHandled);
                 }
             } else {
                 previousAttributes = null;
