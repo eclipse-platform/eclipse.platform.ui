@@ -1471,6 +1471,17 @@
               %newProjectCheckoutWizardDescription2
             </description>
       </wizard>
+      <wizard
+            category="org.eclipse.team.cvs.ui.newWizards"
+            icon="$nl$/icons/full/etool16/newlocation_wiz.gif"
+            name="%newLocationWizard"
+            class="org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard"
+            project="false"
+            id="org.eclipse.team.cvs.ui.newLocation">
+            <description> 
+              %newLocationWizardDescription
+            </description>
+      </wizard>
    </extension>
    
    <!-- ********** Import Wizard ************** --> 

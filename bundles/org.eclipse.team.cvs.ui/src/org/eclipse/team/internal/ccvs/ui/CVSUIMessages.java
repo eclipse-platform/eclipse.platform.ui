@@ -1109,4 +1109,9 @@ public class CVSUIMessages extends NLS {
     public static String CVSProxyPreferencePage_proxyUser;
     public static String CVSProxyPreferencePage_proxyPass;
     public static String CVSProxyPreferencePage_proxyPortError;
+    
+	public static String NewLocationWizard_1;
+	public static String NewLocationWizard_2;
+	public static String NewLocationWizard_3;
+	public static String NewLocationWizard_4;
 }

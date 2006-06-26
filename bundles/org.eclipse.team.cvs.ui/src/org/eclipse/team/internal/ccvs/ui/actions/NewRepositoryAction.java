@@ -44,6 +44,7 @@ public class NewRepositoryAction implements IWorkbenchWindowActionDelegate, IVie
 	 */
 	public void run(IAction action) {
 		NewLocationWizard wizard = new NewLocationWizard();
+		wizard.setSwitchPerspectives(false);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
 	}

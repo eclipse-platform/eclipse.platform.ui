@@ -33,6 +33,7 @@ public class NewCVSRepositoryAction extends Action {
 			shell = new Shell(display);
 		}
 		NewLocationWizard wizard = new NewLocationWizard();
+		wizard.setSwitchPerspectives(false);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
 	}

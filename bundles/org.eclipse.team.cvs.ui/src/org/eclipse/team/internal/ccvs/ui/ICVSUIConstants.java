@@ -164,7 +164,8 @@ public interface ICVSUIConstants {
 	// Repositories view preferences
 	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project"; //$NON-NLS-1$
 	
-	// Work in Progress preferences
+	// Perspective changing preferences
+	public final String PREF_CHANGE_PERSPECTIVE_ON_NEW_REPOSITORY_LOCATION = "pref_change_perspective_on_new_location"; //$NON-NLS-1$
 	public final String PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS= "pref_change_perspective_on_show_annotations"; //$NON-NLS-1$
 	public final String PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS= "pref_default_perspective_for_show_annotations"; //$NON-NLS-1$
 	

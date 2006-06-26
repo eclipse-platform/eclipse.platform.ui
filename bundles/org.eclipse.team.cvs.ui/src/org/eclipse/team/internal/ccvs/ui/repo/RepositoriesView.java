@@ -147,6 +147,7 @@ public class RepositoriesView extends RemoteViewPart {
 		newAction = new Action(CVSUIMessages.RepositoriesView_new, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { 
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
+				wizard.setSwitchPerspectives(false);
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
 			}
@@ -162,6 +163,7 @@ public class RepositoriesView extends RemoteViewPart {
 					p.setProperty("host", "dev.eclipse.org"); //$NON-NLS-1$ //$NON-NLS-2$
 					p.setProperty("root", "/cvsroot/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
 					NewLocationWizard wizard = new NewLocationWizard(p);
+					wizard.setSwitchPerspectives(false);
 					WizardDialog dialog = new WizardDialog(shell, wizard);
 					dialog.open();
 				}

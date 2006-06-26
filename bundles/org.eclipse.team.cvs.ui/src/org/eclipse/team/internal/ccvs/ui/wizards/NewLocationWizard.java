@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
@@ -25,11 +27,14 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.*;
 
-public class NewLocationWizard extends Wizard {
+public class NewLocationWizard extends Wizard implements IWorkbenchWizard {
+	
 	private ConfigurationWizardMainPage mainPage;
-
 	private Properties properties = null;
+	private boolean switchPerspectives = true;
 	
 	/**
 	 * Return the settings used for all location pages
@@ -131,9 +136,88 @@ public class NewLocationWizard extends Wizard {
 		}
 		if (keepLocation) {
 			KnownRepositories.getInstance().addRepository(location[0], true /* let the world know */);
+			if (switchPerspectives) {
+		        final IWorkbench workbench= PlatformUI.getWorkbench();
+		        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		        
+				final String defaultPerspectiveID= promptForPerspectiveSwitch();
+
+				if (defaultPerspectiveID != null) {
+					try {
+						workbench.showPerspective(defaultPerspectiveID, window);
+					} catch (WorkbenchException e) {
+						Utils.handleError(window.getShell(), e, CVSUIMessages.ShowAnnotationOperation_0, e.getMessage()); 
+					}
+				}
+			}
 		} else {
 			KnownRepositories.getInstance().disposeRepository(location[0]);
 		}
 		return keepLocation;	
+	}
+
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		// Nothing to do
+	}
+
+	public void setSwitchPerspectives(boolean switchPerspectives) {
+		this.switchPerspectives = switchPerspectives;
+	}
+	
+	private String promptForPerspectiveSwitch() {
+		// check whether we should ask the user.
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String option = store.getString(ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_NEW_REPOSITORY_LOCATION);
+		final String desiredID = CVSPerspective.ID;
+		
+		if (option.equals(MessageDialogWithToggle.ALWAYS))
+			return desiredID; // no, always switch
+		
+		if (option.equals(MessageDialogWithToggle.NEVER))
+			return null; // no, never switch
+		
+		// Check whether the desired perspective is already active.
+		final IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
+		final IPerspectiveDescriptor desired = registry.findPerspectiveWithId(desiredID);
+		final IWorkbenchPage page = CVSUIPlugin.getActivePage();
+		
+		if (page != null) {
+			final IPerspectiveDescriptor current = page.getPerspective();
+			if (current != null && current.getId().equals(desiredID)) {
+				return null; // it is active, so no prompt and no switch
+			}
+		}
+		
+		if (desired != null) {
+		    
+			String message;;
+			String desc = desired.getDescription();
+			if (desc == null) {
+				message = NLS.bind(CVSUIMessages.NewLocationWizard_2, new String[] { desired.getLabel() });
+			} else {
+				message = NLS.bind(CVSUIMessages.NewLocationWizard_3, new String[] { desired.getLabel(), desc });
+			}
+		    // Ask the user whether to switch
+			final MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
+			        Utils.getShell(null),
+			        CVSUIMessages.NewLocationWizard_1, 
+			        message, 
+			        CVSUIMessages.NewLocationWizard_4,   
+			        false /* toggle state */,
+			        store,
+			        ICVSUIConstants.PREF_CHANGE_PERSPECTIVE_ON_NEW_REPOSITORY_LOCATION);
+			
+			final int result = m.getReturnCode();
+			switch (result) {
+			// yes
+			case IDialogConstants.YES_ID:
+			case IDialogConstants.OK_ID :
+			    return desiredID;
+			// no
+			case IDialogConstants.NO_ID :
+			    return null;
+			}
+		}
+		return null;
 	}
 }
