@@ -15,6 +15,7 @@ import java.io.File;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 
@@ -57,6 +58,17 @@ public class WorkflowTests extends BenchmarkTest {
         runWorkflowTests("testBigWithNoUI", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow No UI", BenchmarkTestSetup.LOOP_COUNT, false, new SyncInfoSource());
     }
 	
+    protected void waitForBuild() {
+    	super.waitForBuild();
+    	// Ensure that we can obtrain the worksapce lock before continuing
+    	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    	try {
+    		Platform.getJobManager().beginRule(root, null);
+    	} finally {
+    		Platform.getJobManager().endRule(root);
+    	}
+    }
+    
 	/**
 	 * Runs a series of incoming and outgoing workflow-related tests.
 	 */
@@ -76,6 +88,7 @@ public class WorkflowTests extends BenchmarkTest {
 			String moduleName = outProject.getName();
 			BenchmarkUtils.renameResource(outProject, moduleName + "out");
 			outProject = BenchmarkUtils.getProject(moduleName + "out");
+			waitForBuild();
 			
 			// test initial project checkout
 			IProject inProject = BenchmarkUtils.getProject(moduleName);
