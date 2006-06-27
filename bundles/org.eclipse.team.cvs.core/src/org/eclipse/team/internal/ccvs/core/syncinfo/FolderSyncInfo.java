@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Value (immutable) object that represents workspace state information about the contents of a
@@ -206,7 +207,7 @@ public class FolderSyncInfo {
 	 * @throws a CVSException if the root or repository is malformed.
 	 */
 	public String getRemoteLocation() throws CVSException {
-		return getRootDirectory() + ResourceSyncInfo.SEPARATOR + getRepository(); 
+		return Util.appendPath(getRootDirectory(), getRepository());
 	}
 	
 	/*

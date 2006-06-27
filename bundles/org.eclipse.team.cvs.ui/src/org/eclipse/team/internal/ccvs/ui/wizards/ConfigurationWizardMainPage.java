@@ -627,6 +627,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 					CVSUIMessages.ConfigurationWizardMainPage_invalidPathWithSlashes, null); 
 			}
 		}
+		if (pathString.endsWith("/")) { //$NON-NLS-1$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					CVSUIMessages.ConfigurationWizardMainPage_invalidPathWithTrailingSlash, null);
+		}
 		return Status.OK_STATUS;
 	}
 }

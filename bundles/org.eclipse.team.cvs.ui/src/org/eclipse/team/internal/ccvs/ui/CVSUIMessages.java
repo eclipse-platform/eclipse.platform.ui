@@ -359,6 +359,7 @@ public class CVSUIMessages extends NLS {
 	public static String ConfigurationWizardMainPage_invalidPort;
 	public static String ConfigurationWizardMainPage_invalidPathWithSpaces;
 	public static String ConfigurationWizardMainPage_invalidPathWithSlashes;
+	public static String ConfigurationWizardMainPage_invalidPathWithTrailingSlash;
 	public static String ConfigurationWizardMainPage_useNTFormat;
 
 	public static String Console_resultServerError;

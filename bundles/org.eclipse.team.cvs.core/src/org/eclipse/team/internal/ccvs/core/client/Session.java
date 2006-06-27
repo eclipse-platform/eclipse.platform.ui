@@ -412,7 +412,8 @@ public class Session {
 	 * </p>
 	 */
 	public void sendConstructedDirectory(String localDir) throws CVSException {
-		sendDirectory(localDir, getRepositoryRoot() + "/" + localDir); //$NON-NLS-1$
+		String path = Util.appendPath(getRepositoryRoot(), localDir);
+		sendDirectory(localDir, path);
 	}
 
 	/**
