@@ -187,13 +187,13 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
-		if (fAcquireCount > 0)
+		fAcquireCount++;
+		if (fAcquireCount > 1)
 			return fBuffer.getDocument();
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= fFile.getFullPath();
 		manager.connect(path, pm);
-		fAcquireCount++;
 		fBuffer= manager.getTextFileBuffer(path);
 		IDocument result= fBuffer.getDocument();
 		fContentStamp= ContentStamps.get(fFile, result);
