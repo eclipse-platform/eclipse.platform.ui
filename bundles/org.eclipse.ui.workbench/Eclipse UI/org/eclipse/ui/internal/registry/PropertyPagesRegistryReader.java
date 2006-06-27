@@ -145,8 +145,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		}
 		String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
 		if (objectClassName == null) {
-			logMissingAttribute(element, ATT_OBJECTCLASS);
-			return;
+			objectClassName = Object.class.getName();
 		}
 
 		registerContributor(contributor, objectClassName);
