@@ -26,7 +26,6 @@ import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -168,11 +167,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private void addDragAdapters(StructuredViewer viewer) {
 		Transfer[] transfers= new Transfer[] { ResourceTransfer.getInstance() };
 		int ops= DND.DROP_COPY | DND.DROP_LINK;
-		
-		DelegatingDragAdapter adapter= new DelegatingDragAdapter();
-		adapter.addDragSourceListener(new ResourceTransferDragAdapter(viewer));
-		
-		viewer.addDragSupport(ops, transfers, adapter);
+		viewer.addDragSupport(ops, transfers, new ResourceTransferDragAdapter(viewer));
 	}	
 
 	protected void configureTableViewer(TableViewer viewer) {
