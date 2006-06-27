@@ -24,6 +24,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.dialogs.NoChangesDialog;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -243,7 +244,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	protected void handleNoChanges() {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getShell(), TeamUIMessages.ResourceMappingMergeOperation_0, TeamUIMessages.ResourceMappingMergeOperation_1);
+				NoChangesDialog.open(getShell(), TeamUIMessages.ResourceMappingMergeOperation_0, TeamUIMessages.ResourceMappingMergeOperation_1, TeamUIMessages.ModelMergeOperation_3, getScope().asInputScope());
 			};
 		});
 	}

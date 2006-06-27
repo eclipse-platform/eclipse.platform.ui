@@ -72,6 +72,10 @@ abstract public class DetailsDialog extends TrayDialog {
 	public DetailsDialog(Shell parentShell, String dialogTitle) {
 		super(parentShell);
 		this.title = dialogTitle;
+		initializeStyle();
+	}
+
+	protected void initializeStyle() {
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 

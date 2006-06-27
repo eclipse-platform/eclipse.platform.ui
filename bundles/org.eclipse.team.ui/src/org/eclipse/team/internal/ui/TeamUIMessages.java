@@ -124,6 +124,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String ModelEnablementPreferencePage_1;
 
+	public static String ModelMergeOperation_3;
+
 	public static String ResourceMarkAsMergedHandler_0;
 
 	public static String ResourceMarkAsMergedHandler_1;
