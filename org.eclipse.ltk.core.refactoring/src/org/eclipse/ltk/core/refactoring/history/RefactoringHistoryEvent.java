@@ -87,10 +87,11 @@ public final class RefactoringHistoryEvent {
 	/**
 	 * Returns the refactoring descriptor proxy.
 	 * <p>
-	 * Depending on the event, this proxy may not exist and cannot be resolved
-	 * to a refactoring descriptor. Clients should also be prepared to receive
-	 * notifications for unknown refactorings, which are discriminated by their
-	 * special id {@link RefactoringDescriptor#ID_UNKNOWN};
+	 * Depending on the event, this proxy may refer to an inexisting refactoring
+	 * and cannot be resolved to a refactoring descriptor. Clients should also
+	 * be prepared to receive notifications for unknown refactorings, which are
+	 * discriminated by their special id
+	 * {@link RefactoringDescriptor#ID_UNKNOWN};
 	 * </p>
 	 * 
 	 * @return the refactoring descriptor proxy
