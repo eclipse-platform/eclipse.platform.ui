@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
@@ -29,6 +28,7 @@ public class PropertyPageTests extends DynamicTestCase {
 		super(testName);
 	}
 
+
 	public void testPropertyPageCount() {
 		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
 		int size = manager.getContributors().size();
@@ -41,27 +41,18 @@ public class PropertyPageTests extends DynamicTestCase {
 	public void testPropertyPageContribution() {
 		PropertyPageContributorManager cManager = PropertyPageContributorManager.getManager();
 		PropertyPageManager manager; 
-		IAdaptable adaptable = new IAdaptable() {
+		DynamicTestType type = new DynamicTestType();
 			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-			 */
-			public Object getAdapter(Class adapter) {
-				if (adapter == Object.class)
-					return this;
-				return null;
-			}};
-			
-		cManager.contribute(manager = new PropertyPageManager(), adaptable);
+		cManager.contribute(manager = new PropertyPageManager(), type);
 		assertNull(manager.find(PROPERTYPAGE));
 		getBundle();
-		cManager.contribute(manager = new PropertyPageManager(), adaptable);
+		cManager.contribute(manager = new PropertyPageManager(), type);
 		IPreferenceNode result = manager.find(PROPERTYPAGE);
 		assertNotNull(result);
 		result.createPage(); // muck around and ensure we've created some potential garbage
 		result.disposeResources();
 		removeBundle();
-		cManager.contribute(manager = new PropertyPageManager(), adaptable);
+		cManager.contribute(manager = new PropertyPageManager(), type);
 		assertNull(manager.find(PROPERTYPAGE));
 	}
 	
