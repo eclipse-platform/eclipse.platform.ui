@@ -128,6 +128,8 @@ public class MemoryViewSynchronizationService implements
 		// do nothing when a memory block is added
 		// create a synchronize info object when there is a fView
 		// tab registered to be synchronized.
+		
+		
 	}
 
 	/* (non-Javadoc)
@@ -138,6 +140,13 @@ public class MemoryViewSynchronizationService implements
 		for (int i=0; i<memoryBlocks.length; i++)
 		{
 			IMemoryBlock memory = memoryBlocks[i];
+			
+			if (fLastChangedRendering != null && fLastChangedRendering.getMemoryBlock() == memory)
+				fLastChangedRendering = null;
+			
+			if (fSyncServiceProvider != null && fSyncServiceProvider.getMemoryBlock() == memory)
+				fSyncServiceProvider = null;
+			
 			// delete the info object and remove it from fSynchronizeInfo
 			// when the memory block is deleted
 			SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(memory);
