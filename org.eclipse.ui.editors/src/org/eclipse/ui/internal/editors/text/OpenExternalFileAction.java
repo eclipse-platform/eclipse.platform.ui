@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -21,11 +18,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,17 +32,14 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -150,54 +141,16 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		}
 	}
 
-	/*
-	 * XXX: Requested a helper to get the correct editor descriptor
-	 *		see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=110203
-	 */
 	private String getEditorId(IFileStore file) {
-		IWorkbench workbench= fWindow.getWorkbench();
-		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
-		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName(), getContentType(file));
-
-		// check the OS for in-place editor (OLE on Win32)
-		if (descriptor == null && editorRegistry.isSystemInPlaceEditorAvailable(file.getName()))
-			descriptor= editorRegistry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
-		
-		// check the OS for external editor
-		if (descriptor == null && editorRegistry.isSystemExternalEditorAvailable(file.getName()))
-			descriptor= editorRegistry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-		
+		IEditorDescriptor descriptor;
+		try {
+			descriptor= IDE.getEditorDescriptor(file.getName());
+		} catch (PartInitException e) {
+			return null;
+		}
 		if (descriptor != null)
 			return descriptor.getId();
-		
-		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
-	}
-
-	private IContentType getContentType (IFileStore fileStore) {
-		if (fileStore == null)
-			return null;
-
-		InputStream stream= null;
-		try {
-			stream= fileStore.openInputStream(EFS.NONE, null);
-			return Platform.getContentTypeManager().findContentTypeFor(stream, fileStore.getName());
-		} catch (IOException x) {
-			EditorsPlugin.log(x);
-			return null;
-		} catch (CoreException x) {
-			// Do not log FileNotFoundException (no access)
-			if (!(x.getStatus().getException() instanceof FileNotFoundException))
-				EditorsPlugin.log(x);
-			
-			return null;
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException x) {
-				EditorsPlugin.log(x);
-			}
-		}
+		return null;
 	}
 
 	private IEditorInput createEditorInput(IFileStore fileStore) {
