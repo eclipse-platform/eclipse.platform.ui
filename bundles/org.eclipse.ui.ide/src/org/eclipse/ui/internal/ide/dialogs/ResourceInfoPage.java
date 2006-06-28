@@ -225,7 +225,7 @@ public class ResourceInfoPage extends PropertyPage {
 				IIDEHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 		// layout the page
-		IResource resource = (IResource) getElement();
+		IResource resource = (IResource) getElement().getAdapter(IResource.class);
 		if (resource.getType() != IResource.PROJECT) {
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {

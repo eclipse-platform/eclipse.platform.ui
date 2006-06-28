@@ -526,18 +526,22 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference"
             name="%PropertyPages.project.reference"
-            objectClass="org.eclipse.core.resources.IProject">
+            >
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
       </page>
       <page
-            adaptable="true"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file"
             name="%PropertyPages.info.file"
-            objectClass="org.eclipse.core.resources.IResource">
+            >
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IResource"/>
+         </enabledWhen>
       </page>
    </extension>
    <extension

@@ -2802,4 +2802,39 @@
             class="doesn't matter"
             helpContextId="org.eclipse.ui.tests.handlerHelp" />
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="Test Category"
+            class="org.eclipse.ui.tests.propertyPages.TestPropertyPage"
+            id="org.eclipse.ui.tests.and"
+            name="And (Only on File)">
+         <enabledWhen>
+            <and>
+               <adapt type="org.eclipse.core.resources.IResource"/>
+               <adapt type="org.eclipse.core.resources.IFile"/>
+            </and>
+         </enabledWhen>
+      </page>
+      <page
+            category="Test Category"
+            class="org.eclipse.ui.tests.propertyPages.TestPropertyPage"
+            id="org.eclipse.ui.tests.or"
+            name="Or (Files and Folders)">
+         <enabledWhen>
+            <or>
+               <instanceof value="org.eclipse.core.resources.IFile"/>
+               <instanceof value="org.eclipse.core.resources.IFolder"/>
+            </or>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.ui.tests.propertyPages.TestPropertyPage"
+            id="org.eclipse.ui.tests.instanceof"
+            name="Instance Of (Projects)">
+         <enabledWhen>
+            <instanceof value="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
+      </page>
+   </extension>
 </plugin>            

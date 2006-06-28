@@ -98,9 +98,11 @@ If these filtering mechanisms are inadequate a property page may use the filter 
             <annotation>
                <documentation>
                   a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrappered in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
+
+&lt;p&gt;Deprecated in Eclipse 3.3. Use the instanceOf or adapt element of the enabledWhen element instead&lt;/p&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" deprecated="true"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -127,7 +129,12 @@ wild card match applied to the target object name.
                <documentation>
                   a flag that indicates if types that adapt to IResource should use this property page.
 This flag is used if objectClass adapts to IResource.  Default value is false.
+
+&lt;p&gt;Deprecated in Eclipse 3.3. Use adapt sub element of the enabledWhen element instead&lt;/p&gt;
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
