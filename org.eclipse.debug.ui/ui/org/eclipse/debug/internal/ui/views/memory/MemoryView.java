@@ -158,7 +158,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 				// only fire change event if the selection has really changed
 				if (fSelections.getFirstElement() != ((IStructuredSelection)selection).getFirstElement())
 					fireChanged = true;
-				
+
 				fSelections = (IStructuredSelection)selection;
 				
 				if (fireChanged)
@@ -419,6 +419,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
 			toggleCommand.setHandler(null);
 			
+			Command nextMemoryBlockCommand = commandSupport.getCommand(ID_NEXT_MEMORY_BLOCK_COMMAND);
+			nextMemoryBlockCommand.setHandler(null);
+			
 			if (fContext != null)
 				contextSupport.deactivateContext(fContext);
 		}
@@ -498,7 +501,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 			public void handleEvent(Event event) {
 				fActivePaneId = id;
 			}});
-
+		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
