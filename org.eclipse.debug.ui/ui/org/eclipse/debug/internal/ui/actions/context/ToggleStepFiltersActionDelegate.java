@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions.context;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -25,8 +26,8 @@ import org.eclipse.ui.IViewPart;
  */
 public class ToggleStepFiltersActionDelegate extends AbstractDebugContextActionDelegate implements IPropertyChangeListener, IViewActionDelegate {
 
-	public ToggleStepFiltersActionDelegate()
-	{
+	
+	public ToggleStepFiltersActionDelegate() {
 		setAction(new ToggleStepFiltersAction());
 	}
 	
@@ -52,7 +53,7 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugContextActionD
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IDebugUIConstants.PREF_USE_STEP_FILTERS)) {
-			Object newValue= event.getNewValue();
+			Object newValue = event.getNewValue();
 			if (newValue instanceof Boolean) {
 				getWindowAction().setChecked(((Boolean)(newValue)).booleanValue());
 			} else if (newValue instanceof String) {
@@ -72,10 +73,21 @@ public class ToggleStepFiltersActionDelegate extends AbstractDebugContextActionD
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		DebugUITools.setUseStepFilters(!DebugUITools.isUseStepFilters());
+		//this is to ensure that when the toolbar is initialized and run() gets called for checked items we don't immediately 
+		//reverse our desired check state.
+		if(action instanceof Action) { 
+			if(action.isChecked() != isUseStepFilters()) {
+				DebugUITools.setUseStepFilters(!isUseStepFilters());
+			}
+		}
+		else {
+			DebugUITools.setUseStepFilters(!isUseStepFilters());
+		}
 	}
-
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
 	public void init(IViewPart view) {
 		init(view.getSite().getWorkbenchWindow());
 	}
