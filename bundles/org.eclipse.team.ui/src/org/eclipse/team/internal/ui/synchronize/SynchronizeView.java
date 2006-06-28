@@ -116,6 +116,14 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, new Saveable[] { oldSaveable }, false));
 				if (listener != null && newSaveable != null)
 					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { oldSaveable }, false));
+			} else if (event.getProperty().equals(ISynchronizeParticipant.P_CONTENT)) {
+				final IWorkbenchSiteProgressService ps = (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+				if (ps != null)
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							ps.warnOfContentChange();
+						}
+					});
 			}
 		}
 		if (source instanceof ISynchronizePageConfiguration) {

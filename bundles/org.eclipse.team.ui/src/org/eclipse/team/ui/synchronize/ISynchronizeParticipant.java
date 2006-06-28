@@ -65,6 +65,17 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * @since 3.0
  */
 public interface ISynchronizeParticipant extends IExecutableExtension, IAdaptable {
+	
+	/**
+	 * A property constant that can be used to indicate that the content of this participant 
+	 * has changed. This is a general event that can be used to indicate to the user that there
+	 * is a change in state for the participant. In general, the values associated with the event do not have
+	 * any meaning.
+	 * 
+	 * @see #addPropertyChangeListener(IPropertyChangeListener)
+	 */
+	public static final String P_CONTENT = "org.eclipse.team.ui.content"; //$NON-NLS-1$
+
 	/**
 	 * Returns the unique id that identified the <i>type</i> of this
 	 * synchronize participant. The synchronize manager supports registering

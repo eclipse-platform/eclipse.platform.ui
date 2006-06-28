@@ -346,6 +346,12 @@ public abstract class RefreshParticipantJob extends Job {
 			}
 			event.setStatus(status);
 			notifyListeners(DONE, event);
+			if (event.getChangeDescription().getChangeCount() > 0) {
+				if (participant instanceof AbstractSynchronizeParticipant) {
+					AbstractSynchronizeParticipant asp = (AbstractSynchronizeParticipant) participant;
+					asp.firePropertyChange(participant, ISynchronizeParticipant.P_CONTENT, null, event.getChangeDescription());
+				}
+			}
 			return event.getStatus();
 		} finally {
 			if (acquired) lock.release();
@@ -399,6 +405,7 @@ public abstract class RefreshParticipantJob extends Job {
             
 			if (changeCount > 0) {
 			// New changes found
+				code = IRefreshEvent.STATUS_NEW_CHANGES;
 				String numNewChanges = Integer.toString(changeCount);
 				if (changeCount == 1) {
 				    text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges, numIncomingChanges, sep, numOutgoingChanges}))); 
