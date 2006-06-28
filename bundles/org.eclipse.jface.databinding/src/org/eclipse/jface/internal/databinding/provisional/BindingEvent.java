@@ -204,9 +204,10 @@ public class BindingEvent {
 	 */
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		result.append("(" + eventConstants.get(new Integer(copyType)) + ", "); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append(eventConstants.get(new Integer(copyType)) + ": Diff(" + diff + "): "); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append("("); //$NON-NLS-1$
 		result.append(pipelineConstants.get(new Integer(pipelinePosition)));
-		result.append("): Diff(" + diff + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append(")"); //$NON-NLS-1$
 		return result.toString();
 	}
 
