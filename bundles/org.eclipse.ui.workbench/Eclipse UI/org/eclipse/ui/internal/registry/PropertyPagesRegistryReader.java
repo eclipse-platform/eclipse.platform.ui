@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -63,6 +64,18 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
 
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$;
+
+//	private static final String CHILD_ADAPT = "adapt"; //$NON-NLS-1$
+//
+//	private static final String ATT_TYPE = "type";//$NON-NLS-1$
+
+	private static final String CHILD_INSTANCEOF = "instanceof";//$NON-NLS-1$
+
+	private static final String ATT_VALUE = "value"; //$NON-NLS-1$
+
+	private static final String CHILD_AND = "and"; //$NON-NLS-1$
+
+	private static final String CHILD_OR = "or"; //$NON-NLS-1$
 
 	private Collection pages = new ArrayList();
 
@@ -143,13 +156,84 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 			return;
 		}
-		String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-		if (objectClassName == null) {
-			objectClassName = Object.class.getName();
+		List objectClassNames;
+		if (element.getAttribute(ATT_OBJECTCLASS) == null)
+			objectClassNames = getObjectClassesFromEnablement(element);
+		else {
+			objectClassNames = new ArrayList();
+			objectClassNames.add(element.getAttribute(ATT_OBJECTCLASS));
+		}
+		registerContributors(contributor, objectClassNames);
+
+	}
+
+	/**
+	 * Register the contributor for all of the relevant classes.
+	 * 
+	 * @param contributor
+	 * @param objectClassNames
+	 */
+	private void registerContributors(RegistryPageContributor contributor,
+			List objectClassNames) {
+
+		pages.add(contributor);
+		for (Iterator iter = objectClassNames.iterator(); iter.hasNext();) {
+			manager.registerContributor(contributor, (String) iter.next());
 		}
 
-		registerContributor(contributor, objectClassName);
+	}
 
+	/**
+	 * Get all of the classes that this contributor is enabled for. If none are
+	 * specified return {@link Object}.
+	 * 
+	 * @param element
+	 * @return List of String
+	 */
+	private List getObjectClassesFromEnablement(IConfigurationElement element) {
+		IConfigurationElement[] elements = element
+				.getChildren(CHILD_ENABLED_WHEN);
+		List names = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			addClassNamesFrom(element, names);
+		}
+		if (names.isEmpty())
+			names.add(Object.class.getName());
+
+		return names;
+
+	}
+
+	/**
+	 * Add the classNames in the instanceOf or adapts children to names.
+	 * 
+	 * @param element
+	 * @param names
+	 */
+	private void addClassNamesFrom(IConfigurationElement element, List names) {
+		IConfigurationElement[] children = element.getChildren();
+		for (int i = 0; i < children.length; i++) {
+//			IConfigurationElement[] adapted = children[i].getChildren(CHILD_ADAPT);
+//			for (int j = 0; j < adapted.length; j++) {
+//				names.add(adapted[j].getAttribute(ATT_TYPE));	
+//				addClassNamesFrom(adapted[j], names);
+//			}
+			IConfigurationElement[] instanceOf = children[i].getChildren(CHILD_INSTANCEOF);
+			for (int j = 0; j < instanceOf.length; j++) {
+				names.add(instanceOf[j].getAttribute(ATT_VALUE));				
+			}
+			
+			IConfigurationElement[] ands = children[i].getChildren(CHILD_AND);
+			for (int j = 0; j < ands.length; j++) {
+				addClassNamesFrom(ands[j], names);		
+			}
+			
+			IConfigurationElement[] ors = children[i].getChildren(CHILD_OR);
+			for (int j = 0; j < ors.length; j++) {
+				addClassNamesFrom(ors[j], names);		
+			}
+		}
+		
 	}
 
 	/**
@@ -176,16 +260,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Creates object class instance and registers the contributor with the
-	 * property page manager.
-	 */
-	private void registerContributor(RegistryPageContributor contributor,
-			String objectClassName) {
-		manager.registerContributor(contributor, objectClassName);
-		pages.add(contributor);
 	}
 
 	/**
