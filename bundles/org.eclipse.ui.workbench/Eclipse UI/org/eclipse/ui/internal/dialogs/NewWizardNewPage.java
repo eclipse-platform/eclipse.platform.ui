@@ -458,6 +458,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
         descImageCanvas = new CLabel(parent, SWT.NONE);
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING
                 | GridData.VERTICAL_ALIGN_BEGINNING);
+        data.widthHint = 0;
+        data.heightHint = 0;
         descImageCanvas.setLayoutData(data);
 
         // hook a listener to get rid of cached images.
@@ -668,6 +670,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
             }
 
             if (descriptor != null) {
+            	GridData data = (GridData)descImageCanvas.getLayoutData();
+            	data.widthHint = SWT.DEFAULT;
+            	data.heightHint = SWT.DEFAULT;
                 Image image = (Image) imageTable.get(descriptor);
                 if (image == null) {
                     image = descriptor.createImage(false);
@@ -676,6 +681,9 @@ class NewWizardNewPage implements ISelectionChangedListener {
                 descImageCanvas.setImage(image);
             }
         } else {
+        	GridData data = (GridData)descImageCanvas.getLayoutData();
+        	data.widthHint = 0;
+        	data.heightHint = 0;
             descImageCanvas.setImage(null);
         }
 
