@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.ui.mapping;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -115,5 +112,29 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 			}
 		}
 		return getName(mapping);
+	}
+	
+	/**
+	 * Return the synchronization state of the resource mapping with respect to
+	 * the given team state provider. This method is invoked from instances of
+	 * {@link ITeamStateProvider} when the synchronization state description for
+	 * an element is requested.
+	 * 
+	 * @param provider
+	 *            the team state provider
+	 * @param mapping
+	 *            the element
+	 * @param stateMask
+	 *            the state mask that indicates which state flags are desired
+	 * @param monitor
+	 *            a progress monitor
+	 * @return the synchronization state of the element or -1 if the calculation
+	 *         of the state should be done using the resources of the mapping.
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	public int getSynchronizationState(ITeamStateProvider provider, ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
+		return -1;
 	}
 }

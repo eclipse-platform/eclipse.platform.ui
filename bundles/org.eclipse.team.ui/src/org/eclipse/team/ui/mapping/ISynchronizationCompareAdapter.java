@@ -12,6 +12,7 @@ package org.eclipse.team.ui.mapping;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.ui.IMemento;
@@ -90,5 +91,28 @@ public interface ISynchronizationCompareAdapter {
 	 * @return the mappings restored from the given memento
 	 */
 	public ResourceMapping[] restore(IMemento memento);
+
+	/**
+	 * Return the synchronization state of the resource mapping with respect to
+	 * the given team state provider. This method is invoked from instances of
+	 * {@link ITeamStateProvider} when the synchronization state description for
+	 * an element is requested. This method can return -1 to indicate that the state 
+	 * calculation should be performed using the resources that the element maps to.
+	 * 
+	 * @param provider
+	 *            the team state provider
+	 * @param mapping
+	 *            the element
+	 * @param stateMask
+	 *            the state mask that indicates which state flags are desired
+	 * @param monitor
+	 *            a progress monitor
+	 * @return the synchronization state of the element or -1 if the calculation
+	 *         of the state should be done using the resources of the mapping.
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	public int getSynchronizationState(ITeamStateProvider provider, ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException;
 
 }

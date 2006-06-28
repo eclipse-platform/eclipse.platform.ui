@@ -20,8 +20,7 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.ITeamStateDescription;
-import org.eclipse.team.ui.mapping.ITeamStateProvider;
+import org.eclipse.team.ui.mapping.*;
 
 /**
  * A team state provider that makes use of a {@link Subscriber} to determine the synchronization
@@ -70,8 +69,12 @@ public class SubscriberTeamStateProvider extends TeamStateProvider implements IS
 	}
 
 	/**
-	 * Obtain the synchronization state of the element from the subscriber
+	 * Obtain the synchronization state of the element. If the model
+	 * provider for the element adapts to an
+	 * ISynchronizationCompareAdapter, then the adapter is used to determine the
+	 * synchronization state. Others, the state is obtained from the subscriber
 	 * using {@link Subscriber#getState(ResourceMapping, int, IProgressMonitor)}
+	 * 
 	 * @param element the element
 	 * @param stateMask the state mask that indicates which state flags are desired
 	 * @param monitor a progress monitor
@@ -82,17 +85,28 @@ public class SubscriberTeamStateProvider extends TeamStateProvider implements IS
 			IProgressMonitor monitor) throws CoreException {
 		ResourceMapping mapping = Utils.getResourceMapping(element);
 		if (mapping != null) {
-			try {
-				return getSubscriber().getState(mapping, stateMask, monitor);
-			} catch (CoreException e) {
-				IProject[] projects = mapping.getProjects();
-				for (int i = 0; i < projects.length; i++) {
-					IProject project = projects[i];
-					// Only through the exception if the project for the mapping
-					// is accessible
-					if (project.isAccessible()) {
-						throw e;
-					}
+			return getSynchronizationState(mapping, stateMask, monitor);
+		}
+		return IDiff.NO_CHANGE;
+	}
+	
+	private int getSynchronizationState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
+		ISynchronizationCompareAdapter compareAdapter = (ISynchronizationCompareAdapter)Utils.getAdapter(mapping.getModelProvider(), ISynchronizationCompareAdapter.class);
+		try {
+			if (compareAdapter != null) {
+				int state = compareAdapter.getSynchronizationState(this, mapping, stateMask, monitor);
+				if (state != -1)
+					return state;
+			}
+			return getSubscriber().getState(mapping, stateMask, monitor);
+		} catch (CoreException e) {
+			IProject[] projects = mapping.getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				IProject project = projects[i];
+				// Only through the exception if the project for the mapping
+				// is accessible
+				if (project.isAccessible()) {
+					throw e;
 				}
 			}
 		}
