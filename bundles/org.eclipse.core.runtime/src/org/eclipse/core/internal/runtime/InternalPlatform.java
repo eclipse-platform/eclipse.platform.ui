@@ -983,8 +983,13 @@ public final class InternalPlatform {
 		initialized = true;
 		getMetaArea();
 		initializeAuthorizationHandler();
-		platformLog = new PlatformLogWriter(getFrameworkLog());
-		addLogListener(platformLog);
+		FrameworkLog log = getFrameworkLog();
+		if (log != null) {
+			platformLog = new PlatformLogWriter(getFrameworkLog());
+			addLogListener(platformLog);
+		}
+		else
+			platformLog = null;
 		adapterManagerListener = new AdapterManagerListener(); // after extension registry
 		startServices();
 
@@ -1009,7 +1014,8 @@ public final class InternalPlatform {
 		stopServices(); // should be done after preferences shutdown
 		if (adapterManagerListener != null)
 			adapterManagerListener.stop(); // before extension registry
-		RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
+		if (platformLog != null)
+			RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
 		initialized = false;
 		closeOSGITrackers();
 		context = null;
