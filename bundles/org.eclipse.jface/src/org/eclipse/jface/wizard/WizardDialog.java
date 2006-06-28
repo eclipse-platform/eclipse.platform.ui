@@ -1002,7 +1002,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         	    		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
         	    		int width = Math.max(currentSize.x, newSize.x);
         	    		int height = Math.max(currentSize.y, newSize.y);
-        	    		setShellSize(width, height);	
+        	    		setShellSize(width, height);
+        	    		progressMonitorPart.getParent().layout(true);
         	    	}
                 }
                 // Ensure the dialog is large enough for the wizard
