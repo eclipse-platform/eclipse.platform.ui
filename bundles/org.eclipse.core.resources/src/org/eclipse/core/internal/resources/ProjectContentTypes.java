@@ -15,8 +15,7 @@ import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeMatcher;
+import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
@@ -26,7 +25,7 @@ import org.osgi.service.prefs.Preferences;
  * Manages project-specific content type behavior.
  * 
  * @see ContentDescriptionManager
- * @see ISelectionPolicy
+ * @see IContentTypeManager.ISelectionPolicy
  * @since 3.1
  */
 public class ProjectContentTypes {
