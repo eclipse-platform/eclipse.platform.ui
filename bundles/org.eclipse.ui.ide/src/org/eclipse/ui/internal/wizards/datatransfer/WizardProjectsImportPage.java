@@ -147,8 +147,14 @@ public class WizardProjectsImportPage extends WizardPage implements
 					}					
 				} else {
 					IPath path = new Path(projectSystemFile.getPath());
-					newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
-							.loadProjectDescription(path);
+					//if the file is in the default location, use the directory name as the project name
+					if (isDefaultLocation(path)) {
+						projectName = path.segment(path.segmentCount()-2);
+						newDescription = IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(projectName);
+					} else {
+						newDescription = IDEWorkbenchPlugin.getPluginWorkspace()
+								.loadProjectDescription(path);
+					}
 				}
 			} catch (CoreException e) {
 				// no good couldn't get the name
@@ -163,6 +169,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 				this.description = newDescription;
 				projectName = this.description.getName();
 			}
+		}
+
+		/**
+		 * Returns whether the given project description file path is in the default location for a project
+		 * @param path The path to examine
+		 * @return Whether the given path is the default location for a project
+		 */
+		private boolean isDefaultLocation(IPath path) {
+			//The project description file must at least be within the project, which is within the workspace location
+			if (path.segmentCount() < 2)
+				return false;
+			return path.removeLastSegments(2).toFile().equals(Platform.getLocation().toFile());
 		}
 
 		/**
@@ -1057,8 +1075,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 			record.description = workspace.newProjectDescription(projectName);
 			IPath locationPath = new Path(record.projectSystemFile
 					.getAbsolutePath());
-			// IPath locationPath = new
-			// Path(record.projectFile.getFullPath(record.projectFile.getRoot()));
 
 			// If it is under the root use the default location
 			if (Platform.getLocation().isPrefixOf(locationPath)) {
@@ -1093,8 +1109,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 				importSource = new File(locationURI);
 				IProjectDescription desc = workspace.newProjectDescription(projectName);
 				desc.setBuildSpec(record.description.getBuildSpec());
-				desc.setNatureIds(record.description.getNatureIds());
+				desc.setComment(record.description.getComment());
 				desc.setDynamicReferences(record.description.getDynamicReferences());
+				desc.setNatureIds(record.description.getNatureIds());
 				desc.setReferencedProjects(record.description.getReferencedProjects());
 				record.description = desc;
 			}
