@@ -465,7 +465,8 @@ public class ModelSynchronizeParticipant extends
 		if(memento != null) {
 			IMemento settings = memento.getChild(CTX_PARTICIPANT_SETTINGS);
 			String startupAction = settings.getString(StartupPreferencePage.PROP_STARTUP_ACTION);
-			preferences.putValue(StartupPreferencePage.PROP_STARTUP_ACTION, startupAction);
+			if (startupAction != null)
+				preferences.putValue(StartupPreferencePage.PROP_STARTUP_ACTION, startupAction);
 			ResourceMapping[] mappings = loadMappings(settings);
 			if (mappings.length == 0)
 				throw new PartInitException(NLS.bind(TeamUIMessages.ModelSynchronizeParticipant_0, getId()));
