@@ -43,6 +43,8 @@ topic_img = new Image();
 topic_img.src = "<%=prefs.getImagesDirectory()%>"+"/topic.gif";
 altTopicClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicClosed", request))%>";
 altTopicOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicOpen", request))%>";
+altBookClosed="<%=ServletResources.getString("bookClosed", request)%>";
+altBookOpen="<%=ServletResources.getString("bookOpen", request)%>";
 </script>
 
 <script language="JavaScript" src="toc.js"></script>
@@ -54,9 +56,23 @@ altTopicOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicOpe
 function loadTOC(tocHref)
 {
 	// navigate to this toc, if not already loaded
-	if (window.location.href.indexOf("tocView.jsp?toc="+tocHref) != -1)
-		return;
-	window.location.replace("tocView.jsp?toc="+tocHref);
+	if (window.location.href.indexOf("tocView.jsp?toc="+escape(tocHref)) != -1){
+		var links = document.getElementsByTagName("A")
+	  	     for(var i=0;i<links.length;i++){
+		  	    if (links[i].name=="opened"){
+			  	    var plus_minus = getPlusMinus(links[i]);
+			  		if (plus_minus != null)
+			  		{	
+			    		if (isCollapsed(plus_minus)) 
+			   				expand(plus_minus);
+			  			scrollIntoView(links[i]);
+			  		}
+					  return;
+		  	    }
+	  	    }
+	  } else {	
+		window.location.replace("tocView.jsp?toc="+tocHref);
+	  }
 }
 
 var tocTitle = "";
@@ -191,18 +207,20 @@ if (data.isIE()){
 		if(isSelected) {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" alt="<%=ServletResources.getString("bookOpen", request)%>" title="<%=ServletResources.getString("bookOpen", request)%>"><a id="b<%=toc%>" name="opened" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick=''><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" class="expanded" alt="<%=ServletResources.getString("bookOpen", request)%>" ><a id="b<%=toc%>" name="opened" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+		<ul class="expanded">
 <%
 			// Only generate the selected toc
 			data.generateToc(toc, out);
 			// keep track of the selected toc id
 %>
+		</ul>
 			<script language="JavaScript">tocId="b"+<%=toc%></script>
 <%
 		} else {
 %>
 		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" name="<%=data.getTocHref(toc)%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" onclick='loadTOC("<%=data.getTocHref(toc)%>")' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" name="<%=data.getTocHref(toc)%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
 <%
 		}
 %>

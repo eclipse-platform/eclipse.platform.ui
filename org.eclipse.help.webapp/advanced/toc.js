@@ -215,12 +215,33 @@ function collapse(node) {
 }
 
 /**
+ * Collapses a book element rooted at the specified element
+ */
+function collapseBook(node) {
+  node.className = "collapsed";
+  node.src = toc_closed_img.src;
+  node.alt = altBookClosed;
+  // set the UL as well
+  var ul = getChildNode(node.parentNode, "UL");
+  if (ul != null) ul.className = "collapsed";
+}
+
+/**
  * Expands a tree rooted at the specified element
  */
 function expand(node) {
+  	var nodeA=getNextSibling(node);
+
   	node.className = "expanded";
+    
+   if(nodeA.id!=""&&nodeA.id.charAt(0)=='b'){      
+      node.src = toc_open_img.src;
+      node.alt = altBookOpen;
+   }else {   
   	node.src = minus.src;
     node.alt = altTopicOpen;
+   }
+    
     node.title = altTopicOpen;
   	// set the UL as well
   	var ul = getChildNode(node.parentNode, "UL");
@@ -238,6 +259,7 @@ function expand(node) {
   			frames.dynLoadFrame.location = "tocFragment.jsp" + query + "&path=" + ul.id;
   		}
   	}
+
 }
 
 /**
@@ -496,6 +518,34 @@ function mouseMoveHandler(e) {
 function mouseClickHandler(e) {
 
   	var clickedNode = getTarget(e);
+	if (!clickedNode) return;
+	
+   //if clickedNode is book node, call collapseBook() to collapse it. 	
+  	clickedNodeA=getNextSibling(clickedNode);  	
+  	
+  if(clickedNodeA!=null){
+    if(clickedNodeA.id!=null){
+    
+  			if(clickedNodeA.id.charAt(0)=='b'){
+  			
+				var plus_minus = getPlusMinus(clickedNodeA);
+          		if (plus_minus != null)
+          		{	
+            		if (isCollapsed(plus_minus)) 
+   			         expand(plus_minus);
+            		
+            		else if (isExpanded(plus_minus)) 
+           				collapseBook(plus_minus);
+          			
+          			scrollIntoView(clickedNodeA);
+          		}
+					return true;
+				
+			}
+			
+		}
+	}
+//if clickedNode is not book node, call collapse() to collapse it.	
 
   	if (isPlusMinus(clickedNode) )
   	{	
@@ -525,7 +575,56 @@ function mouseDblClickHandler(e) {
   	var clickedNode = getTarget(e);
   	if (!clickedNode) return;
 
+  	 //if clickedNode is book node, call collapseBook() to collapse it.  	
+  if(clickedNode.id!=null){
+  
+  			if(clickedNode.id.charAt(0)=='b'){  			
+				
   	var plus_minus = getPlusMinus(clickedNode);
+  	if (plus_minus != null)
+  	{	
+    	if (isCollapsed(plus_minus)) 
+   			expand(plus_minus);
+            		
+            		else if (isExpanded(plus_minus)) 
+           				collapseBook(plus_minus);
+          			
+          			scrollIntoView(clickedNode);
+          		}
+					return true;
+				
+			}
+			
+		}
+		
+		clickedNodeA=getNextSibling(clickedNode);
+		
+     if(clickedNodeA!=null&&clickedNodeA.id!=null){
+  			if(clickedNodeA.id.charAt(0)=='b'){
+  			
+				var plus_minus = getPlusMinus(clickedNodeA);
+          		if (plus_minus != null)
+          		{	
+            		if (isCollapsed(plus_minus)) 
+   			         expand(plus_minus);
+            		
+            		else if (isExpanded(plus_minus)) 
+           				collapseBook(plus_minus);
+          			
+          			highlightTopic(plus_minus);
+          			scrollIntoView(clickedNodeA);
+          		}
+					return true;
+				
+			}
+			
+		}
+		
+	//if clickedNode is not book node, call collapse() to collapse it.	
+  	var plus_minus = getPlusMinus(clickedNode);
+  	
+  	
+  	
   	if (plus_minus != null)
   	{	
     	if (isCollapsed(plus_minus)) 
@@ -582,7 +681,6 @@ function keyDownHandler(e)
   		{	
     		if (isCollapsed(plus_minus)) 
    				expand(plus_minus);
-  			
   			highlightTopic(plus_minus);
   			scrollIntoView(clickedNode);
   		}
@@ -590,10 +688,21 @@ function keyDownHandler(e)
 		var clickedNode = getTarget(e);
   		if (!clickedNode) return;
   		
+  			//if clickedNode is book node, call collapseBook() to collapse it. 
   		if(clickedNode.id!=null){
+  		
   			if(clickedNode.id.charAt(0)=='b'){
+  			
 				if(clickedNode.name=="opened"){
-					loadTOC(" ");
+				
+				var plus_minus = getPlusMinus(clickedNode);
+          		if (plus_minus != null)
+          		{	
+            		if (isExpanded(plus_minus)) 
+           				collapseBook(plus_minus);
+          			
+          			scrollIntoView(clickedNode);
+          		}
 					return true;
 				}
 				else{ 	
@@ -602,6 +711,8 @@ function keyDownHandler(e)
 			}
 			
 		}
+
+	//if clickedNode is not book node, call collapse() to collapse it.
 
   		var plus_minus = getPlusMinus(clickedNode);
   		if (plus_minus != null)
