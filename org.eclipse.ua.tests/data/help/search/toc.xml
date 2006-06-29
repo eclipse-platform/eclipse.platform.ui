@@ -9,4 +9,7 @@
 	<topic label="test5.xhtml" href="data/help/search/test5.xhtml"/>
 	<topic label="test6.xhtml" href="data/help/search/test6.xhtml"/>
 	<topic label="test7.html" href="data/help/search/test7.html"/>
+	<topic label="test9(a).htm" href="data/help/search/test9.htm"/>
+	<topic label="test9(b).htm" href="data/help/search/extraDir/../test9.htm"/>
+	<topic label="test9(c).htm" href="data/help/search//extraDir//subdir/../../test9.htm"/>
 </toc>

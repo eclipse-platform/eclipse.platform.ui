@@ -108,6 +108,7 @@ public class DirectoryToc {
 				locale);
 		for (Iterator it = paths.iterator(); it.hasNext();) {
 			String href = "/" + pluginID + "/" + (String) it.next();  //$NON-NLS-1$//$NON-NLS-2$
+			href = HrefUtil.normalizeDirectoryPath(href);
 			ret.put(href, new ExtraTopic(href));
 		}
 		return ret;

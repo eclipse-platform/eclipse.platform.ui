@@ -35,7 +35,7 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
-public class XHTMLTest extends TestCase {
+public class BasicTest extends TestCase {
 	
 	private boolean oldPreference;
 	
@@ -81,13 +81,16 @@ public class XHTMLTest extends TestCase {
 		// only exists in a paragraph in test7.html that should be filtered out
 		// make sure this works for XHTML content inside .html file
 		{ "hugftnhdtg", /* no hits */ },
+		
+		// this doc is listed in TOC several times, using slightly different paths
+		{ "rqfedajhtg", "/org.eclipse.ua.tests/data/help/search/test9.htm" },
 	};
 	
 	/*
 	 * Returns an instance of this Test.
 	 */
 	public static Test suite() {
-		return new TestSuite(XHTMLTest.class);
+		return new TestSuite(BasicTest.class);
 	}
 
 	/*
@@ -114,7 +117,7 @@ public class XHTMLTest extends TestCase {
 		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 
-	public void testXHTMLSearch() throws Exception {
+	public void testSearch() throws Exception {
 		for (int i=0;i<EXPECTED_RESULTS.length;++i) {
 			String searchWord = EXPECTED_RESULTS[i][0];
 			final Set hrefsToFind = new HashSet();

@@ -30,7 +30,7 @@ public class AllSearchTests extends TestSuite {
 	 */
 	public AllSearchTests() {
 		addTest(ExtraDirTest.suite());
-		addTest(XHTMLTest.suite());
+		addTest(BasicTest.suite());
 		addTest(SearchCheatsheet.suite());
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
+import org.eclipse.core.runtime.Path;
+
 public class HrefUtil {
 	/**
 	 * Creates /pluginid/directory from directory name
@@ -42,6 +44,7 @@ public class HrefUtil {
 	public final static String normalizeHref(String pluginID, String href) {
 		if (href == null)
 			return null;
+		href = normalizeDirectoryPath(href);
 		if (href.startsWith("/")) //$NON-NLS-1$
 			// already normalized
 			return href;
@@ -104,5 +107,19 @@ public class HrefUtil {
 		// href is /pluginID/
 		return ""; //$NON-NLS-1$
 	}
-
+	
+	/**
+	 * Parses directory path and obtains simple form path
+	 * 
+	 * @param href
+	 *            directory path in format a/../c/1 or a//b/c
+	 *            to  /c/1 and a/b/c
+	 * @return normalized directory path, or null
+	 */
+	public static String normalizeDirectoryPath(String href) {
+		if (href != null) {
+			return new Path(href).toString();
+		}
+		return null;
+	}
 }
