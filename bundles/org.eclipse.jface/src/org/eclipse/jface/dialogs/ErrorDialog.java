@@ -503,12 +503,23 @@ public class ErrorDialog extends IconAndMessageDialog {
         }
         buffer.append(buildingStatus.getMessage());
         buffer.append("\n"); //$NON-NLS-1$
-        
+    
         // Look for a nested core exception
         Throwable t = buildingStatus.getException();
         if (t instanceof CoreException) {
             CoreException ce = (CoreException)t;
             populateCopyBuffer(ce.getStatus(), buffer, nesting + 1);
+        } else if (t != null){
+        	// Include low-level exception message
+            for (int i = 0; i < nesting; i++) {
+                buffer.append(NESTING_INDENT);
+            }
+        	String message = t.getLocalizedMessage();
+	        if (message == null) {
+				message = t.toString();
+			}
+	        buffer.append(message);
+	        buffer.append("\n"); //$NON-NLS-1$
         }
         
         IStatus[] children = buildingStatus.getChildren();
