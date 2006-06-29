@@ -57,7 +57,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	public static final int CLOCK_SEQUENCE_HIGH_AND_RESERVED = 8;
 	public static final int CLOCK_SEQUENCE_LOW = 9;
 	public static final int NODE_ADDRESS_START = 10;
-	public static final int HOST_ADDRESS_BYTE_SIZE = 4;
 	public static final int NODE_ADDRESS_BYTE_SIZE = 6;
 
 	public static final int BYTE_MASK = 0xFF;
@@ -217,19 +216,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	public int hashCode() {
 		return fBits[0] + fBits[3] + fBits[7] + fBits[11] + fBits[15];
-	}
-
-	/**
-	 Returns a new instance of <code>UniversalUniqueIdentifier</code>
-	 that represents the single undefined state.
-
-	 <p>The undefined <code>UniversalUniqueIdentifier</code> is used
-	 to represent cases where a unique identifier is not required.
-
-	 @return the undefined instance of <code>UniversalUniqueIdentifier</code>
-	 */
-	public static UniversalUniqueIdentifier newUndefined() {
-		return new UniversalUniqueIdentifier(UNDEFINED_UUID_BYTES);
 	}
 
 	private static int nextClockSequence() {
