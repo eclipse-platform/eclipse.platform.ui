@@ -275,8 +275,6 @@ public class Messages extends NLS {
 	// utils
 	public static String utils_clone;
 	public static String utils_stringJobName;
-	public static String utils_wrongLength;
-
 	// watson
 	public static String watson_elementNotFound;
 	public static String watson_illegalSubtree;
