@@ -91,7 +91,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 				timeToFail = System.currentTimeMillis() > potentialEndTime;
      			Thread.yield();
 			}
-			assertFalse("Test failed due to timeout on addition", timeToFail);
+			assertTrue("Expected ADDED event did not arrive in time", hasAddedEventPropagated());
 			try {
 				LeakTests.checkRef(queue, addedDelta);
 			} catch (IllegalArgumentException e1) {
@@ -234,7 +234,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 					timeToFail = System.currentTimeMillis() > potentialEndTime;
 					Thread.yield();
 				}
-				assertFalse("Test failed due to timeout on removal", timeToFail);
+				assertTrue("Expected REMOVED event did not arrive in time", hasRemovedEventPropagated());
 				try {
 					LeakTests.checkRef(queue, removedDelta);
 				} catch (IllegalArgumentException e1) {
