@@ -34,8 +34,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	private static final byte[] BYTE_ARRAY_DEFAULT_DEFAULT = new byte[0];
 
-	PreferencesService a;
-
 	private IEclipsePreferences pluginRoot = (IEclipsePreferences) PreferencesService.getDefault().getRootNode().node(InstanceScope.SCOPE);
 	private DefaultPreferences defaultsRoot = (DefaultPreferences) PreferencesService.getDefault().getRootNode().node(DefaultScope.SCOPE);
 	private String pluginID;
