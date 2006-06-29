@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -37,6 +38,16 @@ public class NewWizardShortcutAction extends Action implements
         IPluginContribution {
     private IWizardDescriptor wizardElement;
 
+    /**
+     * The wizard dialog width
+     */
+    private static final int SIZING_WIZARD_WIDTH = 500;
+
+    /**
+     * The wizard dialog height
+     */
+    private static final int SIZING_WIZARD_HEIGHT = 500;
+    
     private IWorkbenchWindow window;
 
     /**
@@ -100,6 +111,10 @@ public class NewWizardShortcutAction extends Action implements
         Shell parent = window.getShell();
         WizardDialog dialog = new WizardDialog(parent, wizard);
         dialog.create();
+        Point defaultSize = dialog.getShell().getSize();
+        dialog.getShell().setSize(
+                Math.max(SIZING_WIZARD_WIDTH, defaultSize.x),
+                Math.max(SIZING_WIZARD_HEIGHT, defaultSize.y));
         window.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
 				IWorkbenchHelpContextIds.NEW_WIZARD_SHORTCUT);
         
