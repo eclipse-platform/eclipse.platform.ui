@@ -66,9 +66,6 @@ public final class InternalPlatform {
 	private static String[] frameworkArgs = new String[0];
 
 	private static boolean initialized;
-	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
-
-	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	private static String keyringFile;
 
@@ -90,28 +87,20 @@ public final class InternalPlatform {
 
 	// command line options
 	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
-	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
 	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
 	public static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
-	public static final String PROP_CONSOLE = "osgi.console"; //$NON-NLS-1$
-	public static final String PROP_CONSOLE_CLASS = "osgi.consoleClass"; //$NON-NLS-1$
 	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
 	public static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$
 	public static final String PROP_DEV = "osgi.dev"; //$NON-NLS-1$
-	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
 	// OSGI system properties.  Copied from EclipseStarter
 	public static final String PROP_INSTALL_AREA = "osgi.install.area"; //$NON-NLS-1$
-	public static final String PROP_INSTANCE_AREA = "osgi.instance.area"; //$NON-NLS-1$
-	public static final String PROP_MANIFEST_CACHE = "osgi.manifest.cache"; //$NON-NLS-1$
 	public static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
 	public static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
 
 	// Eclipse System Properties
 	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
-	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
-	public static final String PROP_USER_AREA = "osgi.user.area"; //$NON-NLS-1$
 	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
 	public static final String PROP_ACTIVATE_PLUGINS = "eclipse.activateRuntimePlugins"; //$NON-NLS-1$
 
@@ -445,17 +434,6 @@ public final class InternalPlatform {
 		return (Location) instanceLocation.getService();
 	}
 
-	public int getIntegerOption(String option, int defaultValue) {
-		String value = getOption(option);
-		if (value == null)
-			return defaultValue;
-		try {
-			return Integer.parseInt(value);
-		} catch (NumberFormatException e) {
-			return defaultValue;
-		}
-	}
-
 	/**
 	 * @see Platform#getLocation()
 	 */
@@ -481,10 +459,6 @@ public final class InternalPlatform {
 		result = new Log(bundle);
 		logs.put(bundle, result);
 		return result;
-	}
-
-	public IPath getLogFileLocation() {
-		return getMetaArea().getLogLocation();
 	}
 
 	/**
@@ -587,33 +561,6 @@ public final class InternalPlatform {
 		return (IPreferencesService) preferencesTracker.getService();
 	}
 
-	/**
-	 * Look for the companion preference translation file for a group
-	 * of preferences.  This method will attempt to find a companion 
-	 * ".properties" file first.  This companion file can be in an
-	 * nl-specific directory for this plugin or any of its fragments or 
-	 * it can be in the root of this plugin or the root of any of the
-	 * plugin's fragments. This properties file can be used to translate
-	 * preference values.
-	 * 
-	 * TODO fix these comments
-	 * @param uniqueIdentifier the descriptor of the plugin
-	 *   who has the preferences
-	 * @param basePrefFileName the base name of the preference file
-	 *   This base will be used to construct the name of the 
-	 *   companion translation file.
-	 *   Example: If basePrefFileName is "plugin_customization",
-	 *   the preferences are in "plugin_customization.ini" and
-	 *   the translations are found in
-	 *   "plugin_customization.properties".
-	 * @return the properties file
-	 * 
-	 * @since 2.0
-	 */
-	public Properties getPreferenceTranslator(String uniqueIdentifier, String basePrefFileName) {
-		return new Properties();
-	}
-
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
@@ -683,6 +630,9 @@ public final class InternalPlatform {
 		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
 	}
 
+	/**
+	 * This method is only used to register runtime once compatibility has been started.
+	 */
 	public Plugin getRuntimeInstance() {
 		return runtimeInstance;
 	}
@@ -743,13 +693,6 @@ public final class InternalPlatform {
 
 	public String getWS() {
 		return getBundleContext().getProperty(PROP_WS);
-	}
-
-	/**
-	 * @return whether platform log writer has already been registered
-	 */
-	public boolean hasLogWriter() {
-		return platformLog != null && RuntimeLog.contains(platformLog);
 	}
 
 	private void initializeAuthorizationHandler() {
@@ -958,13 +901,9 @@ public final class InternalPlatform {
 		RuntimeLog.removeLogListener(listener);
 	}
 
-	public void setOption(String option, String value) {
-		DebugOptions options = getDebugOptions();
-		if (options != null)
-			options.setOption(option, value);
-	}
-
-	//Those two methods are only used to register runtime once compatibility has been started.
+	/**
+	 * This method is only used to register runtime once compatibility has been started.
+	 */
 	public void setRuntimeInstance(Plugin runtime) {
 		runtimeInstance = runtime;
 	}
@@ -1019,30 +958,6 @@ public final class InternalPlatform {
 		initialized = false;
 		closeOSGITrackers();
 		context = null;
-	}
-
-	/**
-	 * Takes a preference value and a related resource bundle and
-	 * returns the translated version of this value (if one exists).
-	 * 
-	 * TODO: fix these comments
-	 * @param value the preference value for potential translation
-	 * @param props the properties containing the translated values
-	 * 
-	 * @since 2.0
-	 */
-	public String translatePreference(String value, Properties props) {
-		value = value.trim();
-		if (props == null || value.startsWith(KEY_DOUBLE_PREFIX))
-			return value;
-		if (value.startsWith(KEY_PREFIX)) {
-
-			int ix = value.indexOf(" "); //$NON-NLS-1$
-			String key = ix == -1 ? value : value.substring(0, ix);
-			String dflt = ix == -1 ? value : value.substring(ix + 1);
-			return props.getProperty(key.substring(1), dflt);
-		}
-		return value;
 	}
 
 	private void startServices() {
