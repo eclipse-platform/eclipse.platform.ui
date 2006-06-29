@@ -990,22 +990,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
                 // Allow the wizard pages to precreate their page controls
                 // This allows the wizard to open to the correct size
                 createPageControls();
-                // progress monitor required for this wizard - resize dialog 
-                if (wizard.needsProgressMonitor()){
-                	GridData data = (GridData)progressMonitorPart.getLayoutData();
-                	data.widthHint = SWT.DEFAULT;
-                	data.heightHint = SWT.DEFAULT;
-        	    	Shell shell = getShell();
-        	    	if (shell != null){
-        	    		// ensure the wizard does not shrink upon resize
-        	    		Point currentSize = shell.getSize();
-        	    		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        	    		int width = Math.max(currentSize.x, newSize.x);
-        	    		int height = Math.max(currentSize.y, newSize.y);
-        	    		setShellSize(width, height);
-        	    		progressMonitorPart.getParent().layout(true);
-        	    	}
-                }
                 // Ensure the dialog is large enough for the wizard
                 updateSizeForWizard(wizard);
                 pageContainer.layout(true);
@@ -1145,6 +1129,24 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         updateTitleBar();
         // Update the buttons
         updateButtons();
+        
+        // progress monitor required for this wizard - resize dialog 
+        if (wizard.needsProgressMonitor()){
+        	GridData data = (GridData)progressMonitorPart.getLayoutData();
+        	data.widthHint = SWT.DEFAULT;
+        	data.heightHint = SWT.DEFAULT;
+	    	Shell shell = getShell();
+	    	if (shell != null){
+	    		// ensure the wizard does not shrink upon resize
+	    		Point currentSize = shell.getSize();
+	    		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	    		int width = Math.max(currentSize.x, newSize.x);
+	    		int height = Math.max(currentSize.y, newSize.y);
+	    		setShellSize(width, height);
+	    		progressMonitorPart.getParent().layout(true);
+	    	}
+        }
+        
 		// Fires the page change event
 		firePageChanged(new PageChangedEvent(this, getCurrentPage()));
     }
