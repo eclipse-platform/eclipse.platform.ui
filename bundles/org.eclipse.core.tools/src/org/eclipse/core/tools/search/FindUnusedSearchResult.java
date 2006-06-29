@@ -55,11 +55,9 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
 	public String getLabel() {
-		if (getMatchCount() == 1) {
+		if (getMatchCount() == 1)
 			return "1 unused element found"; //$NON-NLS-1$
-		} else {
-			return getMatchCount() + " unused elements found"; //$NON-NLS-1$
-		}
+		return getMatchCount() + " unused elements found"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
