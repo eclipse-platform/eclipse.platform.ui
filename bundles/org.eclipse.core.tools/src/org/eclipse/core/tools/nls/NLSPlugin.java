@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tools.nls;
 
-import org.eclipse.ui.plugin.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import java.util.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -22,9 +23,9 @@ public class NLSPlugin extends AbstractUIPlugin {
 	private static NLSPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+
 	public static final String PI_NLS = "com.example.nls"; //$NON-NLS-1$
-	
+
 	/**
 	 * The constructor.
 	 */

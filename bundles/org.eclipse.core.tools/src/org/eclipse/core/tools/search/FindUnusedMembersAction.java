@@ -25,10 +25,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.*;
 
 public class FindUnusedMembersAction implements IObjectActionDelegate {
-	
-
-	
-	
 
 	private IStructuredSelection selection;
 	private IWorkbenchPart part;
@@ -39,29 +35,28 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
-		ArrayList allCus= new ArrayList();
+		ArrayList allCus = new ArrayList();
 		try {
 			for (Iterator it = selection.iterator(); it.hasNext();) {
 				Object element = it.next();
 				if (element instanceof IJavaElement)
-					collectCompilationUnits((IJavaElement)element, allCus);
+					collectCompilationUnits((IJavaElement) element, allCus);
 			}
 		} catch (JavaModelException e) {
-			ErrorDialog.openError(part.getSite().getShell(), "Find Unused Members", "Problem collecting compilation units", e.getStatus());  //$NON-NLS-1$//$NON-NLS-2$
+			ErrorDialog.openError(part.getSite().getShell(), "Find Unused Members", "Problem collecting compilation units", e.getStatus()); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		
+
 		if (allCus.isEmpty()) {
 			MessageDialog.openInformation(part.getSite().getShell(), "Find Unused Members", "No compilation units in 'internal' packages selected"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		
-		ICompilationUnit[] cus= (ICompilationUnit[]) allCus.toArray(new ICompilationUnit[allCus.size()]);
+
+		ICompilationUnit[] cus = (ICompilationUnit[]) allCus.toArray(new ICompilationUnit[allCus.size()]);
 		NewSearchUI.runQueryInBackground(new FindUnusedSearchQuery(cus));
 		if (true) {
 			return;
 		}
-		
 
 		FileDialog dialog = new FileDialog(part.getSite().getShell(), SWT.SAVE);
 		String outFileName = dialog.open();
@@ -70,15 +65,15 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 		File outputFile = new File(outFileName);
 		if (outputFile.exists())
 			outputFile.delete();
-		
+
 		FileWriter writer = null;
 		try {
-			int unusedCount= 0;
+			int unusedCount = 0;
 			try {
 				writer = new FileWriter(outputFile);
 				FindUnusedMembers search = new FindUnusedMembers(cus, writer);
 				PlatformUI.getWorkbench().getProgressService().run(true, true, search);
-				unusedCount= search.getUnusedMethodCount();
+				unusedCount = search.getUnusedMethodCount();
 			} finally {
 				String summary = "Search complete.  Found " + unusedCount + " unreferenced methods."; //$NON-NLS-1$ //$NON-NLS-2$
 				if (writer != null) {
@@ -86,7 +81,7 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 					writer.write(summary);
 					writer.close();
 				}
-				MessageDialog.openInformation(part.getSite().getShell(), "Search Complete", summary);   //$NON-NLS-1$
+				MessageDialog.openInformation(part.getSite().getShell(), "Search Complete", summary); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

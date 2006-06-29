@@ -131,7 +131,7 @@ public class EventsView extends TableWithTotalView {
 			return null;
 		}
 	}
-	
+
 	class StatsListener extends PerformanceStats.PerformanceListener {
 		private void asyncExec(Runnable runnable) {
 			final Control control = viewer.getControl();
@@ -142,6 +142,7 @@ public class EventsView extends TableWithTotalView {
 				return;
 			display.asyncExec(runnable);
 		}
+
 		/**
 		 * @see PerformanceStats.PerformanceListener#eventsOccurred(PerformanceStats[])
 		 */
@@ -153,12 +154,13 @@ public class EventsView extends TableWithTotalView {
 				}
 			});
 		}
+
 		public void eventFailed(final PerformanceStats event, final long duration) {
 			asyncExec(new Runnable() {
 				public void run() {
-					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlameString() + " context: " + event.getContext()+ " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlameString() + " context: " + event.getContext() + " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					getViewSite().getActionBars().getStatusLineManager().setErrorMessage(msg);
-//					MessageDialog.openError(getSite().getShell(), "Performance failure", msg);
+					//					MessageDialog.openError(getSite().getShell(), "Performance failure", msg);
 				}
 			});
 		}
@@ -171,15 +173,13 @@ public class EventsView extends TableWithTotalView {
 	public final static int COLUMN_COUNT = 3;
 	public final static int COLUMN_TIME = 4;
 
-	private String columnHeaders[] = {
-			Messages.stats_eventHeader, //
+	private String columnHeaders[] = {Messages.stats_eventHeader, //
 			Messages.stats_blameHeader, //
 			Messages.stats_contextHeader, //
 			Messages.stats_countHeader, //
 			Messages.stats_timeHeader, //
 	};
-	private ColumnLayoutData columnLayouts[] = {
-			new ColumnWeightData(80), // event
+	private ColumnLayoutData columnLayouts[] = {new ColumnWeightData(80), // event
 			new ColumnWeightData(180), // blame
 			new ColumnWeightData(40), // context
 			new ColumnPixelData(65), // count 
@@ -311,7 +311,7 @@ public class EventsView extends TableWithTotalView {
 	protected String getStatusLineMessage(Object element) {
 		if (!(element instanceof PerformanceStats))
 			return ""; //$NON-NLS-1$
-		return  ((PerformanceStats) element).getBlameString();
+		return ((PerformanceStats) element).getBlameString();
 	}
 
 	protected TableTreeViewer getViewer() {

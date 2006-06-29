@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;

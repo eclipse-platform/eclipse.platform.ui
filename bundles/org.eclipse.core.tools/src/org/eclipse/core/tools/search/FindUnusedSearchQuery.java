@@ -20,13 +20,13 @@ import org.eclipse.search.ui.ISearchResult;
  * 
  */
 public class FindUnusedSearchQuery implements ISearchQuery {
-	
+
 	private final ICompilationUnit[] fCus;
 	private FindUnusedSearchResult fSearchResult;
 
 	public FindUnusedSearchQuery(ICompilationUnit[] cus) {
-		fCus= cus;
-		fSearchResult= new FindUnusedSearchResult(this);
+		fCus = cus;
+		fSearchResult = new FindUnusedSearchResult(this);
 	}
 
 	/* (non-Javadoc)
@@ -62,13 +62,13 @@ public class FindUnusedSearchQuery implements ISearchQuery {
 	 */
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		fSearchResult.removeAll();
-		
+
 		FindUnusedMembers search = new FindUnusedMembers(fCus, fSearchResult);
 		try {
 			search.process(monitor);
 		} catch (CoreException e) {
 			return e.getStatus();
-		} 
+		}
 		return Status.OK_STATUS;
 	}
 

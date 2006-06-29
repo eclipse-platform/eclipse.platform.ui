@@ -23,11 +23,11 @@ import org.eclipse.search.ui.text.*;
  * 
  */
 public class FindUnusedSearchResult extends AbstractTextSearchResult implements IResultReporter {
-	
+
 	private final FindUnusedSearchQuery fQuery;
 
 	public FindUnusedSearchResult(FindUnusedSearchQuery query) {
-		fQuery= query;
+		fQuery = query;
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +80,7 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 	 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMember)
 	 */
 	public void unusedElementFound(IMember member) throws CoreException {
-		ISourceRange nameRange= member.getNameRange();
+		ISourceRange nameRange = member.getNameRange();
 		addMatch(new Match(member, nameRange.getOffset(), nameRange.getLength()));
 	}
 

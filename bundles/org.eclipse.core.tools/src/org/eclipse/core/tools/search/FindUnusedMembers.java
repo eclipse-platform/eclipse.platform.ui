@@ -24,39 +24,39 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * Class that removes field declarations which aren't referenced.
  */
 public class FindUnusedMembers implements IRunnableWithProgress {
-	
+
 	public static interface IResultReporter {
 		void unusedElementFound(IMember member) throws CoreException;
 	}
-	
+
 	public static class OutputWriter implements IResultReporter {
-		
+
 		private final Writer output;
 		private IType lastType;
 
 		public OutputWriter(Writer writer) {
-			output= writer;
+			output = writer;
 		}
-			
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMethod)
 		 */
 		public void unusedElementFound(IMember member) throws CoreException {
 			try {
 				if (!member.getDeclaringType().equals(lastType)) {
-					lastType= member.getDeclaringType();
+					lastType = member.getDeclaringType();
 					writeHeader(lastType);
 				}
 				if (member instanceof IMethod) {
-					writeResult((IMethod)member);
+					writeResult((IMethod) member);
 				} else if (member instanceof IField) {
-					writeResult((IField)member);
+					writeResult((IField) member);
 				}
 			} catch (IOException e) {
 				// to do
 			}
 		}
-		
+
 		private void writeHeader(IType type) throws IOException {
 			output.write("\n\n" + type.getFullyQualifiedName()); //$NON-NLS-1$
 		}
@@ -83,37 +83,35 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			output.write(")"); //$NON-NLS-1$
 		}
 	}
-	
-	
+
 	private final IResultReporter result;
 	private ICompilationUnit[] units;
 	protected int unusedMemberCount = 0;
 
-	
 	public FindUnusedMembers(ICompilationUnit[] units, Writer writer) {
 		this(units, new OutputWriter(writer));
 	}
-	
+
 	public FindUnusedMembers(ICompilationUnit[] units, IResultReporter resultReporter) {
 		this.units = units;
-		this.result= resultReporter;
+		this.result = resultReporter;
 	}
-	
-	private void doSearchCU(ICompilationUnit cu, IProgressMonitor monitor) throws CoreException {	
-		IType[] allTypes= cu.getAllTypes();
+
+	private void doSearchCU(ICompilationUnit cu, IProgressMonitor monitor) throws CoreException {
+		IType[] allTypes = cu.getAllTypes();
 		monitor.beginTask("Processing " + cu.getElementName(), allTypes.length + 1); //$NON-NLS-1$
 		try {
-		
-			ASTParser astParser= ASTParser.newParser(AST.JLS3);
+
+			ASTParser astParser = ASTParser.newParser(AST.JLS3);
 			astParser.setResolveBindings(true);
 			astParser.setProject(cu.getJavaProject());
-	
-			IBinding[] bindings= astParser.createBindings(allTypes, new NullProgressMonitor());
-			for (int i= 0; i < bindings.length; i++) {
+
+			IBinding[] bindings = astParser.createBindings(allTypes, new NullProgressMonitor());
+			for (int i = 0; i < bindings.length; i++) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				ITypeBinding typeBinding= (ITypeBinding) bindings[i];
-				monitor.subTask("Processing '" + typeBinding.getQualifiedName() + "'");  //$NON-NLS-1$//$NON-NLS-2$
+				ITypeBinding typeBinding = (ITypeBinding) bindings[i];
+				monitor.subTask("Processing '" + typeBinding.getQualifiedName() + "'"); //$NON-NLS-1$//$NON-NLS-2$
 				doSearchType(typeBinding, new NullProgressMonitor());
 			}
 		} finally {
@@ -124,27 +122,26 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 	private boolean methodOverrides(IMethodBinding binding) {
 		return Bindings.findOverriddenMethod(binding, true) != null;
 	}
-	
-	
+
 	public void doSearchType(ITypeBinding typeBinding, IProgressMonitor monitor) throws CoreException {
 		IMethodBinding[] methods = typeBinding.getDeclaredMethods();
 		IVariableBinding[] fields = typeBinding.getDeclaredFields();
-		
+
 		monitor.beginTask("Searching for references.", methods.length + fields.length); //$NON-NLS-1$
-		
+
 		try {
 			for (int i = 0; i < methods.length; i++) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				
-				IMethodBinding methodBinding= methods[i];
+
+				IMethodBinding methodBinding = methods[i];
 				if (methodOverrides(methodBinding))
 					continue;
-				
-				IMethod method= (IMethod) methodBinding.getJavaElement();
+
+				IMethod method = (IMethod) methodBinding.getJavaElement();
 				if (method == null)
 					continue;
-					
+
 				if (hasReferences(method, new SubProgressMonitor(monitor, 1)))
 					continue;
 				result.unusedElementFound(method);
@@ -153,9 +150,9 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			for (int i = 0; i < fields.length; i++) {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				
-				IVariableBinding fieldBinding= fields[i];
-				IField field= (IField) fieldBinding.getJavaElement();
+
+				IVariableBinding fieldBinding = fields[i];
+				IField field = (IField) fieldBinding.getJavaElement();
 				if (field == null)
 					continue;
 				if (hasReferences(field, new SubProgressMonitor(monitor, 1)))
@@ -176,27 +173,27 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 	}
 
 	private boolean hasReferences(IMember member, IProgressMonitor monitor) throws JavaModelException {
-		
+
 		final class ReferenceFound extends Error {
-			private static final long serialVersionUID= 1L;
+			private static final long serialVersionUID = 1L;
 		}
-		
+
 		try {
 			IJavaSearchScope searchScope;
 			if (Flags.isPrivate(member.getFlags())) {
-				searchScope= SearchEngine.createJavaSearchScope(new IJavaElement[] { member.getCompilationUnit() });
+				searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {member.getCompilationUnit()});
 			} else {
-				searchScope= SearchEngine.createJavaSearchScope(new IJavaElement[] { member.getJavaProject() },  IJavaSearchScope.SOURCES);
+				searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {member.getJavaProject()}, IJavaSearchScope.SOURCES);
 			}
-			SearchPattern pattern= SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES);
-			SearchRequestor requestor= new SearchRequestor() {
+			SearchPattern pattern = SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES);
+			SearchRequestor requestor = new SearchRequestor() {
 				public void acceptSearchMatch(SearchMatch match) throws CoreException {
 					if (match.getAccuracy() == SearchMatch.A_ACCURATE) {
 						throw new ReferenceFound();
 					}
 				}
 			};
-			new SearchEngine().search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope, requestor, monitor);
+			new SearchEngine().search(pattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, monitor);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		} catch (ReferenceFound e) {
@@ -210,14 +207,14 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			monitor = new NullProgressMonitor();
 		try {
 			monitor.beginTask("Searching unused members", this.units.length); //$NON-NLS-1$
-			for (int i= 0; i < this.units.length; i++) {
+			for (int i = 0; i < this.units.length; i++) {
 				doSearchCU(units[i], new SubProgressMonitor(monitor, 1));
 			}
 		} finally {
 			monitor.done();
 		}
 	}
-	
+
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			process(monitor);

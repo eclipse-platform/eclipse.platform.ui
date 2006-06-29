@@ -90,7 +90,6 @@ public class DumpSummaryView extends SpyView {
 		output.append('/');
 		output.append(dump.getFile().length());
 		output.append(" byte(s) read"); //$NON-NLS-1$
-		
 
 		// updates the view contents 
 		viewer.getDocument().set(output.toString());

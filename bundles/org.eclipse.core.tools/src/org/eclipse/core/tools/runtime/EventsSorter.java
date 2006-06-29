@@ -23,7 +23,7 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 	protected int columnNumber;
 
 	protected int[][] SORT_ORDERS_BY_COLUMN = {
-			// Event
+	// Event
 			{EventsView.COLUMN_EVENT, EventsView.COLUMN_BLAME, EventsView.COLUMN_CONTEXT},
 			// Blame
 			{EventsView.COLUMN_BLAME, EventsView.COLUMN_EVENT, EventsView.COLUMN_CONTEXT},
@@ -95,18 +95,18 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 			 */
 			int compareColumnValue(int column, PerformanceStats s1, PerformanceStats s2) {
 				switch (column) {
-					case EventsView.COLUMN_EVENT:
+					case EventsView.COLUMN_EVENT :
 						return c.compare(s1.getEvent(), s2.getEvent());
-					case EventsView.COLUMN_BLAME:
+					case EventsView.COLUMN_BLAME :
 						return c.compare(s1.getBlameString(), s2.getBlameString());
-					case EventsView.COLUMN_CONTEXT:
+					case EventsView.COLUMN_CONTEXT :
 						String name1 = s1.getContext() == null ? "" : s1.getContext(); //$NON-NLS-1$
 						String name2 = s2.getContext() == null ? "" : s2.getContext(); //$NON-NLS-1$
 						return c.compare(name1, name2);
-					case EventsView.COLUMN_COUNT:
+					case EventsView.COLUMN_COUNT :
 						return s2.getRunCount() - s1.getRunCount();
-					case EventsView.COLUMN_TIME:
-						return (int)(s2.getRunningTime() - s1.getRunningTime());
+					case EventsView.COLUMN_TIME :
+						return (int) (s2.getRunningTime() - s1.getRunningTime());
 				}
 				return 0;
 			}

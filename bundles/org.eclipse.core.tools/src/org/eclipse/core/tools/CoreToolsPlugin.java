@@ -72,7 +72,7 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 	public BundleContext getContext() {
 		return context;
 	}
-	
+
 	public void log(String message, Throwable exception) {
 		getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception));
 	}

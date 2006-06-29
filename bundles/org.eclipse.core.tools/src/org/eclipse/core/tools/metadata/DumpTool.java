@@ -26,8 +26,8 @@ public class DumpTool implements IPlatformRunnable {
 	 * 
 	 * @param args the command-line arguments
 	 * @see DumperFactory#getDumper(String)
-	 */	
-	public Object run(Object args) throws Exception {		
+	 */
+	public Object run(Object args) throws Exception {
 		String fileName = System.getProperty("dump.file"); //$NON-NLS-1$
 		if (fileName == null) {
 			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$			

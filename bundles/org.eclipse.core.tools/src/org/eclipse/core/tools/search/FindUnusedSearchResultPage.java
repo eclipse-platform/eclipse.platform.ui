@@ -26,13 +26,13 @@ import org.eclipse.ui.part.IShowInTargetList;
  */
 public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage {
 
-	private static final String[] SHOW_IN_TARGETS= new String[] { JavaUI.ID_PACKAGES , IPageLayout.ID_RES_NAV };
-	public static final IShowInTargetList SHOW_IN_TARGET_LIST= new IShowInTargetList() {
+	private static final String[] SHOW_IN_TARGETS = new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+	public static final IShowInTargetList SHOW_IN_TARGET_LIST = new IShowInTargetList() {
 		public String[] getShowInTargetIds() {
 			return SHOW_IN_TARGETS;
 		}
 	};
-	
+
 	public static class TableContentProvider implements IStructuredContentProvider {
 		private AbstractTextSearchResult fSearchResult;
 		private TableViewer fTableViewer;
@@ -47,14 +47,14 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			fTableViewer= (TableViewer) viewer;
-			fSearchResult= (AbstractTextSearchResult) newInput;
+			fTableViewer = (TableViewer) viewer;
+			fSearchResult = (AbstractTextSearchResult) newInput;
 		}
 
 		public void elementsChanged(Object[] updatedElements) {
-			int addCount= 0;
-			int removeCount= 0;
-			for (int i= 0; i < updatedElements.length; i++) {
+			int addCount = 0;
+			int removeCount = 0;
+			for (int i = 0; i < updatedElements.length; i++) {
 				if (fSearchResult.getMatchCount(updatedElements[i]) > 0) {
 					if (fTableViewer.testFindItem(updatedElements[i]) != null)
 						fTableViewer.refresh(updatedElements[i]);
@@ -67,22 +67,21 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 				}
 			}
 		}
-		
+
 		public void clear() {
 			fTableViewer.refresh();
 		}
 	}
-	
-	
+
 	private TableContentProvider fContentProvider;
 
 	public FindUnusedSearchResultPage() {
 		super(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 	}
-	
+
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		try {
-			Object element= match.getElement();
+			Object element = match.getElement();
 			if (element instanceof IJavaElement) {
 				JavaUI.openInEditor((IJavaElement) element);
 			}
@@ -90,7 +89,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 			throw new PartInitException(e1.getStatus());
 		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
 	 */
@@ -119,10 +118,10 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	 */
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setLabelProvider(new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_POST_QUALIFIED));
-		fContentProvider= new TableContentProvider();
+		fContentProvider = new TableContentProvider();
 		viewer.setContentProvider(fContentProvider);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
