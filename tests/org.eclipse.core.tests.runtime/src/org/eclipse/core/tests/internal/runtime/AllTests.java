@@ -37,6 +37,7 @@ public class AllTests extends TestCase {
 		suite.addTest(LogSerializationTest.suite());
 		suite.addTest(PlatformURLLocalTest.suite());
 		suite.addTest(PlatformURLSessionTest.suite());
+		suite.addTest(FileLocatorTest.suite());
 		return suite;
 	}
 }

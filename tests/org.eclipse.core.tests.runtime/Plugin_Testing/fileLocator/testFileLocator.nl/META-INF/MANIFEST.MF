@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: fileLocator test NL Fragment
+Bundle-SymbolicName: fileLocatorTest.nl
+Bundle-Version: 1.0.0
+Fragment-Host: fileLocatorTest;bundle-version="1.0.0"
