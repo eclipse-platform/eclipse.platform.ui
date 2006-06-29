@@ -13,10 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -33,7 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 /**
  * This class acts as an abstract class for checkout operations.
  * It provides a few common methods.
@@ -169,6 +166,10 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 						result[0] = performCheckout(session, resource, targetProjects, sendModuleName, monitor);
 					}
 				}, Policy.subMonitorFor(pm, 90));
+			}
+			String wsName = getWorkingSetName();
+			if (wsName != null){
+				createWorkingSet(wsName, targetProjects);
 			}
 			return result[0];
 		} catch (CVSException e) {
@@ -501,6 +502,29 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		} else {
 			return NLS.bind(CVSUIMessages.CheckoutMultipleProjectsOperation_taskName, new String[] { new Integer(remoteFolders.length).toString() });  
 		}
+	}
+	
+	/* private */ void createWorkingSet(String workingSetName, IProject[] projects) {
+		IWorkingSetManager manager = CVSUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
+		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
+		if (oldSet == null) {
+			IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
+			manager.addWorkingSet(newSet);
+		}else {
+			//don't overwrite the old elements
+			IAdaptable[] tempElements = oldSet.getElements();
+			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + projects.length];
+			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
+			System.arraycopy(projects, 0,finalElementList, tempElements.length, projects.length);
+			oldSet.setElements(finalElementList);
+		}	
+	}
+	
+	/*
+	 * Returns the name of the working set to add the checked out projects to or null for none
+	 */
+	protected String getWorkingSetName(){
+		return null;
 	}
 	
 }

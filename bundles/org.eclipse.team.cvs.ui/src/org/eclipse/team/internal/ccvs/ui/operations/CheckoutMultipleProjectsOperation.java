@@ -24,11 +24,18 @@ import org.eclipse.ui.IWorkbenchPart;
 public class CheckoutMultipleProjectsOperation extends CheckoutProjectOperation {
 
 	boolean hasTargetLocation;
+	//The name of the working set to add all of the projects to
+	String workingSetName;
 	
 	public CheckoutMultipleProjectsOperation(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, String targetLocation) {
+		this(part,remoteFolders,targetLocation,null);
+	}
+	
+	public CheckoutMultipleProjectsOperation(IWorkbenchPart part, ICVSRemoteFolder[] remoteFolders, String targetLocation, String wsName) {
 		super(part, remoteFolders, targetLocation);
 		hasTargetLocation = targetLocation != null;
 		setInvolvesMultipleResources(remoteFolders.length > 1);
+		this.workingSetName=wsName;
 	}
 	
 	/**
@@ -48,6 +55,10 @@ public class CheckoutMultipleProjectsOperation extends CheckoutProjectOperation 
 	 */
 	protected IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
 		return checkout(folder, null, monitor);
+	}
+	
+	protected String getWorkingSetName(){
+		return workingSetName;
 	}
 	
 }

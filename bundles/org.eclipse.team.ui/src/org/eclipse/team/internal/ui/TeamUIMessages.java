@@ -382,6 +382,16 @@ public class TeamUIMessages extends NLS {
 	public static String SynchronizeManager_19;
 	public static String SynchronizeModelProvider_0;
 	public static String SynchronizeModelUpdateHandler_0;
+
+	public static String WorkingSetsDialog_ErrorMessage;
+
+	public static String WorkingSetsDialog_Label;
+
+	public static String WorkingSetsDialog_Message;
+
+	public static String WorkingSetsDialog_Title;
+
+	public static String WorkingSetsDialog_TitleBar;
 	public static String WorkspaceScope_0;
 	public static String WorkingSetScope_0;
 	public static String SubscriberParticipant_namePattern;

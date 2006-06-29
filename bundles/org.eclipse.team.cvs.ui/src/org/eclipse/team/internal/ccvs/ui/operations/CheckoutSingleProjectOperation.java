@@ -25,11 +25,17 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 
 	private boolean preconfigured;
 	private IProject targetProject;
+	private String workingSetName;
 	
 	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured) {
+		this(part,remoteFolder,targetProject,targetLocation,preconfigured,null);
+	}
+	
+	public CheckoutSingleProjectOperation(IWorkbenchPart part, ICVSRemoteFolder remoteFolder, IProject targetProject, String targetLocation, boolean preconfigured, String wsName) {
 		super(part, new ICVSRemoteFolder[] { remoteFolder }, targetLocation);
 		this.targetProject = targetProject;
 		this.preconfigured = preconfigured;
+		this.workingSetName = wsName;
 	}
 
 	private boolean isPreconfigured() {
@@ -58,6 +64,10 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 	 */
 	protected IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
 		return checkout(folder, targetProject, monitor);
+	}
+	
+	protected String getWorkingSetName(){
+		return workingSetName;
 	}
 
 }
