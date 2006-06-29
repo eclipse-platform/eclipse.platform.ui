@@ -29,13 +29,6 @@ public class ObjectMap implements Map {
 
 	/**
 	 * Creates a new object map.
-	 */
-	public ObjectMap() {
-		this(DEFAULT_SIZE);
-	}
-
-	/**
-	 * Creates a new object map.
 	 * 
 	 * @param initialCapacity
 	 *                  The initial number of elements that will fit in the map.
