@@ -44,11 +44,12 @@ public class AuthorizationHandler {
 					return;
 			} catch (InvalidSyntaxException e) {
 				// ignore this.  It should never happen as we have tested the above format.
+				return;
 			}
 			Location configurationLocation = (Location) Activator.getContext().getService(refs[0]);
 			if (configurationLocation == null)
 				return;
-			File file = new File(configurationLocation.getURL().getPath() + "/org.eclipse.core.runtime");
+			File file = new File(configurationLocation.getURL().getPath() + "/org.eclipse.core.runtime"); //$NON-NLS-1$
 			Activator.getContext().ungetService(refs[0]);
 			file = new File(file, F_KEYRING);
 			keyringFile = file.getAbsolutePath();
