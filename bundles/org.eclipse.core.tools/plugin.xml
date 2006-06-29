@@ -173,4 +173,14 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+    	id="UnusedMembersResultPage"
+        point="org.eclipse.search.searchResultViewPages">
+		<viewPage
+			id="org.eclipse.core.tools.UnusedMembersResultPage"
+			searchResultClass="org.eclipse.core.tools.search.FindUnusedSearchResult"
+			class="org.eclipse.core.tools.search.FindUnusedSearchResultPage">
+		</viewPage>
+   </extension>  
+   
 </plugin>
