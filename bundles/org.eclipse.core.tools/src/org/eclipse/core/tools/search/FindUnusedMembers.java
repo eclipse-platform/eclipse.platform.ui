@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.internal.corext.dom.Bindings;
+import org.eclipse.jdt.internal.corext.refactoring.RefactoringScopeFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /*
@@ -179,12 +180,7 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		}
 
 		try {
-			IJavaSearchScope searchScope;
-			if (Flags.isPrivate(member.getFlags())) {
-				searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {member.getCompilationUnit()});
-			} else {
-				searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {member.getJavaProject()}, IJavaSearchScope.SOURCES);
-			}
+			IJavaSearchScope searchScope = RefactoringScopeFactory.create(member.getDeclaringType());
 			SearchPattern pattern = SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES);
 			SearchRequestor requestor = new SearchRequestor() {
 				public void acceptSearchMatch(SearchMatch match) throws CoreException {
