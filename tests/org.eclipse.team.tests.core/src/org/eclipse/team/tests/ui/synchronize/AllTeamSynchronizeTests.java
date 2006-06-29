@@ -17,25 +17,17 @@ import org.eclipse.core.tests.resources.ResourceTest;
 
 public class AllTeamSynchronizeTests extends ResourceTest {
 
-	/**
-	 * Constructor for CVSClientTest.
-	 */
 	public AllTeamSynchronizeTests() {
 		super();
 	}
 
-	/**
-	 * Constructor for CVSClientTest.
-	 * @param name
-	 */
 	public AllTeamSynchronizeTests(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(TestDiffNodePresentationModel.suite());
-		suite.addTest(SyncInfoSetContentProviderTest.suite());
+		suite.addTest(ResourceContentTests.suite());
 		return suite;
 	}
 }

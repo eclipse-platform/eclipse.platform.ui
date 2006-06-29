@@ -38,10 +38,7 @@ import org.eclipse.ui.navigator.*;
  */
 public abstract class SynchronizationContentProvider implements ICommonContentProvider, IDiffChangeListener, IPropertyChangeListener {
 
-	private ISynchronizationScope scope;
-	private ISynchronizationContext context;
 	private Viewer viewer;
-	private IExtensionStateModel stateModel;
 	private boolean empty;
 	private ICommonContentExtensionSite site;
 	
@@ -93,6 +90,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			empty = true;
 			return new Object[0];
 		} else if (element instanceof ISynchronizationContext) {
+			ISynchronizationContext context = (ISynchronizationContext)element;
 			// If the root is a context, we want to filter by the context
 			ISynchronizationContext sc = (ISynchronizationContext) element;
 			if (sc.getScope().getMappings(getModelProviderId()).length > 0) {
@@ -109,6 +107,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			return new Object[0];
 		}
 		if (element == getModelProvider()) {
+			ISynchronizationContext context = getContext();
 			if (context != null && !isInitialized(context)) {
 				return new Object[0];
 			}
@@ -120,7 +119,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 			}
 		}
 		Object[] delegateChildren = getDelegateChildren(parent, isElement);
-		ISynchronizationContext sc = getContext();
+		ISynchronizationContext context = getContext();
 		if (context == null) {
 			ISynchronizationScope scope = getScope();
 			if (scope == null) {
@@ -129,7 +128,7 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 				return getChildrenInScope(scope, parent, delegateChildren);
 			}
 		} else {
-			return getChildrenInContext(sc, parent, delegateChildren);
+			return getChildrenInContext(context, parent, delegateChildren);
 		}
 	}
 
@@ -254,7 +253,11 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		stateModel.removePropertyChangeListener(this);
+		ICommonContentExtensionSite extensionSite = getExtensionSite();
+		if (extensionSite != null) {
+			extensionSite.getExtensionStateModel().removePropertyChangeListener(this);
+		}
+		ISynchronizationContext context = getContext();
 		if (context != null)
 			context.getDiffTree().removeDiffChangeListener(this);
 		ISynchronizePageConfiguration configuration = getConfiguration();
@@ -274,18 +277,18 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
 	public void init(ICommonContentExtensionSite site) {
+		// Set the site
 		this.site = site;
-		stateModel = site.getExtensionStateModel();
-		stateModel.addPropertyChangeListener(this);
+		// Configure the content provider based on the site and state model
+		site.getExtensionStateModel().addPropertyChangeListener(this);
 		ISynchronizePageConfiguration configuration = getConfiguration();
 		if (configuration != null)
 			configuration.addPropertyChangeListener(this);
-		scope = (ISynchronizationScope)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
-		context = (ISynchronizationContext)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		ITreeContentProvider provider = getDelegateContentProvider();
 		if (provider instanceof ICommonContentProvider) {
 			((ICommonContentProvider) provider).init(site);	
 		}
+		ISynchronizationContext context = getContext();
 		if (context != null)
 			context.getDiffTree().addDiffChangeListener(this);
 	}
@@ -327,7 +330,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the synchronization context or <code>null</code>
 	 */
 	protected ISynchronizationContext getContext() {
-		return context;
+		ICommonContentExtensionSite extensionSite = getExtensionSite();
+		if (extensionSite != null)
+			return (ISynchronizationContext) extensionSite
+					.getExtensionStateModel()
+						.getProperty(
+							ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
+		return null;
 	}
 
 	/**
@@ -337,7 +346,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the resource mapping scope or <code>null</code>
 	 */
 	protected ISynchronizationScope getScope() {
-		return scope;
+		ICommonContentExtensionSite extensionSite = getExtensionSite();
+		if (extensionSite != null)
+			return (ISynchronizationScope) extensionSite
+					.getExtensionStateModel()
+						.getProperty(
+							ITeamContentProviderManager.P_SYNCHRONIZATION_SCOPE);
+		return null;
 	}
 	
 	/**
@@ -347,7 +362,13 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 * @return the synchronization page configuration or <code>null</code>
 	 */
 	protected ISynchronizePageConfiguration getConfiguration() {
-		return (ISynchronizePageConfiguration)stateModel.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+		ICommonContentExtensionSite extensionSite = getExtensionSite();
+		if (extensionSite != null)
+			return (ISynchronizePageConfiguration) extensionSite
+					.getExtensionStateModel()
+						.getProperty(
+							ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+		return null;
 	}
 	
 	/* (non-Javadoc)
