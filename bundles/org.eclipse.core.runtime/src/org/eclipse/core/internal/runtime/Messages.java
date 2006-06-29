@@ -34,14 +34,7 @@ public class Messages extends NLS {
 
 	// metadata
 	public static String meta_appNotInit;
-	public static String meta_authFormatChanged;
 	public static String meta_exceptionParsingLog;
-	public static String meta_keyringFileAlreadySpecified;
-
-	// Extension Registry
-	public static String meta_unableToReadAuthorization;
-	public static String meta_unableToWriteAuthorization;
-
 	// parsing/resolve
 	public static String plugin_deactivatedLoad;
 
