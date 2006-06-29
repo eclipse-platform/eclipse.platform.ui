@@ -54,6 +54,8 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 
 		ICompilationUnit[] cus = (ICompilationUnit[]) allCus.toArray(new ICompilationUnit[allCus.size()]);
 		NewSearchUI.runQueryInBackground(new FindUnusedSearchQuery(cus));
+		
+		//remove this block to report output of tool to a file
 		if (true) {
 			return;
 		}
@@ -95,13 +97,13 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 				collectCompilationUnits(children[i], res);
 			}
 		} else if (current instanceof IPackageFragment) {
-			//don't search API packages
-			if (current.getElementName().indexOf("internal") > 0) { //$NON-NLS-1$
+			//uncomment this condition to only search API packages
+//			if (current.getElementName().indexOf("internal") > 0) { //$NON-NLS-1$
 				IJavaElement[] children = ((IParent) current).getChildren();
 				for (int i = 0; i < children.length; i++) {
 					collectCompilationUnits(children[i], res);
 				}
-			}
+//			}
 		} else if (current instanceof ICompilationUnit)
 			res.add(current);
 	}
