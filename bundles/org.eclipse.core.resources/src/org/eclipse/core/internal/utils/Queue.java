@@ -50,19 +50,6 @@ public class Queue {
 		tail = newTail;
 	}
 
-	public void clear() {
-		if (tail >= head) {
-			for (int i = head; i < tail; i++)
-				elements[i] = null;
-		} else {
-			for (int i = head; i < elements.length; i++)
-				elements[i] = null;
-			for (int i = 0; i < tail; i++)
-				elements[i] = null;
-		}
-		tail = head = 0;
-	}
-
 	/**
 	 * This method does not affect the queue itself. It is only a
 	 * helper to decrement an index in the queue.
@@ -90,16 +77,6 @@ public class Queue {
 		System.arraycopy(elements, head, newElements, 0, end);
 		System.arraycopy(elements, 0, newElements, end, tail);
 		return new ArrayIterator(newElements);
-	}
-
-	public Object get(Object o) {
-		int index = head;
-		while (index != tail) {
-			if (elements[index].equals(o))
-				return elements[index];
-			index = increment(index);
-		}
-		return null;
 	}
 
 	/**
