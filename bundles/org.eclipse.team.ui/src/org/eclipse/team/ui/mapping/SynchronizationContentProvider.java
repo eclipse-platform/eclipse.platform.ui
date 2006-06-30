@@ -320,7 +320,10 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 	 *         included in the contents
 	 */
 	protected boolean includeDirection(int direction) {
-		return ((SynchronizePageConfiguration)getConfiguration()).includeDirection(direction);
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration != null)
+			return ((SynchronizePageConfiguration)configuration).includeDirection(direction);
+		return true;
 	}
 	
 	/**
