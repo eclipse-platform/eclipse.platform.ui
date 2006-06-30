@@ -121,9 +121,7 @@ public class WorkingSetTypePage extends WizardPage {
 				IWorkbenchHelpContextIds.WORKING_SET_TYPE_PAGE);
         Label typesLabel = new Label(composite, SWT.NONE);
         typesLabel.setText(WorkbenchMessages.WorkingSetTypePage_typesLabel);
-        GridData data = new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.VERTICAL_ALIGN_CENTER);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
         typesLabel.setLayoutData(data);
         typesLabel.setFont(font);
 
