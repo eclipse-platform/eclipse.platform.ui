@@ -114,7 +114,7 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 			ParameterizedCommand command = commandService.deserialize(serializedCommand);
 			command.executeWithChecks(null, null);
 		} catch (CommandException ex) {
-			// silently ignore error
+			HelpUIPlugin.logError("There was an error executing the command: " + serializedCommand, ex); //$NON-NLS-1$
 		}
 	}
 
