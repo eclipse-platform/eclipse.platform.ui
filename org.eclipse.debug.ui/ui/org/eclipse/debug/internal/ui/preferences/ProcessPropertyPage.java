@@ -17,14 +17,13 @@ import java.util.regex.Pattern;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -44,58 +43,35 @@ public class ProcessPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite ancestor) {
-		Font font = ancestor.getFont();
 		noDefaultAndApplyButton();
-		Composite parent = new Composite(ancestor, SWT.NULL);
-		GridLayout layout = new GridLayout(1, false);
-		parent.setLayout(layout);
+		Composite parent = SWTUtil.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
 		
 		IProcess proc = getProcess();
 		
 	//create the process time section
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		Label lbl = new Label(parent, SWT.NONE);
-		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_0);
-		lbl.setLayoutData(gd);
-		lbl.setFont(fHeadingFont);
-		
-		Text text = new Text(parent, SWT.READ_ONLY);
+		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
+		Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1);
+		((GridData)text.getLayoutData()).horizontalIndent = 10;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_RUN_AT);
 		text.setText(getTimeText(proc));
-		text.setFont(font);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 10;
-		text.setLayoutData(gd);
-		createVerticalSpacer(parent, 2);
+		SWTUtil.createVerticalSpacer(parent, 2);
 		
 	//create the path name section
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		lbl = new Label(parent, SWT.NONE);
-		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_1);
-		lbl.setFont(fHeadingFont);
-		lbl.setLayoutData(gd);
-		
-		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY);
+		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_1, fHeadingFont, 1);		
+		text = SWTUtil.createText(parent, SWT.WRAP | SWT.READ_ONLY, 1);
+		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		text.setText(getPathText(proc));
-		text.setFont(font);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 10;
-		text.setLayoutData(gd);
-		createVerticalSpacer(parent, 2);
+		SWTUtil.createVerticalSpacer(parent, 2);
 		
 	//create commandline section
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		lbl = new Label(parent, SWT.NULL);
-		lbl.setText(DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1); 
-		lbl.setLayoutData(gd);
-		lbl.setFont(fHeadingFont);
-		
-		text = new Text(parent, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint= convertWidthInCharsToPixels(80);
-		gd.heightHint= convertHeightInCharsToPixels(15);
-		gd.horizontalIndent = 10;
-		text.setLayoutData(gd);
-		text.setFont(font);
+		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1, fHeadingFont, 1);
+		text = SWTUtil.createText(parent, 
+				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
+				1, 
+				convertWidthInCharsToPixels(80),
+				convertHeightInCharsToPixels(15),
+				GridData.FILL_BOTH);
+		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		String commandLineText = getCommandLineText(proc);
 		if (commandLineText != null) {
 			text.setText(commandLineText);
@@ -121,20 +97,6 @@ public class ProcessPropertyPage extends PropertyPage {
 			proc = ((IProcess)obj);
 		}
 		return proc;
-	}
-	
-	/**
-	 * creates a vertical spacer for seperating components
-	 * @param comp
-	 * @param numlines
-	 * 
-	 * @since 3.2
-	 */
-	private void createVerticalSpacer(Composite comp, int numlines) {
-		Label lbl = new Label(comp, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = numlines;
-		lbl.setLayoutData(gd);
 	}
 	
 	/**

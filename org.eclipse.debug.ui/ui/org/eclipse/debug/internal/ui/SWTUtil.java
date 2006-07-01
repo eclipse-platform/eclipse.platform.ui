@@ -129,6 +129,25 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * Creates a new label widget
+	 * @param parent the parent composite to add this label widget to
+	 * @param text the text for the label
+	 * @param font the font for the label
+	 * @param hspan the horizontal span to take up in the parent composite
+	 * @return the new label
+	 * @since 3.3
+	 */
+	public static Label createLabel(Composite parent, String text, Font font, int hspan) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setFont(font);
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
 	 * Creates a new text widget 
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -141,6 +160,45 @@ public class SWTUtil {
     	t.setFont(parent.getFont());
     	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	return t;
+    }
+	
+	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param style the style bits for the text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @return the new text widget
+	 * @since 3.3
+	 */
+	public static Text createText(Composite parent, int style, int hspan) {
+    	Text t = new Text(parent, style);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	return t;
+    }
+	
+	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param style the style bits for the text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param width the desired width of the text widget
+	 * @param height the desired height of the text widget
+	 * @param fill the fill style for the widget
+	 * @return the new text widget
+	 * @since 3.3
+	 */
+	public static Text createText(Composite parent, int style, int hspan, int width, int height, int fill) {
+    	Text t = new Text(parent, style);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
+    	gd.horizontalSpan = hspan;
+    	gd.widthHint = width;
+    	gd.heightHint = height;
     	t.setLayoutData(gd);
     	return t;
     }
