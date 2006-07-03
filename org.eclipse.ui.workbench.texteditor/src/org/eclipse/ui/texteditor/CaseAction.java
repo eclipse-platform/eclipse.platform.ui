@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 145326 [typing] toUpperCase incorrect selection
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -97,7 +98,11 @@ public class CaseAction extends TextEditorAction implements IUpdate {
 			String replacement= (fToUpper ? target.toUpperCase() : target.toLowerCase());
 			if (!target.equals(replacement)) {
 				document.replace(sel.x, target.length(), replacement);
-			}
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=145326: replacement might be larger than the original
+				int adjustment= replacement.length() - target.length();
+				if (adjustment > 0)
+					sel.y += adjustment;
+ 			}
 		} catch (BadLocationException x) {
 			// ignore and return
 			return;
