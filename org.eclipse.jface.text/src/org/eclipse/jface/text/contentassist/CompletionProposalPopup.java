@@ -47,11 +47,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -64,6 +59,12 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
+
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -493,6 +494,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
+		fProposalShell.setFont(JFaceResources.getDefaultFont());
 		if (USE_VIRTUAL) {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
@@ -527,11 +529,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalTable.setLayoutData(data);
 			fProposalShell.setSize(size);
 		} else {
-			data.heightHint= fProposalTable.getItemHeight() * 10;
-			data.widthHint= 300;
+			int height= fProposalTable.getItemHeight() * 10;
+			int width= (int) (height * 1.4142135);
+			// alternative: 60 chars wide
+//			GC gc= new GC(fProposalShell);
+//			FontMetrics metrics;
+//			try {
+//				gc.setFont(fProposalTable.getFont());
+//				metrics= gc.getFontMetrics();
+//			} finally {
+//				gc.dispose();
+//			}
+//			int width= Dialog.convertWidthInCharsToPixels(metrics, 60);
+			Rectangle trim= fProposalTable.computeTrim(0, 0, width, height);
+			data.heightHint= trim.height;
+			data.widthHint= trim.width;
 			fProposalTable.setLayoutData(data);
 			fProposalShell.pack();
-			fSize= fProposalShell.getSize();
 		}
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());
 
