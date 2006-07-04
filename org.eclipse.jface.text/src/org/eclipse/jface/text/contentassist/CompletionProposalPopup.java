@@ -530,17 +530,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setSize(size);
 		} else {
 			int height= fProposalTable.getItemHeight() * 10;
-			int width= (int) (height * 1.4142135);
-			// alternative: 60 chars wide
-//			GC gc= new GC(fProposalShell);
-//			FontMetrics metrics;
-//			try {
-//				gc.setFont(fProposalTable.getFont());
-//				metrics= gc.getFontMetrics();
-//			} finally {
-//				gc.dispose();
-//			}
-//			int width= Dialog.convertWidthInCharsToPixels(metrics, 60);
+			final double aspectRatio= 4d / 3;
+			int width= (int) (height * aspectRatio);
 			Rectangle trim= fProposalTable.computeTrim(0, 0, width, height);
 			data.heightHint= trim.height;
 			data.widthHint= trim.width;
