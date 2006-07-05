@@ -72,7 +72,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     
     /**
      * Contains a map of the editor to use for each workbench
-     * page, when the 'resuse editor' preference is on. 
+     * page, when the 'reuse editor' preference is on. 
      */
     private Map fEditorsByPage;
     
@@ -185,7 +185,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     }
     
     /**
-     * Rerturns the model presentation for the given debug model, or <code>null</code>
+     * Returns the model presentation for the given debug model, or <code>null</code>
      * if none.
      * 
      * @param id debug model id
@@ -209,7 +209,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
      * result. Has no effect if the result has an unknown editor id or editor input.
      * The editor is opened, positioned, and annotated.
      * <p>
-     * Honors the user preference of whether to re-use editors when displaying source.
+     * Honor's the user preference of whether to re-use editors when displaying source.
      * </p> 
      * @param result source lookup result to display
      * @param page the page to display the result in
