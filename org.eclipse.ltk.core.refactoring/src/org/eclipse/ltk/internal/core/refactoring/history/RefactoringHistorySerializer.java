@@ -28,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryListener;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistoryEvent;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
@@ -45,7 +46,6 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		Assert.isNotNull(event);
 		switch (event.getEventType()) {
 			case RefactoringHistoryEvent.ADDED:
-			case RefactoringHistoryEvent.DELETED:
 			case RefactoringHistoryEvent.PUSHED:
 			case RefactoringHistoryEvent.POPPED: {
 				final RefactoringDescriptorProxy proxy= event.getDescriptor();
@@ -112,7 +112,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
 			if (descriptor != null)
 				manager.addRefactoringDescriptor(descriptor, type == RefactoringHistoryEvent.ADDED, monitor);
-		} else if (type == RefactoringHistoryEvent.POPPED || type == RefactoringHistoryEvent.DELETED)
-			manager.removeRefactoringDescriptor(proxy.getTimeStamp(), monitor);
+		} else if (type == RefactoringHistoryEvent.POPPED)
+			manager.removeRefactoringDescriptors(new RefactoringDescriptorProxy[] { proxy}, monitor, RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 	}
 }

@@ -141,7 +141,8 @@ public final class RefactoringSessionTransformer {
 	/**
 	 * Begins the transformation of a refactoring session.
 	 * <p>
-	 * Calls to {@link RefactoringSessionTransformer#beginSession(String)} must
+	 * Calls to
+	 * {@link RefactoringSessionTransformer#beginSession(String, String)} must
 	 * be balanced with calls to
 	 * {@link RefactoringSessionTransformer#endSession()}. If the transformer
 	 * is already processing a session, nothing happens.
@@ -150,16 +151,18 @@ public final class RefactoringSessionTransformer {
 	 * @param comment
 	 *            the comment associated with the refactoring session, or
 	 *            <code>null</code>
+	 * @param version
+	 *            the non-empty version tag
 	 * @throws CoreException
 	 *             if an error occurs while creating a new session
 	 */
-	public void beginSession(final String comment) throws CoreException {
+	public void beginSession(final String comment, final String version) throws CoreException {
 		if (fDocument == null) {
 			try {
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
-				attribute.setValue(IRefactoringSerializationConstants.CURRENT_VERSION);
+				attribute.setValue(version);
 				fSession.getAttributes().setNamedItem(attribute);
 				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);

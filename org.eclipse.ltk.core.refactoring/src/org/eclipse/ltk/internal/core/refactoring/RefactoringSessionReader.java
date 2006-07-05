@@ -57,6 +57,9 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 */
 	private List fRefactoringDescriptors= null;
 
+	/** Has a session been found during parsing? */
+	private boolean fSessionFound= false;
+
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
 
@@ -111,9 +114,12 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 *             if an error occurs while reading form the input source
 	 */
 	public RefactoringSessionDescriptor readSession(final InputSource source) throws CoreException {
+		fSessionFound= false;
 		try {
 			source.setSystemId("/"); //$NON-NLS-1$
 			createParser(SAXParserFactory.newInstance()).parse(source, this);
+			if (!fSessionFound)
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringSessionReader_no_session, null));
 			if (fRefactoringDescriptors != null) {
 				if (fVersion == null || "".equals(fVersion)) //$NON-NLS-1$
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_missing_version_information, null));
@@ -186,6 +192,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				fRefactoringDescriptors.add(descriptor);
 			}
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
+			fSessionFound= true;
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 			if (version != null && !"".equals(version)) //$NON-NLS-1$
 				fVersion= version;

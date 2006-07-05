@@ -11,7 +11,6 @@
 package org.eclipse.ltk.internal.core.refactoring.history;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -59,21 +58,8 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	 * {@inheritDoc}
 	 */
 	public RefactoringDescriptorProxy[] getDescriptors() {
-		if (!fSorted && fDescriptorProxies.length > 1) {
-			Arrays.sort(fDescriptorProxies, new Comparator() {
-
-				public final int compare(final Object first, final Object second) {
-					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-					final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
-					if (delta > 0)
-						return 1;
-					else if (delta < 0)
-						return -1;
-					return 0;
-				}
-			});
-		}
+		if (!fSorted && fDescriptorProxies.length > 1)
+			RefactoringHistoryManager.sortRefactoringDescriptorsDescending(fDescriptorProxies);
 		fSorted= true;
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
 		System.arraycopy(fDescriptorProxies, 0, proxies, 0, fDescriptorProxies.length);
