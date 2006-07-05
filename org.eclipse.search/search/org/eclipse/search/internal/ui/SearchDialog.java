@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
@@ -265,15 +266,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		final ArrayList createdImages= new ArrayList(input.size());
 		ILabelProvider labelProvider= new LabelProvider() {
 			public String getText(Object element) {
-				if (element instanceof SearchPageDescriptor) {
-					String label= ((SearchPageDescriptor)element).getLabel();
-					int i= label.indexOf('&');
-					while (i >= 0) {
-						label= label.substring(0, i) + label.substring(i+1);
-						i= label.indexOf('&');
-					}
-					return label;
-				}
+				if (element instanceof SearchPageDescriptor)
+					return LegacyActionTools.removeMnemonics(((SearchPageDescriptor)element).getLabel());
 				return null;
 			}
 			public Image getImage(Object element) {

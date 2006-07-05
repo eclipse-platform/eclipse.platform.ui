@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 
@@ -141,26 +142,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		ArrayList listModelItems= new ArrayList();
 		for (Iterator it= descriptors.iterator(); it.hasNext();) {
 			ReferenceProviderDescriptor descriptor= (ReferenceProviderDescriptor) it.next();
-			String label= descriptor.getLabel();
-			int i, j=-1;
-			i= label.indexOf("(&"); //$NON-NLS-1$
-			if (i >= 0)
-				j = label.indexOf(')',i);
-			while (i >= 0 && j >= 0) {
-				label= label.substring(0, i) + label.substring(j+1);
-				i= label.indexOf("(&"); //$NON-NLS-1$
-				if(i >= 0)
-					j = label.indexOf(')',i);
-			}
-
-			i= label.indexOf('&');
-			while (i >= 0) {
-				if (i < label.length())
-					label= label.substring(0, i) + label.substring(i+1);
-				else
-					label= label.substring(0, i);
-				i= label.indexOf('&');
-			}
+			String label= LegacyActionTools.removeMnemonics(descriptor.getLabel());
 			listModelItems.add(new String[] { descriptor.getId(), label });
 		}
 		String[][] items= new String[listModelItems.size()][];
