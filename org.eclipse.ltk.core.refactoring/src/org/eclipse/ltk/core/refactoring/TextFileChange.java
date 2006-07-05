@@ -152,28 +152,34 @@ public class TextFileChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void initializeValidationData(IProgressMonitor pm) {
-		pm.beginTask("", 1); //$NON-NLS-1$
-		fValidationState= BufferValidationState.create(fFile);
-		pm.worked(1);
+	public void initializeValidationData(IProgressMonitor monitor) {
+		try {
+			monitor.beginTask("", 1); //$NON-NLS-1$
+			fValidationState= BufferValidationState.create(fFile);
+		} finally {
+			monitor.done();
+		}
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
-		pm.beginTask("", 1); //$NON-NLS-1$
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
-		fDirty= buffer != null && buffer.isDirty();
-		RefactoringStatus result= fValidationState.isValid(needsSaving());
-		if (needsSaving()) {
-			result.merge(Changes.validateModifiesFiles(new IFile[] {fFile}));
-		} else {
-			// we are reading the file. So it should be at least in sync
-			result.merge(Changes.checkInSync(new IFile[] {fFile}));
+	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
+		try {
+			monitor.beginTask("", 1); //$NON-NLS-1$
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+			fDirty= buffer != null && buffer.isDirty();
+			RefactoringStatus result= fValidationState.isValid(needsSaving());
+			if (needsSaving()) {
+				result.merge(Changes.validateModifiesFiles(new IFile[] { fFile}));
+			} else {
+				// we are reading the file. So it should be at least in sync
+				result.merge(Changes.checkInSync(new IFile[] { fFile}));
+			}
+			return result;
+		} finally {
+			monitor.done();
 		}
-		pm.worked(1);
-		return result;
 	}
 
 	/**
@@ -202,6 +208,10 @@ public class TextFileChange extends TextChange {
 	
 	/**
 	 * {@inheritDoc}
+	 * <p>
+	 * The implementation of this method only commits the underlying buffer if
+	 * {@link #needsSaving()} returns <code>true</code>.
+	 * </p>
 	 */
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
 		if (needsSaving()) {
@@ -240,8 +250,19 @@ public class TextFileChange extends TextChange {
 		return fAcquireCount > 0;
 	}
 
-	private boolean needsSaving() {
+	/**
+	 * Does the text file change need saving?
+	 * <p>
+	 * The implementation of this method returns <code>true</code> if the
+	 * <code>FORCE_SAVE</code> flag is enabled, or the underlying file is not
+	 * dirty and <code>KEEP_SAVE_STATE</code> is enabled.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if it needs saving according to its dirty
+	 *         state and the save mode flags, <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	protected final boolean needsSaving() {
 		return (fSaveMode & FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & KEEP_SAVE_STATE) != 0);
 	}
 }
-
