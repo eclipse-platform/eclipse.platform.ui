@@ -158,9 +158,9 @@ public final class EditorsUI {
 	 * Returns the shared text colors of this plug-in.
 	 *
 	 * @return the shared text colors
-	 * @since 3.2
+	 * @since 3.3
 	 */
-	public ISharedTextColors getSharedTextColors() {
+	public static ISharedTextColors getSharedTextColors() {
 		return EditorsPlugin.getDefault().getSharedTextColors();
 	}
 
