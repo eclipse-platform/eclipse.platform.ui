@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +36,7 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.compare.IStreamMerger;
 
 /**
- * Combined storage and tream merger for refactoring history index files.
+ * Combined storage and stream merger for refactoring history index files.
  * 
  * @since 3.2
  */
@@ -127,30 +125,6 @@ public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerg
 			set.add(sourceProxies[index]);
 		for (int index= 0; index < targetProxies.length; index++)
 			set.add(targetProxies[index]);
-		final RefactoringDescriptorProxy[] outputProxies= new RefactoringDescriptorProxy[set.size()];
-		set.toArray(outputProxies);
-		Arrays.sort(outputProxies, new Comparator() {
-
-			public final int compare(final Object first, final Object second) {
-				final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-				final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-				final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
-				if (delta > 0)
-					return 1;
-				else if (delta < 0)
-					return -1;
-				return 0;
-			}
-		});
-		final StringBuffer buffer= new StringBuffer(256);
-		for (int index= 0; index < outputProxies.length; index++) {
-			final RefactoringDescriptorProxy proxy= outputProxies[index];
-			buffer.setLength(0);
-			buffer.append(proxy.getTimeStamp());
-			buffer.append(RefactoringHistoryManager.DELIMITER_COMPONENT);
-			buffer.append(RefactoringHistoryManager.escapeString(proxy.getDescription()));
-			buffer.append(RefactoringHistoryManager.DELIMITER_ENTRY);
-			output.write(buffer.toString().getBytes(encoding));
-		}
+		RefactoringHistoryManager.writeRefactoringDescriptorProxies(output, (RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]));
 	}
 }

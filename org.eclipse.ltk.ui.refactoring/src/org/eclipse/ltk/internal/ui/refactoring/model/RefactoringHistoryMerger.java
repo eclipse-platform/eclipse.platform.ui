@@ -13,8 +13,6 @@ package org.eclipse.ltk.internal.ui.refactoring.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +26,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
+import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -112,8 +112,8 @@ public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMe
 	 *             if an error occurs
 	 */
 	private void performMerge(final OutputStream output, final InputStream target, final InputStream source) throws CoreException {
-		final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source, 0, Long.MAX_VALUE);
-		final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target, 0, Long.MAX_VALUE);
+		final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
+		final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
 		final Set set= new HashSet();
 		for (int index= 0; index < sourceDescriptors.length; index++)
 			set.add(sourceDescriptors[index]);
@@ -121,19 +121,7 @@ public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMe
 			set.add(targetDescriptors[index]);
 		final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
 		set.toArray(outputDescriptors);
-		Arrays.sort(outputDescriptors, new Comparator() {
-
-			public final int compare(final Object first, final Object second) {
-				final RefactoringDescriptor predecessor= (RefactoringDescriptor) first;
-				final RefactoringDescriptor successor= (RefactoringDescriptor) second;
-				final long delta= successor.getTimeStamp() - predecessor.getTimeStamp();
-				if (delta > 0)
-					return 1;
-				else if (delta < 0)
-					return -1;
-				return 0;
-			}
-		});
-		RefactoringHistoryManager.writeRefactoringDescriptors(output, outputDescriptors, true);
+		RefactoringHistoryManager.sortRefactoringDescriptorsAscending(outputDescriptors);
+		RefactoringHistoryManager.writeRefactoringSession(output, new RefactoringSessionDescriptor(outputDescriptors, IRefactoringSerializationConstants.CURRENT_VERSION, null), true);
 	}
 }

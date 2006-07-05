@@ -15,8 +15,6 @@ import com.ibm.icu.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ChoiceFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -47,6 +45,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryImplementation;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage;
@@ -790,19 +789,7 @@ public class RefactoringHistoryWizard extends Wizard {
 			final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 			final RefactoringDescriptorProxy[] result= new RefactoringDescriptorProxy[proxies.length];
 			System.arraycopy(proxies, 0, result, 0, proxies.length);
-			Arrays.sort(result, new Comparator() {
-
-				public final int compare(final Object first, final Object second) {
-					final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-					final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-					final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
-					if (delta > 0)
-						return 1;
-					else if (delta < 0)
-						return -1;
-					return 0;
-				}
-			});
+			RefactoringHistoryManager.sortRefactoringDescriptorsAscending(result);
 			fDescriptorProxies= result;
 		}
 		return fDescriptorProxies;

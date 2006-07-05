@@ -23,8 +23,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +36,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
+import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -174,43 +173,10 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				} else if (result == 2)
 					return false;
 			}
-			final OutputStream[] stream= { null};
+			OutputStream stream= null;
 			try {
-				stream[0]= new BufferedOutputStream(new FileOutputStream(file));
-				Arrays.sort(writable, new Comparator() {
-
-					public final int compare(final Object first, final Object second) {
-						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-						final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
-						if (delta > 0)
-							return 1;
-						else if (delta < 0)
-							return -1;
-						return 0;
-					}
-				});
-				final RefactoringDescriptorProxy[] finalWritable= writable;
-				try {
-					getContainer().run(false, false, new IRunnableWithProgress() {
-
-						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								RefactoringCore.getHistoryService().writeRefactoringDescriptors(finalWritable, stream[0], RefactoringDescriptor.NONE, false, monitor);
-							} catch (CoreException exception) {
-								throw new InvocationTargetException(exception);
-							}
-						}
-					});
-				} catch (InvocationTargetException exception) {
-					final Throwable throwable= exception.getTargetException();
-					if (throwable instanceof CoreException) {
-						final CoreException extended= (CoreException) throwable;
-						throw extended;
-					}
-				} catch (InterruptedException exception) {
-					// Do nothing
-				}
+				stream= new BufferedOutputStream(new FileOutputStream(file));
+				writeRefactoringDescriptorProxies(writable, stream);
 				return true;
 			} catch (CoreException exception) {
 				final Throwable throwable= exception.getStatus().getException();
@@ -225,9 +191,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
 				return true;
 			} finally {
-				if (stream[0] != null) {
+				if (stream != null) {
 					try {
-						stream[0].close();
+						stream.close();
 					} catch (IOException exception) {
 						// Do nothing
 					}
@@ -236,40 +202,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		} else if (fUseClipboard) {
 			try {
 				final ByteArrayOutputStream stream= new ByteArrayOutputStream(2048);
-				Arrays.sort(writable, new Comparator() {
-
-					public final int compare(final Object first, final Object second) {
-						final RefactoringDescriptorProxy predecessor= (RefactoringDescriptorProxy) first;
-						final RefactoringDescriptorProxy successor= (RefactoringDescriptorProxy) second;
-						final long delta= predecessor.getTimeStamp() - successor.getTimeStamp();
-						if (delta > 0)
-							return 1;
-						else if (delta < 0)
-							return -1;
-						return 0;
-					}
-				});
-				final RefactoringDescriptorProxy[] finalWritable= writable;
-				try {
-					getContainer().run(false, false, new IRunnableWithProgress() {
-
-						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								RefactoringCore.getHistoryService().writeRefactoringDescriptors(finalWritable, stream, RefactoringDescriptor.NONE, false, monitor);
-							} catch (CoreException exception) {
-								throw new InvocationTargetException(exception);
-							}
-						}
-					});
-				} catch (InvocationTargetException exception) {
-					final Throwable throwable= exception.getTargetException();
-					if (throwable instanceof CoreException) {
-						final CoreException extended= (CoreException) throwable;
-						throw extended;
-					}
-				} catch (InterruptedException exception) {
-					// Do nothing
-				}
+				writeRefactoringDescriptorProxies(writable, stream);
 				try {
 					final String string= stream.toString(IRefactoringSerializationConstants.OUTPUT_ENCODING);
 					Clipboard clipboard= null;
@@ -369,5 +302,39 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		final IWizardContainer wizard= getContainer();
 		if (wizard.getCurrentPage() != null)
 			wizard.updateButtons();
+	}
+
+	/**
+	 * Writes the refactoring descriptor proxies to the specified output stream.
+	 * 
+	 * @param writable
+	 *            the refactoring descriptor proxies
+	 * @param stream
+	 *            the output stream to write to
+	 * @throws CoreException
+	 *             if an error occurs
+	 */
+	private void writeRefactoringDescriptorProxies(final RefactoringDescriptorProxy[] writable, final OutputStream stream) throws CoreException {
+		RefactoringHistoryManager.sortRefactoringDescriptorsAscending(writable);
+		try {
+			getContainer().run(false, false, new IRunnableWithProgress() {
+
+				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, monitor);
+					} catch (CoreException exception) {
+						throw new InvocationTargetException(exception);
+					}
+				}
+			});
+		} catch (InvocationTargetException exception) {
+			final Throwable throwable= exception.getTargetException();
+			if (throwable instanceof CoreException) {
+				final CoreException extended= (CoreException) throwable;
+				throw extended;
+			}
+		} catch (InterruptedException exception) {
+			// Do nothing
+		}
 	}
 }
