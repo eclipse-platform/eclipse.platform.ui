@@ -12,13 +12,11 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
  
-import com.ibm.icu.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,6 +45,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -84,8 +83,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -294,19 +296,24 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	private void handleContainerChecked(CheckStateChangedEvent event, BreakpointContainer container) {
 		final IBreakpoint[] breakpoints = container.getBreakpoints();
 		final boolean enable= event.getChecked();
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
-                for (int i = 0; i < breakpoints.length; i++) {
-                    IBreakpoint breakpoint = breakpoints[i];
-                    breakpoint.setEnabled(enable);
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) {
+                try {
+                    for (int i = 0; i < breakpoints.length; i++) {
+                        IBreakpoint breakpoint = breakpoints[i];
+                        breakpoint.setEnabled(enable);
+                    }
+                } catch (CoreException e) {
+                    DebugUIPlugin.log(e);
                 }
             }
         };
+        // TODO: should use scheduling rule
+        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
         try {
-            // TODO: should use scheduling rule
-            ResourcesPlugin.getWorkspace().run(runnable, null);
-        } catch (CoreException e) {
-            DebugUIPlugin.log(e);
+            progressService.busyCursorWhile(runnable);
+        } catch (InvocationTargetException e) {
+        } catch (InterruptedException e) {
         }
 	}
 
