@@ -67,6 +67,10 @@ public class TeamUIMessages extends NLS {
 
 	public static String ExportProjectSetMainPage_WorkspaceDialogTitleMessage;
 
+	public static String ImportProjectSetMainPage_AddToWorkingSet;
+
+	public static String ImportProjectSetMainPage_Browse;
+
 	public static String information;
     
 	public static String ConfigureProjectAction_configureProject;

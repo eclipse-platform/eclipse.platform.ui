@@ -16,24 +16,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
@@ -41,14 +32,16 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	Combo fileCombo;
 	String file = ""; //$NON-NLS-1$
 	Button browseButton;
-	Button createWorkingSetButton;
-	Text workingSetNameField;
+	Button addToWorkingSet;
+	Text workingSetField;
 	
 	private boolean createWorkingSet = false;
 	private String workingSetName = ""; //$NON-NLS-1$
 	
+	private boolean haveBrowsed;
+	
 	// constants
-	private static final int SIZING_TEXT_FIELD_WIDTH = 80;
+	//private static final int SIZING_TEXT_FIELD_WIDTH = 80;
 
 	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -66,7 +59,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.IMPORT_PROJECT_SET_PAGE);
 				
 		Composite inner = new Composite(composite, SWT.NULL);
-		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginHeight = 0;
@@ -116,66 +109,76 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			}
 		});
 
-		createWorkinSetCreationArea(inner, 3);
+		addWorkingSetSection(composite);
 		setControl(composite);
 		updateEnablement();
         Dialog.applyDialogFont(parent);
 	}
 
-	/**
-	 * Method createWorkinSetCreationArea.
-	 * @param inner
-	 */
-	private void createWorkinSetCreationArea(Composite composite, int numColumns) {
-		
-		createWorkingSetButton = new Button(composite, SWT.CHECK | SWT.RIGHT);
-		createWorkingSetButton.setText(TeamUIMessages.ImportProjectSetMainPage_createWorkingSetLabel); 
-		createWorkingSetButton.setSelection(createWorkingSet);
+	private void addWorkingSetSection(Composite composite) {
+
+		addToWorkingSet = new Button(composite, SWT.CHECK | SWT.LEFT);
+		addToWorkingSet.setText( TeamUIMessages.ImportProjectSetMainPage_AddToWorkingSet);
 		GridData data = new GridData();
-		data.horizontalSpan = numColumns;
-		createWorkingSetButton.setLayoutData(data);
-
-		final Label label = new Label(composite, SWT.NONE);
-		label.setText(TeamUIMessages.ImportProjectSetMainPage_workingSetLabel); 
-		data = new GridData();
-		data.horizontalSpan = 1;
-		label.setLayoutData(data);
-		label.setEnabled(createWorkingSet);
+		data.horizontalSpan = 2;
+		addToWorkingSet.setLayoutData(data);
 		
-		workingSetNameField = new Text(composite, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		data.horizontalSpan = 1;
-		workingSetNameField.setLayoutData(data);
-		workingSetNameField.setEnabled(createWorkingSet);
-
-		createWorkingSetButton.addSelectionListener(new SelectionAdapter() {
+		addToWorkingSet.setSelection(false);
+		addToWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				createWorkingSet = createWorkingSetButton.getSelection();
-				label.setEnabled(createWorkingSet);
-				workingSetNameField.setEnabled(createWorkingSet);
+				createWorkingSet= !createWorkingSet;
 				updateEnablement();
 			}
 		});
-		workingSetNameField.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateEnablement();
-			}
-		});
-	}
 
+		Composite inner = new Composite(composite, SWT.NULL);
+		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		inner.setLayout(layout);
+
+		workingSetField = createTextField(inner);
+		workingSetField.setEditable(false);
+		browseButton = new Button(inner, SWT.PUSH);
+		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize = browseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		browseButton.setLayoutData(data);
+	
+		
+		//keep track if the user has browsed for working sets; don't show any error message until then
+		haveBrowsed = false;
+		browseButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				//open workspace selection dialog
+				final WorkingSetsDialog dialog = new WorkingSetsDialog(getShell());
+				haveBrowsed = true;
+				if (dialog.open() == Window.OK)
+					workingSetField.setText(dialog.getSelectedWorkingSet());
+				
+				updateEnablement();
+			}
+		});
+		updateEnablement();
+
+	}
+	
 	private boolean validateWorkingSetName() {
-		if (createWorkingSet) {
-			workingSetName =  workingSetNameField.getText();
+		if (addToWorkingSet.getSelection()) {
+			workingSetName = workingSetField.getText();
 			if (workingSetName.length() == 0) {
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); 
 				return false;
 			} else {
 				// todo: verify name doesn't already exist
 				IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-				if (existingSet != null) {
-					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, WARNING); 
-					return true;
+				if (existingSet != null && !existingSet.getId().equals(WorkingSetsDialog.resourceWorkingSetId)) {
+					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, ERROR); 
+					return false;
 				}
 			}
 		}
@@ -186,21 +189,36 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	private void updateEnablement() {
 		boolean complete;
 		setMessage(null);
+		
+		workingSetField.setEnabled(addToWorkingSet.getSelection());
+		browseButton.setEnabled(addToWorkingSet.getSelection());
+		
 		if (file.length() == 0) {
-			complete = false;
+			setPageComplete(false);
+			return;
 		} else {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, ERROR); 
-				complete = false;
+				setPageComplete(false);
+				return;
 			} else if (f.isDirectory()) {
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); 
-				complete = false;
-			} else {
-				complete = validateWorkingSetName();
-			}
+				setPageComplete(false);
+				return;
+			} 
 		}
+		
+		//If add to working set checkbox selected and the user has not selected
+		//a working set, mark page incomplete
+		if (addToWorkingSet.getSelection() && !haveBrowsed){
+			setPageComplete(false);
+			return;
+		}
+		
+		complete = validateWorkingSetName();
+			
 		setPageComplete(complete);
 	}
 

@@ -13,23 +13,14 @@ package org.eclipse.team.internal.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.ProjectSetImporter;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IImportWizard;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.xml.sax.SAXException;
 
@@ -49,12 +40,6 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		// check if the desired working set exists
 		final String workingSetName = mainPage.getWorkingSetName();
-		if (workingSetName != null) {
-			IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-			if (existingSet != null && 
-				!MessageDialog.openConfirm(getShell(), TeamUIMessages.ProjectSetImportWizard_workingSetExistsTitle, NLS.bind(TeamUIMessages.ProjectSetImportWizard_workingSetExistsMessage, new String[] { workingSetName }))) // 
-					return false;
-		}
 		
 		final boolean[] result = new boolean[] {false};
 		try {
@@ -90,7 +75,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		}
 		return result[0];
 	}
-	
+		
 	/* private */ void createWorkingSet(String workingSetName, IProject[] projects) {
 		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
 		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
@@ -98,7 +83,12 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 			IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
 			manager.addWorkingSet(newSet);
 		}else {
-			oldSet.setElements(projects);
+			//don't overwrite the old elements
+			IAdaptable[] tempElements = oldSet.getElements();
+			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + projects.length];
+			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
+			System.arraycopy(projects, 0,finalElementList, tempElements.length, projects.length);
+			oldSet.setElements(finalElementList);
 		}	
 	}
 
