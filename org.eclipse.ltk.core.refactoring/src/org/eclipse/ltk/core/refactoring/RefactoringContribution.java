@@ -73,12 +73,12 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
 public abstract class RefactoringContribution {
 
 	/**
-	 * Creates a new customizable refactoring descriptor, initialized with its
+	 * Creates a new customizable refactoring descriptor initialized with its
 	 * default values.
 	 * <p>
 	 * This method may be reimplemented to return a language-specified
 	 * refactoring descriptor which can be initialized using language-specific
-	 * features. Refactoring tool providers may reimplement this API in order to
+	 * features. Refactoring tool providers may reimplement this method to
 	 * provide a uniform API to expose refactoring functionality in the form of
 	 * refactoring descriptors.
 	 * </p>
@@ -88,7 +88,8 @@ public abstract class RefactoringContribution {
 	 * provided by the API of the refactoring tooling provider.
 	 * </p>
 	 * <p>
-	 * Note: this method is supposed to be reimplemented by clients.
+	 * Note: this method is supposed to be reimplemented by clients wishing to
+	 * provide customizable refactoring descriptors.
 	 * </p>
 	 * 
 	 * @return the refactoring descriptor, or <code>null</code> if the
@@ -104,8 +105,8 @@ public abstract class RefactoringContribution {
 	}
 
 	/**
-	 * Creates a new refactoring descriptor, initialized with the values
-	 * provided by the arguments of this method.
+	 * Creates a new refactoring descriptor initialized with the values provided
+	 * by the arguments of this method.
 	 * <p>
 	 * This method is used by the refactoring framework to create a
 	 * language-specific refactoring descriptor representing the refactoring
@@ -181,7 +182,7 @@ public abstract class RefactoringContribution {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * Note: subclasses must extend this method to provide more specific
+	 * Note: Subclasses must extend this method to provide more specific
 	 * implementation in order to let the refactoring framework retrieve the
 	 * argument map from language-specific refactoring descriptors.
 	 * Implementations of this method must never return <code>null</code>.
