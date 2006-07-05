@@ -15,7 +15,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.internal.ui.actions.context.ActionRequestMonitor;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter;
-import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * As targets are launched, this manager sets its step filter
@@ -64,7 +63,7 @@ public class StepFilterManager implements ILaunchListener {
 	 * @return whether to use step filters
 	 */
 	public boolean isUseStepFilters() {
-		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_USE_STEP_FILTERS);
+		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS);
 	}
 	
 	/**
@@ -73,7 +72,7 @@ public class StepFilterManager implements ILaunchListener {
 	 * @param useFilters whether to use step filters
 	 */
 	public void setUseStepFilters(boolean useFilters) {
-		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_USE_STEP_FILTERS, useFilters);
+		DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS, useFilters);
 		ILaunch[] launchs = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (int i = 0; i < launchs.length; i++) {
 			ILaunch launch = launchs[i];

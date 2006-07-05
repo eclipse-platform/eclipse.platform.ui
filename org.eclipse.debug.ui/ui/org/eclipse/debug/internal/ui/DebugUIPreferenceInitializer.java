@@ -90,7 +90,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false);		 //$NON-NLS-1$
 		
 		// Step filter preferences
-		prefs.setDefault(IDebugUIConstants.PREF_USE_STEP_FILTERS, false);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS, false);
 		
 		// set default for column size preference
 		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE, 
