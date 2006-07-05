@@ -47,13 +47,12 @@ public class InstructionPointerManager {
 	 * Mapping of IDebugTarget objects to (mappings of IThread objects to lists of instruction
 	 * pointer contexts).
 	 */
-	private Map fDebugTargetMap;
+	private Map fDebugTargetMap = new HashMap();
 	
 	/**
 	 * Clients must not instantiate this class.
 	 */
 	private InstructionPointerManager() {
-		fDebugTargetMap = new HashMap();
 	}
 	
 	/**
@@ -110,28 +109,34 @@ public class InstructionPointerManager {
 		}
 		position = new Position(charStart, length);
 		
-		// Add the annotation at the position to the editor's annotation model.
-		annModel.removeAnnotation(annotation);
-		annModel.addAnnotation(annotation, position);	
-		
-		// Retrieve the list of instruction pointer contexts
-		IDebugTarget debugTarget = frame.getDebugTarget();
-		Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-		if (threadMap == null) {
-			threadMap = new HashMap();	
-			fDebugTargetMap.put(debugTarget, threadMap);		
-		}
-		IThread thread = frame.getThread();
-		List contextList = (List) threadMap.get(thread);
-		if (contextList == null) {
-			contextList = new ArrayList();
-			threadMap.put(thread, contextList);
+		if (frame.isTerminated()) {
+			return;
 		}
 		
-		// Create a context object & add it to the list
-		InstructionPointerContext context = new InstructionPointerContext(textEditor, annotation);
-		contextList.remove(context);
-		contextList.add(context);
+		synchronized (fDebugTargetMap) {
+			// Add the annotation at the position to the editor's annotation model.
+			annModel.removeAnnotation(annotation);
+			annModel.addAnnotation(annotation, position);	
+			
+			// Retrieve the list of instruction pointer contexts
+			IDebugTarget debugTarget = frame.getDebugTarget();
+			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
+			if (threadMap == null) {
+				threadMap = new HashMap();	
+				fDebugTargetMap.put(debugTarget, threadMap);		
+			}
+			IThread thread = frame.getThread();
+			List contextList = (List) threadMap.get(thread);
+			if (contextList == null) {
+				contextList = new ArrayList();
+				threadMap.put(thread, contextList);
+			}
+			
+			// Create a context object & add it to the list
+			InstructionPointerContext context = new InstructionPointerContext(textEditor, annotation);
+			contextList.remove(context);
+			contextList.add(context);
+		}
 	}
 	
 	/**
@@ -139,22 +144,23 @@ public class InstructionPointerManager {
 	 * is tracking.
 	 */
 	public void removeAnnotations(IDebugTarget debugTarget) {
-		
-		// Retrieve the mapping of threads to context lists
-		Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-		if (threadMap == null) {
-			return;
+		synchronized (fDebugTargetMap) {
+			// Retrieve the mapping of threads to context lists
+			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
+			if (threadMap == null) {
+				return;
+			}
+			
+			// Remove annotations for all threads associated with the debug target
+			Object[] threads = threadMap.keySet().toArray();
+			for (int i = 0; i < threads.length; i++) {
+				IThread thread = (IThread) threads[i];
+				removeAnnotations(thread, threadMap);
+			}
+			
+			// Remove the entry for the debug target
+			fDebugTargetMap.remove(debugTarget);
 		}
-		
-		// Remove annotations for all threads associated with the debug target
-		Object[] threads = threadMap.keySet().toArray();
-		for (int i = 0; i < threads.length; i++) {
-			IThread thread = (IThread) threads[i];
-			removeAnnotations(thread, threadMap);
-		}
-		
-		// Remove the entry for the debug target
-		fDebugTargetMap.remove(debugTarget);
 	}
 	
 	/**
@@ -162,18 +168,19 @@ public class InstructionPointerManager {
 	 * is tracking.
 	 */
 	public void removeAnnotations(IThread thread) {
-		
-		// Retrieve the thread map
-		IDebugTarget debugTarget = thread.getDebugTarget();
-		Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-		if (threadMap == null) {
-			return;
-		}
-		
-		// Remove all annotations for the thread
-		removeAnnotations(thread, threadMap);
-		if (threadMap.isEmpty()) {
-			fDebugTargetMap.remove(debugTarget);
+		synchronized (fDebugTargetMap) {
+			// Retrieve the thread map
+			IDebugTarget debugTarget = thread.getDebugTarget();
+			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
+			if (threadMap == null) {
+				return;
+			}
+			
+			// Remove all annotations for the thread
+			removeAnnotations(thread, threadMap);
+			if (threadMap.isEmpty()) {
+				fDebugTargetMap.remove(debugTarget);
+			}
 		}
 	}
 	
