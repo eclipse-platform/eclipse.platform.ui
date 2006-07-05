@@ -926,7 +926,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		setAction(FIND_ELEMENT, action);
 		
 		// TODO: Still using "old" resource access
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
 		action = new FindReplaceAction(bundle, "find_replace_action_", VariablesView.this);	 //$NON-NLS-1$
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction("FindReplaceText", action); //$NON-NLS-1$
