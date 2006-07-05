@@ -23,4 +23,10 @@
          </enablement>
       </renameParticipant>
    </extension>
+     <extension
+           point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+        <contribution
+              class="org.eclipse.ltk.core.refactoring.tests.history.MockRefactoringContribution"
+              id="org.eclipse.ltk.core.mock"></contribution>
+     </extension>
 </plugin>

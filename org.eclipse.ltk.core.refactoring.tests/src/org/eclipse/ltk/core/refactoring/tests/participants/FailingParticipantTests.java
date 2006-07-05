@@ -20,12 +20,12 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class FailingParticipantTests extends TestCase {
 
 	private ElementRenameRefactoring fRefactoring;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
-	public void test() throws Exception {
+
+    public FailingParticipantTests() {
+	    super("Failing Participants Tests");
+    }
+
+	public void testFailingParticipants() throws Exception {
 		fRefactoring= new ElementRenameRefactoring();
 		fRefactoring.checkInitialConditions(new NullProgressMonitor());
 		fRefactoring.checkFinalConditions(new NullProgressMonitor());

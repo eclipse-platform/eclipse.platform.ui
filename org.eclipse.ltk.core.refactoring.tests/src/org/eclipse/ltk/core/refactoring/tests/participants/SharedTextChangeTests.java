@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.core.refactoring.tests;
+package org.eclipse.ltk.core.refactoring.tests.participants;
 
 import junit.framework.TestCase;
 
@@ -38,7 +38,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
-public class SharedTextChangeTest extends TestCase {
+public class SharedTextChangeTests extends TestCase {
 
 	private SimpleTestProject fProject;
 	
@@ -99,7 +99,11 @@ public class SharedTextChangeTest extends TestCase {
 			return new RefactoringParticipant[] { participant };
 		}
 	}
-	
+
+    public SharedTextChangeTests() {
+	    super("Shared TextChange Tests");
+    }
+
 	/**
 	 * {@inheritDoc}
 	 */
