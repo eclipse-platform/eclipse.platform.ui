@@ -43,8 +43,8 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.LineDelimiterEditor;
 
 /**
- * The ResourceInfoPage is the page that shows the basic
- * info about the resource.
+ * The ResourceInfoPage is the page that shows the basic info about the
+ * resource.
  */
 public class ResourceInfoPage extends PropertyPage {
 
@@ -133,7 +133,8 @@ public class ResourceInfoPage extends PropertyPage {
 		// path value label
 		Text pathValueText = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
-		String pathString = TextProcessor.process(resource.getFullPath().toString());
+		String pathString = TextProcessor.process(resource.getFullPath()
+				.toString());
 		pathValueText.setText(pathString);
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
@@ -150,7 +151,8 @@ public class ResourceInfoPage extends PropertyPage {
 		typeTitle.setFont(font);
 
 		Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
-		typeValue.setText(IDEResourceInfoUtils.getTypeString(resource, getContentDescription(resource)));
+		typeValue.setText(IDEResourceInfoUtils.getTypeString(resource,
+				getContentDescription(resource)));
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		typeValue.setFont(font);
@@ -165,7 +167,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
 				| SWT.READ_ONLY);
-		String locationStr = TextProcessor.process(IDEResourceInfoUtils.getLocationText(resource));
+		String locationStr = TextProcessor.process(IDEResourceInfoUtils
+				.getLocationText(resource));
 		locationValue.setText(locationStr);
 		gd = new GridData();
 		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
@@ -187,7 +190,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 			Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
-			resolvedLocationValue.setText(IDEResourceInfoUtils.getResolvedLocationText(resource));
+			resolvedLocationValue.setText(IDEResourceInfoUtils
+					.getResolvedLocationText(resource));
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
@@ -225,7 +229,8 @@ public class ResourceInfoPage extends PropertyPage {
 				IIDEHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 		// layout the page
-		IResource resource = (IResource) getElement().getAdapter(IResource.class);
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
 		if (resource.getType() != IResource.PROJECT) {
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {
@@ -273,7 +278,8 @@ public class ResourceInfoPage extends PropertyPage {
 		});
 
 		if (resource.getType() == IResource.PROJECT) {
-			lineDelimiterEditor = new LineDelimiterEditor(composite, resource.getProject());
+			lineDelimiterEditor = new LineDelimiterEditor(composite, resource
+					.getProject());
 			lineDelimiterEditor.doLoad();
 		}
 
@@ -418,7 +424,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		// timeStamp value label
 		Text timeStampValue = new Text(composite, SWT.READ_ONLY);
-		timeStampValue.setText(IDEResourceInfoUtils.getDateStringValue(resource));
+		timeStampValue.setText(IDEResourceInfoUtils
+				.getDateStringValue(resource));
 		timeStampValue.setFont(font);
 		timeStampValue.setBackground(timeStampValue.getDisplay()
 				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -442,17 +449,19 @@ public class ResourceInfoPage extends PropertyPage {
 						createArchiveButton(composite);
 					}
 				} catch (CoreException e) {
-					//ignore if we can't access the file system for this resource
+					// ignore if we can't access the file system for this
+					// resource
 				}
 			}
 			createDerivedButton(composite);
-			//create warning for executable flag
+			// create warning for executable flag
 			if (executableBox != null && resource.getType() == IResource.FOLDER) {
-		        Composite noteComposite = createNoteComposite(font, composite,
-		        		IDEWorkbenchMessages.Preference_note, IDEWorkbenchMessages.ResourceInfo_exWarning);
-		        GridData noteData = new GridData();
-		        noteData.horizontalSpan = 2;
-		        noteComposite.setLayoutData(noteData);
+				Composite noteComposite = createNoteComposite(font, composite,
+						IDEWorkbenchMessages.Preference_note,
+						IDEWorkbenchMessages.ResourceInfo_exWarning);
+				GridData noteData = new GridData();
+				noteData.horizontalSpan = 2;
+				noteComposite.setLayoutData(noteData);
 			}
 		}
 	}
@@ -464,7 +473,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		if (cachedContentDescription == null) {
 			try {
-				cachedContentDescription = ((IFile)resource).getContentDescription();
+				cachedContentDescription = ((IFile) resource)
+						.getContentDescription();
 			} catch (CoreException e) {
 				// silently ignore
 			}
@@ -534,7 +544,8 @@ public class ResourceInfoPage extends PropertyPage {
 	 */
 	public boolean performOk() {
 
-		IResource resource = (IResource) getElement();
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
 
 		encodingEditor.store();
 
@@ -593,8 +604,9 @@ public class ResourceInfoPage extends PropertyPage {
 				}
 			}
 		} catch (CoreException exception) {
-			ErrorDialog.openError(getShell(), IDEWorkbenchMessages.InternalError,
-					exception.getLocalizedMessage(), exception.getStatus());
+			ErrorDialog.openError(getShell(),
+					IDEWorkbenchMessages.InternalError, exception
+							.getLocalizedMessage(), exception.getStatus());
 			return false;
 		}
 		return true;
