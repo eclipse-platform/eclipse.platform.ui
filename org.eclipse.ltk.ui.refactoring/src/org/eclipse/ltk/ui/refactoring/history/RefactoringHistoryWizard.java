@@ -69,6 +69,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -216,23 +217,6 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	public static final int STATUS_CODE_INTERRUPTED= 10003;
 
-	/**
-	 * Converts a button label to pure text.
-	 * 
-	 * @param label
-	 *            the button label
-	 * @return the resulting text
-	 */
-	private static String getLabelAsText(final String label) {
-		Assert.isNotNull(label);
-		StringBuffer buffer= new StringBuffer(label.length());
-		for (int index= 0; index < label.length(); index++) {
-			char character= label.charAt(index);
-			if (character != '&')
-				buffer.append(character);
-		}
-		return buffer.toString();
-	}
 
 	/** Has the about to perform history event already been fired? */
 	private boolean fAboutToPerformFired= false;
@@ -1029,7 +1013,7 @@ public class RefactoringHistoryWizard extends Wizard {
 		} else {
 			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_FINISH) && proxies.length > 0) {
-				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, getLabelAsText(IDialogConstants.FINISH_LABEL)), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
+				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, LegacyActionTools.removeMnemonics(IDialogConstants.FINISH_LABEL)), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
 				dialog.open();
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
 				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID)

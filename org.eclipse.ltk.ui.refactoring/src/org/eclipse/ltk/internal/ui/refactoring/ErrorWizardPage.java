@@ -13,9 +13,15 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
+import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -23,10 +29,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
-import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 
@@ -79,13 +81,7 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 
 	protected String getLabelAsText(String label) {
 		Assert.isNotNull(label);
-		StringBuffer buffer= new StringBuffer(label.length());
-		for (int index= 0; index < label.length(); index++) {
-			char character= label.charAt(index);
-			if (character != '&')
-				buffer.append(character);
-		}
-		return buffer.toString();
+		return LegacyActionTools.removeMnemonics(label);
 	}
 
 	/**
