@@ -62,7 +62,10 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * Note: Clients which extend this class are required to reimplement the method
  * {@link #retrieveArgumentMap(RefactoringDescriptor)} in subclasses to capture
  * the state of a language-specific refactoring descriptor in a neutral
- * key-value representation used by the refactoring framework.
+ * key-value representation used by the refactoring framework. The default
+ * implementation in this class only handles refactoring descriptors associated
+ * with refactorings for which no corresponding refactoring contribution has
+ * been registered.
  * </p>
  * 
  * @since 3.2
