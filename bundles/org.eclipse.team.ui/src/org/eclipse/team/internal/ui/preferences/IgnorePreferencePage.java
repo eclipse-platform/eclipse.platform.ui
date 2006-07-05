@@ -36,7 +36,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Creates preference page controls on demand.
 	 *
-	 * @param parent  the parent for the preference page
+	 * @param ancestor  the parent for the preference page
 	 */
 	protected Control createContents(Composite ancestor) {
 		

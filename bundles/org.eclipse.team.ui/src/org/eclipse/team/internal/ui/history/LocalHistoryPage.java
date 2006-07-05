@@ -311,7 +311,7 @@ public class LocalHistoryPage extends HistoryPage {
 	/**
 	 * Creates the tree that displays the local file revisions
 	 * 
-	 * @param the parent composite to contain the group
+	 * @param parent the parent composite to contain the group
 	 * @return the group control
 	 */
 	protected TreeViewer createTree(Composite parent) {

@@ -56,7 +56,6 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	/**
 	 * Initialize the diff tree of this context. This method must
 	 * be called before the context is given to clients.
-	 * @throws CoreException
 	 */
 	protected void initialize() {
 		handler = new SubscriberDiffTreeEventHandler(subscriber, manager, (ResourceDiffTree)getDiffTree());

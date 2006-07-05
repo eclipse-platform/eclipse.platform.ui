@@ -217,7 +217,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 *	was able to be adequately initialized.
 	 *
 	 *	@param element  the element to initialize the properties for
-	 *	@param extension  the registry to get properties from
+	 *	@param config  the registry to get properties from
 	 *	@return whether initialization was successful
 	 */
 	protected boolean initializeWizard(ConfigurationWizardElement element, IConfigurationElement config) {

@@ -233,7 +233,7 @@ public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelP
     /**
      * Add the give sync infos to the provider, creating
      * any intermediate nodes a required.
-     * @param infos the added infos
+     * @param added the added infos
      */
 	protected void addResources(SyncInfo[] added) {
 		for (int i = 0; i < added.length; i++) {

@@ -319,10 +319,9 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	/**
 	 * Shows the given errors to the user.
 	 * 
-	 * @param status  the status containing the error
+	 * @param exception  the status containing the error
 	 * @param title  the title of the error dialog
 	 * @param message  the message for the error dialog
-	 * @param shell  the shell to open the error dialog in
 	 */
 	protected void handle(Exception exception, String title, String message) {
 		Utils.handleError(getShell(), exception, title, message);

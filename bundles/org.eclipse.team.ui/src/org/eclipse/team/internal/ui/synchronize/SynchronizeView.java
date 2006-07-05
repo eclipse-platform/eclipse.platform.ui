@@ -377,7 +377,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	/**
 	 * Add the actions to the toolbar
 	 * 
-	 * @param mgr toolbar manager
+	 * @param bars the action bars
 	 */
 	protected void configureToolBar(IActionBars bars) {
 		IToolBarManager mgr = bars.getToolBarManager();

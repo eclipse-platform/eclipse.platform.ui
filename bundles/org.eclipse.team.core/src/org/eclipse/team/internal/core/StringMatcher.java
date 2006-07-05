@@ -372,7 +372,7 @@ public class StringMatcher {
 	 * @param text the string to match
 	 * @param start the starting index in the text for search, inclusive
 	 * @param end the stopping point of search, exclusive
-	 * @param pattern a string that has no wildcard
+	 * @param p a string that has no wildcard
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	protected int textPosIn(String text, int start, int end, String p) { 

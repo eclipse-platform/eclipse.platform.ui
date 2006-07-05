@@ -348,7 +348,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 	 * given page is now current. Subclasses may extend.
 	 * </p>
 	 *
-	 * @param pageRec the page record containing the page to show
+	 * @param pageContainer the page record containing the page to show
 	 */
 	protected void showPageRec(PageContainer pageContainer) {
 		// If already showing do nothing

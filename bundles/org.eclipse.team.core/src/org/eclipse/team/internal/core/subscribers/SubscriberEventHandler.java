@@ -287,10 +287,9 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	/**
 	 * Called to initialize to calculate the synchronization information using the optimized subscriber method. For
 	 * subscribers that don't support the optimization, all resources in the subscriber are manually re-calculated. 
-	 * @param resources the resources to check
+	 * @param resource the resources to check
 	 * @param depth the depth
 	 * @param monitor
-	 * @throws TeamException
 	 */
 	protected abstract void collectAll(
 		IResource resource,

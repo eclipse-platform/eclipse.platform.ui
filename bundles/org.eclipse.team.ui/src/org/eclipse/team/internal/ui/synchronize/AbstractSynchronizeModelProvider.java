@@ -957,7 +957,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	
 	/**
 	 * Remove the element from the viewer
-	 * @param element the element to be removed
+	 * @param elements the elements to be removed
 	 */
 	protected void doRemove(ISynchronizeModelElement[] elements) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();

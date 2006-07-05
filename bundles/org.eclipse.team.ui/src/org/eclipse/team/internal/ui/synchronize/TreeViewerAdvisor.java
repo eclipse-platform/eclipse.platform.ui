@@ -303,8 +303,6 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 	 * default one provided by this method or subclass <code>TeamSubscriberParticipantLabelProvider</code>.
 	 * In the later case, the logical label provider should still be assigned
 	 * to the subclass of <code>TeamSubscriberParticipantLabelProvider</code>.
-	 * @param logicalProvider
-	 *            the label provider for the selected logical view
 	 * @return a label provider
 	 * @see SynchronizeModelElementLabelProvider
 	 */
