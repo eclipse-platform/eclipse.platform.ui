@@ -38,7 +38,7 @@ public interface IRefactoringDescriptorDeleteQuery {
 	 * The refactoring descriptor will considered to be deleted only if this
 	 * method returns a status of severity {@link RefactoringStatus#OK}.<br>
 	 * If a status of severity {@link RefactoringStatus#FATAL} is returned, the
-	 * entire operation which this deletion if part of is considered to be
+	 * entire operation which this deletion is part of is considered to be
 	 * aborted.
 	 * </p>
 	 * 
