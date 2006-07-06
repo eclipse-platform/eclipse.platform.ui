@@ -134,6 +134,10 @@ public class TabbedPropertySheetWidgetFactory
     public CCombo createCCombo(Composite parent, int comboStyle) {
         CCombo combo = new CCombo(parent, comboStyle);
         adapt(combo, true, false);
+        // Bugzilla 145837 - workaround for no borders on Windows XP
+		if (getBorderStyle() == SWT.BORDER) {
+			combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		}
         return combo;
     }
 
