@@ -48,7 +48,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleResume(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.CONTENT | IModelDelta.STATE | IModelDelta.SELECT);
 	}
 
 	protected void handleSuspend(DebugEvent event) {
