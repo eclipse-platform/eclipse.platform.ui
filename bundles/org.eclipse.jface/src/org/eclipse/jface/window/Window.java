@@ -1018,7 +1018,7 @@ public abstract class Window implements IShellProvider {
 	/**
 	 * Sets the exception handler for this application.
 	 * <p>
-	 * Note that only one handler may be set. Other calls to this method will be
+	 * Note that the handler may only be set once.  Subsequent calls to this method will be
 	 * ignored.
 	 * <p>
 	 * 
