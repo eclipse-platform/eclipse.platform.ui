@@ -18,7 +18,7 @@
          id="testDynamicPropertyPageAddition"
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="java.lang.Object"
+            objectClass="org.eclipse.ui.tests.dynamicplugins.DynamicTestType"
             class="org.eclipse.ui.dynamic.DynamicPropertyPage"
             name="org.eclipse.ui.tests.page1"
             id="dynamicPropertyPage1"/>

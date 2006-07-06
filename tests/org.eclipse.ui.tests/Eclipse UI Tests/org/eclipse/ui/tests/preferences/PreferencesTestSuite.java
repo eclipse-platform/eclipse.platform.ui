@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
+import org.eclipse.ui.tests.propertyPages.PropertyPageEnablementTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -34,5 +36,6 @@ public class PreferencesTestSuite extends TestSuite {
         addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
         addTest(new TestSuite(ScopedPreferenceStoreTestCase.class));
         addTest(new TestSuite(WorkingCopyPreferencesTestCase.class));
+        addTest(new TestSuite(PropertyPageEnablementTest.class));
     }
 }
