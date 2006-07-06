@@ -43,6 +43,25 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextActivated(java.lang.Object, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public synchronized void contextActivated(ISelection selection, IWorkbenchPart part) {
+		displaySource(selection, part, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void contextChanged(ISelection selection, IWorkbenchPart part) {	
+		displaySource(selection, part, true);
+	}
+	
+	/**
+	 * Displays source for the given selection and part, optionally forcing
+	 * a source lookup.
+	 * 
+	 * @param selection
+	 * @param part
+	 * @param force
+	 */
+	protected synchronized void displaySource(ISelection selection, IWorkbenchPart part, boolean force) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			if (structuredSelection.size() == 1) {
@@ -53,17 +72,10 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 				} else {
 					page = part.getSite().getPage();
 				} 
-				displaySource(context, page, false);
+				displaySource(context, page, force);
 			}
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {	
-		contextActivated(selection, part);
-	}
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
