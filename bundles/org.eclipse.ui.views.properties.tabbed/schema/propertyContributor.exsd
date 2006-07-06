@@ -71,6 +71,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="actionProvider" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements the action provider for the property sheet page, i.e. implements &lt;tt&gt;org.eclipse.ui.views.properties.tabbed.IActionProvider&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.properties.tabbed.IActionProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
