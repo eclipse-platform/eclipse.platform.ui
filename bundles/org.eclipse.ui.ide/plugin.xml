@@ -343,7 +343,7 @@
             label="%PreferenceKeywords.Tabs"/>
       <keyword
             id="org.eclipse.ui.ide.editors"
-            label="%PreferenceKeywords.Editors "/>
+            label="%PreferenceKeywords.Editors"/>
       <keyword
             id="org.eclipse.ui.ide.keys"
             label="%PreferenceKeywords.Keys"/>
