@@ -10,16 +10,44 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.history;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class MockRefactoring extends Refactoring {
+
+	private Map fArguments= Collections.EMPTY_MAP;
+
+	private String fComment= "A mock comment";
+
+	private String fDescription= "A mock description";
+
+	private int fFlags= RefactoringDescriptor.BREAKING_CHANGE;
+
+	private String fProject= "MockProject";
+
+	public MockRefactoring() {
+
+	}
+
+	public MockRefactoring(String project, String description, String comment, Map arguments, int flags) {
+		fProject= project;
+		fDescription= description;
+		fComment= comment;
+		fArguments= arguments;
+		fFlags= flags;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -39,7 +67,16 @@ public class MockRefactoring extends Refactoring {
 	 * {@inheritDoc}
 	 */
 	public Change createChange(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		return new NullChange();
+		return new NullChange() {
+
+			/**
+			 * {@inheritDoc}
+			 */
+			public ChangeDescriptor getDescriptor() {
+				MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor(fProject, fDescription, fComment, fArguments, fFlags);
+				return new RefactoringChangeDescriptor(descriptor);
+			}
+		};
 	}
 
 	/**

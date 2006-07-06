@@ -18,6 +18,7 @@ public class RefactoringHistoryTests {
 	public static Test suite() {
 		TestSuite suite= new TestSuite("All LTK Refactoring History Tests"); //$NON-NLS-1$
 		suite.addTestSuite(RefactoringHistorySerializationTests.class);
+		suite.addTestSuite(RefactoringHistoryServiceTests.class);
 		return suite;
 	}
 }
