@@ -144,8 +144,8 @@ public class CommonViewer extends TreeViewer {
 	}
 
 	protected void handleDispose(DisposeEvent event) {
-		super.handleDispose(event);
 		dispose();
+		super.handleDispose(event);
 	}
 
 //	/* (non-Javadoc) Method declared on StructuredViewer. */
