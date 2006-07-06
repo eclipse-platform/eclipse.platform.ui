@@ -96,10 +96,10 @@ public class CellEditorActionHandler {
             cellFindAction);
 
     private IPropertyChangeListener undoActionListener = new ActionEnabledChangeListener(
-            cellRedoAction);
+            cellUndoAction);
 
     private IPropertyChangeListener redoActionListener = new ActionEnabledChangeListener(
-            cellUndoAction);
+            cellRedoAction);
 
     private CellEditor activeEditor;
 
