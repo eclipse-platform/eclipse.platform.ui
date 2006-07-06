@@ -8,7 +8,9 @@ Bundle-Activator: org.eclipse.ltk.core.refactoring.tests.RefactoringCoreTestPlug
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.core.refactoring.tests;x-internal:=true,
+ org.eclipse.ltk.core.refactoring.tests.history,
  org.eclipse.ltk.core.refactoring.tests.participants;x-internal:=true,
+ org.eclipse.ltk.core.refactoring.tests.scripting,
  org.eclipse.ltk.core.refactoring.tests.util;x-internal:=true
 Require-Bundle: org.junit,
  org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
