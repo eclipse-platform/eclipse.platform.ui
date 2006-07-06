@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import com.ibm.icu.text.Collator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,6 +43,19 @@ import org.w3c.dom.Node;
  */
 public final class RefactoringSessionTransformer {
 
+	/** Comparator for attributes */
+	private static final class AttributeComparator implements Comparator {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public int compare(final Object first, final Object second) {
+			final Attr predecessor= (Attr) first;
+			final Attr successor= (Attr) second;
+			return Collator.getInstance().compare(predecessor.getName(), successor.getName());
+		}
+	}
+
 	/** The current document, or <code>null</code> */
 	private Document fDocument= null;
 
@@ -44,8 +65,14 @@ public final class RefactoringSessionTransformer {
 	/** The current refactoring node, or <code>null</code> */
 	private Node fRefactoring= null;
 
+	/** The current refactoring arguments, or <code>null</code> */
+	private List fRefactoringArguments= null;
+
 	/** The current session node, or <code>null</code> */
 	private Node fSession= null;
+
+	/** The current session arguments, or <code>null</code> */
+	private List fSessionArguments= null;
 
 	/**
 	 * Creates a new refactoring session transformer.
@@ -56,6 +83,26 @@ public final class RefactoringSessionTransformer {
 	 */
 	public RefactoringSessionTransformer(final boolean projects) {
 		fProjects= projects;
+	}
+
+	/**
+	 * Adds the attributes specified in the list to the node, in ascending order
+	 * of their names.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param list
+	 *            the list of attributes
+	 */
+	private void addArguments(final Node node, final List list) {
+		final NamedNodeMap map= node.getAttributes();
+		if (map != null) {
+			Collections.sort(list, new AttributeComparator());
+			for (final Iterator iterator= list.iterator(); iterator.hasNext();) {
+				final Attr attribute= (Attr) iterator.next();
+				map.setNamedItem(attribute);
+			}
+		}
 	}
 
 	/**
@@ -100,33 +147,33 @@ public final class RefactoringSessionTransformer {
 		}
 		if (fRefactoring == null) {
 			try {
+				fRefactoringArguments= new ArrayList(16);
 				fRefactoring= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
-				final NamedNodeMap attributes= fRefactoring.getAttributes();
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_ID);
 				attribute.setValue(id);
-				attributes.setNamedItem(attribute);
+				fRefactoringArguments.add(attribute);
 				if (stamp >= 0) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
 					attribute.setValue(new Long(stamp).toString());
-					attributes.setNamedItem(attribute);
+					fRefactoringArguments.add(attribute);
 				}
 				if (flags != RefactoringDescriptor.NONE) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_FLAGS);
 					attribute.setValue(String.valueOf(flags));
-					attributes.setNamedItem(attribute);
+					fRefactoringArguments.add(attribute);
 				}
 				attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION);
 				attribute.setValue(description);
-				attributes.setNamedItem(attribute);
+				fRefactoringArguments.add(attribute);
 				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
-					attributes.setNamedItem(attribute);
+					fRefactoringArguments.add(attribute);
 				}
 				if (project != null && fProjects) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_PROJECT);
 					attribute.setValue(project);
-					attributes.setNamedItem(attribute);
+					fRefactoringArguments.add(attribute);
 				}
 				if (fSession == null)
 					fDocument.appendChild(fRefactoring);
@@ -161,13 +208,14 @@ public final class RefactoringSessionTransformer {
 			try {
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 				fSession= fDocument.createElement(IRefactoringSerializationConstants.ELEMENT_SESSION);
+				fSessionArguments= new ArrayList(2);
 				Attr attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
 				attribute.setValue(version);
-				fSession.getAttributes().setNamedItem(attribute);
+				fSessionArguments.add(attribute);
 				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 					attribute.setValue(comment);
-					fSession.getAttributes().setNamedItem(attribute);
+					fSessionArguments.add(attribute);
 				}
 				fDocument.appendChild(fSession);
 			} catch (DOMException exception) {
@@ -197,11 +245,11 @@ public final class RefactoringSessionTransformer {
 		Assert.isTrue(!"".equals(name)); //$NON-NLS-1$
 		Assert.isNotNull(value);
 		Assert.isTrue(!"".equals(value)); //$NON-NLS-1$
-		if (fDocument != null && fRefactoring != null && value != null) {
+		if (fDocument != null && fRefactoringArguments != null && value != null) {
 			try {
 				final Attr attribute= fDocument.createAttribute(name);
 				attribute.setValue(value);
-				fRefactoring.getAttributes().setNamedItem(attribute);
+				fRefactoringArguments.add(attribute);
 			} catch (DOMException exception) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getLocalizedMessage(), null));
 			}
@@ -215,6 +263,9 @@ public final class RefactoringSessionTransformer {
 	 * </p>
 	 */
 	public void endRefactoring() {
+		if (fRefactoring != null && fRefactoringArguments != null)
+			addArguments(fRefactoring, fRefactoringArguments);
+		fRefactoringArguments= null;
 		fRefactoring= null;
 	}
 
@@ -226,6 +277,9 @@ public final class RefactoringSessionTransformer {
 	 * </p>
 	 */
 	public void endSession() {
+		if (fSession != null && fSessionArguments != null)
+			addArguments(fSession, fSessionArguments);
+		fSessionArguments= null;
 		fSession= null;
 	}
 
