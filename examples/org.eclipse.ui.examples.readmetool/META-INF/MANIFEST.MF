@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors
 Eclipse-AutoStart: true
 Eclipse-AutoStart-comment: Use Eclipse-AutoStart instead of Eclipse-LazyStart because the readme example should run against 3.1 as well as 3.2.
+Export-Package: org.eclipse.ui.examples.readmetool
