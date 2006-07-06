@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 3.2
  */
-public class CalendarableItemControl extends Canvas  {
+public class DayEditorCalendarableItemControl extends Canvas implements ICalendarableItemControl  {
 
 	private static final int MARGIN = 3;
 	private Label label = null;
@@ -77,7 +77,7 @@ public class CalendarableItemControl extends Canvas  {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public CalendarableItemControl(Composite parent, int style) {
+	public DayEditorCalendarableItemControl(Composite parent, int style) {
 		super(parent, style);
 		Display display = parent.getDisplay();
 		BORDER_COLOR = new Color(display, 215, 215, 245);
@@ -88,6 +88,9 @@ public class CalendarableItemControl extends Canvas  {
 		initialize();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		BORDER_COLOR.dispose();
@@ -116,13 +119,16 @@ public class CalendarableItemControl extends Canvas  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setMenu(org.eclipse.swt.widgets.Menu)
+	 */
 	public void setMenu(Menu menu) {
 		super.setMenu(menu);
 		label.setMenu(menu);
 	}
 
-	/**
-	 * @param text
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setText(java.lang.String)
 	 */
 	public void setText(String text) {
 		if (text == null) {
@@ -135,13 +141,16 @@ public class CalendarableItemControl extends Canvas  {
 		label.setText(text);
 	}
 		
-	/**
-	 * @param image
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setImage(org.eclipse.swt.graphics.Image)
 	 */
 	public void setImage(Image image) {
 		label.setImage(image);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setToolTipText(java.lang.String)
+	 */
 	public void setToolTipText(String text) {
 		super.setToolTipText(text);
 		label.setToolTipText(text);
@@ -149,17 +158,16 @@ public class CalendarableItemControl extends Canvas  {
 
 	private int clipping;
 	
-	/**
-	 * Sets the clipping style bits
-	 * @param clipping  One of SWT.TOP or SWT.BOTTOM
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setClipping(int)
 	 */
 	public void setClipping(int clipping) {
 		this.clipping = clipping;
 		redraw();
 	}
 	
-	/**
-	 * @return The clipping style bits
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#getClipping()
 	 */
 	public int getClipping() {
 		return clipping;
@@ -167,16 +175,15 @@ public class CalendarableItemControl extends Canvas  {
 	
 	private int continued;
 	
-	/**
-	 * Sets the continued style bits
-	 * @param continued  One of SWT.TOP or SWT.BOTTOM
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setContinued(int)
 	 */
 	public void setContinued(int continued) {
 		this.continued = continued;
 	}
 	
-	/**
-	 * @return the continued style bits
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#getContinued()
 	 */
 	public int getContinued() {
 		return continued;
@@ -222,10 +229,8 @@ public class CalendarableItemControl extends Canvas  {
 		}
 	};
 
-	/**
-	 * Set or clear the selection indicator in the UI.
-	 * 
-	 * @param selected true if this control should appear selected; false otherwise.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setSelected(boolean)
 	 */
 	public void setSelected(boolean selected) {
 		if (selected) {
@@ -242,6 +247,9 @@ public class CalendarableItemControl extends Canvas  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#addMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
 	public void addMouseListener(MouseListener listener) {
 		super.addMouseListener(listener);
 		mouseListeners.add(listener);
@@ -249,6 +257,9 @@ public class CalendarableItemControl extends Canvas  {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#removeMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void removeMouseListener(MouseListener listener) {
 		super.removeMouseListener(listener);
@@ -260,7 +271,7 @@ public class CalendarableItemControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			e.widget = CalendarableItemControl.this;
+			e.widget = DayEditorCalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseDoubleClick(e);
@@ -271,7 +282,7 @@ public class CalendarableItemControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
-			e.widget = CalendarableItemControl.this;
+			e.widget = DayEditorCalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseDown(e);
@@ -282,7 +293,7 @@ public class CalendarableItemControl extends Canvas  {
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
-			e.widget = CalendarableItemControl.this;
+			e.widget = DayEditorCalendarableItemControl.this;
 			for (Iterator listenerIter = mouseListeners.iterator(); listenerIter.hasNext();) {
 				MouseListener l = (MouseListener) listenerIter.next();
 				l.mouseUp(e);
@@ -292,16 +303,15 @@ public class CalendarableItemControl extends Canvas  {
 
 	private CalendarableItem calendarable;
 
-	/**
-	 * Method setCalendarable. Sets the associated model.
-	 * @param calendarable
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#setCalendarableItem(org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem)
 	 */
 	public void setCalendarableItem(CalendarableItem calendarable) {
 		this.calendarable = calendarable;
 	}
 
-	/**
-	 * @return Returns the calendarable.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl#getCalendarableItem()
 	 */
 	public CalendarableItem getCalendarableItem() {
 		return calendarable;

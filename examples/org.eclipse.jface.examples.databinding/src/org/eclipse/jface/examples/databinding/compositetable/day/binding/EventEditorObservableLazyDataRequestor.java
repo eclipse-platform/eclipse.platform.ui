@@ -26,7 +26,7 @@ import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableIte
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.SelectionChangeEvent;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.ReflectedProperty;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider;
@@ -216,7 +216,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 					Pair eventToCalendarable = (Pair) eventsIter.next();
 					if (eventToCalendarable.a.equals(event)) {
 						if (eventToCalendarable.b != null) {
-							CalendarableItemControl control = eventToCalendarable.b.getControl();
+							ICalendarableItemControl control = eventToCalendarable.b.getControl();
 							if (control != null) {
 								control.setSelected(selected);
 							}

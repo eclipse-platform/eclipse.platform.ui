@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -470,7 +470,7 @@ public class CalendarableItem extends ModelObject {
 		this.lowerRightPositionInDayRowCoordinates = lowerRightPositionInDayRowCoordinates;
 	}
 
-	private CalendarableItemControl control = null;
+	private ICalendarableItemControl control = null;
 	
 	/**
 	 * (non-API)
@@ -478,7 +478,7 @@ public class CalendarableItem extends ModelObject {
 	 * 
 	 * @return The UI control for this CalendarableItem or null if there is none.
 	 */
-	public CalendarableItemControl getControl() {
+	public ICalendarableItemControl getControl() {
 		return control;
 	}
 
@@ -488,7 +488,7 @@ public class CalendarableItem extends ModelObject {
 	 * 
 	 * @param control The control to set.
 	 */
-	public void setControl(CalendarableItemControl control) {
+	public void setControl(ICalendarableItemControl control) {
 		if (control == null) {
 			this.control.setCalendarableItem(null);
 		}
@@ -501,7 +501,14 @@ public class CalendarableItem extends ModelObject {
 
 	private int continued;
 
+	/**
+	 * (Non-API)
+	 */
 	public static final String BINDING_KEY = "BindingBinding";
+
+	/**
+	 * (Non-API)
+	 */
 	public static final String DATA_KEY = "BindingData";
 	
 	/**

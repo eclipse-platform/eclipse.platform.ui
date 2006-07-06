@@ -24,8 +24,9 @@ import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider
 import org.eclipse.jface.examples.databinding.compositetable.RowConstructionListener;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollEvent;
 import org.eclipse.jface.examples.databinding.compositetable.ScrollListener;
-import org.eclipse.jface.examples.databinding.compositetable.day.internal.CalendarableItemControl;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.DayEditorCalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.EventLayoutComputer;
+import org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlice;
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.TimeSlot;
 import org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem;
@@ -194,7 +195,7 @@ public class DayEditor extends Composite implements IEventEditor {
 
 	private void setMenuOnCollection(List collection, Menu menu) {
 		for (Iterator controls = collection.iterator(); controls.hasNext();) {
-			CalendarableItemControl control = (CalendarableItemControl) controls.next();
+			ICalendarableItemControl control = (ICalendarableItemControl) controls.next();
 			control.setMenu(menu);
 		}
 	}
@@ -1299,6 +1300,10 @@ public class DayEditor extends Composite implements IEventEditor {
 		calendarable.getControl().setClipping(clippingStyle);
 	}
 
+	private DayEditorCalendarableItemControl getControl(CalendarableItem item) {
+		return (DayEditorCalendarableItemControl) item.getControl();
+	}
+	
 	private void layoutAllDayEvent(int day, int allDayEventRow, CalendarableItem calendarable, Control[] gridRows) {
 		if (eventRowIsVisible(allDayEventRow)) {
 			createCalendarableControl(calendarable);
@@ -1308,8 +1313,8 @@ public class DayEditor extends Composite implements IEventEditor {
 			int gutterWidth = TimeSlot.TIME_BAR_WIDTH + 1;
 			timeSliceBounds.x += gutterWidth;
 			timeSliceBounds.width -= gutterWidth;
-			calendarable.getControl().setBounds(timeSliceBounds);
-			calendarable.getControl().moveAbove(compositeTable);
+			getControl(calendarable).setBounds(timeSliceBounds);
+			getControl(calendarable).moveAbove(compositeTable);
 		} else {
 			freeCalendarableControl(calendarable);
 		}
@@ -1362,8 +1367,8 @@ public class DayEditor extends Composite implements IEventEditor {
 			
 			Rectangle finalPosition = new Rectangle(left, top, width, height);
 			
-			calendarable.getControl().setBounds(finalPosition);
-			calendarable.getControl().moveAbove(compositeTable);
+			getControl(calendarable).setBounds(finalPosition);
+			getControl(calendarable).moveAbove(compositeTable);
 		} else {
 			freeCalendarableControl(calendarable);
 		}
@@ -1407,7 +1412,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private void freeCalendarableControl(CalendarableItem calendarableItem) {
 		if (calendarableItem.getControl() != null) {
-			freeCEC(calendarableItem.getControl());
+			freeCEC(getControl(calendarableItem));
 			calendarableItem.setControl(null);
 			fireDisposeItemStrategy(calendarableItem);
 		}
@@ -1425,7 +1430,7 @@ public class DayEditor extends Composite implements IEventEditor {
 		 */
 		public void mouseDown(MouseEvent e) {
 			fireMouseDownEvent(e);
-			CalendarableItemControl control = (CalendarableItemControl) e.widget;
+			ICalendarableItemControl control = (ICalendarableItemControl) e.widget;
 			CalendarableItem aboutToSelect = control.getCalendarableItem();
 			setSelection(aboutToSelect);
 		}
@@ -1445,21 +1450,21 @@ public class DayEditor extends Composite implements IEventEditor {
 		}
 	};
 
-	private CalendarableItemControl newCEC() {
+	private DayEditorCalendarableItemControl newCEC() {
 		if (recycledCalendarableEventControls.size() > 0) {
-			CalendarableItemControl result = (CalendarableItemControl) recycledCalendarableEventControls.remove(0);
+			DayEditorCalendarableItemControl result = (DayEditorCalendarableItemControl) recycledCalendarableEventControls.remove(0);
 			result.setVisible(true);
 			return result;
 		}
-		CalendarableItemControl calendarableItemControl = new CalendarableItemControl(this, SWT.NULL);
+		DayEditorCalendarableItemControl dayEditorCalendarableItemControl = new DayEditorCalendarableItemControl(this, SWT.NULL);
 		if (menu != null) {
-			calendarableItemControl.setMenu(menu);
+			dayEditorCalendarableItemControl.setMenu(menu);
 		}
-		calendarableItemControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
-		return calendarableItemControl;
+		dayEditorCalendarableItemControl.addMouseListener(selectCompositeTableOnMouseDownAdapter);
+		return dayEditorCalendarableItemControl;
 	}
 	
-	private void freeCEC(CalendarableItemControl control) {
+	private void freeCEC(DayEditorCalendarableItemControl control) {
 		control.setSelected(false);
 		control.setCalendarableItem(null);
 		control.setVisible(false);
@@ -1496,6 +1501,16 @@ public class DayEditor extends Composite implements IEventEditor {
 		if (compositeTable != null) {
 			compositeTable.setBackground(color);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#setFocus()
+	 */
+	public boolean setFocus() {
+		if (!compositeTable.setFocus()) {
+			return super.setFocus();
+		}
+		return true;
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

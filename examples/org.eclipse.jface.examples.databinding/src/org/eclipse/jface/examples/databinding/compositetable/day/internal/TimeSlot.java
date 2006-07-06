@@ -232,6 +232,7 @@ public class TimeSlot extends Canvas {
 	 */
 	private TraverseListener traverseListener = new TraverseListener() {
 		public void keyTraversed(TraverseEvent e) {
+			// NOOP: this just lets us receive focus from SWT
 		}
 	};
 	

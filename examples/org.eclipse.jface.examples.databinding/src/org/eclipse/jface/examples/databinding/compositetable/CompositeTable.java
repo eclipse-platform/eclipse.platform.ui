@@ -412,7 +412,7 @@ public class CompositeTable extends Canvas {
 		if (maxRowsVisible == Integer.MAX_VALUE || isHeader) {
 			return rowControlHeight;
 		}
-		if (fittingVertically && isRunTime()) {
+		if (contentPane != null && fittingVertically && isRunTime()) {
 			// FIXME: Yuck: bad code smell here...  (coupling with contentPane)
 			int fitControlHeight = contentPane.clientAreaHeight / maxRowsVisible;
 			if (fitControlHeight < rowControlHeight) {
