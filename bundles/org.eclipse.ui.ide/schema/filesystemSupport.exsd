@@ -93,7 +93,20 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;p&gt;
+&lt;pre&gt;
+ &lt;extension
+         point=&quot;org.eclipse.ui.ide.filesystemSupport&quot;&gt;
+      &lt;filesystemContributor       
+        class=&quot;myFileSystemContributor&quot;
+            label=&quot;My file system&quot;
+            scheme=&quot;myFilesystem &quot;/&gt;
+   &lt;/extension&gt;
+   
+   &lt;/pre&gt;
+&lt;/p&gt;
+
+The example above has a FileSystemContributor that maps to a org.eclipse.core.filesystems.filesystem that it is provding a user interface for.
       </documentation>
    </annotation>
 
@@ -102,7 +115,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         The should be a one to one mapping of a org.eclipse.core.filesystems.filesystem scheme to filesystemContributor.
       </documentation>
    </annotation>
 
@@ -111,7 +124,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         There are no filesystemSupports contributed by default. There is an internal implementation that supports the IResource that is backed by the file system. 
       </documentation>
    </annotation>
 
