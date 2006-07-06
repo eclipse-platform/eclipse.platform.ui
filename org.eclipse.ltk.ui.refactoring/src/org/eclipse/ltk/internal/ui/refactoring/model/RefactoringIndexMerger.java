@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IStorage;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
@@ -118,8 +117,8 @@ public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerg
 	 *             if the encoding is not supported
 	 */
 	private void performMerge(final OutputStream output, final String encoding, final InputStream target, final InputStream source) throws IOException, UnsupportedEncodingException {
-		final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE);
-		final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE, RefactoringDescriptor.NONE);
+		final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE);
+		final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE);
 		final Set set= new HashSet();
 		for (int index= 0; index < sourceProxies.length; index++)
 			set.add(sourceProxies[index]);

@@ -355,7 +355,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 											InputStream stream= null;
 											try {
 												stream= storage.getContents();
-												final RefactoringDescriptorProxy[] proxies= RefactoringHistoryService.getInstance().readRefactoringDescriptorProxies(stream, RefactoringDescriptor.MULTI_CHANGE);
+												final RefactoringDescriptorProxy[] proxies= RefactoringHistoryService.getInstance().readRefactoringDescriptorProxies(stream);
 												for (int offset= 0; offset < proxies.length; offset++)
 													existing.add(new RefactoringDescriptorSynchronizationProxy(proxies[offset], project, IThreeWayDiff.OUTGOING));
 

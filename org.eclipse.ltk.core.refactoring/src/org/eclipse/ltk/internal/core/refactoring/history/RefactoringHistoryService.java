@@ -333,7 +333,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (descriptor == null) {
 					final RefactoringHistoryManager manager= getManager(proxy.getProject());
 					if (manager != null)
-						manager.requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+						descriptor= manager.requestDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 					else
 						monitor.worked(1);
 				} else
@@ -615,6 +615,36 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	private static final RefactoringDescriptor NO_REFACTORING= new NoRefactoringDescriptor();
 
 	/**
+	 * Filters the given array of refactoring proxies and returns the result in
+	 * the specified set.
+	 * 
+	 * @param proxies
+	 *            the refactoring descriptor proxies
+	 * @param set
+	 *            the result set
+	 * @param flags
+	 *            the refactoring descriptor flags which must be present in
+	 *            order to be returned in the refactoring history object
+	 * @param monitor
+	 *            the progress monitor to use
+	 */
+	private static void filterRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final Set set, final int flags, final IProgressMonitor monitor) {
+		try {
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
+			for (int offset= 0; offset < proxies.length; offset++) {
+				final RefactoringDescriptor descriptor= proxies[offset].requestDescriptor(new SubProgressMonitor(monitor, 1));
+				if (descriptor != null) {
+					final int filter= descriptor.getFlags();
+					if ((filter | flags) == filter)
+						set.add(proxies[offset]);
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
 	 * Returns the singleton instance of the refactoring history.
 	 * 
 	 * @return the singleton instance
@@ -748,9 +778,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_FORMAT_ERROR
 	 * @see IRefactoringCoreStatusCodes#REFACTORING_HISTORY_IO_ERROR
 	 */
-	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final IProgressMonitor monitor) throws CoreException {
+	public void deleteRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(proxies);
-		Assert.isNotNull(monitor);
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length + 300);
 			final Map projects= new HashMap();
@@ -1088,11 +1119,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			if (monitor == null)
 				monitor= new NullProgressMonitor();
 			try {
-				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 12);
+				monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 120);
 				final String name= project.getName();
 				final RefactoringHistoryManager manager= fUndoStack.getManager(name);
-				if (manager != null)
-					return manager.readRefactoringHistory(start, end, flags, new SubProgressMonitor(monitor, 12));
+				if (manager != null) {
+					RefactoringHistory history= manager.readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 20));
+					if (flags > RefactoringDescriptor.NONE) {
+						final Set set= new HashSet();
+						filterRefactoringDescriptors(history.getDescriptors(), set, flags, new SubProgressMonitor(monitor, 100));
+						history= new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]));
+					}
+					return history;
+				}
 			} finally {
 				monitor.done();
 			}
@@ -1118,35 +1156,21 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 2 * projects.length);
+			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 3 * projects.length);
 			final Set set= new HashSet();
-			final boolean flagged= flags > RefactoringDescriptor.NONE;
-			if (flagged) {
+			if (flags > RefactoringDescriptor.NONE) {
 				for (int index= 0; index < projects.length; index++) {
 					final IProject project= projects[index];
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
-						final IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-						try {
-							subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
-							for (int offset= 0; offset < proxies.length; offset++) {
-								final RefactoringDescriptor descriptor= proxies[offset].requestDescriptor(new SubProgressMonitor(subMonitor, 1));
-								if (descriptor != null) {
-									final int filter= descriptor.getFlags();
-									if ((filter | flags) == filter)
-										set.add(proxies[offset]);
-								}
-							}
-						} finally {
-							subMonitor.done();
-						}
+						filterRefactoringDescriptors(proxies, set, flags, new SubProgressMonitor(monitor, 2));
 					}
 				}
 			} else {
 				for (int index= 0; index < projects.length; index++) {
 					final IProject project= projects[index];
 					if (project.isAccessible()) {
-						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 2)).getDescriptors();
+						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 3)).getDescriptors();
 						for (int offset= 0; offset < proxies.length; offset++)
 							set.add(proxies[offset]);
 					}
@@ -1204,19 +1228,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * 
 	 * @param stream
 	 *            the input stream to read from
-	 * @param flags
-	 *            the refactoring descriptor flags which must be present in
-	 *            order to be returned in the refactoring history object, or
-	 *            <code>RefactoringDescriptor#NONE</code>
 	 * @return the refactoring descriptor proxies
 	 * @throws CoreException
 	 *             if an error occurs while reading the refactoring descriptor
 	 *             proxies
 	 */
-	public RefactoringDescriptorProxy[] readRefactoringDescriptorProxies(final InputStream stream, final int flags) throws CoreException {
+	public RefactoringDescriptorProxy[] readRefactoringDescriptorProxies(final InputStream stream) throws CoreException {
 		Assert.isNotNull(stream);
 		try {
-			return RefactoringHistoryManager.readRefactoringDescriptorProxies(stream, null, 0, Long.MAX_VALUE, flags);
+			return RefactoringHistoryManager.readRefactoringDescriptorProxies(stream, null, 0, Long.MAX_VALUE);
 		} catch (IOException exception) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 0, exception.getLocalizedMessage(), null));
 		}
