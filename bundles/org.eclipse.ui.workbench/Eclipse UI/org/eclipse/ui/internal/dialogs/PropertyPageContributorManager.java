@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -26,6 +26,8 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Extends generic object contributor manager by loading property page
@@ -210,4 +212,23 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
             reader.readElement(addedElements[i]);
         }
     }
+
+	/**
+	 * Return the contributors for element filters on the
+	 * enablement. This is currently
+	 * only used for test suites.
+	 * @param element
+	 * @return Collection of PropertyPageContribution
+	 */
+	public Collection getApplicableContributors(Object element) {
+		Collection contributors = getContributors(element);
+		Collection result = new ArrayList();
+		for (Iterator iter = contributors.iterator(); iter.hasNext();) {
+			RegistryPageContributor contributor = (RegistryPageContributor) iter.next();
+			if(contributor.isApplicableTo(element))
+				result.add(contributor);
+			
+		}
+		return result;
+	}
 }

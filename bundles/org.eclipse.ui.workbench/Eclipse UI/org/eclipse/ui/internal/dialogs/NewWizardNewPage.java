@@ -47,14 +47,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -96,10 +91,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
     private IWizardCategory wizardCategories;
 
     private IWizardDescriptor [] primaryWizards;
-
-    private ToolItem helpButton;
-
-    private String wizardHelpHref;
 
     private CLabel descImageCanvas;
 
@@ -455,29 +446,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
                 }
             });
         }
-
-        Image buttonImage = WorkbenchImages
-                .getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
-        ToolBar toolBar = new ToolBar(parent, SWT.FLAT);
-        helpButton = new ToolItem(toolBar, SWT.NONE);
-        helpButton.setImage(buttonImage);
-        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-                | GridData.VERTICAL_ALIGN_END);
-        if (!needShowAll) {
-			data.horizontalSpan = 2;
-		}
-        toolBar.setLayoutData(data);
-
-        helpButton.addSelectionListener(new SelectionAdapter() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
-            	PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
-						wizardHelpHref);
-            }
-        });
     }
     
     /**
@@ -692,20 +660,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 		}
 
         page.setDescription(string);
-
-        if (selectedObject != null) {
-            wizardHelpHref = selectedObject.getHelpHref();
-        } else {
-            wizardHelpHref = null;
-        }
-
-        if (wizardHelpHref != null) {
-            helpButton.setEnabled(true);
-            helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_moreHelp);
-        } else {
-            helpButton.setEnabled(false);
-            helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_noHelp);
-        }
 
         if (hasImage(selectedObject)) {
             ImageDescriptor descriptor = null;
