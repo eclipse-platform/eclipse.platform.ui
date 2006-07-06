@@ -27,6 +27,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -80,12 +81,38 @@ public class DayEditorCalendarableItemControl extends Canvas implements ICalenda
 	public DayEditorCalendarableItemControl(Composite parent, int style) {
 		super(parent, style);
 		Display display = parent.getDisplay();
-		BORDER_COLOR = new Color(display, 215, 215, 245);
-		SELECTED_BORDER_COLOR = new Color(display, 220, 220, 220);
-		SELECTED_BACKGROUND_COLOR = new Color(display, 245, 245, 230);
-		BACKGROUND_COLOR = new Color(display, 235, 235, 255);
+
+		BACKGROUND_COLOR = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT).getRGB(), .08f), .3f));
+		BORDER_COLOR = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB(), .18f), .1f));
+		SELECTED_BACKGROUND_COLOR = display.getSystemColor(SWT.COLOR_WHITE);
+		SELECTED_BORDER_COLOR = new Color(display, saturate(BORDER_COLOR.getRGB(), .4f));
 
 		initialize();
+	}
+	
+	/**
+	 * Sets the color's saturation to the specified value.
+	 * 
+	 * @param color The RGB of the color
+	 * @param saturation the new saturation (between 0 and 1)
+	 * @return a Color that is saturated by the specified amount
+	 */
+	private RGB saturate(RGB color, float saturation) {
+		float[] hsb = color.getHSB();
+		return new RGB(hsb[0], saturation, hsb[2]);
+	}
+	
+	/**
+	 * @param color The RGB of the color
+	 * @param amount The amount to lighten as a percentage expresssed as a float between -1 and 1.
+	 * @return The new RGB that is lightened by the specified amount
+	 */
+	private RGB lighten(RGB color, float amount) {
+		float[] hsb = color.getHSB();
+		float b = hsb[2] + hsb[2] * amount;
+		if (b < 0) b=0;
+		if (b > 1) b=1;
+		return new RGB(hsb[0], hsb[1], b);
 	}
 	
 	/* (non-Javadoc)
@@ -96,7 +123,7 @@ public class DayEditorCalendarableItemControl extends Canvas implements ICalenda
 		BORDER_COLOR.dispose();
 		BACKGROUND_COLOR.dispose();
 		SELECTED_BORDER_COLOR.dispose();
-		SELECTED_BACKGROUND_COLOR.dispose();
+//		SELECTED_BACKGROUND_COLOR.dispose();
 	}
 
 	/**

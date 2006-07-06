@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -85,16 +86,41 @@ public class TimeSlot extends Canvas {
 
 		WHITE = display.getSystemColor(SWT.COLOR_WHITE);
 
-		// Bluish color scheme by default; change as necessary.
-		CELL_BACKGROUND_LIGHT = new Color(display, 247, 247, 250);
-		CELL_BACKGROUND_WHITE = new Color(display, 255, 255, 255);
-		CELL_BORDER_EMPHASIZED = new Color(display, 100, 100, 255);
-		CELL_BORDER_LIGHT = new Color(display, 200, 200, 255);
-		TIME_BAR_COLOR = new Color(display, 170, 170, 190);
-		FOCUS_RUBBERBAND = new Color(display, 100, 100, 170);
+		CELL_BACKGROUND_WHITE = display.getSystemColor(SWT.COLOR_WHITE);
+		CELL_BORDER_EMPHASIZED = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
+		CELL_BACKGROUND_LIGHT = new Color(display, new RGB(248, 248, 248));
+		CELL_BORDER_LIGHT = new Color(display, saturate(CELL_BORDER_EMPHASIZED.getRGB(), .2f));
+		TIME_BAR_COLOR = new Color(display, saturate(CELL_BORDER_EMPHASIZED.getRGB(), .1f));
+		FOCUS_RUBBERBAND = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB(), .85f), -.333f));
 
 		setBackground(CELL_BACKGROUND_LIGHT);
 	}
+
+	/**
+	 * Sets the color's saturation to the specified value.
+	 * 
+	 * @param color The RGB of the color
+	 * @param saturation the new saturation (between 0 and 1)
+	 * @return a Color that is saturated by the specified amount
+	 */
+	private RGB saturate(RGB color, float saturation) {
+		float[] hsb = color.getHSB();
+		return new RGB(hsb[0], saturation, hsb[2]);
+	}
+	
+	/**
+	 * @param color The RGB of the color
+	 * @param amount The amount to lighten as a percentage expresssed as a float between -1 and 1.
+	 * @return The new RGB that is lightened by the specified amount
+	 */
+	private RGB lighten(RGB color, float amount) {
+		float[] hsb = color.getHSB();
+		float b = hsb[2] + hsb[2] * amount;
+		if (b < 0) b=0;
+		if (b > 1) b=1;
+		return new RGB(hsb[0], hsb[1], b);
+	}
+	
 
 	/**
 	 * Make sure we remove our listeners...
@@ -110,8 +136,6 @@ public class TimeSlot extends Canvas {
 
 			// Dispose colors here
 			CELL_BACKGROUND_LIGHT.dispose();
-			CELL_BACKGROUND_WHITE.dispose();
-			CELL_BORDER_EMPHASIZED.dispose();
 			CELL_BORDER_LIGHT.dispose();
 			TIME_BAR_COLOR.dispose();
 			FOCUS_RUBBERBAND.dispose();

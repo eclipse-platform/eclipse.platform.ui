@@ -70,9 +70,9 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		super(parent, style);
 		
 		Display display = Display.getCurrent();
-		FOCUS_RUBBERBAND = new Color(display, 100, 100, 170);
-		CURRENT_MONTH = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
-		OTHER_MONTH = saturate(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND).getRGB(), 70);
+		FOCUS_RUBBERBAND = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB(), .85f), -.333f));
+		CURRENT_MONTH = display.getSystemColor(SWT.COLOR_WHITE);
+		OTHER_MONTH = new Color(display, new RGB(240, 240, 240));
 		
 		initialize();
 		
@@ -87,15 +87,28 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	}
 	
 	/**
-	 * @param color
-	 * @param by an int -100 - 100
-	 * @return a Color that is saturated or desatured by the specified amount
+	 * Sets the color's saturation to the specified value.
+	 * 
+	 * @param color The RGB of the color
+	 * @param saturation the new saturation (between 0 and 1)
+	 * @return a Color that is saturated by the specified amount
 	 */
-	private Color saturate(RGB color, int by) {
-		int newRed = (int)((255 - color.red) * (by / (double)100)) + color.red;
-		int newGreen = (int)((255 - color.green) * (by / (double)100)) + color.green;
-		int newBlue = (int)((255 - color.blue) * (by / (double)100)) + color.blue;
-		return new Color(Display.getCurrent(), new RGB(newRed, newGreen, newBlue));
+	private RGB saturate(RGB color, float saturation) {
+		float[] hsb = color.getHSB();
+		return new RGB(hsb[0], saturation, hsb[2]);
+	}
+	
+	/**
+	 * @param color The RGB of the color
+	 * @param amount The amount to lighten as a percentage expresssed as a float between -1 and 1.
+	 * @return The new RGB that is lightened by the specified amount
+	 */
+	private RGB lighten(RGB color, float amount) {
+		float[] hsb = color.getHSB();
+		float b = hsb[2] + hsb[2] * amount;
+		if (b < 0) b=0;
+		if (b > 1) b=1;
+		return new RGB(hsb[0], hsb[1], b);
 	}
 	
 	/* (non-Javadoc)
