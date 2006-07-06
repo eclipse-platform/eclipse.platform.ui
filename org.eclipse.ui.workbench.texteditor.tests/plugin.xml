@@ -14,7 +14,6 @@
    
    <requires>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.text.tests"/>
       <import plugin="org.eclipse.jface.text"/>
