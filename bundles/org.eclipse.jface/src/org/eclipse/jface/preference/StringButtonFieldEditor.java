@@ -19,6 +19,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -159,6 +160,9 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
         changeButtonText = text;
         if (changeButton != null) {
 			changeButton.setText(text);
+			Point prefSize = changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			GridData data = (GridData)changeButton.getLayoutData();
+			data.widthHint = Math.max(SWT.DEFAULT, prefSize.x);
 		}
     }
 
