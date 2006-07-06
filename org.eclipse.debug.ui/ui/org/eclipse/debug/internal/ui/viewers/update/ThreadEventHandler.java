@@ -106,7 +106,10 @@ public class ThreadEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleTerminate(DebugEvent event) {
-		fireDeltaAndClearTopFrame((IThread) event.getSource(), IModelDelta.REMOVED);
+		IThread thread = (IThread) event.getSource();
+		if (!thread.getDebugTarget().isTerminated()) {
+			fireDeltaAndClearTopFrame(thread, IModelDelta.REMOVED);
+		}
 	}
 
 	protected void handleChange(DebugEvent event) {
