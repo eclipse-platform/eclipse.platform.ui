@@ -245,7 +245,11 @@ public class ProgressManager extends ProgressProvider implements
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			JobInfo info = getJobInfo(job);
+			// Use the internal get so we don't create a Job Info for
+			// a job that is not running (see bug 149857)
+			JobInfo info = internalGetJobInfo(job);
+			if (info == null)
+				return false;
 			return info.isCanceled();
 		}
 
@@ -589,12 +593,22 @@ public class ProgressManager extends ProgressProvider implements
 	 * @return JobInfo
 	 */
 	JobInfo getJobInfo(Job job) {
-		JobInfo info = (JobInfo) jobs.get(job);
+		JobInfo info = internalGetJobInfo(job);
 		if (info == null) {
 			info = new JobInfo(job);
 			jobs.put(job, info);
 		}
 		return info;
+	}
+
+	/**
+	 * Return an existing job info for the given Job or 
+	 * <code>null</code> if there isn't one.
+	 * @param job
+	 * @return JobInfo
+	 */
+	JobInfo internalGetJobInfo(Job job) {
+		return (JobInfo) jobs.get(job);
 	}
 
 	/**
