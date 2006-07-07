@@ -68,6 +68,9 @@ public class IntegerFieldEditor extends StringFieldEditor {
     public void setValidRange(int min, int max) {
         minValidValue = min;
         maxValidValue = max;
+        setErrorMessage(JFaceResources.format(
+        		"IntegerFieldEditor.errorMessageRange", //$NON-NLS-1$
+        		new Object[] { new Integer(min), new Integer(max) }));
     }
 
     /* (non-Javadoc)
