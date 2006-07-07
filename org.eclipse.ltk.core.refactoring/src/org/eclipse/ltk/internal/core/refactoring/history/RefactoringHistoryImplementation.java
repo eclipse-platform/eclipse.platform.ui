@@ -27,6 +27,22 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
  */
 public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
+	/**
+	 * Returns a hash code value for the array
+	 * 
+	 * @param array
+	 *            the array to create a hash code value for
+	 * @return a hash code value for the array
+	 */
+	private static int hashCode(final Object[] array) {
+		if (array == null)
+			return 0;
+		int result= 1;
+		for (int index= 0; index < array.length; index++)
+			result= 31 * result + (array[index] == null ? 0 : array[index].hashCode());
+		return result;
+	}
+
 	/** The refactoring descriptor proxies */
 	private final RefactoringDescriptorProxy[] fDescriptorProxies;
 
@@ -43,6 +59,22 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		Assert.isNotNull(proxies);
 		fDescriptorProxies= new RefactoringDescriptorProxy[proxies.length];
 		System.arraycopy(proxies, 0, fDescriptorProxies, 0, proxies.length);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(final Object object) {
+		if (this == object)
+			return true;
+		if (object == null)
+			return false;
+		if (getClass() != object.getClass())
+			return false;
+		final RefactoringHistoryImplementation other= (RefactoringHistoryImplementation) object;
+		if (!Arrays.equals(getDescriptors(), other.getDescriptors()))
+			return false;
+		return true;
 	}
 
 	/**
@@ -64,6 +96,13 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
 		System.arraycopy(fDescriptorProxies, 0, proxies, 0, fDescriptorProxies.length);
 		return proxies;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		return 31 * RefactoringHistoryImplementation.hashCode(getDescriptors());
 	}
 
 	/**
