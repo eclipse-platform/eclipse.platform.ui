@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -797,12 +798,26 @@ public class TabbedPropertySheetPage
      */
     private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(
             Object object) {
-        Object element = object instanceof IAdaptable ? ((IAdaptable) object)
-            .getAdapter(ITabbedPropertySheetPageContributor.class)
-            : object;
-        return element instanceof ITabbedPropertySheetPageContributor ? (ITabbedPropertySheetPageContributor) element
-            : null;
-    }
+        if (object instanceof ITabbedPropertySheetPageContributor) {
+            return (ITabbedPropertySheetPageContributor) object;
+        }
+
+        if (object instanceof IAdaptable
+            && ((IAdaptable) object)
+                .getAdapter(ITabbedPropertySheetPageContributor.class) != null) {
+            return (ITabbedPropertySheetPageContributor) (((IAdaptable) object)
+                .getAdapter(ITabbedPropertySheetPageContributor.class));
+        }
+
+        if (Platform.getAdapterManager().hasAdapter(object,
+            ITabbedPropertySheetPageContributor.class.getName())) {
+            return (ITabbedPropertySheetPageContributor) Platform
+                .getAdapterManager().loadAdapter(object,
+                    ITabbedPropertySheetPageContributor.class.getName());
+        }
+
+        return null;
+	}
 
 	/**
 	 * The workbench part creates this instance of the TabbedPropertySheetPage
