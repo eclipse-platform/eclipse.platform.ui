@@ -73,10 +73,14 @@ public class MockRefactoring extends Refactoring {
 			 * {@inheritDoc}
 			 */
 			public ChangeDescriptor getDescriptor() {
-				MockRefactoringDescriptor descriptor= new MockRefactoringDescriptor(fProject, fDescription, fComment, fArguments, fFlags);
+				MockRefactoringDescriptor descriptor= createRefactoringDescriptor();
 				return new RefactoringChangeDescriptor(descriptor);
 			}
 		};
+	}
+
+	public MockRefactoringDescriptor createRefactoringDescriptor() {
+		return new MockRefactoringDescriptor(fProject, fDescription, fComment, fArguments, fFlags);
 	}
 
 	/**
