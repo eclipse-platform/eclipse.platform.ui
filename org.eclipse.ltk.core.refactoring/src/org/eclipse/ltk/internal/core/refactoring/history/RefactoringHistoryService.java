@@ -616,27 +616,41 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	/**
 	 * Filters the given array of refactoring proxies and returns the result in
-	 * the specified set.
+	 * the specified refactoring descriptor proxy set.
+	 * <p>
+	 * Clients wishing to benefit from the resolving of refactoring descriptors
+	 * to determine its flags can set resolve to <code>true</code> if they
+	 * would like to have resolved refactoring descriptor proxies as result.
+	 * </p>
 	 * 
 	 * @param proxies
 	 *            the refactoring descriptor proxies
 	 * @param set
 	 *            the result set
+	 * @param resolve
+	 *            <code>true</code> to return the filtered refactoring
+	 *            descriptors as resolved refactoring proxies,
+	 *            <code>false</code> otherwise
 	 * @param flags
 	 *            the refactoring descriptor flags which must be present in
 	 *            order to be returned in the refactoring history object
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	private static void filterRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final Set set, final int flags, final IProgressMonitor monitor) {
+	private static void filterRefactoringDescriptors(final RefactoringDescriptorProxy[] proxies, final Set set, final boolean resolve, final int flags, final IProgressMonitor monitor) {
+		Assert.isTrue(flags > RefactoringDescriptor.NONE);
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
 			for (int offset= 0; offset < proxies.length; offset++) {
 				final RefactoringDescriptor descriptor= proxies[offset].requestDescriptor(new SubProgressMonitor(monitor, 1));
 				if (descriptor != null) {
 					final int filter= descriptor.getFlags();
-					if ((filter | flags) == filter)
-						set.add(proxies[offset]);
+					if ((filter | flags) == filter) {
+						if (resolve)
+							set.add(new RefactoringDescriptorProxyAdapter(descriptor));
+						else
+							set.add(proxies[offset]);
+					}
 				}
 			}
 		} finally {
@@ -1126,7 +1140,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					RefactoringHistory history= manager.readRefactoringHistory(start, end, new SubProgressMonitor(monitor, 20));
 					if (flags > RefactoringDescriptor.NONE) {
 						final Set set= new HashSet();
-						filterRefactoringDescriptors(history.getDescriptors(), set, flags, new SubProgressMonitor(monitor, 100));
+						filterRefactoringDescriptors(history.getDescriptors(), set, false, flags, new SubProgressMonitor(monitor, 100));
 						history= new RefactoringHistoryImplementation((RefactoringDescriptorProxy[]) set.toArray(new RefactoringDescriptorProxy[set.size()]));
 					}
 					return history;
@@ -1163,7 +1177,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					final IProject project= projects[index];
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
-						filterRefactoringDescriptors(proxies, set, flags, new SubProgressMonitor(monitor, 2));
+						filterRefactoringDescriptors(proxies, set, false, flags, new SubProgressMonitor(monitor, 2));
 					}
 				}
 			} else {
