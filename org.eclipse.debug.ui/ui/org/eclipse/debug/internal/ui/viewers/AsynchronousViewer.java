@@ -973,8 +973,14 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected void nodeChildRemoved(ModelNode parentNode, int index) {
 		Widget widget = findItem(parentNode);
 		if (widget != null && !widget.isDisposed()) {
+			Widget childWidget = getChildWidget(widget, index);
 			int childCount = parentNode.getChildCount();
-			setItemCount(widget, childCount);
+			// if the child widget exists, dispose it so item state remains, otherwise update child count
+			if (childWidget == null) {
+				setItemCount(widget, childCount);
+			} else {
+				childWidget.dispose();
+			}
 			for (int i = index; i < childCount; i ++) {
 				clearChild(widget, i);
 			}
