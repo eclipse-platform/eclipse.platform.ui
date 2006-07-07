@@ -276,6 +276,10 @@ public class CalendarableModel {
 	}
 	
 	private void refresh(Date date, int column, List invalidatedElements) {
+		if (eventCountProvider == null || eventContentProvider == null) {
+			return;
+		}
+		
 		int numberOfEventsInDay = eventCountProvider.getNumberOfEventsInDay(date);
 
 		while (dayColumns[column].size() > 0) {

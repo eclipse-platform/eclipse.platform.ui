@@ -98,6 +98,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setTimeBreakdown(int, int)
 	 */
 	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
+		checkWidget();
 		model.setTimeBreakdown(numberOfDays, numberOfDivisionsInHour);
 		
 		if (compositeTable != null) {
@@ -177,8 +178,10 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public void setMenu(final Menu menu) {
+		checkWidget();
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
+				if (isDisposed()) return;
 				DayEditor.super.setMenu(menu);
 				DayEditor.this.menu = menu;
 				compositeTable.setMenu(menu);
@@ -206,6 +209,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener listener) {
+		checkWidget();
 		keyListeners.add(listener);
 	}
 	
@@ -213,6 +217,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void removeKeyListener(KeyListener listener) {
+		checkWidget();
 		keyListeners.remove(listener);
 	}
 	
@@ -291,6 +296,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void addMouseListener(MouseListener listener) {
+		checkWidget();
 		mouseListeners.add(listener);
 	}
 	
@@ -298,6 +304,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void removeMouseListener(MouseListener listener) {
+		checkWidget();
 		mouseListeners.remove(listener);
 	}
 	
@@ -441,6 +448,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @param newSelection The Calendarable to select.
 	 */
 	public void setSelection(CalendarableItem newSelection) {
+		checkWidget();
 		if (newSelection != null) {
 			int day = model.getDay(newSelection);
 			int row = computeRowForCalendarable(newSelection, day);
@@ -483,6 +491,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @return the current DayEditorSelection
 	 */
 	public DayEditorSelection getSelection() {
+		checkWidget();
 		DayEditorSelection selection = new DayEditorSelection();
 		Point compositeTableSelection = compositeTable.getSelection();
 		
@@ -537,6 +546,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see SelectionChangeEvent
 	 */
 	public void addSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		checkWidget();
 		if (l == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -593,6 +603,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @return true if the object represented by the CalendarableItem was changed; false otherwise.
 	 */
 	public boolean fireEdit(CalendarableItem toEdit) {
+		checkWidget();
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = toEdit;
 		boolean changed = fireEvents(e, editHandlers);
@@ -629,6 +640,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeItemInsertHandler
 	 */
 	public void addItemEditHandler(CalendarableItemEventHandler handler) {		
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -664,6 +676,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeItemInsertHandler
 	 */
 	public void removeItemEditHandler(CalendarableItemEventHandler handler) {		
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -679,6 +692,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireInsert(java.util.Date)
 	 */
 	public NewEvent fireInsert(Date date, boolean allDayEvent) {
+		checkWidget();
 		CalendarableItem item = new CalendarableItem(date);
 		item.setAllDayEvent(allDayEvent);
 		item.setStartTime(date);
@@ -727,6 +741,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeItemInsertHandler
 	 */
 	public void addItemInsertHandler(CalendarableItemEventHandler handler) {		
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -758,6 +773,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #addItemInsertHandler
 	 */
 	public void removeItemInsertHandler(CalendarableItemEventHandler handler) {		
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -773,6 +789,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireDelete(org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem)
 	 */
 	public boolean fireDelete(CalendarableItem item) {
+		checkWidget();
 		boolean result = fireEvents(item, deleteHandlers);
 		if (result) {
 			// TODO: Only refresh the affected days.
@@ -803,6 +820,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeDeleteItemHandler
 	 */
 	public void addItemDeleteHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -834,6 +852,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #addDeleteItemHandler
 	 */
 	public void removeItemDeleteHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
 		deleteHandlers.remove(handler);
 	}
 	
@@ -866,6 +885,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeCalendarableItemDisposeHandler
 	 */
 	public void addItemDisposeHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
 		if (handler == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -898,6 +918,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see #removeDeleteListener
 	 */
 	public void removeItemDisposeHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
 		itemDisposeHandlers.remove(handler);
 	}
 	
@@ -924,6 +945,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see SelectionChangeEvent
 	 */
 	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		checkWidget();
 		if (l == null) {
 			throw new IllegalArgumentException("The argument cannot be null");
 		}
@@ -944,6 +966,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @param defaultStartHour The defaultStartHour to set.
 	 */
 	public void setDefaultStartHour(int defaultStartHour) {
+		checkWidget();
 		model.setDefaultStartHour(defaultStartHour);
 		updateVisibleRows();
 		layoutEventControls();
@@ -953,10 +976,12 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setDayEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
 	 */
 	public void setEventCountProvider(EventCountProvider eventCountProvider) {
+		checkWidget();
 		model.setEventCountProvider(eventCountProvider);
 		updateVisibleRows();
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
+				if (isDisposed()) return;
 				layoutEventControls();
 			}
 		});
@@ -966,10 +991,12 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
+		checkWidget();
 		model.setEventContentProvider(eventContentProvider);
 		updateVisibleRows();
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
+				if (isDisposed()) return;
 				layoutEventControls();
 			}
 		});
@@ -979,6 +1006,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
 	 */
 	public void setStartDate(Date startDate) {
+		checkWidget();
 		List removedDays = model.setStartDate(startDate);
 		computeEventRowsForNewDays();
 		if (daysHeader != null) {
@@ -995,6 +1023,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getStartDate()
 	 */
 	public Date getStartDate() {
+		checkWidget();
 		return model.getStartDate();
 	}
 
@@ -1002,6 +1031,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
+		checkWidget();
 		List removedDays = model.refresh(date);
 		freeObsoleteCalendarableEventControls(removedDays);
 		updateVisibleRows();
@@ -1015,10 +1045,12 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
 	 */
 	public void refresh() {
+		checkWidget();
 		if (!refreshing) {
 			refreshing = true;
 			Display.getCurrent().asyncExec(new Runnable() {
 				public void run() {
+					if (isDisposed()) return;
 					Date dateToRefresh = getStartDate();
 					GregorianCalendar gc = new GregorianCalendar();
 					gc.setTime(dateToRefresh);
@@ -1036,6 +1068,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDays()
 	 */
 	public int getNumberOfDays() {
+		checkWidget();
 		return model.getNumberOfDays();
 	}
 
@@ -1043,6 +1076,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDivisionsInHour()
 	 */
 	public int getNumberOfDivisionsInHour() {
+		checkWidget();
 		return model.getNumberOfDivisionsInHour();
 	}
 	
@@ -1115,16 +1149,6 @@ public class DayEditor extends Composite implements IEventEditor {
 					break;
 				}
 			}
-//			for (Iterator calendarablesIter = model.getCalendarableEvents(day).iterator(); calendarablesIter.hasNext();) {
-//				Calendarable candidate = (Calendarable) calendarablesIter.next();
-//				if (candidate.isAllDayEvent()) {
-//					if (candidate == calendarable) {
-//						row = allDayEventRow - compositeTable.getTopRow();
-//						break;
-//					}
-//					++allDayEventRow;
-//				}
-//			}
 		} else {
 			// Convert to viewport coordinates
 			Point upperLeft = calendarable.getUpperLeftPositionInDayRowCoordinates();
@@ -1244,9 +1268,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	
 	private Runnable refreshEventControlPositions = new Runnable() {
 		public void run() {
-			if (DayEditor.this.isDisposed()) {
-				return;
-			}
+			if (isDisposed()) return;
 			
 			Control[] gridRows = compositeTable.getRowControls();
 			
@@ -1477,6 +1499,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @return int the number of hours a new event occupies by default.
 	 */
 	public int getDefaultEventDuration() {
+		checkWidget();
 		return defaultEventDuration;
 	}
 
@@ -1487,6 +1510,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 *            int the number of hours a new event occupies by default.
 	 */
 	public void setDefaultEventDuration(int defaultEventDuration) {
+		checkWidget();
 		this.defaultEventDuration = defaultEventDuration;
 	}
 	
@@ -1496,6 +1520,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
 	 */
 	public void setBackground(Color color) {
+		checkWidget();
 		super.setBackground(color);
 		this.background = color;
 		if (compositeTable != null) {
@@ -1507,6 +1532,7 @@ public class DayEditor extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Composite#setFocus()
 	 */
 	public boolean setFocus() {
+		checkWidget();
 		if (!compositeTable.setFocus()) {
 			return super.setFocus();
 		}

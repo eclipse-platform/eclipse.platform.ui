@@ -51,6 +51,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	private final Color FOCUS_RUBBERBAND;
 	private Color CURRENT_MONTH;
 	private Color OTHER_MONTH;
+	private Color CELL_BACKGROUND_LIGHT;
 	
 	private static final int FOCUS_LINE_WIDTH = 2;
 	private boolean focusControl = false;
@@ -72,7 +73,8 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		Display display = Display.getCurrent();
 		FOCUS_RUBBERBAND = new Color(display, lighten(saturate(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND).getRGB(), .85f), -.333f));
 		CURRENT_MONTH = display.getSystemColor(SWT.COLOR_WHITE);
-		OTHER_MONTH = new Color(display, new RGB(240, 240, 240));
+		OTHER_MONTH = new Color(display, new RGB(230, 230, 230));
+		CELL_BACKGROUND_LIGHT = new Color(display, new RGB(248, 248, 248));
 		
 		initialize();
 		
@@ -117,6 +119,8 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	public void widgetDisposed(DisposeEvent e) {
 		FOCUS_RUBBERBAND.dispose();
 		OTHER_MONTH.dispose();
+		CELL_BACKGROUND_LIGHT.dispose();
+		
 		removeTraverseListener(traverseListener);
 		removeKeyListener(keyListener);
 		removeMouseListener(mouseListener);
@@ -158,6 +162,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 				SWT.COLOR_LIST_BACKGROUND));
 		this.setLayout(gridLayout);
 		setSize(new org.eclipse.swt.graphics.Point(106, 101));
+		setBackground(CELL_BACKGROUND_LIGHT);
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -267,21 +272,39 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	private FocusListener focusListener = new FocusListener() {
 		public void focusGained(FocusEvent e) {
 			focusControl = true;
+			Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(true);
+			resetAllBackgrounds(Day.this, background);
 			redraw();
 		}
 
 		public void focusLost(FocusEvent e) {
 			focusControl = false;
+			Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(false);
+			resetAllBackgrounds(Day.this, background);
 			redraw();
 		}
 	};
 	
-	private void setBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(Control control) {
-		if (inCurrentMonth) {
-			control.setBackground(CURRENT_MONTH);
-		} else {
-			control.setBackground(OTHER_MONTH);
+	private void resetAllBackgrounds(Composite composite, Color color) {
+		composite.setBackground(color);
+		Control[] children = composite.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof Composite) {
+				resetAllBackgrounds((Composite) children[i], color);
+			} else {
+				children[i].setBackground(color);
+			}
 		}
+	}
+	
+	private Color getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(boolean focused) {
+		if (inCurrentMonth && focused) {
+			return CURRENT_MONTH;
+		}
+		if (inCurrentMonth) {
+			return CELL_BACKGROUND_LIGHT;
+		}
+		return OTHER_MONTH;
 	}
 	
 	private boolean inCurrentMonth = false;
@@ -291,9 +314,8 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 	 */
 	public void setInCurrentMonth(boolean inCurrentMonth) {
 		this.inCurrentMonth = inCurrentMonth;
-		setBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(this);
-		setBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(spacer);
-		setBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(dayNumber);
+		Color background = getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(false);
+		resetAllBackgrounds(this, background);
 	}
 	
 	private CalendarableItem[] controls = null;
@@ -312,7 +334,7 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 		this.controls = controls;
 		for (int i = 0; i < this.controls.length; i++) {
 			MonthCalendarableItemControl control = new MonthCalendarableItemControl(this, SWT.NULL);
-			setBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(control);
+			getBackgroundTakingIntoAccountIfWeAreInTheCurrentMonth(false);
 			control.setText(this.controls[i].getText());
 			Image image = this.controls[i].getImage();
 			if (image != null) {

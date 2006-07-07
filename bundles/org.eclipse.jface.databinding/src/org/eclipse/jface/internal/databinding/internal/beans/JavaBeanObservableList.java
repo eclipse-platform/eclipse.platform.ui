@@ -72,6 +72,14 @@ public class JavaBeanObservableList extends ObservableList implements ILazyListE
 			collectionListenSupport.dispose();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		lastListenerRemoved();
+	}
 
 	private Object primGetValues() {
 		try {

@@ -153,6 +153,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setStartDate(java.util.Date)
 	 */
 	public void setStartDate(Date startDate) {
+		checkWidget();
+		
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
 		c.set(Calendar.DAY_OF_MONTH, 1);
@@ -170,6 +172,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getStartDate()
 	 */
 	public Date getStartDate() {
+		checkWidget();
+		
 		return startDate;
 	}
 
@@ -179,6 +183,33 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh(java.util.Date)
 	 */
 	public void refresh(Date date) {
+		checkWidget();
+		
+		Calendar currentDay = new GregorianCalendar();
+		currentDay.setTime(startDate);
+		currentDay.set(Calendar.DAY_OF_MONTH, 1);
+		currentDay.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		
+		Calendar endDay = new GregorianCalendar();
+		endDay.setTime(date);
+		endDay.set(Calendar.HOUR_OF_DAY, 0);
+		endDay.set(Calendar.MINUTE, 0);
+		endDay.set(Calendar.SECOND, 0);
+		endDay.set(Calendar.MILLISECOND, 0);
+		Date targetDate = endDay.getTime();
+		
+		Day currentDayControl = null;
+		for (int week = 0; week < weeks.length; week++) {
+			for (int day = 0; day < 7; day++) {
+				currentDayControl = weeks[week].getDay(day);
+				
+				currentDay.add(Calendar.DAY_OF_MONTH, 1);
+				if (currentDay.getTime().after(targetDate)) {
+					refresh(date, currentDayControl);
+					return;
+				}
+			}
+		}
 	}
 	
 	private void refresh(Date date, Day dayControl) {
@@ -201,6 +232,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#refresh()
 	 */
 	public void refresh() {
+		checkWidget();
+		
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
 		int currentMonth = c.get(Calendar.MONTH);
@@ -257,6 +290,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventContentProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventContentProvider)
 	 */
 	public void setEventContentProvider(EventContentProvider eventContentProvider) {
+		checkWidget();
+		
 		this.eventContentProvider = eventContentProvider;
 	}
 	
@@ -268,6 +303,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#setEventCountProvider(org.eclipse.jface.examples.databinding.compositetable.timeeditor.EventCountProvider)
 	 */
 	public void setEventCountProvider(EventCountProvider eventCountProvider) {
+		checkWidget();
+		
 		this.eventCountProvider = eventCountProvider;
 	}
 
@@ -299,6 +336,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemDeleteHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemDeleteHandler(CalendarableItemEventHandler deleteHandler) {
+		checkWidget();
+		
 		deleteHandlers.add(deleteHandler);
 	}
 
@@ -308,6 +347,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemDeleteHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemDeleteHandler(CalendarableItemEventHandler deleteHandler) {
+		checkWidget();
+		
 		deleteHandlers.remove(deleteHandler);
 	}
 	
@@ -319,6 +360,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemDisposeHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler) {
+		checkWidget();
+		
 		disposeHandlers.add(itemDisposeHandler);
 	}
 
@@ -328,6 +371,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemDisposeHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemDisposeHandler(CalendarableItemEventHandler itemDisposeHandler) {
+		checkWidget();
+		
 		disposeHandlers.remove(itemDisposeHandler);
 	}
 	
@@ -339,6 +384,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemEditHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemEditHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
+		
 		itemEditHandlers.add(handler);
 	}
 
@@ -348,6 +395,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemEditHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemEditHandler(CalendarableItemEventHandler handler) {
+		checkWidget();
+		
 		itemEditHandlers.remove(handler);
 	}
 	
@@ -359,6 +408,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemInsertHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void addItemInsertHandler(CalendarableItemEventHandler insertHandler) {
+		checkWidget();
+		
 		itemInsertHandlers.add(insertHandler);
 	}
 
@@ -368,6 +419,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemInsertHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
 	 */
 	public void removeItemInsertHandler(CalendarableItemEventHandler insertHandler) {
+		checkWidget();
+		
 		itemInsertHandlers.remove(insertHandler);
 	}
 	
@@ -379,6 +432,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
 	 */
 	public void addSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		checkWidget();
+		
 		selectionChangeListeners.add(l);
 	}
 
@@ -388,6 +443,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeSelectionChangeListener(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener)
 	 */
 	public void removeSelectionChangeListener(CalendarableSelectionChangeListener l) {
+		checkWidget();
+		
 		selectionChangeListeners.remove(l);
 	}
 	
@@ -397,6 +454,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireDelete(org.eclipse.jface.examples.databinding.compositetable.timeeditor.CalendarableItem)
 	 */
 	public boolean fireDelete(CalendarableItem toDelete) {
+		checkWidget();
+		
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -408,6 +467,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 *      boolean)
 	 */
 	public NewEvent fireInsert(Date date, boolean allDayEvent) {
+		checkWidget();
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -419,6 +480,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 *      int)
 	 */
 	public void setTimeBreakdown(int numberOfDays, int numberOfDivisionsInHour) {
+		checkWidget();
 		// NOOP
 	}
 	
@@ -428,6 +490,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDays()
 	 */
 	public int getNumberOfDays() {
+		checkWidget();
+		
 		// Return the number of days in the current month
 		Calendar c = new GregorianCalendar();
 		c.setTime(startDate);
@@ -440,6 +504,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#getNumberOfDivisionsInHour()
 	 */
 	public int getNumberOfDivisionsInHour() {
+		checkWidget();
+		
 		// NOOP
 		return -1;
 	}
@@ -453,6 +519,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * selected day.
 	 */
 	public MonthCalendarSelectedDay getSelectedDay() {
+		checkWidget();
+		
 		return selectedDay;
 	}
 	
@@ -481,6 +549,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#addFocusListener(org.eclipse.swt.events.FocusListener)
 	 */
 	public void addFocusListener(FocusListener listener) {
+		checkWidget();
+		
 		super.addFocusListener(listener);
 		focusListeners.add(listener);
 	}
@@ -506,6 +576,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#removeFocusListener(org.eclipse.swt.events.FocusListener)
 	 */
 	public void removeFocusListener(FocusListener listener) {
+		checkWidget();
+		
 		super.removeFocusListener(listener);
 		focusListeners.remove(listener);
 	}
@@ -541,6 +613,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void addMouseListener(MouseListener listener) {
+		checkWidget();
+		
 		super.addMouseListener(listener);
 		mouseListeners.add(listener);
 	}
@@ -549,6 +623,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#removeMouseListener(org.eclipse.swt.events.MouseListener)
 	 */
 	public void removeMouseListener(MouseListener listener) {
+		checkWidget();
+		
 		super.removeMouseListener(listener);
 		mouseListeners.remove(listener);
 	}
@@ -614,6 +690,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#addKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void addKeyListener(KeyListener listener) {
+		checkWidget();
+		
 		super.addKeyListener(listener);
 		keyListeners.add(listener);
 	}
@@ -637,6 +715,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Control#removeKeyListener(org.eclipse.swt.events.KeyListener)
 	 */
 	public void removeKeyListener(KeyListener listener) {
+		checkWidget();
+		
 		super.removeKeyListener(listener);
 		keyListeners.remove(listener);
 	}
@@ -696,6 +776,8 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	 * @see org.eclipse.swt.widgets.Composite#setFocus()
 	 */
 	public boolean setFocus() {
+		checkWidget();
+		
 		Day newDay = weeks[0].getDay(0);
 		return newDay.setFocus();
 	}

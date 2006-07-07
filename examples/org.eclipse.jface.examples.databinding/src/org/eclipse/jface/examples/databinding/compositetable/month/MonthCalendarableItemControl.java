@@ -96,9 +96,8 @@ public class MonthCalendarableItemControl extends Canvas
 		});
 
 		initAccessible();
-
-//		setLayout(new FillLayout());
-//		label = new CLabel(this, SWT.NULL);
+		
+		setBackground(parent.getBackground());
 	}
 	
 	private CalendarableItem calendarableItem = null;

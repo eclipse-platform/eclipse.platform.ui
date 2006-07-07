@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -45,7 +44,7 @@ public class Week extends Composite {
 		gridLayout.marginWidth = 0;
 		gridLayout.makeColumnsEqualWidth = true;
 		this.setLayout(gridLayout);
-		this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+//		this.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 		this.setSize(new Point(870, 158));
 	}
 
