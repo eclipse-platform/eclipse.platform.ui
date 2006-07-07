@@ -14,11 +14,9 @@ import java.util.Arrays;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.ui.CVSPreferencesPage.PerspectiveDescriptorComparator;
-import org.eclipse.team.internal.ui.preferences.ComboFieldEditor;
 import org.eclipse.ui.*;
 
 public class AnnotatePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
