@@ -25,6 +25,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
  * be properly synchronized using the techniques specified by the client's
  * widget library.
  * </p>
+ * <p>
+ * Note: this class is not intended to be instantiated by clients.
+ * </p>
  * 
  * @see IRefactoringHistoryListener
  * @see IRefactoringHistoryService
