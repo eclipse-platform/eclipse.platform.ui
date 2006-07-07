@@ -300,7 +300,8 @@ public class TabbedPropertySheetPage
 		 * of these events since we want to send aboutToBeHidden() and
 		 * aboutToBeShown() when the property sheet is hidden or shown.
 		 */
-		if (!thisActivated && !part.equals(contributor)) {
+        if (!thisActivated && !part.equals(contributor)
+                && !part.getSite().getId().equals(contributor.getContributorId())) {
 			/*
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
