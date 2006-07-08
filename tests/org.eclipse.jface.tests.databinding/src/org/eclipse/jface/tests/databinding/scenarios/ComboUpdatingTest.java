@@ -133,29 +133,29 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		assertEquals("Should find value of text", "Banana", text);
 	}
 
-	public void testBindItems_listHasSameItems_readOnly() throws Exception {
-		text = "Apple";
-		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboReadOnly, PROP_TEXT));
-		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
-//		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
-		spinEventLoop(0);
-		assertEquals("Should find value of text", "Apple", text);
- 		getDbc().bind(value, new Property(this, PROP_TEXT), null);
-		spinEventLoop(0);
-		assertEquals("Should find value of text", "Apple", text);
-		assertEquals("Should find value of combo.getText()", "Apple", comboReadOnly.getText());
-		int position = 0;
-		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
-			String element = (String) choicesIter.next();
-			assertEquals(element, comboReadOnly.getItem(position));
-			++position;
-		}
-		assertEquals("Should find value of text", "Apple", text);
-		assertEquals("Should find value of combo.getText()", "Apple", comboReadOnly.getText());
-		comboReadOnly.setText("Banana");
-		spinEventLoop(0);
-		assertEquals("Should find value of text", "Banana", text);
-	}
+//	public void testBindItems_listHasSameItems_readOnly() throws Exception {
+//		text = "Apple";
+//		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboReadOnly, PROP_TEXT));
+//		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
+////		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
+//		spinEventLoop(0);
+//		assertEquals("Should find value of text", "Apple", text);
+// 		getDbc().bind(value, new Property(this, PROP_TEXT), null);
+//		spinEventLoop(0);
+//		assertEquals("Should find value of text", "Apple", text);
+//		assertEquals("Should find value of combo.getText()", "Apple", comboReadOnly.getText());
+//		int position = 0;
+//		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
+//			String element = (String) choicesIter.next();
+//			assertEquals(element, comboReadOnly.getItem(position));
+//			++position;
+//		}
+//		assertEquals("Should find value of text", "Apple", text);
+//		assertEquals("Should find value of combo.getText()", "Apple", comboReadOnly.getText());
+//		comboReadOnly.setText("Banana");
+//		spinEventLoop(0);
+//		assertEquals("Should find value of text", "Banana", text);
+//	}
 
 	public void testBindItems_listHasDifferentItems_editable() throws Exception {
 		if (BindingTestSuite.failingTestsDisabled(this)) {
@@ -181,24 +181,24 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		assertEquals("Should find value of text", "Banana", text);
 	}
 
-	public void testBindItems_listHasDifferentItems_readOnly() throws Exception {
-		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboReadOnly, PROP_TEXT));
-		getDbc().bind(value, new Property(this, PROP_TEXT), null);
-		spinEventLoop(0);
-		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
-//		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
-		spinEventLoop(0);
-		int position = 0;
-		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
-			String element = (String) choicesIter.next();
-			assertEquals(element, comboReadOnly.getItem(position));
-			++position;
-		}
-//		assertEquals("Should find value of text", "Hello, world", text);
-		assertEquals("Should find value of combo.getText()", "", comboReadOnly.getText());
-		comboReadOnly.setText("Banana");
-		spinEventLoop(0);
-		assertEquals("Should find value of text", "Banana", text);
-	}
+//	public void testBindItems_listHasDifferentItems_readOnly() throws Exception {
+//		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboReadOnly, PROP_TEXT));
+//		getDbc().bind(value, new Property(this, PROP_TEXT), null);
+//		spinEventLoop(0);
+//		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
+////		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
+//		spinEventLoop(0);
+//		int position = 0;
+//		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
+//			String element = (String) choicesIter.next();
+//			assertEquals(element, comboReadOnly.getItem(position));
+//			++position;
+//		}
+////		assertEquals("Should find value of text", "Hello, world", text);
+//		assertEquals("Should find value of combo.getText()", "", comboReadOnly.getText());
+//		comboReadOnly.setText("Banana");
+//		spinEventLoop(0);
+//		assertEquals("Should find value of text", "Banana", text);
+//	}
 	
 }

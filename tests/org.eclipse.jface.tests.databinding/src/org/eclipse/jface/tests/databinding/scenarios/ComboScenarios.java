@@ -256,70 +256,40 @@ public class ComboScenarios extends ScenariosTestCase {
 	 * This scenario tests a simple SWT combo with a set item list where the
 	 * selection is bouded to a String property
 	 */
-	public void test_ROCombo_Scenario01() {
-
-		// Read-Only Combo will not change its text property on a call to
-		// setText()
-
-		String[] items = new String[] { "FairyLand", "TuneLand", "NoWereLand",
-				"TinkerLand", "DreamLand" };
-		combo.setItems(items);
-		Account account = catalog.getAccounts()[0];
-
-		// simple Combo's selection bound to the Account's country property
-		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
-				new Property(account, "country"), null);
-
-		// Drive the combo selection
-		int index = 3;
-		combo.setText(items[index]); // this should drive the selection
-		assertEquals(account.getCountry(), items[index]);
-
-		// Set the country, and ensure selection is set property
-		index = 1;
-		account.setCountry(items[index]);
-		assertEquals(index, combo.getSelectionIndex());
-		assertEquals(combo.getText(), items[index]);
-
-		index = combo.getSelectionIndex();
-		String txt = combo.getText();
-		// Set the country to something that is not in the Combo's list
-		account.setCountry("FooBar");
-		// Combo's selection will not Change
-		assertEquals(combo.getSelectionIndex(), index);
-		assertEquals(combo.getText(), txt);
-
-	}
-
-	/**
-	 * This scenario tests a simple SWT combo that is bound to a list of Country
-	 * objects. The Country object's name property is listed in the Combo.
-	 * 
-	 * The Combo's selection is bounded to the Country property of an Account.
-	 */
-	public void test_ROCombo_Scenario02_SWTCombo() {
-
-		// Create a list of Strings for the countries
-		IObservableList list = new WritableList();
-		for (int i = 0; i < catalog.getAccounts().length; i++)
-			list.add(catalog.getAccounts()[i].getCountry());
-
-		// Bind the combo's content to that of the String based list
-		getDbc().bind(combo, list, null);
-		assertEquals(Arrays.asList(combo.getItems()), list);
-
-		Account account = catalog.getAccounts()[0];
-
-		// simple Combo's selection bound to the Account's country property
-		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
-				new Property(account, "country"), null);
-
-		// Drive the combo selection
-		String selection = (String) list.get(2);
-		combo.setText(selection); // this should drive the selection
-		assertEquals(account.getCountry(), selection);
-
-	}
+//	public void test_ROCombo_Scenario01() {
+//
+//		// Read-Only Combo will not change its text property on a call to
+//		// setText()
+//
+//		String[] items = new String[] { "FairyLand", "TuneLand", "NoWereLand",
+//				"TinkerLand", "DreamLand" };
+//		combo.setItems(items);
+//		Account account = catalog.getAccounts()[0];
+//
+//		// simple Combo's selection bound to the Account's country property
+//		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
+//				new Property(account, "country"), null);
+//
+//		// Drive the combo selection
+//		int index = 3;
+//		combo.setText(items[index]); // this should drive the selection
+//		assertEquals(account.getCountry(), items[index]);
+//
+//		// Set the country, and ensure selection is set property
+//		index = 1;
+//		account.setCountry(items[index]);
+//		assertEquals(index, combo.getSelectionIndex());
+//		assertEquals(combo.getText(), items[index]);
+//
+//		index = combo.getSelectionIndex();
+//		String txt = combo.getText();
+//		// Set the country to something that is not in the Combo's list
+//		account.setCountry("FooBar");
+//		// Combo's selection will not Change
+//		assertEquals(combo.getSelectionIndex(), index);
+//		assertEquals(combo.getText(), txt);
+//
+//	}
 
 	/**
 	 * This scenario tests a simple SWT combo that is bound to a list of Country
@@ -327,38 +297,68 @@ public class ComboScenarios extends ScenariosTestCase {
 	 * 
 	 * The Combo's selection is bounded to the Country property of an Account.
 	 */
-	public void test_ROCombo_Scenario02_ComboViewer() {
+//	public void test_ROCombo_Scenario02_SWTCombo() {
+//
+//		// Create a list of Strings for the countries
+//		IObservableList list = new WritableList();
+//		for (int i = 0; i < catalog.getAccounts().length; i++)
+//			list.add(catalog.getAccounts()[i].getCountry());
+//
+//		// Bind the combo's content to that of the String based list
+//		getDbc().bind(combo, list, null);
+//		assertEquals(Arrays.asList(combo.getItems()), list);
+//
+//		Account account = catalog.getAccounts()[0];
+//
+//		// simple Combo's selection bound to the Account's country property
+//		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
+//				new Property(account, "country"), null);
+//
+//		// Drive the combo selection
+//		String selection = (String) list.get(2);
+//		combo.setText(selection); // this should drive the selection
+//		assertEquals(account.getCountry(), selection);
+//
+//	}
 
-		// Account label provider will fill the combo with the country
-		cviewer.setLabelProvider(accountLabelProvider);
-		// Bind the ComboViewer's content to the available accounts
-		getDbc().bind(
-				cviewer,
-				new ListModelDescription(new Property(catalog, "accounts"),
-						"country"), null);
-
-		// Ensure that cv's content now has the catalog's accounts
-		assertArrayEquals(catalog.getAccounts(), getViewerContent(cviewer)
-				.toArray());
-		// Ensure that the cv's labels are the same as the account countries
-		assertEquals(getColumn(catalog.getAccounts(), "country"),
-				getComboContent());
-
-		Account account = SampleData.FACTORY.createAccount();
-
-		// Use the Viewers visual Combo (Strings) to set the account's country
-		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
-				new Property(account, "country"), null);
-
-		// Change the selection of the ComboViewer to all possible accounts, and
-		// verify that the account's Country is being changed correctly.
-		for (int i = 0; i < catalog.getAccounts().length; i++) {
-			Account selection = catalog.getAccounts()[i];
-			cviewer.setSelection(new StructuredSelection(selection));
-			assertEquals(selection.getCountry(), account.getCountry());
-		}
-
-	}
+	/**
+	 * This scenario tests a simple SWT combo that is bound to a list of Country
+	 * objects. The Country object's name property is listed in the Combo.
+	 * 
+	 * The Combo's selection is bounded to the Country property of an Account.
+	 */
+//	public void test_ROCombo_Scenario02_ComboViewer() {
+//
+//		// Account label provider will fill the combo with the country
+//		cviewer.setLabelProvider(accountLabelProvider);
+//		// Bind the ComboViewer's content to the available accounts
+//		getDbc().bind(
+//				cviewer,
+//				new ListModelDescription(new Property(catalog, "accounts"),
+//						"country"), null);
+//
+//		// Ensure that cv's content now has the catalog's accounts
+//		assertArrayEquals(catalog.getAccounts(), getViewerContent(cviewer)
+//				.toArray());
+//		// Ensure that the cv's labels are the same as the account countries
+//		assertEquals(getColumn(catalog.getAccounts(), "country"),
+//				getComboContent());
+//
+//		Account account = SampleData.FACTORY.createAccount();
+//
+//		// Use the Viewers visual Combo (Strings) to set the account's country
+//		getDbc().bind(new Property(combo, SWTProperties.SELECTION),
+//				new Property(account, "country"), null);
+//
+//		// Change the selection of the ComboViewer to all possible accounts, and
+//		// verify that the account's Country is being changed correctly.
+//		for (int i = 0; i < catalog.getAccounts().length; i++) {
+//			Account selection = catalog.getAccounts()[i];
+//			cviewer.setSelection(new StructuredSelection(selection));
+//			assertEquals(selection.getCountry(), account.getCountry());
+//		}
+//
+//	}
 
 	/**
 	 * This test ensure that multiple combos can be bound to the same deomain
