@@ -13,6 +13,10 @@ package org.eclipse.compare.patch;
 import org.eclipse.compare.internal.patch.WorkspacePatcher;
 import org.eclipse.core.resources.IProject;
 
+/**
+ * Provides the headers required to create a workspace patch.
+ * @since 3.2
+ */
 public class WorkspacePatcherUI {
 	/**
 	 * Returns a string that must be the first line of a workspace patch (a multi-project patch 
