@@ -27,12 +27,10 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.TextUtilities;
 
-import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 /**
@@ -139,16 +137,11 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the status line manager of the active editor
 	 */
 	private IStatusLineManager getStatusLineManager() {
-
 		IEditorPart editor= fWorkbenchPart.getSite().getPage().getActiveEditor();
 		if (editor == null)
 			return null;
-
-		IEditorActionBarContributor contributor= editor.getEditorSite().getActionBarContributor();
-		if (contributor instanceof EditorActionBarContributor) {
-			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
-		}
-		return null;
+		
+		return editor.getEditorSite().getActionBars().getStatusLineManager();
 	}
 
 	/**

@@ -131,7 +131,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
 
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -159,7 +158,6 @@ import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
-import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
 
@@ -4740,20 +4738,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Returns the status line manager of this editor.
+	 * 
 	 * @return the status line manager of this editor
-	 * @since 2.0
+	 * @since 2.0, protected since 3.3
 	 */
-	private IStatusLineManager getStatusLineManager() {
-
-		IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();
-		if (!(contributor instanceof EditorActionBarContributor))
-			return null;
-
-		IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
-		if (actionBars == null)
-			return null;
-
-		return actionBars.getStatusLineManager();
+	protected IStatusLineManager getStatusLineManager() {
+		return getEditorSite().getActionBars().getStatusLineManager();
 	}
 
 	/*
