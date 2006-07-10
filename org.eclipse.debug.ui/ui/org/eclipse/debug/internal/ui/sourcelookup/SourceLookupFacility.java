@@ -259,27 +259,13 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			return null;
 		}
 		
-		// TODO: persist/restore the editor to use per page
-		
 		if (fReuseEditor) {
-			editor = page.getActiveEditor();
-			if (editor != null) {
-				// The active editor is the one we want to  reuse
-				if (!(editor.getEditorInput().equals(input) && editor.getSite().getId().equals(id))) {
-					editor = null;
-				}
-			}
-			if (editor == null) {
-				// Try to find the editor we want to reuse and activate it
-				IEditorReference[] refs = page.getEditorReferences();
-				for (int i = 0; i < refs.length; i++) {
-					IEditorPart refEditor= refs[i].getEditor(false);
-					if (refEditor != null && input.equals(refEditor.getEditorInput()) && refEditor.getSite().getId().equals(id)) {
-						editor = refEditor;
-						page.bringToTop(editor);
-						break;
-					}
-				}
+			IEditorReference[] references = page.findEditors(input, id, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+			if (references.length > 0) {
+				// activate the editor we want to reuse
+				IEditorPart refEditor= references[0].getEditor(false);
+				editor = refEditor;
+				page.bringToTop(editor);	
 			}
 			if (editor == null) {
 			    IEditorPart editorForPage = getEditor(page);
