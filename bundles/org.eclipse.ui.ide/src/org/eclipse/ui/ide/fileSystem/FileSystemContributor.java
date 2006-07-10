@@ -17,8 +17,11 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * FileSystemContributor is the abstract superclass
- * of class attributes of <a href="../../../../../../extension-points/org_eclipse_ui_ide_filesystemSupport.html">filesystemSupport</a> extensions. 
+ * The abstract base class for all UI file system contributors. This class
+ * provides the infrastructure for defining a contributor and fulfills the contract
+ * specified by the <code>org.eclipse.ui.ide.filesystemSupport</code> 
+ * extension point.
+ * 
  * @since 3.2
  * @see org.eclipse.core.filesystem.IFileSystem
  */
