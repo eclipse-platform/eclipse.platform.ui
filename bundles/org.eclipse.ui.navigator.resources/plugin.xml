@@ -295,4 +295,10 @@
           </editorInputEnablement>
        </linkHelper>
     </extension>
+	<extension
+      point="org.eclipse.ui.perspectiveExtensions">
+    	<perspectiveExtension targetID = "org.eclipse.ui.resourcePerspective">
+		    <showInPart id = "org.eclipse.ui.navigator.ProjectExplorer"/>
+    	</perspectiveExtension>
+   	</extension>    
 </plugin> 
