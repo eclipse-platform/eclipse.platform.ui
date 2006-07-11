@@ -61,7 +61,7 @@ public class TocManager {
 	 */
 	public synchronized IToc getToc(String id, String locale) {
 		fetchTocs(locale);
-		return (IToc)tocsById.get(locale);
+		return (IToc)tocsById.get(id);
 	}
 	
 	private void fetchTocs(String locale) {

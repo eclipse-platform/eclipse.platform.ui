@@ -34,7 +34,6 @@ import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
-import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.search.LuceneSearchParticipant;
 
 /**
@@ -497,11 +496,9 @@ class IndexingOperation {
 			for (int j = 0; j < topics.length; j++) {
 				add(topics[j], hrefs);
 			}
-			if (tocs[i] instanceof Toc) {
-				topics = ((Toc) tocs[i]).getExtraTopics();
-				for (int j = 0; j < topics.length; j++) {
-					add(topics[j], hrefs);
-				}
+			topics = BaseHelpSystem.getXMLTocProvider().getExtraTopics(tocs[i].getHref());
+			for (int j = 0; j < topics.length; j++) {
+				add(topics[j], hrefs);
 			}
 			ITopic tocDescriptionTopic = tocs[i].getTopic(null);
 			if (tocDescriptionTopic != null)

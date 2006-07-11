@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITocProvider;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -40,8 +41,12 @@ public class XMLTocProvider implements ITocProvider {
 	public static final String ATTRIBUTE_NAME_EXTRADIR = "extradir"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_CATEGORY = "category"; //$NON-NLS-1$
 	
+	private static final ITopic[] EMPTY_TOPIC_ARRAY = new ITopic[0];;
+	
 	private static XMLTocProvider instance;
 	private Map contributingPlugins2IndexPaths;
+	private Map tocHrefs2ExtraTopics;
+	private Map extraTopicHref2TocHref;
 	
 	/*
 	 * Returns the instance if one was created already. If not, returns null.
@@ -68,6 +73,25 @@ public class XMLTocProvider implements ITocProvider {
 	}
 
 	/*
+	 * Returns all extra topics associated with the given toc.
+	 */
+	public ITopic[] getExtraTopics(String tocHref) {
+		ITopic[] extraTopics = (ITopic[])tocHrefs2ExtraTopics.get(tocHref);
+		if (extraTopics != null) {
+			return extraTopics;
+		}
+		return EMPTY_TOPIC_ARRAY;
+	}
+	
+	/*
+	 * Returns the toc href for the given topic that was contributed using the
+	 * extraDir attribute, or null if it is not a valid extraDir topic.
+	 */
+	public String getExtraTopicToc(String href) {
+		return (String)extraTopicHref2TocHref.get(href);
+	}
+	
+	/*
 	 * Returns the path to the index for the given plugin. Must load tocs before
 	 * calling this.
 	 */
@@ -80,6 +104,8 @@ public class XMLTocProvider implements ITocProvider {
 	 * @see org.eclipse.help.ITocProvider#getTocContributions(java.lang.String)
 	 */
 	public ITocContribution[] getTocContributions(String locale) {
+		tocHrefs2ExtraTopics = new HashMap();
+		extraTopicHref2TocHref = new HashMap();
 		List tocFiles = getTocFiles(locale);
 		TocBuilder builder = new TocBuilder();
 		builder.build(tocFiles);
@@ -88,7 +114,15 @@ public class XMLTocProvider implements ITocProvider {
 		Iterator iter = builtTocs.iterator();
 		while (iter.hasNext()) {
 			Toc toc = (Toc)iter.next();
-			contributions.add(new XMLTocContribution(toc));
+			ITocContribution contrib = new XMLTocContribution(toc);
+			contributions.add(contrib);
+			
+			// collect extra topics
+			ITopic[] extraTopics = toc.getExtraTopics();
+			tocHrefs2ExtraTopics.put(toc.getHref(), extraTopics);
+			for (int i=0;i<extraTopics.length;++i) {
+				extraTopicHref2TocHref.put(extraTopics[i].getHref(), toc.getHref());
+			}
 		}
 		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
 	}
