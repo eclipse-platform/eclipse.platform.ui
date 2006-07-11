@@ -17,7 +17,6 @@ import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.IRefreshResult;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
@@ -67,7 +66,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 
 	/**
 	 * Checks for changes to the PREF_AUTO_UPDATE property.
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 * @see Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();

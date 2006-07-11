@@ -213,7 +213,7 @@ public class ProjectContentTypes {
 	 * <li>otherwise, relative ordering should be preserved.</li>
 	 * </ol>
 	 * 
-	 *  @see ISelectionPolicy
+	 *  @see IContentTypeManager.ISelectionPolicy
 	 */
 	final IContentType[] select(Project project, IContentType[] candidates, boolean fileName, boolean content) {
 		// since no vetoing is done here, don't go further if there is nothing to sort
