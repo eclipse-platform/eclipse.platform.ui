@@ -55,6 +55,7 @@ public class ProjectSetSerializationContext {
 	 * @return
 	 * 		an array of zero or more projects that should be overwritten
 	 * 		or <code>null</code> if the operation is to be canceled
+	 * @throws TeamException 
 	 */
 	public IProject[] confirmOverwrite(IProject[] projects) throws TeamException {
 		return new IProject[0];

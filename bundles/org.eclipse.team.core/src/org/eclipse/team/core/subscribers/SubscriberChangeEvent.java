@@ -63,6 +63,7 @@ public class SubscriberChangeEvent implements ISubscriberChangeEvent {
 	/**
 	 * Returns an array of deltas for the resources with <code>ISubscriberChangeEvent.SYNC_CHANGED</code>
 	 * as the flag.
+	 * @param subscriber the subscriber
 	 * @param resources the resources whose sync info has changed
 	 * @return an array of change events
 	 */

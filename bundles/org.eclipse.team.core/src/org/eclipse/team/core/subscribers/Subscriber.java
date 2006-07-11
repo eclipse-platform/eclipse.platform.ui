@@ -83,8 +83,10 @@ abstract public class Subscriber {
 	 * of the resource. Returns <code>false</code> in all
 	 * other cases.
 	 * 
+	 * @param resource the resource being tested
 	 * @return <code>true</code> if this resource is supervised, and <code>false</code>
 	 *               otherwise
+	 * @throws TeamException 
 	 */
 	abstract public boolean isSupervised(IResource resource) throws TeamException;
 
@@ -99,6 +101,7 @@ abstract public class Subscriber {
 	 * </p>
 	 * @param resource the resource
 	 * @return a list of member resources
+	 * @throws TeamException 
 	 */
 	abstract public IResource[] members(IResource resource) throws TeamException;
 
@@ -134,6 +137,7 @@ abstract public class Subscriber {
 	 * 
 	 * @param resource the resource of interest
 	 * @return sync info
+	 * @throws TeamException 
 	 * @see #getDiff(IResource)
 	 */
 	abstract public SyncInfo getSyncInfo(IResource resource) throws TeamException;
@@ -358,6 +362,7 @@ abstract public class Subscriber {
 	 * 
 	 * @param resource the resource of interest
 	 * @return the diff for the resource or <code>null</code>
+	 * @throws CoreException 
 	 * @throws TeamException if errors occur
 	 * @since 3.2
 	 */
@@ -380,6 +385,7 @@ abstract public class Subscriber {
 	 * </ul>
 	 * @param traversals the traversals to be visited
 	 * @param visitor the visitor
+	 * @throws CoreException 
 	 * @throws TeamException if errors occur
 	 * @since 3.2
 	 */
@@ -408,7 +414,7 @@ abstract public class Subscriber {
 	 *            <code>IResource.DEPTH_ONE</code>, or
 	 *            <code>IResource.DEPTH_INFINITE</code>)
 	 * @param visitor the visitor
-	 * @throws TeamException if errors occur
+	 * @throws CoreException if errors occur
 	 * @since 3.2
 	 */
 	public void accept(IResource[] resources, int depth, IDiffVisitor visitor) throws CoreException {
