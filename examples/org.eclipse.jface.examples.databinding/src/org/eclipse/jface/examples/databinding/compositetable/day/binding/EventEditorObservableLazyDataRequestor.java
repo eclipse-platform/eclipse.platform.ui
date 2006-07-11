@@ -505,8 +505,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	
 	// Event handlers here ----------------------------------------------------
 
-	private Date currentlyFetching = null;
-	private List dataForCurrentDate = null;
 	private int currentOffset = 0;
 
 	private boolean currentOffsetIsSame(Date day) {
