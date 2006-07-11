@@ -63,7 +63,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private String imagePropertyName = null;
 	private String allDayEventPropertyName = null;
 	
-	private class Pair {
+	private class MultiDayEventItem {
 		/**
 		 * a in the pair (a, b)
 		 */
@@ -80,7 +80,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		 * @param a a in the pair (a, b)
 		 * @param b b in the pair (a, b)
 		 */
-		public Pair(Object a, CalendarableItem  b) {
+		public MultiDayEventItem(Object a, CalendarableItem  b) {
 			this.a = a;
 			this.b = b;
 		}
@@ -89,10 +89,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj.getClass() != Pair.class) {
+			if (obj.getClass() != MultiDayEventItem.class) {
 				return false;
 			}
-			Pair other = (Pair) obj;
+			MultiDayEventItem other = (MultiDayEventItem) obj;
 			return a.equals(other.a) && b.equals(other.b);
 		}
 
@@ -140,7 +140,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				events = new LinkedList();
 				daysToEventsMap.put(date, events);
 			}
-			Pair eventToCalenderable = new Pair(event, null);
+			MultiDayEventItem eventToCalenderable = new MultiDayEventItem(event, null);
 			events.add(eventToCalenderable);
 			daysToEventsMap.put(date, events);
 		}
@@ -165,7 +165,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				return;
 			}
 			for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
-				Pair eventToCalendarable = (Pair) eventsIter.next();
+				MultiDayEventItem eventToCalendarable = (MultiDayEventItem) eventsIter.next();
 				if (eventToCalendarable.a.equals(event)) {
 					eventsIter.remove();
 					break;
@@ -213,7 +213,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				}
 				
 				for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
-					Pair eventToCalendarable = (Pair) eventsIter.next();
+					MultiDayEventItem eventToCalendarable = (MultiDayEventItem) eventsIter.next();
 					if (eventToCalendarable.a.equals(event)) {
 						if (eventToCalendarable.b != null) {
 							ICalendarableItemControl control = eventToCalendarable.b.getControl();
@@ -243,7 +243,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			
 			Iterator sourceEventIter = dataForDate.iterator();
 			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
-				Pair sourceEventPair = (Pair) sourceEventIter.next();
+				MultiDayEventItem sourceEventPair = (MultiDayEventItem) sourceEventIter.next();
 				sourceEventPair.b = items[itemIndex];
 				Object sourceEvent = sourceEventPair.a;
 				Date startDate = getBeginningDate(sourceEvent);
@@ -253,6 +253,26 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				bindCalendarableItemProperties(items[itemIndex], sourceEvent, dayWithinEvent, numberOfDaysInEvent);
 			}
 		}
+		
+		/**
+		 * Returns 11:59:999 PM of the ending date of the passed event.
+		 * 
+		 * @param it The event
+		 * @return The ending of the last day
+		 */
+		protected Date getEndingDate(Object it) {
+			ReflectedProperty property = new ReflectedProperty(it, endTimePropertyName);
+			Date endingDate = (Date) property.get();
+			Date endOfEndingDate = setToEndOfDay(endingDate);
+			return endOfEndingDate;
+		}
+
+		private int differenceInDays(Date date, Date daysToSubtract) {
+			long difference = date.getTime() - daysToSubtract.getTime();
+			difference /= (1000*60*60*24);
+			return (int) difference;
+		}
+		
 	}
 	
 	/**
@@ -400,33 +420,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	
 	// Utility methods here ---------------------------------------------------
 	
-    public boolean isDateBetweenInclusive(Date testDate, Date startDate, Date endDate) {
-    	GregorianCalendar gc = new GregorianCalendar();
-    	gc.setTime(startDate);
-    	GregorianCalendar startDatePortion = new GregorianCalendar();
-    	startDatePortion.set(Calendar.YEAR, gc.get(Calendar.YEAR));
-    	startDatePortion.set(Calendar.MONTH, gc.get(Calendar.MONTH));
-    	startDatePortion.set(Calendar.DATE, gc.get(Calendar.DATE));
-    	Date realStartDate = startDatePortion.getTime();
-    	
-    	GregorianCalendar endDatePortion = new GregorianCalendar();
-    	endDatePortion.set(Calendar.YEAR, gc.get(Calendar.YEAR));
-    	endDatePortion.set(Calendar.MONTH, gc.get(Calendar.MONTH));
-    	endDatePortion.set(Calendar.DATE, gc.get(Calendar.DATE));
-    	endDatePortion.add(Calendar.DATE, 1);
-    	Date realEndDate = endDatePortion.getTime();
-    	
-    	boolean startDateOK = testDate.after(realStartDate) || testDate.equals(realStartDate);
-		return startDateOK && testDate.before(realEndDate);
-	}
-
-    public Date getLastVisibleDate() {
-    	GregorianCalendar gc = new GregorianCalendar();
-    	gc.setTime(editor.getStartDate());
-    	gc.add(Calendar.DATE, editor.getNumberOfDays()-1);
-    	return gc.getTime();
-    }
-    
     protected Date incrementDay(Date initialDate, int increment) {
     	GregorianCalendar gc = new GregorianCalendar();
     	gc.setTime(initialDate);
@@ -460,19 +453,6 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		return date;
 	}
 	
-	/**
-	 * Returns 11:59:999 PM of the ending date of the passed event.
-	 * 
-	 * @param it The event
-	 * @return The ending of the last day
-	 */
-	protected Date getEndingDate(Object it) {
-		ReflectedProperty property = new ReflectedProperty(it, endTimePropertyName);
-		Date endingDate = (Date) property.get();
-		Date endOfEndingDate = setToEndOfDay(endingDate);
-		return endOfEndingDate;
-	}
-
 	protected static Date setToEndOfDay(Date date) {
 		GregorianCalendar gc = new GregorianCalendar();
 		gc.setTime(date);
@@ -497,52 +477,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		return (Date)property.get();
 	}
 	
-	private int differenceInDays(Date date, Date daysToSubtract) {
-		long difference = date.getTime() - daysToSubtract.getTime();
-		difference /= (1000*60*60*24);
-		return (int) difference;
-	}
-	
 	// Event handlers here ----------------------------------------------------
-
-	private int currentOffset = 0;
-
-	private boolean currentOffsetIsSame(Date day) {
-		Object current = getModelElementAt(currentOffset);
-		return getBeginningDate(current).equals(setToStartOfDay(day));
-	}
-
-	private boolean currentOffsetIsAfter(Date day) {
-		Object current = getModelElementAt(currentOffset);
-		return getBeginningDate(current).after(setToStartOfDay(day));
-	}
-
-	private boolean currentOffsetIsBefore(Date day) {
-		Object current = getModelElementAt(currentOffset);
-		return getBeginningDate(current).before(setToStartOfDay(day));
-	}
-	
-	protected void scrollToBeginningOfDay(Date day) {
-		if (currentOffset >= modelSize) {
-			currentOffset = modelSize-1;
-		}
-		if (currentOffset < 0) {
-			currentOffset = 0;
-		}
-		
-		while (currentOffsetIsBefore(day) && currentOffset < modelSize - 1) {
-			++currentOffset;
-		}
-		while (currentOffsetIsAfter(day) && currentOffset > 0) {
-			--currentOffset;
-		}
-		while (currentOffsetIsSame(day) && currentOffset > 0) {
-			--currentOffset;
-		}
-		if (currentOffset < modelSize - 1) {
-			++currentOffset;
-		}
-	}
 
 	protected void bindCalendarableItemProperties(
 			CalendarableItem item, 
