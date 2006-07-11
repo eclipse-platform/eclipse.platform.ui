@@ -1340,7 +1340,9 @@ public abstract class Dialog extends Window {
 			// and the contents.
 			Control control = buttonBar.getParent();
 			while (control != dialogContents && control != null) {
-				control.addMouseListener(restoreSizeMouseListener);
+				if (control.getClass() == Composite.class) {
+					control.addMouseListener(restoreSizeMouseListener);
+				}
 				control = control.getParent();
 			}
 		}
@@ -1356,7 +1358,10 @@ public abstract class Dialog extends Window {
 	 *  @since 3.2
 	 */
 	private void addRestoreSizeMouseListenerToComposites(Control control) {
-		if (control instanceof Composite) {
+		// Check explicitly for instances of Composite, not instances of
+		// subclasses of composite.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306
+		if (control.getClass() == Composite.class) {
 			control.addMouseListener(restoreSizeMouseListener);
 			Control [] children = ((Composite)control).getChildren();
 			for (int i=0; i<children.length; i++) {
@@ -1373,15 +1378,36 @@ public abstract class Dialog extends Window {
 	private void removeRestoreSizeMouseListeners() {
 		Control dialogContents = getContents();
 		if (buttonBar != null && !buttonBar.isDisposed()) {
-			buttonBar.removeMouseListener(restoreSizeMouseListener);
+			removeRestoreSizeMouseListenerFromComposites(buttonBar);
 			Control control = buttonBar.getParent();
 			while (control != dialogContents && control != null && !control.isDisposed()) {
-				control.removeMouseListener(restoreSizeMouseListener);
+				if (control.getClass() == Composite.class) {
+					control.removeMouseListener(restoreSizeMouseListener);
+				}
 				control = control.getParent();
 			}
 		}
 		if (dialogContents != null && !dialogContents.isDisposed()) {
 			dialogContents.removeMouseListener(restoreSizeMouseListener);
+		}
+	}
+	
+	/**
+	 * Remove mouse listeners from the specified control if it is a composite,
+	 * and any child composites.  Called recursively.
+	 * 
+	 *  @since 3.3
+	 */
+	private void removeRestoreSizeMouseListenerFromComposites(Control control) {
+		// Check explicitly for instances of Composite, not instances of
+		// subclasses of composite.
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306
+		if (control.getClass() == Composite.class) {
+			control.removeMouseListener(restoreSizeMouseListener);
+			Control [] children = ((Composite)control).getChildren();
+			for (int i=0; i<children.length; i++) {
+				removeRestoreSizeMouseListenerFromComposites(children[i]);
+			}
 		}
 	}
 	
