@@ -645,7 +645,7 @@ public class SearchIndex implements ISearchIndex {
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
 			HashSet totalIds = new HashSet();
-			Collection docPluginsIds = tocManager.getContributingPlugins();
+			Collection docPluginsIds = BaseHelpSystem.getXMLTocProvider().getContributingPlugins();
 			Collection additionalPluginIds = BaseHelpSystem.getSearchManager()
 					.getPluginsWithSearchParticipants();
 			totalIds.addAll(docPluginsIds);

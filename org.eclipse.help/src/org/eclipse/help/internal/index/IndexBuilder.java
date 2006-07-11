@@ -15,11 +15,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Stack;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IIndex;
+import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.model.ITocElement;
 
 
 /**
@@ -35,7 +34,7 @@ public class IndexBuilder {
     private Index index;
     private IndexEntry current;
 	private Stack entries;
-    private ITocElement[] tocs;
+    private IToc[] tocs;
     
     /**
      * Constructs the index builder
@@ -44,7 +43,7 @@ public class IndexBuilder {
         unprocessedIndexFiles = new ArrayList();
         index = new Index(comparator);
 		entries = new Stack();
-        tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+        tocs = HelpSystem.getTocs();
     }
     
     public void build(Collection contributedIndexFiles) {

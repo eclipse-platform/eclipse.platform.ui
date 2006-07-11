@@ -14,4 +14,9 @@
       <contentProducer producer="org.eclipse.help.internal.DynamicContentProducer"/>
    </extension>
 
+   <extension
+         point="org.eclipse.help.toc">
+      <tocProvider class="org.eclipse.help.internal.toc.XMLTocProvider"/>
+   </extension>
+
 </plugin>

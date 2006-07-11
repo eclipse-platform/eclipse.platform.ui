@@ -12,11 +12,7 @@
 &lt;ul&gt;
 &lt;ul&gt;
 &lt;li&gt;
-author the html files, zip html files into doc.zip, and store the zip file
-in the plug-in directory.&lt;/li&gt;
-
-&lt;li&gt;
-create TOC files that describe Table of Contents for the help and the necessary
+create TOC files that describe the table of contents for the help and the necessary
 topic interleaving. See the syntax below.&lt;/li&gt;
 
 &lt;li&gt;
@@ -24,7 +20,7 @@ the plugin.xml file should extend the &lt;tt&gt;org.eclipse.help.toc&lt;/tt&gt; 
 point and specify TOC file(s).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/ul&gt;
-&lt;p&gt;Optionally, a search index can be prebuilt and registered using &lt;code&gt;index&lt;/code&gt; element in order to performance of the first search attempt. Only one index per plug-in can be registered - multiple &lt;code&gt;index&lt;/code&gt; elements will result in undefined behaviour.
+&lt;p&gt;Optionally, a search index can be prebuilt and registered using &lt;code&gt;index&lt;/code&gt; element in order to improve the performance of the first search attempt. Only one index per plug-in can be registered - multiple &lt;code&gt;index&lt;/code&gt; elements will result in undefined behaviour.
       </documentation>
    </annotation>
 
@@ -32,6 +28,7 @@ point and specify TOC file(s).&lt;/li&gt;
       <complexType>
          <sequence>
             <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="tocProvider" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="index" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -62,6 +59,11 @@ point and specify TOC file(s).&lt;/li&gt;
    </element>
 
    <element name="toc">
+      <annotation>
+         <documentation>
+            a toc contribution made by supplying an XML file
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="file" type="string" use="required">
             <annotation>
@@ -182,6 +184,26 @@ or not primary and intended to be integrated into another table of contents.
       </complexType>
    </element>
 
+   <element name="tocProvider">
+      <annotation>
+         <documentation>
+            (&lt;b&gt;since 3.3&lt;/b&gt;) a toc contribution made by plugging in code
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the implementation class for the toc provider.  This class must implement the &lt;samp&gt;org.eclipse.help.ITocProvider&lt;/samp&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ITocProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="index">
       <annotation>
          <documentation>
@@ -294,8 +316,7 @@ to plugin directory.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         No code is required to use this extension point.  All that is needed is to supply the appropriate manifest 
-files mentioned in the plugin.xml file.
+         An implementation of &lt;samp&gt;org.eclipse.help.ITocProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;tocProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 
@@ -304,7 +325,7 @@ files mentioned in the plugin.xml file.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The default implementation of the help system UI supplied with the Eclipse platform fully supports the &lt;samp&gt;toc&lt;/samp&gt; extension point.
+         The default implementation of the help system UI supplied with the Eclipse platform fully supports this extension point.
       </documentation>
    </annotation>
 

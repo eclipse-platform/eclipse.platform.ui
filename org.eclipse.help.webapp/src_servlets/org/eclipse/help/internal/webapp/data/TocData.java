@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +27,6 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.model.INavigationElement;
-import org.eclipse.help.internal.model.ITocElement;
-import org.eclipse.help.internal.model.ITopicElement;
-import org.eclipse.help.internal.toc.Toc;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -59,7 +57,7 @@ public class TocData extends ActivitiesData {
 	private int topicsGenerated = 0;
 
 	// List of TOC's, unfiltered
-	private ITocElement[] tocs;
+	private IToc[] tocs;
 	// List of TOC's, filtered by roles
 	//private IToc[] filteredTocs;
 
@@ -117,6 +115,29 @@ public class TocData extends ActivitiesData {
 		loadTocs();
 	}
 
+	/*
+	 * Counts and returns the number of topics inside the given TOC (all
+	 * descendants, not just subtopics), including the overall book's topic.
+	 */
+	private static int countTopics(IToc toc) {
+		return countTopics(toc.getTopics()) + 1;
+	}
+	
+	/*
+	 * Counts and returns the number of topics in the given array and all
+	 * subtopics.
+	 */
+	private static int countTopics(ITopic[] topics) {
+		int count = topics.length;
+		for (int i=0;i<topics.length;++i) {
+			ITopic[] subtopics = topics[i].getSubtopics();
+			if (subtopics != null && subtopics.length > 0) {
+				count += countTopics(subtopics);
+			}
+		}
+		return count;
+	}
+	
 	// Accessor methods to avoid exposing help classes directly to JSP.
 	// Note: this seems ok for now, but maybe we need to reconsider this
 	//       and allow help classes in JSP's.
@@ -135,6 +156,54 @@ public class TocData extends ActivitiesData {
 
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
+	}
+
+	/*
+	 * Finds a path of ITopics in the given IToc to the given topic. If the
+	 * toc doesn't contain the topic, returns null.
+	 */
+	private static ITopic[] getTopicPathInToc(ITopic topicToFind, IToc toc) {
+		ITopic topics[] = toc.getTopics();
+		if (topics != null) {
+			for (int i=0;i<topics.length;++i) {
+				// returns path in reverse order
+				List reversePath = getTopicPathInToc(topicToFind, topics[i]);
+				if (reversePath != null) {
+					// reverse and return
+					ITopic[] path = new ITopic[reversePath.size()];
+					for (int j=0;j<path.length;++j) {
+						path[j] = (ITopic)reversePath.get((path.length - 1) - j);
+					}
+					return path;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * Finds the topic in the given topic sub-tree. Returns a path of ITopics
+	 * to that topic in reverse order (from the topic up).
+	 */
+	private static List getTopicPathInToc(ITopic topicToFind, ITopic topic) {
+		if (topic == topicToFind) {
+			// found it. start the list to be created recursively
+			List path = new ArrayList();
+			path.add(topic);
+			return path;
+		}
+		else {
+			ITopic[] subtopics = topic.getSubtopics();
+			for (int i=0;i<subtopics.length;++i) {
+				List path = getTopicPathInToc(topicToFind, subtopics[i]);
+				if (path != null) {
+					// it was in a subtopic.. add to the path and return
+					path.add(topic);
+					return path;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -170,9 +239,9 @@ public class TocData extends ActivitiesData {
 	 * Returns a list of all the TOC's as xml elements. Individual TOC's are not
 	 * loaded yet.
 	 * 
-	 * @return Element[]
+	 * @return IToc[]
 	 */
-	public ITocElement[] getTocs() {
+	public IToc[] getTocs() {
 		return tocs;
 	}
 
@@ -195,7 +264,7 @@ public class TocData extends ActivitiesData {
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
-	private boolean isEnabled(ITocElement toc) {
+	private boolean isEnabled(IToc toc) {
 		if(!isAdvancedUI()){
 			// activities never filtered for basic browsers
 			return true;
@@ -220,10 +289,8 @@ public class TocData extends ActivitiesData {
 			selectedToc = findTocContainingTopic(topicHref);
 
 			ITopic topic = findTopic();
-			if (topic != null
-					&& topic instanceof org.eclipse.help.internal.toc.Topic) {
-				topicPath = ((org.eclipse.help.internal.toc.Topic) topic)
-						.getPathInToc(tocs[selectedToc]);
+			if (topic != null) {
+				topicPath = getTopicPathInToc(topic, tocs[selectedToc]);
 			}
 		}
 	}
@@ -299,15 +366,14 @@ public class TocData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	public void generateToc(int toc, Writer out) throws IOException {
-		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
+		ITopic[] topics = getEnabledSubtopics(tocs[toc]);
 		if (topics.length <= 0) {
 			// do not generate toc when there are no leaf topics
 			return;
 		}
 
 		int maxLevels = dynamicLoadDepths;
-		if (tocs[toc] instanceof Toc
-				&& ((Toc) tocs[toc]).size() <= loadBookAtOnceLimit) {
+		if (countTopics(tocs[toc]) <= loadBookAtOnceLimit) {
 			maxLevels = -1;
 		}
 		// Construct ID of subtree root
@@ -353,7 +419,7 @@ public class TocData extends ActivitiesData {
 	 *            current level of topic, 0 is first Level under TOC
 	 * @throws IOException
 	 */
-	private void generateTopic(ITopicElement topic, Writer out, String id,
+	private void generateTopic(ITopic topic, Writer out, String id,
 			int maxLevels, int currentLevel) throws IOException {
 		if (maxLevels == 0) {
 			return;
@@ -364,7 +430,7 @@ public class TocData extends ActivitiesData {
 			maxLevels = 1;
 		}
 
-		ITopicElement[] topics = getEnabledSubtopics(topic);
+		ITopic[] topics = getEnabledSubtopics(topic);
 		boolean hasNodes = topics.length > 0;
 
 		if (hasNodes) {
@@ -430,18 +496,18 @@ public class TocData extends ActivitiesData {
 	 * @throws IOException
 	 */
 	public void generateBasicToc(int toc, Writer out) throws IOException {
-		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
+		ITopic[] topics = getEnabledSubtopics(tocs[toc]);
 		for (int i = 0; i < topics.length; i++) {
 			generateBasicTopic(topics[i], out);
 		}
 
 	}
 
-	private void generateBasicTopic(ITopicElement topic, Writer out)
+	private void generateBasicTopic(ITopic topic, Writer out)
 			throws IOException {
 
 		out.write("<li>"); //$NON-NLS-1$
-		ITopicElement[] topics = getEnabledSubtopics(topic);
+		ITopic[] topics = getEnabledSubtopics(topic);
 		boolean hasNodes = topics.length > 0;
 		if (hasNodes) {
 			out.write("<nobr>"); //$NON-NLS-1$
@@ -508,34 +574,41 @@ public class TocData extends ActivitiesData {
 	 * Obtains children topics for a given navigation element. Topics from TOCs
 	 * not matching enabled activities are filtered out.
 	 * 
-	 * @param navigationElement
+	 * @param element ITopic or IToc
 	 * @return ITopic[]
 	 */
-	private ITopicElement[] getEnabledSubtopics(
-			INavigationElement navigationElement) {
-		List topics = getEnabledSubtopicList(navigationElement);
-		return (ITopicElement[]) topics
-				.toArray(new ITopicElement[topics.size()]);
+	private ITopic[] getEnabledSubtopics(Object element) {
+		List topics = getEnabledSubtopicList(element);
+		return (ITopic[])topics.toArray(new ITopic[topics.size()]);
 	}
 	/**
 	 * Obtains children topics for a given navigation element. Topics from TOCs
 	 * not matching enabled activities are filtered out.
 	 * 
 	 * @param navigationElement
-	 * @return List of ITopicElement
+	 * @return List of ITopic
 	 */
-	private List getEnabledSubtopicList(INavigationElement navigationElement) {
-		if (navigationElement instanceof ITocElement
-				&& !isEnabled((ITocElement) navigationElement))
+	private List getEnabledSubtopicList(Object element) {
+		if (element instanceof IToc && !isEnabled((IToc) element))
 			return Collections.EMPTY_LIST;
-		List children = navigationElement.getChildren();
+		List children;
+		if (element instanceof IToc) {
+			children = Arrays.asList(((IToc)element).getTopics());
+		}
+		else if (element instanceof ITopic) {
+			children = Arrays.asList(((ITopic)element).getSubtopics());
+		}
+		else {
+			// unknown element type
+			return Collections.EMPTY_LIST;
+		}
 		List childTopics = new ArrayList(children.size());
 		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
-			INavigationElement c = (INavigationElement) childrenIt.next();
-			if ((c instanceof ITopicElement)) {
+			Object c = childrenIt.next();
+			if ((c instanceof ITopic)) {
 				// add topic only if it will not end up being an empty
 				// container
-				if (((((ITopicElement) c).getHref() != null && ((ITopicElement) c)
+				if (((((ITopic) c).getHref() != null && ((ITopic) c)
 						.getHref().length() > 0) || getEnabledSubtopicList(c).size() > 0) &&
 						!UAContentFilter.isFiltered(c)) {
 					childTopics.add(c);

@@ -22,6 +22,7 @@ import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.toc.XMLTocProvider;
 import org.eclipse.help.internal.workingset.*;
 import org.osgi.framework.Bundle;
 
@@ -122,6 +123,15 @@ public final class BaseHelpSystem {
 		return getInstance().bookmarkManager;
 	}
 
+	public static synchronized XMLTocProvider getXMLTocProvider() {
+		XMLTocProvider provider = XMLTocProvider.getInstance();
+		if (provider == null) {
+			HelpSystem.getTocs();
+			provider = XMLTocProvider.getInstance();
+		}
+		return provider;
+	}
+	
 	/**
 	 * Allows Help UI to plug-in a soft adapter that delegates all the work to
 	 * the workbench browser support.

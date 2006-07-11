@@ -11,282 +11,244 @@
 package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
+import org.eclipse.help.ITocProvider;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
-/**
- * Manages the navigation model. It keeps track of all the tables of contents.
+import com.ibm.icu.util.StringTokenizer;
+
+/*
+ * Manages toc contributions (ITocContribution) supplied by the various toc
+ * providers (ITocProvider).
  */
 public class TocManager {
-	public static final String TOC_XP_NAME = "toc"; //$NON-NLS-1$
-	public static final String TOC_ELEMENT_NAME = "toc"; //$NON-NLS-1$
-	public static final String INDEX_ELEMENT_NAME = "index"; //$NON-NLS-1$
+	
+	private static final String EXTENSION_POINT_ID_TOC = HelpPlugin.PLUGIN_ID + ".toc"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME_TOC_PROVIDER = "tocProvider"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
+	
+	private ITocProvider[] tocProviders;
+	private Map tocsByLocale = new HashMap();
+	private Map tocsById = new HashMap();
 
-	/**
-	 * Map of ITocNavNode[] by String
+	/*
+	 * Returns all top-level toc entries (books) for the given locale.
 	 */
-	private Map tocsByLang;
-
-	/**
-	 * Map of plugin ID (String) to index path (String)
-	 */
-	private Map contributingPlugins2IndexPaths;
-
-	/**
-	 * HelpNavigationManager constructor.
-	 */
-	public TocManager() {
-		super();
-		try {
-			tocsByLang = new HashMap();
-			// build TOCs for machine locale at startup
-			// Note: this can be removed, and build on first invocation...
-			build(Platform.getNL());
-		} catch (Exception e) {
-			HelpPlugin.logError("", e); //$NON-NLS-1$
-		}
+	public synchronized IToc[] getTocs(String locale) {
+		fetchTocs(locale);
+		return (IToc[])tocsByLocale.get(locale);
 	}
 
-	/**
-	 * Returns the list of TOC's available in the help system
+	/*
+	 * Returns the toc whose toc contribution has the given id, for the
+	 * given locale.
 	 */
-	public ITocElement[] getTocs(String locale) {
-
-		if (locale == null)
-			return new ITocElement[0];
-
-		ITocElement[] tocs = (ITocElement[]) tocsByLang.get(locale);
-		if (tocs == null) {
-			synchronized (this) {
-				if (tocs == null) {
-					build(locale);
-				}
-			}
-			tocs = (ITocElement[]) tocsByLang.get(locale);
-			// one more sanity test...
-			if (tocs == null)
-				tocs = new ITocElement[0];
-		}
-		return tocs;
-	}
-
-	/**
-	 * Returns the navigation model for specified toc
-	 */
-	public ITocElement getToc(String href, String locale) {
-		if (href == null || href.equals("")) //$NON-NLS-1$
-			return null;
-		ITocElement[] tocs = getTocs(locale);
-
-		for (int i = 0; i < tocs.length; i++) {
-			if (tocs[i].getHref().equals(href))
-				return tocs[i];
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the list of contributing Bundle IDs
-	 */
-	public Collection getContributingPlugins() {
-		if (contributingPlugins2IndexPaths == null) {
-			getContributedTocFiles(Locale.getDefault().toString());
-		}
-		return contributingPlugins2IndexPaths.keySet();
-	}
-
-	/**
-	 * Returns the index path for a given plugin ID
-	 * @return String or null
-	 */
-	public String getIndexPath(String pluginId) {
-		if (contributingPlugins2IndexPaths == null) {
-			getContributedTocFiles(Locale.getDefault().toString());
-		}
-		return (String) contributingPlugins2IndexPaths.get(pluginId);
-	}
-
-	/**
-	 * Builds the toc from the contribution files
-	 */
-	private void build(String locale) {
-		IToc[] tocs;
-		try {
-			Collection contributedTocFiles = getContributedTocFiles(locale);
-			TocBuilder builder = new TocBuilder();
-			builder.build(contributedTocFiles);
-			List builtTocs = builder.getBuiltTocs();
-			tocs = new ITocElement[builtTocs.size()];
-			int i = 0;
-			for (Iterator it = builtTocs.iterator(); it.hasNext();) {
-				tocs[i++] = (ITocElement) it.next();
-			}
-			List orderedTocs = orderTocs(builtTocs);
-			tocs = new ITocElement[orderedTocs.size()];
-			orderedTocs.toArray(tocs);
-		} catch (Exception e) {
-			tocs = new IToc[0];
-			HelpPlugin.logError("", e); //$NON-NLS-1$
-		}
-		tocsByLang.put(locale, tocs);
-	}
-
-	/**
-	 * Expands the given list of TOCs and categories into the full list of TOCs. This is
-	 * done by substituting each category with all the TOCs in that category.
-	 * 
-	 * @param entries the TOCs and categories
-	 * @return full list of TOCs
-	 */
-	private List expandCategories(List entries) {
-		List expanded = new ArrayList();
-		Iterator iter = entries.iterator();
-		while (iter.hasNext()) {
-			Object entry = iter.next();
-			if (entry instanceof ITocElement) {
-				expanded.add(entry);
-			}
-			else if (entry instanceof TocCategory) {
-				expanded.addAll((TocCategory)entry);
-			}
-		}
-		return expanded;
+	public synchronized IToc getToc(String id, String locale) {
+		fetchTocs(locale);
+		return (IToc)tocsById.get(locale);
 	}
 	
-	/**
-	 * Orders the TOCs according to all products' preferences, with the
-	 * active product getting precedence.
-	 */
-	private List orderTocs(List unorderedTocs) {
-		try {
-			// first categorize the TOCs
-			List itemsToOrder = new ArrayList();
-			Map categorized = categorizeTocs(unorderedTocs, itemsToOrder);
-			
-			// order them
-			List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
-			
-			// replace with actual Toc or TocCategory
-			orderedItems = substituteValues(orderedItems, categorized);
-			
-			// expand the categories
-			orderedItems = expandCategories(orderedItems);
-			return orderedItems;
-		}
-		catch (Exception e) {
-			// if anything goes wrong, log an error and fall back to unordered tocs
-			HelpPlugin.logError("An unexpected internal error occured while ordering TOCs", e); //$NON-NLS-1$
-			return unorderedTocs;
-		}
-	}
-
-	/**
-	 * Reads preferences to determine TOCs to be ignored.
-	 * @return the list of TOC href's.
-	 */
-	private Collection getIgnoredTocs() {
-		HashSet ignored = new HashSet();
-		try {
-			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
-			if (preferredTocs != null) {
-				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(
-						preferredTocs, " ;,"); //$NON-NLS-1$
-
-				while (suggestdOrderedInfosets.hasMoreElements()) {
-					ignored.add(suggestdOrderedInfosets.nextElement());
+	private void fetchTocs(String locale) {
+		IToc[] tocs = (IToc[])tocsByLocale.get(locale);
+		if (tocs == null) {
+			ITocContribution[] raw = getAllTocContributions(locale);
+			ITocContribution[] filtered = filterTocContributions(raw);
+			ITocContribution[] ordered = orderTocContributions(filtered);
+			List orderedTocs = new ArrayList(ordered.length);
+			for (int i=0;i<ordered.length;++i) {
+				try {
+					IToc toc = ordered[i].getToc();
+					orderedTocs.add(toc);
+					tocsById.put(ordered[i].getId(), toc);
+				}
+				catch (Throwable t) {
+					// log and skip
+					String msg = "Error getting " + IToc.class.getName() + " from " + ITocContribution.class.getName() + ": " + ordered[i]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					HelpPlugin.logError(msg, t);
 				}
 			}
-		} catch (Exception e) {
-			HelpPlugin.logError(
-					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
+			tocs = (IToc[])orderedTocs.toArray(new IToc[orderedTocs.size()]);
+			tocsByLocale.put(locale, tocs);
+		}
+	}
+	
+	/*
+	 * Filters the given contributions according to product preferences. If
+	 * either the contribution's id or its category's id is listed in the
+	 * ignoredTocs, filter the contribution.
+	 */
+	private ITocContribution[] filterTocContributions(ITocContribution[] unfiltered) {
+		Set tocsToFilter = getIgnoredTocContributions();
+		List filtered = new ArrayList();
+		for (int i=0;i<unfiltered.length;++i) {
+			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
+					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
+				filtered.add(unfiltered[i]);
+			}
+		}
+		return (ITocContribution[])filtered.toArray(new ITocContribution[filtered.size()]);
+	}
+	
+	/*
+	 * Returns all toc contributions for the given locale, from all toc
+	 * providers.
+	 */
+	private ITocContribution[] getAllTocContributions(String locale) {
+		List contributions = new ArrayList();
+		ITocProvider[] providers = getTocProviders();
+		for (int i=0;i<providers.length;++i) {
+			ITocContribution[] contrib;
+			try {
+				contrib = providers[i].getTocContributions(locale);
+			}
+			catch (Throwable t) {
+				// log and skip
+				String msg = "Error getting " + ITocContribution.class.getName() + " from " + ITocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				HelpPlugin.logError(msg, t);
+				continue;
+			}
+			
+			// check for nulls
+			for (int j=0;j<contrib.length;++j) {
+				// null means no contribution
+				if (contrib[j] != null) {
+					// pre-fetch everything and cache for safety
+					try {
+						ITocContribution wrapped = new CachedTocContribution(contrib[j]);
+						contributions.add(wrapped);
+					}
+					catch (Throwable t) {
+						// log, and skip this offending contribution
+						String msg = "Error getting " + ITocContribution.class.getName() + " information from " + contrib[j].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+						HelpPlugin.logError(msg, t);
+						continue;
+					}
+				}
+			}
+		}
+		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
+	}
+	
+	private Set getIgnoredTocContributions() {
+		HashSet ignored = new HashSet();
+		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+		String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
+		if (preferredTocs.length() > 0) {
+			StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
+			while (suggestdOrderedInfosets.hasMoreTokens()) {
+				ignored.add(suggestdOrderedInfosets.nextToken());
+			}
 		}
 		return ignored;
 	}
 
-	/**
-	 * Returns a collection of TocFile that were not processed.
+	/*
+	 * Returns all registered toc providers (potentially cached).
 	 */
-	protected Collection getContributedTocFiles(String locale) {
-		contributingPlugins2IndexPaths = new HashMap();
-		Collection contributedTocFiles = new ArrayList();
-		Collection ignored = getIgnoredTocs();
-		// find extension point
-		IExtensionPoint xpt = Platform.getExtensionRegistry()
-				.getExtensionPoint(HelpPlugin.PLUGIN_ID, TOC_XP_NAME);
-		if (xpt == null)
-			return contributedTocFiles;
-		// get all extensions
-		IExtension[] extensions = xpt.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			String pluginId = extensions[i].getContributor().getName();
-			if(!contributingPlugins2IndexPaths.containsKey(pluginId))
-				contributingPlugins2IndexPaths.put(pluginId, null);
-			IConfigurationElement[] configElements = extensions[i]
-					.getConfigurationElements();
-			for (int j = 0; j < configElements.length; j++){
-				if (configElements[j].getName().equals(TOC_ELEMENT_NAME)) {
-					// add to TocFiles declared in this extension
-					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
-					String categoryId = configElements[j].getAttribute("category"); //$NON-NLS-1$
-					if (href == null
-							|| ignored.contains("/" + pluginId + "/" + href) //$NON-NLS-1$ //$NON-NLS-2$
-							|| (categoryId != null && ignored.contains(categoryId))) {
-						continue;
+	private ITocProvider[] getTocProviders() {
+		if (tocProviders == null) {
+			List providers = new ArrayList();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
+			for (int i=0;i<elements.length;++i) {
+				IConfigurationElement elem = elements[i];
+				try {
+					if (elem.getName().equals(ELEMENT_NAME_TOC_PROVIDER)) {
+						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
+						if (className != null) {
+							try {
+								ITocProvider provider = (ITocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+								providers.add(provider);
+							}
+							catch (CoreException e) {
+								// log and skip
+								String msg = "Error instantiating " + ELEMENT_NAME_TOC_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
+								HelpPlugin.logError(msg, e);
+							}
+							catch (ClassCastException e) {
+								// log and skip
+								String msg = ELEMENT_NAME_TOC_PROVIDER + " class must implement " + ITocProvider.class.getName(); //$NON-NLS-1$
+								HelpPlugin.logError(msg, e);
+							}
+						}
+						else {
+							// log the missing class attribute and skip
+							String msg = ELEMENT_NAME_TOC_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_TOC + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							try {
+								msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							catch (InvalidRegistryObjectException e) {
+								// skip the declaring plugin part
+							}
+							HelpPlugin.logError(msg, null);
+						}
 					}
-					boolean isPrimary = "true".equals( //$NON-NLS-1$
-							configElements[j].getAttribute("primary")); //$NON-NLS-1$
-					String extraDir = configElements[j]
-							.getAttribute("extradir"); //$NON-NLS-1$
-					contributedTocFiles.add(new TocFile(pluginId, href,
-							isPrimary, locale, extraDir, categoryId));
-				} else 	if (configElements[j].getName().equals(INDEX_ELEMENT_NAME)) {
-					// add to index paths declared in this extension
-					String path = configElements[j].getAttribute("path"); //$NON-NLS-1$
-					if (path == null
-							|| path.length()==0) {
-						continue;
-					}
-					// override entry map entry with new one, only one index path per plugin allowed
-					contributingPlugins2IndexPaths.put(pluginId, path);
-				} 
+				}
+				catch (InvalidRegistryObjectException e) {
+					// no longer valid; skip it
+				}
 			}
+			tocProviders = (ITocProvider[])providers.toArray(new ITocProvider[providers.size()]);
 		}
-		return contributedTocFiles;
+		return tocProviders;
+	}
+
+	/*
+	 * Orders the given toc contributions by category and product preference.
+	 */
+	private ITocContribution[] orderTocContributions(ITocContribution[] unorderedTocs) {
+		// first categorize the TOCs
+		List itemsToOrder = new ArrayList();
+		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
+			
+		// order them
+		List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
+			
+		// replace with actual ITocContribution or category
+		orderedItems = substituteValues(orderedItems, categorized);
+			
+		// expand the categories
+		orderedItems = expandCategories(orderedItems);
+		return (ITocContribution[])orderedItems.toArray(new ITocContribution[orderedItems.size()]);
 	}
 	
-	/**
-	 * Categorizes TOCs by their category ids. If a TOC does not have a category specified,
-	 * it is treated as a category of one. The result is a mapping between a string that
-	 * represents either the TOC href or the category id, to the Toc or TocCategory,
-	 * respectively.
-	 * 
-	 * In order to preserve the order of the original tocs and not have "random"
-	 * ordering by hashing, the order of resulting categories is returned via the
-	 * order parameter.
-	 * 
-	 * @param tocs the list of Tocs to categorize
-	 * @param tocOrder an empty list to return the tocs/categories in their preferred order
-	 * @return a mapping of category id/toc href to TocCategory/Toc
+	/*
+	 * Categorizes the given toc contributions into categories, or individual
+	 * toc contributions if no category (treated as a category of one). Returns
+	 * mapping from category id/toc id to category/toc. Order of categories/
+	 * tocs is returned via tocOrder.
 	 */
 	private Map categorizeTocs(List tocs, List tocOrder) {
 		Map categorized = new HashMap();
 		Iterator iter = tocs.iterator();
 		while (iter.hasNext()) {
-			Toc toc = (Toc)iter.next();
-			String categoryId = toc.getTocFile().getCategoryId();
+			ITocContribution toc = (ITocContribution)iter.next();
+			String categoryId;
+			try {
+				categoryId = toc.getCategoryId();
+			}
+			catch (Throwable t) {
+				// log and skip
+				String msg = "Error retrieving categoryId from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+				HelpPlugin.logError(msg, t);
+				continue;
+			}
 			if (categoryId != null) {
 				// it has a category, add it to the appropriate TocCategory
 				TocCategory category = (TocCategory)categorized.get(categoryId);
@@ -300,20 +262,45 @@ public class TocManager {
 			}
 			else {
 				// doesn't have a category; insert the TOC directly
-				categorized.put(toc.getHref(), toc);
-				tocOrder.add(toc.getHref());
+				String id;
+				try {
+					id = toc.getId();
+				}
+				catch (Throwable t) {
+					// log and skip
+					String msg = "Error retrieving id from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+					HelpPlugin.logError(msg, t);
+					continue;
+				}
+				categorized.put(id, toc);
+				tocOrder.add(id);
 			}
 		}
 		return categorized;
 	}
 	
-	/**
-	 * For each item in the list, substitutes it with the value in the map using
-	 * the item as a key. If the map does not have the item as a key, the item is
-	 * omitted.
-	 * 
-	 * @param items the items to substitute
-	 * @param map the map to use for substitution
+	/*
+	 * Expands all categories in the given list to actual toc contributions
+	 * organized by category.
+	 */
+	private List expandCategories(List entries) {
+		List expanded = new ArrayList();
+		Iterator iter = entries.iterator();
+		while (iter.hasNext()) {
+			Object entry = iter.next();
+			if (entry instanceof ITocContribution) {
+				expanded.add(entry);
+			}
+			else if (entry instanceof TocCategory) {
+				expanded.addAll((TocCategory)entry);
+			}
+		}
+		return expanded;
+	}
+
+	/*
+	 * Substitutes each item with it's corresponding mapping from the map.
+	 * Original List is not modified.
 	 */
 	private static List substituteValues(List items, Map map) {
 		if (items != null && map != null) {
@@ -331,8 +318,9 @@ public class TocManager {
 		return null;
 	}
 	
-	/**
-	 * A category of TOCs. A category has an id and a list of contained TOCs.
+	/*
+	 * A category of tocs. A category has an id and a list of contained
+	 * tocs.
 	 */
 	private static class TocCategory extends ArrayList {
 		

@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
@@ -522,7 +521,7 @@ class IndexingOperation {
 		PrebuiltIndexes indexes = new PrebuiltIndexes(index);
 		for (Iterator it = pluginIds.iterator(); it.hasNext();) {
 			String pluginId = (String) it.next();
-			String indexPath = HelpPlugin.getTocManager()
+			String indexPath = BaseHelpSystem.getXMLTocProvider()
 					.getIndexPath(pluginId);
 			if (indexPath != null) {
 				indexes.add(pluginId, indexPath);

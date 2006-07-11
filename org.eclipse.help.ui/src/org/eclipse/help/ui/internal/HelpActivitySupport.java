@@ -17,12 +17,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.model.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.activities.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.IToc;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpActivitySupport;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Wrapper for eclipse ui activity support
@@ -204,9 +210,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		}
 		// Find out if description topic for enabled top level TOCs matches the
 		// topic
-		ITocElement[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int t = 0; t < tocs.length; t++) {
-			String descriptionHref = tocs[t].getTocTopicHref();
+			String descriptionHref = tocs[t].getTopic(null).getHref();
 			if (descriptionHref != null
 					&& descriptionHref.length() > 0
 					&& descriptionHref.equals(href)
@@ -222,30 +228,20 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @param href
 	 *            href of a topic
 	 * @param tocList
-	 *            List of ITocElement
-	 * @return true if given topic belongs to one of enabled ITocElements or
-	 *         their children
+	 *            List of IToc
+	 * @return true if given topic belongs to one of enabled ITocs
 	 */
 	private boolean isInTocSubtree(String href, List tocList) {
 		for (Iterator it = tocList.iterator(); it.hasNext();) {
-			ITocElement toc = (ITocElement) it.next();
+			IToc toc = (IToc) it.next();
 			if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref())) {
 				// TOC is not enabled, check other TOCs
 				continue;
 			}
 			// Check topics in navigation
-			if (toc.getOwnedTopic(href) != null) {
+			if (toc.getTopic(href) != null) {
 				return true;
 			}
-			// Check extra dir
-			if (toc.getOwnedExtraTopic(href) != null) {
-				return true;
-			}
-			// check children TOCs
-			if (isInTocSubtree(href, toc.getChildrenTocs())) {
-				return true;
-			}
-			// try other TOCs at this level
 		}
 		return false;
 	}
