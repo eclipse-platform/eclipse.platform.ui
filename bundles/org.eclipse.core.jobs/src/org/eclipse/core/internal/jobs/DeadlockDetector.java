@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
@@ -677,19 +679,22 @@ class DeadlockDetector {
 	 * Prints out the current matrix to standard output. 
 	 * Only used for debugging.
 	 */
-	public void toDebugString() {
-		System.out.println(" :: "); //$NON-NLS-1$
+	public String toDebugString() {
+		StringWriter sWriter = new StringWriter();
+		PrintWriter out = new PrintWriter(sWriter, true);
+		out.println(" :: "); //$NON-NLS-1$
 		for (int j = 0; j < locks.size(); j++) {
-			System.out.print(" " + locks.get(j) + ','); //$NON-NLS-1$
+			out.print(" " + locks.get(j) + ','); //$NON-NLS-1$
 		}
-		System.out.println();
+		out.println();
 		for (int i = 0; i < graph.length; i++) {
-			System.out.print(" " + ((Thread) lockThreads.get(i)).getName() + " : "); //$NON-NLS-1$ //$NON-NLS-2$
+			out.print(" " + ((Thread) lockThreads.get(i)).getName() + " : "); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < graph[i].length; j++) {
-				System.out.print(" " + graph[i][j] + ','); //$NON-NLS-1$
+				out.print(" " + graph[i][j] + ','); //$NON-NLS-1$
 			}
-			System.out.println();
+			out.println();
 		}
-		System.out.println("-------"); //$NON-NLS-1$
+		out.println("-------"); //$NON-NLS-1$
+		return sWriter.toString();
 	}
 }

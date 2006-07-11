@@ -183,7 +183,7 @@ public class LockManager {
 	private void handleInternalError(Throwable t) {
 		try {
 			handleException(t);
-			locks.toDebugString();
+			handleException(new Exception(locks.toDebugString()));
 		} catch (Exception e2) {
 			//ignore failure to log or to create the debug string
 		}
