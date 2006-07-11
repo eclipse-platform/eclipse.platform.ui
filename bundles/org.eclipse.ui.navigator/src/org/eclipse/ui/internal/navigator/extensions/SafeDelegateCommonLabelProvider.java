@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
  * 
@@ -54,13 +55,21 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 
 	/**
 	 * <p>
-	 * Returns <b>null </b>, forcing the CommonNavigator to provide the default
+	 * If the delegate label provider implements <code>IDescriptionProvider</code>,
+	 * it is used to retrieve the status bar message. 
+	 * </p>
+	 * <p>
+	 * Returns <b>null </b> otherwise, forcing the CommonNavigator to provide the default
 	 * message.
 	 * </p>
 	 * 
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object element) {
+		if (delegateLabelProvider instanceof IDescriptionProvider) {
+			IDescriptionProvider provider = (IDescriptionProvider) delegateLabelProvider;
+			return provider.getDescription(element);
+		}
 		return null;
 	}
 
