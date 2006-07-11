@@ -458,20 +458,44 @@ public final class DataBindingContext {
 	public void fillBindSpecDefaults(DataBindingContext dataBindingContext,
 			BindSpec bindSpec, Object targetType, Object modelType) {
 		if (bindSpec.getTypeConversionValidator() == null) {
-			bindSpec.setValidator(dataBindingContext.createValidator(
-					targetType, modelType));
+			bindSpec.setValidator(
+					dataBindingContext.createValidator(targetType, modelType));
 		}
 		if (bindSpec.getDomainValidator() == null) {
-			bindSpec.setDomainValidator(dataBindingContext
-					.createDomainValidator(modelType));
+			bindSpec.setDomainValidator(
+					dataBindingContext.createDomainValidator(modelType));
 		}
-		if (bindSpec.getModelToTargetConverter() == null) {
-			bindSpec.setModelToTargetConverter(dataBindingContext
-					.createConverter(modelType, targetType));
+		IConverter[] modelToTargetConverters = bindSpec.getModelToTargetConverters();
+		if (modelToTargetConverters.length > 1) {
+			for (int i = 0; i < modelToTargetConverters.length; i++) {
+				if (modelToTargetConverters[i] == null) {
+					modelToTargetConverters[i] = dataBindingContext.createConverter(modelType, targetType);
+				}
+			}
+		} else {
+			// There's code in setModelToTargetConverter() that converts the 0
+			// element array that represents null to a 1 element array, so we'll
+			// just call setMTTC() instead of manipulating the array directly
+			if (bindSpec.getModelToTargetConverter() == null) {
+				bindSpec.setModelToTargetConverter(
+						dataBindingContext.createConverter(modelType, targetType));
+			}
 		}
-		if (bindSpec.getTargetToModelConverter() == null) {
-			bindSpec.setTargetToModelConverter(dataBindingContext
-					.createConverter(targetType, modelType));
+		IConverter[] targetToModelConverters = bindSpec.getTargetToModelConverters();
+		if (targetToModelConverters.length > 1) {
+			for (int i = 0; i < targetToModelConverters.length; i++) {
+				if (targetToModelConverters[i] == null) {
+					targetToModelConverters[i] = dataBindingContext.createConverter(targetType, modelType);
+				}
+			}
+		} else {
+			// There's code in setTargetToModelConverter() that converts the 0
+			// element array that represents null to a 1 element array, so we'll
+			// just call setTTMC() instead of manipulating the array directly
+			if (bindSpec.getTargetToModelConverter() == null) {
+				bindSpec.setTargetToModelConverter(
+						dataBindingContext.createConverter(targetType, modelType));
+			}
 		}
 	}
 

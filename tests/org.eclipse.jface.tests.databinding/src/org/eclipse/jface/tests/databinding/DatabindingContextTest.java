@@ -18,10 +18,13 @@ import org.eclipse.jface.internal.databinding.provisional.BindingAdapter;
 import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.internal.databinding.provisional.conversion.ConvertString2Byte;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverter;
+import org.eclipse.jface.internal.databinding.provisional.conversion.ToStringConverter;
 import org.eclipse.jface.internal.databinding.provisional.description.NestedProperty;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
@@ -370,7 +373,38 @@ public class DatabindingContextTest extends TestCase {
 		} catch (BindingException be) {
 		}
 	}
+	
+	public void testFillBindSpecDefaultsMultipleConvertersAndValidators() throws Exception {
+		DataBindingContext dbc = new DataBindingContext();
+		dbc.addBindSupportFactory(new DefaultBindSupportFactory());
+		
+		BindSpec bs = new BindSpec();
+		bs.setModelToTargetConverters(new IConverter[] {
+				null, new ToStringConverter(), null
+		});
+		bs.setTargetToModelConverters(new IConverter[] {
+				null, new ConvertString2Byte(), null
+		});
+		
+		dbc.fillBindSpecDefaults(dbc, bs, Object.class, Object.class);
+		
+		assertConverterType(bs, 0, IdentityConverter.class, bs.getModelToTargetConverters());
+		assertConverterType(bs, 1, ToStringConverter.class, bs.getModelToTargetConverters());
+		assertConverterType(bs, 2, IdentityConverter.class, bs.getModelToTargetConverters());
 
+		assertConverterType(bs, 0, IdentityConverter.class, bs.getTargetToModelConverters());
+		assertConverterType(bs, 1, ConvertString2Byte.class, bs.getTargetToModelConverters());
+		assertConverterType(bs, 2, IdentityConverter.class, bs.getTargetToModelConverters());
+	}
+
+	private void assertConverterType(BindSpec bs, int element, Class clazz, IConverter[] converters) {
+		assertEquals("model2target[" + element + "] = identity", clazz, converters[element].getClass());
+	}
+	
+	//-------------------------------------------------------------------------
+	// Fixture classes
+	//-------------------------------------------------------------------------
+	
 	public class MockObservableFactory implements IObservableFactory {
 		public IObservable createObservable(Object description) {
 			Property property = (Property) description;
@@ -440,4 +474,6 @@ public class DatabindingContextTest extends TestCase {
 			return "foo";
 		}
 	}
+	
+	
 }
