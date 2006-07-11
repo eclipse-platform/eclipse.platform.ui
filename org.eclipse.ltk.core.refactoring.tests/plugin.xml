@@ -5,7 +5,7 @@
       <renameParticipant
             class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
             id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
-            name="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant">
+            name="%FailingParticipant.name">
          <enablement>
            <with variable="element">
              <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
@@ -15,7 +15,7 @@
       <renameParticipant
             class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
             id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
-            name="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2">
+            name="%FailingParticipant2.name">
          <enablement>
            <with variable="element">
              <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
