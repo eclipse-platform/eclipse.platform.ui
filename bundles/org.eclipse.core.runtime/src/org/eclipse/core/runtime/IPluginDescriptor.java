@@ -259,7 +259,7 @@ public interface IPluginDescriptor {
 	 *     import org.eclipse.osgi.util.ManifestElement;
 	 *     import org.osgi.framework.Constants;
 	 *     ...
-	 *     String requires = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
+	 *     String requires = (String)bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
 	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);
 	 * </pre>
 	 * where <code>bundle</code> is the bundle associated with 
@@ -390,7 +390,7 @@ public interface IPluginDescriptor {
 	 *     import org.eclipse.osgi.util.ManifestElement;
 	 *     import org.osgi.framework.Constants;
 	 *     ...
-	 *     String requires = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
+	 *     String requires = (String)bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
 	 *     ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, requires);
 	 * </pre>
 	 * where <code>bundle</code> is the bundle associated with 
