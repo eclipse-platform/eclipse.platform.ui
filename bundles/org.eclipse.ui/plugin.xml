@@ -1285,5 +1285,19 @@
          </location>
       </group>
    </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.ui.internal.incubator.ctrlEActionSet"
+            label="%CtrlE.actionSet.label"
+            visible="true">
+         <action
+               class="org.eclipse.ui.internal.incubator.CtrlEAction"
+               id="org.eclipse.ui.internal.incubator.CtrlEAction"
+               label="%CtrlE.action.label"
+               toolbarPath="ctrlEGroup"
+               tooltip="%CtrlE.action.tooltip"/>
+      </actionSet>
+   </extension>
    
 </plugin>

@@ -33,6 +33,18 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.2
  */
 public abstract class Saveable {
+	
+	/**
+	 * Attempts to show this saveable in the given page and returns <code>true</code>
+	 * on success. The default implementation does nothing and returns <code>false</code>.
+	 * 
+	 * @param page the workbench page in which to show this saveable  
+	 * @return <code>true</code> if this saveable is now visible to the user
+	 * @since 3.3
+	 */
+	public boolean show(IWorkbenchPage page) {
+		return false;
+	}
 
 	/**
 	 * Returns the name of this saveable for display purposes.

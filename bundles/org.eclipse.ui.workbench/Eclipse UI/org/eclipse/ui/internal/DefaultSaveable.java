@@ -15,8 +15,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.Saveable;
 
 /**
@@ -121,6 +125,29 @@ public class DefaultSaveable extends Saveable {
 		} else if (!part.equals(other.part))
 			return false;
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.Saveable#show(org.eclipse.ui.IWorkbenchPage)
+	 */
+	public boolean show(IWorkbenchPage page) {
+		IWorkbenchPartReference reference = page.getReference(part);
+		if (reference != null) {
+			page.activate(part);
+			return true;
+		}
+		if (part instanceof IViewPart) {
+			IViewPart viewPart = (IViewPart) part;
+			try {
+				page.showView(viewPart.getViewSite().getId(), viewPart
+						.getViewSite().getSecondaryId(),
+						IWorkbenchPage.VIEW_ACTIVATE);
+			} catch (PartInitException e) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 }
