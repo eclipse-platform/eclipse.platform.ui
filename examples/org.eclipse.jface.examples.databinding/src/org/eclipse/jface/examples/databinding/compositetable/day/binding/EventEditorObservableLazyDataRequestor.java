@@ -52,7 +52,7 @@ import org.eclipse.swt.SWT;
 public class EventEditorObservableLazyDataRequestor extends AbstractObservable implements ILazyDataRequestor {
 
 	private IEventEditor editor;
-	private EventCache eventCache = new EventCache();
+	private MultiDayEventCalendar multiDayEventCalendar = new MultiDayEventCalendar();
 	protected int modelSize = 0;
 	
 	private DataBindingContext dbc;
@@ -105,11 +105,11 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	}
 	
 	
-	private class EventCache {
+	private class MultiDayEventCalendar {
 		private Map daysToEventsMap;
 		private List eventsList;
 		
-		public EventCache() {
+		public MultiDayEventCalendar() {
 			flush();
 		}
 		
@@ -228,7 +228,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 		
 		public int getNumberOfEventsInDay(Date day) {
-			List dataForDate = eventCache.get(day);
+			List dataForDate = multiDayEventCalendar.get(day);
 			if (dataForDate == null) {
 				return 0;
 			}
@@ -236,7 +236,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 
 		public void refresh(Date day, CalendarableItem[] items) {
-			List dataForDate = eventCache.get(day);
+			List dataForDate = multiDayEventCalendar.get(day);
 			if (dataForDate == null) {
 				return;
 			}
@@ -395,7 +395,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 */
 	public void setSize(int size) {
 		this.modelSize = size;
-		eventCache.flush();
+		multiDayEventCalendar.flush();
 		editor.refresh();
 	}
 	
@@ -403,7 +403,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#add(int, java.lang.Object)
 	 */
 	public void add(int position, Object element) {
-		eventCache.add(element);
+		multiDayEventCalendar.add(element);
 		modelSize++;
 		editor.refresh();
 	}
@@ -412,7 +412,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#remove(int)
 	 */
 	public Object remove(int position) {
-		Object removed = eventCache.remove(position);
+		Object removed = multiDayEventCalendar.remove(position);
 		modelSize--;
 		editor.refresh();
 		return removed;
@@ -566,13 +566,13 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	
 	private EventCountProvider eventCountProvider = new EventCountProvider() {
 		public int getNumberOfEventsInDay(Date day) {
-			return eventCache.getNumberOfEventsInDay(day);
+			return multiDayEventCalendar.getNumberOfEventsInDay(day);
 		}
 	};
 	
 	private EventContentProvider eventContentProvider = new EventContentProvider() {
 		public void refresh(Date day, CalendarableItem[] items) {
-			eventCache.refresh(day, items);
+			multiDayEventCalendar.refresh(day, items);
 		}
 	};
 	
@@ -583,7 +583,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				e.doit = false;
 				return;
 			}
-			eventCache.add(newObject.it);
+			multiDayEventCalendar.add(newObject.it);
 			Date firstDayOfEvent = getBeginningTime(newObject.it);
 			Date lastDayOfEvent = getEndingTime(newObject.it);
 			e.result = new NewEvent(newObject.it, new Date[] {firstDayOfEvent, lastDayOfEvent});
@@ -592,19 +592,19 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 
 	private CalendarableItemEventHandler deleteHandler = new CalendarableItemEventHandler() {
 		public void handleRequest(CalendarableItemEvent e) {
-			int objectToDelete = eventCache.indexOf(e.calendarableItem.getData(CalendarableItem.DATA_KEY));
+			int objectToDelete = multiDayEventCalendar.indexOf(e.calendarableItem.getData(CalendarableItem.DATA_KEY));
 			if (!fireDelete(objectToDelete)) {
 				e.doit = false;
 				return;
 			}
-			eventCache.remove(objectToDelete);
+			multiDayEventCalendar.remove(objectToDelete);
 		}
 	};
 
 	private CalendarableItemEventHandler editHandler = new CalendarableItemEventHandler() {
 		public void requestHandled(CalendarableItemEvent e) {
 			if (e.result != null && e.doit) {
-				eventCache.update((EventDateTimeDiff) e.result, 
+				multiDayEventCalendar.update((EventDateTimeDiff) e.result, 
 						e.calendarableItem.getData(CalendarableItem.DATA_KEY));
 			}
 		}
@@ -613,10 +613,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private CalendarableSelectionChangeListener selectionListener = new CalendarableSelectionChangeListener() {
 		public void selectionChanged(SelectionChangeEvent e) {
 			if (e.oldSelection != null) {
-				eventCache.setCalendarableSelection(e.oldSelection.getData(CalendarableItem.DATA_KEY), false);
+				multiDayEventCalendar.setCalendarableSelection(e.oldSelection.getData(CalendarableItem.DATA_KEY), false);
 			}
 			if (e.newSelection != null) {
-				eventCache.setCalendarableSelection(e.newSelection.getData(CalendarableItem.DATA_KEY), true);
+				multiDayEventCalendar.setCalendarableSelection(e.newSelection.getData(CalendarableItem.DATA_KEY), true);
 			}
 		}
 	};
