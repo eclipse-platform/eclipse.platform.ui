@@ -11,6 +11,8 @@
 package org.eclipse.jface.examples.databinding.compositetable.month.internal;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.eclipse.jface.examples.databinding.compositetable.day.internal.ICalendarableItemControl;
 import org.eclipse.jface.examples.databinding.compositetable.month.MonthCalendarableItemControl;
@@ -24,7 +26,6 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -226,10 +227,41 @@ public class Day extends Canvas implements PaintListener, DisposeListener {
 			gc.setLineWidth(oldLineWidth);
 		}
 	}
+	
+	private LinkedList mouseListeners = new LinkedList();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
+	 */
+	public void addMouseListener(MouseListener listener) {
+		super.addMouseListener(listener);
+		if (listener != mouseListener) mouseListeners.add(listener);
+	}
+	
+	public void removeMouseListener(MouseListener listener) {
+		super.removeMouseListener(listener);
+		if (listener != mouseListener) mouseListeners.remove(listener);
+	}
 
-	private MouseListener mouseListener = new MouseAdapter() {
+	private MouseListener mouseListener = new MouseListener() {
 		public void mouseDown(MouseEvent e) {
 			setFocus();
+			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+				MouseListener listener = (MouseListener) i.next();
+				listener.mouseDown(e);
+			}
+		}
+		public void mouseUp(MouseEvent e) {
+			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+				MouseListener listener = (MouseListener) i.next();
+				listener.mouseUp(e);
+			}
+		}
+		public void mouseDoubleClick(MouseEvent e) {
+			for (Iterator i = mouseListeners.iterator(); i.hasNext();) {
+				MouseListener listener = (MouseListener) i.next();
+				listener.mouseDoubleClick(e);
+			}
 		}
 	};
 

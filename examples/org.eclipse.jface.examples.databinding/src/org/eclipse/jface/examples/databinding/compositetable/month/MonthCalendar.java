@@ -43,6 +43,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * An IEventEditor implementing a month calendar.  This class is not intended
@@ -630,8 +631,16 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	}
 	
 	private MouseListener dayMouseListener = new MouseListener() {
+		private Day getDay(MouseEvent e) {
+			Control control = (Control) e.widget;
+			while (!(control instanceof Day)) {
+				control = control.getParent();
+			}
+			Day day = (Day) control;
+			return day;
+		}
 		public void mouseDown(MouseEvent e) {
-			Day day = (Day) e.widget;
+			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
 
@@ -641,7 +650,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 			}
 		}
 		public void mouseUp(MouseEvent e) {
-			Day day = (Day) e.widget;
+			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
 			
@@ -651,7 +660,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 			}
 		}
 		public void mouseDoubleClick(MouseEvent e) {
-			Day day = (Day) e.widget;
+			Day day = getDay(e);
 			Point coordinates = day.getMonthPosition();
 			e.data = new MonthCalendarSelectedDay(day.getDate(), coordinates);
 			
