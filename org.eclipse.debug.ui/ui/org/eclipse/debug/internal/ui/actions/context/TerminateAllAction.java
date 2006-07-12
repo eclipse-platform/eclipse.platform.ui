@@ -19,7 +19,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousTerminateAdapter;
 import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -72,17 +71,17 @@ public class TerminateAllAction extends AbstractDebugContextAction {
 	 * the launch manager. selection is unused and can be <code>null</code>.
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
-	protected void update(IAction action, ISelection selection) {
+	protected void update(ISelection selection) {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		for (int i= 0; i< launches.length; i++) {
 			ILaunch launch= launches[i];
 			if (!launch.isTerminated()) {
-				action.setEnabled(true);
+				setEnabled(true);
 				return;
 			}
 		}
-		action.setEnabled(false);
+		setEnabled(false);
 	}
 
 	protected IStructuredSelection getContext() {
