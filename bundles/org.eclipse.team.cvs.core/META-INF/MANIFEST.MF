@@ -12,7 +12,7 @@ Export-Package: org.eclipse.team.internal.ccvs.core;x-friends:="org.eclipse.team
  org.eclipse.team.internal.ccvs.core.connection;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.internal.ccvs.core.filehistory;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.internal.ccvs.core.filesystem;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
- org.eclipse.team.internal.ccvs.core.mapping,
+ org.eclipse.team.internal.ccvs.core.mapping;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.internal.ccvs.core.resources;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.internal.ccvs.core.syncinfo;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui",
  org.eclipse.team.internal.ccvs.core.util;x-friends:="org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh2,org.eclipse.team.cvs.ui"
