@@ -49,9 +49,15 @@ public class TeamUIMessages extends NLS {
 
 	public static String ExportProjectSetMainPage_DeselectAll;
 
+	public static String ExportProjectSetMainPage_EditButton;
+
+	public static String ExportProjectSetMainPage_ExportWorkingSets;
+
 	public static String ExportProjectSetMainPage_FileButton;
 
 	public static String ExportProjectSetMainPage_SelectAll;
+
+	public static String ExportProjectSetMainPage_SelectButton;
 
 	public static String ExportProjectSetMainPage_WorkspaceButton;
 

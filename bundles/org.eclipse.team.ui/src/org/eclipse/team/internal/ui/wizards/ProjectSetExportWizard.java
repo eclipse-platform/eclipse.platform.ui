@@ -12,11 +12,10 @@ package org.eclipse.team.internal.ui.wizards;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -27,11 +26,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.ui.IExportWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 	ExportProjectSetMainPage mainPage;
+	ExportProjectSetLocationPage locationPage;
 	IStructuredSelection selection;
 	
 	public ProjectSetExportWizard() {
@@ -42,15 +43,18 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 	public void addPages() {
 		mainPage = new ExportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$ 
 		IProject[] projects = (IProject[])selection.toList().toArray(new IProject[0]);
-		mainPage.setSelectedProjects(projects);
 		addPage(mainPage);
+		mainPage.setSelectedProjects(projects);
+		locationPage = new ExportProjectSetLocationPage("projectSetLocationPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$
+		addPage(locationPage);
+		
 	}
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					String filename = mainPage.getFileName();
+					String filename = locationPage.getFileName();
 					Path path = new Path(filename);
 					if (path.getFileExtension() == null) {
 						filename = filename + ".psf"; //$NON-NLS-1$
@@ -78,7 +82,11 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							return;
 						}
 					}
-					
+
+					IWorkingSet[] workingSets = null;
+					if (mainPage.exportWorkingSets.getSelection()){
+						workingSets = mainPage.getSelectedWorkingSets();
+					}
 					// Hash the projects by provider
 					IProject[] projects = mainPage.getSelectedProjects();
 					Map map = new HashMap();
@@ -102,21 +110,14 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					try {
 						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")); //$NON-NLS-1$
 						
-						writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-						writer.newLine();
-						writer.write("<psf version=\"2.0\">"); //$NON-NLS-1$
-						writer.newLine();
-						
-						// For each provider id, do the writing
-
+						//
+						XMLMemento xmlMemento = getXMLMementoRoot();
 						Iterator it = map.keySet().iterator();
 						monitor.beginTask(null, 1000 * map.keySet().size());
 						while (it.hasNext()) {
 							String id = (String)it.next();
-							writer.write("\t<provider id=\""); //$NON-NLS-1$
-							writer.write(id);
-							writer.write("\">"); //$NON-NLS-1$
-							writer.newLine();
+							IMemento memento = xmlMemento.createChild("provider"); //$NON-NLS-1$
+							memento.putString("id", id); //$NON-NLS-1$
 							List list = (List)map.get(id);
 							IProject[] projectArray = (IProject[])list.toArray(new IProject[list.size()]);
 							RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
@@ -125,17 +126,18 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							if (serializer != null) {
 								String[] references = serializer.asReference(projectArray, context, new SubProgressMonitor(monitor, 990));
 								for (int i = 0; i < references.length; i++) {
-									writer.write("\t\t<project reference=\""); //$NON-NLS-1$
-									writer.write(references[i]);
-									writer.write("\"/>"); //$NON-NLS-1$
-									writer.newLine();
+									IMemento proj = memento.createChild("project"); //$NON-NLS-1$
+									proj.putString("reference", references[i]); //$NON-NLS-1$
 								}
 							}
-							writer.write("\t</provider>"); //$NON-NLS-1$
-							writer.newLine();
 						}
-						writer.write("</psf>"); //$NON-NLS-1$
-						writer.newLine();
+						if (workingSets != null){
+							for (int i = 0; i < workingSets.length; i++) {
+								IMemento memento =xmlMemento.createChild("workingSets"); //$NON-NLS-1$
+								workingSets[i].saveState(memento);
+							}
+						}
+						xmlMemento.save(writer);						
 						result[0] = true;
 					} catch (IOException e) {
 						throw new InvocationTargetException(e);
@@ -152,9 +154,9 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					}
 					
 					// if file was written to the workspace, refresh it
-					if (!mainPage.isSaveToFileSystem())
+					if (!locationPage.isSaveToFileSystem())
 						try {
-							mainPage.refreshWorkspaceFile(monitor);
+							locationPage.refreshWorkspaceFile(monitor);
 						} catch (CoreException e) {
 							//throw away
 						}
@@ -173,6 +175,21 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					
 					monitor.done();
 				}
+
+				private XMLMemento getXMLMementoRoot() {
+					Document document;
+			        try {
+			            document = DocumentBuilderFactory.newInstance()
+			                    .newDocumentBuilder().newDocument();
+			            Element element = document.createElement("psf"); //$NON-NLS-1$
+			            element.setAttribute("version", "2.0"); //$NON-NLS-1$ //$NON-NLS-2$
+			            document.appendChild(element);
+			            return new XMLMemento(document, element);
+			        } catch (ParserConfigurationException e) {
+			            throw new Error(e.getMessage());
+			        }
+				}
+
 			});
 		} catch (InterruptedException e) {
 			return true;
