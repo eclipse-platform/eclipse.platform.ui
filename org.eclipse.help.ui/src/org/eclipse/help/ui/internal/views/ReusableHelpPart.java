@@ -1413,12 +1413,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
-			final Object href = text.getSelectedLinkHref();
+			final String href = parseHref(text.getSelectedLinkHref().toString());
 			final String label = text.getSelectedLinkText();
 			if (href != null) {
 				return new IHelpResource() {
 					public String getHref() {
-						return href.toString();
+						return href;
 					}
 
 					public String getLabel() {
@@ -1428,6 +1428,17 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 		return null;
+	}
+	
+	private String parseHref(String href) {
+		int index = href.indexOf('?');
+		if (index != -1) {
+			String param = href.substring(index);
+			href = href.substring(0, index);
+			if ((index = param.indexOf('#')) != -1)
+				href = href + param.substring(index);
+		}
+		return href;
 	}
 
 	private void doBookmark(Object target) {
