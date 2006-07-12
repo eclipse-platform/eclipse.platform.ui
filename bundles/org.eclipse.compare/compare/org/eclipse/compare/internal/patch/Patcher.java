@@ -540,7 +540,7 @@ public class Patcher {
 			}
 			// System.err.println("can't parse date: <" + line + ">");
 		}
-		return new Date().getTime();
+		return -1;
 	}
 	
 	/*
