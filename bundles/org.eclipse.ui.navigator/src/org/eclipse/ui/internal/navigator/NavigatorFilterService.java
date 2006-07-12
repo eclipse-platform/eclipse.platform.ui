@@ -101,7 +101,8 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		try {
 			synchronized (activeFilters) {
 
-				StringBuffer activatedFiltersPreferenceValue = new StringBuffer();
+				/* by creating a StringBuffer with DELIM, we ensure the string is not empty when persisted.*/
+				StringBuffer activatedFiltersPreferenceValue = new StringBuffer(DELIM);
 
 				for (Iterator activeItr = activeFilters.iterator(); activeItr
 						.hasNext();) {
