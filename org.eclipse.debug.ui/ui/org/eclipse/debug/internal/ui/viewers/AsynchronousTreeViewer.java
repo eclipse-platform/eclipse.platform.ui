@@ -70,7 +70,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * A tree viewer that retrieves children and labels asynchronously via adapters
  * and supports duplicate elements in the tree with different parents.
- * Retrieving children and labels asynchrnously allows for arbitrary latency
+ * Retrieving children and labels asynchronously allows for arbitrary latency
  * without blocking the UI thread.
  * <p>
  * Clients may instantiate and subclass this class.
@@ -109,18 +109,18 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     private IColumnEditor fColumnEditor = null;
     
     /**
-     * Map of columns presentation id to its visible colums ids (String[])
+     * Map of columns presentation id to its visible columns id's (String[])
      * When a columns presentation is not in the map, default settings are used.
      */
     private Map fVisibleColumns = new HashMap();
     
     /**
-     * Map of column ids to persisted sizes
+     * Map of column id's to persisted sizes
      */
     private Map fColumnSizes = new HashMap();
     
     /**
-     * Map of column presentation ids to an array of integers representing the column order
+     * Map of column presentation id's to an array of integers representing the column order
      * for that presentation, or <code>null</code> if default.
      */
     private Map fColumnOrder = new HashMap();
@@ -133,17 +133,17 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     private Map fShowColumns = new HashMap();
         
     /**
-	 * Memento type for column sizes. Sizes are keyed by colunm presentation id 
+	 * Memento type for column sizes. Sizes are keyed by column presentation id 
 	 */
 	private static final String COLUMN_SIZES = "COLUMN_SIZES"; //$NON-NLS-1$
 	/**
 	 * Memento type for the column order for a presentation context.
-	 * A memento is created for each colunm presentation
+	 * A memento is created for each column presentation
 	 */
 	private static final String COLUMN_ORDER = "COLUMN_ORDER";     //$NON-NLS-1$	
 	/**
 	 * Memento type for the visible columns for a presentation context.
-	 * A memento is created for each colunm presentation keyed by column number
+	 * A memento is created for each column presentation keyed by column number
 	 */
 	private static final String VISIBLE_COLUMNS = "VISIBLE_COLUMNS";     //$NON-NLS-1$
 	/**
@@ -332,7 +332,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     				// no change
     				return;
     			} else {
-    				// dipose current
+    				// dispose current
     				fColumnEditor.dispose();
     			}
     		}
@@ -603,7 +603,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * @param presentation
      */
     protected void buildColumns(IColumnPresentation presentation) {
-    	// dispose current columns, persisting their weigts
+    	// dispose current columns, persisting their weights
     	Tree tree = getTree();
 		final TreeColumn[] columns = tree.getColumns();
 		String[] visibleColumnIds = getVisibleColumns();
@@ -750,7 +750,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
      * from the UI thread.
      * 
      * @param item
-     *            item to constuct a path for
+     *            item to construct a path for
      * @return tree path for the item or <code>null</code> if none
      */
     protected synchronized TreePath getTreePath(TreeItem item) {
@@ -1111,10 +1111,10 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }
 
     /**
-     * Collaspes the given item and all of its children items.
+     * Collapses the given item and all of its children items.
      * 
      * @param item
-     *            item to collapose recursively
+     *            item to collapse recursively
      */
     protected void collapse(TreeItem item) {
         TreeItem[] items = item.getItems();
@@ -1243,7 +1243,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	}
     
     /**
-	 * Attempt pending udpates. Subclasses may override but should call super.
+	 * Attempt pending updates. Subclasses may override but should call super.
 	 */
     protected void attemptPendingUpdates() {
     	attemptExpansion();
@@ -1298,7 +1298,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
 	}
 	
 	/**
-	 * Sets the ids of visible columns, or <code>null</code> to set default columns.
+	 * Sets the id's of visible columns, or <code>null</code> to set default columns.
 	 * Only effects the current column presentation.
 	 * 
 	 * @param ids visible columns
