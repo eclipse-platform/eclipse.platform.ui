@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -22,6 +23,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.ISelection;
@@ -355,9 +357,10 @@ public class CtrlEAction
 
 	private static final class MyLabelProvider extends LabelProvider {
 		public String getText(Object element) {
+			String separator = " - "; //$NON-NLS-1$
 			if (element instanceof Saveable) {
 				Saveable saveable = (Saveable) element;
-				return saveable.getName();
+				return saveable.getName() + separator + saveable.getToolTipText();
 			}
 			if (element instanceof IViewDescriptor) {
 				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
@@ -365,20 +368,33 @@ public class CtrlEAction
 			}
 			if (element instanceof IPreferenceNode) {
 				IPreferenceNode preferenceNode = (IPreferenceNode) element;
-				return preferenceNode.getLabelText();
+				IPreferencePage page = preferenceNode.getPage();
+				if (page != null && page.getDescription()!=null && page.getDescription().length()!=0) {
+					return preferenceNode.getLabelText() + separator + page.getDescription();
+				}
+                return preferenceNode.getLabelText();
 			}
-			if (element instanceof IWizardDescriptor) {
+            if (element instanceof IWizardDescriptor) {
 				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
-				return wizardDescriptor.getLabel();
+				return wizardDescriptor.getLabel() + separator + wizardDescriptor.getDescription();
 			}
 			if (element instanceof ActionContributionItem) {
 				ActionContributionItem item = (ActionContributionItem) element;
-				return LegacyActionTools.removeMnemonics(item.getAction()
+				IAction action = item.getAction();
+				if (action.getToolTipText()!=null && action.getToolTipText().length() != 0) {
+					return LegacyActionTools.removeMnemonics(action
+							.getText()) + separator + action.getToolTipText();
+				}
+				return LegacyActionTools.removeMnemonics(action
 						.getText());
 			}
 			if (element instanceof ParameterizedCommand) {
 				ParameterizedCommand command = (ParameterizedCommand) element;
 				try {
+					Command nestedCommand = command.getCommand();
+					if (nestedCommand!=null && nestedCommand.getDescription()!=null && nestedCommand.getDescription().length()!=0) {
+						return command.getName() + separator + nestedCommand.getDescription(); 
+					}
 					return command.getName();
 				} catch (NotDefinedException e) {
 					return command.toString();
