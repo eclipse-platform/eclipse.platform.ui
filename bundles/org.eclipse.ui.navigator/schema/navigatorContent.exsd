@@ -69,7 +69,7 @@ expand to the right node.
 &lt;br&gt;&lt;br&gt;
 Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
 &lt;br&gt;&lt;br&gt;
-When an extension is deactivated by the user, the content and label providers are disposed. However, because many of the Image resources might be in use by other extensions in the Common Navigator Viewer, clients should not dispose of Image Resources until the viewer itself is disposed. 
+When an extension is deactivated by the user, the content and label providers are disposed. However, because many of the Image resources might be in use by other extensions in the Common Navigator Viewer, clients should not dispose of Image Resources until the viewer itself is disposed.
          </documentation>
       </annotation>
       <complexType>
@@ -148,6 +148,9 @@ Elements contributed from the content provider are not guaranteed to appear in t
                <documentation>
                   A plugin-relative path to an icon for use when displaying the metadata about the content extension to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
