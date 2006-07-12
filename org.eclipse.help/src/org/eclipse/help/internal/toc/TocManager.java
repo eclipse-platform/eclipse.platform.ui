@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,8 +31,6 @@ import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITocProvider;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
-
-import com.ibm.icu.util.StringTokenizer;
 
 /*
  * Manages toc contributions (ITocContribution) supplied by the various toc
