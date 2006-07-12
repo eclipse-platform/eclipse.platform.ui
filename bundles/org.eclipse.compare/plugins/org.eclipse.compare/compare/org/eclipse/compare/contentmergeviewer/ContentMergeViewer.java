@@ -11,30 +11,58 @@
 
 package org.eclipse.compare.contentmergeviewer;
 
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.IWorkbenchPartSite;
-
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.CompareViewerPane;
+import org.eclipse.compare.IPropertyChangeNotifier;
+import org.eclipse.compare.internal.ChangePropertyAction;
+import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.ISavable;
+import org.eclipse.compare.internal.MergeViewerAction;
+import org.eclipse.compare.internal.MergeViewerContentProvider;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.ViewerSwitchingCancelled;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.compare.internal.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -259,7 +287,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	MergeViewerAction fLeftSaveAction;
 	MergeViewerAction fRightSaveAction;
 	
-	private IKeyBindingService fKeyBindingService;
+	private IHandlerService fHandlerService;
 
 	// SWT widgets
 	/* package */ Composite fComposite;
@@ -277,6 +305,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private Cursor fHSashCursor;
 	private Cursor fVSashCursor;
 	private Cursor fHVSashCursor;
+
+	private java.util.List fActivations = new ArrayList();
 
 	//---- end
 	
@@ -715,7 +745,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		createControls(fComposite);
 		
 		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
-		fKeyBindingService= ps != null ? ps.getKeyBindingService() : null;
+		fHandlerService= ps != null ? (IHandlerService)ps.getService(IHandlerService.class) : null;
 						
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
@@ -737,7 +767,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyLeftToRightAction, getResourceBundle(), "action.CopyLeftToRight."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyLeftToRightAction); //$NON-NLS-1$
-				Utilities.registerAction(fKeyBindingService, fCopyLeftToRightAction, "org.eclipse.compare.copyAllLeftToRight");	//$NON-NLS-1$
+				Utilities.registerAction(fHandlerService, fCopyLeftToRightAction, "org.eclipse.compare.copyAllLeftToRight", fActivations);	//$NON-NLS-1$
 			}
 			
 			if (cc.isLeftEditable()) {
@@ -749,7 +779,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyRightToLeftAction, getResourceBundle(), "action.CopyRightToLeft."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyRightToLeftAction); //$NON-NLS-1$
-				Utilities.registerAction(fKeyBindingService, fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft");	//$NON-NLS-1$
+				Utilities.registerAction(fHandlerService, fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft", fActivations);	//$NON-NLS-1$
 			}
 			
 			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
@@ -803,13 +833,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		if (fKeyBindingService != null) {
-			if (fCopyLeftToRightAction != null)
-				fKeyBindingService.unregisterAction(fCopyLeftToRightAction);
-			if (fCopyRightToLeftAction != null)
-				fKeyBindingService.unregisterAction(fCopyRightToLeftAction);
-			fKeyBindingService= null;
-		}
+		Utilities.deregisterActions(fHandlerService, fActivations);
+		fHandlerService= null;
 		
 		Object input= getInput();	
 		if (input instanceof ICompareInput)

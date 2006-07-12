@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.*;
-import com.ibm.icu.text.MessageFormat;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,39 +24,47 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourceAttributes;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.ui.*;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Convenience and utility methods.
@@ -61,10 +73,20 @@ public class Utilities {
 	
 	private static final IPath ICONS_PATH= new Path("$nl$/icons/full/"); //$NON-NLS-1$
 	
-	public static void registerAction(IKeyBindingService kbs, IAction a, String id) {
-		if (kbs != null) {
+	public static void registerAction(IHandlerService hs, IAction a, String id, List activations) {
+		if (hs != null) {
 			a.setActionDefinitionId(id);
-			kbs.registerAction(a);
+			IHandlerActivation activation = hs.activateHandler(id, new ActionHandler(a));
+			if (activation != null) {
+				activations .add(activation);
+			}
+		}
+	}
+	
+	public static void deregisterActions(IHandlerService handlerService, List activations) {
+		if (handlerService != null) {
+			handlerService.deactivateHandlers(activations);
+			activations.clear();
 		}
 	}
 	

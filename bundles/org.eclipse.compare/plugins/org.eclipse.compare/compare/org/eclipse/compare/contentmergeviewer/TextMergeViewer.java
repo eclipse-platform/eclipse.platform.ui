@@ -12,65 +12,107 @@
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import com.ibm.icu.text.MessageFormat;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.BufferedCanvas;
+import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.CompareNavigator;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.DocLineComparator;
+import org.eclipse.compare.internal.DocumentManager;
+import org.eclipse.compare.internal.ICompareContextIds;
+import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.internal.MergeSourceViewer;
+import org.eclipse.compare.internal.MergeViewerContentProvider;
+import org.eclipse.compare.internal.TokenComparator;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.rangedifferencer.IRangeComparator;
+import org.eclipse.compare.rangedifferencer.RangeDifference;
+import org.eclipse.compare.rangedifferencer.RangeDifferencer;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IProgressService;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.MergeSourceViewer;
-import org.eclipse.compare.internal.BufferedCanvas;
-import org.eclipse.compare.internal.MergeViewerContentProvider;
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.TokenComparator;
-import org.eclipse.compare.internal.DocLineComparator;
-import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.INavigatable;
-import org.eclipse.compare.internal.CompareNavigator;
-import org.eclipse.compare.internal.DocumentManager;
-import org.eclipse.compare.internal.CompareMessages;
-import org.eclipse.compare.rangedifferencer.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A text merge viewer uses the <code>RangeDifferencer</code> to perform a
@@ -250,7 +292,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private ActionContributionItem fCopyDiffLeftToRightItem;
 	private ActionContributionItem fCopyDiffRightToLeftItem;
 	
-	private IKeyBindingService fKeyBindingService;
+	private IHandlerService fHandlerService;
+	private List fActivations = new ArrayList();
 	
 	private boolean fSynchronizedScrolling= true;
 	private boolean fShowMoreInfo= false;
@@ -900,30 +943,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		if (fKeyBindingService != null) {
-			IAction a;
-			if (fNextItem != null) {
-				a= fNextItem.getAction();
-				if (a != null)
-					fKeyBindingService.unregisterAction(a);
-			}
-			if (fPreviousItem != null) {
-				a= fPreviousItem.getAction();
-				if (a != null)
-					fKeyBindingService.unregisterAction(a);
-			}
-			if (fCopyDiffLeftToRightItem != null) {
-				a= fCopyDiffLeftToRightItem.getAction();
-				if (a != null)
-					fKeyBindingService.unregisterAction(a);
-			}
-			if (fCopyDiffRightToLeftItem != null) {
-				a= fCopyDiffRightToLeftItem.getAction();
-				if (a != null)
-					fKeyBindingService.unregisterAction(a);
-			}
-			fKeyBindingService= null;
-		}
+		Utilities.deregisterActions(fHandlerService, fActivations);
+		fHandlerService= null;
 		
 		Object input= getInput();
 		DocumentManager.remove(getDocument2('A', input));
@@ -3032,7 +3053,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	protected void createToolItems(ToolBarManager tbm) {
 
 		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
-		fKeyBindingService= ps != null ? ps.getKeyBindingService() : null;
+		fHandlerService= ps != null ? (IHandlerService)ps.getService(IHandlerService.class) : null;
 		
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {
@@ -3059,7 +3080,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Utilities.initAction(a, getResourceBundle(), "action.NextDiff."); //$NON-NLS-1$
 		fNextItem= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fNextItem); //$NON-NLS-1$
-		Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.selectNextChange");	//$NON-NLS-1$
+		Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.selectNextChange", fActivations);	//$NON-NLS-1$
 		
 		a= new Action() {
 			public void run() {
@@ -3069,7 +3090,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff."); //$NON-NLS-1$
 		fPreviousItem= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fPreviousItem); //$NON-NLS-1$
-		Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.selectPreviousChange");	//$NON-NLS-1$
+		Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.selectPreviousChange", fActivations);	//$NON-NLS-1$
 
 		
 		CompareConfiguration cc= getCompareConfiguration();
@@ -3084,7 +3105,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCopyDiffLeftToRightItem= new ActionContributionItem(a);
 			fCopyDiffLeftToRightItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem); //$NON-NLS-1$
-			Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.copyLeftToRight");	//$NON-NLS-1$
+			Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.copyLeftToRight", fActivations);	//$NON-NLS-1$
 		}
 		
 		if (cc.isLeftEditable()) {
@@ -3097,7 +3118,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCopyDiffRightToLeftItem= new ActionContributionItem(a);
 			fCopyDiffRightToLeftItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
-			Utilities.registerAction(fKeyBindingService, a, "org.eclipse.compare.copyRightToLeft");	//$NON-NLS-1$
+			Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.copyRightToLeft", fActivations);	//$NON-NLS-1$
 		}
 	}
 	
