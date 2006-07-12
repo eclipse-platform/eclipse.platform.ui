@@ -138,18 +138,25 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public synchronized IStatus runInUIThread(IProgressMonitor monitor) {
-			if (!monitor.isCanceled() && fResult != null && fPage != null) {
-				DebugUITools.displaySource(fResult, fPage);
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			ISourceLookupResult result = null;
+			IWorkbenchPage page = null;
+			synchronized (this) {
+				result = fResult;
+				page = fPage;
+				setDisplayInfo(null, null);
+			}
+			if (!monitor.isCanceled() && result != null && page != null) {
+				DebugUITools.displaySource(result, page);
 				// termination may have occurred while displaying source
 				if (monitor.isCanceled()) {
-					Object artifact = fResult.getArtifact();
+					Object artifact = result.getArtifact();
 					if (artifact instanceof IStackFrame) {
 						clearSourceSelection(((IStackFrame)artifact).getThread());
 					}
 				}
 			}
-			setDisplayInfo(null, null);
+			
 			return Status.OK_STATUS;
 		}
 		
