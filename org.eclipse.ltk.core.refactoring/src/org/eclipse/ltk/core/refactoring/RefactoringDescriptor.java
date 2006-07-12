@@ -207,7 +207,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	public final int compareTo(final Object object) {
 		if (object instanceof RefactoringDescriptor) {
 			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
-			return (int) (fTimeStamp - descriptor.fTimeStamp);
+			final long delta= fTimeStamp - descriptor.fTimeStamp;
+			if (delta < 0)
+				return -1;
+			else if (delta > 0)
+				return +1;
 		}
 		return 0;
 	}
