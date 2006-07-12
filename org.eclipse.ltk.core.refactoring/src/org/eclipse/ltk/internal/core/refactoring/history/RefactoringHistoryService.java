@@ -1369,6 +1369,15 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * refactorings are tracked as well, but persisted internally in a
 	 * plugin-specific way without altering the project.
 	 * </p>
+	 * <p>
+	 * Note: this method simply copies the content of the refactoring history
+	 * folder to the location corresponding to the shared history setting.
+	 * Clients wishing to programmatically change the refactoring history
+	 * location have to update the preference
+	 * {@link RefactoringPreferenceConstants#PREFERENCE_SHARED_REFACTORING_HISTORY}
+	 * located in the preference store of the
+	 * <code>org.eclipse.ltk.core.refactoring</code> plugin accordingly.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project to set the shared refactoring history property
