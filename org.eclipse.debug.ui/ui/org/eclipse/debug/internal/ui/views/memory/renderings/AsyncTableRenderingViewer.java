@@ -485,12 +485,18 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	{
 		super.dispose();
 		
-		if (!fTableCursor.isDisposed())
+		if (fTableCursor != null && !fTableCursor.isDisposed())
 		{
 			fCursorEditor.dispose();
+			fCursorEditor = null;
+			
 			fTableCursor.removeTraverseListener(fCursorTraverseListener);
 			fTableCursor.removeKeyListener(fCursorKeyAdapter);
 			fTableCursor.removeMouseListener(fCursorMouseListener);
+			fTableCursor.removeSelectionListener(fCursorSelectionListener);
+			
+			fTableCursor.dispose();
+			fTableCursor = null;
 		}
 	}
 	

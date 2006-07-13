@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.memory.provisional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
@@ -375,6 +376,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private PendingPropertyChanges fPendingSyncProperties;
 	
+	// list of menu listeners for popupMenuMgr.  
+	private ArrayList fMenuListeners;
+	private MenuManager fMenuMgr;
+	
 	/** 
 	 * Identifier for an empty group preceding all context menu actions 
 	 * (value <code>"popUpBegin"</code>).
@@ -624,13 +629,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						// create context menu
 						// create pop up menu for the rendering
 						createActions();
-						IMenuListener listener = new IMenuListener() {
+						IMenuListener menuListener = new IMenuListener() {
 							public void menuAboutToShow(IMenuManager mgr) {
 								fillContextMenu(mgr);
-							}};
-							
-						createPopupMenu(fTableViewer.getControl(), listener);
-						createPopupMenu(fTableViewer.getCursor(), listener);
+							}
+						};
+						createPopupMenu(fTableViewer.getControl(), menuListener);
+						createPopupMenu(fTableViewer.getCursor(), menuListener);
 						
 						fTableViewer.addSelectionChangedListener(fViewerSelectionChangedListener);
 						fTableViewer.getTable().getVerticalBar().addSelectionListener(fScrollBarSelectionListener);
@@ -660,25 +665,36 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private void createPopupMenu(Control control, IMenuListener menuListener)
 	{
 		IMemoryRenderingContainer container = getMemoryRenderingContainer();
-		MenuManager popupMenuMgr = getPopupMenuManager();
-		if (popupMenuMgr == null)
+		if (fMenuMgr == null)
 		{
-			popupMenuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-			popupMenuMgr.setRemoveAllWhenShown(true);
+			fMenuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+			fMenuMgr.setRemoveAllWhenShown(true);
 			IMemoryRenderingSite site = container.getMemoryRenderingSite();
 			String menuId = container.getId();
 						
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
-			// must add additions separator before registering the menu
-			// otherwise, we will get an error
-			popupMenuMgr.addMenuListener(menuListener);
-			
-			site.getSite().registerContextMenu(menuId, popupMenuMgr, selProvider);
+			addMenuListener(menuListener);
+
+			site.getSite().registerContextMenu(menuId, fMenuMgr, selProvider);
 		}
 		
-		Menu popupMenu = popupMenuMgr.createContextMenu(control);
+		addMenuListener(menuListener);
+		
+		Menu popupMenu = fMenuMgr.createContextMenu(control);
 		control.setMenu(popupMenu);
+	}
+
+
+	private void addMenuListener(IMenuListener menuListener) {
+		if (fMenuListeners == null)
+			fMenuListeners = new ArrayList();
+		
+		if (!fMenuListeners.contains(menuListener))
+		{
+			fMenuMgr.addMenuListener(menuListener);
+			fMenuListeners.add(menuListener);
+		}
 	}
 
 	private BigInteger getInitialSelectedAddress() {
@@ -717,6 +733,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		removeRenderingFromSyncService();
 		JFaceResources.getFontRegistry().removeListener(this);
+		
+		Iterator iter = fMenuListeners.iterator();
+		while (iter.hasNext())
+		{
+			fMenuMgr.removeMenuListener((IMenuListener)iter.next());
+		}
+		
+		fMenuListeners.clear();
 	}
 	
 	private void addRenderingToSyncService()
@@ -1643,7 +1667,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (fIsDisposed)
 			return;
 		
+		fIsDisposed = true;
+		
 		removeListeners();
+		
+		if (fMenuMgr != null)
+		{
+			fMenuMgr.removeAll();
+			fMenuMgr.dispose();
+			fMenuMgr = null;
+		}
 		
 		if (fTableViewer != null)
 		{
@@ -1674,8 +1707,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	protected void updateRenderingLabel(final boolean showAddress)
 	{
 		Job job = new Job("Update Rendering Label"){ //$NON-NLS-1$
-
 			protected IStatus run(IProgressMonitor monitor) {
+				if (fIsDisposed)
+					return Status.OK_STATUS;
 				fLabel = buildLabel(showAddress);
 				firePropertyChangedEvent(new PropertyChangeEvent(AbstractAsyncTableRendering.this, IBasicPropertyConstants.P_TEXT, null, fLabel));
 				return Status.OK_STATUS;
@@ -2210,6 +2244,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
 	 */
 	public void becomesHidden() {
+		
 		// creates new object for storing potential changes in sync properties
 		fPendingSyncProperties = new PendingPropertyChanges();		
 		super.becomesHidden();
@@ -2305,6 +2340,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		Job job = new Job("becomesVisible") //$NON-NLS-1$
 		{
 			protected IStatus run(IProgressMonitor monitor) {
+				if (fIsDisposed)
+					return Status.OK_STATUS;
 				try {
 					fContentDescriptor.updateContentBaseAddress();
 				} catch (DebugException e) {

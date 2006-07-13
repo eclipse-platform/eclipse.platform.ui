@@ -83,6 +83,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * @since 3.2 
 	 */
 	private ILabelDecorator fLabelDecorator;
+	private IMenuListener fMenuListener;
 	
 	/**
 	 * Constructs a new rendering of the given type.
@@ -114,9 +115,17 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			Runnable runnable = new Runnable(){
 				public void run() {
-					((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+						((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
 				}};
 			new ConnectionJob(runnable).schedule();
+		}
+		
+		if (fPopupMenuMgr != null)
+		{
+			fPopupMenuMgr.removeMenuListener(fMenuListener);
+			fPopupMenuMgr.removeAll();
+			fPopupMenuMgr.dispose();
+			fPopupMenuMgr = null;
 		}
 		
 		if (fPropertyListeners != null)
@@ -167,7 +176,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			Runnable runnable = new Runnable(){
 				public void run() {
-					((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+						((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
 				}};
 			new ConnectionJob(runnable).schedule();
 		}
@@ -329,12 +338,11 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 						
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 			
-			// must add additions separator before registering the menu
-			// otherwise, we will get an error
-			fPopupMenuMgr.addMenuListener(new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-				}});
+			fMenuListener = new IMenuListener() {
+							public void menuAboutToShow(IMenuManager manager) {
+								manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+							}};
+			fPopupMenuMgr.addMenuListener(fMenuListener);
 			
 			site.getSite().registerContextMenu(menuId, fPopupMenuMgr, selProvider);
 		}

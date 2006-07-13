@@ -214,6 +214,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 	private Shell fToolTipShell;
 	private FormatTableRenderingAction fFormatRenderingAction;
+
+	private IMenuListener fMenuListener;
 	
 	private class EventHandleLock
 	{
@@ -790,11 +792,13 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		createActions();
 		createPopupMenu(fTableViewer.getControl());
 		createPopupMenu(fTableCursor);
-		getPopupMenuManager().addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			}});
+		
+		fMenuListener = new IMenuListener() {
+					public void menuAboutToShow(IMenuManager manager) {
+						fillContextMenu(manager);
+						manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+					}};
+		getPopupMenuManager().addMenuListener(fMenuListener);
 		
 		// now the rendering is successfully created
 		fIsCreated = true;
@@ -2259,6 +2263,11 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			
 			fToolTipShell.dispose();
+			
+			if (getPopupMenuManager() != null)
+			{
+				getPopupMenuManager().removeMenuListener(fMenuListener);
+			}
 			
 			super.dispose();
 
