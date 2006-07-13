@@ -627,17 +627,14 @@ public class ContentProposalAdapter {
 			proposalTable.addSelectionListener(new SelectionListener() {
 
 				public void widgetSelected(SelectionEvent e) {
-					// If a proposal has been selected, show it in the popup.
-					// Otherwise close the popup.
+					// If a proposal has been selected, show it in the secondary
+					// popup.  Otherwise close the popup.
 					if (e.item == null) {
 						if (infoPopup != null) {
 							infoPopup.close();
 						}
 					} else {
-						TableItem item = (TableItem) e.item;
-						IContentProposal proposal = (IContentProposal) item
-								.getData();
-						showProposalDescription(proposal.getDescription());
+						showProposalDescription();
 					}
 				}
 
@@ -838,7 +835,7 @@ public class ContentProposalAdapter {
 			proposalTable.setSelection(index);
 			proposalTable.showSelection();
 
-			showProposalDescription(proposals[index].getDescription());
+			showProposalDescription();
 		}
 
 		/**
@@ -858,7 +855,7 @@ public class ContentProposalAdapter {
 			popupCloser.installListeners();
 			IContentProposal p = getSelectedProposal();
 			if (p != null) {
-				showProposalDescription(p.getDescription());
+				showProposalDescription();
 			}
 			return value;
 		}
@@ -879,12 +876,13 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Show the proposal description in a secondary popup.
+		 * Show the currently selected proposal's description in a 
+		 * secondary popup.
 		 */
-		private void showProposalDescription(String description) {
+		private void showProposalDescription() {
 			// If we do not already have a pending update, then
 			// create a thread now that will show the proposal description
-			if (!pendingDescriptionUpdate && description != null) {
+			if (!pendingDescriptionUpdate) {
 				// Create a thread that will sleep for the specified delay
 				// before creating the popup. We do not use Jobs since this
 				// code must be able to run independently of the Eclipse
@@ -905,20 +903,25 @@ public class ContentProposalAdapter {
 								// been delayed
 								IContentProposal p = getSelectedProposal();
 								if (p != null) {
-									if (infoPopup == null) {
-										infoPopup = new InfoPopupDialog(
-												getShell());
-										infoPopup.open();
-										infoPopup.getShell()
-												.addDisposeListener(
-														new DisposeListener() {
-															public void widgetDisposed(
-																	DisposeEvent event) {
-																infoPopup = null;
-															}
-														});
+									String description = p.getDescription();
+									if (description != null) {
+										if (infoPopup == null) {
+											infoPopup = new InfoPopupDialog(
+													getShell());
+											infoPopup.open();
+											infoPopup.getShell()
+													.addDisposeListener(
+															new DisposeListener() {
+																public void widgetDisposed(
+																		DisposeEvent event) {
+																	infoPopup = null;
+																}
+															});
+										}
+										infoPopup.setContents(p.getDescription());
+									} else if (infoPopup != null) {
+										infoPopup.close();
 									}
-									infoPopup.setContents(p.getDescription());
 									pendingDescriptionUpdate = false;
 
 								}
