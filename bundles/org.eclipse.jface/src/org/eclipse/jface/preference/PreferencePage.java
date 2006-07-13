@@ -571,7 +571,8 @@ public abstract class PreferencePage extends DialogPage implements
 
         final Label noteLabel = new Label(messageComposite, SWT.BOLD);
         noteLabel.setText(title);
-        noteLabel.setFont(JFaceResources.getBannerFont());
+        noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
+				JFaceResources.DEFAULT_FONT));	
         noteLabel
                 .setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
