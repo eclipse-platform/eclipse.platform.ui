@@ -727,14 +727,21 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 						restoreSelection(oldSelection);
 					}
 				} else {
-					final ISelection tempSelection = oldSelection;
 					WorkbenchJob job = new WorkbenchJob("attemptSelection") { //$NON-NLS-1$
 						public IStatus runInUIThread(IProgressMonitor monitor) {
-                            if (!getControl().isDisposed()) {
-                				if (!tempSelection.equals(newSelectionFromWidget())) {
-                					restoreSelection(tempSelection);
-                				}
-                            }
+							synchronized (AsynchronousViewer.this) {
+	                            if (!getControl().isDisposed()) {
+	                            	if (fPendingSelection == null || fPendingSelection.isEmpty()) {
+		                            	ISelection tempSelection = fCurrentSelection;
+		                            	if (tempSelection == null) {
+		                            		tempSelection = new StructuredSelection();
+		                				}
+		                				if (!tempSelection.equals(newSelectionFromWidget())) {
+		                					restoreSelection(tempSelection);
+		                				}
+	                            	}
+	                            }
+							}
                             return Status.OK_STATUS;
 						}
 						
