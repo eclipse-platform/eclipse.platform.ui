@@ -562,7 +562,7 @@ public class ContentProposalAdapter {
 		 *            Text to be shown in a lower info area, or
 		 *            <code>null</code> if there is no info area.
 		 */
-		ContentProposalPopup(String infoText) {
+		ContentProposalPopup(String infoText, IContentProposal[] proposals) {
 			// IMPORTANT: Use of SWT.ON_TOP is critical here for ensuring
 			// that the target control retains focus on Mac and Linux. Without
 			// it, the focus will disappear, keystrokes will not go to the
@@ -572,7 +572,7 @@ public class ContentProposalAdapter {
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=126138
 			super(control.getShell(), SWT.RESIZE | SWT.ON_TOP, false, false,
 					false, false, null, infoText);
-			this.proposals = getProposals(filterText);
+			this.proposals = proposals;
 		}
 		/*
 		 * Overridden to force change of colors.
@@ -1620,7 +1620,7 @@ public class ContentProposalAdapter {
 							// We never propagate the keystroke for an explicit
 							// keystroke invocation of the popup
 							e.doit = false;
-							openProposalPopup();
+							openProposalPopup(false);
 							return;
 						}
 					}
@@ -1664,7 +1664,7 @@ public class ContentProposalAdapter {
 										getControl().getDisplay().syncExec(
 												new Runnable() {
 													public void run() {
-														openProposalPopup();
+														openProposalPopup(true);
 													}
 												});
 									}
@@ -1680,7 +1680,7 @@ public class ContentProposalAdapter {
 										new Runnable() {
 											public void run() {
 												if (isValid()) {
-													openProposalPopup();
+													openProposalPopup(true);
 												}
 											}
 										});
@@ -1736,22 +1736,45 @@ public class ContentProposalAdapter {
 
 	/**
 	 * Open the proposal popup and display the proposals provided by the
-	 * proposal provider. This method returns immediately. That is, it does not
-	 * wait for a proposal to be selected.
+	 * proposal provider. If there are no proposals to be shown, do not show
+	 * the popup.  This method returns immediately. That is, it does not
+	 * wait for the popup to open or a proposal to be selected.
+	 * 
+	 * @param autoActivated a boolean indicating whether the popup was
+	 * autoactivated.  If false, a beep will sound when no proposals
+	 * can be shown.
 	 */
-	protected void openProposalPopup() {
+	private void openProposalPopup(boolean autoActivated) {
 		if (isValid()) {
 			if (popup == null) {
-				recordCursorPosition();
-				popup = new ContentProposalPopup(null);
-				popup.open();
-				popup.getShell().addDisposeListener(new DisposeListener() {
-					public void widgetDisposed(DisposeEvent event) {
-						popup = null;
-					}
-				});
+				// Check whether there are any proposals to be shown.
+				recordCursorPosition();  // must be done before getting proposals
+				IContentProposal[] proposals = getProposals();
+				if (proposals.length > 0) {
+					recordCursorPosition();
+					popup = new ContentProposalPopup(null, proposals);
+					popup.open();
+					popup.getShell().addDisposeListener(new DisposeListener() {
+						public void widgetDisposed(DisposeEvent event) {
+							popup = null;
+						}
+					});
+				} else if (!autoActivated) {
+					getControl().getDisplay().beep();
+				}
 			}
 		}
+	}
+	
+	/**
+	 * Open the proposal popup and display the proposals provided by the
+	 * proposal provider. This method returns immediately. That is, it does not
+	 * wait for a proposal to be selected.  This method is used by subclasses
+	 * to explicitly invoke the opening of the popup.  If there are no proposals
+	 * to show, the popup will not open and a beep will be sounded.
+	 */
+	protected void openProposalPopup() {
+		openProposalPopup(false);
 	}
 
 	/*
@@ -1830,5 +1853,25 @@ public class ContentProposalAdapter {
 					.getCursorPosition(control);
 
 		}
+	}
+	
+	/*
+	 * Get the proposals from the proposal provider. 
+	 * Gets all of the proposals without doing any filtering.
+	 */
+	private IContentProposal[] getProposals() {
+		if (proposalProvider == null || !isValid()) {
+			return null;
+		}
+		int position = insertionPos;
+		if (position == -1) {
+			position = getControlContentAdapter().getCursorPosition(
+					getControl());
+		}
+		String contents = getControlContentAdapter().getControlContents(
+				getControl());
+		IContentProposal[] proposals = proposalProvider.getProposals(
+				contents, position);
+		return proposals;
 	}
 }
