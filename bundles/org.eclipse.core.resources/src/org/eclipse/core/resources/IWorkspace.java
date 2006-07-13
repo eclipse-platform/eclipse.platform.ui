@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.LockListener;
 
 /**
  * Workspaces are the basis for Eclipse Platform resource management. There is
@@ -1207,7 +1208,7 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @deprecated it is no longer possible to override the workspace lock
 	 * behavior. This functionality is now provided in the platform API by
-	 * implementing the org.eclipse.core.runtime.jobs.ILockListener interface.
+	 * subclassing the {@link LockListener} class.
 	 */
 	public void setWorkspaceLock(WorkspaceLock lock);
 
