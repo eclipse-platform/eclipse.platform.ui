@@ -327,7 +327,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		}		
 		 
 		if(shouldContinue(label, foundExtension)) {
-			return findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor().getOverriddenDescriptor()), label, elementPath);
+			return findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor()), label, elementPath);
 		}  
 		return text;
 	}
