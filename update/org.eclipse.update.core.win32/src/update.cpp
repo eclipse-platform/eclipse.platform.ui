@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    IBM Corporation - Initial API and implementation
+ *    Morten Tokle (tokle@broadpark.no) - fix for disk size under Windows 2003 bug #142815
  **********************************************************************/
 
 # include <update.h>
@@ -19,6 +20,7 @@ int WINNT = 1;
 int WINME = 2;
 int WIN2000 = 3;
 int WINXP = 4;
+int WIN2003 = 5;
 
 // set to 1 for DEBUG
 int DEBUG = 0;
@@ -99,6 +101,7 @@ jstring getLabel(TCHAR driveLetter[],JNIEnv * jnienv){
  * int 2 WINME;
  * int 3 WIN2000;
  * int 4 WINXP;
+ * int 5 WIN2003;
  * returns -1 otherwise
  */
 int getWindowsVersion(){
@@ -131,6 +134,8 @@ int getWindowsVersion(){
 					return WIN2000;
 				if (osvi.dwMinorVersion==1)
 					return WINXP;
+				if (osvi.dwMinorVersion==2)
+					return WIN2003;
 			} else {
 				return UNKNOWN;
 			};
