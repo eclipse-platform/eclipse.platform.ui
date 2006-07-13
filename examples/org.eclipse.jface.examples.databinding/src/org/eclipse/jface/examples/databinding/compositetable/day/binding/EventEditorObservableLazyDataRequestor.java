@@ -63,16 +63,16 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private String imagePropertyName = null;
 	private String allDayEventPropertyName = null;
 	
-	private class MultiDayEventItem {
+	private class EventToCalendarableItem {
 		/**
 		 * a in the pair (a, b)
 		 */
-		public Object a;
+		public Object event;
 
 		/**
 		 * b in the pair (a, b)
 		 */
-		public CalendarableItem b;
+		public CalendarableItem item;
 
 		/**
 		 * Construct a Pair(a, b)
@@ -80,27 +80,27 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		 * @param a a in the pair (a, b)
 		 * @param b b in the pair (a, b)
 		 */
-		public MultiDayEventItem(Object a, CalendarableItem  b) {
-			this.a = a;
-			this.b = b;
+		public EventToCalendarableItem(Object a, CalendarableItem  b) {
+			this.event = a;
+			this.item = b;
 		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj.getClass() != MultiDayEventItem.class) {
+			if (obj.getClass() != EventToCalendarableItem.class) {
 				return false;
 			}
-			MultiDayEventItem other = (MultiDayEventItem) obj;
-			return a.equals(other.a) && b.equals(other.b);
+			EventToCalendarableItem other = (EventToCalendarableItem) obj;
+			return event.equals(other.event) && item.equals(other.item);
 		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
-			return a.hashCode() + b.hashCode();
+			return event.hashCode() + item.hashCode();
 		}
 	}
 	
@@ -140,7 +140,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				events = new LinkedList();
 				daysToEventsMap.put(date, events);
 			}
-			MultiDayEventItem eventToCalenderable = new MultiDayEventItem(event, null);
+			EventToCalendarableItem eventToCalenderable = new EventToCalendarableItem(event, null);
 			events.add(eventToCalenderable);
 			daysToEventsMap.put(date, events);
 		}
@@ -165,8 +165,8 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				return;
 			}
 			for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
-				MultiDayEventItem eventToCalendarable = (MultiDayEventItem) eventsIter.next();
-				if (eventToCalendarable.a.equals(event)) {
+				EventToCalendarableItem eventToCalendarable = (EventToCalendarableItem) eventsIter.next();
+				if (eventToCalendarable.event.equals(event)) {
 					eventsIter.remove();
 					break;
 				}
@@ -213,10 +213,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 				}
 				
 				for (Iterator eventsIter = events.iterator(); eventsIter.hasNext();) {
-					MultiDayEventItem eventToCalendarable = (MultiDayEventItem) eventsIter.next();
-					if (eventToCalendarable.a.equals(event)) {
-						if (eventToCalendarable.b != null) {
-							ICalendarableItemControl control = eventToCalendarable.b.getControl();
+					EventToCalendarableItem eventToCalendarable = (EventToCalendarableItem) eventsIter.next();
+					if (eventToCalendarable.event.equals(event)) {
+						if (eventToCalendarable.item != null) {
+							ICalendarableItemControl control = eventToCalendarable.item.getControl();
 							if (control != null) {
 								control.setSelected(selected);
 							}
@@ -243,9 +243,9 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			
 			Iterator sourceEventIter = dataForDate.iterator();
 			for (int itemIndex = 0; itemIndex < items.length; itemIndex++) {
-				MultiDayEventItem sourceEventPair = (MultiDayEventItem) sourceEventIter.next();
-				sourceEventPair.b = items[itemIndex];
-				Object sourceEvent = sourceEventPair.a;
+				EventToCalendarableItem sourceEventPair = (EventToCalendarableItem) sourceEventIter.next();
+				sourceEventPair.item = items[itemIndex];
+				Object sourceEvent = sourceEventPair.event;
 				Date startDate = getBeginningDate(sourceEvent);
 				Date endDate = getEndingTime(sourceEvent);
 				int dayWithinEvent = differenceInDays(day, startDate);
