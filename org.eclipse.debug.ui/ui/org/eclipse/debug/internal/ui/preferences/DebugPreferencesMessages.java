@@ -32,6 +32,8 @@ public class DebugPreferencesMessages extends NLS {
 
 	public static String DebugPreferencePage_1;
 	public static String DebugPreferencePage_2;
+
+	public static String DebugPreferencePage_29;
 	public static String DebugPreferencePage_3;
 	public static String DebugPreferencePage_0;
 	public static String DebugPreferencePage_4;

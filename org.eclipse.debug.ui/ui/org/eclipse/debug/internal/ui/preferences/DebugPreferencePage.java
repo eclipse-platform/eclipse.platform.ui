@@ -60,7 +60,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 
 		createSpacer(getFieldEditorParent(), 2);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.DebugPreferencePage_25, SWT.NONE, getFieldEditorParent())); 
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.DebugPreferencePage_25, SWT.NONE, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.PREF_REMOVE_ALL_BREAKPOINTS, DebugPreferencesMessages.DebugPreferencePage_29, SWT.NONE, getFieldEditorParent()));
 		
 		createSpacer(getFieldEditorParent(), 2);
 		ColorFieldEditor mem= new ColorFieldEditor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR, DebugPreferencesMessages.DebugPreferencePage_4, getFieldEditorParent()); 

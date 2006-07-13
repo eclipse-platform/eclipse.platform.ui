@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,11 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -83,7 +86,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	 */
 	public void run(IAction action) {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
+		final IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
 		if (breakpoints.length < 1) {
 			return;
 		}
@@ -91,7 +94,19 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		if (window == null) {
 			return;
 		}
-		boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, ActionMessages.RemoveAllBreakpointsAction_1);  
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		boolean delete = store.getBoolean(IDebugPreferenceConstants.PREF_REMOVE_ALL_BREAKPOINTS);
+		boolean proceed = true;
+		if(!delete) {
+			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, 
+					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, delete, null, null);
+			if(mdwt.getReturnCode() ==  IDialogConstants.NO_ID){
+				proceed = false;
+			}
+			else {
+				store.setValue(IDebugPreferenceConstants.PREF_REMOVE_ALL_BREAKPOINTS, mdwt.getToggleState());
+			}
+		}  
 		if (proceed) {
             new Job(ActionMessages.RemoveAllBreakpointsAction_2) { 
                 protected IStatus run(IProgressMonitor monitor) {

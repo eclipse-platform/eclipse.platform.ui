@@ -53,6 +53,8 @@ public class ActionMessages extends NLS {
     public static String RemoveAllBreakpointsAction_1;
     public static String RemoveAllBreakpointsAction_2;
 
+	public static String RemoveAllBreakpointsAction_3;
+
     public static String RemoveBreakpointAction_0;
     public static String RemoveBreakpointAction_1;
     public static String RemoveBreakpointAction_2;
