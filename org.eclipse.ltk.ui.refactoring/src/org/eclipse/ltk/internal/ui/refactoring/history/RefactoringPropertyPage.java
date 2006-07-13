@@ -136,7 +136,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							}
 						}
 					});
-				}
+				} else
+					fReturnCode= IDialogConstants.YES_ID;
 				fWarned= true;
 				if (fReturnCode == IDialogConstants.YES_ID)
 					return new RefactoringStatus();

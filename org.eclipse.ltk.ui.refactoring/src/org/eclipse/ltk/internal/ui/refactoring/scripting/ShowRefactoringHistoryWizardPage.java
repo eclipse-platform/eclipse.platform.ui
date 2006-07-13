@@ -110,7 +110,8 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 						}
 					}
 				});
-			}
+			} else
+				fReturnCode= IDialogConstants.YES_ID;
 			fWarned= true;
 			if (fReturnCode == IDialogConstants.YES_ID)
 				return new RefactoringStatus();
