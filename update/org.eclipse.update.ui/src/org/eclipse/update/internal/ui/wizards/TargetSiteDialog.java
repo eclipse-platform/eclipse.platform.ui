@@ -38,7 +38,7 @@ public class TargetSiteDialog extends Dialog {
 	private Button deleteButton;
 	private IInstallConfigurationChangedListener listener;
     //private IConfiguredSite targetSite;
-    private IInstallFeatureOperation job;
+    private IInstallFeatureOperation[] jobs;
     
     class SitesContentProvider
 		extends DefaultContentProvider
@@ -71,11 +71,11 @@ public class TargetSiteDialog extends Dialog {
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public TargetSiteDialog(Shell parentShell, IInstallConfiguration config, IInstallFeatureOperation job, IInstallConfigurationChangedListener listener) {
+	public TargetSiteDialog(Shell parentShell, IInstallConfiguration config, IInstallFeatureOperation[] jobs, IInstallConfigurationChangedListener listener) {
         super(parentShell);
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		this.job = job;
+		this.jobs = jobs;
         this.listener = listener;
         config.addInstallConfigurationChangedListener(listener);
 	}
@@ -149,10 +149,10 @@ public class TargetSiteDialog extends Dialog {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.MultiTargetPage2"); //$NON-NLS-1$
 		Dialog.applyDialogFont(parent);
         
-        siteViewer.setInput(job);
-        IConfiguredSite affinitySite = UpdateUtils.getDefaultTargetSite(config, job, true);
-        if (job.getTargetSite() != null) 
-          siteViewer.setSelection(new StructuredSelection(job.getTargetSite()));
+        siteViewer.setInput(jobs[0]);
+        IConfiguredSite affinitySite = UpdateUtils.getDefaultTargetSite(config, jobs[0], true);
+        if (jobs[0].getTargetSite() != null) 
+          siteViewer.setSelection(new StructuredSelection(jobs[0].getTargetSite()));
         addButton.setEnabled(affinitySite == null);
         
         return client;
@@ -200,8 +200,10 @@ public class TargetSiteDialog extends Dialog {
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		if (site != null)
-			job.setTargetSite(site);
+		if (site != null) {
+			for(int i = 0; i < jobs.length; i++)
+				jobs[i].setTargetSite(site);
+		}
 	}
 
 	private void addTargetLocation() {
@@ -227,10 +229,7 @@ public class TargetSiteDialog extends Dialog {
 //        siteViewer.getControl().setFocus();
 	}
 
-	private IConfiguredSite addConfiguredSite(
-		Shell shell,
-		IInstallConfiguration config,
-		File file) {
+	private IConfiguredSite addConfiguredSite(Shell shell, IInstallConfiguration config, File file) {
 		try {
 			IConfiguredSite csite = config.createConfiguredSite(file);
 			IStatus status = csite.verifyUpdatableStatus();

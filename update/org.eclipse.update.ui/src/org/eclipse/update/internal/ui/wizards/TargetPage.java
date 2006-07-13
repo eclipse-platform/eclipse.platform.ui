@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -24,17 +25,25 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
@@ -94,8 +103,68 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				return feature.getLabel()
 					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion().toString();
+			} else if (col == 1) {
+				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
+				return ((IInstallFeatureOperation)obj).getTargetSite().getSite().getURL().getFile().toString();
 			}
 			return null;
+		}
+	}
+	
+	class JobViewerSorter extends ViewerSorter {
+		
+		public static final int FEATURE_NAME = 0;
+
+		public static final int INSTALLATION_DIRECTORY = 1;
+		
+		private static final int ASCENDING = 0;
+
+		private static final int DESCENDING = 1;
+
+		private int column;
+
+		private int direction;
+
+		public void doSort(int column) {
+
+			if (column == this.column) {
+				direction = 1 - direction;
+			} else {
+				this.column = column;
+				direction = ASCENDING;
+			}
+		}
+
+		/**
+		 * Compares the object for sorting
+		 */
+		public int compare(Viewer viewer, Object o1, Object o2) {
+
+			int rc = 0;
+			
+			IFeature feature1 = ((IInstallFeatureOperation) o1).getFeature();
+			IFeature feature2 = ((IInstallFeatureOperation) o2).getFeature();
+
+			String featureName1 = feature1.getLabel() + " " + feature1.getVersionedIdentifier().getVersion().toString(); //$NON-NLS-1$
+			String featureName2 = feature2.getLabel() + " " + feature2.getVersionedIdentifier().getVersion().toString(); //$NON-NLS-1$
+
+			String installationDirectory1 = ((IInstallFeatureOperation)o1).getTargetSite().getSite().getURL().getFile().toString();
+			String installationDirectory2 = ((IInstallFeatureOperation)o2).getTargetSite().getSite().getURL().getFile().toString();
+
+			switch (column) {
+			case FEATURE_NAME:
+				rc = collator.compare(featureName1, featureName2);
+				break;
+			case INSTALLATION_DIRECTORY:
+				rc = collator.compare(installationDirectory1, installationDirectory2);
+				break;
+			}
+
+			// If descending order, flip the direction
+			if (direction == DESCENDING)
+				rc = -rc;
+
+			return rc;
 		}
 	}
 	
@@ -185,18 +254,27 @@ public class TargetPage extends BannerPage implements IDynamicPage {
                 if (job == null) 
                     return;
                 
-                TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, job, configListener);
+                TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()), configListener);
                 dialog.create();
 
                 SWTUtil.setDialogSize(dialog, 400, 300);
                 
                 dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
-                dialog.open();
-                setTargetLocation(job);
-                pageChanged();
-                jobViewer.refresh();
-                updateStatus(job.getTargetSite());
+                if ( dialog.open() == Dialog.OK) {
+                	Iterator selectedJob = selection.iterator();
+                	if (selectedJob != null) {
+                		while(selectedJob.hasNext()) {
+                			setTargetLocation((IInstallFeatureOperation)selectedJob.next());
+                		}
+                	}
+                	//setTargetLocation(job);
+                	pageChanged();
+                	jobViewer.refresh();
+                	updateStatus(job.getTargetSite());
+                }
             }
+
+			
         });
 			
 		Composite status = new Composite(client, SWT.NULL);
@@ -223,21 +301,84 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	}
 
 	private void createJobViewer(Composite parent) {
-		jobViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		
+		final Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.RESIZE | SWT.FULL_SELECTION);
+		final TableColumn featureNameColumn = new TableColumn(table, SWT.LEFT, 0);
+		featureNameColumn.setText(UpdateUIMessages.TargetPage_FeatureNameColumn); 
+		featureNameColumn.setWidth(75);
+		
+		final TableColumn featureLocationColumn = new TableColumn(table, SWT.LEFT, 1);
+		featureLocationColumn.setText(UpdateUIMessages.TargetPage_InstallationDirectoryColumn); 
+		featureLocationColumn.setWidth(75);
+		jobViewer = new TableViewer(table);
+		
+		//jobViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 3;
 		gd.widthHint = 150;
 		jobViewer.getTable().setLayoutData(gd);
+		//Table table = jobViewer.getTable();
+		//TableColumn featureNameColumn = new TableColumn(table, SWT.NONE);
+		//TableColumn featureLocationColumn = new TableColumn(table, SWT.NONE);
 		jobViewer.setContentProvider(new JobsContentProvider());
 		jobViewer.setLabelProvider(new JobsLabelProvider());
+		jobViewer.setSorter(new JobViewerSorter());
+		
+		featureNameColumn.addSelectionListener(new SelectionAdapter() {
+		      public void widgetSelected(SelectionEvent event) {
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(JobViewerSorter.FEATURE_NAME);
+		        jobViewer.refresh();
+		      }
+		    });
+		
+		featureLocationColumn.addSelectionListener(new SelectionAdapter() {
+		      public void widgetSelected(SelectionEvent event) {
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(JobViewerSorter.INSTALLATION_DIRECTORY);
+		        jobViewer.refresh();
+		      }
+		    });
+		
+		table.addControlListener(new ControlAdapter() {
+		    public void controlResized(ControlEvent e) {
+		    	
+		    	
+		    	Rectangle area = table.getClientArea();
+			    Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+			    int width = area.width - table.getBorderWidth();
+			    if (preferredSize.y > area.height + table.getHeaderHeight()){
+			    	Point vBarSize = table.getVerticalBar().getSize();
+			    	width -= vBarSize.x;
+			    }
+			    Point oldSize = table.getSize();
+			    if (oldSize.x > area.width) {
+			    	featureNameColumn.setWidth(width/2);
+			    	featureLocationColumn.setWidth(width - featureNameColumn.getWidth());		    	
+			    } else {
+			    	featureNameColumn.setWidth(width/2);
+			    	featureLocationColumn.setWidth(width - featureNameColumn.getWidth());
+			    }
+		    }
+		});
+
 
 		jobViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
-				setTargetLocation(job);
+				Iterator selectedJobs = selection.iterator();
+				if (selectedJobs != null) {
+					while(selectedJobs.hasNext()) {
+						setTargetLocation((IInstallFeatureOperation) selectedJobs.next());
+					}
+				}
+				jobViewer.refresh();
+				//IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
+				//setTargetLocation(job);
 			}
 		});
+		
+		table.setHeaderVisible(true);
+	    table.setLinesVisible(true);
 	}
 
 	public void setVisible(boolean visible) {
@@ -459,4 +600,18 @@ public class TargetPage extends BannerPage implements IDynamicPage {
             updateStatus(job.getTargetSite());
         }
     }
+    
+    private IInstallFeatureOperation[] toJobArray(Iterator selectedJobs) {
+		
+    	if (selectedJobs == null) 
+    		return new IInstallFeatureOperation[0];
+    	
+    	ArrayList result = new ArrayList();
+    	
+    	while (selectedJobs.hasNext()) {
+    		result.add(selectedJobs.next());
+    	}
+    	
+    	return (IInstallFeatureOperation[])result.toArray(new IInstallFeatureOperation[result.size()]);
+	}
 }
