@@ -56,6 +56,8 @@ public class CustomizationTab extends Composite {
 
 		initializeDialogUnits();
 		contentService = aContentService;
+		
+		createControl();
  
 	}
 
@@ -71,7 +73,7 @@ public class CustomizationTab extends Composite {
 		}
 	}
 
-	protected void createControl() {
+	private void createControl() {
 
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = Dialog.convertVerticalDLUsToPixels(
@@ -90,6 +92,10 @@ public class CustomizationTab extends Composite {
 		layoutTable(table);  
 
 		tableViewer = new CheckboxTableViewer(getTable());
+		
+
+		setFont(getParent().getFont());
+		tableViewer.getControl().setFont(getFont());
 
 	} 
 
@@ -106,8 +112,8 @@ public class CustomizationTab extends Composite {
 				getFontMetrics(), LABEL_WIDTH);
 
 		extensionsInstructionLabel.setLayoutData(gridData);
-		extensionsInstructionLabel
-				.setText(labelText);
+		extensionsInstructionLabel.setFont(getFont());
+		extensionsInstructionLabel.setText(labelText);
 	}
 	
 

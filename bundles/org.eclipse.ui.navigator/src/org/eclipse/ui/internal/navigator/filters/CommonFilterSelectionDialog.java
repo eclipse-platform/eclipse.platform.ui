@@ -39,13 +39,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
+ *  
  * @since 3.2
  * 
  */
@@ -87,7 +81,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		createCustomizationsTabFolder(superComposite);
 
 		commonFiltersTab = new CommonFiltersTab(customizationsTabFolder,
-				contentService);
+				contentService); 
 		createTabItem(
 				customizationsTabFolder,
 				CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Filters,
@@ -99,16 +93,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 		if (!hideExtensionsTab) {
 			contentExtensionsTab = new ContentExtensionsTab(
-					customizationsTabFolder, contentService);
-
+					customizationsTabFolder, contentService); 
+			
 			createTabItem(
 					customizationsTabFolder,
 					CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Content,
 					contentExtensionsTab);
 		}
 
-		createDescriptionText(superComposite);
-		descriptionText.setBackground(superComposite.getBackground());
+		createDescriptionText(superComposite); 
 
 		commonFiltersTab.addSelectionChangedListener(getSelectionListener());
 
@@ -130,6 +123,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		customizationsTabFolder.setLayout(layout);
 		customizationsTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		customizationsTabFolder.setFont(superComposite.getFont());
 
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
@@ -157,6 +151,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL
 				| SWT.BORDER);
+		descriptionText.setFont(composite.getFont());
+		descriptionText.setBackground(composite.getBackground());
 		GridData descriptionTextGridData = new GridData(
 				GridData.FILL_HORIZONTAL);
 		descriptionTextGridData.heightHint = convertHeightInCharsToPixels(3);

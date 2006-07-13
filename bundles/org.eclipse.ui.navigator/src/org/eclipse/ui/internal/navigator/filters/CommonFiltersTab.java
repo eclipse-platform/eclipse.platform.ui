@@ -68,16 +68,14 @@ public class CommonFiltersTab extends CustomizationTab {
 		createControl();
 	}
 
-	protected void createControl() {
-
+	private  void createControl() {  
+		 
 		createPatternFilterText(this);
-
-		super.createControl();
 
 		getTableViewer().setContentProvider(filterContentProvider);
 		getTableViewer().setLabelProvider(filterLabelProvider);
 		getTableViewer().setSorter(new CommonFilterSorter());
-		getTableViewer().setInput(getContentService());
+		getTableViewer().setInput(getContentService()); 
 
 		getTableViewer().addFilter(patternFilter);
 
@@ -96,6 +94,7 @@ public class CommonFiltersTab extends CustomizationTab {
 				getFontMetrics(), LABEL_WIDTH);
 		filterText.setLayoutData(filterTextGridData);
 		filterText.setText(initialFilterTextValue);
+		filterText.setFont(composite.getFont());
 
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {
