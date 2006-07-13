@@ -29,7 +29,9 @@ public class ContentExtensionsTab extends CustomizationTab {
 
 	}
 
-	private  void createControl() { 
+	private void createControl() { 
+		
+		createTable();
 
 		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_available_extensions);
 
