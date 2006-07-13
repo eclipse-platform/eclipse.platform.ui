@@ -14,4 +14,4 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.junit,
  org.eclipse.pde.junit.runtime,
  org.eclipse.test.performance;resolution:=optional
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
