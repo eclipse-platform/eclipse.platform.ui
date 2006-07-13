@@ -719,8 +719,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				}					
 			}
 			
-			setRenderingSelection(newViewTab.getRendering());
-		}			
+			// should only change selection if the new view tab is different
+			if (lastViewTab != newViewTab)
+				setRenderingSelection(newViewTab.getRendering());
+		}	
+		
+
 		
 		//set toolbar actions enabled/disabled
 		updateToolBarActionsEnablement();

@@ -468,10 +468,38 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	}
 
 	/**
+	 * @return an activate listener for the given view pane
+	 * 
+	 */
+	private Listener createDeactivateListener(final IMemoryViewPane viewPane) {
+		Listener deactivateListener = new Listener() {
+			private String id=viewPane.getId();
+			public void handleEvent(Event event) {
+				if (fActivePaneId.equals(id))
+					viewPane.removeSelctionListener(fSelectionProvider);
+			}};
+		return deactivateListener;
+	}
+
+	/**
+	 * @return a deactivate listener for the given view pane
+	 */
+	private Listener createActivateListener(final IMemoryViewPane viewPane) {
+		Listener activateListener = new Listener() {
+			private String id=viewPane.getId(); 
+			public void handleEvent(Event event) {
+				fActivePaneId = id;
+				viewPane.addSelectionListener(fSelectionProvider);
+				fSelectionProvider.setSelection(viewPane.getSelectionProvider().getSelection());
+			}};
+		return activateListener;
+	}
+
+	/**
 	 * 
 	 */
 	public void createRenderingViewPane(final String paneId) {
-		RenderingViewPane renderingPane = new RenderingViewPane(this); 
+		final RenderingViewPane renderingPane = new RenderingViewPane(this); 
 		fViewPanes.put(paneId, renderingPane);
 		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.NONE);
 		fViewPaneControls.put(paneId, renderingViewForm);
@@ -480,7 +508,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(renderingControl, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
-		renderingPane.addSelectionListener(fSelectionProvider);
 		
 		ToolBarManager renderingViewMgr = new ToolBarManager(SWT.FLAT);
 		IAction[] renderingActions = renderingPane.getActions();
@@ -496,12 +523,12 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		renderingLabel.setText(renderingPane.getLabel());
 		renderingViewForm.setTopLeft(renderingLabel);
 		
-		renderingControl.addListener(SWT.Activate, new Listener() {
-			private String id=paneId; 
-			public void handleEvent(Event event) {
-				fActivePaneId = id;
-			}});
+		Listener renderingActivateListener = createActivateListener(renderingPane);
+		renderingControl.addListener(SWT.Activate, renderingActivateListener);
 		
+		Listener renderingDeactivateListener = createDeactivateListener(renderingPane);
+		renderingControl.addListener(SWT.Deactivate, renderingDeactivateListener);
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
