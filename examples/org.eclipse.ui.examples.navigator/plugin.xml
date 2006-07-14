@@ -148,5 +148,27 @@
                tooltip="Delete a specific property"/>
       </objectContribution> 
    </extension>
+   
+   <!-- 
+   	Bind the Action Provider independently 
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">         
+     <actionProvider
+           class="org.eclipse.ui.examples.navigator.actions.PropertyActionProvider"
+           id="org.eclipse.ui.examples.navigator.properties.actions.OpenProvider"/> 
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerActionBinding viewerId="org.eclipse.ui.examples.navigator.view">
+         <includes>
+            <actionExtension 
+            	pattern="org.eclipse.ui.examples.navigator.properties.actions.*"/>
+         </includes>
+      </viewerActionBinding>
+   </extension> 
+   
+   -->
+  
   
 </plugin>

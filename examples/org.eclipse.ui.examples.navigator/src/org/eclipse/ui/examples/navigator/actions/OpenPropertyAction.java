@@ -48,6 +48,7 @@ public class OpenPropertyAction extends Action {
 	 * @param selectionProvider The selection provider 
 	 */
 	public OpenPropertyAction(IWorkbenchPage p, ISelectionProvider selectionProvider) {
+		setText("Open Property"); //$NON-NLS-1$
 		page = p;
 		provider = selectionProvider;
 	}
