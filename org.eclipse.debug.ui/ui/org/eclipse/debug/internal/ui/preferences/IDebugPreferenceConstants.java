@@ -149,10 +149,10 @@ public interface IDebugPreferenceConstants {
 	public static final int PREF_ROW_SIZE_DEFAULT = 16;
 	
 	/**
-	 * Stores the pref when remoing all breakpoints if the user wishes to be prompted
+	 * Stores the boolean preference of whether to prompt when removing all breakpoints.
 	 * @since 3.3
 	 */
-	public static final String PREF_REMOVE_ALL_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".remove_all_breakpoints_prompt"; //$NON-NLS-1$
+	public static final String PREF_PROMPT_REMOVE_ALL_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".remove_all_breakpoints_prompt"; //$NON-NLS-1$
 		
 	/**
 	 * Default padded string for renderings

@@ -95,16 +95,16 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 			return;
 		}
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-		boolean delete = store.getBoolean(IDebugPreferenceConstants.PREF_REMOVE_ALL_BREAKPOINTS);
+		boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS);
 		boolean proceed = true;
-		if(!delete) {
+		if(prompt) {
 			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, 
-					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, delete, null, null);
+					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
 			if(mdwt.getReturnCode() ==  IDialogConstants.NO_ID){
 				proceed = false;
 			}
 			else {
-				store.setValue(IDebugPreferenceConstants.PREF_REMOVE_ALL_BREAKPOINTS, mdwt.getToggleState());
+				store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS, !mdwt.getToggleState());
 			}
 		}  
 		if (proceed) {
