@@ -93,7 +93,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Clients should set this flag to indicate that the represented refactoring
 	 * may cause breaking API changes. If clients set the
 	 * {@link #BREAKING_CHANGE} flag, they should set {@link #STRUCTURAL_CHANGE}
-	 * as well.
+	 * as well. Typically, refactorings which change elements that are marked as
+	 * API according to the semantics of the associated programming language
+	 * should set this flag. This flag is used by the refactoring framework to
+	 * determine whether a refactoring may break existing API when replayed by
+	 * clients.
 	 * </p>
 	 */
 	public static final int BREAKING_CHANGE= 1 << 0;
@@ -119,7 +123,9 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * Clients should set this flag to indicate that the change created by the
 	 * represented refactoring might causes changes in other files than the
 	 * files of the input elements according to the semantics of the associated
-	 * programming language.
+	 * programming language. Typically, refactorings which update references to
+	 * the refactored element should set this flag. This flag is used during
+	 * team synchronize operations to optimize the processing of refactorings.
 	 * </p>
 	 */
 	public static final int MULTI_CHANGE= 1 << 2;
@@ -132,7 +138,11 @@ public abstract class RefactoringDescriptor implements Comparable {
 	 * <p>
 	 * Clients should set this flag to indicate that the change created by the
 	 * represented refactoring might be a structural change according to the
-	 * semantics of the associated programming language.
+	 * semantics of the associated programming language. Typically, refactorings
+	 * which cause changes in elements other than the element which declares the
+	 * refactored element should set this flag. This flag is used by
+	 * language-specific tools to determine whether the refactoring may impact
+	 * client code.
 	 * </p>
 	 */
 	public static final int STRUCTURAL_CHANGE= 1 << 1;
