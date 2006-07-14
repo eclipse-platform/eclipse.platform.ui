@@ -21,6 +21,7 @@ import java.io.*;
  */
 public class SafeFileInputStream extends FilterInputStream {
 	protected static final String EXTENSION = ".bak"; //$NON-NLS-1$
+	private static final int DEFAUT_BUFFER_SIZE = 2048;
 
 	public SafeFileInputStream(File file) throws IOException {
 		this(file.getAbsolutePath(), null);
@@ -30,16 +31,23 @@ public class SafeFileInputStream extends FilterInputStream {
 	 * If targetPath is null, the file will be created in the default-temporary directory.
 	 */
 	public SafeFileInputStream(String targetPath, String tempPath) throws IOException {
-		super(getInputStream(targetPath, tempPath));
+		super(getInputStream(targetPath, tempPath, DEFAUT_BUFFER_SIZE));
 	}
 
-	private static InputStream getInputStream(String targetPath, String tempPath) throws IOException {
+	/**
+	 * If targetPath is null, the file will be created in the default-temporary directory.
+	 */
+	public SafeFileInputStream(String targetPath, String tempPath, int bufferSize) throws IOException {
+		super(getInputStream(targetPath, tempPath, bufferSize));
+	}
+
+	private static InputStream getInputStream(String targetPath, String tempPath, int bufferSize) throws IOException {
 		File target = new File(targetPath);
 		if (!target.exists()) {
 			if (tempPath == null)
 				tempPath = target.getAbsolutePath() + EXTENSION;
 			target = new File(tempPath);
 		}
-		return new BufferedInputStream(new FileInputStream(target));
+		return new BufferedInputStream(new FileInputStream(target), bufferSize);
 	}
 }
