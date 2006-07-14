@@ -119,7 +119,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 			}
 		}
 
-		event.detail = DND.DROP_NONE;
+		event.detail = DND.DROP_NONE; 
 
 	}
 
@@ -226,6 +226,8 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 					.println("CommonDropAdapter.validateDrop (returning " + (valid != null ? valid.getSeverity() + ": " + valid.getMessage() : "" + result) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
+
+		setScrollExpandEnabled(result);
 		return result;
 
 	}
