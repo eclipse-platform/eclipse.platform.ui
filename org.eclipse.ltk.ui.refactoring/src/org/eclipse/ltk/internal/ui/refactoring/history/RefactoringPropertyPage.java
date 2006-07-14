@@ -29,13 +29,11 @@ import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
-import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
@@ -81,79 +79,11 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public final class RefactoringPropertyPage extends PropertyPage {
 
-	/** The refactoring descriptor delete query */
-	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
-
-		/** The number of descriptors to delete */
-		private final int fCount;
-
-		/** The return code */
-		private int fReturnCode= -1;
-
-		/** The shell to use */
-		private final Shell fShell;
-
-		/** Has the user already been warned once? */
-		private boolean fWarned= false;
-
-		/**
-		 * Creates a new refactoring descriptor delete query.
-		 * 
-		 * @param shell
-		 *            the shell to use
-		 * @param count
-		 *            the number of descriptors to delete
-		 */
-		public RefactoringDescriptorDeleteQuery(final Shell shell, final int count) {
-			Assert.isNotNull(shell);
-			Assert.isTrue(count >= 0);
-			fShell= shell;
-			fCount= count;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public boolean hasDeletions() {
-			return fReturnCode == IDialogConstants.YES_ID;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
-			final IProject project= getCurrentProject();
-			if (project != null) {
-				final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-				if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
-					fShell.getDisplay().syncExec(new Runnable() {
-
-						public final void run() {
-							if (!fShell.isDisposed()) {
-								final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { new Integer(fCount).toString(), project.getName()}), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
-								store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-								fReturnCode= dialog.getReturnCode();
-							}
-						}
-					});
-				} else
-					fReturnCode= IDialogConstants.YES_ID;
-				fWarned= true;
-				if (fReturnCode == IDialogConstants.YES_ID)
-					return new RefactoringStatus();
-			}
-			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
-		}
-	}
-
 	/** The dialog settings key */
 	private static String DIALOG_SETTINGS_KEY= "RefactoringPropertyPage"; //$NON-NLS-1$
 
 	/** The empty descriptors constant */
 	static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= new RefactoringDescriptorProxy[0];
-
-	/** Preference key for the warn delete preference */
-	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.descriptor"; //$NON-NLS-1$;
 
 	/** Preference key for the warn delete all preference */
 	private static final String PREFERENCE_DO_NOT_WARN_DELETE_ALL= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.history"; //$NON-NLS-1$;
@@ -256,7 +186,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					final IProject project= getCurrentProject();
 					if (project != null) {
 						final Shell shell= getShell();
-						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, selection.length), new IRefactoringHistoryProvider() {
+						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, getCurrentProject(), selection.length), new IRefactoringHistoryProvider() {
 
 							public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
 								return RefactoringHistoryService.getInstance().getProjectHistory(project, monitor);

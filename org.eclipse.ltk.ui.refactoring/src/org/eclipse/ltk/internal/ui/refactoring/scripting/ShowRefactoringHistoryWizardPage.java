@@ -14,15 +14,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
-import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
+import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper;
 import org.eclipse.ltk.internal.ui.refactoring.history.ShowRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
@@ -38,12 +34,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
@@ -57,73 +50,8 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfigura
  */
 public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 
-	/** The refactoring descriptor delete query */
-	private final class RefactoringDescriptorDeleteQuery implements IRefactoringDescriptorDeleteQuery {
-
-		/** The number of descriptors to delete */
-		private final int fCount;
-
-		/** The return code */
-		private int fReturnCode= -1;
-
-		/** The shell to use */
-		private final Shell fShell;
-
-		/** Has the user already been warned once? */
-		private boolean fWarned= false;
-
-		/**
-		 * Creates a new refactoring descriptor delete query.
-		 * 
-		 * @param shell
-		 *            the shell to use
-		 * @param count
-		 *            the number of descriptors to delete
-		 */
-		public RefactoringDescriptorDeleteQuery(final Shell shell, final int count) {
-			Assert.isNotNull(shell);
-			Assert.isTrue(count >= 0);
-			fShell= shell;
-			fCount= count;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public boolean hasDeletions() {
-			return fReturnCode == IDialogConstants.YES_ID;
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public RefactoringStatus proceed(final RefactoringDescriptorProxy proxy) {
-			final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
-			if (!fWarned && !store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
-				fShell.getDisplay().syncExec(new Runnable() {
-
-					public final void run() {
-						if (!fShell.isDisposed()) {
-							final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, Messages.format(ScriptingMessages.ShowRefactoringHistoryWizard_confirm_deletion, new Integer(fCount).toString()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
-							store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-							fReturnCode= dialog.getReturnCode();
-						}
-					}
-				});
-			} else
-				fReturnCode= IDialogConstants.YES_ID;
-			fWarned= true;
-			if (fReturnCode == IDialogConstants.YES_ID)
-				return new RefactoringStatus();
-			return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
-		}
-	}
-
 	/** The show refactoring history wizard page name */
 	private static final String PAGE_NAME= "ShowRefactoringHistoryWizardPage"; //$NON-NLS-1$
-
-	/** Preference key for the warn delete preference */
-	private static final String PREFERENCE_DO_NOT_WARN_DELETE= RefactoringUIPlugin.getPluginId() + ".do.not.warn.delete.descriptor"; //$NON-NLS-1$;
 
 	/** The sort dialog setting */
 	private static final String SETTING_SORT= "org.eclipse.ltk.ui.refactoring.sortRefactorings"; //$NON-NLS-1$
@@ -225,7 +153,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				if (selection.length > 0) {
 					final Shell shell= getShell();
 					final IRunnableContext context= new ProgressMonitorDialog(shell);
-					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, selection.length), new IRefactoringHistoryProvider() {
+					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, null, selection.length), new IRefactoringHistoryProvider() {
 
 						public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
 							return RefactoringHistoryService.getInstance().getWorkspaceHistory(monitor);
