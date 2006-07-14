@@ -1290,7 +1290,7 @@
       <actionSet
             id="org.eclipse.ui.internal.incubator.ctrlEActionSet"
             label="%CtrlE.actionSet.label"
-            visible="true">
+            visible="false">
          <action
                class="org.eclipse.ui.internal.incubator.CtrlEAction"
                id="org.eclipse.ui.internal.incubator.CtrlEAction"
