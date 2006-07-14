@@ -122,7 +122,7 @@ public class AssignValueAction extends SelectionProviderAction {
 			    }
 			}
 		} catch (DebugException e) {
-            MessageDialog.openError(activeShell, ActionMessages.AssignValueAction_0, ActionMessages.AssignValueAction_5);
+            MessageDialog.openError(activeShell, ActionMessages.AssignValueAction_0, e.getStatus().getMessage());
 		}
 		
 	}
