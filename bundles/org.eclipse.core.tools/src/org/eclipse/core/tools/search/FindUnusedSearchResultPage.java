@@ -11,6 +11,7 @@
 package org.eclipse.core.tools.search;
 
 import java.text.Collator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -27,7 +28,7 @@ import org.eclipse.ui.part.IShowInTargetList;
 /**
  * 
  */
-public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage {
+public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage, IAdaptable {
 
 	public class DecoratorIgnoringViewerSorter extends ViewerSorter {
 

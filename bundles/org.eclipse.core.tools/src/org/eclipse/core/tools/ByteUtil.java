@@ -40,15 +40,4 @@ public class ByteUtil {
 		result.append(']');
 		return result.toString();
 	}
-
-	/**
-	 * Calls <code>byteArrayToString()</code> with no limit for array lenght.
-	 * 
-	 * @see #byteArrayToString(byte[], int) 
-	 * @param byteArray the array to be converted to string
-	 * @return a string representation for the array 
-	 */
-	public static String byteArrayToString(byte[] byteArray) {
-		return byteArrayToString(byteArray, 0);
-	}
 }

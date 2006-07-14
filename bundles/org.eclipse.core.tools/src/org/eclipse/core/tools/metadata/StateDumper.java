@@ -71,8 +71,4 @@ public class StateDumper extends AbstractDumper {
 		contents.append(')');
 		contents.append('\n');
 	}
-
-	public String getFormatDescription() {
-		return "Framework state"; //$NON-NLS-1$
-	}
 }

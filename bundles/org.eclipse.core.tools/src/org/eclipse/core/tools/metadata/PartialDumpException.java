@@ -24,11 +24,6 @@ public class PartialDumpException extends DumpException {
 		this.partialContents = partialContents;
 	}
 
-	public PartialDumpException(String msg, Throwable cause, Object partialContents) {
-		super(msg, cause);
-		this.partialContents = partialContents;
-	}
-
 	/**
 	 * Returns the contents partially read when this exception occurred. May 
 	 * return <code>null</code>.

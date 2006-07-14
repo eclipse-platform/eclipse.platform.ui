@@ -68,15 +68,6 @@ public class Dump implements IDump {
 	}
 
 	/**
-	 * Sets this dump object failed flag.
-	 * 
-	 * @param failed The value of the failed flag for this dump object
-	 */
-	public void setFailed(boolean failed) {
-		this.failed = failed;
-	}
-
-	/**
 	 * Sets the failure reason.
 	 * 
 	 * @param failureReason The failure reason for this dump object

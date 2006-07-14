@@ -146,17 +146,6 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	}
 
 	/**
-	 * Removes all child nodes (if any) from this node. This operation affects
-	 * only this node. No changes are made to the child nodes. 
-	 */
-	public void removeAllChildren() {
-		if (children == null)
-			return;
-
-		children.clear();
-	}
-
-	/**
 	 * Sorts this node's children list in ascending order. The children are 
 	 * ordered by name. Any changes in the children list will potentially 
 	 * invalidate the ordering. All children must be instances of 
@@ -224,13 +213,6 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 				return found;
 		}
 		return null;
-	}
-
-	/**
-	 * Returns this node's name.
-	 */
-	public String getName() {
-		return name;
 	}
 
 	public Object getAdapter(Class adapter) {
