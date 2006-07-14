@@ -54,7 +54,7 @@ public class DumperFactory {
 	}
 
 	private void loadDumpers() {
-		IExtensionPoint dumpersPoint = Platform.getExtensionRegistry().getExtensionPoint(CoreToolsPlugin.PLUGIN_ID, PT_METADATA_DUMPERS);
+		IExtensionPoint dumpersPoint = Platform.getExtensionRegistry().getExtensionPoint(CoreToolsPlugin.PI_TOOLS, PT_METADATA_DUMPERS);
 		IConfigurationElement[] dumperDefinitions = dumpersPoint.getConfigurationElements();
 		for (int i = 0; i < dumperDefinitions.length; i++)
 			if (dumperDefinitions[i].getName().equals(ELEM_DUMPER))

@@ -29,7 +29,7 @@ public class ErrorUtil {
 	 * @param userMessage an optional  higher-level explanation for the exception
 	 */
 	public static void logException(Exception exception, String userMessage) {
-		String pluginID = CoreToolsPlugin.PLUGIN_ID;
+		String pluginID = CoreToolsPlugin.PI_TOOLS;
 		if (userMessage == null)
 			userMessage = exception.getMessage();
 		IStatus status = new Status(IStatus.ERROR, pluginID, -1, userMessage, exception);

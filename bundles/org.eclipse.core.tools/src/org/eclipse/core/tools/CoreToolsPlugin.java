@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 
 public class CoreToolsPlugin extends AbstractUIPlugin {
 	private static CoreToolsPlugin instance;
-	public static String PLUGIN_ID = "org.eclipse.core.tools"; //$NON-NLS-1$
+	public static String PI_TOOLS = "org.eclipse.core.tools"; //$NON-NLS-1$
 	private BundleContext context;
 
 	static {
@@ -74,6 +74,6 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 	}
 
 	public void log(String message, Throwable exception) {
-		getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception));
+		getLog().log(new Status(IStatus.ERROR, PI_TOOLS, 0, message, exception));
 	}
 }
