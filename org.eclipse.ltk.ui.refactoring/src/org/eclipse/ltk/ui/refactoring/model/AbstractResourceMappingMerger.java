@@ -327,9 +327,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 			for (int index= 0; index < diffs.length; index++) {
 				final IDiff diff= diffs[index];
 				if (diff instanceof IThreeWayDiff) {
+					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
 					final Set localDescriptors= new HashSet();
 					final Set remoteDescriptors= new HashSet();
-					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
 					final ITwoWayDiff localDiff= threeWay.getLocalChange();
 					if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
 						final IResourceDiff resourceDiff= (IResourceDiff) localDiff;
@@ -371,7 +371,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * @param monitor
 	 *            the progress monitor to use
 	 */
-	private void getRefactoringDescriptors(final IFileRevision revision, final Set descriptors, final IProgressMonitor monitor) {
+	static final void getRefactoringDescriptors(final IFileRevision revision, final Set descriptors, final IProgressMonitor monitor) {
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, 1);
 			IStorage storage= null;
