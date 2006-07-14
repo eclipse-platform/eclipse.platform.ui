@@ -600,8 +600,13 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		resetColumnWidths();
 		int minWidth = internalGetMinimumWidth(parent, changed);
 		int maxWidth = internalGetMaximumWidth(parent, changed);
+		
+		if (parentWidth == SWT.DEFAULT)
+			parentWidth = maxWidth;		
+		
 		int tableWidth = parentWidth;
 		int[] columnWidths;
+		
 		if (parentWidth <= minWidth) {
 			tableWidth = minWidth;
 			if (makeColumnsEqualWidth) {
