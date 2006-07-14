@@ -23,7 +23,7 @@ public class DumpException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * The low-level exception that caused this <coed>DumpException</code>. May be 
+	 * The low-level exception that caused this <code>DumpException</code>. May be 
 	 * null.
 	 */
 	private Throwable cause;
