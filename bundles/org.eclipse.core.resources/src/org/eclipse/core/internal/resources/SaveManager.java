@@ -81,6 +81,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	private static final String DEBUG_FULL_SAVE = "Full save on workspace: "; //$NON-NLS-1$
 	private static final String DEBUG_PROJECT_SAVE = "Save on project "; //$NON-NLS-1$
 	private static final String DEBUG_SNAPSHOT = "Snapshot: "; //$NON-NLS-1$
+	private static final int TREE_BUFFER_SIZE = 1024 * 64;//64KB buffer
 
 	public SaveManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -884,7 +885,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			return;
 		}
 		try {
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
+			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE));
 			try {
 				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
 			} finally {
