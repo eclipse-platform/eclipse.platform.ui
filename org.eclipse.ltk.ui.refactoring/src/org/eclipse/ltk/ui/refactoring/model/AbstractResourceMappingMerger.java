@@ -333,21 +333,21 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 					final ITwoWayDiff localDiff= threeWay.getLocalChange();
 					if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
 						final IResourceDiff resourceDiff= (IResourceDiff) localDiff;
-						final IFileRevision fileRevision= resourceDiff.getAfterState();
-						if (fileRevision != null) {
-							final String name= fileRevision.getName();
+						final IFileRevision revision= resourceDiff.getAfterState();
+						if (revision != null) {
+							final String name= revision.getName();
 							if (name.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
-								getRefactoringDescriptors(fileRevision, localDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								getRefactoringDescriptors(revision, localDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}
 					final ITwoWayDiff remoteDiff= threeWay.getLocalChange();
 					if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
 						final IResourceDiff resourceDiff= (IResourceDiff) remoteDiff;
-						final IFileRevision fileRevision= resourceDiff.getAfterState();
-						if (fileRevision != null) {
-							final String name= fileRevision.getName();
+						final IFileRevision revision= resourceDiff.getAfterState();
+						if (revision != null) {
+							final String name= revision.getName();
 							if (name.equalsIgnoreCase(RefactoringHistoryService.NAME_HISTORY_FILE))
-								getRefactoringDescriptors(fileRevision, remoteDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+								getRefactoringDescriptors(revision, remoteDescriptors, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						}
 					}
 					remoteDescriptors.removeAll(localDescriptors);
