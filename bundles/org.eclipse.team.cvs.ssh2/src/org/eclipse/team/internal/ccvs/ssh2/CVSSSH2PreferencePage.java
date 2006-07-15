@@ -719,6 +719,33 @@ public class CVSSSH2PreferencePage extends PreferencePage
 					  file+
 					  ".pub"); //$NON-NLS-1$
 	  }
+	  else{
+		  return;
+	  }
+
+	  // The generated key should be added to privateKeyText.
+
+	  String dir=fd.getFilterPath();
+	  File mypkey=new java.io.File(dir, fd.getFileName());
+	  String pkeys=privateKeyText.getText();
+	  
+	  // Check if the generated key has been included in pkeys?
+	  String[] pkeysa = pkeys.split(","); //$NON-NLS-1$
+	  for (int i = 0; i < pkeysa.length; i++) {
+		  File pkey = new java.io.File(pkeysa[i]);
+		  if (!pkey.isAbsolute()) {
+			pkey = new java.io.File(home, pkeysa[i]);
+		  }
+		  if(pkey.equals(mypkey))
+			  return;
+	  }
+	  
+	  if(dir.equals(home)){dir="";} //$NON-NLS-1$
+	  else{dir+=java.io.File.separator;}
+	  if(pkeys.length()>0)
+		  pkeys+=",";  //$NON-NLS-1$
+	  pkeys=pkeys+dir+fd.getFileName();
+	  privateKeyText.setText(pkeys);
 	}
       });
 
