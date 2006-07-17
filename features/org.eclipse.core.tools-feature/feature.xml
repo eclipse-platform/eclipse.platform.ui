@@ -15,7 +15,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
+      <update label="%updateSiteName" url="http://eclipse.org/eclipse/platform-core/updates"/>
    </url>
 
    <plugin
