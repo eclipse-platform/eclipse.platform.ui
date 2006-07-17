@@ -26,6 +26,12 @@ import org.eclipse.ui.*;
 
 public class FindUnusedMembersAction implements IObjectActionDelegate {
 
+	/**
+	 * This flag controls how the search results are presented.  If <code>true</code>,
+	 * the results are shown in the search view.  If <code>false</code>, the
+	 * results are written to a file.
+	 */
+	private static final boolean SHOW_RESULTS_IN_SEARCH_VIEW = true;
 	private IStructuredSelection selection;
 	private IWorkbenchPart part;
 
@@ -53,13 +59,13 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 		}
 
 		ICompilationUnit[] cus = (ICompilationUnit[]) allCus.toArray(new ICompilationUnit[allCus.size()]);
-		NewSearchUI.runQueryInBackground(new FindUnusedSearchQuery(cus));
-		
-		//remove this block to report output of tool to a file
-		if (true) {
+
+		if (SHOW_RESULTS_IN_SEARCH_VIEW) {
+			NewSearchUI.runQueryInBackground(new FindUnusedSearchQuery(cus));
 			return;
 		}
 
+		//prompt the user for a file to write search results to
 		FileDialog dialog = new FileDialog(part.getSite().getShell(), SWT.SAVE);
 		String outFileName = dialog.open();
 		if (outFileName == null)
