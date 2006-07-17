@@ -33,6 +33,8 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizardAction_title;
 	public static String InstallWizard_retryTitle;
 	public static String InstallWizard_retry;
+	public static String TargetPage_Feature_Size;
+	public static String TargetPage_Feature_Version;
 	public static String TargetPage_FeatureNameColumn;
 	public static String TargetPage_InstallationDirectoryColumn;
 	public static String WebBookmarksDialog_label;

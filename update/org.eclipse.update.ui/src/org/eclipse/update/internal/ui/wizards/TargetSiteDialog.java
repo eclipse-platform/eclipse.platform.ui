@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,6 +55,8 @@ import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetSiteDialog extends Dialog {
+	
+	protected static final String MOST_RECEANTLY_USED_SITE_URL = "mostReceantlyUsedSiteURL"; //$NON-NLS-1$
 	private TableViewer siteViewer;
 	private IInstallConfiguration config;
     //private Label installLocation;
@@ -216,9 +219,16 @@ public class TargetSiteDialog extends Dialog {
 		deleteButton.setEnabled(enable);
 	}
 
+	
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
+		IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
+		IDialogSettings section = master.getSection(MOST_RECEANTLY_USED_SITE_URL);
+		if (section==null)
+			section = master.addNewSection(MOST_RECEANTLY_USED_SITE_URL);
+		section.put(MOST_RECEANTLY_USED_SITE_URL, site.getSite().getURL().toExternalForm()); 
+			
 		if (site != null) {
 			for(int i = 0; i < jobs.length; i++)
 				jobs[i].setTargetSite(site);

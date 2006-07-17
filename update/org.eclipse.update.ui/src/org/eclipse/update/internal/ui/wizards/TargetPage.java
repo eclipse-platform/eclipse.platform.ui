@@ -11,13 +11,16 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -53,6 +56,7 @@ import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
 import org.eclipse.update.configuration.LocalSystemInfo;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
 import org.eclipse.update.internal.ui.UpdateUI;
@@ -65,9 +69,14 @@ import org.eclipse.update.operations.IInstallFeatureOperation;
 public class TargetPage extends BannerPage implements IDynamicPage {
 	
 	private static final int FEATURE_NAME_COLUMN = 0;
-	private static final int FEATURE_ID_COLUMN = 1;
+	private static final int FEATURE_VERSION_COLUMN = 1;
 	private static final int FEATURE_SIZE_COLUMN = 2;
 	private static final int INSTALLATION_DIRECTORY_COLUMN = 3;
+	
+	private float featureNameColumnProcetange = 0.25f;
+	private float featureVersionColumnProcetange = 0.25f;
+	private float featureSizeColumnProcetange = 0.15f;
+	private float installationDirectoryColumnProcetange = 0.35f;
 	
 	private TableViewer jobViewer;
 	private IInstallConfiguration config;
@@ -117,7 +126,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			ISite site = ((IInstallFeatureOperation)obj).getTargetSite().getSite();
 			if (col == FEATURE_NAME_COLUMN) {				
 				return feature.getLabel();
-			} else if (col == FEATURE_ID_COLUMN) {
+			} else if (col == FEATURE_VERSION_COLUMN) {
 				return feature.getVersionedIdentifier().getVersion().toString();
 			} else if (col == FEATURE_SIZE_COLUMN) {
 				long requiredSpace = site.getDownloadSizeFor(feature) + site.getInstallSizeFor(feature);
@@ -173,7 +182,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			case FEATURE_NAME_COLUMN:
 				rc = collator.compare(featureName1, featureName2);
 				break;
-			case FEATURE_ID_COLUMN:
+			case FEATURE_VERSION_COLUMN:
 				rc = collator.compare(featureId1, featureId2);
 				break;
 			case INSTALLATION_DIRECTORY_COLUMN:
@@ -324,16 +333,17 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void createJobViewer(Composite parent) {
 		
 		final Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.RESIZE | SWT.FULL_SELECTION);
+		
 		TableColumn featureNameColumn = new TableColumn(table, SWT.LEFT, FEATURE_NAME_COLUMN);
 		featureNameColumn.setText(UpdateUIMessages.TargetPage_FeatureNameColumn); 
 		featureNameColumn.setWidth(75);
 		
-		TableColumn featureIdColumn = new TableColumn(table, SWT.LEFT, FEATURE_ID_COLUMN);
-		featureIdColumn.setText("Feature Id"); 
-		featureIdColumn.setWidth(75);
+		TableColumn featureVersionColumn = new TableColumn(table, SWT.LEFT, FEATURE_VERSION_COLUMN);
+		featureVersionColumn.setText(UpdateUIMessages.TargetPage_Feature_Version); 
+		featureVersionColumn.setWidth(75);
 		
 		TableColumn featureSizeColumn = new TableColumn(table, SWT.LEFT, FEATURE_SIZE_COLUMN);
-		featureSizeColumn.setText("Feature Size"); 
+		featureSizeColumn.setText(UpdateUIMessages.TargetPage_Feature_Size); 
 		featureSizeColumn.setWidth(75);
 		
 		TableColumn featureLocationColumn = new TableColumn(table, SWT.LEFT, INSTALLATION_DIRECTORY_COLUMN);
@@ -346,9 +356,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
         gd.horizontalSpan = 3;
 		gd.widthHint = 150;
 		jobViewer.getTable().setLayoutData(gd);
-		//Table table = jobViewer.getTable();
-		//TableColumn featureNameColumn = new TableColumn(table, SWT.NONE);
-		//TableColumn featureLocationColumn = new TableColumn(table, SWT.NONE);
 		jobViewer.setContentProvider(new JobsContentProvider());
 		jobViewer.setLabelProvider(new JobsLabelProvider());
 		jobViewer.setSorter(new JobViewerSorter());
@@ -361,9 +368,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		    }
 		);
 		
-		featureIdColumn.addSelectionListener(new SelectionAdapter() {
+		featureVersionColumn.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_ID_COLUMN);
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_VERSION_COLUMN);
 		        jobViewer.refresh();
 		      }
 		    }
@@ -392,35 +399,33 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				Rectangle area = table.getClientArea();
 				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-				int width = area.width - 2 * table.getBorderWidth();
+				int tableWidth = area.width - 3 * table.getBorderWidth();
 				if (preferredSize.y > area.height + table.getHeaderHeight()){
 					Point vBarSize = table.getVerticalBar().getSize();
-					width -= vBarSize.x;
-				}
+					tableWidth -= vBarSize.x;
+				}		
+				
 				TableColumn featureNameColumn = table.getColumn(FEATURE_NAME_COLUMN);
-				TableColumn featureIdColumn = table.getColumn(FEATURE_ID_COLUMN);
+				TableColumn featureVersionColumn = table.getColumn(FEATURE_VERSION_COLUMN);
 				TableColumn featureSizeColumn = table.getColumn(FEATURE_SIZE_COLUMN);
 				TableColumn featureLocationColumn = table.getColumn(INSTALLATION_DIRECTORY_COLUMN);
 
-				featureNameColumn.setWidth(width/4);
-				featureIdColumn.setWidth(width/4);
-				featureSizeColumn.setWidth(width/4);
-				featureLocationColumn.setWidth(width - featureNameColumn.getWidth() - featureIdColumn.getWidth() - featureSizeColumn.getWidth());		    	
+				featureNameColumn.setWidth((int)(tableWidth * featureNameColumnProcetange));
+				featureVersionColumn.setWidth((int)(tableWidth * featureVersionColumnProcetange));
+				featureSizeColumn.setWidth((int)(tableWidth * featureSizeColumnProcetange));
+				featureLocationColumn.setWidth(tableWidth - featureNameColumn.getWidth() - featureVersionColumn.getWidth() - featureSizeColumn.getWidth());		    	
 
+				
+				featureNameColumnProcetange = featureNameColumn.getWidth() / (float)tableWidth;
+				featureVersionColumnProcetange = featureVersionColumn.getWidth() / (float)tableWidth;
+				featureSizeColumnProcetange = featureSizeColumn.getWidth() / (float)tableWidth;
+				installationDirectoryColumnProcetange = featureLocationColumn.getWidth() / (float)tableWidth;
 			}
 		});
 
 
 		jobViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				/*IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				Iterator selectedJobs = selection.iterator();
-				if (selectedJobs != null) {
-					while(selectedJobs.hasNext()) {
-						setTargetLocation((IInstallFeatureOperation) selectedJobs.next());
-					}
-				}
-				jobViewer.refresh();*/
 				updateStatus();
 
 			}
@@ -518,9 +523,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			double sizeInMB = size / order;
 			double sizeInGB = size / order / order;
 			if ( sizeInMB < 1) {
-				return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_KB, "" + size);
+				return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_KB, "" + size); //$NON-NLS-1$
 			} else {
-				String pattern = "#.##";
+				String pattern = "#.##"; //$NON-NLS-1$
 				DecimalFormat formatter = new DecimalFormat(pattern);
 				if (sizeInGB < 1) {					
 					return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_MB, formatter.format(sizeInMB));
@@ -625,6 +630,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	}
 	
 	private void initializeDefaultTargetSites() {
+		
+		
+		IConfiguredSite mostReceantlyUsedSite = getMostReceantlyUsedSite();
 		for (int i = 0; i < jobs.length; i++) {
 			if (jobs[i].getTargetSite() != null)
 				continue;
@@ -640,10 +648,45 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				jobs[i].setTargetSite(defaultSite);
 				continue;
 			}
+			
+			if (mostReceantlyUsedSite != null) {
+				jobs[i].setTargetSite(mostReceantlyUsedSite);
+				continue;
+			}
 
 			jobs[i].setTargetSite(getFirstTargetSite(jobs[i]));
 
 		}
+
+	}
+	
+	private IConfiguredSite getMostReceantlyUsedSite() {
+		IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
+		IDialogSettings section = master.getSection(TargetSiteDialog.MOST_RECEANTLY_USED_SITE_URL);
+		if (section == null) {
+			return null;
+		}
+		String mostReceantlyUsedSiteURLString = section.get(TargetSiteDialog.MOST_RECEANTLY_USED_SITE_URL); 
+		if (mostReceantlyUsedSiteURLString == null) {
+			return null;
+		}
+		
+		URL mostReceantlyUsedSiteURL = null;
+		try {
+			mostReceantlyUsedSiteURL = new URL(mostReceantlyUsedSiteURLString);
+		} catch (MalformedURLException mue) {
+			UpdateCore.log("Url format is wrong for the mostReceantlyUsedSiteURL in preferences", mue); //$NON-NLS-1$
+			mue.printStackTrace();
+			return null;
+		}
+		IConfiguredSite[] sites = config.getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			IConfiguredSite configuredSite = sites[i];
+			if (mostReceantlyUsedSiteURL.equals(configuredSite.getSite().getURL())) {
+				return configuredSite;
+			}
+		}
+		return null;
 	}
 	
 
