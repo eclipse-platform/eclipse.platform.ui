@@ -336,7 +336,9 @@ public final class UpdateUIMessages extends NLS {
 	public static String InstallWizard_TargetPage_location_error_title;
 	public static String InstallWizard_TargetPage_location_error_message;
 	public static String InstallWizard_TargetPage_location_error_reason;
-	public static String InstallWizard_TargetPage_size;
+	public static String InstallWizard_TargetPage_size_KB;
+	public static String InstallWizard_TargetPage_size_MB;
+	public static String InstallWizard_TargetPage_size_GB;
 	public static String InstallWizard_TargetPage_unknownSize;
 	public static String InstallWizard_TargetPage_patchError;
 	public static String InstallWizard_TargetPage_patchError2;

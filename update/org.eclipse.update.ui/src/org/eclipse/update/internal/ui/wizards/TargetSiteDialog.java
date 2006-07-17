@@ -9,26 +9,49 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.io.*;
+
+import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.operations.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.ui.UpdateLabelProvider;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.UpdateUIMessages;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetSiteDialog extends Dialog {
 	private TableViewer siteViewer;
@@ -40,18 +63,14 @@ public class TargetSiteDialog extends Dialog {
     //private IConfiguredSite targetSite;
     private IInstallFeatureOperation[] jobs;
     
-    class SitesContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+    class SitesContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object parent) {
 			return config.getConfiguredSites();
 		}
 	}
 	
-	class SitesLabelProvider
-	extends LabelProvider
-	implements ITableLabelProvider {
+	class SitesLabelProvider extends LabelProvider implements ITableLabelProvider {
 		
 		public Image getColumnImage(Object obj, int col) {
 			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
@@ -152,7 +171,7 @@ public class TargetSiteDialog extends Dialog {
         siteViewer.setInput(jobs[0]);
         IConfiguredSite affinitySite = UpdateUtils.getDefaultTargetSite(config, jobs[0], true);
         if (jobs[0].getTargetSite() != null) 
-          siteViewer.setSelection(new StructuredSelection(jobs[0].getTargetSite()));
+        	siteViewer.setSelection(new StructuredSelection(jobs[0].getTargetSite()));
         addButton.setEnabled(affinitySite == null);
         
         return client;

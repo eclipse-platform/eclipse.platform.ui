@@ -11,6 +11,8 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.File;
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,6 +52,7 @@ import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
 import org.eclipse.update.configuration.LocalSystemInfo;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
 import org.eclipse.update.internal.ui.UpdateUI;
@@ -60,6 +63,12 @@ import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
+	
+	private static final int FEATURE_NAME_COLUMN = 0;
+	private static final int FEATURE_ID_COLUMN = 1;
+	private static final int FEATURE_SIZE_COLUMN = 2;
+	private static final int INSTALLATION_DIRECTORY_COLUMN = 3;
+	
 	private TableViewer jobViewer;
 	private IInstallConfiguration config;
 	private ConfigListener configListener;
@@ -84,6 +93,11 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		implements ITableLabelProvider {
 			
 		public Image getColumnImage(Object obj, int col) {
+			
+			if (col > 0) {
+				return null;
+			}
+			
 			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
 
 			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
@@ -98,14 +112,18 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 
 		public String getColumnText(Object obj, int col) {
-			if (col == 0) {
-				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
-				return feature.getLabel()
-					+ " " //$NON-NLS-1$
-					+ feature.getVersionedIdentifier().getVersion().toString();
-			} else if (col == 1) {
-				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
-				return ((IInstallFeatureOperation)obj).getTargetSite().getSite().getURL().getFile().toString();
+			
+			IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
+			ISite site = ((IInstallFeatureOperation)obj).getTargetSite().getSite();
+			if (col == FEATURE_NAME_COLUMN) {				
+				return feature.getLabel();
+			} else if (col == FEATURE_ID_COLUMN) {
+				return feature.getVersionedIdentifier().getVersion().toString();
+			} else if (col == FEATURE_SIZE_COLUMN) {
+				long requiredSpace = site.getDownloadSizeFor(feature) + site.getInstallSizeFor(feature);
+				return getSizeString(requiredSpace);
+			} else if (col == INSTALLATION_DIRECTORY_COLUMN) {
+				return site.getURL().getFile().toString();
 			}
 			return null;
 		}
@@ -113,9 +131,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	
 	class JobViewerSorter extends ViewerSorter {
 		
-		public static final int FEATURE_NAME = 0;
-
-		public static final int INSTALLATION_DIRECTORY = 1;
 		
 		private static final int ASCENDING = 0;
 
@@ -145,17 +160,23 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			IFeature feature1 = ((IInstallFeatureOperation) o1).getFeature();
 			IFeature feature2 = ((IInstallFeatureOperation) o2).getFeature();
 
-			String featureName1 = feature1.getLabel() + " " + feature1.getVersionedIdentifier().getVersion().toString(); //$NON-NLS-1$
-			String featureName2 = feature2.getLabel() + " " + feature2.getVersionedIdentifier().getVersion().toString(); //$NON-NLS-1$
+			String featureName1 = feature1.getLabel();
+			String featureName2 = feature2.getLabel();
+			
+			String featureId1 = feature1.getVersionedIdentifier().getVersion().toString();
+			String featureId2 = feature2.getVersionedIdentifier().getVersion().toString();
 
 			String installationDirectory1 = ((IInstallFeatureOperation)o1).getTargetSite().getSite().getURL().getFile().toString();
 			String installationDirectory2 = ((IInstallFeatureOperation)o2).getTargetSite().getSite().getURL().getFile().toString();
 
 			switch (column) {
-			case FEATURE_NAME:
+			case FEATURE_NAME_COLUMN:
 				rc = collator.compare(featureName1, featureName2);
 				break;
-			case INSTALLATION_DIRECTORY:
+			case FEATURE_ID_COLUMN:
+				rc = collator.compare(featureId1, featureId2);
+				break;
+			case INSTALLATION_DIRECTORY_COLUMN:
 				rc = collator.compare(installationDirectory1, installationDirectory2);
 				break;
 			}
@@ -250,8 +271,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
                 IStructuredSelection selection = (IStructuredSelection) jobViewer.getSelection();
                 if (selection == null)
                     return;
-                IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
-                if (job == null) 
+                Iterator selectedJob = selection.iterator();
+                if (selectedJob == null) 
                     return;
                 
                 TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()), configListener);
@@ -261,16 +282,16 @@ public class TargetPage extends BannerPage implements IDynamicPage {
                 
                 dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
                 if ( dialog.open() == Dialog.OK) {
-                	Iterator selectedJob = selection.iterator();
-                	if (selectedJob != null) {
+                	
+                	/*if (selectedJob != null) {
                 		while(selectedJob.hasNext()) {
                 			setTargetLocation((IInstallFeatureOperation)selectedJob.next());
                 		}
-                	}
+                	}*/
                 	//setTargetLocation(job);
                 	pageChanged();
                 	jobViewer.refresh();
-                	updateStatus(job.getTargetSite());
+                	updateStatus();
                 }
             }
 
@@ -303,11 +324,19 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void createJobViewer(Composite parent) {
 		
 		final Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.RESIZE | SWT.FULL_SELECTION);
-		final TableColumn featureNameColumn = new TableColumn(table, SWT.LEFT, 0);
+		TableColumn featureNameColumn = new TableColumn(table, SWT.LEFT, FEATURE_NAME_COLUMN);
 		featureNameColumn.setText(UpdateUIMessages.TargetPage_FeatureNameColumn); 
 		featureNameColumn.setWidth(75);
 		
-		final TableColumn featureLocationColumn = new TableColumn(table, SWT.LEFT, 1);
+		TableColumn featureIdColumn = new TableColumn(table, SWT.LEFT, FEATURE_ID_COLUMN);
+		featureIdColumn.setText("Feature Id"); 
+		featureIdColumn.setWidth(75);
+		
+		TableColumn featureSizeColumn = new TableColumn(table, SWT.LEFT, FEATURE_SIZE_COLUMN);
+		featureSizeColumn.setText("Feature Size"); 
+		featureSizeColumn.setWidth(75);
+		
+		TableColumn featureLocationColumn = new TableColumn(table, SWT.LEFT, INSTALLATION_DIRECTORY_COLUMN);
 		featureLocationColumn.setText(UpdateUIMessages.TargetPage_InstallationDirectoryColumn); 
 		featureLocationColumn.setWidth(75);
 		jobViewer = new TableViewer(table);
@@ -326,54 +355,74 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		
 		featureNameColumn.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(JobViewerSorter.FEATURE_NAME);
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_NAME_COLUMN);
 		        jobViewer.refresh();
 		      }
-		    });
+		    }
+		);
+		
+		featureIdColumn.addSelectionListener(new SelectionAdapter() {
+		      public void widgetSelected(SelectionEvent event) {
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_ID_COLUMN);
+		        jobViewer.refresh();
+		      }
+		    }
+		);
+		
+		featureSizeColumn.addSelectionListener(new SelectionAdapter() {
+		      public void widgetSelected(SelectionEvent event) {
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_SIZE_COLUMN);
+		        jobViewer.refresh();
+		      }
+		    }
+		);
 		
 		featureLocationColumn.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(JobViewerSorter.INSTALLATION_DIRECTORY);
+		        ((JobViewerSorter) jobViewer.getSorter()).doSort(INSTALLATION_DIRECTORY_COLUMN);
 		        jobViewer.refresh();
 		      }
-		    });
+		    }
+		);
 		
 		table.addControlListener(new ControlAdapter() {
-		    public void controlResized(ControlEvent e) {
-		    	
-		    	
-		    	Rectangle area = table.getClientArea();
-			    Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			public void controlResized(ControlEvent e) {
 
-			    int width = area.width - table.getBorderWidth();
-			    if (preferredSize.y > area.height + table.getHeaderHeight()){
-			    	Point vBarSize = table.getVerticalBar().getSize();
-			    	width -= vBarSize.x;
-			    }
-			    Point oldSize = table.getSize();
-			    if (oldSize.x > area.width) {
-			    	featureNameColumn.setWidth(width/2);
-			    	featureLocationColumn.setWidth(width - featureNameColumn.getWidth());		    	
-			    } else {
-			    	featureNameColumn.setWidth(width/2);
-			    	featureLocationColumn.setWidth(width - featureNameColumn.getWidth());
-			    }
-		    }
+
+				Rectangle area = table.getClientArea();
+				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+				int width = area.width - 2 * table.getBorderWidth();
+				if (preferredSize.y > area.height + table.getHeaderHeight()){
+					Point vBarSize = table.getVerticalBar().getSize();
+					width -= vBarSize.x;
+				}
+				TableColumn featureNameColumn = table.getColumn(FEATURE_NAME_COLUMN);
+				TableColumn featureIdColumn = table.getColumn(FEATURE_ID_COLUMN);
+				TableColumn featureSizeColumn = table.getColumn(FEATURE_SIZE_COLUMN);
+				TableColumn featureLocationColumn = table.getColumn(INSTALLATION_DIRECTORY_COLUMN);
+
+				featureNameColumn.setWidth(width/4);
+				featureIdColumn.setWidth(width/4);
+				featureSizeColumn.setWidth(width/4);
+				featureLocationColumn.setWidth(width - featureNameColumn.getWidth() - featureIdColumn.getWidth() - featureSizeColumn.getWidth());		    	
+
+			}
 		});
 
 
 		jobViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				/*IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				Iterator selectedJobs = selection.iterator();
 				if (selectedJobs != null) {
 					while(selectedJobs.hasNext()) {
 						setTargetLocation((IInstallFeatureOperation) selectedJobs.next());
 					}
 				}
-				jobViewer.refresh();
-				//IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
-				//setTargetLocation(job);
+				jobViewer.refresh();*/
+				updateStatus();
+
 			}
 		});
 		
@@ -401,35 +450,85 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	}
 
 
-	private void updateStatus(Object element) {
-		if (element == null) {
-			requiredSpaceLabel.setText(""); //$NON-NLS-1$
-			availableSpaceLabel.setText(""); //$NON-NLS-1$
+	private void updateStatus() {
+		
+		IStructuredSelection selectedJobs = (IStructuredSelection)jobViewer.getSelection();
+		IInstallFeatureOperation selectedJob = (IInstallFeatureOperation)selectedJobs.getFirstElement();
+	
+		requiredSpaceLabel.setText(""); //$NON-NLS-1$
+		availableSpaceLabel.setText(""); //$NON-NLS-1$
+		installLocation.setText(""); //$NON-NLS-1$
+		
+		if (selectedJob == null) {
 			return;
 		}
-		IConfiguredSite site = (IConfiguredSite) element;
+		
+		IConfiguredSite site = selectedJob.getTargetSite(); /*(IConfiguredSite) element*/;
 		File file = new File(site.getSite().getURL().getFile());
-		long available = LocalSystemInfo.getFreeSpace(file);
-		long required = computeRequiredSizeFor(site);
-		//add the download size to space required to do operation since all plugins and nonplugin data will be downloaded first
-		required += computeDownloadSizeFor(site); 
-		if (required <= 0)
-			requiredSpaceLabel.setText(UpdateUIMessages.InstallWizard_TargetPage_unknownSize); 
-		else
-			requiredSpaceLabel.setText(
-				NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size, "" + required)); //$NON-NLS-1$
-
+		long available = -1;
+		long required = -1;
+		if (areAllTargetSitesSame()) {
+			available = LocalSystemInfo.getFreeSpace(file);
+			required = computeRequiredSizeFor(site);
+			//add the download size to space required to do operation since all plugins and nonplugin data will be downloaded first
+			required += computeDownloadSizeFor(site); 
+			installLocation.setText(new File(selectedJob.getTargetSite().getSite().getURL().getFile()).toString());
+		}		
+		
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
-			availableSpaceLabel.setText(UpdateUIMessages.InstallWizard_TargetPage_unknownSize); 
-		else
-			availableSpaceLabel.setText(
-				NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size, "" + available)); //$NON-NLS-1$
+			available = -1;
+		
+		requiredSpaceLabel.setText(getSizeString(required));
+		availableSpaceLabel.setText(getSizeString(available));
+		
+		
 		//if the available space was retireved from the OS and the required space is greater that the available space, do not let the user continue
 		if(available != LocalSystemInfo.SIZE_UNKNOWN && required > available){
 			this.setPageComplete(false);
 			//TODO: set error message: "...not enough space..."
 		}else
 			this.setPageComplete(true);
+	}
+	
+	private boolean areAllTargetSitesSame() {
+		IStructuredSelection selectedJobs = (IStructuredSelection)jobViewer.getSelection();
+		Iterator iterator = selectedJobs.iterator();
+		URL site = null;
+		if (iterator != null) {
+			while(iterator.hasNext()) {
+				IInstallFeatureOperation current = (IInstallFeatureOperation) iterator.next();				
+				if (site != null) {
+					if (!site.equals(current.getTargetSite().getSite().getURL())) {
+						return false;
+					}
+				} else {
+					site = current.getTargetSite().getSite().getURL();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private String getSizeString(long size) {
+		if (size <= 0) {
+			return UpdateUIMessages.InstallWizard_TargetPage_unknownSize;
+		} else {
+			double order = 1024.0;
+			double sizeInMB = size / order;
+			double sizeInGB = size / order / order;
+			if ( sizeInMB < 1) {
+				return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_KB, "" + size);
+			} else {
+				String pattern = "#.##";
+				DecimalFormat formatter = new DecimalFormat(pattern);
+				if (sizeInGB < 1) {					
+					return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_MB, formatter.format(sizeInMB));
+				} else {
+					return NLS.bind(UpdateUIMessages.InstallWizard_TargetPage_size_GB, formatter.format(sizeInGB));
+				}
+			}
+		}
 	}
 
 	private long computeRequiredSizeFor(IConfiguredSite site) {
@@ -594,12 +693,12 @@ public class TargetPage extends BannerPage implements IDynamicPage {
     /**
      * @param job
      */
-    private void setTargetLocation(IInstallFeatureOperation job) {
+/*    private void setTargetLocation(IInstallFeatureOperation job) {
         if (job != null && job.getTargetSite() != null) {
             installLocation.setText(new File(job.getTargetSite().getSite().getURL().getFile()).toString());
             updateStatus(job.getTargetSite());
         }
-    }
+    }*/
     
     private IInstallFeatureOperation[] toJobArray(Iterator selectedJobs) {
 		
