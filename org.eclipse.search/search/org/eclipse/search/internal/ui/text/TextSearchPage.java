@@ -516,7 +516,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		
 		fIsCaseSensitiveCheckbox= new Button(group, SWT.CHECK);
 		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive); 
-		fIsCaseSensitiveCheckbox.setSelection(!fIsCaseSensitive);
+		fIsCaseSensitiveCheckbox.setSelection(fIsCaseSensitive);
 		fIsCaseSensitiveCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fIsCaseSensitive= fIsCaseSensitiveCheckbox.getSelection();
