@@ -53,6 +53,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -413,13 +414,15 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		// Build a list of selected children.
 		ISelection selection= fViewer.getSelection();
 		if (selection instanceof IStructuredSelection)
-			setResult(((IStructuredSelection)fViewer.getSelection()).toList());
-		
+			setResult(((IStructuredSelection) fViewer.getSelection()).toList());
 		
 		// remove queries
 		for (Iterator iter= fRemovedEntries.iterator(); iter.hasNext();) {
 			ISearchResult result= (ISearchResult) iter.next();
-			InternalSearchUI.getInstance().removeQuery(result.getQuery());
+			ISearchQuery query= result.getQuery();
+			if (query != null) { // must not be null: invalid implementation of a search query
+				InternalSearchUI.getInstance().removeQuery(query);
+			}
 		}
 		super.okPressed();
 	}

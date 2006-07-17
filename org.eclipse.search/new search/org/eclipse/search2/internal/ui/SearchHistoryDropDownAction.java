@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IMenuCreator;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
@@ -105,7 +106,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		
 		fMenu= new Menu(parent);
 				
-		ISearchQuery[] searches= InternalSearchUI.getInstance().getSearchManager().getQueries();
+		ISearchQuery[] searches= NewSearchUI.getQueries();
 		if (searches.length > 0) {			
 			for (int i= 0; i < searches.length; i++) {
 				ISearchResult search= searches[i].getSearchResult();

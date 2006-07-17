@@ -17,6 +17,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 
@@ -40,8 +41,7 @@ class ShowSearchHistoryDialogAction extends Action {
 	}
 	 
 	public void run() {
-		QueryManager sm= InternalSearchUI.getInstance().getSearchManager();
-		ISearchQuery[] queries= sm.getQueries();
+		ISearchQuery[] queries= NewSearchUI.getQueries();
 
 		ArrayList input= new ArrayList();
 		for (int j= 0; j < queries.length; j++) {

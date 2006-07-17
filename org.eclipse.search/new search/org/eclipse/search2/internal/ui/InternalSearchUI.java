@@ -295,17 +295,27 @@ public class InternalSearchUI {
 	}
 
 	public void removeQuery(ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException();
+		}
 		cancelSearch(query);
 		getSearchManager().removeQuery(query);
 		fSearchJobs.remove(query);
 	}
 
 	public void addQuery(ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException();
+		}
+		
 		int historyLimit= SearchPreferencePage.getHistoryLimit();
 		
 		QueryManager searchManager= getSearchManager();
-		while (searchManager.getQueries().length >= historyLimit) {
-			removeQuery(searchManager.getOldestQuery());
+		while (searchManager.getSize() >= historyLimit) {
+			ISearchQuery oldestQuery= searchManager.getOldestQuery();
+			if (oldestQuery != null) {
+				removeQuery(oldestQuery);
+			}
 		}
 		searchManager.addQuery(query);
 	}	

@@ -62,6 +62,9 @@ public class NewSearchUI {
 	 * or {@link #runQueryInForeground(IRunnableContext, ISearchQuery)} to run it in foreground
 	 */
 	public static void runQuery(ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		if (query.canRunInBackground())
 			runQueryInBackground(query);
 		else {
@@ -93,6 +96,9 @@ public class NewSearchUI {
 	 * @since 3.1
 	 */
 	public static void runQueryInBackground(ISearchQuery query) throws IllegalArgumentException {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		runQueryInBackground(query, null);
 	}
 	
@@ -116,6 +122,9 @@ public class NewSearchUI {
 	 * @since 3.2
 	 */
 	public static void runQueryInBackground(ISearchQuery query, ISearchResultViewPart view) throws IllegalArgumentException {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		if (query.canRunInBackground())
 			InternalSearchUI.getInstance().runSearchInBackground(query, view);
 		else
@@ -140,6 +149,9 @@ public class NewSearchUI {
 	 *            that the query was canceled.
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		return runQueryInForeground(context, query, null);
 	}
 	
@@ -166,6 +178,9 @@ public class NewSearchUI {
 	 * @since 3.2
 	 */
 	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view) {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		return InternalSearchUI.getInstance().runSearchInForeground(context, query, view);
 	}
 	
@@ -212,6 +227,9 @@ public class NewSearchUI {
 	 * @see NewSearchUI#runQueryInForeground(IRunnableContext, ISearchQuery)
 	 */
 	public static boolean isQueryRunning(ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		return InternalSearchUI.getInstance().isQueryRunning(query);
 	}
 	
@@ -224,6 +242,9 @@ public class NewSearchUI {
 	 * @since 3.1
 	 */
 	public static void cancelQuery(ISearchQuery query) {
+		if (query == null) {
+			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
+		}
 		InternalSearchUI.getInstance().cancelSearch(query);
 	}
 	

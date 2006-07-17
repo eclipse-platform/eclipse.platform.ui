@@ -454,13 +454,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	public void queryStarting(ISearchQuery query) {
-		if (query.getSearchResult().equals(fCurrentSearch)) {
+		if (fCurrentSearch != null && fCurrentSearch.equals(query.getSearchResult())) {
 			updateCancelAction();
 		}
 	}
 
 	public void queryFinished(ISearchQuery query) {
-		if (query.getSearchResult().equals(fCurrentSearch)) {
+		if (fCurrentSearch != null && fCurrentSearch.equals(query.getSearchResult())) {
 			updateCancelAction();
 		}
 	}

@@ -13,6 +13,7 @@ package org.eclipse.search2.internal.ui;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,56 +22,62 @@ import org.eclipse.search.ui.ISearchQuery;
 
 class QueryManager {
 	private List fQueries;
-	private List fLRU;
 	private List fListeners;
+	
 	public QueryManager() {
 		super();
 		// an ArrayList should be plenty fast enough (few searches).
-		fQueries= new ArrayList();
 		fListeners= new ArrayList();
-		fLRU= new ArrayList();
+		fQueries= new LinkedList();
 	}
 	
-	synchronized boolean hasQueries() {
-		return !fQueries.isEmpty();
+	public boolean hasQueries() {
+		synchronized (this) {
+			return !fQueries.isEmpty();
+		}
 	}
 	
-	synchronized ISearchQuery[] getQueries() {
-		ISearchQuery[] result= new ISearchQuery[fQueries.size()];
-		return (ISearchQuery[]) fQueries.toArray(result);
+	public int getSize() {
+		synchronized (this) {
+			return fQueries.size();
+		}
+	}
+	
+	public ISearchQuery[] getQueries() {
+		synchronized (this) {
+			return (ISearchQuery[]) fQueries.toArray(new ISearchQuery[fQueries.size()]);
+		}
 	}
 
-	void removeQuery(ISearchQuery query) {
-		synchronized (fQueries) {
+	public void removeQuery(ISearchQuery query) {
+		synchronized (this) {
 			fQueries.remove(query);
-			fLRU.remove(query);
 		}
 		fireRemoved(query);
 	}
 
-	void addQuery(ISearchQuery query) {
-		synchronized (fQueries) {
+	public void addQuery(ISearchQuery query) {
+		synchronized (this) {
 			if (fQueries.contains(query))
 				return;
 			fQueries.add(0, query);
-			fLRU.add(0, query);
 		}
 		fireAdded(query);
 	}
 	
-	void addQueryListener(IQueryListener l) {
+	public void addQueryListener(IQueryListener l) {
 		synchronized (fListeners) {
 			fListeners.add(l);
 		}
 	}
 
-	void removeQueryListener(IQueryListener l) {
+	public void removeQueryListener(IQueryListener l) {
 		synchronized (fListeners) {
 			fListeners.remove(l);
 		}
 	}
 	
-	void fireAdded(ISearchQuery query) {
+	public void fireAdded(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
@@ -82,7 +89,7 @@ class QueryManager {
 		}
 	}
 
-	void fireRemoved(ISearchQuery query) {
+	public void fireRemoved(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
@@ -94,7 +101,7 @@ class QueryManager {
 		}
 	}
 	
-	void fireStarting(ISearchQuery query) {
+	public void fireStarting(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
@@ -106,7 +113,7 @@ class QueryManager {
 		}
 	}
 
-	void fireFinished(ISearchQuery query) {
+	public void fireFinished(ISearchQuery query) {
 		Set copiedListeners= new HashSet();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
@@ -118,13 +125,11 @@ class QueryManager {
 		}
 	}
 
-	void removeAll() {
-		Set copiedSearches= new HashSet();
-		synchronized (fQueries) {
-			copiedSearches.addAll(fQueries);
-			fQueries.clear();
-			fLRU.clear();
-			Iterator iter= copiedSearches.iterator();
+	public void removeAll() {
+		synchronized (this) {
+			List old= fQueries;
+			fQueries= new LinkedList();
+			Iterator iter= old.iterator();
 			while (iter.hasNext()) {
 				ISearchQuery element= (ISearchQuery) iter.next();
 				fireRemoved(element);
@@ -132,24 +137,29 @@ class QueryManager {
 		}
 	}
 
-	void queryFinished(ISearchQuery query) {
+	public void queryFinished(ISearchQuery query) {
 		fireFinished(query);
 	}
 
-	void queryStarting(ISearchQuery query) {
+	public void queryStarting(ISearchQuery query) {
 		fireStarting(query);
 	}
 	
-	void touch(ISearchQuery query) {
-		if (fLRU.contains(query)) {
-			fLRU.remove(query);
-			fLRU.add(0, query);
+	public void touch(ISearchQuery query) {
+		synchronized (this) {
+			if (fQueries.contains(query)) {
+				fQueries.remove(query);
+				fQueries.add(0, query);
+			}
 		}
 	}
 	
-	ISearchQuery getOldestQuery() {
-		if (fLRU.size() > 0)
-			return (ISearchQuery) fLRU.get(fLRU.size()-1);
+	public ISearchQuery getOldestQuery() {
+		synchronized (this) {
+			if (!fQueries.isEmpty()) {
+				return (ISearchQuery) fQueries.get(fQueries.size()-1);
+			}
+		}
 		return null;
 	}
 
