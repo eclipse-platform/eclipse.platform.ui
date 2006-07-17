@@ -50,4 +50,3 @@ public class RefreshLocalJavaFileBuilder extends TestBuilder {
 	}
 
 }
-

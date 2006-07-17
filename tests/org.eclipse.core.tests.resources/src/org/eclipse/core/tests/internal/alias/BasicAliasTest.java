@@ -41,11 +41,11 @@ public class BasicAliasTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(BasicAliasTest.class);
-		
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new BasicAliasTest("testDeepLink"));
-//		suite.addTest(new BasicAliasTest("testCreateDeleteLink"));
-//		return suite;
+
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new BasicAliasTest("testDeepLink"));
+		//		suite.addTest(new BasicAliasTest("testCreateDeleteLink"));
+		//		return suite;
 	}
 
 	public BasicAliasTest() {
@@ -505,19 +505,19 @@ public class BasicAliasTest extends ResourceTest {
 			assertTrue("3.1", !linkChild.exists());
 			ensureExistsInWorkspace(folderChild, true);
 			assertTrue("3.2", linkChild.exists());
-			
+
 			//delete the project that contains the links
 			IFile fileInLinkedProject = pLinked.getFile("fileInLinkedProject.txt");
-			createFileInFileSystem(((Resource)fileInLinkedProject).getStore(), getRandomContents());
+			createFileInFileSystem(((Resource) fileInLinkedProject).getStore(), getRandomContents());
 			try {
 				getWorkspace().getRoot().delete(IResource.NONE, getMonitor());
 			} catch (CoreException e) {
 				e.printStackTrace();
 				//failure expected here because it is out of sync
 			}
-			
+
 			//ensure aliases are gone (bug 144458)
-			final IResource[] aliases = aliasManager.computeAliases(folder, ((Folder)folder).getStore());
+			final IResource[] aliases = aliasManager.computeAliases(folder, ((Folder) folder).getStore());
 			assertNull("4.0", aliases);
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -599,7 +599,7 @@ public class BasicAliasTest extends ResourceTest {
 		IFile childProjectFileInParent = childDirInParent.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		assertTrue("1.0", childDirInParent.exists());
 		assertTrue("1.1", childProjectFileInParent.exists());
-		
+
 		//now delete the child and ensure the resources in the parent are gone
 		try {
 			child.delete(IResource.NONE, getMonitor());
@@ -608,7 +608,7 @@ public class BasicAliasTest extends ResourceTest {
 		}
 		assertTrue("2.0", !childDirInParent.exists());
 		assertTrue("2.1", !childProjectFileInParent.exists());
-		
+
 		//recreate the child and ensure resources in parent are there
 		try {
 			child.create(childDesc, getMonitor());
@@ -618,14 +618,14 @@ public class BasicAliasTest extends ResourceTest {
 		}
 		assertTrue("3.0", childDirInParent.exists());
 		assertTrue("3.1", childProjectFileInParent.exists());
-		
+
 		//delete the parent and ensure child is also deleted
 		try {
 			parent.delete(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
-		
+
 		assertTrue("4.0", !parent.exists());
 		assertTrue("4.1", !child.exists());
 		assertTrue("4.2", !childDirInParent.exists());

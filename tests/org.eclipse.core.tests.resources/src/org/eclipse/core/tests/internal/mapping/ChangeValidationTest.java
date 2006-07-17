@@ -123,14 +123,14 @@ public class ChangeValidationTest extends ResourceTest {
 		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/x")), ChangeDescription.getMessageFor(ChangeDescription.COPIED, project.findMember("c/b/y"))});
 	}
-	
+
 	public void testFileCreate() {
 		IFile file = project.getFile("file");
 		factory.create(file);
 		IStatus status = validateChange(factory);
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.ADDED, file)});
 	}
-	
+
 	public void testFileInFolderCreate() {
 		IFolder folder = project.getFolder("folder");
 		IFile file = folder.getFile("file");
@@ -139,7 +139,7 @@ public class ChangeValidationTest extends ResourceTest {
 		IStatus status = validateChange(factory);
 		//this isn't very accurate, but ChangeDescription doesn't currently record recursive creates
 		assertStatusEqual(status, new String[] {ChangeDescription.getMessageFor(ChangeDescription.ADDED, folder)});
-		
+
 	}
 
 	public void testFileDeletion() {

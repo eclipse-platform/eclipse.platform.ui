@@ -65,9 +65,9 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 		assertTrue("2.1", folder.exists());
 		assertTrue("2.2", file.exists());
 	}
+
 	public static Test suite() {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestCloseNoSave.class);
 	}
-	
-}
 
+}

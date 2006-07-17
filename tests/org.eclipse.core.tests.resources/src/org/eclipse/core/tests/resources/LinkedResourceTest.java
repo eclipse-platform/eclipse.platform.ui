@@ -62,9 +62,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
-//				TestSuite suite = new TestSuite();
-//				suite.addTest(new LinkedResourceTest("testCreateLinkCaseVariant"));
-//				return suite;
+		//				TestSuite suite = new TestSuite();
+		//				suite.addTest(new LinkedResourceTest("testCreateLinkCaseVariant"));
+		//				return suite;
 	}
 
 	public LinkedResourceTest() {

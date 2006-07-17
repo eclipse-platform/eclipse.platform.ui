@@ -19,19 +19,19 @@ import org.eclipse.core.runtime.*;
  * all resources for the purposes of validation.
  */
 public class TestModelProvider extends ModelProvider {
-	
+
 	/**
 	 * Validation enablement flag to prevent validation when the 
 	 * tests are not running.
 	 */
 	public static boolean enabled = false;
-	
+
 	public static final String ID = "org.eclipse.core.tests.resources.modelProvider";
 
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceMapping[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#validateChange(org.eclipse.core.resources.IResourceDelta, org.eclipse.core.runtime.IProgressMonitor)
 	 */

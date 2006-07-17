@@ -33,4 +33,3 @@ public abstract class WatsonTest extends TestCase {
 	 */
 
 }
-

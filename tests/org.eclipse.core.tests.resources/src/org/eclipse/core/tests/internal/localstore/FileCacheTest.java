@@ -106,7 +106,7 @@ public class FileCacheTest extends LocalStoreTest {
 
 			//old cache will be out of date
 			assertNotSame("2.0", newContents, getBytes(cachedFile));
-			
+
 			//fetching the cache again should return up to date file
 			cachedFile = store.toLocalFile(EFS.CACHE, getMonitor());
 			assertTrue("3.0", cachedFile.exists());

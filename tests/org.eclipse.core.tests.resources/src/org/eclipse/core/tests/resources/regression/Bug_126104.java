@@ -49,7 +49,7 @@ public class Bug_126104 extends ResourceTest {
 			fail("1.99", e);
 		}
 		assertTrue("1.0", destination.exists());
-		
+
 		//try the same thing with move
 		ensureDoesNotExistInWorkspace(destination);
 		try {

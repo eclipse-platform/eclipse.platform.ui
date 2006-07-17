@@ -99,11 +99,11 @@ public class HistoryStoreTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-//		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
-//		suite.addTest(new HistoryStoreTest("testMoveProject"));
-//		suite.addTest(new HistoryStoreTest("testFindDeleted"));		
-//		return suite;
-				return new TestSuite(HistoryStoreTest.class);
+		//		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
+		//		suite.addTest(new HistoryStoreTest("testMoveProject"));
+		//		suite.addTest(new HistoryStoreTest("testFindDeleted"));		
+		//		return suite;
+		return new TestSuite(HistoryStoreTest.class);
 	}
 
 	/*
@@ -1362,7 +1362,7 @@ public class HistoryStoreTest extends ResourceTest {
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
 			FileInfo fileInfo = new FileInfo(file.getName());
 			fileInfo.setLastModified(myLong);
-			historyStore.addState(file.getFullPath(), ((Resource)file).getStore(), fileInfo, true);
+			historyStore.addState(file.getFullPath(), ((Resource) file).getStore(), fileInfo, true);
 			try {
 				contents = "This file has some contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());
@@ -1377,7 +1377,7 @@ public class HistoryStoreTest extends ResourceTest {
 		for (int i = 0; i < ITERATIONS; i++, myLong++) {
 			FileInfo fileInfo = new FileInfo(file.getName());
 			fileInfo.setLastModified(myLong);
-			historyStore.addState(secondValidFile.getFullPath(), ((Resource)secondValidFile).getStore(), fileInfo, true);
+			historyStore.addState(secondValidFile.getFullPath(), ((Resource) secondValidFile).getStore(), fileInfo, true);
 			try {
 				contents = "A file with some other contents in testGetContents.";
 				InputStream is = new ByteArrayInputStream(contents.getBytes());

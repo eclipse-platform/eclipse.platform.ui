@@ -147,4 +147,3 @@ public class IFileTest extends ResourceTest {
 		}
 	}
 }
-

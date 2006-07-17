@@ -324,7 +324,7 @@ public class Bug_032076 extends ResourceTest {
 
 			ensureExistsInWorkspace(new IResource[] {sourceFile, destinationParent}, true);
 
-			roFolderStore = ((Resource)roFolder).getStore();
+			roFolderStore = ((Resource) roFolder).getStore();
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();
@@ -405,8 +405,8 @@ public class Bug_032076 extends ResourceTest {
 
 			ensureExistsInWorkspace(new IResource[] {file1, file2, destinationParent}, true);
 
-			roFolderLocation = ((Resource)roFolder).getStore();
-			destinationROFolderLocation = ((Resource)destinationROFolder).getStore();
+			roFolderLocation = ((Resource) roFolder).getStore();
+			destinationROFolderLocation = ((Resource) destinationROFolder).getStore();
 
 			// add a marker to a file to ensure the move operation is not losing anything
 			String attributeKey = getRandomString();

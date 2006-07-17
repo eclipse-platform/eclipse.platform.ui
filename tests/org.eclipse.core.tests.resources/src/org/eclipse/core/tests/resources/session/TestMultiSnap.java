@@ -37,7 +37,7 @@ public class TestMultiSnap extends WorkspaceSerializationTest {
 	}
 
 	public void test1() throws Exception {
-		
+
 		/* create some resource handles */
 		IProject project = getWorkspace().getRoot().getProject(PROJECT);
 		project.create(getMonitor());

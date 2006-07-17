@@ -89,7 +89,6 @@ public class OpenOutputStreamTest extends FileSystemTest {
 		assertEquals("1.2", file.getName(), info.getName());
 	}
 
-
 	public void testParentNotExists() {
 		IFileStore dir = baseStore.getChild("dir");
 		IFileStore file = dir.getChild("file");

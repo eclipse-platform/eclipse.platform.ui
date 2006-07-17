@@ -175,5 +175,6 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 	}
 
 	public static Test suite() {
-		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestInterestingProjectPersistence.class);	}
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestInterestingProjectPersistence.class);
+	}
 }

@@ -41,9 +41,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceWithPathVariableTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new LinkedResourceWithPathVariableTest("testMoveFile"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new LinkedResourceWithPathVariableTest("testMoveFile"));
+		//		return suite;
 	}
 
 	protected void setUp() throws Exception {
@@ -55,9 +55,9 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 
 	protected void tearDown() throws Exception {
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, null);
-		IPath [] paths = (IPath[]) toDelete.toArray(new IPath[0]);
+		IPath[] paths = (IPath[]) toDelete.toArray(new IPath[0]);
 		toDelete.clear();
-		for (int i = 0; i < paths.length; i++) 
+		for (int i = 0; i < paths.length; i++)
 			Workspace.clear(paths[i].toFile());
 		super.tearDown();
 	}

@@ -706,6 +706,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.99");
 		}
 	}
+
 	/**
 	 * Tests that enabling autobuild causes a build to occur.
 	 */

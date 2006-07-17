@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;

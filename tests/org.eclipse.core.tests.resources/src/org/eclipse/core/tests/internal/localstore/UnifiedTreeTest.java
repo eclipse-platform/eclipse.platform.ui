@@ -120,14 +120,14 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInWorkspace(folder, set);
 
 		/* create some file system structure */
-		createResourcesInFileSystem(((Resource)folder).getStore(), set);
+		createResourcesInFileSystem(((Resource) folder).getStore(), set);
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
 			public boolean visit(UnifiedTreeNode node) {
 				/* test the node.getLocalName() method */
 				final IResource resource = node.getResource();
-				final IFileStore store = ((Resource)resource).getStore();
+				final IFileStore store = ((Resource) resource).getStore();
 				if (node.existsInFileSystem())
 					assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
 				assertEquals("1.1", store, node.getStore());
@@ -165,7 +165,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInWorkspace(folder, set);
 
 		/* create some file system structure */
-		createResourcesInFileSystem(((Resource)folder).getStore(), set);
+		createResourcesInFileSystem(((Resource) folder).getStore(), set);
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
@@ -173,7 +173,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 				/* test the node.getLocalName() method */
 				final IResource resource = node.getResource();
-				IFileStore store = ((Resource)resource).getStore();
+				IFileStore store = ((Resource) resource).getStore();
 				String key = store.fetchInfo().getName();
 				if (node.existsInFileSystem())
 					assertEquals("1.0", key, node.getLocalName());
@@ -221,14 +221,14 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		createResourcesInWorkspace(project, set);
 
 		/* create some file system structure */
-		createResourcesInFileSystem(((Resource)project).getStore(), set);
+		createResourcesInFileSystem(((Resource) project).getStore(), set);
 
 		/* create a visitor */
 		IUnifiedTreeVisitor visitor = new IUnifiedTreeVisitor() {
 			public boolean visit(UnifiedTreeNode node) {
 				/* test the node.getLocalName() method */
 				final IResource resource = node.getResource();
-				IFileStore store = ((Resource)resource).getStore();
+				IFileStore store = ((Resource) resource).getStore();
 				if (node.existsInFileSystem())
 					assertEquals("1.0", store.fetchInfo().getName(), node.getLocalName());
 				assertEquals("1.1", store, node.getStore());

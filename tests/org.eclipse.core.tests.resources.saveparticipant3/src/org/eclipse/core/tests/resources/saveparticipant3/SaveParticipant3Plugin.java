@@ -12,46 +12,54 @@ package org.eclipse.core.tests.resources.saveparticipant3;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.runtime.*;
+
 /**
  * This plugin is intended to the .safetable of config files.
  */
 public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 	protected boolean shouldFail = false;
 	protected static final String file1 = "file_1";
-public SaveParticipant3Plugin(IPluginDescriptor descriptor) {
-	super(descriptor);
-}
-protected IPath getFilePath(String name) {
-	return getStateLocation().append(name);
-}
-protected IPath getRealPath(String name, int saveNumber) {
-	return getFilePath(name + "." + saveNumber);
-}
-public void prepareToSave(ISaveContext context) throws CoreException {
-	resetSaveLifecycleLog();
-	context.needSaveNumber();
-	IPath file = getFilePath(file1);
-	if (context.lookup(file) != null) {
-		validate(context);
-		shouldFail = true;
-		return;
+
+	public SaveParticipant3Plugin(IPluginDescriptor descriptor) {
+		super(descriptor);
 	}
-	IPath realPath = getRealPath(file1, context.getSaveNumber());
-	context.map(file, realPath);
-}
-public void rollback(ISaveContext context) {
-}
-public void saving(ISaveContext context) throws CoreException {
-	if (shouldFail)
-		throw new CoreException(new Status(0, getDescriptor().getUniqueIdentifier(), 0, "fake failure", null));
-}
-protected void validate(ISaveContext context) {
-	IPath file = getFilePath(file1);
-	IPath realPath = getRealPath(file1, context.getPreviousSaveNumber());
-	IPath value = context.lookup(file);
-	if (value != null && value.equals(realPath))
-		return;
-	String message = "Name of configuration file is different than expected.";
-	saveLifecycleLog.add(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), 111, message, null));
-}
+
+	protected IPath getFilePath(String name) {
+		return getStateLocation().append(name);
+	}
+
+	protected IPath getRealPath(String name, int saveNumber) {
+		return getFilePath(name + "." + saveNumber);
+	}
+
+	public void prepareToSave(ISaveContext context) throws CoreException {
+		resetSaveLifecycleLog();
+		context.needSaveNumber();
+		IPath file = getFilePath(file1);
+		if (context.lookup(file) != null) {
+			validate(context);
+			shouldFail = true;
+			return;
+		}
+		IPath realPath = getRealPath(file1, context.getSaveNumber());
+		context.map(file, realPath);
+	}
+
+	public void rollback(ISaveContext context) {
+	}
+
+	public void saving(ISaveContext context) throws CoreException {
+		if (shouldFail)
+			throw new CoreException(new Status(0, getDescriptor().getUniqueIdentifier(), 0, "fake failure", null));
+	}
+
+	protected void validate(ISaveContext context) {
+		IPath file = getFilePath(file1);
+		IPath realPath = getRealPath(file1, context.getPreviousSaveNumber());
+		IPath value = context.lookup(file);
+		if (value != null && value.equals(realPath))
+			return;
+		String message = "Name of configuration file is different than expected.";
+		saveLifecycleLog.add(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), 111, message, null));
+	}
 }

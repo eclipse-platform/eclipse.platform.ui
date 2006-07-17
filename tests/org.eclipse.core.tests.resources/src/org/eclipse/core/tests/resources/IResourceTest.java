@@ -146,9 +146,9 @@ public class IResourceTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
 
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IResourceTest("testAttributeArchive"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IResourceTest("testAttributeArchive"));
+		//		return suite;
 	}
 
 	public IResourceTest() {
@@ -266,7 +266,7 @@ public class IResourceTest extends ResourceTest {
 			ensureDoesNotExistInWorkspace(changedTarget);
 		ensureExistsInWorkspace(interestingResources, true);
 	}
-	
+
 	/**
 	 * Returns an array of all projects in the given resource array. */
 	protected IProject[] getProjects(IResource[] resources) {
@@ -624,7 +624,7 @@ public class IResourceTest extends ResourceTest {
 		IPath projectPath = project1.getLocation().removeLastSegments(1).append("NewProject");
 		try {
 			projectPath.toFile().mkdirs();
-	
+
 			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 			assertTrue("1.1", project1.exists());
@@ -1619,6 +1619,7 @@ public class IResourceTest extends ResourceTest {
 		project.open(null);
 		assertEquals(stamp, file.getModificationStamp());
 	}
+
 	/**
 	 * Tests IResource.isReadOnly and setReadOnly
 	 * @deprecated This test is for deprecated API
@@ -1811,6 +1812,7 @@ public class IResourceTest extends ResourceTest {
 			}
 		}
 	}
+
 	/**
 	 * This method tests the IResource.setLocalTimeStamp() operation */
 	public void testSetLocalTimeStamp() {

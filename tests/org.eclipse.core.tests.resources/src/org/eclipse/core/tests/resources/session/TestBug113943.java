@@ -44,10 +44,10 @@ public class TestBug113943 extends WorkspaceSerializationTest {
 			parent.mkdir(EFS.NONE, getMonitor());
 			child.openOutputStream(EFS.NONE, getMonitor()).close();
 			link.createLink(location, IResource.NONE, getMonitor());
-			
+
 			assertTrue("1.0", link.exists());
 			assertTrue("1.1", linkChild.exists());
-			
+
 			getWorkspace().save(true, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
@@ -55,6 +55,7 @@ public class TestBug113943 extends WorkspaceSerializationTest {
 			fail("1.99", e);
 		}
 	}
+
 	/**
 	 * Refresh the linked resource and check that its content is intact
 	 */
@@ -64,7 +65,7 @@ public class TestBug113943 extends WorkspaceSerializationTest {
 		IFile linkChild = link.getFile("child.txt");
 		try {
 			link.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
-			
+
 			assertTrue("1.0", link.exists());
 			assertTrue("1.1", linkChild.exists());
 			cleanup();

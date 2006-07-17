@@ -36,6 +36,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 	public WorkspaceConcurrencyTest(String name) {
 		super(name);
 	}
+
 	private void sleep(long duration) {
 		try {
 			Thread.sleep(duration);
@@ -43,7 +44,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			//ignore
 		}
 	}
-	
+
 	public void testEndRuleInWorkspaceOperation() {
 		try {
 			final IProject project = getWorkspace().getRoot().getProject("testEndRuleInWorkspaceOperation");
@@ -135,6 +136,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			getWorkspace().removeResourceChangeListener(listener);
 		}
 	}
+
 	/**
 	 * Tests calling IWorkspace.run with a non-workspace rule.  This should be
 	 * allowed. This is a regression test for bug 60114.
@@ -144,6 +146,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			public boolean contains(ISchedulingRule rule) {
 				return rule == this;
 			}
+
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this;
 			}
@@ -158,6 +161,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			fail("1.99", e);
 		}
 	}
+
 	/**
 	 * Tests three overlapping jobs
 	 *  - Job 1 (root rule) does a build.
@@ -216,7 +220,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			//schedule and wait for job one to start
 			jobOne.schedule();
 			TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
-			
+
 			//create job two that does an empty workspace operation
 			Job jobTwo = new Job("jobTwo") {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -239,7 +243,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			};
 			jobTwo.schedule();
 			//create job three that has a non-null rule
-			Job jobThree= new Job("jobThree") {
+			Job jobThree = new Job("jobThree") {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						workspace.run(new IWorkspaceRunnable() {
@@ -263,10 +267,10 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			jobThree.schedule();
 			//wait for job two to complete
 			waitForCompletion(jobTwo);
-			
+
 			//let job three complete
 			status[2] = TestBarrier.STATUS_WAIT_FOR_DONE;
-			
+
 			//wait for job three to complete
 			waitForCompletion(jobThree);
 
@@ -280,7 +284,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			result = jobThree.getResult();
 			if (!result.isOK())
 				fail("1.2", new CoreException(result));
-			
+
 			if (failure[0] != null)
 				fail("1.3", failure[0]);
 		} finally {
@@ -288,6 +292,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			workspace.removeResourceChangeListener(listener);
 		}
 	}
+
 	private void waitForCompletion(Job job) {
 		int i = 0;
 		while (job.getState() != Job.NONE) {

@@ -708,24 +708,24 @@ public class MarkerTest extends ResourceTest {
 			fail("1.99", e);
 		}
 	}
-	
+
 	/**
 	 * Tests public API method IMarker#isSubTypeOf
 	 */
 	public void testIsSubTypeOf() {
 		IProject project = getWorkspace().getRoot().getProject("testisSubType");
 		IMarker marker, task, problem, testProblem, invalid;
-		
+
 		final String INVALID_MARKER = "does.not.exist.at.AllMarker";
-		
+
 		try {
 			ensureExistsInWorkspace(project, true);
-			marker= project.createMarker(IMarker.MARKER);
+			marker = project.createMarker(IMarker.MARKER);
 			task = project.createMarker(IMarker.TASK);
 			problem = project.createMarker(IMarker.PROBLEM);
-			testProblem  = project.createMarker(TEST_PROBLEM_MARKER);
+			testProblem = project.createMarker(TEST_PROBLEM_MARKER);
 			invalid = project.createMarker(INVALID_MARKER);
-			
+
 			assertTrue("1.0", marker.isSubtypeOf(IMarker.MARKER));
 			assertTrue("1.1", !marker.isSubtypeOf(IMarker.TASK));
 			assertTrue("1.2", !marker.isSubtypeOf(IMarker.PROBLEM));
@@ -762,7 +762,7 @@ public class MarkerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
-		
+
 	}
 
 	/**

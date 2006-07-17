@@ -30,7 +30,7 @@ public class Bug_127562 extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(Bug_127562.class);
 	}
-	
+
 	public void testBug() {
 		final IProject project = getWorkspace().getRoot().getProject("Bug127562");
 		ensureExistsInWorkspace(project, true);

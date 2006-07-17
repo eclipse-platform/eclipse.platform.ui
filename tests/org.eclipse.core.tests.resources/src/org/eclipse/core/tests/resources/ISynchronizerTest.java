@@ -79,9 +79,9 @@ public class ISynchronizerTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(ISynchronizerTest.class);
 
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new ISynchronizerTest("testMoveResource2"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new ISynchronizerTest("testMoveResource2"));
+		//		return suite;
 	}
 
 	public void tearDown() throws Exception {

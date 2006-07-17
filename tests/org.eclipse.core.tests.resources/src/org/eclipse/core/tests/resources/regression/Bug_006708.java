@@ -59,4 +59,3 @@ public class Bug_006708 extends ResourceTest {
 		}
 	}
 }
-

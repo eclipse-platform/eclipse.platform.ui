@@ -49,6 +49,7 @@ public class NatureTest extends ResourceTest {
 	protected void setNatures(String message, IProject project, String[] natures, boolean shouldFail) {
 		setNatures(message, project, natures, shouldFail, false);
 	}
+
 	/**
 	 * Sets the given set of natures for the project.  If success
 	 * does not match the "shouldFail" argument, an assertion error
@@ -138,6 +139,7 @@ public class NatureTest extends ResourceTest {
 			fail("2.99", e);
 		}
 	}
+
 	public void testNatureLifecyle() {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IProject project = ws.getRoot().getProject("Project");
@@ -149,13 +151,13 @@ public class NatureTest extends ResourceTest {
 		assertTrue("1.1", instance.wasConfigured);
 		assertTrue("1.2", !instance.wasDeconfigured);
 		instance.reset();
-		
+
 		//remove simple nature
 		setNatures("1.3", project, new String[0], false);
 		instance = SimpleNature.getInstance();
 		assertTrue("1.4", !instance.wasConfigured);
 		assertTrue("1.5", instance.wasDeconfigured);
-		
+
 		//add with AVOID_NATURE_CONFIG
 		instance.reset();
 		setNatures("2.0", project, new String[] {NATURE_SIMPLE}, false, true);

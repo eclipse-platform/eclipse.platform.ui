@@ -12,11 +12,7 @@ package org.eclipse.core.tests.internal.builders;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -41,6 +37,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		SortBuilder.resetSingleton();
 		CustomTriggerBuilder.resetSingleton();
 	}
+
 	/**
 	 * Tests that a builder that does not declare itself as configurable
 	 * is not configurable.
@@ -72,15 +69,15 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		assertTrue("1.3", command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
 		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
 		assertTrue("1.4", !command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD));
-		
+
 		assertTrue("1.5", command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
 		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
 		assertTrue("1.6", !command.isBuilding(IncrementalProjectBuilder.FULL_BUILD));
-		
+
 		assertTrue("1.7", command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
 		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
 		assertTrue("1.8", !command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD));
-		
+
 		try {
 			//set the command back into the project for change to take effect
 			IProjectDescription desc = project.getDescription();
@@ -123,7 +120,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		}
 		builder = CustomTriggerBuilder.getInstance();
 		assertTrue("4.0", builder == null || builder.triggerForLastBuild == 0);
-		
+
 		//turn the builder back on and make sure it runs
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
 		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
@@ -162,7 +159,8 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 			fail("8.99", e);
 		}
 		assertTrue("8.1", builder.wasCleanBuild());
-}	
+	}
+
 	/**
 	 * Tests that a builder that does not declare itself as configurable
 	 * is not configurable.

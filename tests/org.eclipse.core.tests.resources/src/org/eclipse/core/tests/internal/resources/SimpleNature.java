@@ -35,6 +35,7 @@ public class SimpleNature extends TestNature {
 		super();
 		instance = this;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
@@ -42,6 +43,7 @@ public class SimpleNature extends TestNature {
 		super.configure();
 		wasConfigured = true;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */

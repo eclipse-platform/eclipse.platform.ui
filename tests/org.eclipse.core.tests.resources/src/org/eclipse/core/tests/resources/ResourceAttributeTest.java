@@ -146,10 +146,10 @@ public class ResourceAttributeTest extends ResourceTest {
 			//folder is executable initially and the file should exist
 			assertTrue("1.0", project.getResourceAttributes().isExecutable());
 			assertTrue("1.1", file.exists());
-			
+
 			setExecutable(folder, false);
 			waitForRefresh();
-			
+
 			boolean wasExecutable = folder.getResourceAttributes().isExecutable();
 			boolean fileExists = file.exists();
 
@@ -158,7 +158,7 @@ public class ResourceAttributeTest extends ResourceTest {
 
 			assertTrue("2.1", !wasExecutable);
 			assertTrue("2.2", !fileExists);
-			
+
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}

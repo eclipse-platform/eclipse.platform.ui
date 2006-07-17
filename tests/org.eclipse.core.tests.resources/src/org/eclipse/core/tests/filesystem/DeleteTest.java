@@ -26,7 +26,7 @@ public class DeleteTest extends FileSystemTest {
 	public DeleteTest(String name) {
 		super(name);
 	}
-	
+
 	public void testDeleteFile() {
 		IFileStore file = baseStore.getChild("child");
 		ensureExists(file, false);

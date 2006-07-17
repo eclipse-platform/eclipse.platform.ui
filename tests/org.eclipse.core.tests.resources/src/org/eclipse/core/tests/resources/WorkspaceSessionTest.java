@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-
 /**
  * Workspace session tests function as follows:  Each test class looks like a typical JUnit test,
  * except the platform is shutdown and restarted after each test method.  The steps for each

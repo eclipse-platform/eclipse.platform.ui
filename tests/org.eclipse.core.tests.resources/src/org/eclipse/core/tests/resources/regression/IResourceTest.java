@@ -226,7 +226,7 @@ public class IResourceTest extends ResourceTest {
 			fail("2.99", e);
 		}
 	}
-	
+
 	public void testBug111821() {
 		//this test only makes sense on Windows
 		if (!Platform.OS_WIN32.equals(Platform.getOS()))

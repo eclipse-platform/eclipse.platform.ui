@@ -73,7 +73,7 @@ public class ObjectMapTest extends ResourceTest {
 			assertNotNull("3.2." + i, map.get(key));
 		}
 	}
-	
+
 	public void testPutEmptyMap() {
 		ObjectMap map = new ObjectMap(new HashMap());
 		map.put(new Object(), new Object());

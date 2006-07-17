@@ -33,4 +33,3 @@ public class AllTests extends TestCase {
 		return suite;
 	}
 }
-

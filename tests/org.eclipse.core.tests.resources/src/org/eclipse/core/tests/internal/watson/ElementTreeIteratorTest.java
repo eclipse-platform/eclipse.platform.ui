@@ -152,6 +152,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 			 * All serializable objects should have a stable serialVersionUID
 			 */
 			private static final long serialVersionUID = 1L;
+
 			public void pushAll(Object[] array) {
 				for (int i = 0; i < array.length; i++) {
 					push(array[i]);

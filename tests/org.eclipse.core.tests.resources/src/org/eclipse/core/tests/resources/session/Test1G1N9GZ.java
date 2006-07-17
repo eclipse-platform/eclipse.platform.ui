@@ -91,8 +91,9 @@ public class Test1G1N9GZ extends WorkspaceSerializationTest {
 			fail("1.1", e);
 		}
 	}
+
 	public static Test suite() {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, Test1G1N9GZ.class);
 	}
-	
+
 }

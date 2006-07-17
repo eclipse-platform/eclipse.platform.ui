@@ -21,9 +21,9 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class BenchMiscWorkspace extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(BenchMiscWorkspace.class);
-//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
-//		suite.addTest(new BenchMiscWorkspace("testGetProject"));
-//		return suite;
+		//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
+		//		suite.addTest(new BenchMiscWorkspace("testGetProject"));
+		//		return suite;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 			}
 		};
 		//run a first operation to make sure no other jobs are running before starting timer
-		ws.run(noop,null);
+		ws.run(noop, null);
 		waitForBuild();
 		//now start the test
 		new PerformanceTestRunner() {
@@ -64,7 +64,7 @@ public class BenchMiscWorkspace extends ResourceTest {
 			}
 		}.run(this, 10, 100000);
 	}
-	
+
 	public void testGetProject() {
 		new PerformanceTestRunner() {
 			protected void test() {
@@ -73,6 +73,6 @@ public class BenchMiscWorkspace extends ResourceTest {
 					root.getProject(Integer.toString(i));
 			}
 		}.run(this, 10, 1000);
-		
+
 	}
 }

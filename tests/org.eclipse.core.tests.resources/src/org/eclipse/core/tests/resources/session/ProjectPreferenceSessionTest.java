@@ -27,13 +27,13 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 
 	public static Test suite() {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, ProjectPreferenceSessionTest.class);
-//						return new ProjectPreferenceSessionTest("testDeleteFileBeforeLoad2");
+		//						return new ProjectPreferenceSessionTest("testDeleteFileBeforeLoad2");
 	}
 
 	public ProjectPreferenceSessionTest(String name) {
 		super(name);
 	}
-	
+
 	protected void tearDown() throws Exception {
 		getWorkspace().save(true, getMonitor());
 	}

@@ -51,11 +51,11 @@ public class CustomTriggerBuilder extends TestBuilder {
 		super.clean(monitor);
 		triggerForLastBuild = IncrementalProjectBuilder.CLEAN_BUILD;
 	}
-	
+
 	public boolean wasCleanBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.CLEAN_BUILD;
 	}
-	
+
 	public boolean wasFullBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.FULL_BUILD;
 	}

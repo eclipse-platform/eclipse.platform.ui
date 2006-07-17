@@ -30,7 +30,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 	}
 
 	public static Test suite() {
-//		return new IWorkspaceRootTest("testFindFilesForLocationOnWrappedFileSystem");
+		//		return new IWorkspaceRootTest("testFindFilesForLocationOnWrappedFileSystem");
 		return new TestSuite(IWorkspaceRootTest.class);
 	}
 
@@ -38,7 +38,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IProject[] projects = getWorkspace().getRoot().getProjects();
 		getWorkspace().delete(projects, true, null);
 	}
-	
+
 	/**
 	 * Tests the API method findContainersForLocation.
 	 */
@@ -49,13 +49,12 @@ public class IWorkspaceRootTest extends ResourceTest {
 		testFindContainersForLocation(p1, p2);
 	}
 
-	private void replaceProject(IProject project, URI newLocation)
-			throws CoreException {
+	private void replaceProject(IProject project, URI newLocation) throws CoreException {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setLocationURI(newLocation);
 		project.move(projectDesc, IResource.REPLACE, null);
 	}
-	
+
 	public void testFindContainersForLocationOnWrappedFileSystem() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject p1 = root.getProject("p1");
@@ -73,6 +72,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		}
 		testFindContainersForLocation(p1, p2);
 	}
+
 	/**
 	 * Tests the API method findContainersForLocation.
 	 */
@@ -82,7 +82,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IContainer[] result = root.findContainersForLocation(root.getLocation());
 		assertEquals("1.0", 1, result.length);
 		assertEquals("1.1", root, result[0]);
-		
+
 		//deep linked resource
 		IFolder parent = p2.getFolder("parent");
 		IFolder link = parent.getFolder("link");
@@ -93,22 +93,22 @@ public class IWorkspaceRootTest extends ResourceTest {
 			fail("1.99", e);
 		}
 		assertResources("2.0", p1, link, root.findContainersForLocation(p1.getLocation()));
-		
+
 		//existing folder
 		IFolder existing = p2.getFolder("existing");
 		ensureExistsInWorkspace(existing, true);
 		assertResources("3.0", existing, root.findContainersForLocation(existing.getLocation()));
 		assertResources("3.1", existing, root.findContainersForLocationURI(existing.getLocationURI()));
-		
+
 		//non-existing
 		IFolder nonExisting = p2.getFolder("nonExisting");
 		assertResources("3.2", nonExisting, root.findContainersForLocation(nonExisting.getLocation()));
 		assertResources("3.3", nonExisting, root.findContainersForLocationURI(nonExisting.getLocationURI()));
-		
+
 		//relative path
 		assertResources("3.4", existing, root.findContainersForLocation(existing.getLocation().makeRelative()));
 		assertResources("3.5", nonExisting, root.findContainersForLocation(nonExisting.getLocation().makeRelative()));
-		
+
 		//relative URI is illegal
 		URI relative = null;
 		try {
@@ -135,7 +135,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		}
 		result = root.findContainersForLocationURI(location);
 		assertResources("5.1", otherLink, result);
-		
+
 		//child of linked folder
 		IFolder child = otherLink.getFolder("link-child");
 		URI childLocation = linkStore.getChild(child.getName()).toURI();
@@ -143,8 +143,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		assertResources("5.1", child, result);
 
 	}
-	
-	
+
 	/**
 	 * Tests the API method findFilesForLocation.
 	 */
@@ -160,8 +159,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		}
 		testFindFilesForLocation(project);
 	}
-	
-	
+
 	/**
 	 * Tests the API method findFilesForLocation on non-default file system.
 	 */
@@ -179,30 +177,30 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IFile[] result = root.findFilesForLocation(root.getLocation());
 		assertEquals("1.0", 0, result.length);
-		
+
 		IFile existing = project.getFile("file1");
 		ensureExistsInWorkspace(existing, true);
-		
+
 		//existing file
 		final IPath existingFileLocation = existing.getLocation();
 		result = root.findFilesForLocation(existingFileLocation);
 		assertResources("2.0", existing, result);
 		result = root.findFilesForLocationURI(existing.getLocationURI());
 		assertResources("2.1", existing, result);
-		
+
 		//non-existing file
 		IFile nonExisting = project.getFile("nonExisting");
 		result = root.findFilesForLocation(nonExisting.getLocation());
 		assertResources("3.1", nonExisting, result);
 		result = root.findFilesForLocationURI(nonExisting.getLocationURI());
 		assertResources("3.2", nonExisting, result);
-		
+
 		//relative path
 		result = root.findFilesForLocation(existingFileLocation.makeRelative());
 		assertResources("4.0", existing, result);
 		result = root.findFilesForLocation(nonExisting.getLocation().makeRelative());
 		assertResources("4.1", nonExisting, result);
-		
+
 		//existing file with different case
 		if (!isCaseSensitive(existing)) {
 			IPath differentCase = new Path(existingFileLocation.toOSString().toUpperCase());
@@ -211,7 +209,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 			result = root.findFilesForLocationURI(existing.getLocationURI());
 			assertResources("5.1", existing, result);
 		}
-		
+
 		//linked resource
 		IFolder link = project.getFolder("link");
 		IFileStore linkStore = getTempStore();
@@ -259,7 +257,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		assertEquals("1.0", root, root.getContainerForLocation(root.getLocation()));
 	}
-	
+
 	/**
 	 * Tests the AP method getFile(IPath)
 	 */

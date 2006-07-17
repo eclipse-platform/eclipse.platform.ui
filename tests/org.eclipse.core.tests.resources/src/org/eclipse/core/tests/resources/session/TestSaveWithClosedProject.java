@@ -70,5 +70,6 @@ public class TestSaveWithClosedProject extends WorkspaceSerializationTest {
 	}
 
 	public static Test suite() {
-		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSaveWithClosedProject.class);	}
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSaveWithClosedProject.class);
+	}
 }

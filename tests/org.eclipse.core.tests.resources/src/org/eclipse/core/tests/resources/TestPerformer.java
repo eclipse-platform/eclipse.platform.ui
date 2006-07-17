@@ -71,7 +71,7 @@ abstract public class TestPerformer {
 						invokeMethod(args, count);
 						StringBuffer buffer = new StringBuffer();
 						buffer.append("invocation " + count + " should fail, but it doesn't [");
-						for (int j=0; j<args.length; j++) {
+						for (int j = 0; j < args.length; j++) {
 							buffer.append(args[j]);
 							buffer.append(',');
 						}

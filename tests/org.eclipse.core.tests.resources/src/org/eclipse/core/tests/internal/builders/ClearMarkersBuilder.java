@@ -40,4 +40,3 @@ public class ClearMarkersBuilder extends TestBuilder {
 		return null;
 	}
 }
-

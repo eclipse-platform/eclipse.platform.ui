@@ -23,12 +23,15 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
  */
 public abstract class FileSystemTest extends CoreTest {
 	protected IFileStore baseStore;
+
 	public FileSystemTest() {
 		super();
 	}
+
 	public FileSystemTest(String name) {
 		super(name);
 	}
+
 	protected void ensureDoesNotExist(IFileStore store) {
 		try {
 			store.delete(EFS.NONE, getMonitor());
@@ -37,7 +40,7 @@ public abstract class FileSystemTest extends CoreTest {
 			fail("ensureDoesNotExist", e);
 		}
 	}
-	
+
 	/**
 	 * Asserts that a file store exists.
 	 * 
@@ -83,8 +86,9 @@ public abstract class FileSystemTest extends CoreTest {
 		} catch (IOException e) {
 			fail("ensureExists", e);
 		}
-			
+
 	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		//the base file system to be tested is setup here.
@@ -94,7 +98,7 @@ public abstract class FileSystemTest extends CoreTest {
 		baseStore = EFS.getStore(URI.create("mem:/baseStore"));
 		baseStore.mkdir(EFS.NONE, null);
 	}
-	
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		baseStore.delete(EFS.NONE, null);

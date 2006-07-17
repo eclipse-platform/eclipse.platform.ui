@@ -454,6 +454,7 @@ public abstract class ResourceTest extends CoreTest {
 			assertClose(output);
 		}
 	}
+
 	/**
 	 * Create the given file in the local store. 
 	 */
@@ -553,7 +554,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * to ensure that we have a correct Path -> File mapping.
 	 */
 	public void ensureExistsInFileSystem(IFile file) {
-		createFileInFileSystem(((Resource)file).getStore());
+		createFileInFileSystem(((Resource) file).getStore());
 	}
 
 	/**
@@ -565,7 +566,7 @@ public abstract class ResourceTest extends CoreTest {
 			ensureExistsInFileSystem((IFile) resource);
 		else {
 			try {
-				((Resource)resource).getStore().mkdir(EFS.NONE, null);
+				((Resource) resource).getStore().mkdir(EFS.NONE, null);
 			} catch (CoreException e) {
 				fail("ensureExistsInFileSystem.1", e);
 			}
@@ -907,6 +908,6 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	protected boolean isCaseSensitive(IResource resource) {
-		return ((Resource)resource).getStore().getFileSystem().isCaseSensitive();
+		return ((Resource) resource).getStore().getFileSystem().isCaseSensitive();
 	}
 }

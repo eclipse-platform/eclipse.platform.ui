@@ -16,7 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 import org.eclipse.core.tests.resources.AutomatedTests;
 import org.eclipse.core.tests.resources.WorkspaceSessionTest;
-import org.eclipse.core.tests.session.*;
+import org.eclipse.core.tests.session.SessionTestSuite;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 public class Test1GALH44 extends WorkspaceSessionTest {
 
@@ -88,7 +89,7 @@ public class Test1GALH44 extends WorkspaceSessionTest {
 			fail("99.99", e);
 		}
 	}
-	
+
 	public static Test suite() {
 		SessionTestSuite suite = new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, Test1GALH44.class.getName());
 		suite.addTest(new Test1GALH44("test1"));

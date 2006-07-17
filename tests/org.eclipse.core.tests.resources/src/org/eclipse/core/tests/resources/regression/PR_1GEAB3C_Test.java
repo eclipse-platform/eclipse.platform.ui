@@ -14,8 +14,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 public class PR_1GEAB3C_Test extends ResourceTest {
 	ResourceDeltaVerifier verifier;

@@ -53,7 +53,7 @@ public class Bug_097608 extends ResourceTest {
 			fail("1.99", e);
 		}
 		//try a string with less than 65536 characters whose UTF encoding exceeds the limit
-		Arrays.fill(chars, (char)0x0800);
+		Arrays.fill(chars, (char) 0x0800);
 		value = new String(chars);
 		try {
 			marker.setAttribute(IMarker.MESSAGE, value);

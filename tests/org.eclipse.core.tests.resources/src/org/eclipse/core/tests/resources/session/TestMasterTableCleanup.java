@@ -71,8 +71,8 @@ public class TestMasterTableCleanup extends WorkspaceSerializationTest {
 		assertTrue("2.0", !masterTable.containsKey(closeOpen.getFullPath().append(".tree").toString()));
 		assertTrue("2.1", !masterTable.containsKey(closeDelete.getFullPath().append(".tree").toString()));
 	}
-	
+
 	public static Test suite() {
-		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMasterTableCleanup.class);		
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMasterTableCleanup.class);
 	}
 }

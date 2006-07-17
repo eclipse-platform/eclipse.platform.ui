@@ -18,8 +18,6 @@ import org.eclipse.core.internal.localstore.Bucket;
 import org.eclipse.core.internal.localstore.BucketTree;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -51,11 +49,11 @@ public class BucketTreeTests extends ResourceTest {
 		public SimpleBucket() {
 			super();
 		}
-		
+
 		protected String getIndexFileName() {
 			return "simple_bucket.index";
 		}
-		
+
 		protected String getVersionFileName() {
 			return "simple_bucket.version";
 		}

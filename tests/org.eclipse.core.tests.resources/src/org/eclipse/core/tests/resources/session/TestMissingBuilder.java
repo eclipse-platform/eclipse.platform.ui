@@ -181,5 +181,6 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 	}
 
 	public static Test suite() {
-		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMissingBuilder.class);	}
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMissingBuilder.class);
+	}
 }

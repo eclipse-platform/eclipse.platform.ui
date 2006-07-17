@@ -80,10 +80,10 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	public static Test suite() {
 		// all test methods are named "test..."
-				return new TestSuite(ProjectPreferencesTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new ProjectPreferencesTest("testLoadIsImport"));
-//		return suite;
+		return new TestSuite(ProjectPreferencesTest.class);
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new ProjectPreferencesTest("testLoadIsImport"));
+		//		return suite;
 	}
 
 	public ProjectPreferencesTest(String name) {
@@ -816,7 +816,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (BackingStoreException e) {
 			fail("3.91", e);
 		}
-//		assertNull("3.3", projectNode.node(qualifier).get(oldKey, null));
+		//		assertNull("3.3", projectNode.node(qualifier).get(oldKey, null));
 
 		// create the file in the project and discover it via a refresh local
 		try {

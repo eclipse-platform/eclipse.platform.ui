@@ -22,7 +22,7 @@ public class Bug_079398 extends ResourceTest {
 	public Bug_079398(String name) {
 		super(name);
 	}
-	
+
 	public void testBug79398() {
 		IProject project = getWorkspace().getRoot().getProject("myproject");
 		IFile file1 = project.getFile("myFile.txt");
@@ -61,7 +61,7 @@ public class Bug_079398 extends ResourceTest {
 			}
 			// just make sure our assumptions are valid
 			assertEquals("0.4", 10, sourceStates.length);
-			
+
 			// copy the file - the history should be shared, but the destination 
 			// will conform to the policy
 			try {
@@ -96,8 +96,8 @@ public class Bug_079398 extends ResourceTest {
 			}
 			IHistoryStore history = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
 			// clean history
-			history.clean(getMonitor());			
-			
+			history.clean(getMonitor());
+
 			try {
 				destinationStates = file2.getHistory(getMonitor());
 			} catch (CoreException e) {
@@ -105,8 +105,8 @@ public class Bug_079398 extends ResourceTest {
 			}
 			// cleaning will remove any states the destination had in common
 			// with the source since they don't fit into the policy
-			assertEquals("1.7", description.getMaxFileStates(), destinationStates.length);			
-			
+			assertEquals("1.7", description.getMaxFileStates(), destinationStates.length);
+
 			try {
 				sourceStates = file1.getHistory(getMonitor());
 			} catch (CoreException e) {
@@ -126,6 +126,6 @@ public class Bug_079398 extends ResourceTest {
 				log(ResourceTest.PI_RESOURCES_TESTS, e);
 			}
 		}
-	}	
+	}
 
 }

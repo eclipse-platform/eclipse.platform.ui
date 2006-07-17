@@ -82,5 +82,6 @@ public class TestSnapSaveSnap extends WorkspaceSerializationTest {
 	}
 
 	public static Test suite() {
-		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSnapSaveSnap.class);	}
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSnapSaveSnap.class);
+	}
 }

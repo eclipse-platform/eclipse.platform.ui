@@ -40,10 +40,10 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 				return NO_DESCRIPTION_FILE_NAME;
 		}
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(ContentDescriptionPerformanceTest.class);
-	}	
+	}
 
 	public ContentDescriptionPerformanceTest(String name) {
 		super(name);

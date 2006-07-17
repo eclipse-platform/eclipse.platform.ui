@@ -28,6 +28,7 @@ public class IPathVariableTest extends ResourceTest {
 			 * All serializable objects should have a stable serialVersionUID
 			 */
 			private static final long serialVersionUID = 1L;
+
 			VerificationFailedException(String message) {
 				super(message);
 			}

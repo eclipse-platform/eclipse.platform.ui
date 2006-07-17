@@ -46,17 +46,17 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		IFile fileVariant = folderVariant.getFile(file.getName());
 		//create the project, folder, and file
 		ensureExistsInWorkspace(file, true);
-		
+
 		//change the case of the folder on disk
 		folder.getLocation().toFile().renameTo(folderVariant.getLocation().toFile());
-		
+
 		try {
 			//refresh the project
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
-		
+
 		//variant should exist but original shouldn't
 		assertTrue("1.1", folderVariant.exists());
 		assertTrue("1.2", fileVariant.exists());
@@ -64,6 +64,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		assertTrue("1.4", !file.exists());
 		assertTrue("1.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 	}
+
 	/**
 	 * Test discovery of a linked resource on refresh.
 	 */
@@ -206,7 +207,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 			fail("1.0", e);
 		}
 	}
-	
+
 	public void testRefreshFolder() throws Throwable {
 		/* initialize common objects */
 		IProject project = projects[0];
@@ -259,15 +260,15 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		/* test changes of a child (child is file) */
 		file = project.getFile("file");
-		IFileStore fileStore = ((Resource)file).getStore();
+		IFileStore fileStore = ((Resource) file).getStore();
 		ensureExistsInWorkspace(file, true);
 		assertTrue("4.1", file.exists());
 		assertTrue("4.2", file.isLocal(IResource.DEPTH_ZERO));
 		assertEquals("4.3", fileStore.fetchInfo().getLastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 		ensureOutOfSync(file);
-		assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() !=  fileStore.fetchInfo().getLastModified());
+		assertTrue("4.4", ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo() != fileStore.fetchInfo().getLastModified());
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		assertEquals("4.5",  fileStore.fetchInfo().getLastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
+		assertEquals("4.5", fileStore.fetchInfo().getLastModified(), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 		ensureDoesNotExistInWorkspace(file);
 		ensureDoesNotExistInFileSystem(file);
 	}
@@ -286,7 +287,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 
 		/* test root and children creation */
 		IFolder folder = project.getFolder("folder");
-		IFileStore target = ((Resource)folder).getStore();
+		IFileStore target = ((Resource) folder).getStore();
 		createTree(getTree(target));
 		assertTrue("2.0", !folder.exists());
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);

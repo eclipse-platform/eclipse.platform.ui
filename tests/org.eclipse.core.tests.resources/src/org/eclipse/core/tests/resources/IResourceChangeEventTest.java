@@ -235,4 +235,3 @@ public class IResourceChangeEventTest extends ResourceTest {
 		assertTrue("5.2", found3);
 	}
 }
-

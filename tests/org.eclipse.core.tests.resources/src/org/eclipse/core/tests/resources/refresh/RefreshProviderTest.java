@@ -15,10 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.resources.ResourceTest;
-
 
 /**
  * Tests the IRefreshMonitor interface
@@ -48,6 +45,7 @@ public class RefreshProviderTest extends ResourceTest {
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 
 	}
+
 	/*(non-javadoc)
 	 * Method declared on TestCase.
 	 */
@@ -58,6 +56,7 @@ public class RefreshProviderTest extends ResourceTest {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 	}
+
 	/**
 	 * Test to ensure that a refresh provider is given the correct events when a linked
 	 * file is created and deleted.
@@ -88,7 +87,7 @@ public class RefreshProviderTest extends ResourceTest {
 			Workspace.clear(location.toFile());
 		}
 	}
-	
+
 	/**
 	 * Test to ensure that a refresh provider is given the correct events when a project
 	 * is closed or opened.

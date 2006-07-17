@@ -82,7 +82,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	public void testCreateFile() throws Throwable {
 		/* initialize common objects */
 		IProject project = projects[0];
-		File file = (File)project.getFile("foo");
+		File file = (File) project.getFile("foo");
 		/* common contents */
 		String originalContent = "this string should not be equal the other";
 
@@ -414,7 +414,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		/* initialize common objects */
 		final IProject project = projects[0];
 		IFile dotProject = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
-		final IFileStore fileStore = ((Resource)project).getStore();
+		final IFileStore fileStore = ((Resource) project).getStore();
 		// create project and then delete from file system
 		// wrap in runnable to prevent snapshot from occurring in the middle.
 		getWorkspace().run(new IWorkspaceRunnable() {
@@ -426,7 +426,7 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 			}
 		}, null);
 		assertTrue("2.2", fileStore.fetchInfo().isDirectory());
-		long lastModified = ((Resource)dotProject).getStore().fetchInfo().getLastModified();
+		long lastModified = ((Resource) dotProject).getStore().fetchInfo().getLastModified();
 		assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 	}
 

@@ -13,9 +13,11 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.localstore.SafeFileInputStream;
+import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class SafeFileInputOutputStreamTest extends ResourceTest {

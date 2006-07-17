@@ -45,9 +45,9 @@ public class IWorkspaceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(IWorkspaceTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IWorkspaceTest("testValidateProjectLocation"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IWorkspaceTest("testValidateProjectLocation"));
+		//		return suite;
 	}
 
 	protected void setUp() throws Exception {
@@ -974,7 +974,7 @@ public class IWorkspaceTest extends ResourceTest {
 
 			assertTrue("5.2", !(getWorkspace().validatePath("\\", IResource.FILE).isOK()));
 			assertTrue("5.4", !(getWorkspace().validatePath("device:/abc/123", IResource.FILE).isOK()));
-			
+
 			//trailing dots in segments names not allowed on Windows
 			assertTrue("3.1", !getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK());
 			assertTrue("3.2", !getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK());
@@ -1031,7 +1031,7 @@ public class IWorkspaceTest extends ResourceTest {
 			assertTrue("2.6", !workspace.validateProjectLocation(project, new Path("/abc/>dsasf")).isOK());
 			assertTrue("2.7", !workspace.validateProjectLocation(project, new Path("/abc/|dsasf")).isOK());
 			assertTrue("2.8", !workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK());
-			
+
 			//trailing dots invalid on Windows
 			assertTrue("3.1", !workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK());
 			assertTrue("3.2", !workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK());
@@ -1152,6 +1152,7 @@ public class IWorkspaceTest extends ResourceTest {
 		// FIXME: Should this be valid?
 		assertTrue("23.3", workspace.validateProjectLocation(project, new Path("/.metadata/project")).isOK());
 	}
+
 	/**
 	 * Performs black box testing of the following method:
 	 *     IStatus validateProjectLocationURI(IProject, URI)
