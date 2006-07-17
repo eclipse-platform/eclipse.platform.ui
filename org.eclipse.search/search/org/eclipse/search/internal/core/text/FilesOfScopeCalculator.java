@@ -33,7 +33,7 @@ public class FilesOfScopeCalculator implements IResourceProxyVisitor {
 		fStatus= status;
 	}
 
-	public boolean visit(IResourceProxy proxy) {
+	public boolean visit(IResourceProxy proxy) {		
 		boolean inScope= fScope.contains(proxy);
 
 		if (inScope && proxy.getType() == IResource.FILE) {
@@ -48,7 +48,10 @@ public class FilesOfScopeCalculator implements IResourceProxyVisitor {
 			IResource[] roots= fScope.getRoots();
 			for (int i= 0; i < roots.length; i++) {
 				try {
-					roots[i].accept(this, 0);
+					IResource resource= roots[i];
+					if (resource.isAccessible()) {
+						resource.accept(this, 0);
+					}
 				} catch (CoreException ex) {
 					// report and ignore
 					fStatus.add(ex.getStatus());
