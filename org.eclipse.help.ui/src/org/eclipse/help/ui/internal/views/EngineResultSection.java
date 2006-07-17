@@ -542,7 +542,7 @@ public class EngineResultSection {
 			remainder = Math.min(remainder, HITS_PER_PAGE);
 
 			nextLink.setText(NLS.bind(Messages.EngineResultSection_next, "" + remainder)); //$NON-NLS-1$
-			nextLink.setVisible(hits.size() >= resultOffset + HITS_PER_PAGE);
+			nextLink.setVisible(hits.size() > resultOffset + HITS_PER_PAGE);
 		} else {
 			if (prevLink != null) {
 				prevLink.getParent().setMenu(null);
