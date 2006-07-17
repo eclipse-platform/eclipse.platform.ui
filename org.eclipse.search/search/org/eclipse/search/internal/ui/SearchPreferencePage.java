@@ -11,6 +11,7 @@
 package org.eclipse.search.internal.ui;
 
 import com.ibm.icu.text.Collator;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -40,7 +42,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
-import org.eclipse.search.internal.ui.util.ComboFieldEditor;
 
 
 /*
