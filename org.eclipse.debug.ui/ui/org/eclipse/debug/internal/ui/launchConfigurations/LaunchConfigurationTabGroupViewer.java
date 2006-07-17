@@ -425,9 +425,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public void setName(String name) {
 		if (getWorkingCopy() != null) {
 			if (name == null) {
-				name = EMPTY_STRING;
+				fNameWidget.setText(EMPTY_STRING);
 			}
-			fNameWidget.setText(name.trim());
+			else {
+				fNameWidget.setText(name.trim());
+			}
 			refreshStatus();
 		}
 	}	
