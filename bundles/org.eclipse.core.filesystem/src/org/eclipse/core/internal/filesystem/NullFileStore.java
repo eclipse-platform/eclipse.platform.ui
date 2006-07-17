@@ -44,12 +44,8 @@ public class NullFileStore extends FileStore {
 	}
 
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
-		fail();
-	}
-
-	private void fail() throws CoreException {
-		//TODO real message
-		Policy.error(IStatus.ERROR, toString());
+		//super implementation will always fail
+		super.delete(options, monitor);
 	}
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
@@ -75,8 +71,8 @@ public class NullFileStore extends FileStore {
 	}
 
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException {
-		fail();
-		return null;
+		//super implementation will always fail
+		return super.mkdir(options, monitor);
 	}
 
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
@@ -92,7 +88,8 @@ public class NullFileStore extends FileStore {
 	}
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
-		fail();
+		//super implementation will always fail
+		super.putInfo(info, options, monitor);
 	}
 
 	public String toString() {
