@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup.containers;
 
+import java.io.File;
 import java.io.IOException;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
@@ -198,7 +199,12 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		try {
 			return SourceLookupUtils.getZipFile(fArchivePath);
 		} catch (IOException e) {
-			abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new String[]{fArchivePath}), e); 
+			File file = new File(fArchivePath);
+			if (file.exists()) {
+				abort(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_2, new String[]{fArchivePath}), e);
+			} else {
+				warn(MessageFormat.format(SourceLookupMessages.ExternalArchiveSourceContainer_1, new String[]{fArchivePath}), e);
+			}
 		}
 		return null;
 	}

@@ -33,7 +33,7 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	private ISourceLookupDirector fDirector;
 	
 	/**
-	 * Throws an exception with the given message and underlying exception.
+	 * Throws an error exception with the given message and underlying exception.
 	 * 
 	 * @param message error message
 	 * @param exception underlying exception, or <code>null</code>
@@ -41,6 +41,19 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		throw new CoreException(status);
+	}
+	
+	/**
+	 * Throws a warning exception with the given message and underlying exception.
+	 * 
+	 * @param message error message
+	 * @param exception underlying exception, or <code>null</code>
+	 * @throws CoreException
+	 * @since 3.3
+	 */	
+	protected void warn(String message, Throwable exception) throws CoreException {
+		IStatus status = new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	

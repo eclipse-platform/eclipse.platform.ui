@@ -22,6 +22,8 @@ public class SourceLookupMessages extends NLS {
 	public static String AbstractSourceLookupDirector_19;
 	public static String CompositeSourceContainer_0;
 
+	public static String ExternalArchiveSourceContainer_1;
+
 	public static String ExternalArchiveSourceContainer_2;
 
 	public static String ExternalArchiveSourceContainerType_10;
