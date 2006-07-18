@@ -1902,7 +1902,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED);
 				if(children.length > 0) {
 					//collect child resources that are projects and have been deleted, but not moved
-					//don't process the same delta for deleting multiple projects
 					ArrayList projs = new ArrayList();
 					IResource res = null;
 					for (int i = 0; i < children.length; i++) {
