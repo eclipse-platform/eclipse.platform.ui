@@ -49,7 +49,6 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	 */
 	public MaxDetailsLengthDialog(Shell parent) {
 		super(parent);
-		parent.setText(VariablesViewMessages.MaxDetailsLengthDialog_0);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValue = Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
 		fValidator = new IInputValidator() {
@@ -84,6 +83,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		getShell().setText(VariablesViewMessages.MaxDetailsLengthDialog_0);
 		Control contents = super.createContents(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.MAX_DETAILS_LENGTH_DIALOG);
 		return contents;
