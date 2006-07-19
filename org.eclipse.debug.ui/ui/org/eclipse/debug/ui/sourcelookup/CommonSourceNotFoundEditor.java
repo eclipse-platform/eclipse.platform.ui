@@ -207,6 +207,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		if (fText != null) {			
 			fText.setText(getText());
 		}
+		firePropertyChange(PROP_INPUT);
 	}
 	
 	/**
