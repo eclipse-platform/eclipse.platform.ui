@@ -47,6 +47,9 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 */
 	private BreakpointWorkingSetCache fCache = null;
 	
+	// Cache of the default working set, so we can know when it changes name
+	private static IWorkingSet fDefaultWorkingSet = null;
+	
 	
 	/**
 	 * Constructs a working set breakpoint organizer. Listens for changes in
@@ -57,6 +60,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		fCache = new BreakpointWorkingSetCache();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		fDefaultWorkingSet = getDefaultWorkingSet();
 	}
 
 	/*
@@ -103,14 +107,26 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		IWorkingSet set = null;
-		if (event.getNewValue() instanceof IWorkingSet) {
-			set = (IWorkingSet) event.getNewValue();
+		Object newValue = event.getNewValue();
+		if (newValue instanceof IWorkingSet) {
+			set = (IWorkingSet) newValue;
 		}//end if 
 		else if (event.getOldValue() instanceof IWorkingSet) {
 			set = (IWorkingSet) event.getOldValue();
 		}//end else if
+		String property = event.getProperty();
 		//fix for bug 103731
-		if(event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) {
+		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
+			if (newValue.equals(fDefaultWorkingSet)) {
+				setDefaultWorkingSet((IWorkingSet) newValue);
+			}
+		}
+		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
+			if (event.getOldValue().equals(fDefaultWorkingSet)) {
+				setDefaultWorkingSet(null);
+			}
+		}
+		if(property.equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) {
 			IAdaptable[] breakpoints = set.getElements();
 			for (int i = 0; i < breakpoints.length; i++) {
 				if (breakpoints[i] instanceof IBreakpoint) {
@@ -123,7 +139,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		if (set != null	&& IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
 			fireCategoryChanged(new WorkingSetCategory(set));
 		}
-		if (event.getProperty().equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
+		if (property.equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
 			IWorkingSet defaultWorkingSet = getDefaultWorkingSet();
 			if (defaultWorkingSet != null) {
 				fireCategoryChanged(new WorkingSetCategory(defaultWorkingSet));
@@ -160,7 +176,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	}
 
 	/**
-	 * Adds a breakpoint to a workingset
+	 * Adds a breakpoint to a working set
 	 * @param breakpoint the breakpoint to add
 	 * @param set the set to add it to or <code>null</code> if none
 	 * 
@@ -272,6 +288,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 				name = set.getName();
 			}
 		}
+		fDefaultWorkingSet = set;
 		DebugUIPlugin.getDefault().getPluginPreferences().setValue(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME, name);
 	}
 
@@ -317,10 +334,10 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	}
 	
 	/**
-	 * Gets the workingset names from the marker
+	 * Gets the working set names from the marker
 	 * 
 	 * @param marker
-	 *            them arker to get the names from
+	 *            them marker to get the names from
 	 * @return the listing of markers or an empty String array, never null
 	 * 
 	 * @since 3.2
