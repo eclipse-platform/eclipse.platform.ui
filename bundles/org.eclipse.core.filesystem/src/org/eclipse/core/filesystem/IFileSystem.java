@@ -99,8 +99,9 @@ public interface IFileSystem extends IAdaptable {
 	public String getScheme();
 
 	/**
-	 * Returns a handle to a file store in this file system.  This method succeeds
-	 * regardless of whether a file exists at that path in this file system.
+	 * Returns a handle to a file store in this file system.  This is a handle-only 
+	 * method; this method succeeds regardless of whether a file exists at that 
+	 * path in this file system.
 	 * <p>
 	 * This is a convenience method for file systems that do not make use
 	 * of the authority {@link java.net.URI} component, such as a host or user 
@@ -116,10 +117,10 @@ public interface IFileSystem extends IAdaptable {
 	public IFileStore getStore(IPath path);
 
 	/**
-	 * Returns a handle to a file store in this file system.  This method succeeds
-	 * regardless of whether a file exists at that path in this file system. The
-	 * provided URI must have the appropriate scheme and component parts
-	 * for the file system on which this method is called.
+	 * Returns a handle to a file store in this file system.  This is a handle-only 
+	 * method; this method succeeds regardless of whether a file exists at that 
+	 * path in this file system. The provided URI must have the appropriate scheme 
+	 * and component parts for the file system on which this method is called.
 	 * 
 	 * @param uri The URI of the file store to return.
 	 * @return A handle to a file store in this file system
