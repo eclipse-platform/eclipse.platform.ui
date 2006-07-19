@@ -280,7 +280,8 @@ public final class NavigatorActivationService implements
 				} else {
 					// IS THIS THE RIGHT WAY TO HANDLE THIS CASE?
 					NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(contentExtensionIds[i]);
-					activatedExtensionsMap.put(id, Boolean.valueOf(descriptor.isActiveByDefault()));
+					if(descriptor != null)
+						activatedExtensionsMap.put(id, Boolean.valueOf(descriptor.isActiveByDefault()));
 				}
 			}
 
