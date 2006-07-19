@@ -876,7 +876,11 @@ public class SourceViewerDecorationSupport {
 	protected AnnotationPainter createAnnotationPainter() {
 		AnnotationPainter painter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
 
-		// TODO add extension point for drawing strategies?
+		/*
+		 * XXX:
+		 * Could provide an extension point for drawing strategies,
+		 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=51498
+		 */
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
