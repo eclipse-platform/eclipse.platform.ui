@@ -51,7 +51,7 @@ public class Messages extends NLS {
 	public static String directoryDialogTitle;
 	public static String searchingTaskName;
 	public static String searchingNoneFound;
-	public static String preferenceWebBrowserTitleLong;
+	public static String preferenceWebBrowserTitle;
 	public static String searching;
 	public static String errorDialogTitle;
 	public static String errorCouldNotLaunchWebBrowser;

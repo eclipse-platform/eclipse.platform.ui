@@ -517,7 +517,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible)
-			setTitle(Messages.preferenceWebBrowserTitleLong);
+			setTitle(Messages.preferenceWebBrowserTitle);
 	}
 
 	protected Object getSelection(ISelection sel2) {
