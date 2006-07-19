@@ -217,13 +217,13 @@ public class MultiTextEdit extends TextEdit {
 		fDefined= true;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.text.edits.TextEdit#internalToString(java.lang.StringBuffer, int)
+	 * @since 3.3
 	 */
-	public String toString() {
-		String result= super.toString();
-		if (fDefined)
-			return result;
-		return result + " [undefined]"; //$NON-NLS-1$
+	void internalToString(StringBuffer buffer, int indent) {
+		super.internalToString(buffer, indent);
+		if (! fDefined)
+			buffer.append(" [undefined]"); //$NON-NLS-1$
 	}
 }

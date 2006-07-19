@@ -91,9 +91,11 @@ public final class ReplaceEdit extends TextEdit {
 	}
 
 	/*
-	 * @see java.lang.Object#toString()
+	 * @see org.eclipse.text.edits.TextEdit#internalToString(java.lang.StringBuffer, int)
+	 * @since 3.3
 	 */
-	public String toString() {
-		return super.toString() + " <<" + fText; //$NON-NLS-1$
+	void internalToString(StringBuffer buffer, int indent) {
+		super.internalToString(buffer, indent);
+		buffer.append(" <<").append(fText); //$NON-NLS-1$
 	}
 }

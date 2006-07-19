@@ -48,9 +48,9 @@ import org.eclipse.jface.text.Region;
  * they have been added to a parent. The following code example:
  * <pre>
  *    IDocument document= new Document("org");
- * 	  MultiEdit edit= new MultiEdit();
- *    edit.add(new InsertEdit(0, "www.");
- *    edit.add(new InsertEdit(0, "eclipse.");
+ * 	  MultiTextEdit edit= new MultiTextEdit();
+ *    edit.addChild(new InsertEdit(0, "www."));
+ *    edit.addChild(new InsertEdit(0, "eclipse."));
  *    edit.apply(document);
  * </pre>
  * therefore results in string: "www.eclipse.org".
@@ -513,11 +513,28 @@ public abstract class TextEdit {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		StringBuffer buffer= new StringBuffer("{"); //$NON-NLS-1$
+		StringBuffer buffer= new StringBuffer();
+		toStringWithChildren(buffer, 0);
+		return buffer.toString();
+	}
+
+	/**
+	 * Adds the string representation of this text edit without
+	 * children information to the given string buffer.
+	 * 
+	 * @param buffer	the string buffer
+	 * @param indent	the indent level in number of spaces
+	 * @since 3.3
+	 */
+	void internalToString(StringBuffer buffer, int indent) {
+		for (int i= indent; i > 0; i--) {
+			buffer.append("  "); //$NON-NLS-1$
+		}
+		buffer.append("{"); //$NON-NLS-1$
 		String name= getClass().getName();
 		int index= name.lastIndexOf('.');
 		if (index != -1) {
-			 buffer.append(name.substring(index + 1));
+			buffer.append(name.substring(index + 1));
 		} else {
 			buffer.append(name);
 		}
@@ -531,9 +548,27 @@ public abstract class TextEdit {
 			buffer.append(getLength());
 			buffer.append("]"); //$NON-NLS-1$
 		}
-		return buffer.toString();
 	}
 
+	/**
+	 * Adds the string representation for this text edit 
+	 * and its children to the given string buffer.
+	 * 
+	 * @param buffer	the string buffer
+	 * @param indent	the indent level in number of spaces
+	 * @since 3.3
+	 */
+	private void toStringWithChildren(StringBuffer buffer, int indent) {
+		internalToString(buffer, indent);
+		if (fChildren != null) {
+			for (Iterator iterator= fChildren.iterator(); iterator.hasNext();) {
+				TextEdit child= (TextEdit) iterator.next();
+				buffer.append('\n');
+				child.toStringWithChildren(buffer, indent + 1);
+			}
+		}
+	}
+	
 	//---- Copying -------------------------------------------------------------
 
 	/**
