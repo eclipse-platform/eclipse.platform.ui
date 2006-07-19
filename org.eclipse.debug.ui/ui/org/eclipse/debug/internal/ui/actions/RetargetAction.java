@@ -105,7 +105,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * 
 	 * @param selection selection in the active part 
 	 * @param part active part
-	 * @throws CoreException if an exception occurrs
+	 * @throws CoreException if an exception occurs
 	 */
 	protected abstract void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException;
 	
@@ -114,7 +114,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.fAction = action;
-		// if the active part did not provide an adapter, see if the selectoin does
+		// if the active part did not provide an adapter, see if the selection does
 		if (fTargetAdapter == null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			if (!ss.isEmpty()) {
@@ -168,9 +168,9 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	
 	/**
 	 * Clears reference to active part and adapter when a relevant part
-	 * is closed or deactivated.
+	 * is closed or no longer active.
 	 * 
-	 * @param part workbench part that has been closed or deactivated
+	 * @param part workbench part that has been closed or no longer active
 	 */
 	protected void clearPart(IWorkbenchPart part) {
 		if (part.equals(fActivePart)) {
