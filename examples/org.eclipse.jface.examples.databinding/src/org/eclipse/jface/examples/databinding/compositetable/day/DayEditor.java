@@ -495,21 +495,23 @@ public class DayEditor extends Composite implements IEventEditor {
 		DayEditorSelection selection = new DayEditorSelection();
 		Point compositeTableSelection = compositeTable.getSelection();
 		
+		int visibleAllDayEventRows = model.computeNumberOfAllDayEventRows();
+		visibleAllDayEventRows -= compositeTable.getTopRow();
+		
 		if (selectedCalendarable != null) {
 			selection.setSelectedCalendarable(selectedCalendarable);
 			if (selectedCalendarable.isAllDayEvent()) {
 				selection.setAllDay(true);
 			}
 		} else {
-			int visibleAllDayEventRows = model.computeNumberOfAllDayEventRows();
-			visibleAllDayEventRows -= compositeTable.getTopRow();
 			if (visibleAllDayEventRows > 0) {
-				if (compositeTableSelection.y <= visibleAllDayEventRows) {
+				if (compositeTableSelection.y < visibleAllDayEventRows) {
 					selection.setAllDay(true);
 				}
 			}
 		}
-		selection.setDateTime(computeDateTimeFromViewportCoordinates(compositeTableSelection));
+		selection.setDateTime(computeDateTimeFromViewportCoordinates(
+				compositeTableSelection, visibleAllDayEventRows));
 		return selection;
 	}
 	
@@ -1120,19 +1122,18 @@ public class DayEditor extends Composite implements IEventEditor {
 		return row;
 	}
 	
-	private Date computeDateTimeFromViewportCoordinates(Point viewportSelection) {
+	private Date computeDateTimeFromViewportCoordinates(Point viewportSelection, int visibleAllDayEventRows) {
 		Date startDate = model.calculateDate(getStartDate(), viewportSelection.x);
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(startDate);
 		calendar.set(Calendar.HOUR_OF_DAY, 
-				model.computeHourFromRow(viewportSelection.y));
+				model.computeHourFromRow(viewportSelection.y - visibleAllDayEventRows));
 		calendar.set(Calendar.MINUTE,
-				model.computeMinuteFromRow(viewportSelection.y));
+				model.computeMinuteFromRow(viewportSelection.y - visibleAllDayEventRows));
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
-	
 
 	/**
 	 * @param calendarable
