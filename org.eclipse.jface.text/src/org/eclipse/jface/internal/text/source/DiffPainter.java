@@ -76,8 +76,6 @@ public final class DiffPainter {
 	private Color fDeletedColor;
 	/** The background color. */
 	private Color fBackground;
-	/** The ruler's annotation model. */
-	private IAnnotationModel fAnnotationModel;
 	/** The ruler's hover */
 	private IAnnotationHover fHover;
 	/** The internal listener */
@@ -344,17 +342,6 @@ public final class DiffPainter {
 			newModel= model;
 
 		setDiffer(newModel);
-		setAnnotationModel(model);
-	}
-
-	/**
-	 * Sets the annotation model.
-	 * 
-	 * @param model the annotation model.
-	 */
-	private void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != model)
-			fAnnotationModel= model;
 	}
 
 	/**
