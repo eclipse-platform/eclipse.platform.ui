@@ -41,32 +41,56 @@ public class IDEResourceInfoUtils {
 
 	private static String BYTES_LABEL = IDEWorkbenchMessages.ResourceInfo_bytes;
 
+	/**
+	 * An empty string to reuse.
+	 */
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	private static String FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_file;
+
+	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_fileNotExist;
 
 	private static String FILE_TYPE_FORMAT = IDEWorkbenchMessages.ResourceInfo_fileTypeFormat;
 
 	private static String FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_folder;
 
-	private static String PROJECT_LABEL = IDEWorkbenchMessages.ResourceInfo_project;
-
 	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFile;
 
 	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFolder;
-
-	private static String UNKNOWN_LABEL = IDEWorkbenchMessages.ResourceInfo_unknown;
-
-	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages.ResourceInfo_notLocal;
 
 	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable;
 
 	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_notExist;
 
-	private static String FILE_NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_fileNotExist;
-	
+	private static String NOT_LOCAL_TEXT = IDEWorkbenchMessages.ResourceInfo_notLocal;
+
+	private static String PROJECT_LABEL = IDEWorkbenchMessages.ResourceInfo_project;
+
+	private static String UNKNOWN_LABEL = IDEWorkbenchMessages.ResourceInfo_unknown;
+
 	/**
-	 * An empty string to reuse.
+	 * Return whether or not the file called pathName exists.
+	 * @param pathName
+	 * @return boolean <code>true</code> if the file exists.
+	 * @see IFileInfo#exists()
 	 */
-	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static boolean exists(String pathName) {
+		IFileInfo info = getFileInfo(pathName);
+		if (info == null) {
+			return false;
+		}
+		return info.exists();
+	}
+
+	private static String getContentTypeString(IContentDescription description) {
+		if (description != null) {
+			IContentType contentType = description.getContentType();
+			if (contentType != null) {
+				return contentType.getName();
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Return the value for the date String for the timestamp of the supplied
@@ -80,7 +104,7 @@ public class IDEResourceInfoUtils {
 		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
 		}
-		
+
 		//don't access the file system for closed projects (bug 151089)
 		if (!isProjectAccessible(resource)) {
 			return UNKNOWN_LABEL;
@@ -100,22 +124,21 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (info.exists()) {
-			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
-					DateFormat.MEDIUM);
+			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
 			return format.format(new Date(info.getLastModified()));
 		}
 		return NOT_EXIST_TEXT;
 	}
 
 	/**
-	 * Return the fileInfo for location. Return <code>null</code> if there is
-	 * a CoreException looking it up
+	 * Return the fileInfo at pathName or <code>null</code> if the format is
+	 * invalid or if the file info cannot be determined.
 	 * 
-	 * @param location
-	 * @return String or <code>null</code>
+	 * @param pathName
+	 * @return IFileInfo or <code>null</code>
 	 */
-	public static IFileInfo getFileInfo(URI location) {
-		IFileStore store = getFileStore(location);
+	public static IFileInfo getFileInfo(IPath pathName) {
+		IFileStore store = getFileStore(pathName.toFile().toURI());
 		if (store == null) {
 			return null;
 		}
@@ -136,20 +159,45 @@ public class IDEResourceInfoUtils {
 		}
 		return store.fetchInfo();
 	}
-	
+
 	/**
-	 * Return the fileInfo at pathName or <code>null</code> if the format is
-	 * invalid or if the file info cannot be determined.
+	 * Return the fileInfo for location. Return <code>null</code> if there is
+	 * a CoreException looking it up
 	 * 
-	 * @param pathName
-	 * @return IFileInfo or <code>null</code>
+	 * @param location
+	 * @return String or <code>null</code>
 	 */
-	public static IFileInfo getFileInfo(IPath pathName) {
-		IFileStore store = getFileStore(pathName.toFile().toURI());
+	public static IFileInfo getFileInfo(URI location) {
+		IFileStore store = getFileStore(location);
 		if (store == null) {
 			return null;
 		}
 		return store.fetchInfo();
+	}
+
+	/**
+	 * Get the file store for the string.
+	 * @param string
+	 * @return IFileStore or <code>null</code> if there is a
+	 * {@link CoreException}.
+	 */
+	public static IFileStore getFileStore(String string) {
+		return getFileStore(new Path(string).toFile().toURI());
+	}
+
+	/**
+	 * Get the file store for the URI.
+	 * @param uri
+	 * @return IFileStore or <code>null</code> if there is a
+	 * {@link CoreException}.
+	 */
+	public static IFileStore getFileStore(URI uri) {
+		try {
+			return EFS.getStore(uri);
+		} catch (CoreException e) {
+			log(e);
+			return null;
+		}
 	}
 
 	/**
@@ -171,7 +219,7 @@ public class IDEResourceInfoUtils {
 		if (location == null) {
 			return NOT_EXIST_TEXT;
 		}
-		
+
 		IFileStore store = getFileStore(location);
 		//don't access the file system for closed projects (bug 151089)
 		if (isProjectAccessible(resource) && resolvedLocation != null && !isPathVariable(resource)) {
@@ -225,14 +273,6 @@ public class IDEResourceInfoUtils {
 	}
 
 	/**
-	 * Returns whether the resource's project is available
-	 */
-	private static boolean isProjectAccessible(IResource resource) {
-		IProject project = resource.getProject();
-		return project != null && project.isAccessible();
-	}
-
-	/**
 	 * Return a String that indicates the size of the supplied file.
 	 * 
 	 * @param resource
@@ -276,8 +316,7 @@ public class IDEResourceInfoUtils {
 	 * @param description
 	 * @return String
 	 */
-	public static String getTypeString(IResource resource,
-			IContentDescription description) {
+	public static String getTypeString(IResource resource, IContentDescription description) {
 
 		if (resource.getType() == IResource.FILE) {
 			if (resource.isLinked()) {
@@ -287,8 +326,7 @@ public class IDEResourceInfoUtils {
 			if (resource instanceof IFile) {
 				String contentType = getContentTypeString(description);
 				if (contentType != null) {
-					return MessageFormat.format(FILE_TYPE_FORMAT,
-							new String[] { contentType });
+					return MessageFormat.format(FILE_TYPE_FORMAT, new String[] {contentType});
 				}
 			}
 			return FILE_LABEL;
@@ -308,16 +346,6 @@ public class IDEResourceInfoUtils {
 
 		// Should not be possible
 		return UNKNOWN_LABEL;
-	}
-
-	private static String getContentTypeString(IContentDescription description) {
-		if (description != null) {
-			IContentType contentType = description.getContentType();
-			if (contentType != null) {
-				return contentType.getName();
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -350,32 +378,11 @@ public class IDEResourceInfoUtils {
 	}
 
 	/**
-	 * Get the file store for the string.
-	 * @param string
-	 * @return IFileStore or <code>null</code> if there is a
-	 * {@link CoreException}.
+	 * Returns whether the resource's project is available
 	 */
-	public static IFileStore getFileStore(String string) {
-		return getFileStore(new Path(string).toFile().toURI());
-	}
-
-	/**
-	 * Get the file store for the URI.
-	 * @param uri
-	 * @return IFileStore or <code>null</code> if there is a
-	 * {@link CoreException}.
-	 */
-	public static IFileStore getFileStore(URI uri) {
-		try {
-			return EFS.getStore(uri);
-		} catch (CoreException e) {
-			log(e);
-			return null;
-		}
-	}
-
-	private static void log(CoreException e) {
-		IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+	private static boolean isProjectAccessible(IResource resource) {
+		IProject project = resource.getProject();
+		return project != null && project.isAccessible();
 	}
 
 	/**
@@ -396,27 +403,17 @@ public class IDEResourceInfoUtils {
 			return new IFileStore[0];
 		}
 		for (int i = 0; i < children.length; i++) {
-			if(fileFilter.accept(children[i])) {
+			if (fileFilter.accept(children[i])) {
 				result.add(children[i]);
-			}			
+			}
 		}
 		IFileStore[] stores = new IFileStore[result.size()];
 		result.toArray(stores);
 		return stores;
 	}
-	
-	/**
-	 * Return whether or not the file called pathName exists.
-	 * @param pathName
-	 * @return boolean <code>true</code> if the file exists.
-	 * @see IFileInfo#exists()
-	 */
-	public static boolean exists(String pathName) {
-		IFileInfo info = getFileInfo(pathName);
-		if(info == null) {
-			return false;
-		}
-		return info.exists();
+
+	private static void log(CoreException e) {
+		IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
 	}
 
 }
