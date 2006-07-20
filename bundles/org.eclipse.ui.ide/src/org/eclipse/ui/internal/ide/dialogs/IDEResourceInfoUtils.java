@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.net.URI;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -80,13 +80,17 @@ public class IDEResourceInfoUtils {
 		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
 		}
+		
+		//don't access the file system for closed projects (bug 151089)
+		if (!isProjectAccessible(resource)) {
+			return UNKNOWN_LABEL;
+		}
 
 		URI location = resource.getLocationURI();
 		if (location == null) {
 			if (resource.isLinked()) {
 				return MISSING_PATH_VARIABLE_TEXT;
 			}
-
 			return NOT_EXIST_TEXT;
 		}
 
@@ -167,9 +171,10 @@ public class IDEResourceInfoUtils {
 		if (location == null) {
 			return NOT_EXIST_TEXT;
 		}
-
+		
 		IFileStore store = getFileStore(location);
-		if (resolvedLocation != null && !isPathVariable(resource)) {
+		//don't access the file system for closed projects (bug 151089)
+		if (isProjectAccessible(resource) && resolvedLocation != null && !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
 			if (store == null) {
@@ -211,11 +216,20 @@ public class IDEResourceInfoUtils {
 			return UNKNOWN_LABEL;
 		}
 
-		if (!store.fetchInfo().exists()) {
+		//don't access the file system for closed projects (bug 151089)
+		if (isProjectAccessible(resource) && !store.fetchInfo().exists()) {
 			return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 		}
 
 		return store.toString();
+	}
+
+	/**
+	 * Returns whether the resource's project is available
+	 */
+	private static boolean isProjectAccessible(IResource resource) {
+		IProject project = resource.getProject();
+		return project != null && project.isAccessible();
 	}
 
 	/**

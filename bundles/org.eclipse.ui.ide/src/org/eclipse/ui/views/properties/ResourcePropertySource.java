@@ -11,15 +11,12 @@
 package org.eclipse.ui.views.properties;
 
 import java.io.File;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.views.properties.IDEPropertiesMessages;
 
 /**
@@ -137,93 +134,11 @@ public class ResourcePropertySource implements IPropertySource {
         this.element = res;
     }
 
-    /**
-     * Return the value for the date string for the timestamp of the supplied resource.
-     * 
-     * @param resource the resource to query
-     * @return the date string for the resource 
-     */
-    private String getDateStringValue(IResource resource) {
-
-        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
-			return NOT_LOCAL_TEXT;
-		}
-
-        IPath location = resource.getLocation();
-        if (location == null) {
-            if (resource.isLinked()) {
-				return UNDEFINED_PATH_VARIABLE;
-			}
-
-            return FILE_NOT_FOUND;
-        } 
-        File localFile = location.toFile();
-        if (localFile.exists()) {
-            DateFormat format = new SimpleDateFormat();
-            return format.format(new Date(localFile.lastModified()));
-        }
-        return FILE_NOT_FOUND;
-    }
-
     /* (non-Javadoc)
      * Method declared on IPropertySource.
      */
     public Object getEditableValue() {
         return this;
-    }
-
-    /**
-     * Get the location of a resource
-     */
-    private String getLocationText(IResource resource) {
-        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
-			return NOT_LOCAL_TEXT;
-		}
-
-        IPath resolvedLocation = resource.getLocation();
-        IPath location = resolvedLocation;
-        if (resource.isLinked()) {
-            location = resource.getRawLocation();
-        }
-        if (location == null) {
-            return FILE_NOT_FOUND;
-        }
-        String locationString = location.toOSString();
-        if (resolvedLocation != null && !isPathVariable(resource)) {
-            // No path variable used. Display the file not exist message 
-            // in the location. Fixes bug 33318. 
-            File file = resolvedLocation.toFile();
-            if (!file.exists()) {
-                locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-            }
-        }
-        return locationString;
-    }
-
-    /**
-     * Get the resolved location of a resource.
-     * This resolves path variables if present in the resource path.
-     */
-    private String getResolvedLocationText(IResource resource) {
-        if (!resource.isLocal(IResource.DEPTH_ZERO)) {
-			return NOT_LOCAL_TEXT;
-		}
-
-        IPath location = resource.getLocation();
-        if (location == null) {
-            if (resource.isLinked()) {
-				return UNDEFINED_PATH_VARIABLE;
-			}
-
-            return FILE_NOT_FOUND;
-        }
-        String locationString = location.toOSString();
-        File file = location.toFile();
-
-        if (!file.exists()) {
-            locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-        }
-        return locationString;
     }
 
     /* (non-Javadoc)
@@ -247,7 +162,7 @@ public class ResourcePropertySource implements IPropertySource {
             return TextProcessor.process(element.getFullPath().toString());
         }
         if (name.equals(IResourcePropertyConstants.P_LAST_MODIFIED_RES)) {
-            return getDateStringValue(element);
+            return IDEResourceInfoUtils.getDateStringValue(element);
         }
         if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
             if (element.getResourceAttributes().isReadOnly()) {
@@ -262,10 +177,10 @@ public class ResourcePropertySource implements IPropertySource {
             return String.valueOf(element.isLinked());
         }
         if (name.equals(IResourcePropertyConstants.P_LOCATION_RES)) {
-            return TextProcessor.process(getLocationText(element));
+            return TextProcessor.process(IDEResourceInfoUtils.getLocationText(element));
         }
         if (name.equals(IResourcePropertyConstants.P_RESOLVED_LOCATION_RES)) {
-            return TextProcessor.process(getResolvedLocationText(element));
+            return TextProcessor.process(IDEResourceInfoUtils.getResolvedLocationText(element));
         }
         return null;
     }
