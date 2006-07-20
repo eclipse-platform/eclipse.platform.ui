@@ -24,12 +24,18 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPage"
             id="org.eclipse.ltk.ui.refactoring.property.page"
             name="%RefactoringPropertyPage_name"
-            objectClass="org.eclipse.core.resources.IProject">
+            >
          <keywordReference id="org.eclipse.ltk.ui.refactoring.property.page"/>
+         <enabledWhen>
+            <test
+                  forcePluginActivation="false"
+                  property="org.eclipse.ltk.ui.refactoring.refactoringPropertiesEnabled"
+                  value="true">
+            </test>
+         </enabledWhen>
       </page>
    </extension>
    <extension
@@ -82,5 +88,15 @@
       <contentTypeBinding
             contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
             storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ltk.internal.ui.refactoring.history.RefactoringPropertyPageTester"
+            id="org.eclipse.ltk.ui.refactoring.refactoringPropertiesTester"
+            namespace="org.eclipse.ltk.ui.refactoring"
+            properties="refactoringPropertiesEnabled"
+            type="org.eclipse.core.runtime.IAdaptable">
+      </propertyTester>
    </extension>
 </plugin>
