@@ -428,7 +428,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Resizes the context information popup.
 	 *
-	 * @param offset the caret offset
+	 * @param offset the caret offset in widget coordinates
 	 * @since 2.0
 	 */
 	private void resize(int offset) {
@@ -813,8 +813,9 @@ class ContextInformationPopup implements IContentAssistListener {
 						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
 							hideContextInfoPopup(); // loop variant: reduces the number of contexts on the stack
 						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
+							int widgetOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x;
 							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-							resize(offset);
+							resize(widgetOffset);
 							break;
 						} else
 							break;

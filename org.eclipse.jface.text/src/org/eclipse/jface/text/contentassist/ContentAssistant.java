@@ -447,6 +447,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return -1;
 		}
 
+		/**
+		 * Layouts the popup defined by <code>type</code> at the given widget offset.
+		 * 
+		 * @param type the kind of popup to layout
+		 * @param offset the widget offset
+		 */
 		protected void layout(int type, int offset) {
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
