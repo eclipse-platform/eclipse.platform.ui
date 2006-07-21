@@ -206,6 +206,7 @@ public class ResourceAndContainerGroup implements Listener {
      * or null if no container has been selected. Note that
      * the container may not exist yet if the user entered
      * a new container name in the field.
+     * @return The path of the container, or <code>null</code>
      */
     public IPath getContainerFullPath() {
         return containerGroup.getContainerFullPath();
@@ -233,9 +234,9 @@ public class ResourceAndContainerGroup implements Listener {
     }
 
     /**
-     * Returns a string that is the path of the currently selected
-     * container.  Returns an empty string if no container has been
-     * selected.
+     * Returns a string that is the name of the chosen resource, or an
+     * empty string if no resource has been entered.
+     * @return The resource name
      */
     public String getResource() {
         return resourceNameField.getText();
@@ -394,13 +395,13 @@ public class ResourceAndContainerGroup implements Listener {
     protected boolean validateResourceName() {
         String resourceName = resourceNameField.getText();
 
-        if (resourceName.equals("")) {//$NON-NLS-1$
+        if (resourceName.length() == 0) {
             problemType = PROBLEM_RESOURCE_EMPTY;
             problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_emptyName, resourceType);
             return false;
         }
 
-        if (!(new Path("")).isValidPath(resourceName)) { //$NON-NLS-1$
+        if (!Path.ROOT.isValidPath(resourceName)) {
             problemType = PROBLEM_NAME_INVALID;
             problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_invalidFilename, resourceName);
             return false;
