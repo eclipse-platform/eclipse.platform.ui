@@ -54,7 +54,6 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core.refactoring/perf/participants/createChanges"; //$NON-NLS-1$
 
 	private List/*<RefactoringParticipant>*/ fParticipants;
-	private SharableParticipants fSharedParticipants= new SharableParticipants();
 	
 	private Map/*<Object, TextChange>*/ fTextChangeMap;
 	
@@ -180,7 +179,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 		
-		fParticipants= new ArrayList(Arrays.asList(getProcessor().loadParticipants(result, fSharedParticipants)));
+		SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
+		fParticipants= new ArrayList(Arrays.asList(getProcessor().loadParticipants(result, sharableParticipants)));
 		if (fParticipants == null) 
 			fParticipants= EMPTY_PARTICIPANTS;
 		if (result.hasFatalError()) {
