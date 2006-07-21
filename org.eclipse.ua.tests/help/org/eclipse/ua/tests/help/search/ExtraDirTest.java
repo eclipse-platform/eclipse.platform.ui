@@ -68,6 +68,24 @@ public class ExtraDirTest extends TestCase {
 
 		// extradir doc (in subdir), with incorrect search scope
 		{ "mrendiqwja", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
+
+		// extradir doc link_to'ed from another toc (toc3.xml),no scope
+		{ "kleoiujfpn", null, "/org.eclipse.ua.tests/data/help/search/extraDir2/extraDoc.htm" },
+
+		// extradir doc link_to'ed from another toc (toc3.xml), with correct scope
+		{ "kleoiujfpn", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir2/extraDoc.htm" },
+
+		// extradir doc link_to'ed from another toc (toc3.xml), with incorrect scope
+		{ "kleoiujfpn", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
+
+		// extradir doc linked into toc2.xml from toc4.xml, no scope
+		{ "fuqnejwmfh", null, "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
+
+		// extradir doc linked into toc2.xml from toc4.xml, correct scope
+		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
+
+		// extradir doc linked into toc2.xml from toc4.xml, incorrect scope
+		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
 	};
 	
 	/*

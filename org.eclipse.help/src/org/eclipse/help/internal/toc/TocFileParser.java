@@ -10,50 +10,45 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
-import java.io.*;
-import com.ibm.icu.text.MessageFormat;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.eclipse.help.ITocContribution;
+import org.eclipse.help.internal.Anchor;
+import org.eclipse.help.internal.Node;
+import org.eclipse.help.internal.Filter;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Include;
+import org.eclipse.help.internal.util.FastStack;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * Used to create TocFile's Toc object from contributed toc xml file.
- */
-class TocFileParser extends DefaultHandler {
-	protected TocBuilder builder;
+import com.ibm.icu.text.MessageFormat;
 
-	protected FastStack elementStack;
+public class TocFileParser extends DefaultHandler {
 
-	protected TocFile tocFile;
+	private FastStack elementStack;
+	private TocFile tocFile;
+	private TocContribution tocContribution;
+	private List filterNodes;
+	private SAXParser parser;
 
-	static SAXParserFactory factory = SAXParserFactory.newInstance();
-
-	private static XMLParserPool parserPool = new XMLParserPool();
-
-	/**
-	 * Constructor
-	 */
-	public TocFileParser(TocBuilder builder) {
-		super();
-		this.builder = builder;
-	}
-
-	/**
-	 * @see ErrorHandler#error(SAXParseException)
-	 */
 	public void error(SAXParseException ex) throws SAXException {
 		HelpPlugin.logError("Error parsing Table of Contents file, " //$NON-NLS-1$
 				+ getErrorDetails(ex), null);
 	}
 
-	/**
-	 * @see ErrorHandler#fatalError(SAXParseException)
-	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
 		HelpPlugin.logError("Failed to parse Table of Contents file, " //$NON-NLS-1$
 				+ getErrorDetails(ex), ex);
@@ -71,91 +66,84 @@ class TocFileParser extends DefaultHandler {
 		return message;
 	}
 
-	/**
-	 * Gets the toc
-	 */
-	public void parse(TocFile tocFile) {
+	public ITocContribution parse(TocFile tocFile) throws IOException, SAXException {
 		this.tocFile = tocFile;
 		elementStack = new FastStack();
-		InputStream is = tocFile.getInputStream();
-		if (is == null)
-			return;
-		InputSource inputSource = new InputSource(is);
-		String file = "/" + tocFile.getPluginID() + "/" + tocFile.getHref(); //$NON-NLS-1$ //$NON-NLS-2$
-		inputSource.setSystemId(file);
+		tocContribution = null;
+		filterNodes = new ArrayList();
 		try {
-			SAXParser parser = parserPool.obtainParser();
-			try {
-				parser.parse(inputSource, this);
-				is.close();
-			} finally {
-				parserPool.releaseParser(parser);
-			}
+			parser = SAXParserFactory.newInstance().newSAXParser();
+			InputStream in = tocFile.getInputStream();
+			parser.parse(in, this);
+			in.close();
 		} catch (ParserConfigurationException pce) {
 			HelpPlugin.logError(
 					"SAXParser implementation could not be loaded.", pce); //$NON-NLS-1$
-		} catch (SAXException se) {
-			HelpPlugin.logError("Error loading Table of Contents file " + file //$NON-NLS-1$
-					+ ".", se); //$NON-NLS-1$
-		} catch (IOException ioe) {
-			HelpPlugin.logError("Error loading Table of Contents file " + file //$NON-NLS-1$
-					+ ".", ioe); //$NON-NLS-1$
 		}
+		
+		/*
+		 * For each node that had a filter attribute, slip in a filter node
+		 * above it to contain it.
+		 */
+		Iterator iter = filterNodes.iterator();
+		while (iter.hasNext()) {
+			Object[] entry = (Object[])iter.next();
+			Node node = (Node)entry[0];
+			Node parent = node.getParentInternal();
+			String filterExpression = (String)entry[1];
+			Filter filter = new Filter(filterExpression);
+			filter.addChild(node);
+			parent.replaceChild(node, filter);
+		}
+		
+		return tocContribution;
 	}
 
-	/**
-	 * @see ContentHandler#startElement(String, String, String, Attributes)
-	 */
 	public final void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException {
-		TocNode node = null;
+		
+		Node node = null;
 		if (qName.equals("toc")) { //$NON-NLS-1$
-			node = new Toc(tocFile, atts);
-			tocFile.setToc((Toc) node);
+			node = handleTocElement(atts);
 		} else if (qName.equals("topic")) { //$NON-NLS-1$
-			node = new Topic(tocFile, atts);
+			node = handleTopicElement(atts);
 		} else if (qName.equals("link")) { //$NON-NLS-1$
-			node = new Link(tocFile, atts);
+			node = handleLinkElement(atts);
 		} else if (qName.equals("anchor")) { //$NON-NLS-1$
-			node = new Anchor(tocFile, atts);
+			node = handleAnchorElement(atts);
 		} else if (qName.equals("filter")) { //$NON-NLS-1$
-			if (!elementStack.empty()) {
-				Object parent = elementStack.peek();
-				if (parent instanceof FilterableUAElement && atts != null) {
-					FilterableUAElement filterableNode = (FilterableUAElement)parent;
-					String name = atts.getValue("name"); //$NON-NLS-1$
-					String value = atts.getValue("value"); //$NON-NLS-1$
-					if (name != null && value != null) {
-						filterableNode.addFilter(name, value);
-					}
-				}
-			}
+			node = handleFilterElement(atts);
+		} else {
+			// ignore unknown elements
 			return;
-		} else
-			return; // perhaps throw some exception
+		}
+
+		/*
+		 * If the node has a filter attribute, make note of it so we can
+		 * wrap it in a filter element after.
+		 */
+		String filterAttribute = atts.getValue("filter"); //$NON-NLS-1$
+		if (filterAttribute != null) {
+			Node parent = (Node)elementStack.peek();
+			if (parent != null) {
+				filterNodes.add(new Object[] { node, filterAttribute });
+			}
+		}
+
 		if (!elementStack.empty())
-			((TocNode) elementStack.peek()).addChild(node);
-		elementStack.push(node);
-		// do any builder specific actions in the node
-		node.build(builder);
+			((Node)elementStack.peek()).addChild(node);
+		elementStack.push(node);		
 	}
 
-	/**
-	 * @see ContentHandler#endElement(String, String, String)
-	 */
 	public final void endElement(String namespaceURI, String localName,
 			String qName) throws SAXException {
 		if (qName.equals("toc") || qName.equals("topic") //$NON-NLS-1$ //$NON-NLS-2$
-				|| qName.equals("link") || qName.equals("anchor")) { //$NON-NLS-1$ //$NON-NLS-2$
+				|| qName.equals("link") || qName.equals("anchor") //$NON-NLS-1$ //$NON-NLS-2$
+				|| qName.equals("filter")) { //$NON-NLS-1$
 			elementStack.pop();
 		}
 	}
 
-	/**
-	 * @see EntityResolver This method implementation prevents loading external
-	 *      entities instead of calling
-	 *      org.apache.xerces.parsers.SaxParser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
-	 */
 	public InputSource resolveEntity(String publicId, String systemId) {
 		InputSource source = new InputSource(new ByteArrayInputStream(
 				new byte[0]));
@@ -163,28 +151,75 @@ class TocFileParser extends DefaultHandler {
 		source.setSystemId(systemId);
 		return source;
 	}
-
-	/**
-	 * This class maintain pool of parsers that can be used for parsing TOC
-	 * files. The parsers should be returned to the pool for reuse.
-	 */
-	static class XMLParserPool {
-		private ArrayList pool = new ArrayList();
-
-		SAXParser obtainParser() throws ParserConfigurationException,
-				SAXException {
-			SAXParser p;
-			int free = pool.size();
-			if (free > 0) {
-				p = (SAXParser) pool.remove(free - 1);
-			} else {
-				p = factory.newSAXParser();
-			}
-			return p;
+	
+	private Node handleTocElement(Attributes atts) {
+		String label = atts.getValue("label"); //$NON-NLS-1$
+		// label is required
+		if (label == null) {
+			String msg = "Required attribute \"label\" missing from toc element in " + tocFile.getPluginId() + "/" + tocFile.getFile();; //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+			// continue with empty label
+			label = new String();
 		}
-
-		void releaseParser(SAXParser parser) {
-			pool.add(parser);
+		String topic = HrefUtil.normalizeHref(tocFile.getPluginId(), atts.getValue("topic")); //$NON-NLS-1$
+		String linkTo = HrefUtil.normalizeHref(tocFile.getPluginId(), atts.getValue("link_to")); //$NON-NLS-1$
+		String id = HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile());
+		String categoryId = tocFile.getCategory();
+		String locale = tocFile.getLocale();
+		Toc toc = new Toc(label, topic);
+		String[] extraDocuments = DocumentFinder.collectExtraDocuments(tocFile);
+		boolean isPrimary = tocFile.isPrimary();
+		
+		tocContribution = new TocContribution(id, categoryId, locale, toc, linkTo, isPrimary, extraDocuments);
+		toc.setTocContribution(tocContribution);
+		return toc;
+	}
+	
+	private Node handleTopicElement(Attributes atts) {
+		String label = atts.getValue("label"); //$NON-NLS-1$
+		// label is required
+		if (label == null) {
+			String msg = "Required attribute \"label\" missing from topic element in " + tocFile.getPluginId() + "/" + tocFile.getFile();; //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+			// continue with empty label
+			label = new String();
 		}
+		String href = HrefUtil.normalizeHref(tocFile.getPluginId(), atts.getValue("href")); //$NON-NLS-1$
+		return new Topic(href, label);
+	}
+
+	private Node handleLinkElement(Attributes atts) {
+		String toc = HrefUtil.normalizeHref(tocFile.getPluginId(), atts.getValue("toc")); //$NON-NLS-1$
+		// toc is required
+		if (toc == null) {
+			String msg = "Required attribute \"toc\" missing from link element in " + tocFile.getPluginId() + "/" + tocFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+		}
+		return new Include(toc);
+	}
+
+	private Node handleAnchorElement(Attributes atts) {
+		String id = atts.getValue("id"); //$NON-NLS-1$
+		// id is required
+		if (id == null) {
+			String msg = "Required attribute \"id\" missing from anchor element in " + tocFile.getPluginId() + "/" + tocFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+		}
+		return new Anchor(id);
+	}
+
+	private Node handleFilterElement(Attributes atts) {
+		String name = atts.getValue("name"); //$NON-NLS-1$
+		String value = atts.getValue("value"); //$NON-NLS-1$
+		if (name == null || value == null) {
+			String msg = "Filter element missing one or more of required attributes {name, value} " + tocFile.getPluginId() + "/" + tocFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+		}
+		boolean isNot = value.charAt(0) == '!';
+		if (isNot) {
+			value = value.substring(1);
+		}
+		String expression = name + (isNot ? "!=" : "=") + value; //$NON-NLS-1$ //$NON-NLS-2$
+		return new Filter(expression);
 	}
 }

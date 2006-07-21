@@ -278,22 +278,28 @@ public class InfoCenterPage extends RootScopePage {
 		for (int i = 0; i < engines.getLength(); i++) {
 			final Node node = engines.item(i);
 			IToc toc = new IToc() {
+				public ITocContribution getTocContribution() {
+					return null;
+				}
 				public ITopic[] getTopics() {
 					return new ITopic[0];
 				}
-
 				public ITopic getTopic(String href) {
 					return null;
 				}
-
 				public String getHref() {
 					return node.getAttributes().getNamedItem("href") //$NON-NLS-1$
 							.getNodeValue();
 				}
-
 				public String getLabel() {
 					return node.getAttributes().getNamedItem("label") //$NON-NLS-1$
 							.getNodeValue();
+				}
+				public INode[] getChildren() {
+					return new INode[0];
+				}
+				public INode getParent() {
+					return null;
 				}
 			};
 			list.add(toc);

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.toc.TocManager;
-import org.eclipse.help.internal.toc.XMLTocProvider;
+import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -153,7 +153,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, XMLTocProvider.ELEMENT_NAME_TOC);
+		IExtensionDelta[] deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, TocFileProvider.ELEMENT_NAME_TOC);
 		if (deltas.length > 0) {
 			tocManager = null;
 		}

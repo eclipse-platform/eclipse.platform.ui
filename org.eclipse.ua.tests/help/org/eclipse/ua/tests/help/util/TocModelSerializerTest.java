@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.util;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -26,12 +23,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.toc.Toc;
-import org.eclipse.help.internal.toc.TocBuilder;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
-import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
-import org.eclipse.ua.tests.util.FileUtil;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -68,6 +61,7 @@ public class TocModelSerializerTest extends TestCase {
 	}
 	
 	public void testRunSerializer() throws IOException {
+		/*
 		Collection tocFiles = getTocFiles();
 		TocBuilder builder = new TocBuilder();
 		builder.build(tocFiles);
@@ -87,6 +81,7 @@ public class TocModelSerializerTest extends TestCase {
 			out.print(TocModelSerializer.serialize(toc));
 			out.close();
 		}
+		*/
 	}
 	
 	/**

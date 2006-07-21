@@ -21,12 +21,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -34,6 +39,7 @@ import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
+import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.search.LuceneSearchParticipant;
 
 /**
@@ -42,10 +48,12 @@ import org.eclipse.help.search.LuceneSearchParticipant;
  * returned by its getIndexUpdateOperation() method.
  */
 class IndexingOperation {
+	
+	private static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME_PATH = "path"; //$NON-NLS-1$
+	
 	private int numAdded;
-
 	private int numRemoved;
-
 	private SearchIndex index = null;
 
 	/**
@@ -476,12 +484,16 @@ class IndexingOperation {
 	 */
 	private void add(ITopic topic, Set hrefs) {
 		String href = topic.getHref();
-		if (href != null
-				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			hrefs.add(href);
+		add(href, hrefs);
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i = 0; i < subtopics.length; i++)
 			add(subtopics[i], hrefs);
+	}
+	
+	private void add(String href, Set hrefs) {
+		if (href != null
+				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			hrefs.add(href);
 	}
 
 	/**
@@ -496,9 +508,10 @@ class IndexingOperation {
 			for (int j = 0; j < topics.length; j++) {
 				add(topics[j], hrefs);
 			}
-			topics = BaseHelpSystem.getXMLTocProvider().getExtraTopics(tocs[i].getHref());
-			for (int j = 0; j < topics.length; j++) {
-				add(topics[j], hrefs);
+			ITocContribution contrib = tocs[i].getTocContribution();
+			String[] extraDocs = contrib.getExtraDocuments();
+			for (int j=0;j<extraDocs.length;++j) {
+				add(extraDocs[j], hrefs);
 			}
 			ITopic tocDescriptionTopic = tocs[i].getTopic(null);
 			if (tocDescriptionTopic != null)
@@ -516,12 +529,29 @@ class IndexingOperation {
 	 */
 	private PrebuiltIndexes getIndexesToAdd(Collection pluginIds) {
 		PrebuiltIndexes indexes = new PrebuiltIndexes(index);
-		for (Iterator it = pluginIds.iterator(); it.hasNext();) {
-			String pluginId = (String) it.next();
-			String indexPath = BaseHelpSystem.getXMLTocProvider()
-					.getIndexPath(pluginId);
-			if (indexPath != null) {
-				indexes.add(pluginId, indexPath);
+		
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(TocFileProvider.EXTENSION_POINT_ID_TOC);
+		
+		for (int i=0;i<elements.length;++i) {
+			IConfigurationElement elem = elements[i];
+			try {
+				if (elem.getName().equals(ELEMENT_NAME_INDEX)) {
+					String pluginId = elem.getNamespaceIdentifier();
+					if (pluginIds.contains(pluginId)) {
+						String path = elem.getAttribute(ATTRIBUTE_NAME_PATH);
+						if (path != null) {
+							indexes.add(pluginId, path);
+						}
+						else {
+							String msg = "Element \"index\" in extension of \"org.eclipse.help.toc\" must specify a \"path\" attribute (plug-in: " + pluginId + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+							HelpBasePlugin.logError(msg, null);
+						}
+					}
+				}
+			}
+			catch (InvalidRegistryObjectException e) {
+				// ignore this extension; move on
 			}
 		}
 		return indexes;

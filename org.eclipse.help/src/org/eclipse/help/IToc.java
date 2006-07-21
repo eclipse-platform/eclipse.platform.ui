@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.help;
 
 /**
- * IToc is the table of contents. It contains help topics.
+ * An <code>IToc</code> represents the root node of a toc, for either a complete
+ * toc (book) or a part of one to be assembled into a larger one.
  * 
  * @since 2.0
  */
-public interface IToc extends IHelpResource {
+public interface IToc extends INode, IHelpResource {
 	/**
 	 * This is element name used for TOC in XML files.
 	 */
@@ -25,6 +26,13 @@ public interface IToc extends IHelpResource {
 	 */
 	public final static String TOPIC = "topic"; //$NON-NLS-1$
 
+	/**
+	 * Returns the contribution from which this toc was contributed.
+	 * 
+	 * @return the toc's contribution
+	 */
+	public ITocContribution getTocContribution();
+	
 	/**
 	 * Obtains the topics directly contained by a toc.
 	 * 

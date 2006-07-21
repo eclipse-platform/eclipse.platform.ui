@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.model;
+package org.eclipse.help;
 
 /**
- * Part of help navigation model corresponding to ANCHOR element. It may contain
- * TOC elements.
+ * An include node is a marker to signal that content from another document
+ * should be pulled into the document in which the include resides.
  * 
- * @since 3.0
+ * @since 3.3
  */
-public interface IAnchorElement extends INavigationElement {
+public interface IInclude extends INode {
 
+	/**
+	 * Returns a reference to the target content to be included. The format of
+	 * the string depends on the context of the include.
+	 * 
+	 * @return the include target
+	 */
+	public String getTarget();
 }

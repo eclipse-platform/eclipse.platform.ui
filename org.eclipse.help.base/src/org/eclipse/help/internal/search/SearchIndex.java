@@ -41,8 +41,12 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -51,6 +55,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
+import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.search.ISearchIndex;
@@ -644,11 +649,20 @@ public class SearchIndex implements ISearchIndex {
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
-			HashSet totalIds = new HashSet();
-			Collection docPluginsIds = BaseHelpSystem.getXMLTocProvider().getContributingPlugins();
+			Set totalIds = new HashSet();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extensionPoint = registry.getExtensionPoint(TocFileProvider.EXTENSION_POINT_ID_TOC);
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i=0;i<extensions.length;++i) {
+				try {
+					totalIds.add(extensions[i].getNamespaceIdentifier());
+				}
+				catch (InvalidRegistryObjectException e) {
+					// ignore this extension and move on
+				}
+			}
 			Collection additionalPluginIds = BaseHelpSystem.getSearchManager()
 					.getPluginsWithSearchParticipants();
-			totalIds.addAll(docPluginsIds);
 			totalIds.addAll(additionalPluginIds);
 			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE, totalIds, indexDir, !exists());
 		}

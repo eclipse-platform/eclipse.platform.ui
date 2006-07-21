@@ -1,292 +1,110 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.help.INode;
 import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.model.ITocElement;
-import org.xml.sax.Attributes;
+import org.eclipse.help.internal.Node;
 
-/**
- * Root of navigation TocFile Can be linked with other Toc objects.
- */
-public class Toc extends TocNode implements IToc, ITocElement {
-	private static final int SIZE_UNINITIALIZED = -1;
-	private String link_to;
-	private String href;
+public class Toc extends Node implements IToc {
+
 	private String label;
-	private TocFile tocFile;
-	private ITopic[] topicArray;
-	private Topic descriptionTopic;
-	/**
-	 * Collection of Toc
-	 */
-	private List childrenTocs;
-	private DirectoryToc directoryToc;
-	/**
-	 * Map of all topics contained by this TOC by href. Description topic is not
-	 * in the map.
-	 */
-	private Map topicMap = new HashMap();
+	private ITopic topic;
+	private ITopic[] topics;
+	private Map href2TopicMap;
+	private TocContribution contribution;
 	
-	/**
-	 * Map of all Anchor href topics contained by this TOC by href with anchor removed.
-	 * Description topic is not in the map.
-	 */
-	private Map anchorTopicMap = new HashMap();
-	private int size = SIZE_UNINITIALIZED;
-	/**
-	 * Constructor. Used when parsing help contributions.
-	 */
-	protected Toc(TocFile tocFile, Attributes attrs) {
-		if (attrs == null)
-			return;
-		this.tocFile = tocFile;
-		this.label = attrs.getValue("label"); //$NON-NLS-1$
-		if (label == null) {
-			throw new RuntimeException("toc label==null"); //$NON-NLS-1$
-		}
-		this.link_to = attrs.getValue("link_to"); //$NON-NLS-1$
-		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
-		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile
-				.getHref());
-
-		try {
-			// create the description topic
-			this.descriptionTopic = new Topic(tocFile, null);
-			this.descriptionTopic.setLabel(this.label);
-			String topic = attrs.getValue("topic"); //$NON-NLS-1$
-			if (topic != null && topic.trim().length() > 0)
-				this.descriptionTopic.setHref(HrefUtil.normalizeHref(tocFile
-						.getPluginID(), topic));
-			else
-				this.descriptionTopic.setHref(""); //$NON-NLS-1$
-		} catch (Exception e) {
-		}
-
-		childrenTocs = new ArrayList();
-		directoryToc = new DirectoryToc(tocFile);
-		addFilters(attrs);
+	public Toc(String label, String topic) {
+		this.label = label;
+		this.topic = new Topic(topic, label) {
+			public ITopic[] getSubtopics() {
+				return getTopics();
+			}
+		};
 	}
-	/**
-	 * Implements abstract method.
-	 */
-	public void build(TocBuilder builder) {
-		builder.buildToc(this);
-	}
-	/**
-	 * Returns the toc file. Returns null when the topic is read from a temp
-	 * file.
-	 */
-	public TocFile getTocFile() {
-		return tocFile;
-	}
-	/**
-	 * Gets the link_to
-	 * 
-	 * @return Returns a String
-	 */
-	protected String getLink_to() {
-		return link_to;
-	}
-	/**
-	 * Gets the href
-	 * 
-	 * @return Returns a String
-	 */
+	
 	public String getHref() {
-		return href;
+		return contribution.getId();
 	}
+
 	public String getLabel() {
 		return label;
 	}
-	/**
-	 * Returns a topic with the specified href defined by this TOC. <br>
-	 * If the TOC contains multiple topics with the same href only of them
-	 * (arbitrarily chosen) will be returned.
-	 * <p>
-	 * If no topic is specified, then the TOC description topic is returned, or
-	 * null if there is no description topic for the TOC.
-	 * </p>
-	 * 
-	 * @param href
-	 *            the topic's URL or null
-	 * @return ITopic or null
-	 */
+	
+	public ITocContribution getTocContribution() {
+		return contribution;
+	}
+	
 	public ITopic getTopic(String href) {
-		if (href == null || href.equals(descriptionTopic.getHref())) {
-			return descriptionTopic;
+		if (href == null) {
+			return topic;
 		}
-		return getTopicNoDescr(href);
-	}
-	/**
-	 * Similar to ITopic getTopic(String) but does not match and return
-	 * description Topic
-	 * 
-	 * @param href
-	 *            the topic's URL
-	 * @return ITopic or null
-	 */
-	private ITopic getTopicNoDescr(String href) {
-		ITopic result = getOwnedTopic(href);
-		if (result != null) {
-			return result;
-		}
-
-		// check inside children TOCs
-		for (Iterator it = getChildrenTocs().iterator(); it.hasNext();) {
-			Toc childToc = (Toc) it.next();
-			// must not return description topic from children TOCs
-			result = childToc.getTopicNoDescr(href);
-			if (result != null) {
-				break;
+		else {
+			if (href2TopicMap == null) {
+				href2TopicMap = createHref2TopicMap();
 			}
+			return (ITopic)href2TopicMap.get(href);
 		}
-		return result;
 	}
-	/**
-	 * This public method is to be used after the build of TOCs is finished.
-	 * With assumption that TOC model is not modifiable after the build, this
-	 * method caches subtopics in an array and releases objects used only during
-	 * build.
-	 * 
-	 * @return ITopic[]
-	 */
+	
 	public ITopic[] getTopics() {
-		if (topicArray == null) {
-			List topics = getChildTopics();
-			// create and cache array of children (Topics only)
-			topicArray = new ITopic[topics.size()];
-			topics.toArray(topicArray);
-			// after TOC is build, TocFile no longer needed
-			tocFile = null;
+		if (topics == null) {
+			INode[] children = getChildren();
+			if (children.length > 0) {
+				List list = new ArrayList();
+				for (int i=0;i<children.length;++i) {
+					if (children[i] instanceof ITopic) {
+						list.add(children[i]);
+					}
+				}
+				topics = (ITopic[])list.toArray(new ITopic[list.size()]);
+			}
+			else {
+				topics = new ITopic[0];
+			}
 		}
-		return topicArray;
+		return topics;
 	}
-	/**
-	 * @return ITopic or null;
-	 */
-	public String getTocTopicHref() {
-		if (descriptionTopic != null) {
-			return descriptionTopic.getHref();
-		}
-		return null;
+	
+	public void setTocContribution(TocContribution contribution) {
+		this.contribution = contribution;
 	}
-	/**
-	 * Returns a topic with the specified href defined by this TOC, without
-	 * looking in children TOCs <br>
-	 * If the TOC contains multiple topics with the same href only of them
-	 * (arbitrarily chosen) will be returned. TOC Descritpion topic is ignored.
-	 * 
-	 * @param href
-	 *            the topic's URL.
-	 * @return ITopic or null
-	 */
-	public ITopic getOwnedTopic(String href) {
-		
-		if (topicMap.get(href) != null) {
-			return (ITopic) topicMap.get(href);
+	
+	private Map createHref2TopicMap() {
+		Map map = new HashMap();
+		// create a topic for the overall toc
+		map.put(null, topic);
+		ITopic[] topics = getTopics();
+		for (int i=0;i<topics.length;++i) {
+			createHref2TopicMapAux(map, topics[i]);
 		}
-
-		if (anchorTopicMap.containsKey(href)) {
-			 return (ITopic) anchorTopicMap.get(href);
-		}
-		
-		// if only href without anchor in toc, return it.
-		if (href.indexOf('#') != -1) {
-			href = href.substring(0, href.indexOf('#'));
-		}
-		return (ITopic) topicMap.get(href);
+		return map;
 	}
-	/**
-	 * @return ITopic[]
-	 */
-	public ITopic[] getExtraTopics() {
-		Collection dirTopicCollection = directoryToc.getExtraTopics().values();
-		ITopic[] dirTopics = (ITopic[]) dirTopicCollection
-				.toArray(new ITopic[dirTopicCollection.size()]);
-
-		// add extra topics from children TOCs.
-		for (Iterator it = childrenTocs.iterator(); it.hasNext();) {
-			IToc toc = (IToc) it.next();
-			if (toc instanceof Toc) {
-				ITopic[] moreDirTopics = ((Toc) toc).getExtraTopics();
-				if (moreDirTopics.length > 0) {
-					ITopic[] newDirTopics = new ITopic[dirTopics.length
-							+ moreDirTopics.length];
-					System.arraycopy(dirTopics, 0, newDirTopics, 0,
-							dirTopics.length);
-					System.arraycopy(moreDirTopics, 0, newDirTopics,
-							dirTopics.length, moreDirTopics.length);
-					dirTopics = newDirTopics;
+	
+	private void createHref2TopicMapAux(Map map, ITopic topic) {
+		map.put(topic.getHref(), topic);
+		ITopic[] subtopics = topic.getSubtopics();
+		if (subtopics != null) {
+			for (int i=0;i<subtopics.length;++i) {
+				if (subtopics[i] != null) {
+					createHref2TopicMapAux(map, subtopics[i]);
 				}
 			}
 		}
-
-		return dirTopics;
-	}
-	/**
-	 * Returns a topic with the specified href found in extra dir defined by
-	 * this TOC, without looking in children TOCs
-	 * 
-	 * @param href
-	 *            the topic's URL.
-	 * @return ITopic or null
-	 */
-	public ITopic getOwnedExtraTopic(String href) {
-		return (ITopic) directoryToc.getExtraTopics().get(href);
-
-	}
-	/**
-	 * Used by debugger
-	 */
-	public String toString() {
-		return href != null ? href : super.toString();
-	}
-
-	/**
-	 * Gets the childrenTocs.
-	 * 
-	 * @return Returns a Collection of Toc
-	 */
-	public List getChildrenTocs() {
-		return childrenTocs;
-	}
-	public int size() {
-		if (size == SIZE_UNINITIALIZED) {
-			size = topicMap.size();
-			for (Iterator it = childrenTocs.iterator(); it.hasNext();) {
-				size += ((Toc) it.next()).size();
-			}
-		}
-		return size;
-	}
-	void registerTopic(ITopic topic) {
-		String topicHref = topic.getHref();
-		if (topicHref != null) {
-			topicMap.put(topicHref, topic);
-			int anchorIndex = topicHref.indexOf('#');
-			if (anchorIndex != -1) {
-				String hrefNoAnchor = topicHref.substring(0, anchorIndex);
-				if (!anchorTopicMap.containsKey(hrefNoAnchor)) {
-					anchorTopicMap.put(hrefNoAnchor, topic);
-				}
-			}
-		}			
 	}
 }

@@ -11,8 +11,8 @@
 package org.eclipse.help;
 
 /**
- * An <code>ITocContribution</code> represents a complete top-level TOC (a book)
- * and its metadata.
+ * An <code>ITocContribution</code> represents either a complete or partial
+ * table of contents, as well as its metadata.
  * 
  * This interface is intended to be implemented by clients.
  * 
@@ -20,21 +20,6 @@ package org.eclipse.help;
  */
 public interface ITocContribution {
 
-	/**
-	 * Returns the TOC data for this contribution. This will be called only
-	 * once per session.
-	 * 
-	 * @return the TOC data for this contribution
-	 */
-	public IToc getToc();
-	
-	/**
-	 * Returns a unique identifier for this contribution.
-	 * 
-	 * @return the contribution's unique identifier
-	 */
-	public String getId();
-	
 	/**
 	 * Returns the TOC's category id. Categories are used to organize similar
 	 * books in categories.
@@ -44,9 +29,53 @@ public interface ITocContribution {
 	public String getCategoryId();
 	
 	/**
+	 * Returns the hrefs for any additional documents that are not in this TOC
+	 * but are associated with it, and should be indexed for searching. A
+	 * return value of <code>null</code> will be treated the same as an empty
+	 * array.
+	 * 
+	 * @return any extra documents associated with the TOC
+	 */
+	public String[] getExtraDocuments();
+	
+	/**
+	 * Returns a unique identifier for this contribution.
+	 * 
+	 * @return the contribution's unique identifier
+	 */
+	public String getId();
+	
+	/**
+	 * Returns the target anchor at which to insert this contribution. The
+	 * format is: [contribution_id]#[anchor_id]. For example, to insert the toc
+	 * at the "reference_troubleshooting" anchor in the
+	 * "/my.plugin.id/path/toc.xml" contribution, the target will be
+	 * "/my.plugin.id/path/toc.xml#reference_troubleshooting". If not specified,
+	 * returns null.
+	 * 
+	 * @return the target destination for this contribution, or null if none
+	 */
+	public String getLinkTo();
+	
+	/**
 	 * Returns the locale for this contribution.
 	 * 
 	 * @return the contribution's locale
 	 */
 	public String getLocale();
+	
+	/**
+	 * Returns the TOC data for this contribution. This will be called only
+	 * once per session.
+	 * 
+	 * @return the TOC data for this contribution
+	 */
+	public IToc getToc();
+	
+	/**
+	 * Returns whether or not this is a top-level contribution (a book).
+	 * 
+	 * @return whether the contribution is top-level book
+	 */
+	public boolean isPrimary();
 }

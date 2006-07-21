@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.model;
+package org.eclipse.help.internal;
 
-/**
- * Part of help navigation model corresponding to LINK element. It may contain
- * TOC elements.
- * 
- * @since 3.0
- */
-public interface ILinkElement extends INavigationElement {
+import org.eclipse.help.IFilter;
 
+public class Filter extends Node implements IFilter {
+
+	private String expression;
+	
+	public Filter(String expression) {
+		this.expression = expression;
+	}
+	
+	public String getExpression() {
+		return expression;
+	}
 }

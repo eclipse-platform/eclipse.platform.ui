@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,23 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.model;
-
-import java.util.List;
+package org.eclipse.help;
 
 /**
- * Part of help navigation model corresponding to any of: TOC, TOPIC, ANCHOR, or
- * LINK element. After navigation is built, this may contain TOC, TOPIC, LINK,
- * or ANCHOR elements.
+ * An anchor represents a location at which content can be added from outside
+ * the document.
  * 
- * @since 3.0
+ * @since 3.3
  */
-public interface INavigationElement {
-	/**
-	 * Returns child elements
-	 * 
-	 * @return List of INavigationElement
-	 */
-	List getChildren();
+public interface IAnchor extends INode {
 
+	/**
+	 * Returns this anchor's unique identifier.
+	 * 
+	 * @return the unique identifier for the anchor
+	 */
+	public String getId();
 }

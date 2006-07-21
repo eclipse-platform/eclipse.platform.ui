@@ -254,6 +254,8 @@
        <toc file="data/help/toc/extraContent/simple_toc.xml" />
        <toc file="data/help/search/toc.xml" primary="true"/>
        <toc file="data/help/search/toc2.xml" primary="true" extradir="data/help/search/extraDir"/>
+       <toc file="data/help/search/toc3.xml" primary="false" extradir="data/help/search/extraDir2"/>
+       <toc file="data/help/search/toc4.xml" primary="false" extradir="data/help/search/extraDir3"/>
        <toc file="data/help/producer/toc.xml" primary="true"/>
    </extension>
 

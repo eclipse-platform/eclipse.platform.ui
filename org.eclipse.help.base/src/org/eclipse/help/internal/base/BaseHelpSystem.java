@@ -14,16 +14,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.appserver.*;
-import org.eclipse.help.internal.base.util.*;
-import org.eclipse.help.internal.browser.*;
-import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.toc.XMLTocProvider;
-import org.eclipse.help.internal.workingset.*;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.base.util.IErrorUtil;
+import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.internal.search.SearchManager;
+import org.eclipse.help.internal.workingset.WorkingSetManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -123,15 +130,6 @@ public final class BaseHelpSystem {
 		return getInstance().bookmarkManager;
 	}
 
-	public static synchronized XMLTocProvider getXMLTocProvider() {
-		XMLTocProvider provider = XMLTocProvider.getInstance();
-		if (provider == null) {
-			HelpSystem.getTocs();
-			provider = XMLTocProvider.getInstance();
-		}
-		return provider;
-	}
-	
 	/**
 	 * Allows Help UI to plug-in a soft adapter that delegates all the work to
 	 * the workbench browser support.

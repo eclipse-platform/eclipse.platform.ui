@@ -8,28 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help.toc;
+package org.eclipse.help.internal;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.eclipse.help.IInclude;
 
-/*
- * Tests help table of contents functionality.
- */
-public class AllTocTests extends TestSuite {
+public class Include extends Node implements IInclude {
 
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllTocTests();
+	private String target;
+	
+	public Include(String target) {
+		this.target = target;
 	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllTocTests() {
-		addTest(TocFileParserTest.suite());
-		addTest(TocAssemblerTest.suite());
+	
+	public String getTarget() {
+		return target;
 	}
 }

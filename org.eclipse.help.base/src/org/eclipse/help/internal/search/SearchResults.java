@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableToc;
@@ -126,9 +125,12 @@ public class SearchResults implements ISearchHitCollector {
 			// add root toc's extradir topics to search scope
 			IToc tocRoot = getTocForScope(scope, locale);
 			if (tocRoot != null) {
-				String owningTocHref = BaseHelpSystem.getXMLTocProvider().getExtraTopicToc(href);
-				if (owningTocHref == tocRoot.getHref()) {
-					return scope;
+				IToc toc = HelpPlugin.getTocManager().getOwningToc(href);
+				if (toc != null) {
+					String owningTocHref = toc.getHref();
+					if (owningTocHref == tocRoot.getHref()) {
+						return scope;
+					}
 				}
 			}
 		}
