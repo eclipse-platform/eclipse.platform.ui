@@ -907,6 +907,11 @@ public abstract class ResourceTest extends CoreTest {
 		}
 	}
 
+	/**
+	 * Returns whether the file system in which the provided resource
+	 * is stored is case sensitive. This succeeds whether or not the resource
+	 * exists.
+	 */
 	protected boolean isCaseSensitive(IResource resource) {
 		return ((Resource) resource).getStore().getFileSystem().isCaseSensitive();
 	}
