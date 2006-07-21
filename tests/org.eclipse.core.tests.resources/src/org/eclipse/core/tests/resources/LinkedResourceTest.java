@@ -62,9 +62,9 @@ public class LinkedResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(LinkedResourceTest.class);
-		//				TestSuite suite = new TestSuite();
-		//				suite.addTest(new LinkedResourceTest("testCreateLinkCaseVariant"));
-		//				return suite;
+		//						TestSuite suite = new TestSuite();
+		//						suite.addTest(new LinkedResourceTest("testFindFilesForLocationCaseVariant"));
+		//						return suite;
 	}
 
 	public LinkedResourceTest() {
@@ -820,6 +820,28 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.0", link.exists());
 		assertTrue("2.1", link.isLinked());
 		assertEquals("2.2", resolve(localFolder), link.getLocation());
+	}
+
+	/**
+	 * Tests that IWorkspaceRoot.findFilesForLocation works correctly
+	 * in presence of a linked resource that does not match the case in the file system
+	 */
+	public void testFindFilesForLocationCaseVariant() {
+		//this test only applies to file systems that are not case-sensitive
+		if (isCaseSensitive(existingProject))
+			return;
+		IFolder link = nonExistingFolderInExistingProject;
+		IPath upperCase = localFolder.setDevice(localFolder.getDevice().toUpperCase());
+		IPath lowerCase = localFolder.setDevice(localFolder.getDevice().toLowerCase());
+
+		try {
+			link.createLink(upperCase, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		IPath lowerCaseFilePath = lowerCase.append("file.txt");
+		IFile[] files = getWorkspace().getRoot().findFilesForLocation(lowerCaseFilePath);
+		assertEquals("1.0", 1, files.length);
 	}
 
 	/**
