@@ -26,8 +26,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -41,9 +41,9 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 /**
  * Launch delegate for a program.
  */
-public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
+public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 
-	private static IWindowListener windowListener;
+	private static IWindowListener fWindowListener;
 
 	/**
 	 * A window listener that warns the user about any running programs when
@@ -145,9 +145,9 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		if (windowListener == null) {
-			windowListener= new ProgramLaunchWindowListener();
-			PlatformUI.getWorkbench().addWindowListener(windowListener);
+		if (fWindowListener == null) {
+			fWindowListener= new ProgramLaunchWindowListener();
+			PlatformUI.getWorkbench().addWindowListener(fWindowListener);
 		}
 		Process p = DebugPlugin.exec(cmdLine, workingDir, envp);
 		IProcess process = null;
