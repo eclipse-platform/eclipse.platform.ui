@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.osgi.util.TextProcessor;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * The FilePropertySource gives the extra information that is shown for files
@@ -75,35 +72,8 @@ public class FilePropertySource extends ResourcePropertySource {
 		}
 
         if (key.equals(IResourcePropertyConstants.P_SIZE_RES)) {
-			return getSizeString((IFile) element);
+			return IDEResourceInfoUtils.getSizeString((IFile) element);
 		}
-
         return null;
     }
-
-    /**
-     * Return a String that indicates the size of the supplied file.
-     */
-    private String getSizeString(IFile file) {
-        if (!file.isLocal(IResource.DEPTH_ZERO)) {
-			return NOT_LOCAL_TEXT;
-		} 
-        
-        IPath location = file.getLocation();
-        if (location == null) {
-            if (file.isLinked()) {
-				return UNDEFINED_PATH_VARIABLE;
-			}
-
-            return FILE_NOT_FOUND;
-        } 
-        
-        File localFile = location.toFile();
-
-        if (localFile.exists()) {
-            return Long.toString(localFile.length());
-        }
-        return FILE_NOT_FOUND;
-    }
-
 }
