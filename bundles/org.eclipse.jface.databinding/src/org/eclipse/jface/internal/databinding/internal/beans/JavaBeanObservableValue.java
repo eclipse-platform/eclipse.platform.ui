@@ -31,14 +31,16 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 	private boolean updating = false;
 
 	private final PropertyDescriptor propertyDescriptor;
+	private final Class overrideType;
 
 	/**
 	 * @param object
 	 * @param descriptor
 	 */
-	public JavaBeanObservableValue(Object object, PropertyDescriptor descriptor) {
+	public JavaBeanObservableValue(Object object, PropertyDescriptor descriptor, Class overrideType) {
 		this.object = object;
 		this.propertyDescriptor = descriptor;
+		this.overrideType = overrideType;
 	}
 
 	protected void firstListenerAdded() {
@@ -145,6 +147,8 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 	}
 
 	public Object getValueType() {
-		return propertyDescriptor.getPropertyType();
+		Class type = propertyDescriptor.getPropertyType();
+		if(type == Object.class && overrideType != null) type = overrideType;
+		return type;
 	}
 }

@@ -62,7 +62,7 @@ public class JavaBeansScalarObservableValueFactory extends Object implements
         if (!found) {
            return null;
         }
-        IObservableValue updatable = new JavaBeanObservableValue(collectionContainer, pds[position]);
+        IObservableValue updatable = new JavaBeanObservableValue(collectionContainer, pds[position], property.getPropertyType());
         return updatable;
      }
 

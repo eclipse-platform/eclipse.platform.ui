@@ -138,7 +138,7 @@ final public class BeanObservableFactory implements IObservableFactory {
 							return new JavaBeanObservableList(object,
 									descriptor, elementType);
 						}
-						return new JavaBeanObservableValue(object, descriptor);
+						return new JavaBeanObservableValue(object, descriptor, property.getPropertyType());
 					}
 				}
 			}
