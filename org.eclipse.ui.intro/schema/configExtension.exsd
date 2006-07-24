@@ -274,7 +274,7 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
 &lt;ul&gt;
 &lt;li&gt;org.eclipse.jdt, makes use of configExtension&lt;/li&gt;
 &lt;li&gt;org.eclipse.pde, makes use of configExtension&lt;/li&gt;
-&lt;li&gt;org.eclipse.platform, makes use of standbyPoint&lt;/li&gt;
+&lt;li&gt;org.eclipse.platform, makes use of standbyContentPart&lt;/li&gt;
 &lt;/ul&gt;
       </documentation>
    </annotation>
