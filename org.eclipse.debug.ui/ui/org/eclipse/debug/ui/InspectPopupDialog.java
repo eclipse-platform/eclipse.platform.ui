@@ -12,6 +12,7 @@
 package org.eclipse.debug.ui;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -38,7 +39,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -155,15 +155,6 @@ public class InspectPopupDialog extends DebugPopup {
             public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
-
-        Color background = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-        Color foreground = parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-        fTree.setForeground(foreground);
-        fTree.setBackground(background);
-        composite.setForeground(foreground);
-        composite.setBackground(background);
-        fValueDisplay.setForeground(foreground);
-        fValueDisplay.setBackground(background);
 
         // sashForm.setWeights(getInitialSashWeights());
         fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
@@ -293,4 +284,15 @@ public class InspectPopupDialog extends DebugPopup {
         initialSize.y = Math.max(initialSize.y, MIN_HEIGHT);
         return initialSize;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
+	 */
+	protected List getBackgroundColorExclusions() {
+		List list = super.getBackgroundColorExclusions();
+		list.add(fSashForm);
+		return list;
+	}
+    
+    
 }
