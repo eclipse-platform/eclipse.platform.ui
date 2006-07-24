@@ -55,7 +55,6 @@ public class TocFileParserTest extends TestCase {
 		assertEquals(locale, contribution.getLocale());
 		
 		String[] extraDocs = contribution.getExtraDocuments();
-		assertEquals(3, extraDocs.length);
 		Set set = new HashSet(Arrays.asList(extraDocs));
 		assertTrue(set.contains("/org.eclipse.ua.tests/data/help/toc/parser/extraDir/page1.html"));
 		assertTrue(set.contains("/org.eclipse.ua.tests/data/help/toc/parser/extraDir/page2.html"));

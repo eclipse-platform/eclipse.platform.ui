@@ -55,11 +55,15 @@ public class Toc extends Node implements IToc {
 			return topic;
 		}
 		else {
-			if (href2TopicMap == null) {
-				href2TopicMap = createHref2TopicMap();
-			}
-			return (ITopic)href2TopicMap.get(href);
+			return (ITopic)getHref2TopicMap().get(href);
 		}
+	}
+	
+	public Map getHref2TopicMap() {
+		if (href2TopicMap == null) {
+			href2TopicMap = createHref2TopicMap();
+		}
+		return href2TopicMap;
 	}
 	
 	public ITopic[] getTopics() {
@@ -87,11 +91,14 @@ public class Toc extends Node implements IToc {
 	
 	private Map createHref2TopicMap() {
 		Map map = new HashMap();
-		// create a topic for the overall toc
-		map.put(null, topic);
+		map.put(topic.getHref(), topic);
 		ITopic[] topics = getTopics();
 		for (int i=0;i<topics.length;++i) {
 			createHref2TopicMapAux(map, topics[i]);
+		}
+		String[] extraDocs = contribution.getExtraDocuments();
+		for (int i=0;i<extraDocs.length;++i) {
+			map.put(extraDocs[i], new Topic(extraDocs[i], null));
 		}
 		return map;
 	}

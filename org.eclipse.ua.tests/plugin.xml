@@ -257,6 +257,8 @@
        <toc file="data/help/search/toc3.xml" primary="false" extradir="data/help/search/extraDir2"/>
        <toc file="data/help/search/toc4.xml" primary="false" extradir="data/help/search/extraDir3"/>
        <toc file="data/help/producer/toc.xml" primary="true"/>
+       <toc file="data/help/index/toc.xml" primary="true"/>
+       <toc file="data/help/index/tocIgnored.xml" primary="true"/>
    </extension>
 
    <!--
@@ -300,6 +302,12 @@
    <extension point= "org.eclipse.help.contentExtension"> 
       <contentExtension file="data/help/search/extension.xml"/>
       <contentExtension file="data/help/search/extension2.xml"/>
+   </extension>
+   <extension
+         point="org.eclipse.help.index">
+      <index
+            file="data/help/index/index.xml">
+      </index>
    </extension>
 
 </plugin>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="org.eclipse.ua.tests/data/help/index/tocIgnored.xml">
+	<topic label="topic2.html" href="data/help/index/topic2.html">
+		<topic label="topic3.html" href="data/help/index/topic3.html"/>
+	</topic>
+	<topic label="topic4.html" href="data/help/index/topic4.html"/>
+</toc>

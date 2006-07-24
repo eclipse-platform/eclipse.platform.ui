@@ -56,6 +56,8 @@ public class TocManager {
 	private Map tocsByLocale = new HashMap();
 	private Map tocsById = new HashMap();
 	private Map tocsByTopic;
+	
+	private Set ignoredTopicHrefs;
 
 	/*
 	 * Returns all toc entries (complete books) for the given locale.
@@ -117,15 +119,30 @@ public class TocManager {
 	private ITocContribution[] filterTocContributions(ITocContribution[] unfiltered) {
 		Set tocsToFilter = getIgnoredTocContributions();
 		List filtered = new ArrayList();
+		Set ignoredHrefs = new HashSet();
+		Set notIgnoredHrefs = new HashSet();
 		for (int i=0;i<unfiltered.length;++i) {
+			Toc toc = (Toc)unfiltered[i].getToc();
+			Set hrefs = toc.getHref2TopicMap().keySet();
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
 					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
 				filtered.add(unfiltered[i]);
+				notIgnoredHrefs.addAll(hrefs);
+			}
+			else {
+				ignoredHrefs.addAll(hrefs);
 			}
 		}
+		/*
+		 * Retain only the hrefs of topics that only exist in ignored tocs.
+		 * This is needed to ignore keyword index entries accordingly (see
+		 * isTopicIgnored()).
+		 */
+		ignoredTopicHrefs = ignoredHrefs;
+		ignoredTopicHrefs.removeAll(notIgnoredHrefs);
 		return (ITocContribution[])filtered.toArray(new ITocContribution[filtered.size()]);
 	}
-	
+
 	/*
 	 * Returns all toc contributions for the given locale, from all toc
 	 * providers.
@@ -327,6 +344,28 @@ public class TocManager {
 		return expanded;
 	}
 
+	/**
+	 * Returns whether or not the given topic exists only in ignored toc(s).
+	 * 
+	 * @param href the topic's href, e.g. "/my.plugin.id/path/file.html"
+	 * @return whether or not the topic is ignored
+	 */
+	public boolean isTopicIgnored(String href) {
+		return ignoredTopicHrefs.contains(href);
+	}
+	
+	/*
+	 * For testing purposes only. Reloads everything.
+	 */
+	public void reset() {
+		tocProviders = null;
+		tocsByLocale = new HashMap();
+		tocsById = new HashMap();
+		tocsByTopic = null;
+		ignoredTopicHrefs = null;
+		getTocs(Platform.getNL());
+	}
+	
 	/*
 	 * Substitutes each item with it's corresponding mapping from the map.
 	 * Original List is not modified.

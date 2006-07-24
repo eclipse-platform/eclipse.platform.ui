@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
- * All rights reserved. This program and the accompanying materials
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * All rights reserved. This program and the ccompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - bug 150952
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -19,6 +20,8 @@ import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.toc.TocManager;
 
 
 /**
@@ -35,6 +38,7 @@ public class IndexBuilder {
     private IndexEntry current;
 	private Stack entries;
     private IToc[] tocs;
+    private TocManager tocManager;
     
     /**
      * Constructs the index builder
@@ -44,6 +48,7 @@ public class IndexBuilder {
         index = new Index(comparator);
 		entries = new Stack();
         tocs = HelpSystem.getTocs();
+        tocManager = HelpPlugin.getTocManager();
     }
     
     public void build(Collection contributedIndexFiles) {
@@ -104,25 +109,10 @@ public class IndexBuilder {
 
 		if(emptyLocation) location = ""; //$NON-NLS-1$
 		if(emptyLabel) label = ""; //$NON-NLS-1$
-		if (current != null) {
+		if (current != null && !tocManager.isTopicIgnored(href)) {
 			current.addTopic(label,href,location);
 		}
     }
-
-//    /**
-//     * @param string
-//     * @return
-//     */
-//    private ITopic findTopicByHref(String href) {
-//        for (int i = 0; i < tocs.length; i++) {
-//            ITopic topic = tocs[i].getTopic(href);
-//            if ((topic != null) && (topic.getHref().equals(href)))
-//                return topic;
-//            else
-//                continue;
-//        }
-//        return null;
-//    }
 
     /**
      * @return
