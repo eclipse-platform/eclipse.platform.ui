@@ -12,24 +12,30 @@ package org.eclipse.jface.text;
 
 
 /**
- * Default implementation of {@link org.eclipse.jface.text.IPositionUpdater}.<p>
- * A default position updater must be configured with the position category
- * whose positions it will update. Other position categories are not affected
- * by this updater.<p>
- * This implementation follows the following specification:
+ * Default implementation of {@link org.eclipse.jface.text.IPositionUpdater}.
+ * <p>
+ * A default position updater must be configured with the position category whose positions it will
+ * update. Other position categories are not affected by this updater.
+ * </p>
+ * <p>
+ * This implementation follows the specification below:
+ * </p>
  * <ul>
- * <li> Inserting or deleting text before the position shifts the position accordingly.
- * <li> Inserting text at the position offset shifts the position accordingly.
- * <li> Inserting or deleting text completely surrounded by the position shrinks or stretches the position.
- * <li> Inserting or deleting text after a position does not affect the position.
- * <li> Deleting text which completely contains the position deletes the position.
- * <li> Replacing text overlapping with the position considered as a sequence of first
- * 		deleting the replaced text and afterwards inserting the new text. Thus, a
- * 		position might first be shifted and shrink and then be stretched.
+ * <li>Inserting or deleting text before the position shifts the position accordingly.</li>
+ * <li>Inserting text at the position offset shifts the position accordingly.</li>
+ * <li>Inserting or deleting text strictly contained by the position shrinks or stretches the
+ * position.</li>
+ * <li>Inserting or deleting text after a position does not affect the position.</li>
+ * <li>Deleting text which strictly contains the position deletes the position. Note that the
+ * position is not deleted if its only shrunken to length zero. To delete a position, the
+ * modification must delete from <i>strictly before</i> to <i>strictly after</i> the position.</li>
+ * <li>Replacing text overlapping with the position is considered as a sequence of first deleting
+ * the replaced text and afterwards inserting the new text. Thus, a position might first be shifted
+ * and shrunken and then be stretched.</li>
  * </ul>
- * This class can be used as is or be adapted by subclasses. Fields are protected to
- * allow subclasses direct access. Because of the frequency with which position updaters
- * are used this is a performance decision.
+ * This class can be used as is or be adapted by subclasses. Fields are protected to allow
+ * subclasses direct access. Because of the frequency with which position updaters are used this is
+ * a performance decision.
  */
 public class DefaultPositionUpdater implements IPositionUpdater {
 
