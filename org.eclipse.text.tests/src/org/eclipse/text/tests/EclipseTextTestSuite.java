@@ -33,6 +33,7 @@ public class EclipseTextTestSuite {
 		suite.addTest(DocumentTest.suite());
 		suite.addTest(FindReplaceDocumentAdapterTest.suite());
 		suite.addTest(PositionUpdatingCornerCasesTest.suite());
+		suite.addTest(ExclusivePositionUpdaterTest.suite());
 		suite.addTest(TextEditTests.suite());
 		suite.addTest(GapTextTest.suite());
 		suite.addTest(AdaptiveGapTextTest.suite());
