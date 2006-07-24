@@ -304,7 +304,7 @@ public class IFolderTest extends ResourceTest {
 
 		//do some tests with invalid names
 		String[] names = new String[0];
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (isWindows()) {
 			//invalid windows names
 			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
 		} else {
@@ -325,7 +325,7 @@ public class IFolderTest extends ResourceTest {
 		}
 
 		//do some tests with valid names that are *almost* invalid
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (isWindows()) {
 			//these names are valid on windows
 			names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		} else {

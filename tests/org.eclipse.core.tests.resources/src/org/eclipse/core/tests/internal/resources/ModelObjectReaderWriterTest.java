@@ -29,10 +29,9 @@ import org.xml.sax.InputSource;
  * 
  */
 public class ModelObjectReaderWriterTest extends ResourceTest {
-	private static final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
-	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(WINDOWS ? "D:" : null);
+	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(isWindows() ? "D:" : null);
 	static final URI LONG_LOCATION_URI = LONG_LOCATION.toFile().toURI();
-	private static final String PATH_STRING = new Path("/abc/def").setDevice(WINDOWS ? "D:" : null).toString();
+	private static final String PATH_STRING = new Path("/abc/def").setDevice(isWindows() ? "D:" : null).toString();
 
 	public static Test suite() {
 		//	TestSuite suite = new TestSuite();

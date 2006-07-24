@@ -40,7 +40,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testFileBugOnWindows() {
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 
 		InputStream input = null;
@@ -128,7 +128,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testFolderBugOnWindows() {
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 
 		InputStream input = null;
@@ -225,7 +225,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testProjectBugOnWindows() {
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 
 		IProject sourceProject = null;

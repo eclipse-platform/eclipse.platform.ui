@@ -15,7 +15,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * 
@@ -57,7 +56,7 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeArchive() {
 		// archive bit only implemented on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
@@ -93,7 +92,7 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeExecutable() {
 		// executable bit not implemented on windows
-		if (Platform.getOS().equals(Platform.OS_WIN32))
+		if (isWindows())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
@@ -173,7 +172,7 @@ public class ResourceAttributeTest extends ResourceTest {
 
 	public void testAttributeHidden() {
 		// hidden bit only implemented on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");

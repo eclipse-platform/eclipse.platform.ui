@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class IResourceTest extends ResourceTest {
 
 	public void testBug28790() {
 		//test only applicable on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("a.txt");
@@ -229,7 +229,7 @@ public class IResourceTest extends ResourceTest {
 
 	public void testBug111821() {
 		//this test only makes sense on Windows
-		if (!Platform.OS_WIN32.equals(Platform.getOS()))
+		if (!isWindows())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("testBug111821");
 		IFolder folder = project.getFolder(new Path(null, "c:"));

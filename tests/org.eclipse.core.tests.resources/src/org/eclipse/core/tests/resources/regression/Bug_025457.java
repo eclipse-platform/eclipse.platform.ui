@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -42,7 +41,7 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testFile() {
 		//this test only works on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IFile sourceFile = source.getFile("file.txt");
@@ -86,7 +85,7 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testFolder() {
 		//this test only works on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject source = getWorkspace().getRoot().getProject("SourceProject");
 		IFolder sourceFolder = source.getFolder("folder");
@@ -128,7 +127,7 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testProject() {
 		//this test only works on windows
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!isWindows())
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IProject destination = getWorkspace().getRoot().getProject("Project");
