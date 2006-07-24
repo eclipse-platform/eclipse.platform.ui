@@ -175,7 +175,7 @@ public class LinkedResourceTest extends ResourceTest {
 		}
 
 		//try to create with local path that can never exist
-		if (Platform.getOS().equals(Platform.OS_WIN32))
+		if (isWindows())
 			location = new Path("b:\\does\\not\\exist");
 		else
 			location = new Path("/dev/null/does/not/exist");
@@ -827,12 +827,13 @@ public class LinkedResourceTest extends ResourceTest {
 	 * in presence of a linked resource that does not match the case in the file system
 	 */
 	public void testFindFilesForLocationCaseVariant() {
-		//this test only applies to file systems that are not case-sensitive
-		if (isCaseSensitive(existingProject))
+		//this test only applies to file systems with a device in the path
+		if (!isWindows())
 			return;
 		IFolder link = nonExistingFolderInExistingProject;
-		IPath upperCase = localFolder.setDevice(localFolder.getDevice().toUpperCase());
-		IPath lowerCase = localFolder.setDevice(localFolder.getDevice().toLowerCase());
+		IPath localLocation = resolve(localFolder);
+		IPath upperCase = localLocation.setDevice(localLocation.getDevice().toUpperCase());
+		IPath lowerCase = localLocation.setDevice(localLocation.getDevice().toLowerCase());
 
 		try {
 			link.createLink(upperCase, IResource.NONE, getMonitor());
@@ -1087,7 +1088,7 @@ public class LinkedResourceTest extends ResourceTest {
 	 */
 	public void testLocationWithColon() {
 		//windows does not allow a location with colon in the name
-		if (Platform.getOS().equals(Platform.OS_WIN32))
+		if (isWindows())
 			return;
 		IFolder folder = nonExistingFolderInExistingProject;
 		try {
