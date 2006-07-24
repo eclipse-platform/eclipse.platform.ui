@@ -135,8 +135,8 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
             return Boolean.FALSE;
         } 
         else {
-            DebugUIPlugin.preLaunchSave();
-            return Boolean.TRUE;
+            boolean cancel = DebugUIPlugin.preLaunchSave();
+            return Boolean.valueOf(cancel);
         }
     }
 	
