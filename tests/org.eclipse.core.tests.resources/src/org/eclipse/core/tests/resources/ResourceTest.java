@@ -912,7 +912,15 @@ public abstract class ResourceTest extends CoreTest {
 	 * is stored is case sensitive. This succeeds whether or not the resource
 	 * exists.
 	 */
-	protected boolean isCaseSensitive(IResource resource) {
+	protected static boolean isCaseSensitive(IResource resource) {
 		return ((Resource) resource).getStore().getFileSystem().isCaseSensitive();
+	}
+	/**
+	 * Returns whether the current platform is windows.
+	 * @return <code>true</code> if this platform is windows, and 
+	 * <code>false</code> otherwise.
+	 */
+	protected static boolean isWindows() {
+		return Platform.getOS().equals(Platform.OS_WIN32);
 	}
 }
