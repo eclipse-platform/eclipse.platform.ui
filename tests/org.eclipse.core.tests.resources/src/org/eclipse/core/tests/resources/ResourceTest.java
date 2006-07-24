@@ -85,6 +85,24 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
+	 * Returns whether the file system in which the provided resource
+	 * is stored is case sensitive. This succeeds whether or not the resource
+	 * exists.
+	 */
+	protected static boolean isCaseSensitive(IResource resource) {
+		return ((Resource) resource).getStore().getFileSystem().isCaseSensitive();
+	}
+
+	/**
+	 * Returns whether the current platform is windows.
+	 * @return <code>true</code> if this platform is windows, and 
+	 * <code>false</code> otherwise.
+	 */
+	protected static boolean isWindows() {
+		return Platform.getOS().equals(Platform.OS_WIN32);
+	}
+
+	/**
 	 * Convenience method to copy contents from one stream to another.
 	 */
 	protected static void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) {
@@ -442,6 +460,13 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Create the given file in the local store. 
 	 */
+	public void createFileInFileSystem(IFileStore file) {
+		createFileInFileSystem(file, getRandomContents());
+	}
+
+	/**
+	 * Create the given file in the local store. 
+	 */
 	public void createFileInFileSystem(IFileStore file, InputStream contents) {
 		OutputStream output = null;
 		try {
@@ -453,13 +478,6 @@ public abstract class ResourceTest extends CoreTest {
 		} finally {
 			assertClose(output);
 		}
-	}
-
-	/**
-	 * Create the given file in the local store. 
-	 */
-	public void createFileInFileSystem(IFileStore file) {
-		createFileInFileSystem(file, getRandomContents());
 	}
 
 	/**
@@ -735,8 +753,10 @@ public abstract class ResourceTest extends CoreTest {
 		String m = getClassName() + ".modifyInFileSystem(IFile): ";
 		String newContent = readStringInFileSystem(file) + "f";
 		IPath location = file.getLocation();
-		if (location == null)
+		if (location == null) {
 			fail("0.1 - null location for file: " + file);
+			return;
+		}
 		java.io.File osFile = location.toFile();
 		try {
 			FileOutputStream os = null;
@@ -776,8 +796,10 @@ public abstract class ResourceTest extends CoreTest {
 		String m = getClassName() + ".readBytesInFileSystem(IFile): ";
 		try {
 			IPath location = file.getLocation();
-			if (location == null)
+			if (location == null) {
 				fail("0.1 - null location for file: " + file);
+				return null;
+			}
 			java.io.File osFile = location.toFile();
 			FileInputStream is = new FileInputStream(osFile);
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -836,6 +858,28 @@ public abstract class ResourceTest extends CoreTest {
 		return null;
 	}
 
+	protected void setReadOnly(IFileStore target, boolean value) {
+		assertTrue("setReadOnly.1", usingNatives());
+		IFileInfo fileInfo = target.fetchInfo();
+		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, value);
+		try {
+			target.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
+		} catch (CoreException e) {
+			fail("ResourceTest#setReadOnly", e);
+		}
+	}
+
+	protected void setReadOnly(IResource target, boolean value) {
+		ResourceAttributes attributes = target.getResourceAttributes();
+		assertNotNull("setReadOnly for null attributes", attributes);
+		attributes.setReadOnly(value);
+		try {
+			target.setResourceAttributes(attributes);
+		} catch (CoreException e) {
+			fail("ResourceTest#setReadOnly", e);
+		}
+	}
+
 	/**
 	 * The environment should be set-up in the main method.
 	 */
@@ -883,44 +927,5 @@ public abstract class ResourceTest extends CoreTest {
 		} catch (InterruptedException e) {
 			//ignore
 		}
-	}
-
-	protected void setReadOnly(IResource target, boolean value) {
-		ResourceAttributes attributes = target.getResourceAttributes();
-		assertNotNull("setReadOnly for null attributes", attributes);
-		attributes.setReadOnly(value);
-		try {
-			target.setResourceAttributes(attributes);
-		} catch (CoreException e) {
-			fail("ResourceTest#setReadOnly", e);
-		}
-	}
-
-	protected void setReadOnly(IFileStore target, boolean value) {
-		assertTrue("setReadOnly.1", usingNatives());
-		IFileInfo fileInfo = target.fetchInfo();
-		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, value);
-		try {
-			target.putInfo(fileInfo, EFS.SET_ATTRIBUTES, null);
-		} catch (CoreException e) {
-			fail("ResourceTest#setReadOnly", e);
-		}
-	}
-
-	/**
-	 * Returns whether the file system in which the provided resource
-	 * is stored is case sensitive. This succeeds whether or not the resource
-	 * exists.
-	 */
-	protected static boolean isCaseSensitive(IResource resource) {
-		return ((Resource) resource).getStore().getFileSystem().isCaseSensitive();
-	}
-	/**
-	 * Returns whether the current platform is windows.
-	 * @return <code>true</code> if this platform is windows, and 
-	 * <code>false</code> otherwise.
-	 */
-	protected static boolean isWindows() {
-		return Platform.getOS().equals(Platform.OS_WIN32);
 	}
 }
