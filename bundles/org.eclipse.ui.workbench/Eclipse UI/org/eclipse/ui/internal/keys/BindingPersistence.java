@@ -439,7 +439,7 @@ final class BindingPersistence extends PreferencePersistence {
 					.setActiveScheme(bindingManager
 							.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
 		} catch (final NotDefinedException e) {
-			// Damn, we're fucked.
+			//this is bad - the default default scheme should always exist
 			throw new Error(
 					"The default default active scheme id is not defined."); //$NON-NLS-1$
 		}
