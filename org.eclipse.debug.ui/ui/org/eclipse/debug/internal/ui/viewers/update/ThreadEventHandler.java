@@ -62,6 +62,9 @@ public class ThreadEventHandler extends DebugEventHandler {
 	protected void handleSuspend(DebugEvent event) {
         IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
+			if (event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
+				return;
+			}
         	ModelDelta delta = buildRootDelta();
     		ModelDelta node = addPathToThread(delta, thread);
     		node = node.addNode(thread, IModelDelta.NO_CHANGE);
