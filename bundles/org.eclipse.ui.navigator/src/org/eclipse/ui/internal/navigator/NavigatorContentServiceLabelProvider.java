@@ -304,7 +304,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		 
 		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(elementPath.getLastSegment());
 		reusableLabel.reset(label);
-		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && !reusableLabel.hasChanged(); ) {			 
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && !(reusableLabel.isValid() && reusableLabel.hasChanged()); ) {			 
 			findUpdateLabel((NavigatorContentExtension)itr.next(), reusableLabel, elementPath);			 
 		}
 		reusableLabel.fill(label);

@@ -78,7 +78,7 @@ public class ReusableViewerLabel extends ViewerLabel {
 	 * @return True if the text is non-null and non-zero in length.
 	 */
 	public boolean isValid() {
-		return getText() != null && getText().length() > 0;
+		return getText() != null && getText().length() > 0 && getImage() != null;
 
 	}
 
