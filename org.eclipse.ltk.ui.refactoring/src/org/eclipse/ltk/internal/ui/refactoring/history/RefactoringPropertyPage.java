@@ -298,7 +298,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	private boolean hasSharedRefactoringHistory() {
 		final IProject project= getCurrentProject();
 		if (project != null)
-			return RefactoringHistoryService.getInstance().hasSharedRefactoringHistory(project);
+			return RefactoringHistoryService.hasSharedRefactoringHistory(project);
 		return false;
 	}
 
@@ -329,14 +329,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		if (fManager != null)
 			try {
 				fManager.applyChanges();
-				final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-				final boolean history= service.hasSharedRefactoringHistory(project);
+				final boolean history= RefactoringHistoryService.hasSharedRefactoringHistory(project);
 				if (history != fHasProjectHistory && project != null) {
 					final Job job= new Job(history ? RefactoringUIMessages.RefactoringPropertyPage_sharing_refactoring_history : RefactoringUIMessages.RefactoringPropertyPage_unsharing_refactoring_history) {
 
 						public final IStatus run(final IProgressMonitor monitor) {
 							try {
-								service.setSharedRefactoringHistory(project, history, monitor);
+								RefactoringHistoryService.setSharedRefactoringHistory(project, history, monitor);
 							} catch (CoreException exception) {
 								RefactoringUIPlugin.log(exception);
 								return exception.getStatus();

@@ -56,7 +56,7 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 					if (name != null && !"".equals(name)) { //$NON-NLS-1$
 						final IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 						if (project.isAccessible()) {
-							if (RefactoringHistoryService.getInstance().hasSharedRefactoringHistory(project)) {
+							if (RefactoringHistoryService.hasSharedRefactoringHistory(project)) {
 								final URI uri= project.getLocationURI();
 								if (uri != null) {
 									try {

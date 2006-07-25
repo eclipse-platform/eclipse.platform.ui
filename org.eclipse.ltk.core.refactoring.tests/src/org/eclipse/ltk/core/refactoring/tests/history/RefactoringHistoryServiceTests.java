@@ -188,7 +188,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		final IEclipsePreferences preferences= new ProjectScope(fProject.getProject()).getNode(RefactoringCore.ID_PLUGIN);
 		preferences.put(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.toString(shared));
 		preferences.flush();
-		RefactoringHistoryService.getInstance().setSharedRefactoringHistory(fProject.getProject(), shared, null);
+		RefactoringHistoryService.setSharedRefactoringHistory(fProject.getProject(), shared, null);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		service.connect();
 		fProject= new SimpleTestProject();
 		setSharedRefactoringHistory(true);
-		assertTrue("Refactoring history should be shared", service.hasSharedRefactoringHistory(fProject.getProject()));
+		assertTrue("Refactoring history should be shared", RefactoringHistoryService.hasSharedRefactoringHistory(fProject.getProject()));
 		IFolder folder= fProject.getProject().getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER);
 		assertTrue("Refactoring history folder should not exist.", !folder.exists());
 		setUpTestProjectRefactorings();
@@ -614,13 +614,13 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		final IProject project= fProject.getProject();
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		RefactoringHistory previousHistory= service.getProjectHistory(project, null);
-		assertTrue("Refactoring history should be shared", service.hasSharedRefactoringHistory(project));
+		assertTrue("Refactoring history should be shared", RefactoringHistoryService.hasSharedRefactoringHistory(project));
 		IFolder folder= fProject.getProject().getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER);
 		assertTrue("Refactoring history folder should exist.", folder.exists());
 		setSharedRefactoringHistory(false);
 		RefactoringHistory nextHistory= service.getProjectHistory(project, null);
 		assertEquals("Refactoring history should be the same:", previousHistory, nextHistory);
-		assertFalse("Refactoring history should not be shared", service.hasSharedRefactoringHistory(project));
+		assertFalse("Refactoring history should not be shared", RefactoringHistoryService.hasSharedRefactoringHistory(project));
 		assertFalse("Refactoring history folder should not exist.", folder.exists());
 	}
 
@@ -628,19 +628,19 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		final IProject project= fProject.getProject();
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		RefactoringHistory previousHistory= service.getProjectHistory(project, null);
-		assertTrue("Refactoring history should be shared", service.hasSharedRefactoringHistory(project));
+		assertTrue("Refactoring history should be shared", RefactoringHistoryService.hasSharedRefactoringHistory(project));
 		IFolder folder= fProject.getProject().getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER);
 		assertTrue("Refactoring history folder should exist.", folder.exists());
 		setSharedRefactoringHistory(false);
 		RefactoringHistory nextHistory= service.getProjectHistory(project, null);
 		assertEquals("Refactoring history should be the same:", previousHistory, nextHistory);
-		assertFalse("Refactoring history should not be shared", service.hasSharedRefactoringHistory(project));
+		assertFalse("Refactoring history should not be shared", RefactoringHistoryService.hasSharedRefactoringHistory(project));
 		assertFalse("Refactoring history folder should not exist.", folder.exists());
 		setSharedRefactoringHistory(true);
 		RefactoringHistory lastHistory= service.getProjectHistory(project, null);
 		assertEquals("Refactoring history should be the same:", previousHistory, lastHistory);
 		assertEquals("Refactoring history should be the same:", nextHistory, lastHistory);
-		assertTrue("Refactoring history should be shared", service.hasSharedRefactoringHistory(project));
+		assertTrue("Refactoring history should be shared", RefactoringHistoryService.hasSharedRefactoringHistory(project));
 		assertTrue("Refactoring history folder should exist.", folder.exists());
 	}
 

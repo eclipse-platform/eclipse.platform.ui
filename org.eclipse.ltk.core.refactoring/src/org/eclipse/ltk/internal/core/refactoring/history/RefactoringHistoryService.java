@@ -669,6 +669,105 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		return fInstance;
 	}
 
+	/**
+	 * Returns whether a project has a shared refactoring history.
+	 * 
+	 * @param project
+	 *            the project to test
+	 * @return <code>true</code> if the project has a shared project history,
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean hasSharedRefactoringHistory(final IProject project) {
+		Assert.isNotNull(project);
+		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
+		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
+		if (preference != null)
+			return Boolean.valueOf(preference).booleanValue();
+		return false;
+	}
+
+	/**
+	 * Determines whether a project has a shared refactoring history.
+	 * <p>
+	 * If a shared refactoring history is enabled, refactorings executed on that
+	 * particular project are stored in a hidden refactoring history folder of
+	 * the project folder. If no shared refactoring history is enabled, all
+	 * refactorings are tracked as well, but persisted internally in a
+	 * plugin-specific way without altering the project.
+	 * </p>
+	 * <p>
+	 * Note: this method simply copies the content of the refactoring history
+	 * folder to the location corresponding to the shared history setting.
+	 * Clients wishing to programmatically change the refactoring history
+	 * location have to update the preference
+	 * {@link RefactoringPreferenceConstants#PREFERENCE_SHARED_REFACTORING_HISTORY}
+	 * located in the preference store of the
+	 * <code>org.eclipse.ltk.core.refactoring</code> plugin accordingly.
+	 * </p>
+	 * 
+	 * @param project
+	 *            the project to set the shared refactoring history property
+	 * @param enable
+	 *            <code>true</code> to enable a shared refactoring history,
+	 *            <code>false</code> otherwise
+	 * @param monitor
+	 *            the progress monitor to use, or <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while changing the shared refactoring
+	 *             history property. Reasons include:
+	 *             <ul>
+	 *             <li>An I/O error occurs while changing the shared
+	 *             refactoring history property.</li>
+	 *             </ul>
+	 */
+	public static void setSharedRefactoringHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(project);
+		Assert.isTrue(project.isAccessible());
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
+		try {
+			monitor.beginTask("", 300); //$NON-NLS-1$
+			final String name= project.getName();
+			final URI uri= project.getLocationURI();
+			if (uri != null) {
+				try {
+					final IFileStore history= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
+					if (enable) {
+						final IFileStore source= history.getChild(name);
+						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
+								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
+							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						}
+					} else {
+						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
+						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
+							IFileStore destination= history.getChild(name);
+							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
+								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
+							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
+							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
+						}
+					}
+				} finally {
+					if (enable)
+						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
+					else {
+						final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
+						if (folder.exists())
+							folder.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
 	/** The execution listeners */
 	private final List fExecutionListeners= new ArrayList(2);
 
@@ -1213,23 +1312,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/**
-	 * Returns whether a project has a shared refactoring history.
-	 * 
-	 * @param project
-	 *            the project to test
-	 * @return <code>true</code> if the project has a shared project history,
-	 *         <code>false</code> otherwise
-	 */
-	public boolean hasSharedRefactoringHistory(final IProject project) {
-		Assert.isNotNull(project);
-		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
-		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
-		if (preference != null)
-			return Boolean.valueOf(preference).booleanValue();
-		return false;
-	}
-
-	/**
 	 * Reads refactoring descriptor proxies from the input stream.
 	 * <p>
 	 * Note that calling this method with a flag argument unequal to
@@ -1358,88 +1440,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		fUndoStack.setComment(proxy, comment, monitor);
-	}
-
-	/**
-	 * Determines whether a project has a shared refactoring history.
-	 * <p>
-	 * If a shared refactoring history is enabled, refactorings executed on that
-	 * particular project are stored in a hidden refactoring history folder of
-	 * the project folder. If no shared refactoring history is enabled, all
-	 * refactorings are tracked as well, but persisted internally in a
-	 * plugin-specific way without altering the project.
-	 * </p>
-	 * <p>
-	 * Note: this method simply copies the content of the refactoring history
-	 * folder to the location corresponding to the shared history setting.
-	 * Clients wishing to programmatically change the refactoring history
-	 * location have to update the preference
-	 * {@link RefactoringPreferenceConstants#PREFERENCE_SHARED_REFACTORING_HISTORY}
-	 * located in the preference store of the
-	 * <code>org.eclipse.ltk.core.refactoring</code> plugin accordingly.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project to set the shared refactoring history property
-	 * @param enable
-	 *            <code>true</code> to enable a shared refactoring history,
-	 *            <code>false</code> otherwise
-	 * @param monitor
-	 *            the progress monitor to use, or <code>null</code>
-	 * @throws CoreException
-	 *             if an error occurs while changing the shared refactoring
-	 *             history property. Reasons include:
-	 *             <ul>
-	 *             <li>An I/O error occurs while changing the shared
-	 *             refactoring history property.</li>
-	 *             </ul>
-	 */
-	public void setSharedRefactoringHistory(final IProject project, final boolean enable, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(project);
-		Assert.isTrue(project.isAccessible());
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
-		try {
-			monitor.beginTask("", 300); //$NON-NLS-1$
-			final String name= project.getName();
-			final URI uri= project.getLocationURI();
-			if (uri != null) {
-				try {
-					final IFileStore history= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(NAME_HISTORY_FOLDER);
-					if (enable) {
-						final IFileStore source= history.getChild(name);
-						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
-							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
-								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
-							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-						}
-					} else {
-						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-						if (source.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists()) {
-							IFileStore destination= history.getChild(name);
-							if (destination.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 20)).exists())
-								destination.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							destination.mkdir(EFS.NONE, new SubProgressMonitor(monitor, 20));
-							source.copy(destination, EFS.OVERWRITE, new SubProgressMonitor(monitor, 20));
-							source.delete(EFS.NONE, new SubProgressMonitor(monitor, 20));
-						}
-					}
-				} finally {
-					if (enable)
-						project.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
-					else {
-						final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
-						if (folder.exists())
-							folder.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 30));
-					}
-				}
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 
 	/**
