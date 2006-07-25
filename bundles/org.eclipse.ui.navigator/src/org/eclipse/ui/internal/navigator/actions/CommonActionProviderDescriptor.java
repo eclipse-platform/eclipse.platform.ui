@@ -11,9 +11,11 @@
 package org.eclipse.ui.internal.navigator.actions;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
@@ -32,15 +34,10 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
 import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
 import org.eclipse.ui.navigator.CommonActionProvider;
+import org.eclipse.ui.navigator.Priority;
 
 /**
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
+ *  
  * 
  * @since 3.2
  */
@@ -75,6 +72,8 @@ public class CommonActionProviderDescriptor implements
 
 	private String toString;
 
+	private Priority priority;
+
 	/**
 	 * @param aConfigElement
 	 *            A configuration element with the name "actionProvider" and a
@@ -97,6 +96,7 @@ public class CommonActionProviderDescriptor implements
 	 * @param anEnablementExpression
 	 *            A configuration element with the name 'enablement' or
 	 *            'triggerPoints' and containing an Eclipse Core Expression
+	 * @param defaultPriority 
 	 * @param anOverrideId
 	 *            A unique identifier for this descriptor. Ids can be used as a
 	 *            filtering device for activities or viewer***Bindings.
@@ -107,7 +107,7 @@ public class CommonActionProviderDescriptor implements
 	 *            /&gt; element.
 	 */
 	public CommonActionProviderDescriptor(IConfigurationElement aConfigElement,
-			IConfigurationElement anEnablementExpression, String anOverrideId,
+			IConfigurationElement anEnablementExpression, Priority defaultPriority, String anOverrideId,
 			boolean nestedUnderNavigatorContent) {
 		super();
 		Assert.isTrue(TAG_ACTION_PROVIDER.equals(aConfigElement.getName()));
@@ -118,6 +118,7 @@ public class CommonActionProviderDescriptor implements
 		enablementElement = anEnablementExpression;
 		visibilityId = anOverrideId;
 		isNested = nestedUnderNavigatorContent;
+		priority = defaultPriority;
 		init();
 	}
 
@@ -157,7 +158,8 @@ public class CommonActionProviderDescriptor implements
 						TAG_ENABLEMENT
 						+ " in navigator extension: " + //$NON-NLS-1$
 						configurationElement.getDeclaringExtension()
-								.getUniqueIdentifier());
+								.getUniqueIdentifier() + " in plugin " + //$NON-NLS-1$ 
+								configurationElement.getDeclaringExtension().getNamespaceIdentifier());
 			}
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
@@ -308,15 +310,47 @@ public class CommonActionProviderDescriptor implements
 	public String getOverridesId() {
 		return overridesId;
 	}
+	
+	/**
+	 * Only nested Action Providers have priority (as of 3.2.1). 
+	 * 
+	 * @return The priority associated with this Action Provider Descriptor. 
+	 */
+	public Priority getPriority() {
+		return priority;
+	}
+
+
+	public int hashCode() {
+		final int PRIME = 31;
+		int result = 1;
+		result = PRIME * result + ((definedId == null) ? 0 : definedId.hashCode());
+		result = PRIME * result + ((visibilityId == null) ? 0 : visibilityId.hashCode());
+		return result;
+	}
 
 	public boolean equals(Object obj) {
-
-		if (obj != null && obj instanceof CommonActionProviderDescriptor) {
-			CommonActionProviderDescriptor other = (CommonActionProviderDescriptor) obj;
-			return getId().equals(other.getId());
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final CommonActionProviderDescriptor other = (CommonActionProviderDescriptor) obj;
+		if (definedId == null) {
+			if (other.definedId != null)
+				return false;
+		} else if (!definedId.equals(other.definedId))
+			return false;
+		if (visibilityId == null) {
+			if (other.visibilityId != null)
+				return false;
+		} else if (!visibilityId.equals(other.visibilityId))
+			return false;
+		return true;
 	} 
+	
+	 
 
 	protected void addDependentDescriptor(
 			CommonActionProviderDescriptor dependentDescriptor) {
@@ -331,7 +365,7 @@ public class CommonActionProviderDescriptor implements
 			CommonActionProviderDescriptor overridingDescriptor) {
 		Assert.isTrue(this != overridingDescriptor);
 		if (overridingDescriptors == null) {
-			overridingDescriptors = new LinkedHashSet();
+			overridingDescriptors = new TreeSet(CommonActionProviderDescriptorCompator.INSTANCE);
 		}
 		overridingDescriptors.add(overridingDescriptor);
 	}
@@ -355,9 +389,52 @@ public class CommonActionProviderDescriptor implements
 
 	public String toString() {
 		if (toString == null) {
-			toString = "CommonActionProviderDescriptor[" + getId() + ", dependsOn=" + getDependsOnId() + ", overrides=" + getOverridesId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+			toString = "CommonActionProviderDescriptor[definedId=" + getDefinedId() + ", visibilityId=" + getId() + ", dependsOn=" + getDependsOnId() + ", overrides=" + getOverridesId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		return toString;
+	} 
+
+	
+	/**
+	 * Sorts CommonActionProviderDescriptors by priority, and then by defined id. 
+	 * @since 3.2
+	 *
+	 */
+	public static class CommonActionProviderDescriptorCompator implements Comparator { 
+
+		/**
+		 * The singleton instance.
+		 */
+		public static final CommonActionProviderDescriptorCompator INSTANCE = new CommonActionProviderDescriptorCompator();
+		
+		private static final int LESS_THAN = -1;
+		private static final int EQUALS = 0; 
+		
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object o1, Object o2) {
+			CommonActionProviderDescriptor lvalue= null, rvalue= null;
+			
+			if(o1 instanceof CommonActionProviderDescriptor)
+				lvalue = (CommonActionProviderDescriptor) o1;
+			
+			if(o2 instanceof CommonActionProviderDescriptor)
+				rvalue = (CommonActionProviderDescriptor) o2;
+			
+			if(lvalue == null || rvalue == null)
+				return LESS_THAN;
+			if(lvalue.equals(rvalue))
+				return EQUALS;
+			int comparison = lvalue.getPriority().getValue() - rvalue.getPriority().getValue();
+			if(comparison == 0) 
+				return lvalue.getDefinedId().compareTo(rvalue.getDefinedId());
+			return comparison;
+			
+		}
+		
+		 
 	}
 
 }
+ 
