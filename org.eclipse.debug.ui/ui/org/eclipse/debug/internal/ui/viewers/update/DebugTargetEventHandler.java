@@ -40,7 +40,11 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleChange(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.STATE);
+		int flags = IModelDelta.STATE;
+		if (event.getDetail() == DebugEvent.CONTENT) {
+			flags = flags | IModelDelta.CONTENT;
+		}
+		fireDelta((IDebugTarget) event.getSource(), flags);
 	}
 
 	protected void handleCreate(DebugEvent event) {
