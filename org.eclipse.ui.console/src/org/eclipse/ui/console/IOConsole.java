@@ -13,6 +13,7 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -245,9 +246,24 @@ public class IOConsole extends TextConsole {
     protected void dispose() {
         super.dispose();
         partitioner.disconnect();
-        try {
-            inputStream.close();
-        } catch (IOException ioe) {
+        synchronized (openStreams) {
+        	Iterator iterator = openStreams.iterator();
+        	while (iterator.hasNext()) {
+        		Object stream = iterator.next();
+        		if (stream instanceof IOConsoleInputStream) {
+					IOConsoleInputStream is = (IOConsoleInputStream) stream;
+					try {
+						is.close();
+					} catch (IOException e) {
+					}
+				} else if (stream instanceof IOConsoleOutputStream) {
+					IOConsoleOutputStream os = (IOConsoleOutputStream) stream;
+					try {
+						os.close();
+					} catch (IOException e) {
+					}					
+				}
+        	}
         }
         inputStream = null;
     }
