@@ -480,21 +480,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-				shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
+				CompletionProposalPopup popup= (CompletionProposalPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR];
+				shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
 			} else {
+				CompletionProposalPopup popup= ((CompletionProposalPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR]);
 				switch (fProposalPopupOrientation) {
 					case PROPOSAL_REMOVE: {
 						// Remove the tip selector and place the
 						// proposal selector beneath the cursor line.
 						fShells[LAYOUT_CONTEXT_SELECTOR].dispose();
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
 						break;
 					}
 					case PROPOSAL_OVERLAY: {
 						// Overlay the tip selector with the proposal selector.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
 						break;
 					}
 					case PROPOSAL_STACKED: {
@@ -511,7 +513,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void layoutContextSelector(int offset) {
 			// Always place the context selector beneath the cursor line.
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
-			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset));
+			int threshold= ((ContextInformationPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR]).getMinimalHeight();
+			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, threshold, null));
 
 			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
@@ -546,7 +549,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				case CONTEXT_INFO_BELOW: {
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset));
+					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset, 0, null));
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -637,10 +640,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
+		 * @param threshold if the space below is not sufficient but larger than threshold, the
+		 *        below location is preferred over the above location
+		 * @param popup a popup to inform if the location was switched to above, <code>null</code> to do nothing
 		 * @return the point right below <code>offset</code> in display coordinates
 		 * @since 3.3
 		 */
-		protected Rectangle computeBoundsBelowAbove(Shell shell, Point preferred, int offset) {
+		protected Rectangle computeBoundsBelowAbove(Shell shell, Point preferred, int offset, int threshold, CompletionProposalPopup popup) {
 			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
 			Display display= subjectControl.getDisplay();
 			Rectangle caret= getCaretRectangle(offset);
@@ -651,15 +657,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			int spaceAbove= caret.y - bounds.y;
 			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
 			Rectangle rect;
+			boolean switched= false;
 			if (spaceBelow >= preferred.y)
 				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, preferred.y);
-			else if (spaceAbove >= preferred.y)
-				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
-			// we can't fit in the preferred size - squeeze into larger area
-			else if (spaceBelow >= spaceAbove)
+			// squeeze in below if we have at least threshold space
+			else if (spaceBelow >= threshold)
 				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
-			else
+			else if (spaceAbove >= preferred.y) {
+				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
+				switched= true;
+			} else if (spaceBelow >= spaceAbove) {
+				// we can't fit in the preferred size - squeeze into larger area
+				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
+			} else {
 				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
+				switched= true;
+			}
+			
+			if (popup != null)
+				popup.switchedPositionToAbove(switched);
 			
 			return constrainHorizontally(rect, bounds);
 		}

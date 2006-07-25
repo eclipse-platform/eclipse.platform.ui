@@ -542,6 +542,23 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 
 	/**
+	 * Returns the minimal required height for the popup, may return 0 if the popup has not been
+	 * created yet.
+	 * 
+	 * @return the minimal height
+	 * @since 3.3
+	 */
+	int getMinimalHeight() {
+		int height= 0;
+		if (Helper.okToUse(fContextSelectorTable)) {
+			int items= fContextSelectorTable.getItemHeight() * 10;
+			Rectangle trim= fContextSelectorTable.computeTrim(0, 0, SWT.DEFAULT, items);
+			height= trim.height;
+		}
+		return height;
+	}
+
+	/**
 	 * Causes the context information of the context selected in the context selector
 	 * to be displayed in the context information popup.
 	 */

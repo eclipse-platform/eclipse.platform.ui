@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -59,6 +60,7 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -530,7 +532,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell.setSize(size);
 		} else {
 			int height= fProposalTable.getItemHeight() * 10;
-			final double aspectRatio= 4d / 3;
+			// use golden ratio as default aspect ratio
+			final double aspectRatio= (1 + Math.sqrt(5)) / 2;
 			int width= (int) (height * aspectRatio);
 			Rectangle trim= fProposalTable.computeTrim(0, 0, width, height);
 			data.heightHint= trim.height;
@@ -583,6 +586,25 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable.setHeaderVisible(false);
 		
 		addCommandSupport(fProposalTable);
+	}
+
+	/**
+	 * Returns the minimal required height for the proposal, may return 0 if the popup has not been
+	 * created yet.
+	 * 
+	 * @return the minimal height
+	 * @since 3.3
+	 */
+	int getMinimalHeight() {
+		int height= 0;
+		if (Helper.okToUse(fProposalTable)) {
+			int items= fProposalTable.getItemHeight() * 10;
+			Rectangle trim= fProposalTable.computeTrim(0, 0, SWT.DEFAULT, items);
+			height= trim.height;
+		}
+		if (Helper.okToUse(fMessageText))
+			height+= fMessageText.getSize().y + 1;
+		return height;
 	}
 
 	/**
@@ -975,7 +997,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private Point getLocation() {
 		int caret= fContentAssistSubjectControlAdapter.getCaretOffset();
-		Rectangle location= fContentAssistant.getLayoutManager().computeBoundsBelowAbove(fProposalShell, fSize == null ? fProposalShell.getSize() : fSize, caret);
+		Rectangle location= fContentAssistant.getLayoutManager().computeBoundsBelowAbove(fProposalShell, fSize == null ? fProposalShell.getSize() : fSize, caret, getMinimalHeight(), null);
 		return Geometry.getLocation(location);
 	}
 
@@ -1657,5 +1679,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fMessageText= null;
 		}
 		fProposalShell.layout();
+	}
+
+	/**
+	 * Informs the popup that it is being placed above the caret line instead of below.
+	 * 
+	 * @param above <code>true</code> if the location of the popup is above the caret line, <code>false</code> if it is below
+	 * @since 3.3
+	 */
+	void switchedPositionToAbove(boolean above) {
+		fAdditionalInfoController.setFallbackAnchors(new Anchor[] {
+				AbstractInformationControlManager.ANCHOR_RIGHT,
+				AbstractInformationControlManager.ANCHOR_LEFT,
+				above ? AbstractInformationControlManager.ANCHOR_TOP : AbstractInformationControlManager.ANCHOR_BOTTOM
+		});
 	}
 }
