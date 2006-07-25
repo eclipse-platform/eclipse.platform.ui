@@ -33,7 +33,6 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IWorkbenchPage;
@@ -104,13 +103,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	public static SearchPlugin getDefault() {
 		return fgSearchPlugin;
-	}
-
-	/*
-	 * Overrides AbstractUIPlugin#initializeDefaultPreferences
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		SearchPreferencePage.initDefaults(store);
 	}
 	
 	/**
