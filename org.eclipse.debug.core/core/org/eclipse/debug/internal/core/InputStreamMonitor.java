@@ -44,7 +44,7 @@ public class InputStreamMonitor {
 	private Object fLock;
 	
 	/**
-	 * Wether the underlying output stream has been closed
+	 * Whether the underlying output stream has been closed
 	 */
 	private boolean fClosed = false;
 	

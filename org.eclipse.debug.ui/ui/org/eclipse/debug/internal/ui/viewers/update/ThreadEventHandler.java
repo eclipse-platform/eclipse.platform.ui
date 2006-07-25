@@ -112,7 +112,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 	protected void handleTerminate(DebugEvent event) {
 		IThread thread = (IThread) event.getSource();
 		IDebugTarget target = thread.getDebugTarget();
-		// ignore thraed termination if target is terminated/disconnected
+		// ignore thread termination if target is terminated/disconnected
 		if (!(target.isTerminated() || target.isDisconnected())) {
 			fireDeltaAndClearTopFrame(thread, IModelDelta.REMOVED);
 		}
