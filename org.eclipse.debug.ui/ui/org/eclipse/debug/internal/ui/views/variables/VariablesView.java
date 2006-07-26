@@ -146,7 +146,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class VariablesView extends AbstractDebugView implements IDebugContextListener,
 																	IPropertyChangeListener,
-																	IValueDetailListener,
 																	IDebugExceptionHandler,
 																	IPerspectiveListener {
 
@@ -275,6 +274,104 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	/**
+	 * Job to compute the details for a selection
+	 */
+	class DetailJob extends Job implements IValueDetailListener {
+		
+		private IStructuredSelection fElements;
+		private boolean fFirst = true;
+		private IProgressMonitor fMonitor;
+		
+		public DetailJob(IStructuredSelection elements) {
+			super("compute variable details"); //$NON-NLS-1$
+			setSystem(true);
+			fElements = elements;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			fMonitor = monitor;
+			Iterator iterator = fElements.iterator();
+			while (iterator.hasNext()) {
+				if (monitor.isCanceled()) {
+					break;
+				}
+				Object element = iterator.next();
+				IValue val = null;
+				if (element instanceof IVariable) {
+					try {
+						val = ((IVariable)element).getValue();
+					} catch (DebugException e) {
+						detailComputed(null, e.getStatus().getMessage());
+					}
+				} else if (element instanceof IExpression) {
+					val = ((IExpression)element).getValue();
+				}
+				if (val instanceof IndexedValuePartition) {
+					val = null;
+				}
+				if (val != null && !monitor.isCanceled()) {
+					getModelPresentation().computeDetail(val, this);
+					synchronized (this) {
+						try {
+							wait();
+						} catch (InterruptedException e) {
+							break;
+						}
+					}
+				}				
+			}
+			return Status.OK_STATUS;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
+		 */
+		public void detailComputed(IValue value, final String result) {
+			if (!fMonitor.isCanceled()) {
+				WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						if (!fMonitor.isCanceled()) {
+							String insert = result;
+							int length = 0;
+							if (!fFirst) {
+								length = getDetailDocument().getLength();
+							}
+							if (length > 0) {
+								insert = "\n" + result; //$NON-NLS-1$
+							}
+							try {
+								int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+								if (max > 0 && insert.length() > max) {
+									insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
+								}
+								if (fFirst) {
+									setDetails(insert);
+									fFirst = false;
+								} else {
+									getDetailDocument().replace(length, 0,insert);
+								}
+							} catch (BadLocationException e) {
+								DebugUIPlugin.log(e);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				append.setSystem(true);
+				append.schedule();
+			}
+			synchronized (this) {
+				notifyAll();
+			}
+			
+		}
+		
+	}
+	
+	/**
 	 * The model presentation used as the label provider for the tree viewer,
 	 * and also as the detail information provider for the detail pane.
 	 */
@@ -293,6 +390,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private IDocument fDetailDocument;
 	
 	/**
+	 * Job computing details for selected variables
+	 */
+	private DetailJob fDetailsJob = null;
+	
+	/**
 	 * The identifier of the debug model that is/was being displayed
 	 * in this view. When the type of model being displayed changes,
 	 * the details area needs to be reconfigured.
@@ -303,22 +405,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * The configuration being used in the details area
 	 */
 	private SourceViewerConfiguration fSourceViewerConfiguration;
-	
-	/**
-	 * Selection currently computing details for
-	 * (workaround for bug 12938)
-	 */
-	private IStructuredSelection fValueSelection = null;
-	
-	/**
-	 * The last value for which the detail has been requested.
-	 */
-	private IValue fLastValueDetail= null;
-	
-	/**
-	 * Iterator for multi-selection details computation
-	 */
-	private Iterator fSelectionIterator = null;	
 	
 	/**
 	 * Various listeners used to update the enabled state of actions and also to
@@ -1108,17 +1194,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
                         if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
                             return;
                         }	
-                        
-                        Job job = new Job("Detail Pane Populate Job") {//$NON-NLS-1$
-                            protected IStatus run(IProgressMonitor monitor) {
-                                IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-                                populateDetailPaneFromSelection(selection);
-                                return Status.OK_STATUS;
-                            } 
-                        };
-                        job.setSystem(true);
-                        job.schedule();
-                        
+                        populateDetailPaneFromSelection((IStructuredSelection) event.getSelection());
                         treeSelectionChanged(event);
                     }
                 }					
@@ -1142,15 +1218,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (isDetailPaneVisible()) {
             Viewer viewer = getViewer();
             if (viewer != null) {
-                final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-                Job job = new Job("Populate Detail Pane") {//$NON-NLS-1$
-                    protected IStatus run(IProgressMonitor monitor) {
-                        populateDetailPaneFromSelection(selection);
-                        return Status.OK_STATUS;
-                    }
-                };
-                job.setSystem(true);
-                job.schedule();
+                IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+                populateDetailPaneFromSelection(selection);
             }
         }
     }
@@ -1159,117 +1228,22 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Show the details associated with the first of the selected variables in the 
 	 * detail pane.
 	 */
-	protected void populateDetailPaneFromSelection(final IStructuredSelection selection) {
-        setDetails(""); //$NON-NLS-1$
-		try {
-			if (!selection.isEmpty()) {
-				IValue val = null;
-				Object obj = selection.getFirstElement();
-				if (obj instanceof IndexedVariablePartition) {
-					// no details for partitions
-					return;
-				}
-                
-				if (obj instanceof IVariable) {
-					val = ((IVariable)obj).getValue();
-				} else if (obj instanceof IExpression) {
-					val = ((IExpression)obj).getValue();
-				}
-				if (val == null) {
-					return;
-				}			
-				// workaround for bug 12938
-				if (fValueSelection != null && fValueSelection.equals(selection)) {
-					return;
-				}
-				
-                final IValue finalVal = val;
-                
-                WorkbenchJob wJob = new WorkbenchJob("Populate Details Pane"){ //$NON-NLS-1$
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-                        getDetailDocument().set(""); //$NON-NLS-1$
-                        setDebugModel(finalVal.getModelIdentifier());
-                        fValueSelection = selection;
-                        fSelectionIterator = selection.iterator();
-                        fSelectionIterator.next();
-                        fLastValueDetail= finalVal;
-                        getModelPresentation().computeDetail(finalVal, VariablesView.this);        
-						return Status.OK_STATUS;
-					}
-				};
-				wJob.setSystem(true);
-				wJob.schedule();
-			} 
-		} catch (DebugException de) {
-			setDetails(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18);
-		}				
+	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
+        synchronized (this) {
+        	if (fDetailsJob != null) {
+        		fDetailsJob.cancel();
+        	}
+            fDetailsJob = new DetailJob(selection);
+            setDetails(""); //$NON-NLS-1$
+            fDetailsJob.schedule();
+        }
 	}
 
 	/**
 	 * Clears the detail pane
 	 */
 	private void setDetails(final String value) {
-		WorkbenchJob wJob = new WorkbenchJob("Populate Details Pane") { //$NON-NLS-1$
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-                getDetailDocument().set(value);        
-				return Status.OK_STATUS;
-			}
-        };
-        wJob.setSystem(true);
-        wJob.schedule();
-	}
-	
-	/**
-	 * @see IValueDetailListener#detailComputed(IValue, String)
-	 */
-	public void detailComputed(final IValue value, final String result) {
-		Runnable runnable = new Runnable() {
-			public void run() {
-				if (isAvailable()) {
-					// bug 24862
-					// don't display the result if an other detail has been
-					// requested
-					if (value == fLastValueDetail) {
-						String insert = result;
-						int length = getDetailDocument().getLength();
-						if (length > 0) {
-							insert = "\n" + result; //$NON-NLS-1$
-						}
-						try {
-							int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
-							if (max > 0 && insert.length() > max) {
-								insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
-							}
-							getDetailDocument().replace(length, 0,insert);
-						} catch (BadLocationException e) {
-							DebugUIPlugin.log(e);
-						}
-						fLastValueDetail= null;
-					}
-					
-					if (fSelectionIterator != null && fSelectionIterator.hasNext()) {
-						Object obj = fSelectionIterator.next();
-						IValue val = null;
-						try {
-							if (obj instanceof IVariable) {
-								val = ((IVariable)obj).getValue();
-							} else if (obj instanceof IExpression) {
-								val = ((IExpression)obj).getValue();
-							}
-							fLastValueDetail= val;
-							getModelPresentation().computeDetail(val, VariablesView.this);
-						} catch (DebugException e) {
-							DebugUIPlugin.log(e);
-							getDetailDocument().set(VariablesViewMessages.VariablesView__error_occurred_retrieving_value__18); 	
-						}
-					} else {
-						fValueSelection = null;
-						fSelectionIterator = null;
-					}							
-				}
-			}
-		};
-		asyncExec(runnable);		
+       getDetailDocument().set(value);        
 	}
 	
 	/**

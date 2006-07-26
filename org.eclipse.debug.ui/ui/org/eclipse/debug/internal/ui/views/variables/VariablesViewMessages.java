@@ -17,7 +17,6 @@ public class VariablesViewMessages extends NLS {
 
 	public static String VariablesView__Copy_8;
 	public static String VariablesView__Paste_14;
-	public static String VariablesView__error_occurred_retrieving_value__18;
 	public static String VariablesView_Co_ntent_Assist_3;
 	public static String VariablesView_Cu_t_11;
 	public static String VariablesView_Error_1;
