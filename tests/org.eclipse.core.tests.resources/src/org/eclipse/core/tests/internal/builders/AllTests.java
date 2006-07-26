@@ -23,13 +23,14 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
+		suite.addTest(BuilderCycleTest.suite());
 		suite.addTest(BuilderEventTest.suite());
+		suite.addTest(BuilderNatureTest.suite());
 		suite.addTest(BuilderTest.suite());
 		suite.addTest(BuildDeltaVerificationTest.suite());
-		suite.addTest(MultiProjectBuildTest.suite());
-		suite.addTest(BuilderNatureTest.suite());
-		suite.addTest(BuilderCycleTest.suite());
 		suite.addTest(CustomBuildTriggerTest.suite());
+		suite.addTest(EmptyDeltaTest.suite());
+		suite.addTest(MultiProjectBuildTest.suite());
 		return suite;
 	}
 }
