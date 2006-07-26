@@ -24,6 +24,7 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 	
 	private IHistoryPageSite site;
 	private Object input;
+	private IHistoryView historyView;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.history.IHistoryPage#setSite(org.eclipse.team.ui.history.IHistoryPageSite)
@@ -62,4 +63,20 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 	 * @return <code>true</code> if the page was able to display the contents, <code>false</code> otherwise
 	 */
 	public abstract boolean inputSet();
+	
+	
+	public void setHistoryView(IHistoryView historyView){
+		this.historyView=historyView;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#getHistoryView()
+	 */
+	public IHistoryView getHistoryView() {
+		if (historyView != null)
+			return historyView;
+		
+		return null;
+	}
+	
 }

@@ -455,6 +455,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 					}
 					if (tempPageContainer != null) {
 						if (((IHistoryPage) tempPageContainer.getPage()).setInput(resource)){
+							((HistoryPage) tempPageContainer.getPage()).setHistoryView(this);
 							setContentDescription(resource.getName());
 							showPageRec(tempPageContainer);
 							return (IHistoryPage) tempPageContainer.getPage();
@@ -491,6 +492,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 						return pinnedPage;
 					
 					if (((IHistoryPage) tempPageContainer.getPage()).setInput(object)){
+						((HistoryPage) tempPageContainer.getPage()).setHistoryView(this);
 						setContentDescription(((IHistoryPage) tempPageContainer.getPage()).getName());
 						showPageRec(tempPageContainer);
 						return (IHistoryPage) tempPageContainer.getPage();
