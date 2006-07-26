@@ -1688,10 +1688,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.3
 	 */
 	void switchedPositionToAbove(boolean above) {
-		fAdditionalInfoController.setFallbackAnchors(new Anchor[] {
-				AbstractInformationControlManager.ANCHOR_RIGHT,
-				AbstractInformationControlManager.ANCHOR_LEFT,
-				above ? AbstractInformationControlManager.ANCHOR_TOP : AbstractInformationControlManager.ANCHOR_BOTTOM
-		});
+		if (fAdditionalInfoController != null) {
+			fAdditionalInfoController.setFallbackAnchors(new Anchor[] {
+					AbstractInformationControlManager.ANCHOR_RIGHT,
+					AbstractInformationControlManager.ANCHOR_LEFT,
+					above ? AbstractInformationControlManager.ANCHOR_TOP : AbstractInformationControlManager.ANCHOR_BOTTOM
+			});
+		}
 	}
 }

@@ -481,7 +481,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				// so place the proposal selector beneath the cursor line.
 				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
 				CompletionProposalPopup popup= (CompletionProposalPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR];
-				shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
+				shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup));
 			} else {
 				CompletionProposalPopup popup= ((CompletionProposalPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR]);
 				switch (fProposalPopupOrientation) {
@@ -490,13 +490,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 						// proposal selector beneath the cursor line.
 						fShells[LAYOUT_CONTEXT_SELECTOR].dispose();
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup));
 						break;
 					}
 					case PROPOSAL_OVERLAY: {
 						// Overlay the tip selector with the proposal selector.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
-						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup.getMinimalHeight(), popup));
+						shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, popup));
 						break;
 					}
 					case PROPOSAL_STACKED: {
@@ -513,8 +513,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void layoutContextSelector(int offset) {
 			// Always place the context selector beneath the cursor line.
 			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
-			int threshold= ((ContextInformationPopup) fPopups[LAYOUT_PROPOSAL_SELECTOR]).getMinimalHeight();
-			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, threshold, null));
+			shell.setBounds(computeBoundsBelowAbove(shell, shell.getSize(), offset, null));
 
 			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
@@ -549,7 +548,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				case CONTEXT_INFO_BELOW: {
 					// Place the popup beneath the cursor line.
 					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
-					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset, 0, null));
+					parent.setBounds(computeBoundsBelowAbove(parent, parent.getSize(), offset, null));
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
 						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
@@ -640,13 +639,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
-		 * @param threshold if the space below is not sufficient but larger than threshold, the
-		 *        below location is preferred over the above location
 		 * @param popup a popup to inform if the location was switched to above, <code>null</code> to do nothing
 		 * @return the point right below <code>offset</code> in display coordinates
 		 * @since 3.3
 		 */
-		protected Rectangle computeBoundsBelowAbove(Shell shell, Point preferred, int offset, int threshold, CompletionProposalPopup popup) {
+		protected Rectangle computeBoundsBelowAbove(Shell shell, Point preferred, int offset, CompletionProposalPopup popup) {
 			Control subjectControl= fContentAssistSubjectControlAdapter.getControl();
 			Display display= subjectControl.getDisplay();
 			Rectangle caret= getCaretRectangle(offset);
@@ -654,6 +651,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			Rectangle bounds= monitor.getClientArea();
 			Geometry.moveInside(caret, bounds);
 
+			int threshold= popup == null ? Integer.MAX_VALUE : popup.getMinimalHeight();
 			int spaceAbove= caret.y - bounds.y;
 			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
 			Rectangle rect;
