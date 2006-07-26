@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,14 +50,14 @@ public final class DeviceResourceManager extends AbstractResourceManager {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractSwtRegistry#allocate(org.eclipse.jface.resource.SwtResourceDescriptor)
+     * @see org.eclipse.jface.resource.AbstractResourceManager#allocate(org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
     protected Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException {
         return descriptor.createResource(device);
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractSwtRegistry#deallocate(java.lang.Object, org.eclipse.jface.resource.SwtResourceDescriptor)
+     * @see org.eclipse.jface.resource.AbstractResourceManager#deallocate(java.lang.Object, org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
     protected void deallocate(Object resource, DeviceResourceDescriptor descriptor) {
         descriptor.destroyResource(resource);

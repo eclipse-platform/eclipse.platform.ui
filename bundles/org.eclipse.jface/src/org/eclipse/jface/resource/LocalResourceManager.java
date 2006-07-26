@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * A local registry that shares its resources with some global registry.
- * NestedSWTRegistry is typically used to safeguard against leaks. Clients
+ * LocalResourceManager is typically used to safeguard against leaks. Clients
  * can use a nested registry to allocate and deallocate resources in the
  * global registry. Calling dispose() on the nested registry will deallocate
  * everything allocated for the nested registry without affecting the rest
@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
  * A nested registry can be used to manage the resources for, say, a dialog
  * box.
  * </p>
- * 
  * @since 3.1
  */
 public final class LocalResourceManager extends AbstractResourceManager {
@@ -76,7 +75,7 @@ public final class LocalResourceManager extends AbstractResourceManager {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractSwtRegistry#allocate(org.eclipse.jface.resource.SwtResourceDescriptor)
+     * @see org.eclipse.jface.resource.AbstractResourceManager#allocate(org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
     protected Object allocate(DeviceResourceDescriptor descriptor)
             throws DeviceResourceException {
@@ -84,7 +83,7 @@ public final class LocalResourceManager extends AbstractResourceManager {
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.AbstractSwtRegistry#deallocate(java.lang.Object, org.eclipse.jface.resource.SwtResourceDescriptor)
+     * @see org.eclipse.jface.resource.AbstractResourceManager#deallocate(java.lang.Object, org.eclipse.jface.resource.DeviceResourceDescriptor)
      */
     protected void deallocate(Object resource,
             DeviceResourceDescriptor descriptor) {

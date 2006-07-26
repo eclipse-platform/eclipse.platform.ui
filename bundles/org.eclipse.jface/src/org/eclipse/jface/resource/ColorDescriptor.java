@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,14 +90,14 @@ public abstract class ColorDescriptor extends DeviceResourceDescriptor {
     public abstract void destroyColor(Color toDestroy);
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.SwtResourceDescriptor#create(org.eclipse.swt.graphics.Device)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#createResource(org.eclipse.swt.graphics.Device)
      */
     public final Object createResource(Device device) throws DeviceResourceException {
         return createColor(device);
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.SwtResourceDescriptor#destroy(java.lang.Object)
+     * @see org.eclipse.jface.resource.DeviceResourceDescriptor#destroyResource(java.lang.Object)
      */
     public final void destroyResource(Object previouslyCreatedObject) {
         destroyColor((Color)previouslyCreatedObject);
