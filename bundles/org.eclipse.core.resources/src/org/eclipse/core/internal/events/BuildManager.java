@@ -137,17 +137,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// If no tree is available we have to do a full build
 			if (!clean && lastBuiltTree == null)
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
-			boolean fullBuild = trigger == IncrementalProjectBuilder.FULL_BUILD;
 			// Grab a pointer to the current state before computing the delta
-			currentTree = fullBuild ? null : workspace.getElementTree();
+			currentTree = trigger == IncrementalProjectBuilder.FULL_BUILD ? null : workspace.getElementTree();
 			int depth = -1;
 			try {
-				//don't build if this builder doesn't respond to the given trigger
-				boolean needsBuild = builder.getCommand().isBuilding(trigger);
 				//short-circuit if none of the projects this builder cares about have changed.
-				if (needsBuild && !clean && !fullBuild && !needsBuild(currentBuilder))
-					needsBuild = false;
-				if (!needsBuild) {
+				if (!needsBuild(currentBuilder, trigger)) {
 					//use up the progress allocated for this builder
 					monitor.beginTask("", 1); //$NON-NLS-1$
 					monitor.done();
@@ -435,6 +430,15 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	public void endTopLevel(boolean needsBuild) {
 		autoBuildJob.build(needsBuild);
+	}
+
+	/**
+	 * Returns the value of the boolean configuration element attribute with the
+	 * given name, or <code>false</code> if the attribute is missing.
+	 */
+	private boolean getBooleanAttribute(IConfigurationElement element, String name) {
+		String valueString = element.getAttribute(name);
+		return valueString != null && valueString.equalsIgnoreCase(Boolean.TRUE.toString());
 	}
 
 	/**
@@ -746,9 +750,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		IConfigurationElement[] configs = extension.getConfigurationElements();
 		if (configs.length == 0)
 			return null;
-		String hasNature = configs[0].getAttribute("hasNature"); //$NON-NLS-1$
 		String natureId = null;
-		if (hasNature != null && hasNature.equalsIgnoreCase(Boolean.TRUE.toString())) {
+		if (getBooleanAttribute(configs[0], "hasNature")) { //$NON-NLS-1$
 			//find the nature that owns this builder
 			String builderId = extension.getUniqueIdentifier();
 			natureId = workspace.getNatureManager().findNatureForBuilder(builderId);
@@ -757,9 +760,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		//The nature exists, or this builder doesn't specify a nature
 		InternalBuilder builder = (InternalBuilder) configs[0].createExecutableExtension("run"); //$NON-NLS-1$
-		builder.setPluginId(extension.getNamespace());
+		builder.setPluginId(extension.getContributor().getName());
 		builder.setLabel(extension.getLabel());
 		builder.setNatureId(natureId);
+		builder.setCallOnEmptyDelta(getBooleanAttribute(configs[0], "callOnEmptyDelta")); //$NON-NLS-1$
 		return (IncrementalProjectBuilder) builder;
 	}
 
@@ -798,7 +802,22 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * computing project deltas and invoking builders for projects that haven't
 	 * changed.
 	 */
-	private boolean needsBuild(InternalBuilder builder) {
+	private boolean needsBuild(InternalBuilder builder, int trigger) {
+		//don't build if this builder doesn't respond to the given trigger
+		if (!builder.getCommand().isBuilding(trigger))
+			return false;
+		//on some triggers we build regardless of the delta
+		switch (trigger) {
+			case IncrementalProjectBuilder.CLEAN_BUILD:
+				return true;
+			case IncrementalProjectBuilder.FULL_BUILD:
+				return true;
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+				if (currentBuilder.callOnEmptyDelta())
+					return true;
+				//fall through and check if there is a delta
+		}
+		
 		//compute the delta since the last built state
 		ElementTree oldTree = builder.getLastBuiltTree();
 		ElementTree newTree = workspace.getElementTree();

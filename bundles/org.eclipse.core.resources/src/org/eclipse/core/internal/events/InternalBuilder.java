@@ -39,12 +39,23 @@ public abstract class InternalBuilder {
 	 */
 	private String pluginId;
 	private IProject project;
+	
+	/**
+	 * The value of the callOnEmptyDelta builder extension attribute.
+	 */
+	private boolean callOnEmptyDelta = false;
 
 	/*
 	 *  @see IncrementalProjectBuilder#build
 	 */
 	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * Returns the value of the callOnEmptyDelta builder extension attribute.
+	 */
+	final boolean callOnEmptyDelta() {
+		return callOnEmptyDelta;
+	}
 	/*
 	 * @see IncrementalProjectBuilder
 	 */
@@ -129,6 +140,10 @@ public abstract class InternalBuilder {
 	 */
 	protected void needRebuild() {
 		buildManager.requestRebuild();
+	}
+	
+	final void setCallOnEmptyDelta(boolean value) {
+		this.callOnEmptyDelta = value;
 	}
 
 	final void setCommand(ICommand value) {
