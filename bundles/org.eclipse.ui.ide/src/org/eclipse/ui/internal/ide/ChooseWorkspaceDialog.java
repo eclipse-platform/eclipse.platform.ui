@@ -218,7 +218,15 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         	public void modifyText(ModifyEvent e) {
         		Button okButton = getButton(Window.OK);
         		if(okButton != null && !okButton.isDisposed()) {
-        			okButton.setEnabled(!"".equals(text.getText())); //$NON-NLS-1$
+        			boolean nonWhitespaceFound = false;
+					String characters = text.getText();
+					for (int i = 0; !nonWhitespaceFound
+							&& i < characters.length(); i++) {
+						if (!Character.isWhitespace(characters.charAt(i))) {
+							nonWhitespaceFound = true;
+						}
+					}
+        			okButton.setEnabled(nonWhitespaceFound);
         		}
         	}
         });
