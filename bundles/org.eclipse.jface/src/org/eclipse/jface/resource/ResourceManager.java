@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,8 +55,9 @@ public abstract class ResourceManager {
     /**
      * Returns the resource described by the given descriptor. If the resource already
      * exists, the reference count is incremented and the exiting resource is returned.
-     * Otherwise, a new resource is allocated. Every call to create(...) should have
-     * a corresponding call to dispose(...).  
+     * Otherwise, a new resource is allocated. Every call to this method must have
+     * a corresponding call to {@link #destroy(DeviceResourceDescriptor)}, or 
+     * an eventual call to {@link #dispose()}.
      * 
      * @since 3.1 
      *
@@ -67,9 +68,10 @@ public abstract class ResourceManager {
     public abstract Object create(DeviceResourceDescriptor descriptor) throws DeviceResourceException;
     
     /**
-     * Deallocates a resource previously allocated by create(...). Descriptors are compared
-     * by equality, not identity. If the same resource was created multiple times, this may
-     * decrement a reference count rather than disposing the actual resource.  
+     * Deallocates a resource previously allocated by {@link #create(DeviceResourceDescriptor)}. 
+     * Descriptors are compared by equality, not identity. If the same resource was 
+     * created multiple times, this may decrement a reference count rather than 
+     * disposing the actual resource.  
      * 
      * @since 3.1 
      *
@@ -79,7 +81,8 @@ public abstract class ResourceManager {
     
     /**
      * Creates an image, given an image descriptor. Images allocated in this manner must
-     * be disposed by disposeImage, and never by calling Image.dispose().
+     * be disposed by {@link #destroyImage(ImageDescriptor)}, and never by calling 
+     * {@link Image#dispose()}.
      * 
      * @since 3.1 
      *
@@ -97,7 +100,8 @@ public abstract class ResourceManager {
     
     /**
      * Creates an image, given an image descriptor. Images allocated in this manner must
-     * be disposed by disposeImage, and never by calling Image.dispose().
+     * be disposed by {@link #destroyImage(ImageDescriptor)}, and never by calling 
+     * {@link Image#dispose()}.
      * 
      * @since 3.1 
      *
@@ -139,7 +143,7 @@ public abstract class ResourceManager {
     protected abstract Image getDefaultImage();
 
     /**
-     * Undoes everything that was done by createImage(...).
+     * Undoes everything that was done by {@link #createImage(ImageDescriptor)}.
      * 
      * @since 3.1 
      *
@@ -151,8 +155,9 @@ public abstract class ResourceManager {
 
     /**
      * Allocates a color, given a color descriptor. Any color allocated in this
-     * manner must be disposed by calling disposeColor(...) and never by calling 
-     * Color.dispose() directly.
+     * manner must be disposed by calling {@link #destroyColor(ColorDescriptor)}, 
+     * or by an eventual call to {@link #dispose()}. {@link Color#dispose()} must
+     * never been called directly on the returned color.
      * 
      * @since 3.1 
      *
@@ -165,9 +170,10 @@ public abstract class ResourceManager {
     }
 
     /**
-     * Allocates a color, given its RGB values. Any color allocated in this
-     * manner must be disposed by calling disposeColor(...) and never by calling 
-     * Color.dispose() directly.
+     * Allocates a color, given its RGB value. Any color allocated in this
+     * manner must be disposed by calling {@link #destroyColor(RGB)}, 
+     * or by an eventual call to {@link #dispose()}. {@link Color#dispose()} must
+     * never been called directly on the returned color.
      * 
      * @since 3.1 
      *
@@ -180,7 +186,7 @@ public abstract class ResourceManager {
     }
     
     /**
-     * Undoes everything that was done by a call to createColor(...).
+     * Undoes everything that was done by a call to {@link #createColor(RGB)}.
      * 
      * @since 3.1 
      *
@@ -191,7 +197,8 @@ public abstract class ResourceManager {
     }
 
     /**
-     * Undoes everything that was done by a call to createColor(...).
+     * Undoes everything that was done by a call to {@link #createColor(ColorDescriptor)}.
+     * 
      * 
      * @since 3.1 
      *
@@ -203,8 +210,9 @@ public abstract class ResourceManager {
     
     /**
      * Returns the Font described by the given FontDescriptor. Any Font
-     * allocated in this manner must be deallocated by calling disposeFont(...) and
-     * never by calling Font.dispose() directly.
+     * allocated in this manner must be deallocated by calling disposeFont(...),
+     * or by an eventual call to {@link #dispose()}.  The method {@link Font#dispose()}
+     * must never be called directly on the returned font.
      * 
      * @since 3.1 
      *
@@ -217,7 +225,7 @@ public abstract class ResourceManager {
     }
     
     /**
-     * Undoes everything that was done by a previous call to createFont().
+     * Undoes everything that was done by a previous call to {@link #createFont(FontDescriptor)}.
      * 
      * @since 3.1 
      *
@@ -235,7 +243,7 @@ public abstract class ResourceManager {
             return;
         }
         
-        // If one of the runnables throws an exception, we need to propogate it.
+        // If one of the runnables throws an exception, we need to propagate it.
         // However, this should not prevent the remaining runnables from being 
         // notified. If any runnables throw an exception, we remember one of them
         // here and throw it at the end of the method.
@@ -248,14 +256,14 @@ public abstract class ResourceManager {
             try {
                 exec.run();
             } catch (RuntimeException e) {
-                // Ensure that we propogate an exception, but don't stop notifying
+                // Ensure that we propagate an exception, but don't stop notifying
                 // the remaining runnables.
                 foundException = e;
             }
         }
         
         if (foundException != null) {
-            // If any runnables threw an exception, propogate one of them.
+            // If any runnables threw an exception, propagate one of them.
             throw foundException;
         }
     }
@@ -274,7 +282,7 @@ public abstract class ResourceManager {
     /**
      * Causes the <code>run()</code> method of the runnable to
      * be invoked just before the receiver is disposed. The runnable
-     * can be subsequently cancelled by a call to <code>cancelDisposeExec</code>.
+     * can be subsequently canceled by a call to <code>cancelDisposeExec</code>.
      * 
      * @param r runnable to execute.
      */
