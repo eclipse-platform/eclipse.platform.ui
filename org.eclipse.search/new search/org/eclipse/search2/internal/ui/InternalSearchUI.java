@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
@@ -307,11 +308,10 @@ public class InternalSearchUI {
 		if (query == null) {
 			throw new IllegalArgumentException();
 		}
-		
-		int historyLimit= SearchPreferencePage.getHistoryLimit();
-		
+			
 		QueryManager searchManager= getSearchManager();
-		while (searchManager.getSize() >= historyLimit) {
+		int removeCount= searchManager.getSize() + 1 - SearchPreferencePage.getHistoryLimit();
+		for (int i = 0; i < removeCount; i++) {
 			ISearchQuery oldestQuery= searchManager.getOldestQuery();
 			if (oldestQuery != null) {
 				removeQuery(oldestQuery);
