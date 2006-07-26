@@ -1201,8 +1201,8 @@
             id="org.eclipse.team.ccvs.ui.AnnotateView"/>
      <!-- CVS View Actions -->
     <command
-            name="%newLocation.namen"
-            description="%newLocation.descriptionn"
+            name="%newLocation.name"
+            description="%newLocation.description"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             id="org.eclipse.team.cvs.ui.addLocation"/>
      <!-- CVS Menu Commands -->
