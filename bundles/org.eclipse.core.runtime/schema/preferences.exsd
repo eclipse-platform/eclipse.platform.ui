@@ -143,7 +143,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The preference service (obtained by calling &lt;code&gt;org.eclipse.core.runtime.Platform.getPreferencesService()&lt;/code&gt;) is the hook into the Eclipse preference mechanism.
+         Supplied preference initializers must subclass &lt;code&gt;org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer&lt;/code&gt;.  Preference modify listeners must subclass &lt;code&gt;org.eclipse.core.runtime.preferences.PreferenceModifyListener&lt;/code&gt;. The preference service (obtained by calling &lt;code&gt;org.eclipse.core.runtime.Platform.getPreferencesService()&lt;/code&gt;) is the hook into the Eclipse preference mechanism.
       </documentation>
    </annotation>
 
