@@ -64,6 +64,11 @@
       <run class="org.eclipse.core.tests.internal.builders.ClearMarkersBuilder"/>
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="emptydeltabuilder" name="Empty Delta Builder">
+    <builder callOnEmptyDelta="true">
+      <run class="org.eclipse.core.tests.internal.builders.EmptyDeltaBuilder"/>
+    </builder>
+  </extension>
   
 <extension
       id="simpleNature"
