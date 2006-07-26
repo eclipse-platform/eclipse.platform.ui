@@ -298,13 +298,21 @@ public class LocalHistoryPage extends HistoryPage {
 	protected void fillTableMenu(IMenuManager manager) {
 		// file actions go first (view file)
 		IHistoryPageSite parentSite = getHistoryPageSite();
-		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		if (file != null && !parentSite.isModal()){
 			manager.add(openAction);
 			manager.add(compareAction);
-			manager.add(new Separator());
-			manager.add(getContentsAction);
+			ISelection sel = treeViewer.getSelection();
+			if (!sel.isEmpty()) {
+				if (sel instanceof IStructuredSelection) {
+					IStructuredSelection tempSelection = (IStructuredSelection) sel;
+					if (tempSelection.size() == 1) {
+						manager.add(new Separator("getContents")); //$NON-NLS-1$
+						manager.add(getContentsAction);
+					}
+				}
+			}
 		}
 	}
 
