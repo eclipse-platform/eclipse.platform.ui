@@ -2,6 +2,8 @@ package org.eclipse.ui.internal.texteditor;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
@@ -12,6 +14,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -26,10 +29,13 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.rulers.RulerColumn;
 
 public class AnnotationColumn extends RulerColumn {
+	/** The contribution id of the annotation ruler. */
+	public static final String ID= "org.eclipse.ui.editors.columns.annotations"; //$NON-NLS-1$
 	/** The width of the vertical ruler. */
 	private final static int VERTICAL_RULER_WIDTH= 12;
+
 	
-	private final AnnotationRulerColumn fDelegate= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess());
+	private IVerticalRulerColumn fDelegate;
 	private final MarkerAnnotationPreferences fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 	private PropertyEventDispatcher fDispatcher;
 
@@ -79,8 +85,11 @@ public class AnnotationColumn extends RulerColumn {
 	 * Initializes the given line number ruler column from the preference store.
 	 */
 	private void initialize() {
+		if (fDelegate == null)
+			fDelegate= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess());
 		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
+		if (store != null && fDelegate instanceof AnnotationRulerColumn) {
+			final AnnotationRulerColumn column= (AnnotationRulerColumn) fDelegate;
 			// initial set up
 			for (Iterator iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
 				AnnotationPreference preference= (AnnotationPreference)iter2.next();
@@ -89,9 +98,9 @@ public class AnnotationColumn extends RulerColumn {
 				if (key != null && store.contains(key))
 					showAnnotation= store.getBoolean(key);
 				if (showAnnotation)
-					fDelegate.addAnnotationType(preference.getAnnotationType());
+					column.addAnnotationType(preference.getAnnotationType());
 			}
-			fDelegate.addAnnotationType(Annotation.TYPE_UNKNOWN);
+			column.addAnnotationType(Annotation.TYPE_UNKNOWN);
 			
 			// link to preference store
 			IPropertyChangeListener pcl= new IPropertyChangeListener() {
@@ -101,10 +110,10 @@ public class AnnotationColumn extends RulerColumn {
 					if (annotationPreference != null && event.getNewValue() instanceof Boolean) {
 						Object type= annotationPreference.getAnnotationType();
 						if (((Boolean)event.getNewValue()).booleanValue())
-							fDelegate.addAnnotationType(type);
+							column.addAnnotationType(type);
 						else
-							fDelegate.removeAnnotationType(type);
-						fDelegate.redraw();
+							column.removeAnnotationType(type);
+						column.redraw();
 					}
 				}
 			};
@@ -134,5 +143,11 @@ public class AnnotationColumn extends RulerColumn {
 
 	private IPreferenceStore getPreferenceStore() {
 		return EditorsUI.getPreferenceStore();
+	}
+
+	public void setDelegate(IVerticalRulerColumn column) {
+		Assert.isLegal(fDelegate == null);
+		Assert.isLegal(column != null);
+		fDelegate= column;
 	}
 }

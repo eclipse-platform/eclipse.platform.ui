@@ -152,7 +152,8 @@ public final class DAG {
 	}
 
 	/**
-	 * Returns the sources of the receiver. A source is a vertex with no incoming edges.
+	 * Returns the sources of the receiver. A source is a vertex with no incoming edges. The
+	 * returned set's iterator traverses the nodes in the order they were added to the graph.
 	 * 
 	 * @return the sources of the receiver
 	 */
@@ -161,7 +162,8 @@ public final class DAG {
 	}
 
 	/**
-	 * Returns the sinks of the receiver. A sink is a vertex with no outgoing edges.
+	 * Returns the sinks of the receiver. A sink is a vertex with no outgoing edges. The returned
+	 * set's iterator traverses the nodes in the order they were added to the graph.
 	 * 
 	 * @return the sinks of the receiver
 	 */

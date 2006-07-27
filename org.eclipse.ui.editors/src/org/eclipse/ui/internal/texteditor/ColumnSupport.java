@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.rulers;
+package org.eclipse.ui.internal.texteditor;
 
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
  * 
  * @since 3.3
  */
-public final class ColumnSupport implements IColumnSupport {
+public class ColumnSupport implements IColumnSupport {
 //	/*
 //	 * FIXME add support for non-contributed but well-known columns:
 //	 * - projection
@@ -58,6 +58,13 @@ public final class ColumnSupport implements IColumnSupport {
 	private final AbstractTextEditor fEditor;
 	private final RulerColumnRegistry fRegistry;
 
+	/**
+	 * Creates a new column support for the given editor. Only the editor itself should normally
+	 * create such an instance.
+	 * 
+	 * @param editor the editor
+	 * @param registry the contribution registry to refer to
+	 */
 	public ColumnSupport(AbstractTextEditor editor, RulerColumnRegistry registry) {
 		Assert.isLegal(editor != null);
 		Assert.isLegal(registry != null);
@@ -68,7 +75,7 @@ public final class ColumnSupport implements IColumnSupport {
 	/*
 	 * @see org.eclipse.ui.texteditor.IColumnSupport#setColumnVisible(java.lang.String, boolean)
 	 */
-	public void setColumnVisible(RulerColumnDescriptor descriptor, boolean visible) {
+	public final void setColumnVisible(RulerColumnDescriptor descriptor, boolean visible) {
 		Assert.isLegal(descriptor != null);
 
 		final CompositeRuler ruler= getRuler();
@@ -94,10 +101,19 @@ public final class ColumnSupport implements IColumnSupport {
 		SafeRunnable runnable= new SafeRunnable() {
 			public void run() throws Exception {
 				RulerColumn column= descriptor.createColumn(fEditor);
+				initializeColumn(column);
 				ruler.addDecorator(idx, column);
 			}
 		};
 		SafeRunner.run(runnable);
+	}
+
+	/**
+	 * Hook to let subclasses initialize a newly created column.
+	 * 
+	 * @param column the created column
+	 */
+	protected void initializeColumn(RulerColumn column) {
 	}
 
 	private void removeColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
@@ -159,7 +175,7 @@ public final class ColumnSupport implements IColumnSupport {
 	/*
 	 * @see org.eclipse.ui.texteditor.IColumnSupport#isColumnVisible(java.lang.String)
 	 */
-	public boolean isColumnVisible(RulerColumnDescriptor descriptor) {
+	public final boolean isColumnVisible(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
 		CompositeRuler ruler= getRuler();
 		return ruler != null && getVisibleColumn(ruler, descriptor) != null;
@@ -168,7 +184,7 @@ public final class ColumnSupport implements IColumnSupport {
 	/*
 	 * @see org.eclipse.ui.texteditor.IColumnSupport#isColumnSupported(java.lang.String)
 	 */
-	public boolean isColumnSupported(RulerColumnDescriptor descriptor) {
+	public final boolean isColumnSupported(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
 		if (getRuler() == null)
 			return false;

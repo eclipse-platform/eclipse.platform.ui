@@ -68,8 +68,9 @@ public abstract class RulerColumn implements IVerticalRulerColumn {
 	}
 
 	/**
-	 * Returns the editor targeted by this ruler instance.
-	 *  
+	 * Returns the editor targeted by this ruler instance, may return <code>null</code> before the
+	 * receiver is fully initialized.
+	 * 
 	 * @return the editor targeted by this ruler instance
 	 */
 	protected final ITextEditor getEditor() {

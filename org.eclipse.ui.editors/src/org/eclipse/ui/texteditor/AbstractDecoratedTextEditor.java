@@ -115,6 +115,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.internal.texteditor.AnnotationColumn;
+import org.eclipse.ui.internal.texteditor.ColumnSupport;
 import org.eclipse.ui.internal.texteditor.StringSetSerializer;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
@@ -124,6 +126,7 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
+import org.eclipse.ui.texteditor.rulers.RulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
@@ -259,6 +262,23 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	private RevisionInformation fRevisionInfo;
+	/**
+	 * The column support of this editor.
+	 * @since 3.3
+	 */
+	private final IColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
+		/*
+		 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.RulerColumn)
+		 */
+		protected void initializeColumn(RulerColumn column) {
+			RulerColumnDescriptor descriptor= column.getDescriptor();
+			if (AnnotationColumn.ID.equals(descriptor.getId())) {
+				IVerticalRuler ruler= getVerticalRuler();
+				if (ruler instanceof CompositeRuler)
+					((AnnotationColumn) column).setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
+			}
+		}
+	};
 
 	/**
 	 * Creates a new text editor.
@@ -1095,7 +1115,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				initializeChangeRulerColumn(getChangeColumn());
 			}
 			
-			if (PREFERENCE_RULER_COLUMNS.equals(property)) {
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS.equals(property)) {
 				String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
 				IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
 				for (int i= 0; i < difference.length; i++) {
@@ -1416,6 +1436,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			if (revisionColumn instanceof LineNumberChangeRulerColumn)
 				return ((LineNumberChangeRulerColumn) revisionColumn).getRevisionSelectionProvider();
 		}
+		
+		if (IColumnSupport.class.equals(adapter))
+			return fColumnSupport;
 	
 		return super.getAdapter(adapter);
 	
@@ -1702,7 +1725,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// store directly in generic editor preferences
 		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, PREFERENCE_RULER_COLUMNS);
+		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS);
 		List descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
 		for (Iterator t= descriptors.iterator(); t.hasNext();) {
 			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) t.next();
@@ -1926,7 +1949,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected void addRulerContributions(CompositeRuler ruler) {
 		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
-		RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(EditorsUI.getPreferenceStore(), PREFERENCE_RULER_COLUMNS);
+		RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS);
 		IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
 		List descriptors= registry.getColumnDescriptors();
 		for (Iterator it= descriptors.iterator(); it.hasNext();) {

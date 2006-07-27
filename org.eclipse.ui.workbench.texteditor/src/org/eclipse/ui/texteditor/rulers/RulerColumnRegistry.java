@@ -188,12 +188,9 @@ public final class RulerColumnRegistry {
 	private void sort(List descriptors) {
 		/*
 		 * Topological sort of the DAG defined by the plug-in dependencies
-		 * 1. Sort descriptors by plug-in dependency
+		 * 1. TopoSort descriptors by plug-in dependency
 		 * 2. Insert into Directed Acyclic Graph
-		 * 3. Flatten DAG:
-		 * 	- start with all root nodes (nodes without incoming arrows)
-		 * 	- pick the node with the lowest weight as the next one
-		 * 	- remove the node from the DAG 
+		 * 3. TopoSort DAG: pick the source with the lowest weight and remove from DAG
 		 */
 		ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
 			public IConfigurationElement getConfigurationElement(Object object) {

@@ -151,16 +151,12 @@ import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-import org.eclipse.ui.internal.texteditor.rulers.ColumnSupport;
 import org.eclipse.ui.operations.LinearUndoViolationUserApprover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.texteditor.rulers.IColumnSupport;
-import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
-import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 
 
 /**
@@ -1580,18 +1576,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	public static final String PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK= "hyperlinkKeyModifierMask"; //$NON-NLS-1$
-	/**
-	 * A named preference that controls the visible ruler column contributions.
-	 * <p>
-	 * Value is of type <code>String</code> and should be read using a {@link RulerColumnPreferenceAdapter}.
-	 * </p>
-	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
-	 * </p>
-	 *
-	 * @since 3.3
-	 */
-	public static final String PREFERENCE_RULER_COLUMNS= "rulerColumns"; //$NON-NLS-1$
 
 
 	/** Menu id for the editor context menu. */
@@ -1914,11 +1898,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	private IOperationApprover fLinearUndoViolationApprover;
-	/**
-	 * The column support of this editor.
-	 * @since 3.3
-	 */
-	private IColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault());
 
 
 	/**
@@ -4835,9 +4814,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (Control.class.equals(required))
 			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
-			
-		if (IColumnSupport.class.equals(required))
-			return fColumnSupport;
 
 		return super.getAdapter(required);
 	}
