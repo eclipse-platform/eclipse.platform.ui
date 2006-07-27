@@ -12,8 +12,24 @@ package org.eclipse.ui.texteditor;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -25,41 +41,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -96,6 +77,32 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
+import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -106,14 +113,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
-import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
-import org.eclipse.ui.internal.editors.text.NLSUtility;
+import org.eclipse.ui.internal.texteditor.StringSetSerializer;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
@@ -121,6 +121,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
+import org.eclipse.ui.texteditor.rulers.IColumnSupport;
+import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
+import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
+import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
@@ -229,10 +233,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private boolean fIsChangeInformationShown;
 	/**
-	 * The annotation ruler column used in the vertical ruler.
-	 */
-	private AnnotationRulerColumn fAnnotationRulerColumn;
-	/**
 	 * The editor's implicit document provider.
 	 */
 	private IDocumentProvider fImplicitDocumentProvider;
@@ -298,7 +298,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
-		fAnnotationRulerColumn= null;
 
 		super.dispose();
 	}
@@ -367,6 +366,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		super.createPartControl(parent);
 		if (fSourceViewerDecorationSupport != null)
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
+
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler)
+			addRulerContributions((CompositeRuler) ruler);
 
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
@@ -574,7 +577,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		IChangeRulerColumn changeColumn= getChangeColumn();
 		if (changeColumn != null)
-			changeColumn.setModel(m);
+			changeColumn.setModel(m); // picks up the new model attachment
 		
 		return true;
 	}
@@ -940,13 +943,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the created line number column
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
+		fLineNumberRulerColumn= new LineNumberChangeRulerColumn(getSharedColors());
 		if (isPrefQuickDiffAlwaysOn()) {
-			LineNumberChangeRulerColumn column= new LineNumberChangeRulerColumn(getSharedColors());
-			column.setHover(createChangeHover());
-			initializeChangeRulerColumn(column);
-			fLineNumberRulerColumn= column;
-		} else {
-			fLineNumberRulerColumn= new LineNumberRulerColumn();
+			((IChangeRulerColumn) fLineNumberRulerColumn).setHover(createChangeHover());
+			initializeChangeRulerColumn((IChangeRulerColumn) fLineNumberRulerColumn);
 		}
 		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
 		return fLineNumberRulerColumn;
@@ -988,28 +988,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @see AbstractTextEditor#createVerticalRuler()
 	 */
 	protected IVerticalRuler createVerticalRuler() {
-		CompositeRuler ruler= createCompositeRuler();
-		IPreferenceStore store= getPreferenceStore();
-		if (ruler != null && store != null) {
-			for (Iterator iter=  ruler.getDecoratorIterator(); iter.hasNext();) {
-				IVerticalRulerColumn column= (IVerticalRulerColumn)iter.next();
-				if (column instanceof AnnotationRulerColumn) {
-					fAnnotationRulerColumn= (AnnotationRulerColumn)column;
-					for (Iterator iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
-						AnnotationPreference preference= (AnnotationPreference)iter2.next();
-						String key= preference.getVerticalRulerPreferenceKey();
-						boolean showAnnotation= true;
-						if (key != null && store.contains(key))
-							showAnnotation= store.getBoolean(key);
-						if (showAnnotation)
-							fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
-					}
-					fAnnotationRulerColumn.addAnnotationType(Annotation.TYPE_UNKNOWN);
-					break;
-				}
-			}
-		}
-		return ruler;
+		return createCompositeRuler();
 	}
 
 	/**
@@ -1020,8 +999,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected CompositeRuler createCompositeRuler() {
 		CompositeRuler ruler= new CompositeRuler();
-		ruler.addDecorator(0, createAnnotationRulerColumn(ruler));
 
+		// XXX replace hard-coded positions with ColumnSupport ordering
 		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
 		else if (isPrefQuickDiffAlwaysOn())
@@ -1114,6 +1093,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				initializeChangeRulerColumn(getChangeColumn());
 			}
 			
+			if (PREFERENCE_RULER_COLUMNS.equals(property)) {
+				String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
+				IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+				for (int i= 0; i < difference.length; i++) {
+					RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
+					if (desc != null &&  support.isColumnSupported(desc)) {
+						boolean newState= !support.isColumnVisible(desc);
+						support.setColumnVisible(desc, newState);
+					}
+				}
+			}
+
 			if (AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR.equals(property)) {
 				if (isRangeIndicatorEnabled()) {
 					getSourceViewer().setRangeIndicator(getRangeIndicator());
@@ -1136,16 +1127,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			}
 
-			AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
-			if (annotationPreference != null && event.getNewValue() instanceof Boolean) {
-				Object type= annotationPreference.getAnnotationType();
-				if (((Boolean)event.getNewValue()).booleanValue())
-					fAnnotationRulerColumn.addAnnotationType(type);
-				else
-					fAnnotationRulerColumn.removeAnnotationType(type);
-				getVerticalRuler().update();
-			}
-
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}
@@ -1162,26 +1143,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			AnnotationPreference pref= (AnnotationPreference) iter.next();
 			if (colorKey.equals(pref.getColorPreferenceKey()))
 				return pref;
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the annotation preference for which the given
-	 * preference matches a vertical ruler preference key.
-	 *
-	 * @param preferenceKey the preference key string
-	 * @return the annotation preference or <code>null</code> if none
-	 */
-	private AnnotationPreference getVerticalRulerAnnotationPreference(String preferenceKey) {
-		if (preferenceKey == null)
-			return null;
-
-		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
-			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey()))
-				return info;
 		}
 		return null;
 	}
@@ -1682,6 +1643,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 
 		super.rulerContextMenuAboutToShow(menu);
+		
+		addRulerContributionActions(menu);
 
 		/* quick diff */
 		if (isEditorInputModifiable()) {
@@ -1726,7 +1689,40 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, new Separator(ITextEditorActionConstants.GROUP_SETTINGS));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 	}
-
+	
+	/**
+	 * Adds "show" actions for all contributed rulers that support it.
+	 * 
+	 * @param menu the ruler context menu
+	 * @since 3.3
+	 */
+	private void addRulerContributionActions(IMenuManager menu) {
+		// store directly in generic editor preferences
+		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, PREFERENCE_RULER_COLUMNS);
+		List descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
+		for (Iterator t= descriptors.iterator(); t.hasNext();) {
+			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) t.next();
+			if (!descriptor.isIncludedInMenu())
+				continue;
+			final boolean isVisible= support.isColumnVisible(descriptor);
+			IAction action= new Action(("Show " + descriptor.getName()), IAction.AS_CHECK_BOX) {
+				public void run() {
+					if (descriptor.isGlobal())
+						// column state is modified via preference listener of AbstractTextEditor
+						adapter.setEnabled(descriptor, !isVisible);
+					else
+						// directly modify column for this editor instance
+						support.setColumnVisible(descriptor, !isVisible);
+				}
+			};
+			action.setChecked(isVisible);
+			action.setImageDescriptor(descriptor.getIcon());
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, action);
+		}
+	}
+	
 	/**
 	 * Toggles the line number global preference and shows the line number ruler
 	 * accordingly.
@@ -1915,6 +1911,26 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			} finally {
 				fIsUpdatingMarkerViews= false;
 			}
+		}
+	}
+
+	/**
+	 * Adds enabled ruler contributions to the vertical ruler. Clients may extend or replace.
+	 * <p>
+	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * </p>
+	 * @param ruler the composite ruler to add contributions to
+	 * @since 3.3
+	 */
+	protected void addRulerContributions(CompositeRuler ruler) {
+		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
+		RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(EditorsUI.getPreferenceStore(), PREFERENCE_RULER_COLUMNS);
+		IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+		List descriptors= registry.getColumnDescriptors();
+		for (Iterator it= descriptors.iterator(); it.hasNext();) {
+			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) it.next();
+			if (adapter.isEnabled(descriptor))
+				support.setColumnVisible(descriptor, true);
 		}
 	}
 }

@@ -872,4 +872,17 @@
       </factory>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.rulerColumn">
+      <column
+            class="org.eclipse.ui.internal.texteditor.AnnotationColumn"
+            enabled="true"
+            global="true"
+            id="org.eclipse.ui.editors.columns.annotations"
+            includeInMenu="false"
+            name="Annotations">
+         <placement weight="0.5"/>
+      </column>
+   </extension>
+   
 </plugin>

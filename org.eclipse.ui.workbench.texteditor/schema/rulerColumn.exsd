@@ -1,0 +1,262 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.workbench.texteditor">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="rulerColumn" name="Ruler Column"/>
+      </appInfo>
+      <documentation>
+         Ruler column contributions are line based information areas shown at text editor sides.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="column"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="column">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            The specification of a ruler column contribution. Rulers without target specification are considered to target all editors and content types.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+	        <choice minOccurs="0" maxOccurs="unbounded">
+              <element ref="targetEditor"/>
+              <element ref="targetContentType"/>
+            </choice>
+            <element ref="placement"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique id of the column. The id should be in the namespace of the contributing plug-in.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  An optional name of the column, may be used in the user interface (e.g. in preference pages).
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  An optional icon for the column. May be used in the user interface, for example on preference pages.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class implementing the column that extends <code>org.eclipse.ui.texteditor.rulers.RulerColumn</code>.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  The default enablement state of this column.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="global" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  The enablement behavior of this column. If true, the column is enabled globally, if false, it can be enabled per editor instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="includeInMenu" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Whether to include a "Show/Hide" menu entry for this column. If true, an entry is added, if false, there is no way for the user to turn on the column.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="targetEditor">
+      <annotation>
+         <documentation>
+            Describes an editor that the column is contributed to.  See the &lt;tt&gt;org.eclipse.ui.editors&lt;/tt&gt; extension point.Note that the rulerColumn extension point is typically only supported by line based text editors.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The editor id of the target editor.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="targetContentType">
+      <annotation>
+         <documentation>
+            Describes a content type that the column is contributed to. See the &lt;tt&gt;org.eclipse.core.runtime.contentTypes&lt;/tt&gt; extension point. Note that the rulerColumn extension point is typically only supported by line based text editors.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the target content type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="placement">
+      <annotation>
+         <documentation>
+            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their weight within their slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <choice>
+               <element ref="before"/>
+               <element ref="after"/>
+            </choice>
+         </sequence>
+         <attribute name="weight" use="default" value="1.0">
+            <annotation>
+               <documentation>
+                  The weight of the column placement request. Within one placement slot, columns with lower weight are placed further away from the editor area (leftwards in left-to-right environments), columns with higher weight are placed closer to the editor area (rightwards in left-to-right environments). The weight must be a float number between 0.0 and 100.0. By default, 100.0 is assumed.
+               </documentation>
+            </annotation>
+            <simpleType>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="before">
+      <annotation>
+         <documentation>
+            Requests placement before another column.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="after">
+      <annotation>
+         <documentation>
+            Requests placement after another column.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

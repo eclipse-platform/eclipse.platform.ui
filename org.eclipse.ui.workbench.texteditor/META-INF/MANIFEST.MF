@@ -14,6 +14,7 @@ Export-Package:
  org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer;x-internal:=true,
  org.eclipse.ui.internal.texteditor.spelling;x-internal:=true,
  org.eclipse.ui.texteditor,
+ org.eclipse.ui.texteditor.rulers,
  org.eclipse.ui.texteditor.link,
  org.eclipse.ui.texteditor.quickdiff,
  org.eclipse.ui.texteditor.spelling,

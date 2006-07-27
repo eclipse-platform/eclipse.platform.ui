@@ -549,6 +549,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 * @param rulerColumn the decorator to be inserted
 	 */
 	public void addDecorator(int index, IVerticalRulerColumn rulerColumn) {
+		rulerColumn.setModel(getModel());
+
 		if (index > fDecorators.size())
 			fDecorators.add(rulerColumn);
 		else
