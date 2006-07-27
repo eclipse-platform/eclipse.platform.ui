@@ -134,6 +134,10 @@ public final class ColumnSupport implements IColumnSupport {
 	 * @return the insertion index for a new column
 	 */
 	private int computeIndex(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
+		// annotation column is the leftmost column XXX remove once line numbers are contributed as well
+		if ("org.eclipse.ui.editors.columns.annotations".equals(descriptor.getId())) { //$NON-NLS-1$
+			return 0;
+		}
 		int index= 0;
 		List all= fRegistry.getColumnDescriptors();
 		int newPos= all.indexOf(descriptor);

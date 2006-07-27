@@ -63,6 +63,7 @@ public abstract class RulerColumn implements IVerticalRulerColumn {
 	 * @param editor the editor targeted by this ruler instance
 	 */
 	final void setEditor(ITextEditor editor) {
+		Assert.isLegal(editor != null);
 		fEditor= editor;
 	}
 

@@ -167,7 +167,7 @@
                <element ref="after"/>
             </choice>
          </sequence>
-         <attribute name="weight" use="default" value="1.0">
+         <attribute name="weight" type= "string" use="default" value="1.0">
             <annotation>
                <documentation>
                   The weight of the column placement request. Within one placement slot, columns with lower weight are placed further away from the editor area (leftwards in left-to-right environments), columns with higher weight are placed closer to the editor area (rightwards in left-to-right environments). The weight must be a float number between 0.0 and 100.0. By default, 100.0 is assumed.
@@ -236,7 +236,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         This API is provisional and may change any time before the 3.3 API freeze.
       </documentation>
    </annotation>
 
