@@ -312,4 +312,12 @@ public final class RulerColumnDescriptor {
 		}
 		return null;
 	}
+
+	String getContributor() {
+		try {
+		return fElement.getContributor().getName();
+		} catch (InvalidRegistryObjectException e) {
+			return "unknown"; //$NON-NLS-1$
+		}
+	}
 }

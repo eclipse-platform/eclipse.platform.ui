@@ -13,11 +13,23 @@ package org.eclipse.ui.internal.texteditor.rulers;
 import org.eclipse.osgi.util.NLS;
 
 public final class RulerColumnMessages extends NLS {
+	private static final String BUNDLE_NAME= RulerColumnMessages.class.getName();
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, RulerColumnMessages.class);
+	}
+
+	private RulerColumnMessages() {
+		// Do not instantiate
+	}
 
 	public static String ExtensionPointHelper_invalid_contribution_msg;
 	public static String ExtensionPointHelper_missing_attribute_msg;
 	public static String ExtensionPointHelper_invalid_number_attribute_msg;
 	public static String RulerColumnDescriptor_invalid_placement_msg;
-	public static String RulerColumnDescriptor_invalid_target_msg;
+	public static String RulerColumnRegistry_cyclic_placement_msg;
+	public static String RulerColumnRegistry_duplicate_id_msg;
+	public static String RulerColumnRegistry_invalid_msg;
+	public static String RulerColumnRegistry_unresolved_placement_msg;
 
 }

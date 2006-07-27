@@ -38,6 +38,7 @@ final class TextEditorMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String AbstractDecoratedTextEditor_show_ruler_label;
 	public static String SelectMarkerRulerAction_getMarker;
 	public static String MarkerRulerAction_addMarker;
 	public static String MarkerRulerAction_getMarker;

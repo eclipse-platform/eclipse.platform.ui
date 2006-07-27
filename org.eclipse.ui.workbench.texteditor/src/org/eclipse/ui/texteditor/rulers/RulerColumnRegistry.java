@@ -21,6 +21,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,16 +31,15 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.rulers.DAG;
+import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
+import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 
 /**
- * A registry for all extensions to the <code>org.eclipse.ui.texteditor.rulerColumn</code>
- * extension point.
+ * A registry for all extensions to the
+ * <code>{@value RulerColumnRegistry#QUALIFIED_EXTENSION_POINT}</code> extension point.
  * <p>
  * This API is provisional and may change any time before the 3.3 API freeze.
  * </p>
@@ -48,6 +49,7 @@ import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 public final class RulerColumnRegistry {
 
 	private static final String EXTENSION_POINT= "rulerColumn"; //$NON-NLS-1$
+	private static final String QUALIFIED_EXTENSION_POINT= TextEditorPlugin.PLUGIN_ID + '.' + EXTENSION_POINT;
 	
 	/** The singleton instance. */
 	private static RulerColumnRegistry fgSingleton= null;
@@ -166,9 +168,7 @@ public final class RulerColumnRegistry {
 				 * some other reason. Do not include the extension in the list and inform the user
 				 * about it.
 				 */
-				String message= NLS.bind("The extension '{0}' has become invalid.", element.toString());
-				IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, x);
-				informUser(status);
+				noteInvalidExtension(element, x);
 			}
 		}
 		
@@ -217,7 +217,7 @@ public final class RulerColumnRegistry {
 			Set before= desc.getPlacement().getBefore();
 			for (Iterator it= before.iterator(); it.hasNext();) {
 				String id= (String) it.next();
-				Object target= descriptorsById.get(id);
+				RulerColumnDescriptor target= (RulerColumnDescriptor) descriptorsById.get(id);
 				if (target == null)
 					noteUnknownTarget(desc, id);
 				else if (!dag.addEdge(desc, target))
@@ -226,7 +226,7 @@ public final class RulerColumnRegistry {
 			Set after= desc.getPlacement().getAfter();
 			for (Iterator it= after.iterator(); it.hasNext();) {
 				String id= (String) it.next();
-				Object target= descriptorsById.get(id);
+				RulerColumnDescriptor target= (RulerColumnDescriptor) descriptorsById.get(id);
 				if (target == null)
 					noteUnknownTarget(desc, id);
 				else if (!dag.addEdge(target, desc))
@@ -264,23 +264,28 @@ public final class RulerColumnRegistry {
 		}
 	}
 
-	private void noteUnknownTarget(RulerColumnDescriptor desc, String id) {
-		// TODO Auto-generated method stub
+	private void noteInvalidExtension(IConfigurationElement element, InvalidRegistryObjectException x) {
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_invalid_msg, new Object[] {ExtensionPointHelper.findId(element)});
+		warnUser(message, x);
 	}
 
-	private void noteCycle(RulerColumnDescriptor desc, Object target) {
-		// TODO Auto-generated method stub
+	private void noteUnknownTarget(RulerColumnDescriptor desc, String referencedId) {
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_unresolved_placement_msg, new Object[] {QUALIFIED_EXTENSION_POINT, referencedId, desc.getName(), desc.getContributor()});
+		warnUser(message, null);
+	}
+
+	private void noteCycle(RulerColumnDescriptor desc, RulerColumnDescriptor target) {
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_cyclic_placement_msg, new Object[] {QUALIFIED_EXTENSION_POINT, target.getName(), desc.getName(), desc.getContributor()});
+		warnUser(message, null);
 	}
 
 	private void noteDuplicateId(RulerColumnDescriptor desc) {
-		// TODO Auto-generated method stub
-		
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_duplicate_id_msg, new Object[] {QUALIFIED_EXTENSION_POINT, desc.getId(), desc.getContributor()});
+		warnUser(message, null);
 	}
 
-	private void informUser(IStatus status) {
+	private void warnUser(String message, Exception exception) {
+		IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, exception);
 		TextEditorPlugin.getDefault().getLog().log(status);
-		String title= "Problems During Extension Point Processing";
-		String message= status.getMessage();
-		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 	}
 }

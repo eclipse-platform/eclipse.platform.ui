@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.filesystem.EFS;
@@ -1707,7 +1709,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			if (!descriptor.isIncludedInMenu())
 				continue;
 			final boolean isVisible= support.isColumnVisible(descriptor);
-			IAction action= new Action(("Show " + descriptor.getName()), IAction.AS_CHECK_BOX) {
+			IAction action= new Action(MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_show_ruler_label, new Object[] {descriptor.getName()}), IAction.AS_CHECK_BOX) {
 				public void run() {
 					if (descriptor.isGlobal())
 						// column state is modified via preference listener of AbstractTextEditor

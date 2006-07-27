@@ -881,7 +881,9 @@
             id="org.eclipse.ui.editors.columns.annotations"
             includeInMenu="false"
             name="Annotations">
-         <placement weight="0.5"/>
+         <placement
+               weight="0.5">
+         </placement>
       </column>
    </extension>
    

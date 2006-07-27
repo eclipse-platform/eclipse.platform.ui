@@ -14,9 +14,12 @@ import java.net.URL;
 
 import org.osgi.framework.Bundle;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
@@ -24,14 +27,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 public final class ExtensionPointHelper {
 	
 	private final IConfigurationElement fElement;
 	private final String fName;
-	private final String fBlameMsg;
 	private final ILog fLog;
 
 	public ExtensionPointHelper(IConfigurationElement element, ILog log) throws InvalidRegistryObjectException {
@@ -41,10 +42,6 @@ public final class ExtensionPointHelper {
 		fElement= element;
 		fName= element.getName();
 		// see if we have a conventional 'id' attribute
-		String id= getDefaultAttribute("id", "<unknown>"); //$NON-NLS-1$ //$NON-NLS-2$
-		String extensionPointId= element.getDeclaringExtension().getExtensionPointUniqueIdentifier();
-		Object[] args= { fElement.getContributor().getName(), id, extensionPointId };
-		fBlameMsg= NLS.bind(RulerColumnMessages.ExtensionPointHelper_invalid_contribution_msg, args);
 	}
 	
 	public String getDefaultAttribute(String attribute, String dflt) throws InvalidRegistryObjectException {
@@ -55,7 +52,7 @@ public final class ExtensionPointHelper {
 	public String getNonNullAttribute(String attribute) throws InvalidRegistryObjectException {
 		String value= fElement.getAttribute(attribute);
 		if (value == null)
-			fail(NLS.bind(RulerColumnMessages.ExtensionPointHelper_missing_attribute_msg, fName, attribute));
+			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_missing_attribute_msg, new Object[] {fName, attribute}));
 		return value;
 	}
 	
@@ -67,7 +64,7 @@ public final class ExtensionPointHelper {
 		try {
 			return Float.valueOf(value).floatValue();
 		} catch (NumberFormatException x) {
-			fail(NLS.bind(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, fName, attribute));
+			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, new Object[] {attribute, fName}));
 			return dflt;
 		}
 	}
@@ -80,15 +77,39 @@ public final class ExtensionPointHelper {
 		try {
 			return Boolean.valueOf(value).booleanValue();
 		} catch (NumberFormatException x) {
-			fail(NLS.bind(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, fName, attribute));
+			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, new Object[] {fName, attribute}));
 			return dflt;
 		}
 	}
 	
 	public void fail(String message) throws InvalidRegistryObjectException {
-		IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, fBlameMsg + message, null);
+		String id= findId(fElement);
+		String extensionPointId= fElement.getDeclaringExtension().getExtensionPointUniqueIdentifier();
+		Object[] args= { fElement.getContributor().getName(), id, extensionPointId };
+		String blame= MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_contribution_msg, args);
+
+		IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, blame + message, null);
 		fLog.log(status);
 		throw new InvalidRegistryObjectException();
+	}
+	
+	public static String findId(IConfigurationElement element) {
+		String id= null;
+		while (element != null && id == null) {
+			id= element.getAttribute("id"); //$NON-NLS-1$
+			if (id != null)
+				break;
+			Object parent= element.getParent();
+			if (parent instanceof IExtension) {
+				id= ((IExtension) parent).getUniqueIdentifier();
+				break;
+			} else if (parent instanceof IConfigurationElement) {
+				element= (IConfigurationElement) parent;
+			} else {
+				break;
+			}
+		}
+		return id == null ? "<unknown>" : id; //$NON-NLS-1$
 	}
 
 	public URL getDefaultResourceURL(String attribute, URL dflt) {
