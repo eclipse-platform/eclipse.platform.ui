@@ -53,9 +53,9 @@
       </annotation>
       <complexType>
          <sequence>
-	        <choice minOccurs="0" maxOccurs="unbounded">
-              <element ref="targetEditor"/>
-              <element ref="targetContentType"/>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="targetEditor"/>
+               <element ref="targetContentType"/>
             </choice>
             <element ref="placement"/>
          </sequence>
@@ -89,10 +89,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class implementing the column that extends <code>org.eclipse.ui.texteditor.rulers.RulerColumn</code>.
+                  The class implementing the column. Must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.RulerColumn"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -113,7 +113,7 @@
          <attribute name="includeInMenu" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Whether to include a "Show/Hide" menu entry for this column. If true, an entry is added, if false, there is no way for the user to turn on the column.
+                  Whether to include a &quot;Show/Hide&quot; menu entry for this column. If true, an entry is added, if false, there is no way for the user to turn on the column.
                </documentation>
             </annotation>
          </attribute>
@@ -167,14 +167,12 @@
                <element ref="after"/>
             </choice>
          </sequence>
-         <attribute name="weight" type= "string" use="default" value="1.0">
+         <attribute name="weight" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
                   The weight of the column placement request. Within one placement slot, columns with lower weight are placed further away from the editor area (leftwards in left-to-right environments), columns with higher weight are placed closer to the editor area (rightwards in left-to-right environments). The weight must be a float number between 0.0 and 100.0. By default, 100.0 is assumed.
                </documentation>
             </annotation>
-            <simpleType>
-            </simpleType>
          </attribute>
       </complexType>
    </element>
