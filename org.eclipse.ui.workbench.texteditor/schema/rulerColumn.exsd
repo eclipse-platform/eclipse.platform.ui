@@ -113,7 +113,7 @@
          <attribute name="includeInMenu" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Whether to include a &quot;Show/Hide&quot; menu entry for this column. If true, an entry is added, if false, there is no way for the user to turn on the column.
+                  Whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu.
                </documentation>
             </annotation>
          </attribute>
