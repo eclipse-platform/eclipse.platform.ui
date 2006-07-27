@@ -36,7 +36,7 @@ public class TestActionProvider extends CommonActionProvider {
 		IMenuManager submenu = new MenuManager("CN Test Menu", GROUP_TEST_MENU);
 		submenu.add(action);
 		submenu.add(new GroupMarker(GROUP_TEST_DEPENDENCY));
-		menu.insertAfter(ICommonMenuConstants.GROUP_ADDITIONS, submenu);
+		menu.insertAfter(ICommonMenuConstants.GROUP_REORGANIZE, submenu);
 	}
 
 

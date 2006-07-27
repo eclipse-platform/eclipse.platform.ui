@@ -107,12 +107,15 @@
                  <adapt type="org.eclipse.core.resources.IFile"/>
               </or>
            </possibleDropTargets>
-        </dropAssistant>
+        </dropAssistant>        
+
+        <actionProvider
+              class="org.eclipse.ui.internal.navigator.resources.actions.EditActionProvider"
+              id="org.eclipse.ui.navigator.resources.actions.EditActions"/>         
         <actionProvider
               class="org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider"
-              id="org.eclipse.ui.navigator.resources.actions.RefactorActions"/>
-
-
+              id="org.eclipse.ui.navigator.resources.actions.RefactorActions"/>         
+                      
 	      <!-- Menu Shortcut Actions for Wizards -->
 	      <commonWizard
 	        		type="new"
@@ -200,7 +203,8 @@
 					</adapt>
 				</or>
            </enablement>
-        </actionProvider>
+        </actionProvider> 
+        
       <!-- Expression Filters -->  
       <commonFilter
             id="org.eclipse.ui.navigator.resources.filters.startsWithDot"
