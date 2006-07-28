@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Refactoring descriptor for decorated refactoring descriptors.
+ * Image descriptor for decorated refactoring descriptors.
  * 
  * @since 3.2
  */
