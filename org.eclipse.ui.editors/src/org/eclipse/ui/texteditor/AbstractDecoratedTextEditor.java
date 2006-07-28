@@ -273,13 +273,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		protected void initializeColumn(RulerColumn column) {
 			RulerColumnDescriptor descriptor= column.getDescriptor();
 			if (AnnotationColumn.ID.equals(descriptor.getId())) {
-				IVerticalRuler ruler= getVerticalRuler();
+				IVerticalRuler ruler= internalGetVerticalRuler();
 				if (ruler instanceof CompositeRuler)
 					((AnnotationColumn) column).setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
 			}
 		}
 	};
 
+	private IVerticalRuler internalGetVerticalRuler() {
+		// TODO: workaround for IllegalAccessError
+		return getVerticalRuler();
+	}
+	
 	/**
 	 * Creates a new text editor.
 	 */
