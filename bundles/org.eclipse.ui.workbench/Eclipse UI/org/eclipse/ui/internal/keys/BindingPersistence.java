@@ -393,7 +393,7 @@ final class BindingPersistence extends PreferencePersistence {
 		}
 
 		// A default preference value that is different than the default.
-		if ((defaultActiveSchemeId != null)
+		if ((defaultActiveSchemeId != null && defaultActiveSchemeId.length() > 0)
 				&& (!defaultActiveSchemeId
 						.equals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID))) {
 			try {
