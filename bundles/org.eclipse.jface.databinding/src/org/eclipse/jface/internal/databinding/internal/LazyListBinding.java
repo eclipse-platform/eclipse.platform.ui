@@ -88,31 +88,33 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		}
 		
 		/* (non-Javadoc)
+		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#canDeleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
+		 */
+		public boolean canDeleteElementAt(LazyDeleteEvent e) {
+			return lazyInsertDeleteProvider.canDeleteElementAt(e);
+		}
+		
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#deleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
 		 */
-		public boolean deleteElementAt(LazyDeleteEvent deleteEvent) {
-			boolean deleted = false;
+		public void deleteElementAt(LazyDeleteEvent deleteEvent) {
+			boolean canDelete = false;
 			try {
 				updating = true;
 				BindingEvent e = new BindingEvent(modelList, targetList, null,
 						BindingEvent.EVENT_LAZY_DELETE,
 						BindingEvent.PIPELINE_AFTER_GET);
 				e.originalValue = deleteEvent;
-				if (failure(errMsg(fireBindingEvent(e)))) {
-					return false;
-				}
+				failure(errMsg(fireBindingEvent(e)));
 
-				deleted = lazyInsertDeleteProvider.deleteElementAt(deleteEvent);
+				lazyInsertDeleteProvider.deleteElementAt(deleteEvent);
 				
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 				failure(errMsg(fireBindingEvent(e)));
 			} finally {
 				updating = false;
 			}
-			if (deleted) {
-				fetchNewIterator();
-			}
-			return deleted;
+			fetchNewIterator();
 		}
 	}
 	

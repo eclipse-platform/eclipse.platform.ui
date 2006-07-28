@@ -37,12 +37,20 @@ public class LazyInsertDeleteProvider {
 	}
 	
 	/**
+	 * Returns if the client can delete the object at the specified position.
+	 * 
+	 * @param e The position of the object to delete.
+	 * @return true if the object can be deleted; false otherwise.
+	 */
+	public boolean canDeleteElementAt(LazyDeleteEvent e) {
+		return false;
+	}
+	
+	/**
 	 * Requests that the client delete the object at the specified position.
 	 * 
-	 * @param position The position of the object to delete.
-	 * @return true if the object was deleted; false otherwise.
+	 * @param e.position The position of the object to delete.
 	 */
-	public boolean deleteElementAt(LazyDeleteEvent e) {
-		return false;
+	public void deleteElementAt(LazyDeleteEvent e) {
 	}
 }

@@ -512,8 +512,7 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 				return new NewObject(e.positionHint, event);
 			}
 			
-			public boolean deleteElementAt(LazyDeleteEvent e) {
-				return false;
+			public void deleteElementAt(LazyDeleteEvent e) {
 			}
 		};
 		
@@ -555,9 +554,12 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 				return null;
 			}
 			
-			public boolean deleteElementAt(LazyDeleteEvent e) {
-				model.remove(e.position);
+			public boolean canDeleteElementAt(LazyDeleteEvent e) {
 				return true;
+			}
+			
+			public void deleteElementAt(LazyDeleteEvent e) {
+				model.remove(e.position);
 			}
 		};
 		

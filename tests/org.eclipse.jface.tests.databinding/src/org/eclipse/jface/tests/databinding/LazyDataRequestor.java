@@ -136,8 +136,9 @@ public class LazyDataRequestor extends AbstractObservable implements ILazyDataRe
 	private boolean fireDelete(int position) {
 		for (Iterator iter = insertDeleteProviders.iterator(); iter.hasNext();) {
 			LazyInsertDeleteProvider p = (LazyInsertDeleteProvider) iter.next();
-			boolean result = p.deleteElementAt(new LazyDeleteEvent(position));
+			boolean result = p.canDeleteElementAt(new LazyDeleteEvent(position));
 			if (result) {
+				p.deleteElementAt(new LazyDeleteEvent(position));
 				return true;
 			}
 		}

@@ -77,9 +77,12 @@ public class LazyListBindingTest extends TestCase {
 			return new ILazyDataRequestor.NewObject(1, TWO);
 		}
 		
-		public boolean deleteElementAt(LazyDeleteEvent e) {
-			model.remove(e.position);
+		public boolean canDeleteElementAt(LazyDeleteEvent e) {
 			return true;
+		}
+		
+		public void deleteElementAt(LazyDeleteEvent e) {
+			model.remove(e.position);
 		}
 	};
 	

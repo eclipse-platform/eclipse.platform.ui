@@ -382,8 +382,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	private boolean fireDelete(int position) {
 		for (Iterator iter = insertDeleteProviders.iterator(); iter.hasNext();) {
 			LazyInsertDeleteProvider p = (LazyInsertDeleteProvider) iter.next();
-			boolean result = p.deleteElementAt(new LazyDeleteEvent(position));
+			LazyDeleteEvent e = new LazyDeleteEvent(position);
+			boolean result = p.canDeleteElementAt(e);
 			if (result) {
+				p.deleteElementAt(e);
 				return true;
 			}
 		}

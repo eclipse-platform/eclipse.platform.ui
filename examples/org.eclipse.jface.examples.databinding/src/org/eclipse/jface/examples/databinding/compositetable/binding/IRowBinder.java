@@ -12,7 +12,7 @@
 package org.eclipse.jface.examples.databinding.compositetable.binding;
 
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * Defines an interface for objects that can bind a CompositeTable's row object
@@ -28,8 +28,8 @@ public interface IRowBinder {
 	 * by disposing the supplied data binding context.
 	 * 
 	 * @param context The data binding context
-	 * @param row The row Composite to bind
+	 * @param row The row Control to bind
 	 * @param object The business model object to bind
 	 */
-	void bindRow(DataBindingContext context, Composite row, Object object);
+	void bindRow(DataBindingContext context, Control row, Object object);
 }

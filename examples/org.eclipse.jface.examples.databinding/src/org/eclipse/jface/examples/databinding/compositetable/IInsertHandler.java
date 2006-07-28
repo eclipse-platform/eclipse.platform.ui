@@ -26,7 +26,8 @@ public interface IInsertHandler {
 	 * @param positionHint The user's current position in the user interface relative to the 
 	 * beginning of the collection (0-based).
 	 * 
-	 * @return the actual position of the new object.
+	 * @return the actual position of the new object or -1 if a new object could
+	 * not be inserted.
 	 */
 	public int insert(int positionHint);
 }
