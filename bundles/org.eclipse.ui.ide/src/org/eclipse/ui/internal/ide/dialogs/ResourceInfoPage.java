@@ -231,6 +231,13 @@ public class ResourceInfoPage extends PropertyPage {
 		// layout the page
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
+		
+		if (resource == null) {
+			Label label = new Label(parent, SWT.NONE);
+			label.setText(IDEWorkbenchMessages.ResourceInfoPage_noResource);
+			return label;
+		}
+		
 		if (resource.getType() != IResource.PROJECT) {
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {
@@ -516,6 +523,12 @@ public class ResourceInfoPage extends PropertyPage {
 	 */
 	protected void performDefaults() {
 
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
+		
+		if (resource == null)
+			return;
+
 		// Nothing to update if we never made the box
 		if (this.editableBox != null) {
 			this.editableBox.setSelection(false);
@@ -546,6 +559,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 		IResource resource = (IResource) getElement().getAdapter(
 				IResource.class);
+		
+		if (resource == null)
+			return true;
 
 		encodingEditor.store();
 
