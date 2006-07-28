@@ -68,7 +68,7 @@ public class CompositeTableTest {
 	 * This method initializes multiRowViewer	
 	 *
 	 */
-	private void createMultiRowViewer() {
+	private void createCompositeTable() {
 		table = new CompositeTable(sShell, SWT.NONE);
 		table.setRunTime(true);
 		table.setWeights(new int[] {35, 35, 20, 10});
@@ -177,7 +177,7 @@ public class CompositeTableTest {
 		sShell = new Shell();
 		sShell.setText("Shell");
 		sShell.setLayout(new FillLayout());
-		createMultiRowViewer();
+		createCompositeTable();
 		sShell.setSize(new org.eclipse.swt.graphics.Point(445,243));
 	}
 

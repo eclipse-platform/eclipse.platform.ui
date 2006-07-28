@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
  * 
  * @since 3.3
  */
-public class CompositeTableLazyDataRequestor extends AbstractObservable implements ILazyDataRequestor {
+public class CompositeTableObservableLazyDataRequestor extends AbstractObservable implements ILazyDataRequestor {
 	private static final String DATABINDING_CONTEXT_KEY = "DATABINDING_CONTEXT";
 	private DataBindingContext parentContext;
 	private CompositeTable table;
@@ -44,7 +44,7 @@ public class CompositeTableLazyDataRequestor extends AbstractObservable implemen
 	 * @param table The CompositeTable to bind
 	 * @param rowBinder An IRowBinder that knows how to bind row objects in the CompositeTable
 	 */
-	public CompositeTableLazyDataRequestor(DataBindingContext parentContext, CompositeTable table, IRowBinder rowBinder) {
+	public CompositeTableObservableLazyDataRequestor(DataBindingContext parentContext, CompositeTable table, IRowBinder rowBinder) {
 		this.parentContext = parentContext;
 		this.table = table;
 		this.rowBinder = rowBinder;
