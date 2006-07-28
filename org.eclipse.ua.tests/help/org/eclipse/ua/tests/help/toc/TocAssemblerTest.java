@@ -43,7 +43,7 @@ public class TocAssemblerTest extends TestCase {
 		
 		TocAssembler assembler = new TocAssembler();
 		List contributions = new ArrayList(Arrays.asList(new Object[] { b, c }));
-		assembler.assemble(contributions);
+		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		String expected = serialize(result_b_c);
 		String actual = serialize((ITocContribution)contributions.get(0));
@@ -55,7 +55,7 @@ public class TocAssemblerTest extends TestCase {
 		ITocContribution result_a_b_c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_a_b_c.xml", true, "en", null, null));
 
 		contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
-		assembler.assemble(contributions);
+		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		expected = serialize(result_a_b_c);
 		actual = serialize((ITocContribution)contributions.get(0));

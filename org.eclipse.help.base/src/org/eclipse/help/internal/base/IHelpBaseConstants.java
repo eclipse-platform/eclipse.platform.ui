@@ -19,4 +19,6 @@ public interface IHelpBaseConstants {
 	String P_KEY_OPEN_IN_EDITOR = "open_in_browser"; //$NON-NLS-1$
 	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
 	String P_KEY_SHOW_POTENTIAL_HITS = "show_potential_hits"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_SERVER_HOST = "remoteHelpServerHost"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_SERVER_PORT = "remoteHelpServerPort"; //$NON-NLS-1$
 }

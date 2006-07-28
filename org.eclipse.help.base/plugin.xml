@@ -168,5 +168,11 @@
             participant="org.eclipse.help.internal.search.XHTMLSearchParticipant"
             headless="true"/>
    </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <tocProvider
+            class="org.eclipse.help.internal.base.remote.RemoteTocProvider">
+      </tocProvider>
+   </extension>
 
 </plugin>

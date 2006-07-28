@@ -10,23 +10,41 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.*;
-import java.util.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Locale;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.protocols.*;
-import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
+import org.eclipse.help.internal.webapp.data.ServletResources;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
  */
 public class EclipseConnector {
-	//private ServletContext context;
+	
+	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
+	private static final String PATH_TOPIC = "/help/ntopic/"; //$NON-NLS-1$
+
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
 			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
@@ -83,18 +101,27 @@ public class EclipseConnector {
 			}
 			resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
 
-			InputStream is;
+			InputStream is = null;
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
-						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
-					String error = errorPageBegin
-							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
-							+ errorPageEnd;
-					is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
-				} else {
-					return;
+				// if we're not in an infocenter, check if there's remote content
+				if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+					is = openRemoteInputStream(req, resp);
+				}
+				if (is == null) {
+					// couldn't find any content, remote or local
+					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
+							|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
+						String error = errorPageBegin
+								+ (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ? "<h1>Infocenter</h1>" : "<h1>Workbench</h1>") //$NON-NLS-1$ //$NON-NLS-2$
+								+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
+								+ errorPageEnd;
+						is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
+					} else {
+						return;
+					}
 				}
 			}
 			catch (Exception e) {
@@ -210,6 +237,31 @@ public class EclipseConnector {
 		return con;
 	}
 
+	/*
+	 * Opens a connection to the document on the remote help server, if one
+	 * was specified. If the document doesn't exist on the remote server,
+	 * returns null;
+	 */
+	private InputStream openRemoteInputStream(HttpServletRequest req, HttpServletResponse resp) {		
+		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
+		if (host != null && host.length() > 0) {
+			int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
+			try {
+				URL url = new URL(PROTOCOL_HTTP, host, port == 0 ? -1 : port, PATH_TOPIC + getURL(req));
+				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+				if (connection.getResponseCode() != HttpServletResponse.SC_NOT_FOUND) {
+					return connection.getInputStream();
+				}
+			}
+			catch (IOException e) {
+				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
+				HelpBasePlugin.logError(msg, e);
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Extracts the url from a request
 	 */

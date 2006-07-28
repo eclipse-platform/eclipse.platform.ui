@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.Filter;
 import org.eclipse.help.internal.HelpPlugin;
@@ -31,7 +32,7 @@ import org.eclipse.help.internal.xhtml.XHTMLSupport;
  */
 public class TocAssembler {
 
-	private List books;
+	private List workingCopy;
 	private List includes;
 	private List filters;
 	private Map id2AnchorMap;
@@ -39,15 +40,30 @@ public class TocAssembler {
 	
 	/*
 	 * Assembles the given toc contributions into complete, linked, and filtered
-	 * books. The given list and its contents are modified.
+	 * books. The originals are not modified.
 	 */
-	public void assemble(List contributions) {
-		books = contributions;
+	public List assemble(List contributions) {
+		workingCopy = createWorkingCopy(contributions);
 		discoverNodes();
 		processLinkTos();
 		processIncludes();
 		processFilters();
 		processOrphans();
+		return workingCopy;
+	}
+	
+	/*
+	 * Creates an identical copy of the given contributions. The list and all
+	 * its contents are duplicated (deep copy).
+	 */
+	private List createWorkingCopy(List contributions) {
+		List workingCopy = new ArrayList(contributions.size());
+		Iterator iter = contributions.iterator();
+		while (iter.hasNext()) {
+			ITocContribution contribution = (ITocContribution)iter.next();
+			workingCopy.add(TocPrefetcher.prefetch(contribution));
+		}
+		return workingCopy;
 	}
 	
 	/*
@@ -60,7 +76,7 @@ public class TocAssembler {
 		filters = new ArrayList();
 		id2AnchorMap = new HashMap();
 		id2ContributionMap = new HashMap();
-		Iterator iter = books.iterator();
+		Iterator iter = workingCopy.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
 			id2ContributionMap.put(contrib.getId(), contrib);
@@ -104,7 +120,7 @@ public class TocAssembler {
 	 * inserted at a specific anchor in another toc contribution.
 	 */
 	private void processLinkTos() {
-		ListIterator iter = books.listIterator();
+		ListIterator iter = workingCopy.listIterator();
 		while (iter.hasNext()) {
 			TocContribution contribution = (TocContribution)iter.next();
 			String target = contribution.getLinkTo();
@@ -147,7 +163,7 @@ public class TocAssembler {
 				include.getParentInternal().replaceChild(include, toc.getChildrenInternal());
 				
 				// no longer a top-level toc, so remove it from book list
-				books.remove(contrib);
+				workingCopy.remove(contrib);
 				
 				// combine the extra documents into the larger toc
 				Toc owningToc = getOwningToc(include);
@@ -184,7 +200,7 @@ public class TocAssembler {
 	 * been linked under any other toc (orphan tocs).
 	 */
 	private void processOrphans() {
-		ListIterator iter = books.listIterator();
+		ListIterator iter = workingCopy.listIterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
 			if (!contrib.isPrimary()) {

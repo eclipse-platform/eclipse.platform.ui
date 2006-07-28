@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 
@@ -21,11 +25,13 @@ public class TocContribution implements ITocContribution {
 	private Toc toc;
 	private String linkTo;
 	private boolean isPrimary;
-	private String[] extraDocuments;
+	private List extraDocuments = new ArrayList();
 	
 	public TocContribution(String id, String categoryId, String locale, Toc toc, String linkTo, boolean isPrimary, String[] extraDocuments) {
 		this.categoryId = categoryId;
-		this.extraDocuments = extraDocuments;
+		if (extraDocuments != null) {
+			this.extraDocuments.addAll(Arrays.asList(extraDocuments));
+		}
 		this.id = id;
 		this.locale = locale;
 		this.toc = toc;
@@ -33,16 +39,12 @@ public class TocContribution implements ITocContribution {
 		this.linkTo = linkTo;
 	}
 	
+	public void addExtraDocument(String docToAdd) {
+		extraDocuments.add(docToAdd);
+	}
+	
 	public void addExtraDocuments(String[] docsToAdd) {
-		if (extraDocuments == null) {
-			extraDocuments = docsToAdd;
-		}
-		else if (docsToAdd != null && docsToAdd.length > 0) {
-			String[] combined = new String[extraDocuments.length + docsToAdd.length];
-			System.arraycopy(extraDocuments, 0, combined, 0, extraDocuments.length);
-			System.arraycopy(docsToAdd, 0, combined, extraDocuments.length, docsToAdd.length);
-			extraDocuments = combined;
-		}
+		extraDocuments.addAll(Arrays.asList(docsToAdd));
 	}
 	
 	public String getCategoryId() {
@@ -50,7 +52,7 @@ public class TocContribution implements ITocContribution {
 	}
 
 	public String[] getExtraDocuments() {
-		return extraDocuments;
+		return (String[])extraDocuments.toArray(new String[extraDocuments.size()]);
 	}
 
 	public String getId() {
@@ -71,5 +73,9 @@ public class TocContribution implements ITocContribution {
 	
 	public String getLinkTo() {
 		return linkTo;
+	}
+	
+	public void setToc(Toc toc) {
+		this.toc = toc;
 	}
 }

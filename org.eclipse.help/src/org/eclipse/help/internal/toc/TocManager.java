@@ -27,19 +27,10 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IAnchor;
-import org.eclipse.help.IFilter;
-import org.eclipse.help.IInclude;
-import org.eclipse.help.INode;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITocProvider;
-import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.Anchor;
-import org.eclipse.help.internal.Filter;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.Include;
-import org.eclipse.help.internal.Node;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 /*
@@ -53,6 +44,7 @@ public class TocManager {
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 	
 	private ITocProvider[] tocProviders;
+	private Map tocContributionsByLocale = new HashMap();
 	private Map tocsByLocale = new HashMap();
 	private Map tocsById = new HashMap();
 	private Map tocsByTopic;
@@ -112,6 +104,51 @@ public class TocManager {
 	}
 	
 	/*
+	 * Returns all toc contributions for the given locale, from all toc
+	 * providers.
+	 */
+	public synchronized ITocContribution[] getTocContributions(String locale) {
+		ITocContribution[] cached = (ITocContribution[])tocContributionsByLocale.get(locale);
+		if (cached == null) {
+			List contributions = new ArrayList();
+			ITocProvider[] providers = getTocProviders();
+			for (int i=0;i<providers.length;++i) {
+				ITocContribution[] contrib;
+				try {
+					contrib = providers[i].getTocContributions(locale);
+				}
+				catch (Throwable t) {
+					// log, and skip the offending provider
+					String msg = "Error getting " + ITocContribution.class.getName() + " from " + ITocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					HelpPlugin.logError(msg, t);
+					continue;
+				}
+				
+				// check for nulls
+				for (int j=0;j<contrib.length;++j) {
+					// null means no contribution
+					if (contrib[j] != null) {
+						// pre-fetch everything and cache for safety
+						try {
+							ITocContribution prefetched = TocPrefetcher.prefetch(contrib[j]);
+							contributions.add(prefetched);
+						}
+						catch (Throwable t) {
+							// log, and skip this offending contribution
+							String msg = "Error getting ITocContribution information from " + contrib[j].getClass().getName(); //$NON-NLS-1$
+							HelpPlugin.logError(msg, t);
+							continue;
+						}
+					}
+				}
+			}
+			cached = (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
+			tocContributionsByLocale.put(locale, cached);
+		}
+		return cached;
+	}
+
+	/*
 	 * Filters the given contributions according to product preferences. If
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredTocs, filter the contribution.
@@ -143,52 +180,12 @@ public class TocManager {
 		return (ITocContribution[])filtered.toArray(new ITocContribution[filtered.size()]);
 	}
 
-	/*
-	 * Returns all toc contributions for the given locale, from all toc
-	 * providers.
-	 */
-	private ITocContribution[] getTocContributions(String locale) {
-		List contributions = new ArrayList();
-		ITocProvider[] providers = getTocProviders();
-		for (int i=0;i<providers.length;++i) {
-			ITocContribution[] contrib;
-			try {
-				contrib = providers[i].getTocContributions(locale);
-			}
-			catch (Throwable t) {
-				// log, and skip the offending provider
-				String msg = "Error getting " + ITocContribution.class.getName() + " from " + ITocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				HelpPlugin.logError(msg, t);
-				continue;
-			}
-			
-			// check for nulls
-			for (int j=0;j<contrib.length;++j) {
-				// null means no contribution
-				if (contrib[j] != null) {
-					// pre-fetch everything and cache for safety
-					try {
-						ITocContribution cached = prefetch(contrib[j]);
-						contributions.add(cached);
-					}
-					catch (Throwable t) {
-						// log, and skip this offending contribution
-						String msg = "Error getting ITocContribution information from " + contrib[j].getClass().getName(); //$NON-NLS-1$
-						HelpPlugin.logError(msg, t);
-						continue;
-					}
-				}
-			}
-		}
-		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
-	}
-	
 	private ITocContribution[] getRootTocContributions(String locale) {
 		ITocContribution[] contributions = getTocContributions(locale);
-		List list = new ArrayList(Arrays.asList(contributions));
+		List unassembled = new ArrayList(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler();
-		assembler.assemble(list);
-		return (ITocContribution[])list.toArray(new ITocContribution[list.size()]);
+		List assembled = assembler.assemble(unassembled);
+		return (ITocContribution[])assembled.toArray(new ITocContribution[assembled.size()]);
 	}
 	
 	private Set getIgnoredTocContributions() {
@@ -385,85 +382,7 @@ public class TocManager {
 		}
 		return null;
 	}
-	
-	private static TocContribution prefetch(ITocContribution original) {
-		String id = original.getId();
-		String categoryId = original.getCategoryId();
-		String locale = original.getLocale();
-		Toc toc = prefetch(original.getToc());
-		String linkTo = original.getLinkTo();
-		boolean isPrimary = original.isPrimary();
-		String[] extraDocuments = original.getExtraDocuments();
-		TocContribution contribution = new TocContribution(id, categoryId, locale, toc, linkTo, isPrimary, extraDocuments);
-		toc.setTocContribution(contribution);
-		return contribution;
-	}
-	
-	private static Toc prefetch(IToc original) {
-		String label = original.getLabel();
-		String topic = original.getTopic(null).getHref();
-		Toc toc = new Toc(label, topic);
-		Node[] children = prefetchChildren(original.getChildren());
-		toc.addChildren(children);
-		return toc;
-	}
-	
-	private static Topic prefetch(ITopic original) {
-		String href = original.getHref();
-		String label = original.getLabel();
-		Topic topic = new Topic(href, label);
-		Node[] children = prefetchChildren(original.getChildren());
-		topic.addChildren(children);
-		return topic;
-	}
-	
-	private static Include prefetch(IInclude original) {
-		String target = original.getTarget();
-		Include include = new Include(target);
-		Node[] children = prefetchChildren(original.getChildren());
-		include.addChildren(children);
-		return include;
-	}
-	
-	private static Filter prefetch(IFilter original) {
-		String expression = original.getExpression();
-		Filter filter = new Filter(expression);
-		Node[] children = prefetchChildren(original.getChildren());
-		filter.addChildren(children);
-		return filter;
-	}
-	
-	private static Anchor prefetch(IAnchor original) {
-		String id = original.getId();
-		Anchor anchor = new Anchor(id);
-		Node[] children = prefetchChildren(original.getChildren());
-		anchor.addChildren(children);
-		return anchor;
-	}
-	
-	private static Node[] prefetchChildren(INode[] children) {
-		Node[] copy = new Node[children.length];
-		for (int i=0;i<children.length;++i) {
-			INode node = children[i];
-			if (node instanceof IToc) {
-				copy[i] = prefetch((IToc)node);
-			}
-			else if (node instanceof ITopic) {
-				copy[i] = prefetch((ITopic)node);
-			}
-			else if (node instanceof IInclude) {
-				copy[i] = prefetch((IInclude)node);
-			}
-			else if (node instanceof IFilter) {
-				copy[i] = prefetch((IFilter)node);
-			}
-			else if (node instanceof IAnchor) {
-				copy[i] = prefetch((IAnchor)node);
-			}
-		}
-		return copy;
-	}
-	
+		
 	/*
 	 * A category of tocs. A category has an id and a list of contained
 	 * tocs.
