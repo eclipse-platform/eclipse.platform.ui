@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Layout;
  * Use this layout manager whenever you would have used a null layout
  * previously.
  * 
- * @since 3.2
+ * @since 3.3
  */
 public class AbsoluteLayout extends Layout {
 
