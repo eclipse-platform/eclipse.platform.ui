@@ -57,15 +57,13 @@ public class LazyDataRequestor extends AbstractObservable implements ILazyDataRe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#remove(int)
 	 */
-	public Object remove(int position) {
+	public void remove(int position) {
 		size--;
 		if (position < windowSize) {
 			Object removed = windowData.remove(position);
 			Object refreshed = fireElementProviders(windowData.size());
 			windowData.add(refreshed);
-			return removed;
 		}
-		return null;
 	}
 	
 	/* (non-Javadoc)

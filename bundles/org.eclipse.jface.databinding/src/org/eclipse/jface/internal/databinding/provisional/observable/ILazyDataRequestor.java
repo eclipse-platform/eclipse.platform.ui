@@ -96,7 +96,6 @@ public interface ILazyDataRequestor extends IObservable {
 	 * removed from the observed list.
 	 * 
 	 * @param position The position where the delete occurred
-	 * @return The removed object
 	 */
-	Object remove(int position);
+	void remove(int position);
 }

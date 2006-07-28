@@ -413,11 +413,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#remove(int)
 	 */
-	public Object remove(int position) {
-		Object removed = multiDayEventCalendar.remove(position);
+	public void remove(int position) {
+		multiDayEventCalendar.remove(position);
 		modelSize--;
 		editor.refresh();
-		return removed;
 	}
 	
 	// Utility methods here ---------------------------------------------------

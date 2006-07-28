@@ -111,15 +111,14 @@ public class CompositeTableLazyDataRequestor extends AbstractObservable implemen
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#add(int, java.lang.Object)
 	 */
 	public void add(int position, Object element) {
-		throw new IllegalArgumentException("Unsupported Operation");
+		table.setNumRowsInCollection(table.getNumRowsInCollection()+1);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor#remove(int)
 	 */
-	public Object remove(int position) {
-		throw new IllegalArgumentException("Unsupported Operation");
-//		return null;
+	public void remove(int position) {
+		table.setNumRowsInCollection(table.getNumRowsInCollection()-1);
 	}
 
 	/* (non-Javadoc)
