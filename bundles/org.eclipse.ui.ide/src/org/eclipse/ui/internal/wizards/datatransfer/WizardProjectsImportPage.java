@@ -46,7 +46,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -405,6 +407,16 @@ public class WizardProjectsImportPage extends WizardPage implements
 				return ((ProjectRecord) element).getProjectName();
 			}
 		});
+		
+		projectsList.addCheckStateListener(new ICheckStateListener() {
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 */
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				setPageComplete(projectsList.getCheckedElements().length > 0);		
+			}
+		});
 
 		projectsList.setInput(this);
 		projectsList.setSorter(new ViewerSorter());
@@ -431,6 +443,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				projectsList.setCheckedElements(selectedProjects);
+				setPageComplete(projectsList.getCheckedElements().length > 0);
 			}
 		});
 		Dialog.applyDialogFont(selectAll);
@@ -447,7 +460,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			public void widgetSelected(SelectionEvent e) {
 
 				projectsList.setCheckedElements(new Object[0]);
-
+				setPageComplete(false);
 			}
 		});
 		Dialog.applyDialogFont(deselectAll);
@@ -687,7 +700,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
-			setPageComplete(getValidProjects().length > 0);
+			setPageComplete(projectsList.getCheckedElements().length > 0);
 			return;
 		}
 		// We can't access the radio button from the inner class so get the
@@ -797,7 +810,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		projectsList.refresh(true);
 		projectsList.setCheckedElements(getValidProjects());
-		setPageComplete(getValidProjects().length > 0);
+		setPageComplete(projectsList.getCheckedElements().length > 0);
 	}
 
 	/**
