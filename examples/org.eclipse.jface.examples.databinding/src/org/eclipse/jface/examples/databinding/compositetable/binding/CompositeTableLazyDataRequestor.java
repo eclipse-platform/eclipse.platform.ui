@@ -32,14 +32,18 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.3
  */
 public class CompositeTableLazyDataRequestor extends AbstractObservable implements ILazyDataRequestor {
-	/**
-	 * 
-	 */
 	private static final String DATABINDING_CONTEXT_KEY = "DATABINDING_CONTEXT";
 	private DataBindingContext parentContext;
 	private CompositeTable table;
 	private IRowBinder rowBinder;
 	
+	/**
+	 * Construct a CompositeTableLazyDataRequestor.
+	 * 
+	 * @param parentContext The parent data binding context.
+	 * @param table The CompositeTable to bind
+	 * @param rowBinder An IRowBinder that knows how to bind row objects in the CompositeTable
+	 */
 	public CompositeTableLazyDataRequestor(DataBindingContext parentContext, CompositeTable table, IRowBinder rowBinder) {
 		this.parentContext = parentContext;
 		this.table = table;
@@ -164,7 +168,10 @@ public class CompositeTableLazyDataRequestor extends AbstractObservable implemen
 	};
 	
 	/*
-	 * FIXME: Manage object commit / rollback here???
+	 * FIXME: Manage object-level commit / rollback here???
+	 * 
+	 * Yes.  Need to fire row validation events here?  Will user scrolling
+	 * using the scroll bar cause a problem here?
 	 */
 	private IRowFocusListener rowListener = new RowFocusAdapter();
 }
