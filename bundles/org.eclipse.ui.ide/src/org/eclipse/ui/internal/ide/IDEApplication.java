@@ -164,11 +164,23 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                     writeWorkspaceVersion();
                     return true;
                 }
-                MessageDialog
-                .openError(
-                        shell,
-                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
-                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage);
+                
+                // we failed to create the directory.  
+                // Two possibilities:
+                // 1. directory is already in use
+                // 2. directory could not be created
+                File workspaceDirectory = new File(instanceLoc.getURL().getFile());
+                if (workspaceDirectory.exists()) {
+	                MessageDialog.openError(
+	                        shell,
+	                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
+	                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockMessage);
+                } else {
+                	MessageDialog.openError(
+                			shell, 
+                			IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
+                			IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
+                }
             } catch (IOException e) {
                 IDEWorkbenchPlugin.log("Could not obtain lock for workspace location", //$NON-NLS-1$
                         e);            	
