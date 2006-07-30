@@ -285,7 +285,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
         if (currentPage != null) {
             if (activeEditor != null) {
-                lastEditorTitle = activeEditor.getTitle();
+                lastEditorTitle = activeEditor.getTitleToolTip();
                 title = NLS.bind(IDEWorkbenchMessages.WorkbenchWindow_shellTitle, lastEditorTitle, title);
             }
             IPerspectiveDescriptor persp = currentPage.getPerspective();
