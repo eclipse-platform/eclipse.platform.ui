@@ -31,6 +31,5 @@ public class AllTocTests extends TestSuite {
 	public AllTocTests() {
 		addTest(TocFileParserTest.suite());
 		addTest(TocAssemblerTest.suite());
-		addTest(RemoteTocParserTest.suite());
 	}
 }
