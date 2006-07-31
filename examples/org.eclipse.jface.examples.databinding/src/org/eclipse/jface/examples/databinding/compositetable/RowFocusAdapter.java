@@ -41,7 +41,7 @@ public class RowFocusAdapter implements IRowFocusListener {
 	 */
 	public boolean requestRowChange(CompositeTable sender,
 			int currentObjectOffset, Control row) {
-		return false;
+		return true;
 	}
 
 }
