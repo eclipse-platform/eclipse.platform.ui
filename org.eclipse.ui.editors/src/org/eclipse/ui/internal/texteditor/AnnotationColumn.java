@@ -13,8 +13,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -31,7 +35,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumn;
 /**
  * @since 3.3
  */
-public class AnnotationColumn extends RulerColumn {
+public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	/** The contribution id of the annotation ruler. */
 	public static final String ID= "org.eclipse.ui.editors.columns.annotations"; //$NON-NLS-1$
 	/** The width of the vertical ruler. */
@@ -154,5 +158,57 @@ public class AnnotationColumn extends RulerColumn {
 		Assert.isLegal(fDelegate == null);
 		Assert.isLegal(column != null);
 		fDelegate= column;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
+	 */
+	public void addVerticalRulerListener(IVerticalRulerListener listener) {
+		if (fDelegate instanceof IVerticalRulerInfoExtension)
+			((IVerticalRulerInfoExtension) fDelegate).addVerticalRulerListener(listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 */
+	public IAnnotationHover getHover() {
+		if (fDelegate instanceof IVerticalRulerInfoExtension)
+			return ((IVerticalRulerInfoExtension) fDelegate).getHover();
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
+	 */
+	public IAnnotationModel getModel() {
+		if (fDelegate instanceof IVerticalRulerInfoExtension)
+			return ((IVerticalRulerInfoExtension) fDelegate).getModel();
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
+	 */
+	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
+		if (fDelegate instanceof IVerticalRulerInfoExtension)
+			((IVerticalRulerInfoExtension) fDelegate).removeVerticalRulerListener(listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
+	 */
+	public int getLineOfLastMouseButtonActivity() {
+		if (fDelegate instanceof IVerticalRulerInfo)
+			((IVerticalRulerInfo) fDelegate).getLineOfLastMouseButtonActivity();
+		return -1;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
+	 */
+	public int toDocumentLineNumber(int y_coordinate) {
+		if (fDelegate instanceof IVerticalRulerInfo)
+			((IVerticalRulerInfo) fDelegate).toDocumentLineNumber(y_coordinate);
+		return -1;
 	}
 }
