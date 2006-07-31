@@ -86,11 +86,10 @@ public class CompositeTableTestBinding {
 		IRowBinder rowBinder = new IRowBinder() {
 			public void bindRow(DataBindingContext context, Control row, Object object) {
 				Row rowObj = (Row) row;
-				Person person = (Person) object;
-				context.bind(rowObj.name, new Property(person, "name"), null);
-				context.bind(rowObj.address, new Property(person, "address"), null);
-				context.bind(rowObj.city, new Property(person, "city"), null);
-				context.bind(rowObj.state, new Property(person, "state"), null);
+				context.bind(rowObj.name, new Property(object, "name"), null);
+				context.bind(rowObj.address, new Property(object, "address"), null);
+				context.bind(rowObj.city, new Property(object, "city"), null);
+				context.bind(rowObj.state, new Property(object, "state"), null);
 			}
 		};
 		CompositeTableObservableLazyDataRequestor tableObservable = 

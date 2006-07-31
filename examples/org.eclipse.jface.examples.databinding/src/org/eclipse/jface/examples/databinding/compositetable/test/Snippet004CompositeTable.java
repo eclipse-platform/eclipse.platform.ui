@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
  * Illustrates the basic Model-ViewModel-Binding-View architecture typically 
  * used in data binding applications.
  */
-public class Snippet000HelloWorld {
+public class Snippet004CompositeTable {
 	public static void main(String[] args) {
 		ViewModel viewModel = new ViewModel();
 		Shell shell = new View(viewModel).createShell();
