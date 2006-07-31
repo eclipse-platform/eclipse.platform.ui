@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hiroyuki Inaba <hiroyuki.inaba@jp.fujitsu.com> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=140121
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -16,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 
@@ -35,6 +37,7 @@ class MessageDialogPage extends DialogPage {
 
 	public void createControl(Composite parent) {
 		Composite composite1= new Composite(parent, SWT.NONE);
+		composite1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
@@ -44,6 +47,7 @@ class MessageDialogPage extends DialogPage {
 		GridData messageData= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		fMessageRegion.setMessageLayoutData(messageData);
 		setControl(composite1);
+		Dialog.applyDialogFont(composite1);
 	}
 
 	public void setMessage(String newMessage,int newType) {
