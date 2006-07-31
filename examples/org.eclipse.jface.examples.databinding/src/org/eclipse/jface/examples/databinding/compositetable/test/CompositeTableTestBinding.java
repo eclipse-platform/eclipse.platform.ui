@@ -16,10 +16,15 @@ import java.util.List;
 import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.binding.CompositeTableObservableLazyDataRequestor;
 import org.eclipse.jface.examples.databinding.compositetable.binding.IRowBinder;
+import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
+import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
+import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -83,6 +88,25 @@ public class CompositeTableTestBinding {
 	private void bindGUI(Shell shell) {
 		DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
 		
+		LazyInsertDeleteProvider insertDeleteProvider = new LazyInsertDeleteProvider() {
+			public boolean canDeleteElementAt(LazyDeleteEvent e) {
+				return true;
+			}
+			
+			public void deleteElementAt(LazyDeleteEvent e) {
+				personList.remove(e.position);
+			}
+			
+			public NewObject insertElementAt(LazyInsertEvent e) {
+				Person newPerson = new Person();
+				personList.add(e.positionHint, newPerson);
+				return new NewObject(e.positionHint, newPerson);
+//				int newPosition = (int)(Math.random() * (personList.size()+1));
+//				personList.add(newPosition, newPerson);
+//				return newPosition;
+			}
+		};
+		
 		IRowBinder rowBinder = new IRowBinder() {
 			public void bindRow(DataBindingContext context, Control row, Object object) {
 				Row rowObj = (Row) row;
@@ -94,7 +118,9 @@ public class CompositeTableTestBinding {
 		};
 		CompositeTableObservableLazyDataRequestor tableObservable = 
 			new CompositeTableObservableLazyDataRequestor(bindingContext, table, rowBinder);
-		bindingContext.bind(tableObservable, (IObservable)personList, null);
+		
+		bindingContext.bind(tableObservable, (IObservable)personList, 
+				new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));
 	}
 
 	/**
