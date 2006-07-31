@@ -1984,7 +1984,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param description the destination project description
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (<code>FORCE</code>, <code>KEEP_HISTORY</code>, and <code>SHALLOW</code>)
+	 *   ({@link #FORCE}, {@link #KEEP_HISTORY}, {@link #SHALLOW}
+	 *   and {@link #REPLACE}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be moved. Reasons include:
@@ -2006,6 +2007,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #FORCE
 	 * @see #KEEP_HISTORY
 	 * @see #SHALLOW
+	 * @see #REPLACE
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since  2.0
 	 */
