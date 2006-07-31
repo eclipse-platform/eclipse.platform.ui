@@ -46,5 +46,6 @@ public class AllTests extends TestSuite {
 		addTestSuite(TreeViewerComparatorTest.class);
 		addTestSuite(ListViewerComparatorTest.class);
 		addTestSuite(TableViewerComparatorTest.class);
+		addTestSuite(Bug138608Test.class);
 	}
 }
