@@ -52,6 +52,7 @@ public class TableRow {
 			columns = new Control[] {row};
 		}
 		
+		addListeners(row);
 		for (int i = 0; i < columns.length; i++) {
 			addListeners(columns[i]);
 		}
@@ -132,10 +133,17 @@ public class TableRow {
 	 * this row.
 	 * 
 	 * @param i the 0-based offset of the column to return.
-	 * @return The corresponding control
+	 * @return The corresponding control or null if there is no control at the
+	 * specified position.
 	 */
 	public Control getColumnControl(int i) {
-		return columns[i];
+		if (i < columns.length - 1) {
+			return columns[i];
+		}
+		if (i == -1 && columns.length == 0) {
+			return row;
+		}
+		return null;
 	}
 	
 	/**
