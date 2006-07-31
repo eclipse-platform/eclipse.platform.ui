@@ -66,6 +66,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	// Property fields
 	private int maxRowsVisible;
 	private boolean fittingVertically;
+	private boolean fittingHorizontally;
 	private int numRowsInDisplay;
 	private int numRowsInCollection;
 	private int topRow;
@@ -107,6 +108,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 		maxRowsVisible = parent.getMaxRowsVisible();
 		fittingVertically = parent.isFittingVertically();
+		fittingHorizontally = parent.isFittingHorizontally();
 		numRowsInCollection = parent.getNumRowsInCollection();
 		topRow = parent.getTopRow();
 
@@ -149,13 +151,17 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * header object (if applicable) and the row objects.
 	 */
 	private void createControlHolder() {
-		GridData gridData = new org.eclipse.swt.layout.GridData();
-		gridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+//		final ScrolledComposite scroller = new ScrolledComposite(this, SWT.H_SCROLL);
+		final Composite scroller = new Composite(this, SWT.NONE);
+		scroller.setLayout(new FillLayout());
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
-		gridData.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		controlHolder = new Composite(this, SWT.NONE);
-		controlHolder.setLayoutData(gridData);
+		gridData.verticalAlignment = GridData.FILL;
+		scroller.setLayoutData(gridData);
+		
+		controlHolder = new Composite(scroller, SWT.NONE);
 		controlHolder.setLayout(new Layout() {
 			protected Point computeSize(Composite composite, int wHint,
 					int hHint, boolean flushCache) {
@@ -181,6 +187,41 @@ public class InternalCompositeTable extends Composite implements Listener {
 				layoutControlHolder();
 			}
 		});
+		
+//		scroller.addControlListener(new ControlListener() {
+//			public void controlMoved(ControlEvent e) {
+//				//noop
+//			}
+//
+//			public void controlResized(ControlEvent e) {
+//				Point size = scroller.getSize();
+//				if (fittingHorizontally) {
+//					controlHolder.setBounds(0, 0, size.x, size.y);
+//					return;
+//				}
+//				Point preferredSize = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+//				Control[] children = controlHolder.getChildren();
+//				if (children.length > 0) {
+//					if (children[0] instanceof Composite) {
+//						Composite child = (Composite) children[0];
+//						if (child.getLayout() != null) {
+//							size.x = preferredSize.x;
+//							controlHolder.setBounds(0, 0, size.x, size.y);
+//							return;
+//						}
+//					}
+//				}
+//				for (int i = 0; i < children.length; i++) {
+//					Point childPreferredSize = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+//					if (preferredSize.x < childPreferredSize.x) {
+//						preferredSize.x = childPreferredSize.x;
+//					}
+//				}
+//				size.x = preferredSize.x;
+//				controlHolder.setBounds(0, 0, size.x, size.y);
+//			}
+//		});
+//		scroller.setContent(controlHolder);
 	}
 
 	/**
@@ -686,6 +727,14 @@ public class InternalCompositeTable extends Composite implements Listener {
 	public void setFittingVertically(boolean fittingVertically) {
 		this.fittingVertically = fittingVertically;
 		updateVisibleRows();
+	}
+	
+	/**
+	 * @param fittingHorizontally
+	 */
+	public void setFittingHorizontally(boolean fittingHorizontally) {
+		this.fittingHorizontally = fittingHorizontally;
+		this.layout(true);
 	}
 
 	/**

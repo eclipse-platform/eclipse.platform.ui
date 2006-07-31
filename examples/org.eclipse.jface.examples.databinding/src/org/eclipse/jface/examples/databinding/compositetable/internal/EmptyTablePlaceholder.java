@@ -61,7 +61,7 @@ public class EmptyTablePlaceholder extends Canvas {
 	 */
 	public EmptyTablePlaceholder(Composite parent, int style) {
 		super(parent, style);
-		parentTable = (InternalCompositeTable) parent.getParent();
+		parentTable = (InternalCompositeTable) parent.getParent().getParent();
 		
 		parent.addControlListener(controlListener);
 		

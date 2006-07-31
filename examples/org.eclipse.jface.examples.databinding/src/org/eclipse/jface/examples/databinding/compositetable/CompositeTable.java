@@ -644,6 +644,35 @@ public class CompositeTable extends Canvas {
 			contentPane.setFittingVertically(fittingVertically);
 		}
 	}
+	
+	private boolean fittingHorizontally = true;
+	
+	/**
+	 * Method isFittingHorizontally.  Returns if the CompositeTable control
+	 * will scale the widths of all columns so that they all fit into the
+	 * available space.
+	 * 
+	 * @return Returns true if the table's actual width is set to equal the
+	 * visible width; false otherwise.
+	 */
+	public boolean isFittingHorizontally() {
+		return fittingHorizontally;
+	}
+	
+	/**
+	 * Method setFittingHorizontally. Sets if the CompositeTable control
+	 * will scale the widths of all columns so that they all fit into the
+	 * available space.
+	 * 
+	 * @param fittingHorizontally true if the table's actual width is set to 
+	 * equal the visible width; false otherwise.
+	 */
+	public void setFittingHorizontally(boolean fittingHorizontally) {
+		this.fittingHorizontally = fittingHorizontally;
+		if (contentPane != null) {
+			contentPane.setFittingHorizontally(fittingHorizontally);
+		}
+	}
 
 	/**
 	 * Method getNumRowsVisible. Returns the actual number of rows that are
