@@ -678,19 +678,20 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <p>
 	 * The given project description is used to change the project's
 	 * natures, build spec, comment, and referenced projects.
-	 * The name and location of a project cannot be changed; these settings
-	 * in the project description are ignored.
+	 * The name and location of a project cannot be changed using this method; 
+	 * these settings in the project description are ignored.  To change a project's
+	 * name or location, use {@link IResource#move(IProjectDescription, int, IProgressMonitor)}.
 	 * The project's session and persistent properties are not affected.
 	 * </p>
 	 * <p>
 	 * If the new description includes nature ids of natures that the project
 	 * did not have before, these natures will be configured in automatically, 
 	 * which involves instantiating the project nature and calling 
-	 * <code>IProjectNature.configure</code> on it. An internal reference to the
+	 * {@link IProjectNature#configure()} on it. An internal reference to the
 	 * nature object is retained, and will be returned on subsequent calls to
 	 * <code>getNature</code> for the specified nature id. Similarly, any natures
 	 * the project had which are no longer required will be automatically 
-	 * de-configured by calling <code>IProjectNature.deconfigure</code>
+	 * de-configured by calling {@link IProjectNature#deconfigure}
 	 * on the nature object and letting go of the internal reference to it.
 	 * </p>
 	 * <p>
