@@ -28,6 +28,9 @@ import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.rulers.RulerColumn;
 
+/**
+ * @since 3.3
+ */
 public class AnnotationColumn extends RulerColumn {
 	/** The contribution id of the annotation ruler. */
 	public static final String ID= "org.eclipse.ui.editors.columns.annotations"; //$NON-NLS-1$
@@ -37,7 +40,7 @@ public class AnnotationColumn extends RulerColumn {
 	
 	private IVerticalRulerColumn fDelegate;
 	private final MarkerAnnotationPreferences fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-	private PropertyEventDispatcher fDispatcher;
+	private IPropertyChangeListener fPropertyListener;
 
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		initialize();
@@ -75,9 +78,11 @@ public class AnnotationColumn extends RulerColumn {
 	}
 
 	private void dispose() {
-		if (fDispatcher != null) {
-			fDispatcher.dispose();
-			fDispatcher= null;
+		if (fPropertyListener != null) {
+			IPreferenceStore store= getPreferenceStore();
+			if (store != null)
+				store.removePropertyChangeListener(fPropertyListener);
+			fPropertyListener= null;
 		}
 	}
 
@@ -103,7 +108,7 @@ public class AnnotationColumn extends RulerColumn {
 			column.addAnnotationType(Annotation.TYPE_UNKNOWN);
 			
 			// link to preference store
-			IPropertyChangeListener pcl= new IPropertyChangeListener() {
+			fPropertyListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					String property= event.getProperty();
 					AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
@@ -117,7 +122,7 @@ public class AnnotationColumn extends RulerColumn {
 					}
 				}
 			};
-			store.addPropertyChangeListener(pcl);
+			store.addPropertyChangeListener(fPropertyListener);
 		}
 	}
 	
