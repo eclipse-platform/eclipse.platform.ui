@@ -1209,6 +1209,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @return true if the display needed to be scrolled; false otherwise
 	 */
 	public boolean makeFocusedRowVisible() {
+		if (numRowsVisible < 1) {
+			return false;
+		}
 		int topRowDelta = computeTopRowDelta(currentRow);
 		if (topRowDelta == 0) {
 			return false;
@@ -1785,7 +1788,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @return The corresponding TableRow or null if there is none.
 	 */
 	private TableRow getRowByNumber(int rowNumber) {
-		if (rowNumber > rows.size() - 1) {
+		if (rowNumber > rows.size() - 1 || rowNumber < 0) {
 			return null;
 		}
 		return (TableRow) rows.get(rowNumber);
