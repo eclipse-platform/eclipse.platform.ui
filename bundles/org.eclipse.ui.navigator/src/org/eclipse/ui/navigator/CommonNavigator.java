@@ -150,24 +150,30 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 		commonViewer = createCommonViewer(aParent);	
 
-		INavigatorFilterService filterService = commonViewer
-				.getNavigatorContentService().getFilterService();
-		ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
-		for (int i = 0; i < visibleFilters.length; i++) {
-			commonViewer.addFilter(visibleFilters[i]);
+		try {
+			commonViewer.getControl().setRedraw(false);
+			
+			INavigatorFilterService filterService = commonViewer
+					.getNavigatorContentService().getFilterService();
+			ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
+			for (int i = 0; i < visibleFilters.length; i++) {
+				commonViewer.addFilter(visibleFilters[i]);
+			}
+	
+			commonViewer.setSorter(new CommonViewerSorter());
+	
+			/*
+			 * make sure input is set after sorters and filters to avoid unnecessary
+			 * refreshes
+			 */
+			commonViewer.setInput(getInitialInput()); 
+	
+			getSite().setSelectionProvider(commonViewer);
+	
+			updateTitle();
+		} finally { 
+			commonViewer.getControl().setRedraw(true);
 		}
-
-		commonViewer.setSorter(new CommonViewerSorter());
-
-		/*
-		 * make sure input is set after sorters and filters to avoid unnecessary
-		 * refreshes
-		 */
-		commonViewer.setInput(getInitialInput()); 
-
-		getSite().setSelectionProvider(commonViewer);
-
-		updateTitle();
 
 		/*
 		 * Create the CommonNavigatorManager last because information about the
