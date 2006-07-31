@@ -1219,7 +1219,10 @@ public class InternalCompositeTable extends Composite implements Listener {
 		currentRow += -1 * topRowDelta;
 		
 		setTopRow(topRow + topRowDelta);
-		getControl(currentColumn, currentRow).setFocus(); // ?? Can I get away with avoiding asyncExec here ??
+		Control control = getControl(currentColumn, currentRow);
+		if (control != null) {
+			control.setFocus(); // ?? Can I get away with avoiding asyncExec here ??
+		}
 		return true;
 	}
 	
@@ -1261,6 +1264,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 			if (oldCurrentRow < 0 || oldCurrentRow >= getNumRowsVisible()) {
 				if (currentRow >= 0 && currentRow < getNumRowsVisible()) {
 					Control newFocusControl = getControl(currentColumn, currentRow);
+					if (newFocusControl == null) {
+						return;
+					}
 					if (newFocusControl.isFocusControl()) {
 						newFocusControl.notifyListeners(SWT.FocusIn, new Event());
 					} else {
@@ -1270,10 +1276,13 @@ public class InternalCompositeTable extends Composite implements Listener {
 			} else {
 				// If the new viewport doesn't overlap the old one, hide the focus
 				if (currentRow < 0 || currentRow >= getNumRowsVisible()) {
-//					deleteRowAt(oldCurrentRow);
+					//					deleteRowAt(oldCurrentRow);
 //					getControl(currentColumn, oldCurrentRow).getParent().setVisible(false);
 //					getControl(currentColumn, oldCurrentRow).getParent().setVisible(true);
-					getControl(currentColumn, oldCurrentRow).notifyListeners(SWT.FocusOut, new Event());
+					Control control = getControl(currentColumn, oldCurrentRow);
+					if (control != null) {
+						control.notifyListeners(SWT.FocusOut, new Event());
+					}
 				}
 			}
 		}
@@ -1316,7 +1325,10 @@ public class InternalCompositeTable extends Composite implements Listener {
 
 	private void deselectCurrentRowIfVisible() {
 		if (currentRow >= 0 && currentRow < numRowsVisible) {
-			deselect(getControl(currentColumn, currentRow));
+			Control control = getControl(currentColumn, currentRow);
+			if (control != null) {
+				deselect(control);
+			}
 		}
 	}
 
@@ -1482,10 +1494,12 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		for (Iterator rowChangeListenersIter = parent.rowFocusListeners
 				.iterator(); rowChangeListenersIter.hasNext();) {
-			IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
-					.next();
-			listener.arrive(parent, topRow + currentRow, currentRow()
-					.getRowControl());
+			IRowFocusListener listener = 
+				(IRowFocusListener) rowChangeListenersIter.next();
+			// currentRow() can be null if it's scrolled off the top or bottom
+			TableRow row = currentRow();
+			Control control = row != null ? row.getRowControl() : null;
+			listener.arrive(parent, topRow + currentRow, control);
 		}
 	}
 
@@ -1506,8 +1520,11 @@ public class InternalCompositeTable extends Composite implements Listener {
 				.iterator(); rowChangeListenersIter.hasNext();) {
 			IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
 					.next();
+			// currentRow() can be null if it's scrolled off the top or bottom
+			TableRow row = currentRow();
+			Control control = row != null ? row.getRowControl() : null;
 			if (!listener.requestRowChange(parent, topRow + currentRow,
-					currentRow().getRowControl())) {
+					control)) {
 				return false;
 			}
 		}
@@ -1526,8 +1543,10 @@ public class InternalCompositeTable extends Composite implements Listener {
 				.iterator(); rowChangeListenersIter.hasNext();) {
 			IRowFocusListener listener = (IRowFocusListener) rowChangeListenersIter
 					.next();
-			listener.depart(parent, topRow + currentRow, currentRow()
-					.getRowControl());
+			// currentRow() can be null if it's scrolled off the top or bottom
+			TableRow row = currentRow();
+			Control control = row != null ? row.getRowControl() : null;
+			listener.depart(parent, topRow + currentRow, control);
 		}
 	}
 
@@ -1847,6 +1866,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 */
 	private void internalSetSelection(int column, int row, boolean rowChange) {
 		Control toFocus = getControl(column, row);
+		if (toFocus == null) {
+			return;
+		}
 		if (toFocus.isFocusControl()) {
 			toFocus.notifyListeners(SWT.FocusIn, new Event());
 		} else {
@@ -1865,6 +1887,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 *            true if the rowArrive event should be fired; false otherwise.
 	 */
 	private void deferredSetFocus(final Control toFocus, final boolean rowChange) {
+		if (toFocus == null) {
+			return;
+		}
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
 				toFocus.setFocus();
