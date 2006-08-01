@@ -213,7 +213,8 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		// DEBUG:		
 		Utils.debug("End process config site url:" + urlString + " policy:" + typeString + " updatable:"+flag ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		config.addSiteEntry(url.toExternalForm(), site);
+		currentSiteURL = site.getURL();
+		config.addSiteEntry(currentSiteURL.toExternalForm(), site);
 	}
 	
 	/** 
