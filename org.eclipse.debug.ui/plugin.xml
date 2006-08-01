@@ -439,12 +439,22 @@
                id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
          </action>
          <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
+               label="%ToggleLineBreakpointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.gif"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_line_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleLineBreakpoint">
+         </action>         
+         <action
                definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
                label="%ToggleBreakpointAction.label"
                icon="$nl$/icons/full/obj16/brkp_obj.gif"
                disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
                helpContextId="toggle_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
                id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
          </action>         
