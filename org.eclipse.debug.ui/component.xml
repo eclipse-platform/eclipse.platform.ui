@@ -51,6 +51,7 @@
 	<type name="IToggleBreakpointsTargetExtension" />
 	<type name="IVariableValueEditor" />
 	<type name="IWatchExpressionFactoryAdapter" />
+	<type name="IWatchExpressionFactoryAdapterExtension" />
 	<type name="LaunchAction" subclass="false" />
 	<type name="LaunchAsAction" subclass="false" />
 	<type name="LaunchShortcutsAction" />

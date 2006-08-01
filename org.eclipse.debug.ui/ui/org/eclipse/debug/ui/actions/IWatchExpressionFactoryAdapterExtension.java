@@ -10,39 +10,35 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * An optional adapter used to create a watch expression for a selected variable.
+ * Optional extension to the watch expression factory adapter to dynamically enable the
+ * 'Create Watch Expression' action, based on the selected variable.
  * <p>
- * The 'Create Watch Expression' action is enabled for instances of
+ * By default, the 'Create Watch Expression' action is enabled for instances of
  * {@link org.eclipse.debug.core.model.IVariable} that have an associated
  * {@link org.eclipse.debug.core.model.IWatchExpressionDelegate} registered
- * for that debug model.
- * When a watch expression factory adapter is available for a variable, the factory is
- * consulted to create a watch expression for that variable. When no adapter is provided,
- * the watch expression is generated based on the variable's name.
+ * for that debug model. 
+ * When a watch expression factory adapter is available for a variable that implements
+ * this interface, the factory is consulted to enable the action.
  * </p>
  * <p>
- * Also see the optional interface {@link IWatchExpressionFactoryAdapterExtension}.
+ * Clients may implementing {@link IWatchExpressionFactoryAdapter} may also implement
+ * this interface.
  * </p>
- * <p>
- * Clients may implement this interface.
- * </p>
- * @since 3.2
+ * @since 3.3
  */
-public interface IWatchExpressionFactoryAdapter {
+public interface IWatchExpressionFactoryAdapterExtension extends IWatchExpressionFactoryAdapter {
 	
 	/**
-	 * Creates and returns an expression for the specified variable
-	 * which is used to created an {@link org.eclipse.debug.core.model.IWatchExpression}.
+	 * Returns whether a watch expression can be created for the specified variable.
 	 * 
 	 * @param variable variable a watch expression is required for
-	 * @return text used to create a watch expression
+	 * @return whether an expression can be created
 	 * @exception org.eclipse.core.runtime.CoreException if unable to create a watch
 	 *  expression
 	 */
-	public String createWatchExpression(IVariable variable) throws CoreException;
+	public boolean canCreateWatchExpression(IVariable variable);
 
 }

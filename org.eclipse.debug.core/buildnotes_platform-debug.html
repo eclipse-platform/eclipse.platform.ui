@@ -14,6 +14,9 @@
   <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute specifies the encoding
    used by the console. When unspecified the default system encoding is used. This constant replaces
    the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>added <code>org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension</code> - this is an
+   interface that can be optionally implemented by <code>IWatchExpressionFactoryAdapter</code>'s. Allows
+   the <b>Create Watch Expression</b> action to be dynamically enabled based on the selected variables.</li>
   <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>   
 </ul>
 

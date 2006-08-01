@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -77,7 +78,7 @@ public class WatchAction implements IObjectActionDelegate {
 
 	private void createExpression(IVariable variable) {
 		IWatchExpression expression;
-		IWatchExpressionFactoryAdapter factory = (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);
+		IWatchExpressionFactoryAdapter factory = getFactory(variable);
 		try {
 			String exp = variable.getName();
 			if (factory != null) {
@@ -114,7 +115,8 @@ public class WatchAction implements IObjectActionDelegate {
             Iterator iterator = fSelection.iterator();
             while (iterator.hasNext()) {
                 IVariable variable = (IVariable) iterator.next();
-                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier())) {
+                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) &&
+                		isFactoryEnabled(variable)) {
                     enabled++;
                 } else {
                     break;
@@ -124,4 +126,28 @@ public class WatchAction implements IObjectActionDelegate {
         action.setEnabled(enabled == size);
 	}
 
+	/**
+	 * Returns whether the factory adapter for the given variable is currently enabled.
+	 * 
+	 * @param variable
+	 * @return whether the factory is enabled
+	 */
+	private boolean isFactoryEnabled(IVariable variable) {
+		IWatchExpressionFactoryAdapter factory = getFactory(variable);
+		if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
+			IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
+			return ext.canCreateWatchExpression(variable);
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the factory adapter for the given variable or <code>null</code> if none.
+	 * 
+	 * @param variable
+	 * @return factory or <code>null</code>
+	 */
+	private IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
+		return (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);		
+	}
 }
