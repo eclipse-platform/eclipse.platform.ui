@@ -920,6 +920,16 @@
             adaptableType="org.eclipse.ui.IWorkingSet">
             <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
+       <factory
+             adaptableType="org.eclipse.ui.IFileEditorInput"
+             class="org.eclipse.ui.internal.ide.model.FileInputAdapterFactory">
+          <adapter
+                type="org.eclipse.core.resources.IFile">
+          </adapter>
+          <adapter
+                type="org.eclipse.core.resources.IResource">
+          </adapter>
+       </factory>
    </extension>
    
    <extension
