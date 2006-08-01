@@ -67,6 +67,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -174,14 +175,16 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			return fContext;
 		}	
 		
-		protected synchronized void activate(ISelection selection) {
-			fContext = selection;
+		protected void activate(final ISelection selection) {
+			synchronized (this) {
+				fContext = selection;
+			}
 			Object[] listeners = fListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
 				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
                 SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
-						listener.contextActivated(fContext, ContextProvider.this.getPart());
+						listener.contextActivated(selection, ContextProvider.this.getPart());
 					}
 					public void handleException(Throwable exception) {
 						DebugUIPlugin.log(exception);
@@ -191,25 +194,31 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			}
 		}
 		
-		protected synchronized void possibleContextChange(Object element) {
-			if (fContext instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection) fContext;
-				if (ss.size() == 1 && ss.getFirstElement().equals(element)) {
-					Object[] listeners = fListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-                        SafeRunner.run(new ISafeRunnable() {
-							public void run() throws Exception {
-								listener.contextChanged(fContext, ContextProvider.this.getPart());
-							}
-							public void handleException(Throwable exception) {
-								DebugUIPlugin.log(exception);
-							}
-						});
-						
-					}					
+		protected void possibleContextChange(Object element) {
+			synchronized (this) {
+				if (fContext instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection) fContext;
+					if (!(ss.size() == 1 && ss.getFirstElement().equals(element))) {
+						return;
+					}
+				} else {
+					return;
 				}
 			}
+			Object[] listeners = fListeners.getListeners();
+			final IStructuredSelection context = new StructuredSelection(element);
+			for (int i = 0; i < listeners.length; i++) {
+				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
+                SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						listener.contextChanged(context, ContextProvider.this.getPart());
+					}
+					public void handleException(Throwable exception) {
+						DebugUIPlugin.log(exception);
+					}
+				});
+				
+			}					
 		}
 		
 	}
