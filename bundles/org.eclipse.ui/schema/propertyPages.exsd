@@ -127,6 +127,8 @@ wild card match applied to the target object name.
                <documentation>
                   a flag that indicates if types that adapt to IResource should use this property page.
 This flag is used if objectClass adapts to IResource.  Default value is false.
+
+&lt;strong&gt;NOTE:&lt;/strong&gt; The adaptable attribute will attempt adapt an object to &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; before referencing the types registered in &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt;. If the enabledWhen element is used instead enabledWhen has no special case tests for &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; and uses &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt; to look up adaptable types. These can be registered using the &lt;code&gt;org.eclipse.core.runtime.adaptors&lt;/code&gt; extension point.
                </documentation>
             </annotation>
          </attribute>
