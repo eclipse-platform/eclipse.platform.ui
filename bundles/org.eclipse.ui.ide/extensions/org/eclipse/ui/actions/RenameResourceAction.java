@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
@@ -170,8 +171,9 @@ public class RenameResourceAction extends WorkspaceAction {
 			return false;
 		}
 
-        //Do a quick read only check
-        if (currentResource.getResourceAttributes().isReadOnly()) {
+		//Do a quick read only check
+        final ResourceAttributes attributes = currentResource.getResourceAttributes();
+        if (attributes != null && attributes.isReadOnly()) {
 			return MessageDialog.openQuestion(getShell(), CHECK_RENAME_TITLE,
                     MessageFormat.format(CHECK_RENAME_MESSAGE,
                             new Object[] { currentResource.getName() }));
