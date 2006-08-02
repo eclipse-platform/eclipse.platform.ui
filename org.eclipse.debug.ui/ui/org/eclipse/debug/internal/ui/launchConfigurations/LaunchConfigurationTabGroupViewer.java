@@ -11,8 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +23,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -64,6 +61,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A viewer that displays tabs for a launch configuration, with apply and revert
@@ -348,7 +347,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		link.setLayoutData(gd);
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				SWTUtil.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage", new PerspectivePreferencePage()); //$NON-NLS-1$
+				SWTUtil.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage"); //$NON-NLS-1$
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});

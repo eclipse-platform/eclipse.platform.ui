@@ -12,18 +12,13 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.preferences.LaunchConfigurationsPreferencePage;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -132,18 +127,7 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		//add pref action
 		IAction action = new Action(LaunchConfigurationsMessages.FilterDropDownMenuCreator_3) {
 			public void run() {
-				final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.LaunchConfigurationsPreferencePage",  //$NON-NLS-1$
-						new LaunchConfigurationsPreferencePage());
-				PreferenceManager manager = new PreferenceManager();
-				manager.addToRoot(targetNode);
-				final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
-				BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-					public void run() {
-						dialog.create();
-						dialog.setMessage(targetNode.getLabelText());
-						dialog.open();
-					}
-				});
+				SWTUtil.showPreferencePage("org.eclipse.debug.ui.LaunchConfigurations"); //$NON-NLS-1$
 			}
 		};
 		new ActionContributionItem(action).fill(fCreatedMenu, -1);
