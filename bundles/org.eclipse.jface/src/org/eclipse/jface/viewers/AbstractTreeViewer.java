@@ -366,7 +366,16 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
 	private boolean itemExists(Item[] items, Object element) {
 		if(usingElementMap()) {
-			return findItem(element) != null;
+			Widget[] existingItems = findItems(element);
+			// optimization for two common cases
+			if (existingItems.length == 0) {
+				return false;
+			} else if (existingItems.length == 1) {
+				if (items.length > 0 && existingItems[0] instanceof Item) {
+					Item existingItem = (Item) existingItems[0];
+					return getParentItem(existingItem) == getParentItem(items[0]);
+				}
+			}
 		}
 		for (int i = 0; i < items.length; i++) {
 			if(items[i].getData().equals(element)) {
