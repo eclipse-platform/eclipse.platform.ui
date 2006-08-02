@@ -1388,7 +1388,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 	        }
 	        if (!partsToSave.isEmpty()) {
-	        	if (!EditorManager.saveAll(partsToSave, true, true, window)) {
+	        	if (!EditorManager.saveAll(partsToSave, true, true, false, window)) {
 	        		// user canceled
 	        		return;
 	        	}
@@ -2134,7 +2134,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     			ISaveablePart saveable = (ISaveablePart)view;
     			if (saveable.isSaveOnCloseNeeded()) {
     				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();
-    				boolean success = EditorManager.saveAll(Collections.singletonList(view), true, true, window);
+    				boolean success = EditorManager.saveAll(Collections.singletonList(view), true, true, false, window);
     				if (!success) {
     					// the user cancelled.
     					return;
@@ -2943,7 +2943,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage
      */
     public boolean saveAllEditors(boolean confirm) {
-        return getEditorManager().saveAll(confirm, false);
+        return saveAllEditors(confirm, false);
+    }
+
+    /**
+     * @param confirm 
+     * @param addNonPartSources true if saveables from non-part sources should be saved too
+     * @return false if the user cancelled 
+     * 
+     */
+    public boolean saveAllEditors(boolean confirm, boolean addNonPartSources) {
+        return getEditorManager().saveAll(confirm, false, addNonPartSources);
     }
 
     /*

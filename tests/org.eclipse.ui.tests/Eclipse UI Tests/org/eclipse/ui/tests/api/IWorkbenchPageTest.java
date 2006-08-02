@@ -968,7 +968,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			view2.setDirty(true);
 
 			WorkbenchPage page = (WorkbenchPage) fActivePage;
-			page.getEditorManager().saveAll(true, false);
+			page.getEditorManager().saveAll(true, false, false);
 			
 			assertFalse(view.isDirty());
 			assertFalse(view2.isDirty());
@@ -1015,7 +1015,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			view2.setSharedModel(model);
 
 			WorkbenchPage page = (WorkbenchPage) fActivePage;
-			page.getEditorManager().saveAll(true, false);
+			page.getEditorManager().saveAll(true, false, false);
 
 			assertFalse(view.isDirty());
 			assertFalse(view2.isDirty());

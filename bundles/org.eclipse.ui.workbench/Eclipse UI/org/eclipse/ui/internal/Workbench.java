@@ -764,14 +764,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 						}
 					}
 				}
-				if (dirtyParts.size() > 0) {
-					IWorkbenchWindow w = getActiveWorkbenchWindow();
-					if (w == null) {
-						w = windows[0];
-					}
-					result[0] = EditorManager.saveAll(dirtyParts, finalConfirm,
-							false, w);
+				IWorkbenchWindow w = getActiveWorkbenchWindow();
+				if (w == null) {
+					w = windows[0];
 				}
+				// The fourth parameter is true to also save saveables from
+				// non-part sources, see bug 139004.
+				result[0] = EditorManager.saveAll(dirtyParts, finalConfirm,
+						false, true, w);
 			}
 		});
 		return result[0];
