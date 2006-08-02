@@ -138,6 +138,7 @@ public class TableRow {
 	 * specified position.
 	 */
 	public Control getColumnControl(int i) {
+		System.out.println("i=" + i + "; colums.length="+columns.length);
 		if (i < 1 && columns.length == 0) {
 			return row;
 		}
