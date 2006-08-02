@@ -1159,6 +1159,16 @@ public abstract class MarkerView extends TableView {
 		for (int i = 0; i < markerFilters.length; i++) {
 			markerFilters[i].setFocusResource(resources);
 		}
+
+		Iterator systemFilters = MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters().iterator();
+
+		while (systemFilters.hasNext()) {
+			MarkerFilter filter = (MarkerFilter) systemFilters.next();
+			filter.setFocusResource(resources);
+
+		}
+
 	}
 
 	/**
