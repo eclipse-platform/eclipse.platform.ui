@@ -137,7 +137,7 @@ public class TableRow {
 	 * specified position.
 	 */
 	public Control getColumnControl(int i) {
-		if (i < columns.length - 1) {
+		if (i < columns.length) {
 			return columns[i];
 		}
 		if (i == -1 && columns.length == 0) {
