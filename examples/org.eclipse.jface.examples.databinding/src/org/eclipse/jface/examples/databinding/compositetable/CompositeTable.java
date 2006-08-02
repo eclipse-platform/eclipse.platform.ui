@@ -1211,4 +1211,3 @@ public class CompositeTable extends Canvas {
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"
-

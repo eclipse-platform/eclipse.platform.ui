@@ -174,4 +174,3 @@ public class CompositeTableObservableLazyDataRequestor extends AbstractObservabl
 	 */
 	private IRowFocusListener rowListener = new RowFocusAdapter();
 }
-
