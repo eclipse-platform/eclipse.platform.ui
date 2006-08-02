@@ -70,7 +70,6 @@ import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.operations.FeatureStatus;
@@ -589,20 +588,6 @@ public class ReviewPage	extends BannerPage {
 		buttonContainer.setLayout(layout);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		Button button = new Button(buttonContainer, SWT.PUSH);
-//		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.selectAll")); //$NON-NLS-1$
-//		gd =
-//			new GridData(
-//				GridData.HORIZONTAL_ALIGN_FILL
-//					| GridData.VERTICAL_ALIGN_BEGINNING);
-//		button.setLayoutData(gd);
-//		SWTUtil.setButtonDimensionHint(button);
-//		button.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				handleSelectAll(true);
-//			}
-//		});
-
 		Button button = new Button(buttonContainer, SWT.PUSH);
 		button.setText(UpdateUIMessages.InstallWizard_ReviewPage_deselectAll); 
 		gd =
@@ -790,17 +775,6 @@ public class ReviewPage	extends BannerPage {
 				}
             }
         });
-
-//      treeViewer.addFilter(new ViewerFilter() {
-//          public boolean select(
-//              Viewer viewer,
-//              Object parentElement,
-//              Object element) {
-//              if (element instanceof SiteBookmark)
-//                  return !((SiteBookmark) element).isWebBookmark();
-//              return true;
-//          }
-//      });
         
       descLabel = new ScrolledFormText(sform, true);
       descLabel.setText(""); //$NON-NLS-1$
@@ -857,65 +831,11 @@ public class ReviewPage	extends BannerPage {
 		});
 	}
     
-    
-//    private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
-//
-//        bookmark.setSelected(checked);
-//        if (checked)
-//            bookmark.setIgnoredCategories(new String[0]);
-//            
-//        if (checked || bookmark.isSiteConnected())
-//            treeViewer.setSubtreeChecked(bookmark, checked);
-//   
-//        treeViewer.setGrayed(bookmark, false);
-//    }
-//    
-//    private void handleCategoryChecked(SiteCategory category, boolean checked) {
-//        SiteBookmark bookmark = category.getBookmark();
-//
-//        ArrayList array = new ArrayList();
-//
-//        if (bookmark.isSelected()) {
-//            String[] ignored = bookmark.getIgnoredCategories();
-//            for (int i = 0; i < ignored.length; i++)
-//                array.add(ignored[i]);
-//        } else {
-//            Object[] categs = bookmark.getCatalog(true, null);
-//            for (int i = 0; i < categs.length; i++)
-//                array.add(((SiteCategory) categs[i]).getFullName());
-//        }
-//
-//        if (checked) {
-//            array.remove(category.getFullName());
-//        } else {
-//            array.add(category.getFullName());
-//        }
-//
-//        bookmark.setIgnoredCategories((String[]) array.toArray(new String[array
-//                .size()]));
-//
-//        Object[] children = ((TreeContentProvider) treeViewer
-//                .getContentProvider()).getChildren(category.getBookmark());
-//        treeViewer.setChecked(bookmark, array.size() < children.length);
-//        bookmark.setSelected(array.size() < children.length);
-//        
-//        if (checked)
-//            treeViewer.setSubtreeChecked(bookmark, checked);
-//        
-//        treeViewer.setGrayed(bookmark, array.size() > 0
-//                && array.size() < children.length);
-//    }
-//
-//    private void handleFeatureChecked(IInstallFeatureOperation job, boolean checked) {
-//        treeViewer.setGrayed(job, false);
-//    }
-    
     private void handleSelectionChanged(IStructuredSelection ssel) {
-        //boolean enable = false;
+        
         Object item = ssel.getFirstElement();
         String description = null;
         if (item instanceof SiteBookmark) {
-            //enable = !((SiteBookmark) item).isReadOnly();
             description = ((SiteBookmark)item).getDescription();
         } else if (item instanceof SiteCategory) {
             IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
@@ -923,9 +843,6 @@ public class ReviewPage	extends BannerPage {
                 description = descEntry.getAnnotation();
         } else if (item instanceof IInstallFeatureOperation) {
             jobSelected(ssel);
-//            IURLEntry descEntry = ((IInstallFeatureOperation)item).getFeature().getDescription();
-//            if (descEntry != null)
-//                description = descEntry.getAnnotation();
             return;
         }
 

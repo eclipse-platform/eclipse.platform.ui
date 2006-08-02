@@ -17,6 +17,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -102,6 +104,19 @@ public class MirrorsDialog extends Dialog {
 		mirrorsList.select(0);
 		
 		Dialog.applyDialogFont(composite);
+		
+		mirrorsList.addMouseListener( new MouseListener() {
+				public void mouseDoubleClick(MouseEvent e) {
+					okPressed();			
+				}	
+				public void mouseDown(MouseEvent e) {
+					// do nothing			
+				}
+				public void mouseUp(MouseEvent e) {
+					//	do nothing				
+				}			
+			}
+		);
 		return composite;
 	}
 		

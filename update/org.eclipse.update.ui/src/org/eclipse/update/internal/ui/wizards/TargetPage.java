@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,7 +47,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
@@ -277,31 +282,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
         changeLocation.setText(UpdateUIMessages.InstallWizard_TargetPage_location_change); 
         changeLocation.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                IStructuredSelection selection = (IStructuredSelection) jobViewer.getSelection();
-                if (selection == null)
-                    return;
-                Iterator selectedJob = selection.iterator();
-                if (selectedJob == null) 
-                    return;
-                
-                TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()), configListener);
-                dialog.create();
-
-                SWTUtil.setDialogSize(dialog, 400, 300);
-                
-                dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
-                if ( dialog.open() == Dialog.OK) {
-                	
-                	/*if (selectedJob != null) {
-                		while(selectedJob.hasNext()) {
-                			setTargetLocation((IInstallFeatureOperation)selectedJob.next());
-                		}
-                	}*/
-                	//setTargetLocation(job);
-                	pageChanged();
-                	jobViewer.refresh();
-                	updateStatus();
-                }
+                changeLocationOfFeatures();
             }
 
 			
@@ -360,35 +341,58 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		jobViewer.setLabelProvider(new JobsLabelProvider());
 		jobViewer.setSorter(new JobViewerSorter());
 		
-		featureNameColumn.addSelectionListener(new SelectionAdapter() {
-		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_NAME_COLUMN);
-		        jobViewer.refresh();
+		jobViewer.addDoubleClickListener(new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent event) {
+					changeLocationOfFeatures();				
+				}
+			}
+		);
+		
+		table.addListener(SWT.MenuDetect, new Listener() {
+		      public void handleEvent(Event event) {
+		    	  Menu menu = new Menu (getShell(), SWT.POP_UP);
+					MenuItem item = new MenuItem (menu, SWT.PUSH);
+					item.setText(UpdateUIMessages.InstallWizard_TargetPage_location_change);
+					item.addListener(SWT.Selection, new Listener () {
+							public void handleEvent (Event e) {
+								changeLocationOfFeatures();
+							}
+						}
+					);
+					menu.setLocation (event.x, event.y);
+					menu.setVisible (true);
 		      }
+			}
+		);
+		featureNameColumn.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent event) {
+					((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_NAME_COLUMN);
+					jobViewer.refresh();
+				}
 		    }
 		);
 		
 		featureVersionColumn.addSelectionListener(new SelectionAdapter() {
-		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_VERSION_COLUMN);
-		        jobViewer.refresh();
-		      }
+		      	public void widgetSelected(SelectionEvent event) {
+		      		((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_VERSION_COLUMN);
+		      		jobViewer.refresh();
+		      	}
 		    }
 		);
 		
 		featureSizeColumn.addSelectionListener(new SelectionAdapter() {
-		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_SIZE_COLUMN);
-		        jobViewer.refresh();
-		      }
+		      	public void widgetSelected(SelectionEvent event) {
+		      		((JobViewerSorter) jobViewer.getSorter()).doSort(FEATURE_SIZE_COLUMN);
+		      		jobViewer.refresh();
+		      	}
 		    }
 		);
 		
 		featureLocationColumn.addSelectionListener(new SelectionAdapter() {
-		      public void widgetSelected(SelectionEvent event) {
-		        ((JobViewerSorter) jobViewer.getSorter()).doSort(INSTALLATION_DIRECTORY_COLUMN);
-		        jobViewer.refresh();
-		      }
+		      	public void widgetSelected(SelectionEvent event) {
+		      		((JobViewerSorter) jobViewer.getSorter()).doSort(INSTALLATION_DIRECTORY_COLUMN);
+		      		jobViewer.refresh();
+		      	}
 		    }
 		);
 		
@@ -755,5 +759,26 @@ public class TargetPage extends BannerPage implements IDynamicPage {
     	}
     	
     	return (IInstallFeatureOperation[])result.toArray(new IInstallFeatureOperation[result.size()]);
+	}
+
+	private void changeLocationOfFeatures() {
+		IStructuredSelection selection = (IStructuredSelection) jobViewer.getSelection();
+		if (selection == null)
+		    return;
+		Iterator selectedJob = selection.iterator();
+		if (selectedJob == null) 
+		    return;
+		
+		TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()), configListener);
+		dialog.create();
+
+		SWTUtil.setDialogSize(dialog, 400, 300);
+		
+		dialog.getShell().setText(UpdateUIMessages.SitePage_new); 
+		if ( dialog.open() == Dialog.OK) {
+			pageChanged();
+			jobViewer.refresh();
+			updateStatus();
+		}
 	}
 }
