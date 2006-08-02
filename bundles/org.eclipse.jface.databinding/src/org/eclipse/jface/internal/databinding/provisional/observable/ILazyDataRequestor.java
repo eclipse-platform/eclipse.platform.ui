@@ -45,6 +45,8 @@ public interface ILazyDataRequestor extends IObservable {
 	
 	/**
 	 * Sets the number of elements in the entire list that we are browsing.
+	 * Refreshes all visible elements in the list by retrieving them again
+	 * from the underlying model.
 	 * 
 	 * @param size The new size to set.
 	 */
