@@ -9,9 +9,8 @@
  * Contributors:
  *     David Orme     - Initial API and implementation
  */
-package org.eclipse.jface.examples.databinding.compositetable.internal;
+package org.eclipse.jface.examples.databinding.compositetable;
 
-import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.swt.widgets.Control;
 
 /**

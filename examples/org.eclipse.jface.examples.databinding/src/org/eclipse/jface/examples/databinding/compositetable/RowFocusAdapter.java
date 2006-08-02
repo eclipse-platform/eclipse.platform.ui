@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.examples.databinding.compositetable;
 
-import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.swt.widgets.Control;
 
 /**

@@ -17,11 +17,13 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.eclipse.jface.examples.databinding.compositetable.internal.EmptyTablePlaceholder;
-import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.jface.examples.databinding.compositetable.internal.ISelectableRegionControl;
 import org.eclipse.jface.examples.databinding.compositetable.internal.TableRow;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.DuckType;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -151,9 +153,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * header object (if applicable) and the row objects.
 	 */
 	private void createControlHolder() {
-//		final ScrolledComposite scroller = new ScrolledComposite(this, SWT.H_SCROLL);
-		final Composite scroller = new Composite(this, SWT.NONE);
-		scroller.setLayout(new FillLayout());
+		final ScrolledComposite scroller = new ScrolledComposite(this, SWT.H_SCROLL);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -162,6 +162,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 		scroller.setLayoutData(gridData);
 		
 		controlHolder = new Composite(scroller, SWT.NONE);
+		scroller.setContent(controlHolder);
+		
 		controlHolder.setLayout(new Layout() {
 			protected Point computeSize(Composite composite, int wHint,
 					int hHint, boolean flushCache) {
@@ -188,40 +190,46 @@ public class InternalCompositeTable extends Composite implements Listener {
 			}
 		});
 		
-//		scroller.addControlListener(new ControlListener() {
-//			public void controlMoved(ControlEvent e) {
-//				//noop
-//			}
-//
-//			public void controlResized(ControlEvent e) {
-//				Point size = scroller.getSize();
-//				if (fittingHorizontally) {
-//					controlHolder.setBounds(0, 0, size.x, size.y);
-//					return;
-//				}
-//				Point preferredSize = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-//				Control[] children = controlHolder.getChildren();
-//				if (children.length > 0) {
-//					if (children[0] instanceof Composite) {
-//						Composite child = (Composite) children[0];
-//						if (child.getLayout() != null) {
-//							size.x = preferredSize.x;
-//							controlHolder.setBounds(0, 0, size.x, size.y);
-//							return;
-//						}
-//					}
-//				}
-//				for (int i = 0; i < children.length; i++) {
-//					Point childPreferredSize = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-//					if (preferredSize.x < childPreferredSize.x) {
-//						preferredSize.x = childPreferredSize.x;
-//					}
-//				}
-//				size.x = preferredSize.x;
-//				controlHolder.setBounds(0, 0, size.x, size.y);
-//			}
-//		});
-//		scroller.setContent(controlHolder);
+		scroller.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				//noop
+			}
+
+			public void controlResized(ControlEvent e) {
+				Point size = scroller.getSize();
+				if (fittingHorizontally) {
+					controlHolder.setBounds(0, 0, size.x, size.y);
+					return;
+				}
+				
+				Control[] children = controlHolder.getChildren();
+				if (children.length > 0) {
+					if (children[0] instanceof Composite) {
+						Composite child = (Composite) children[0];
+						// children instanceof Composite && programmer supplied a layout manager --> getPreferredSize()
+						if (child.getLayout() != null) {
+							size.x = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+						} else {
+							// children instanceof Composite && layout == null
+							int[] weights = parent.getWeights();
+							if (weights.length != child.getChildren().length) {
+								throw new IllegalArgumentException("Number of weights != number of child controls");
+							}
+							size.x = 0;
+							for (int i = 0; i < weights.length; i++) {
+								size.x += weights[i]+4;
+							}
+						}
+						controlHolder.setBounds(0, 0, size.x, size.y);
+						
+					} else if (children[0] instanceof Control) {
+						// children instanceof Control --> Use getPreferredSize()
+						size.x = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+						controlHolder.setBounds(0, 0, size.x, size.y);
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -317,6 +325,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 	private void disposeRows(LinkedList rowsCollection) {
 		for (Iterator rowsIter = rowsCollection.iterator(); rowsIter.hasNext();) {
 			TableRow row = (TableRow) rowsIter.next();
+			if (row instanceof IRowFocusListener) {
+				parent.removeRowFocusListener((IRowFocusListener) row);
+			}
 			row.dispose();
 		}
 	}
@@ -381,6 +392,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 					new Integer(SWT.NULL) });
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Unable to construct control"); //$NON-NLS-1$
+		}
+		if (result instanceof IRowFocusListener) {
+			this.parent.addRowFocusListener((IRowFocusListener) result);
 		}
 		return result;
 	}

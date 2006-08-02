@@ -16,7 +16,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import org.eclipse.jface.examples.databinding.compositetable.internal.IRowFocusListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -370,22 +369,22 @@ public class CompositeTable extends Canvas {
 	 * @return the height of the header or row
 	 */
 	int layoutHeaderOrRow(Composite child, boolean isHeader) {
+		if (isFittingHorizontally()) {
+			return layoutWeightedHeaderOrRow(child, isHeader);
+		}
+		return layoutAbsoluteWidthHeaderOrRow(child, isHeader);
+	}
+	
+	private int layoutWeightedHeaderOrRow(Composite child, boolean isHeader) {
 		Control[] children = child.getChildren();
 		if (children.length == 0) {
 			return 50;
 		}
+		int maxHeight = computeMaxHeight(isHeader, children);
+
 		int[] weights = this.weights;
 		weights = checkWeights(weights, children.length);
-
-		int maxHeight = 0;
-		for (int i = 0; i < children.length; i++) {
-			int height = computeDesiredHeight(children[i], isHeader);
-			if (maxHeight < height) {
-				maxHeight = height;
-			}
-		}
-		++maxHeight;
-
+		
 		int widthRemaining = child.getParent().getSize().x;
 		int totalSize = widthRemaining;
 		for (int i = 0; i < children.length - 1; i++) {
@@ -403,6 +402,37 @@ public class CompositeTable extends Canvas {
 		children[children.length - 1].setBounds(left + 2, top,
 				widthRemaining - 4, desiredHeight);
 
+		return maxHeight;
+	}
+	
+	private int layoutAbsoluteWidthHeaderOrRow(Composite child, boolean isHeader) {
+		Control[] children = child.getChildren();
+		if (children.length == 0) {
+			return 50;
+		}
+		int maxHeight = computeMaxHeight(isHeader, children);
+
+		int[] weights = this.weights;
+		int left = 0;
+		for (int i = 0; i < children.length; i++) {
+			int desiredHeight = computeDesiredHeight(children[i], isHeader);
+			int top = maxHeight - desiredHeight - 1;
+			children[i].setBounds(left + 2, top, weights[i], desiredHeight);
+			left += weights[i]+4;
+		}
+
+		return maxHeight;
+	}
+
+	private int computeMaxHeight(boolean isHeader, Control[] children) {
+		int maxHeight = 0;
+		for (int i = 0; i < children.length; i++) {
+			int height = computeDesiredHeight(children[i], isHeader);
+			if (maxHeight < height) {
+				maxHeight = height;
+			}
+		}
+		++maxHeight;
 		return maxHeight;
 	}
 	
@@ -500,9 +530,14 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
-	 * Method getWeights. Returns an array representing the percentage of the
-	 * total width each column is allocated or null if no weights have been
-	 * specified. This property is ignored if the programmer has set a layout
+	 * Method getWeights. If isFittingHorizontally, returns an array 
+	 * representing the percentage of the total width each column is allocated 
+	 * or null if no weights have been specified.
+	 * <p> 
+	 * If !isFittingHorizontally, returns an array where each element is the
+	 * absolute width in pixels of the corresponding column.
+	 * <p>
+	 * This property is ignored if the programmer has set a layout
 	 * manager on the header and/or the row prototype objects.
 	 * 
 	 * @return the current weights array or null if no weights have been
@@ -513,15 +548,20 @@ public class CompositeTable extends Canvas {
 	}
 
 	/**
-	 * Method setWeights. Specifies the percentage of the total width that will
-	 * be allocated to each column. This property is ignored if the programmer
-	 * has set a layout manager on the header and/or the row prototype objects.
+	 * Method setWeights.  If isFittingHorizontally, specifies an array 
+	 * representing the percentage of the total width each column is allocated 
+	 * or null if no weights have been specified.
+	 * <p> 
+	 * If !isFittingHorizontally, specifies an array where each element is the
+	 * absolute width in pixels of the corresponding column.
 	 * <p>
-	 * 
+	 * This property is ignored if the programmer has set a layout
+	 * manager on the header and/or the row prototype objects.
+	 * <p>
 	 * The number of elements in the array must match the number of columns and
-	 * the sum of all elements must equal 100. If either of these constraints is
-	 * not true, this property will be ignored and all columns will be created
-	 * equal in width.
+	 * if isFittingHorizontally, the sum of all elements must equal 100. 
+	 * If either of these constraints is not true, this property will be ignored 
+	 * and all columns will be created equal in width.
 	 * 
 	 * @param weights
 	 *            the weights to use if the CompositeTable is automatically
