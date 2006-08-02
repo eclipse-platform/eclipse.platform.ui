@@ -115,7 +115,13 @@ public class InspectPopupDialog extends DebugPopup {
 
         fVariablesViewer = new VariablesViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, null);
         
-        fVariablesViewer.setContext(new PresentationContext(view));
+        IPresentationContext context;
+        if (view == null) {
+        	context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+        } else {
+        	context = new PresentationContext(view);
+        }
+        fVariablesViewer.setContext(context);
         fModelPresentation = new VariablesViewModelPresentation();
         fVariablesViewer.setLabelProvider(fModelPresentation);
 

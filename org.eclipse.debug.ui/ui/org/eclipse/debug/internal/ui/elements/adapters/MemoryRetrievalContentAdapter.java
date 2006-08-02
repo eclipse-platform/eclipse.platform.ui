@@ -21,7 +21,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-		String id = context.getPart().getSite().getId();
+		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (parent instanceof IMemoryBlockRetrieval)
@@ -33,7 +33,7 @@ public class MemoryRetrievalContentAdapter extends AsynchronousContentAdapter{
 	}
 
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-		String id = context.getPart().getSite().getId();
+		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (element instanceof IMemoryBlockRetrieval)

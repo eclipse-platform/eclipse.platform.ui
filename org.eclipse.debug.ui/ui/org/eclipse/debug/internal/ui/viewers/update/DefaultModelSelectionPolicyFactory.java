@@ -16,7 +16,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Default factory for selection policies.
@@ -26,8 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class DefaultModelSelectionPolicyFactory implements IModelSelectionPolicyFactoryAdapter {
 
 	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null && IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (element instanceof IDebugElement) {
 				return new DefaultSelectionPolicy((IDebugElement)element);
 			}

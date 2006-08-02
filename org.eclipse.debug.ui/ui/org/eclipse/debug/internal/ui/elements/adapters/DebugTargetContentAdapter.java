@@ -27,7 +27,7 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
      * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
      */
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-		String id = context.getPart().getSite().getId();
+		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
 			return ((IDebugTarget) parent).getThreads();
 		else if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
@@ -45,7 +45,7 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
      * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
      */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-		String id = context.getPart().getSite().getId();
+		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
 			return ((IDebugTarget)element).hasThreads();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))

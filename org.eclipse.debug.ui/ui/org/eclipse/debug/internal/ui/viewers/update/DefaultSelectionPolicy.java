@@ -17,7 +17,6 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Default selection policy for the debug view.
@@ -42,18 +41,15 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#contains(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	public boolean contains(ISelection selection, IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection) selection;
-					Object element = ss.getFirstElement();
-					if (element instanceof IDebugElement) {
-						IDebugElement debugElement = (IDebugElement) element;
-						return fDebugElement.getDebugTarget().equals(debugElement.getDebugTarget());
-					}
-				} 
-			}
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object element = ss.getFirstElement();
+				if (element instanceof IDebugElement) {
+					IDebugElement debugElement = (IDebugElement) element;
+					return fDebugElement.getDebugTarget().equals(debugElement.getDebugTarget());
+				}
+			} 
 		}
 		return false;
 	}
@@ -62,14 +58,11 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#overrides(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {	
-				if (existing instanceof IStructuredSelection && candidate instanceof IStructuredSelection) {
-					IStructuredSelection ssExisting = (IStructuredSelection) existing;
-					IStructuredSelection ssCandidate = (IStructuredSelection) candidate;
-					return overrides(ssExisting.getFirstElement(), ssCandidate.getFirstElement());
-				}
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
+			if (existing instanceof IStructuredSelection && candidate instanceof IStructuredSelection) {
+				IStructuredSelection ssExisting = (IStructuredSelection) existing;
+				IStructuredSelection ssCandidate = (IStructuredSelection) candidate;
+				return overrides(ssExisting.getFirstElement(), ssCandidate.getFirstElement());
 			}
 		}
 		return true;
@@ -94,12 +87,9 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#isSticky(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
 	 */
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(part.getSite().getId())) {	
-				if (selection instanceof IStructuredSelection) {
-					return isSticky(((IStructuredSelection)selection).getFirstElement());
-				}
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {	
+			if (selection instanceof IStructuredSelection) {
+				return isSticky(((IStructuredSelection)selection).getFirstElement());
 			}
 		}
 		return false;

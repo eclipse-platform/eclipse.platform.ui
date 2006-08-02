@@ -29,55 +29,55 @@ import org.eclipse.ui.IWorkbenchPart;
 public class DefaultModelProxyFactory implements IModelProxyFactoryAdapter {
 
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			String id = part.getSite().getId();
-			if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
-				if (element instanceof IDebugTarget) {
-					return new DebugTargetProxy((IDebugTarget)element);
-				}
-				if (element instanceof ILaunchManager) {
-					return new LaunchManagerProxy();
-				}
-				if (element instanceof IProcess) {
-					return new ProcessProxy((IProcess)element);
-				}
+		String id = context.getId();
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(id)) {
+			if (element instanceof IDebugTarget) {
+				return new DebugTargetProxy((IDebugTarget)element);
 			}
-			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id)) {
-				if (element instanceof IStackFrame) {
-					return new DefaultVariableViewModelProxy((IStackFrame)element);
-				}
+			if (element instanceof ILaunchManager) {
+				return new LaunchManagerProxy();
 			}
-			if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) {
-				if (element instanceof IExpressionManager) {
-					return new ExpressionManagerModelProxy();
-				} if (element instanceof IWatchExpression) {
+			if (element instanceof IProcess) {
+				return new ProcessProxy((IProcess)element);
+			}
+		}
+		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id)) {
+			if (element instanceof IStackFrame) {
+				return new DefaultVariableViewModelProxy((IStackFrame)element);
+			}
+		}
+		if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(id)) {
+			if (element instanceof IExpressionManager) {
+				return new ExpressionManagerModelProxy();
+			} if (element instanceof IWatchExpression) {
+				IWorkbenchPart part = context.getPart();
+				if (part == null) {
+					return null;
+				} else {
 					return new DefaultWatchExpressionModelProxy((IWatchExpression)element, part.getSite().getWorkbenchWindow());
 				}
-				if (element instanceof IExpression) {
-					return new DefaultExpressionModelProxy((IExpression)element);
-				}
 			}
-			if (IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
-				if (element instanceof IStackFrame) {
-					return new DefaultVariableViewModelProxy((IStackFrame)element);
-				}
+			if (element instanceof IExpression) {
+				return new DefaultExpressionModelProxy((IExpression)element);
 			}
-			if (IDebugUIConstants.ID_MEMORY_VIEW.equals(id)) {
-				if (element instanceof IMemoryBlockRetrieval)
-					return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
-				if (context instanceof MemoryViewPresentationContext)
+		}
+		if (IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
+			if (element instanceof IStackFrame) {
+				return new DefaultVariableViewModelProxy((IStackFrame)element);
+			}
+		}
+		if (IDebugUIConstants.ID_MEMORY_VIEW.equals(id)) {
+			if (element instanceof IMemoryBlockRetrieval)
+				return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
+			if (context instanceof MemoryViewPresentationContext)
+			{
+				if (((MemoryViewPresentationContext)context).getRendering() != null)
 				{
-					if (((MemoryViewPresentationContext)context).getRendering() != null)
-					{
-						if (element instanceof IMemoryBlock)
-							return new MemoryBlockProxy((IMemoryBlock)element);
-					}
+					if (element instanceof IMemoryBlock)
+						return new MemoryBlockProxy((IMemoryBlock)element);
 				}
 			}
 		}
-		
-
 		return null;
 	}
 

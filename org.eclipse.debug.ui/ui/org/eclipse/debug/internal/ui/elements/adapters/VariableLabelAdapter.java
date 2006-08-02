@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Label adapter for variables.
@@ -35,10 +34,9 @@ public class VariableLabelAdapter extends AsynchronousDebugLabelAdapter {
 	 * @see org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter#getLabels(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
-		IWorkbenchPart part = context.getPart();
+		String viewId = context.getId();
 		String[] ids = context.getColumns();
-		if (part != null && ids != null) {
-			String viewId = part.getSite().getId();
+		if (ids != null) {
 			if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(viewId) || IDebugUIConstants.ID_REGISTER_VIEW.equals(viewId)) {
 				IVariable variable = (IVariable) element;
 				IValue value = variable.getValue();

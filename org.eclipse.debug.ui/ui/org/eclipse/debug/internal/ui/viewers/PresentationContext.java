@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class PresentationContext implements IPresentationContext {
     
     private IWorkbenchPart fPart;
+    private String fId;
     private String[] fColumns;
     private ListenerList fListeners = new ListenerList();
     
@@ -38,6 +39,18 @@ public class PresentationContext implements IPresentationContext {
      */
     public PresentationContext(IWorkbenchPart part) {
         fPart = part;
+        if (part != null) {
+        	fId = part.getSite().getId();
+        }
+    }
+    
+    /**
+     * Constructs a presentation context for the given id.
+     * 
+     * @param id presentation context id
+     */
+    public PresentationContext(String id) {
+    	fId = id;
     }
 
     /* (non-Javadoc)
@@ -107,6 +120,13 @@ public class PresentationContext implements IPresentationContext {
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getId()
+	 */
+	public String getId() {
+		return fId;
 	}
 
 }

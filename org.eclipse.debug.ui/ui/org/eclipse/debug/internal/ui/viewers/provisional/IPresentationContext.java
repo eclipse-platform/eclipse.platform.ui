@@ -63,4 +63,14 @@ public interface IPresentationContext {
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener);
     
+    /**
+     * Returns the id of this presentation context. Usually this is the id of
+     * the associated part. However, when no part is associated with this context,
+     * the id may exist on its own. Allows for a context that is not tied to a part.
+     * 
+     * @return id
+     * @since 3.3
+     */
+    public String getId();
+    
 }

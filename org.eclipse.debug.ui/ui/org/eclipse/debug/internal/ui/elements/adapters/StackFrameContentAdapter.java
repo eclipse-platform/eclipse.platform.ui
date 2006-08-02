@@ -20,7 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 public class StackFrameContentAdapter extends AsynchronousContentAdapter {
 
     protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-        String id = context.getPart().getSite().getId();
+        String id = context.getId();
         IStackFrame frame = (IStackFrame) parent;
         if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
             return frame.getVariables();
@@ -31,7 +31,7 @@ public class StackFrameContentAdapter extends AsynchronousContentAdapter {
 	}
 
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-        String id = context.getPart().getSite().getId();
+        String id = context.getId();
         IStackFrame frame = (IStackFrame) element;
         if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
             return frame.hasVariables();

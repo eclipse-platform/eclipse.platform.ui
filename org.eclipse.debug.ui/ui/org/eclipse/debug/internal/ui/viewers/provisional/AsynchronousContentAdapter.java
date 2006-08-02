@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Abstract implementation of an asynchronous content adapter.
@@ -160,11 +159,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * @return whether this adapter supports the given context
      */
     protected boolean supportsContext(IPresentationContext context) {
-		IWorkbenchPart part = context.getPart();
-		if (part != null) {
-			return supportsPartId(part.getSite().getId());
-		}
-		return true;    	
+		return supportsPartId(context.getId());
     }
     
     /**
