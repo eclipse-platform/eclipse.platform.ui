@@ -16,9 +16,12 @@ import java.util.List;
 
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.Saveable;
 
 /**
  * Global action that saves all targets in the
@@ -127,9 +130,12 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
             // action has been disposed
             return;
         }
-        IWorkbenchPage page = getActivePage();
+        WorkbenchPage page = (WorkbenchPage) getActivePage();
         if (page != null) {
-            page.saveAllEditors(false);
+        	// The second parameter is true to also save saveables from non-part
+			// sources, see bug 139004.
+            page.saveAllEditors(false, true);
+            updateState();
         }
     }
 
@@ -144,8 +150,30 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
 		}
 		else {
 			WorkbenchPage page = (WorkbenchPage) getActivePage();
-			setEnabled(page != null	&&
-					(page.getDirtyParts().length > 0));
+			if (page == null) {
+				setEnabled(false);
+			} else {
+				if (page.getDirtyParts().length > 0) {
+					setEnabled(true);
+				} else {
+					// Since Save All also saves saveables from non-part sources,
+					// look if any such saveables exist and are dirty.
+					SaveablesList saveablesList = (SaveablesList) page
+							.getWorkbenchWindow().getWorkbench().getService(
+									ISaveablesLifecycleListener.class);
+					ISaveablesSource[] nonPartSources = saveablesList.getNonPartSources();
+					for (int i = 0; i < nonPartSources.length; i++) {
+						Saveable[] saveables = nonPartSources[i].getSaveables();
+						for (int j = 0; j < saveables.length; j++) {
+							if (saveables[j].isDirty()) {
+								setEnabled(true);
+								return;
+							}
+						}
+					}
+					setEnabled(false);
+				}
+			}
 		}
     }
 

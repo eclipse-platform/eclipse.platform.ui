@@ -852,7 +852,7 @@ public final class IDE {
 								w = windows[0];
 							}
                             result[0] = EditorManager.saveAll(dirtyEditors,
-                                    finalConfirm, false, w);
+                                    finalConfirm, false, false, w);
                         }
                     }
                 });

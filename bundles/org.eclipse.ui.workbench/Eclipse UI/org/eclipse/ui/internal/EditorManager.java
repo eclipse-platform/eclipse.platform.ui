@@ -70,6 +70,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -1037,8 +1038,12 @@ public class EditorManager implements IExtensionChangeHandler {
 	/**
 	 * Save all of the editors in the workbench. Return true if successful.
 	 * Return false if the user has cancelled the command.
+	 * @param confirm true if the user should be prompted before the save
+	 * @param closing true if the page is being closed
+	 * @param addNonPartSources true if saveables from non-part sources should be saved too.
+	 * @return false if the user cancelled
 	 */
-	public boolean saveAll(boolean confirm, boolean closing) {
+	public boolean saveAll(boolean confirm, boolean closing, boolean addNonPartSources) {
 		// Get the list of dirty editors and views. If it is
 		// empty just return.
 		ISaveablePart[] parts = page.getDirtyParts();
@@ -1052,7 +1057,7 @@ public class EditorManager implements IExtensionChangeHandler {
 		}
 
 		// If confirmation is required ..
-		return saveAll(dirtyParts, confirm, closing, window);
+		return saveAll(dirtyParts, confirm, closing, addNonPartSources, window);
 	}
 
 	/**
@@ -1066,6 +1071,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @param closing
 	 *            <code>true</code> if the parts are being closed,
 	 *            <code>false</code> if just being saved without closing
+	 * @param addNonPartSources true if non-part sources should be saved too
 	 * @param window
 	 *            the window to use as the parent for the dialog that prompts to
 	 *            save multiple dirty editors and views
@@ -1073,7 +1079,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 *         canceled the save
 	 */
 	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
-			final IWorkbenchWindow window) {
+			boolean addNonPartSources, final IWorkbenchWindow window) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
     	List modelsToSave;
@@ -1166,7 +1172,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				}
 			}
 
-            modelsToSave = convertToSaveables(dirtyParts, closing);
+            modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
             
             // If nothing to save, return.
             if (modelsToSave.isEmpty()) {
@@ -1221,7 +1227,7 @@ public class EditorManager implements IExtensionChangeHandler {
             }
         }
         else {
-        	modelsToSave = convertToSaveables(dirtyParts, closing);
+        	modelsToSave = convertToSaveables(dirtyParts, closing, addNonPartSources);
 		}
 
         // If the editor list is empty return.
@@ -1263,17 +1269,20 @@ public class EditorManager implements IExtensionChangeHandler {
 
     /**
 	 * For each part (view or editor) in the given list, attempts to convert it
-	 * to one or more saveable models. Duplicate models are removed. If closing is true,
-	 * then models that will remain open in parts other than the given parts
-	 * are removed.
+	 * to one or more saveable models. Duplicate models are removed. If closing
+	 * is true, then models that will remain open in parts other than the given
+	 * parts are removed.
 	 * 
 	 * @param parts
 	 *            the parts (list of IViewPart or IEditorPart)
 	 * @param closing
 	 *            whether the parts are being closed
+	 * @param addNonPartSources
+	 *            whether non-part sources should be added (true for the Save
+	 *            All action, see bug 139004)
 	 * @return the dirty models
 	 */
-	private static List convertToSaveables(List parts, boolean closing) {
+	private static List convertToSaveables(List parts, boolean closing, boolean addNonPartSources) {
 		ArrayList result = new ArrayList();
 		HashSet seen = new HashSet();
 		for (Iterator i = parts.iterator(); i.hasNext();) {
@@ -1286,6 +1295,23 @@ public class EditorManager implements IExtensionChangeHandler {
 					if (!closing
 							|| closingLastPartShowingModel(saveable, parts, part
 									.getSite().getPage())) {
+						result.add(saveable);
+					}
+				}
+			}
+		}
+		if (addNonPartSources) {
+			SaveablesList saveablesList = (SaveablesList) PlatformUI
+					.getWorkbench().getService(
+							ISaveablesLifecycleListener.class);
+			ISaveablesSource[] nonPartSources = saveablesList
+					.getNonPartSources();
+			for (int i = 0; i < nonPartSources.length; i++) {
+				Saveable[] saveables = nonPartSources[i].getSaveables();
+				for (int j = 0; j < saveables.length; j++) {
+					Saveable saveable = saveables[j];
+					if (saveable.isDirty() && !seen.contains(saveable)) {
+						seen.add(saveable);
 						result.add(saveable);
 					}
 				}

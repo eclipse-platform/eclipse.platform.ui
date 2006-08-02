@@ -78,6 +78,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	// reference counting map, Saveable -> Integer
 	private Map modelRefCounts = new HashMap();
 
+	private Set nonPartSources = new HashSet();
+
 	/**
 	 * Returns the list of open models managed by this model manager.
 	 * 
@@ -177,6 +179,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * </p>
 	 */
 	public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
+		if (!(event.getSource() instanceof IWorkbenchPart)) {
+			// just update the set of non-part sources. No prompting necessary.
+			// See bug 139004.
+			updateNonPartSource((ISaveablesSource) event.getSource());
+			return;
+		}
 		Saveable[] modelArray = event.getSaveables();
 		switch (event.getEventType()) {
 		case SaveablesLifecycleEvent.POST_OPEN:
@@ -205,6 +213,19 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this, event
 					.getEventType(), event.getSaveables(), false));
 			break;
+		}
+	}
+
+	/**
+	 * Updates the set of non-part saveables sources.
+	 * @param source
+	 */
+	private void updateNonPartSource(ISaveablesSource source) {
+		Saveable[] saveables = source.getSaveables();
+		if (saveables.length == 0) {
+			nonPartSources.remove(source);
+		} else {
+			nonPartSources.add(source);
 		}
 	}
 
@@ -711,6 +732,15 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			 
 			 return dialogAreaComposite;
 		}
+	}
+
+	/**
+	 * @return a list of ISaveablesSource objects registered with this saveables
+	 *         list which are not workbench parts.
+	 */
+	public ISaveablesSource[] getNonPartSources() {
+		return (ISaveablesSource[]) nonPartSources
+				.toArray(new ISaveablesSource[nonPartSources.size()]);
 	}
 
 }
