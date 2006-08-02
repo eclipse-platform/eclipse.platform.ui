@@ -43,7 +43,7 @@
 			name="%antBuildFileContentType.name" 
 			base-type="org.eclipse.core.runtime.xml"
 			file-names="build.xml"
-			file-extensions="macrodef,ent,xml"
+			file-extensions="macrodef,ent,xml,ant"
 			priority="normal"> 
 			<describer 
 				class="org.eclipse.ant.internal.core.contentDescriber.AntBuildfileContentDescriber">
