@@ -174,11 +174,11 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 				ListDiffEntry[] differences = listDiff.getDifferences();
 				
 				// FIXME: guessing that 20 is a good number for a good user experience for now. 
-				if (differences.length > 20) {
+				if (differences.length > 1) {
 					targetList.setSize(modelList.size());
 				} else {
 					for (int i = 0; i < differences.length; i++) {
-						ListDiffEntry entry = differences[i];
+						ListDiffEntry entry = differences[0];
 						if (entry.isAddition()) {
 							targetList.add(entry.getPosition(), entry.getElement());
 						} else {
