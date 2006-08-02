@@ -4,8 +4,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -49,11 +47,6 @@ public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo,
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		initialize();
 		Control control= fDelegate.createControl(parentRuler, parentControl);
-		control.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
 		return control;
 	}
 
@@ -81,7 +74,10 @@ public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo,
 		fDelegate.setModel(model);
 	}
 
-	private void dispose() {
+	/*
+	 * @see org.eclipse.ui.texteditor.rulers.RulerColumn#columnRemoved()
+	 */
+	protected void columnRemoved() {
 		if (fPropertyListener != null) {
 			IPreferenceStore store= getPreferenceStore();
 			if (store != null)

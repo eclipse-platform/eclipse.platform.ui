@@ -37,24 +37,6 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
  * @since 3.3
  */
 public class ColumnSupport implements IColumnSupport {
-//	/*
-//	 * FIXME add support for non-contributed but well-known columns:
-//	 * - projection
-//	 * - annotation
-//	 * - line numbers
-//	 * - quick diff
-//	 */
-//	static final String LINE_NUMBERS= "org.eclipse.ui.editors.columns.linenumbers";
-//	static final String ANNOTATIONS= "org.eclipse.ui.editors.columns.annotations";
-//	
-//	private static final Set WELL_KNOWN;
-//	static {
-//		Set wellKnown= new HashSet();
-//		wellKnown.add(LINE_NUMBERS);
-//		wellKnown.add(ANNOTATIONS);
-//		WELL_KNOWN= Collections.unmodifiableSet(wellKnown);
-//	}
-	
 	private final AbstractTextEditor fEditor;
 	private final RulerColumnRegistry fRegistry;
 
@@ -116,10 +98,17 @@ public class ColumnSupport implements IColumnSupport {
 	protected void initializeColumn(RulerColumn column) {
 	}
 
-	private void removeColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
-		IVerticalRulerColumn target= getVisibleColumn(ruler, descriptor);
-		if (target != null)
-			ruler.removeDecorator(target);
+	private void removeColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
+		final RulerColumn target= getVisibleColumn(ruler, descriptor);
+		if (target != null) {
+			SafeRunnable runnable= new SafeRunnable() {
+				public void run() throws Exception {
+					ruler.removeDecorator(target);
+					descriptor.disposeColumn(target);
+				}
+			};
+			SafeRunner.run(runnable);
+		}
 	}
 
 	/**
@@ -130,13 +119,14 @@ public class ColumnSupport implements IColumnSupport {
 	 * @param descriptor the descriptor of the column of interest
 	 * @return the matching column or <code>null</code>
 	 */
-	private IVerticalRulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
+	private RulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
 		for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
 			if (column instanceof RulerColumn) {
-				RulerColumnDescriptor rcd= ((RulerColumn) column).getDescriptor();
+				RulerColumn rulerColumn= (RulerColumn) column;
+				RulerColumnDescriptor rcd= rulerColumn.getDescriptor();
 				if (descriptor.equals(rcd))
-					return column;
+					return rulerColumn;
 			}
 		}
 		return null;
@@ -150,10 +140,6 @@ public class ColumnSupport implements IColumnSupport {
 	 * @return the insertion index for a new column
 	 */
 	private int computeIndex(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
-		// annotation column is the leftmost column XXX remove once line numbers are contributed as well
-		if ("org.eclipse.ui.editors.columns.annotations".equals(descriptor.getId())) { //$NON-NLS-1$
-			return 0;
-		}
 		int index= 0;
 		List all= fRegistry.getColumnDescriptors();
 		int newPos= all.indexOf(descriptor);

@@ -11,15 +11,12 @@
 package org.eclipse.ui.internal.texteditor;
 
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -67,10 +64,19 @@ import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 import org.eclipse.ui.texteditor.rulers.RulerColumn;
 
 /**
+ * The line number ruler contribution. Encapsulates a {@link LineNumberChangeRulerColumn} as a
+ * contribution to the <code>rulerColumns</code> extension point. Instead of instantiating the
+ * delegate itself, it calls <code>createLineNumberRulerColumn()</code> in
+ * {@link AbstractDecoratedTextEditor} via {@link ICompatibilityForwarder} to maintain compatibility
+ * with previous releases.
  * 
  * @since 3.3
  */
 public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
+	/**
+	 * Forwarder for preference checks and ruler creation. Needed to maintain the forwarded APIs in
+	 * {@link AbstractDecoratedTextEditor}.
+	 */
 	public static interface ICompatibilityForwarder {
 		IVerticalRulerColumn createLineNumberRulerColumn();
 		boolean isQuickDiffEnabled();
@@ -113,11 +119,6 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 		fViewer= (ISourceViewer) viewer;
 		initialize();
 		Control control= fDelegate.createControl(parentRuler, parentControl);
-		control.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
 		return control;
 	}
 
@@ -208,7 +209,10 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 			((IVerticalRulerInfoExtension) fDelegate).removeVerticalRulerListener(listener);
 	}
 
-	private void dispose() {
+	/*
+	 * @see org.eclipse.ui.texteditor.rulers.RulerColumn#columnRemoved()
+	 */
+	protected void columnRemoved() {
 		if (fDispatcher != null) {
 			fDispatcher.dispose();
 			fDispatcher= null;

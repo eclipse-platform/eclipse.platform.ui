@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor.rulers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -75,5 +76,20 @@ public abstract class RulerColumn implements IVerticalRulerColumn {
 	 */
 	protected final ITextEditor getEditor() {
 		return fEditor;
+	}
+
+	/**
+	 * Hook method called after a column has been instantiated, but before it is added to a
+	 * {@link CompositeRuler}. The {@link #getEditor()} and {@link #getDescriptor()} methods are
+	 * guaranteed to return non-<code>null</code> values after this call. Subclasses may replace.
+	 */
+	protected void columnCreated() {
+	}
+
+	/**
+	 * Hook method called after a column has been removed from the {@link CompositeRuler}.
+	 * Subclasses may replace.
+	 */
+	protected void columnRemoved() {
 	}
 }

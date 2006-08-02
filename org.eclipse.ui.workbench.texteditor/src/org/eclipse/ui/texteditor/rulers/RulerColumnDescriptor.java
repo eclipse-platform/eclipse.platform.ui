@@ -242,7 +242,19 @@ public final class RulerColumnDescriptor {
 		RulerColumn column= (RulerColumn) fElement.createExecutableExtension(CLASS);
 		column.setDescriptor(this);
 		column.setEditor(editor);
+		column.columnCreated();
 		return column;
+	}
+	
+	/**
+	 * Notifies the descriptor of the fact that a column is no longer needed. Calls the
+	 * {@link RulerColumn#columnRemoved()} hook.
+	 * 
+	 * @param column the column that is no longer used
+	 */
+	public void disposeColumn(RulerColumn column) {
+		Assert.isLegal(column != null);
+		column.columnRemoved();
 	}
 	
 	/*
