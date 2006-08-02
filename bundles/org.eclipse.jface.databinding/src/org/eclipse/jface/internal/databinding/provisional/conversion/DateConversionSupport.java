@@ -66,6 +66,9 @@ public abstract class DateConversionSupport {
 	protected Date parse(String str,int formatterIdx) {
 		if(formatterIdx>=0) {
 				ParsePosition pos=new ParsePosition(0);
+				if (str == null) {
+					return null;
+				}
 				Date date=formatters[formatterIdx].parse(str,pos);
 				if(pos.getErrorIndex()!=-1||pos.getIndex()!=str.length()) {
 					return null;
