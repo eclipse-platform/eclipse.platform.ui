@@ -92,6 +92,19 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
         }
     };
 
+    /** the active saveable part is tracked in order to listen to its dirty events */ 
+    private ISaveablePart activeSaveablePart;
+    
+    private final IPropertyListener propListener3 = new IPropertyListener() {
+    	public void propertyChanged(Object source, int propId) {
+    		if (source == activeSaveablePart) {
+    			if (propId == IEditorPart.PROP_DIRTY) {
+    				updateState();
+    			}
+    		}
+    	}
+    };
+    
     /* (non-Javadoc)
      * Method declared on PageEventAction.
      */
@@ -156,6 +169,25 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
     }
 
     /**
+	 * 
+	 */
+	private void updateActiveSaveablePart() {
+		if (activeSaveablePart instanceof IWorkbenchPart) {
+			((IWorkbenchPart)activeSaveablePart).removePropertyListener(propListener3);
+			partsWithListeners.remove(activeSaveablePart);
+		}
+		activeSaveablePart = getSaveableView();
+		if (activeSaveablePart == activeView) {
+			// no need to listen to the same part twice
+			activeSaveablePart = null;
+		}
+		if (activeSaveablePart instanceof IWorkbenchPart) {
+			((IWorkbenchPart)activeSaveablePart).addPropertyListener(propListener3);
+			partsWithListeners.add(activeSaveablePart);
+		}
+	}
+
+	/**
      * Set the active editor
      */
     private void setActiveView(IWorkbenchPart part) {
@@ -175,6 +207,7 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
             activeView.addPropertyListener(propListener2);
             partsWithListeners.add(activeView);
         }
+        updateActiveSaveablePart();
     }
 
     protected final ISaveablePart getSaveableView() {
@@ -196,6 +229,7 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
             IWorkbenchPart part = (IWorkbenchPart) it.next();
             part.removePropertyListener(propListener);
             part.removePropertyListener(propListener2);
+            part.removePropertyListener(propListener3);
         }
         partsWithListeners.clear();
     }
