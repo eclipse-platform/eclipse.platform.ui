@@ -141,6 +141,8 @@ public class TableRow {
 		System.out.println("i=" + i + "; colums.length="+columns.length);
 		if (i < 1 && columns.length == 0) {
 			return row;
+		} else if (i == -1) {
+			return row;
 		}
 		if (i < columns.length) {
 			return columns[i];
