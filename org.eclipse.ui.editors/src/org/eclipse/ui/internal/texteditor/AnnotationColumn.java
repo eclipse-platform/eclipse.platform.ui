@@ -25,12 +25,19 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.rulers.RulerColumn;
 
 /**
+ * The annotation ruler contribution. Encapsulates an {@link AnnotationRulerColumn} as a
+ * contribution to the <code>rulerColumns</code> extension point. Instead of instantiating the
+ * delegate itself, it {@link AbstractDecoratedTextEditor} creates it using its
+ * <code>createAnnotationRulerColumn()</code> method and sets it via
+ * {@link #setDelegate(IVerticalRulerColumn)}.
+ * 
  * @since 3.3
  */
 public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
@@ -44,32 +51,46 @@ public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo,
 	private final MarkerAnnotationPreferences fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 	private IPropertyChangeListener fPropertyListener;
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
+	 */
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		initialize();
 		Control control= fDelegate.createControl(parentRuler, parentControl);
 		return control;
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getControl()
+	 */
 	public Control getControl() {
 		return fDelegate.getControl();
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getWidth()
+	 */
 	public int getWidth() {
 		return fDelegate.getWidth();
 	}
 
-	public int hashCode() {
-		return fDelegate.hashCode();
-	}
-
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#redraw()
+	 */
 	public void redraw() {
 		fDelegate.redraw();
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setFont(org.eclipse.swt.graphics.Font)
+	 */
 	public void setFont(Font font) {
 		fDelegate.setFont(font);
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
+	 */
 	public void setModel(IAnnotationModel model) {
 		fDelegate.setModel(model);
 	}
@@ -150,6 +171,11 @@ public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo,
 		return EditorsUI.getPreferenceStore();
 	}
 
+	/**
+	 * Sets the compatibility delegate. Called by {@link AbstractDecoratedTextEditor}.
+	 * 
+	 * @param column the delegate column implementation
+	 */
 	public void setDelegate(IVerticalRulerColumn column) {
 		Assert.isLegal(fDelegate == null);
 		Assert.isLegal(column != null);
