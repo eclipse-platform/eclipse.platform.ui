@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +27,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 
 public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
@@ -82,11 +83,12 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 				null, 
 				message, 
 				MessageDialog.QUESTION,
-				new String[] {LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0, IDialogConstants.CANCEL_LABEL}, 
+				new String[] {IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL}, 
 				0,
 				LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_1,
 				false);
-        if (dialog.open() == IDialogConstants.INTERNAL_ID) {
+        int open = dialog.open();
+		if (open == IDialogConstants.PROCEED_ID) {
         	if(dialog.getToggleState()) {
         		store.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
         	}
