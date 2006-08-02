@@ -45,7 +45,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -255,18 +254,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		setPageComplete(false);
 		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
 		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param pageName
-	 * @param title
-	 * @param titleImage
-	 */
-	public WizardProjectsImportPage(String pageName, String title,
-			ImageDescriptor titleImage) {
-		super(pageName, title, titleImage);
 	}
 
 	/*
@@ -1186,35 +1173,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 				getFilesForProject(files, provider, child);
 			}
 		}
-		return true;
-	}
-
-	/**
-	 * Execute the passed import operation. Answer a boolean indicating success.
-	 * 
-	 * @return true if the operation executed successfully, false otherwise
-	 */
-	protected boolean executeImportOperation(ImportOperation op) {
-		// initializeOperation(op);
-		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			// displayErrorDialog(e.getTargetException());
-			return false;
-		}
-
-		IStatus status = op.getStatus();
-		if (!status.isOK()) {
-			ErrorDialog.openError(getContainer().getShell(),
-					DataTransferMessages.FileImport_importProblems, null, // no
-					// special
-					// message
-					status);
-			return false;
-		}
-
 		return true;
 	}
 
