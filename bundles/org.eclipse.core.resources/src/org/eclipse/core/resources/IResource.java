@@ -1414,9 +1414,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Gets this resource's extended attributes from the file system,
 	 * or <code>null</code> if the attributes could not be obtained.
-	 * Attributes that are not supported by the underlying file system 
-	 * will be set to <code>false</code>.
 	 * <p>
+	 * Reasons for a <code>null</code> return value include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> This resource is a project that is not open.</li>
+	 * </ul>
+	 * </p><p>
+	 * Attributes that are not supported by the underlying file system 
+	 * will have a value of <code>false</code>.
+	 * </p><p>
 	 * Sample usage: <br>
 	 * <br> 
 	 * <code>
