@@ -46,6 +46,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @since 3.2
 	 */
 	private final DiffPainter fDiffPainter;
+	/**
+	 * Whether to show number or to behave like a change ruler column.
+	 * @since 3.3
+	 */
+	private boolean fShowNumbers= true;
 
 	/**
 	 * Creates a new instance.
@@ -127,8 +132,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createDisplayString(int)
 	 */
 	protected String createDisplayString(int line) {
-		if (fCharacterDisplay && getModel() != null)
-			return super.createDisplayString(line) + fDiffPainter.getDisplayCharacter(line);
+		if (fCharacterDisplay && getModel() != null) {
+			if (fShowNumbers)
+				return super.createDisplayString(line) + fDiffPainter.getDisplayCharacter(line);
+			return fDiffPainter.getDisplayCharacter(line);
+		}
 		return super.createDisplayString(line);
 	}
 
@@ -136,8 +144,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#computeNumberOfDigits()
 	 */
 	protected int computeNumberOfDigits() {
-		if (fCharacterDisplay && getModel() != null)
-			return super.computeNumberOfDigits() + 1;
+		if (fCharacterDisplay && getModel() != null) {
+			if (fShowNumbers)
+				return super.computeNumberOfDigits() + 1;
+			return 1;
+		}
 		return super.computeNumberOfDigits();
 	}
 
@@ -161,12 +172,14 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	void doPaint(GC gc, ILineRange visibleLines) {
 		Color foreground= gc.getForeground();
 		if (visibleLines != null) {
-			fRevisionPainter.paint(gc, visibleLines);
-			if (!fRevisionPainter.hasInformation()) // don't paint quick diff colors if revisions are painted
+			if (fRevisionPainter.hasInformation())
+				fRevisionPainter.paint(gc, visibleLines);
+			else if (fDiffPainter.hasInformation()) // don't paint quick diff colors if revisions are painted
 				fDiffPainter.paint(gc, visibleLines);
 		}
 		gc.setForeground(foreground);
-		super.doPaint(gc, visibleLines);
+		if (fShowNumbers)
+			super.doPaint(gc, visibleLines);
 	}
 	
 	/*
@@ -235,4 +248,63 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
     public ISelectionProvider getRevisionSelectionProvider() {
 	    return fRevisionPainter.getRevisionSelectionProvider();
     }
+    
+    /**
+	 * Sets the line number display mode.
+	 * 
+	 * @param showNumbers <code>true</code> to show numbers, <code>false</code> to only show
+	 *        diff / revision info.
+	 * @since 3.3
+	 */
+    public void showLineNumbers(boolean showNumbers) {
+    	if (fShowNumbers != showNumbers) {
+    		fShowNumbers= showNumbers;
+    		CompositeRuler parent= getParentRuler();
+    		if (parent != null)
+    			parent.relayout();
+    	}
+    }
+
+    /*
+     * @see org.eclipse.jface.text.source.LineNumberRulerColumn#getWidth()
+     * @since 3.3
+     */
+    public int getWidth() {
+    	if (fShowNumbers || fCharacterDisplay)
+    		return super.getWidth();
+    	return 5;
+    }
+
+    /**
+	 * Returns <code>true</code> if the ruler is showing line numbers, <code>false</code>
+	 * otherwise
+	 * 
+	 * @return <code>true</code> if line numbers are shown, <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	public boolean isShowingLineNumbers() {
+		return fShowNumbers;
+	}
+
+	/**
+	 * Returns <code>true</code> if the ruler is showing revision information, <code>false</code>
+	 * otherwise
+	 * 
+	 * @return <code>true</code> if revision information is shown, <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	public boolean isShowingRevisionInformation() {
+		return fRevisionPainter.hasInformation();
+	}
+
+	/**
+	 * Returns <code>true</code> if the ruler is showing change information, <code>false</code>
+	 * otherwise
+	 * 
+	 * @return <code>true</code> if change information is shown, <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	public boolean isShowingChangeInformation() {
+		return fDiffPainter.hasInformation();
+	}
 }

@@ -31,6 +31,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
+import org.eclipse.jface.text.source.ILineDifferExtension2;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
@@ -517,6 +518,18 @@ public final class DiffPainter {
 	 */
 	private static boolean isDark(RGB rgb) {
 		return greyLevel(rgb) > 128;
+	}
+
+	/**
+	 * Returns <code>true</code> if diff information is being displayed, <code>false</code> otherwise.
+	 * 
+     * @return <code>true</code> if diff information is being displayed, <code>false</code> otherwise
+     * @since 3.3
+     */
+	public boolean hasInformation() {
+		if (fLineDiffer instanceof ILineDifferExtension2)
+			return !((ILineDifferExtension2) fLineDiffer).isSuspended();
+		return fLineDiffer != null;
 	}
 
 }

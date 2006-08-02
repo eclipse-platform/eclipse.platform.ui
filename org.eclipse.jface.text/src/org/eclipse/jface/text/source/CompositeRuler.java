@@ -873,4 +873,13 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			listener.annotationContextMenuAboutToShow(event, menu);
 		}
 	}
+
+	/**
+	 * Relayouts the receiver.
+	 *
+	 * @since 3.3
+	 */
+	void relayout() {
+		layoutTextViewer();
+	}
 }

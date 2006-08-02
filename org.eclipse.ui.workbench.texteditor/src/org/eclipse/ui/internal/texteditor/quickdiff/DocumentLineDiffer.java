@@ -44,6 +44,7 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.jface.text.source.ILineDifferExtension;
+import org.eclipse.jface.text.source.ILineDifferExtension2;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
 
@@ -75,7 +76,7 @@ import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
  *
  * @since 3.0
  */
-public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel, ILineDifferExtension {
+public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel, ILineDifferExtension, ILineDifferExtension2 {
 
 	/**
 	 * Artificial line difference information indicating a change with an empty line as original text.
@@ -399,7 +400,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 *
 	 * @return <code>true</code> if the differ is suspended
 	 */
-	private synchronized boolean isSuspended() {
+	public synchronized boolean isSuspended() {
 		return fState == SUSPENDED;
 	}
 

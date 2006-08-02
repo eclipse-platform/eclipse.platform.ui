@@ -31,6 +31,8 @@ import org.eclipse.jface.text.BadLocationException;
  * <ul>
  * <li> {@link ILineDifferExtension} (since version 3.1): introducing the concept
  *      suspending and resuming an <code>ILineDiffer</code>.</li>
+ * <li> {@link ILineDifferExtension2} (since version 3.3): allowing to query the suspension state
+ * of an <code>ILineDiffer</code>.</li>
  * </ul>
  * </p>
  *

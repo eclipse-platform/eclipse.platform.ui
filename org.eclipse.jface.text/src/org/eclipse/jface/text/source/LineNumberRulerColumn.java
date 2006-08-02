@@ -605,6 +605,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			ILineRange visibleLines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
 			if (visibleLines == null)
 				return;
+			fScrollPos= fCachedTextWidget.getTopPixel();
 			doPaint(gc, visibleLines);
 		} finally {
 			gc.dispose();
@@ -643,7 +644,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.2
 	 */
 	void doPaint(GC gc, ILineRange visibleLines) {
-		fScrollPos= fCachedTextWidget.getTopPixel();
 		Display display= fCachedTextWidget.getDisplay();
 		
 		// draw diff info

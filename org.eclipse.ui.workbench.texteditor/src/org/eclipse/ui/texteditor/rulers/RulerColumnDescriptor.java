@@ -70,8 +70,6 @@ public final class RulerColumnDescriptor {
 	private final ImageDescriptor fIcon;
 	/** The configuration element of this extension. */
 	private final IConfigurationElement fElement;
-	/** The registry we are registered with. */
-	private final RulerColumnRegistry fRegistry;
 	/** The target specification of the ruler column contribution. */
 	private final RulerColumnTarget fTarget;
 	/** The placement specification of the ruler column contribution. */
@@ -94,7 +92,6 @@ public final class RulerColumnDescriptor {
 	RulerColumnDescriptor(IConfigurationElement element, RulerColumnRegistry registry) throws InvalidRegistryObjectException {
 		Assert.isLegal(registry != null);
 		Assert.isLegal(element != null);
-		fRegistry= registry;
 		fElement= element;
 		
 		ILog log= TextEditorPlugin.getDefault().getLog();

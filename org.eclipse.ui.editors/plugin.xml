@@ -883,6 +883,18 @@
             name="Annotations">
          <placement
                weight="0.5">
+			   <before id="org.eclipse.ui.editors.columns.linenumbers"/>
+         </placement>
+      </column>
+      <column
+            class="org.eclipse.ui.internal.texteditor.LineNumberColumn"
+            enabled="false"
+            global="true"
+            id="org.eclipse.ui.editors.columns.linenumbers"
+            includeInMenu="false"
+            name="Line Numbers">
+         <placement
+               weight="0.9">
          </placement>
       </column>
    </extension>
