@@ -1335,7 +1335,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	}
 
 	/**
-	 * @return the MarkerFilter associated with the dialog.
+	 * @return the MarkerFilters associated with the dialog.
 	 */
 	public MarkerFilter[] getFilters() {
 		return filters;
