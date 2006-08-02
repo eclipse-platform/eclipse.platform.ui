@@ -328,6 +328,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 			if (row instanceof IRowFocusListener) {
 				parent.removeRowFocusListener((IRowFocusListener) row);
 			}
+			if (row instanceof IRowContentProvider) {
+				parent.removeRowContentProvider((IRowContentProvider) row);
+			}
 			row.dispose();
 		}
 	}
@@ -395,6 +398,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 		}
 		if (result instanceof IRowFocusListener) {
 			this.parent.addRowFocusListener((IRowFocusListener) result);
+		}
+		if (result instanceof IRowContentProvider) {
+			this.parent.addRowContentProvider((IRowContentProvider) result);
 		}
 		return result;
 	}
@@ -1552,7 +1558,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * Indicate to listeners that the focus is arriving on the specified row
 	 */
 	private void fireRowArriveEvent() {
-		if (rows.size() < 1 || currentRow < 1) {
+		if (rows.size() < 1 || currentRow < 0) {
 			return;
 		}
 		for (Iterator rowChangeListenersIter = parent.rowFocusListeners

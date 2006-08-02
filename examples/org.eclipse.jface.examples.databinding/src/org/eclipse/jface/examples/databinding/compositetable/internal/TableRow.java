@@ -62,6 +62,7 @@ public class TableRow {
 	 * Remove all listeners from each control.
 	 */
 	public void dispose() {
+		removeListeners(row);
 		for (int i = 0; i < columns.length; i++) {
 			removeListeners(columns[i]);
 		}
@@ -137,11 +138,11 @@ public class TableRow {
 	 * specified position.
 	 */
 	public Control getColumnControl(int i) {
+		if (i < 1 && columns.length == 0) {
+			return row;
+		}
 		if (i < columns.length) {
 			return columns[i];
-		}
-		if (i == -1 && columns.length == 0) {
-			return row;
 		}
 		return null;
 	}
