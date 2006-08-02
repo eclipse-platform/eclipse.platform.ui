@@ -632,15 +632,6 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			fComposite.childAdded(column.getControl());
 		}
 
-		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				fTextViewer= null;
-				fComposite= null;
-				fModel= null;
-				fDecorators.clear();
-			}
-		});
-
 		return fComposite;
 	}
 
@@ -879,7 +870,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 *
 	 * @since 3.3
 	 */
-	void relayout() {
+	public void relayout() {
 		layoutTextViewer();
 	}
 }

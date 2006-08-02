@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -192,5 +193,28 @@ public class ColumnSupport implements IColumnSupport {
 		if (ruler instanceof CompositeRuler)
 			return (CompositeRuler) ruler;
 		return null;
+	}
+
+	/**
+	 * Removes all currently showing rulers.
+	 */
+	public void dispose() {
+		CompositeRuler ruler= getRuler();
+		if (ruler == null)
+			return;
+
+		List toRemove= new ArrayList(10);
+		for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
+			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
+			if (column instanceof RulerColumn) {
+				RulerColumnDescriptor rcd= ((RulerColumn) column).getDescriptor();
+				if (rcd != null)
+					toRemove.add(rcd);
+			}
+		}
+		for (Iterator it= toRemove.iterator(); it.hasNext();) {
+			RulerColumnDescriptor rcd= (RulerColumnDescriptor) it.next();
+			removeColumn(ruler, rcd);
+		}
 	}
 }

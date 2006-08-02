@@ -242,7 +242,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * The column support of this editor.
 	 * @since 3.3
 	 */
-	private final IColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
+	private final ColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
 		/*
 		 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.RulerColumn)
 		 */
@@ -316,6 +316,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
+		
+		if (fColumnSupport != null)
+			fColumnSupport.dispose();
 
 		super.dispose();
 	}
