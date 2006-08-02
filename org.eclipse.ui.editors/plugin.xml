@@ -880,7 +880,7 @@
             global="true"
             id="org.eclipse.ui.editors.columns.annotations"
             includeInMenu="false"
-            name="Annotations">
+            name="%AnnotationRuler.name">
          <placement
                weight="0.5">
 			   <before id="org.eclipse.ui.editors.columns.linenumbers"/>
@@ -892,7 +892,7 @@
             global="true"
             id="org.eclipse.ui.editors.columns.linenumbers"
             includeInMenu="false"
-            name="Line Numbers">
+            name="%LineNumberRuler.name">
          <placement
                weight="0.9">
          </placement>
