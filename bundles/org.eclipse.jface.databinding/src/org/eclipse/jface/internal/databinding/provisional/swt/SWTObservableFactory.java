@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.swt;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.CLabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ControlObservableValue;
@@ -28,6 +29,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.IObservableF
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -113,6 +115,9 @@ final public class SWTObservableFactory implements IObservableFactory {
 			if (object instanceof Label && SWTProperties.TEXT.equals(attribute)) {
 				return new LabelObservableValue((Label) object);
 			}
+			if (object instanceof CLabel && SWTProperties.TEXT.equals(attribute)) {
+				return new CLabelObservableValue((CLabel) object);
+			}
 			if (object instanceof Button
 					&& SWTProperties.SELECTION.equals(attribute)) {
 				return new ButtonObservableValue((Button) object);
@@ -156,6 +161,8 @@ final public class SWTObservableFactory implements IObservableFactory {
 			return new ButtonObservableValue((Button) description);
 		} else if (description instanceof Label) {
 			return new LabelObservableValue((Label) description);
+		} else if (description instanceof CLabel) {
+			return new CLabelObservableValue((CLabel) description);
 		} else if (description instanceof Combo) {
 			return new ComboObservableList((Combo) description);
 		} else if (description instanceof Spinner) {
