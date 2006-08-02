@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -23,12 +22,6 @@ import org.eclipse.ui.ide.IDE;
  * An IWorkbenchAdapter that represents IFiles.
  */
 public class WorkbenchFile extends WorkbenchResource {
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.model.WorkbenchResource#getLabel(java.lang.Object)
-	 */
-	public String getLabel(Object o) {
-		return TextProcessor.process(super.getLabel(o));
-	}
 
 	/**
      *	Answer the appropriate base image to use for the passed resource, optionally
