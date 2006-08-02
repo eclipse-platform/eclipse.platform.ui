@@ -14,22 +14,47 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var navVisible = true;
 	
-function goBack(button) {
+function goBack(button, param) {
 	parent.history.back();
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
 
-function goForward(button) {
+function goForward(button, param) {
 	parent.history.forward();
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
 
+function goHome(button, param) {
+	var isHome = false;
 
-function bookmarkPage(button)
+	try {
+		// first check if we're already at home
+		var str = param;
+		var index = str.indexOf("/");
+		if (index > 0) {
+			str = str.substring(index);
+		}
+		var locationStr = parent.ContentViewFrame.location.href;
+		isHome = (locationStr.substring(locationStr.length - str.length) == str)
+	}
+	catch (e) {
+		// insufficient permission, not home
+	}
+	
+	if (!isHome) {
+		parent.ContentViewFrame.location = param;
+	}
+	parent.parent.NavFrame.collapseToc();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
+function bookmarkPage(button, param)
 {
 	// Currently we pick up the url from the content page.
 	// If the page is from outside the help domain, a script
@@ -58,7 +83,7 @@ function bookmarkPage(button)
 	}
 }
 
-function bookmarkInfocenterPage(button)
+function bookmarkInfocenterPage(button, param)
 {
 	// Currently we pick up the url from the content page.
 	// If the page is from outside the help domain, a script
@@ -87,7 +112,7 @@ function bookmarkInfocenterPage(button)
 	}
 }
 
-function resynch(button)
+function resynch(button, param)
 {
 	try {
 		var topic = parent.ContentViewFrame.window.location.href;
@@ -102,7 +127,7 @@ function resynch(button)
 	}
 }
 
-function printContent(button)
+function printContent(button, param)
 {
 	try {
 		parent.ContentViewFrame.focus();

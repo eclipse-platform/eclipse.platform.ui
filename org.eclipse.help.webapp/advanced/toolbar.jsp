@@ -289,7 +289,7 @@ if(buttons.length > 0){
 		} else {
 %>
 						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].isOn()?"buttonOn":"button"%>" height=18>
-							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
+							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>', '<%=buttons[i].getParam()%>');" 
 							   onmouseover="javascript:setWindowStatus('<%=buttons[i].getName()%>');return true;" 
 							   onmouseout="window.status='';"
 							   id="b<%=i%>">

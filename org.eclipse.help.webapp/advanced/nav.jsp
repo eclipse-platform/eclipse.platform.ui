@@ -108,6 +108,19 @@ function displayTocFor(topic)
 	}
 }
 
+/*
+ * Shows the TOC frame and collapses all TOCs.
+ */
+function collapseToc()
+{
+	/******** HARD CODED VIEW NAME *********/
+	showView("toc");
+	var tocView = ViewsFrame.toc.tocViewFrame;
+	if (tocView.location.href.indexOf("?") > 0) {
+		tocView.location = "tocView.jsp";
+	}
+}
+
 function saveNavigation()
 {
 	/**** HARD CODED VIEW NAME *********/

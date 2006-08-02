@@ -19,17 +19,20 @@
 	<jsp:param name="tooltip"  value='deleteBookmark'/>
 	<jsp:param name="image"    value="bookmark_rem.gif"/>
 	<jsp:param name="action"   value="removeBookmark"/>
+	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
 
 	<jsp:param name="name"     value="deleteAllBookmarks"/>
 	<jsp:param name="tooltip"  value='deleteAllBookmarks'/>
 	<jsp:param name="image"    value="bookmark_remall.gif"/>
 	<jsp:param name="action"   value="removeAllBookmarks"/>
+	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
 
 	<jsp:param name="name"     value="synchnav"/>
 	<jsp:param name="tooltip"  value='SynchNav'/>
 	<jsp:param name="image"    value="synch_nav.gif"/>
 	<jsp:param name="action"   value="resynchNav"/>
+	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
 </jsp:include>

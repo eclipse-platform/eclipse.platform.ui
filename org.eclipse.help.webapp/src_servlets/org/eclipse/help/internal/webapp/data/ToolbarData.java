@@ -33,13 +33,15 @@ public class ToolbarData extends RequestData {
 		String[] tooltips = request.getParameterValues("tooltip"); //$NON-NLS-1$
 		String[] images = request.getParameterValues("image"); //$NON-NLS-1$
 		String[] actions = request.getParameterValues("action"); //$NON-NLS-1$
+		String[] params = request.getParameterValues("param"); //$NON-NLS-1$
 		String[] states = request.getParameterValues("state"); //$NON-NLS-1$
 
 		if (names == null || tooltips == null || images == null
-				|| actions == null || states == null
+				|| actions == null || params == null || states == null
 				|| names.length != tooltips.length
 				|| names.length != images.length
 				|| names.length != actions.length
+				|| names.length != params.length
 				|| names.length != states.length) {
 			buttons = new ToolbarButton[0];
 			return;
@@ -57,7 +59,7 @@ public class ToolbarData extends RequestData {
 						.getString(tooltips[i], request), preferences
 						.getImagesDirectory()
 						+ "/" + images[i], //$NON-NLS-1$
-						actions[i], "on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
+						actions[i], params[i], "on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
 		}
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
@@ -66,7 +68,7 @@ public class ToolbarData extends RequestData {
 			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
 					getMaximizeTooltip(), preferences.getImagesDirectory()
 							+ "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
-					"restore_maximize", false)); //$NON-NLS-1$
+					"restore_maximize", null, false)); //$NON-NLS-1$
 		}
 		buttons = (ToolbarButton[]) buttonList
 				.toArray(new ToolbarButton[buttonList.size()]);
