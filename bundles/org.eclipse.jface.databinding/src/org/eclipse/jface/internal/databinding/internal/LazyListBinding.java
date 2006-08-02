@@ -170,14 +170,20 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			try {
 				// get setDiff from event object - might have been modified by a
 				// listener
-				ListDiff setDiff = (ListDiff) e.diff;
-				ListDiffEntry[] differences = setDiff.getDifferences();
-				for (int i = 0; i < differences.length; i++) {
-					ListDiffEntry entry = differences[i];
-					if (entry.isAddition()) {
-						targetList.add(entry.getPosition(), entry.getElement());
-					} else {
-						targetList.remove(entry.getPosition());
+				ListDiff listDiff = (ListDiff) e.diff;
+				ListDiffEntry[] differences = listDiff.getDifferences();
+				
+				// FIXME: guessing that 20 is a good number for a good user experience for now. 
+				if (differences.length > 20) {
+					targetList.setSize(modelList.size());
+				} else {
+					for (int i = 0; i < differences.length; i++) {
+						ListDiffEntry entry = differences[i];
+						if (entry.isAddition()) {
+							targetList.add(entry.getPosition(), entry.getElement());
+						} else {
+							targetList.remove(entry.getPosition());
+						}
 					}
 				}
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
