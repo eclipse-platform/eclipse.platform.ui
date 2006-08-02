@@ -18,14 +18,14 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
  */
 public abstract class Converter implements IConverter {
 
-	private Class fromType;
-	private Class toType;
+	private Object fromType;
+	private Object toType;
 
 	/**
 	 * @param fromType
 	 * @param toType
 	 */
-	public Converter(Class fromType, Class toType) {
+	public Converter(Object fromType, Object toType) {
 		this.fromType = fromType;
 		this.toType = toType;
 	}
