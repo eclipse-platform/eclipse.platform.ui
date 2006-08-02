@@ -118,7 +118,7 @@ public final class RulerColumnDescriptor {
 				combined= combined == null ? target : RulerColumnTarget.createOrTarget(combined, target);
 			}
 			for (int i= 0; i < targetContentTypes.length; i++) {
-				IConfigurationElement targetContentType= targetEditors[i];
+				IConfigurationElement targetContentType= targetContentTypes[i];
 				RulerColumnTarget target= RulerColumnTarget.createContentTypeTarget(new ExtensionPointHelper(targetContentType, log).getNonNullAttribute(ID));
 				combined= combined == null ? target : RulerColumnTarget.createOrTarget(combined, target);
 			}
