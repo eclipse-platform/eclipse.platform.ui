@@ -1032,6 +1032,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getResourceAttributes()
 	 */
 	public ResourceAttributes getResourceAttributes() {
+		if (!isAccessible())
+			return null;
 		return getLocalManager().attributes(this);
 	}
 

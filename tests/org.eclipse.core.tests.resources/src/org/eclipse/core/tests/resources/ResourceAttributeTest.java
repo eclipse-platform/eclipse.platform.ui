@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,51 +125,6 @@ public class ResourceAttributeTest extends ResourceTest {
 		}
 	}
 
-	/**
-	 * When the executable bit is cleared on a folder, it effectively
-	 * causes the children of that folder to be removed from the
-	 * workspace because the folder contents can no longer be listed.
-	 * A refresh should happen automatically when the executable
-	 * bit on a folder is changed. See bug 109979 for details.
-	 */
-	public void testRefreshExecutableOnFolder() {
-		// only test on platforms that implement the executable bit
-		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) == 0)
-			return;
-		IProject project = getWorkspace().getRoot().getProject("testRefreshExecutableOnFolder");
-		IFolder folder = project.getFolder("folder");
-		IFile file = folder.getFile("file");
-		ensureExistsInWorkspace(file, getRandomContents());
-
-		try {
-			//folder is executable initially and the file should exist
-			assertTrue("1.0", project.getResourceAttributes().isExecutable());
-			assertTrue("1.1", file.exists());
-
-			setExecutable(folder, false);
-			waitForRefresh();
-
-			boolean wasExecutable = folder.getResourceAttributes().isExecutable();
-			boolean fileExists = file.exists();
-
-			//set the folder executable before asserting anything, otherwise cleanup will fail
-			setExecutable(folder, true);
-
-			assertTrue("2.1", !wasExecutable);
-			assertTrue("2.2", !fileExists);
-
-		} catch (CoreException e1) {
-			fail("2.99", e1);
-		}
-
-		/* remove trash */
-		try {
-			project.delete(true, getMonitor());
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-	}
-
 	public void testAttributeHidden() {
 		// hidden bit only implemented on windows
 		if (!isWindows())
@@ -231,6 +186,20 @@ public class ResourceAttributeTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * Attributes of a closed project should be null.
+	 */
+	public void testClosedProject() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		ensureExistsInWorkspace(project, true);
+		try {
+			project.close(getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertNull("1.0", project.getResourceAttributes());
+	}
+
 	public void testNonExistingResource() {
 		//asking for attributes of a non-existent resource should return null
 		IProject project = getWorkspace().getRoot().getProject("testNonExistingResource");
@@ -248,6 +217,51 @@ public class ResourceAttributeTest extends ResourceTest {
 		assertNotNull("2.0", project.getResourceAttributes());
 		assertNotNull("2.1", folder.getResourceAttributes());
 		assertNotNull("2.2", file.getResourceAttributes());
+	}
+
+	/**
+	 * When the executable bit is cleared on a folder, it effectively
+	 * causes the children of that folder to be removed from the
+	 * workspace because the folder contents can no longer be listed.
+	 * A refresh should happen automatically when the executable
+	 * bit on a folder is changed. See bug 109979 for details.
+	 */
+	public void testRefreshExecutableOnFolder() {
+		// only test on platforms that implement the executable bit
+		if ((EFS.getLocalFileSystem().attributes() & EFS.ATTRIBUTE_EXECUTABLE) == 0)
+			return;
+		IProject project = getWorkspace().getRoot().getProject("testRefreshExecutableOnFolder");
+		IFolder folder = project.getFolder("folder");
+		IFile file = folder.getFile("file");
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			//folder is executable initially and the file should exist
+			assertTrue("1.0", project.getResourceAttributes().isExecutable());
+			assertTrue("1.1", file.exists());
+
+			setExecutable(folder, false);
+			waitForRefresh();
+
+			boolean wasExecutable = folder.getResourceAttributes().isExecutable();
+			boolean fileExists = file.exists();
+
+			//set the folder executable before asserting anything, otherwise cleanup will fail
+			setExecutable(folder, true);
+
+			assertTrue("2.1", !wasExecutable);
+			assertTrue("2.2", !fileExists);
+
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
 	}
 
 }
