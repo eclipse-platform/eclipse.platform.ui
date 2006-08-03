@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 
@@ -43,7 +44,7 @@ public class CVSHistorySearchFilter extends org.eclipse.jface.viewers.ViewerFilt
 
 			CVSFileRevision entry = (CVSFileRevision) element;
 			//empty fields should be considered a non-match
-			boolean orSearch = (authorMatch(entry)) || (dateMatch(entry)) || (commentMatch(entry));
+			boolean orSearch = (authorMatch(entry)) || (dateMatch(entry)) || (commentMatch(entry) || revisionMatch(entry) || tagMatch(entry));
 			if (orSearch)
 				matchCounter++;
 			return orSearch;
@@ -53,24 +54,26 @@ public class CVSHistorySearchFilter extends org.eclipse.jface.viewers.ViewerFilt
 
 	protected boolean authorMatch(CVSFileRevision revision) {
 		String author = revision.getAuthor();
-		Iterator iter = searchStrings.iterator();
-		while (iter.hasNext()) {
-			String nextString = (String) iter.next();
-			if (!((author.indexOf(nextString)) == -1))
-				return true;
+		if (author != null){
+			Iterator iter = searchStrings.iterator();
+			while (iter.hasNext()) {
+				String nextString = (String) iter.next();
+				if (!((author.indexOf(nextString)) == -1))
+					return true;
+			}
 		}
-
 		return false;
 	}
 
 	protected boolean commentMatch(CVSFileRevision revision) {
 		String comment = revision.getComment().toLowerCase();
-		Iterator iter = searchStrings.iterator();
-		while (iter.hasNext()) {
-			if (!(comment.indexOf(((String) iter.next()).toLowerCase()) == -1))
-				return true;
+		if (comment != null) {
+			Iterator iter = searchStrings.iterator();
+			while (iter.hasNext()) {
+				if (!(comment.indexOf(((String) iter.next()).toLowerCase()) == -1))
+					return true;
+			}
 		}
-
 		return false;
 	}
 
@@ -85,7 +88,34 @@ public class CVSHistorySearchFilter extends org.eclipse.jface.viewers.ViewerFilt
 
 		return false;
 	}
+	
+	protected boolean tagMatch(CVSFileRevision revision) {
+		ITag[] tags = revision.getTags();
+		for (int i = 0; i < tags.length; i++) {
+			String tag = tags[i].getName().toLowerCase();
+			Iterator iter = searchStrings.iterator();
+			while (iter.hasNext()) {
+				if (!(tag.indexOf(((String) iter.next()).toLowerCase()) == -1))
+					return true;
+			}
+		}
+		
+		return false;
+	}
 
+	protected boolean revisionMatch(CVSFileRevision revision) {
+		String rev = revision.getContentIdentifier();
+		if (rev != null) {
+			Iterator iter = searchStrings.iterator();
+			while (iter.hasNext()) {
+				if (!(rev.indexOf(((String) iter.next()).toLowerCase()) == -1))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	
 	public int getMatchCount() {
 		return matchCounter;
 	}
