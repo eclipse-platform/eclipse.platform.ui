@@ -37,8 +37,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -49,7 +48,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.filehistory.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
@@ -94,6 +94,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private IAction toggleTextWrapAction;
 	private IAction toggleListAction;
 	private IAction toggleFilterAction;
+	private IAction toggleSearchAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
 	private Action getContentsAction;
@@ -110,7 +111,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
-
+	private SashForm searchSashForm;
+	
 	private Image branchImage;
 	private Image versionImage;
 	
@@ -136,9 +138,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	//current filter mode
 	private int currentFilerMode = 0;
 	
+	//text field used for search
+	private Text searchField;
+	
 	//grouping on
 	private boolean groupingOn;
 	private CVSHistoryFilter historyFilter; 
+	private CVSHistorySearchFilter searchFilter;
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -149,14 +155,26 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		
 		treeViewer = createTree(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		tagViewer = createTagTable(innerSashForm);
 		textViewer = createText(innerSashForm);
-		sashForm.setWeights(new int[] {70, 30});
+		
+		searchSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
+		//Find field
+		searchField = new Text(searchSashForm, SWT.BORDER);
+		searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
+		final SearchHistoryTable searchHistoryTable = new SearchHistoryTable();
+		searchField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e){
+				Display.getDefault().timerExec(1000, searchHistoryTable);
+			}
+		});
+		
+		sashForm.setWeights(new int[] {65, 20, 15});
 		innerSashForm.setWeights(new int[] {50, 50});
-
+		
 		contributeActions();
 
 		setViewerVisibility();
@@ -505,6 +523,20 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 
+		//Toggle search field
+		toggleSearchAction= new Action(CVSUIMessages.CVSHistoryPage_ShowSearchField) {
+			public void run() {
+				setViewerVisibility();
+				store.setValue(ICVSUIConstants.PREF_SHOW_SEARCH, toggleSearchAction.isChecked());
+				if (!toggleSearchAction.isChecked()){
+					if (searchFilter != null)
+					  treeViewer.removeFilter(searchFilter);
+				}
+			}
+		};
+		toggleSearchAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_SEARCH));
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
+		
 		toggleFilterAction = new Action(CVSUIMessages.CVSHistoryPage_NoFilter){
 			public void run(){
 				if (historyFilter != null)
@@ -556,6 +588,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(toggleTextAction);
 					actionBarsMenu.add(toggleListAction);
+					actionBarsMenu.add(new Separator());
+					actionBarsMenu.add(toggleSearchAction);
 					actionBarsMenu.add(new Separator());
 					actionBarsMenu.add(cvsHistoryFilter);
 					actionBarsMenu.add(toggleFilterAction);
@@ -950,6 +984,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/* private */void setViewerVisibility() {
 		boolean showText = toggleTextAction.isChecked();
 		boolean showList = toggleListAction.isChecked();
+		boolean showSearch = toggleSearchAction.isChecked();
 		
 		//check to see if this page is being shown in a dialog, in which case
 		//don't show the text and list panes
@@ -958,17 +993,50 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			showText = false;
 			showList = false;
 		}
+
 		
-		if (showText && showList) {
+		if (showText && showList && showSearch) {
+			//tree + 1 + 2 + search
+			sashForm.setWeights(new int[] {60, 25, 15});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(null);
+			searchSashForm.setMaximizedControl(null);
+		} else if (showText && showSearch) {
+			//tree + 1 + search
+			sashForm.setWeights(new int[] {60, 25, 15});
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
+			searchSashForm.setMaximizedControl(searchField);
+		} else if (showList && showSearch) {
+			//tree + 2 + search
+			sashForm.setWeights(new int[] {60, 25, 15});
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(tagViewer.getTable());
+			searchSashForm.setMaximizedControl(searchField);
+		} else if (showSearch){
+			//tree + search
+			sashForm.setWeights(new int[] {85, 0, 15});
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(null);
+			searchSashForm.setMaximizedControl(searchField);
+		} else if (showText && showList) {
+			//tree + 1 + 2
+			sashForm.setWeights(new int[] {70, 30, 0});
+			sashForm.setMaximizedControl(null);
+			innerSashForm.setMaximizedControl(null);
+			searchSashForm.setMaximizedControl(searchField);
 		} else if (showText) {
+			//tree + 1
+			sashForm.setWeights(new int[] {70, 30, 0});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
 		} else if (showList) {
+			//tree + 2
+			sashForm.setWeights(new int[] {70, 30, 0});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(tagViewer.getTable());
 		} else {
+			//tree
 			sashForm.setMaximizedControl(treeViewer.getControl());
 		}
 
@@ -1042,6 +1110,29 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return null;
 	}
 	
+	private final class SearchHistoryTable implements Runnable {
+		public void run() {
+			String searchString = searchField.getText();
+			if (searchString.equals("")) { //$NON-NLS-1$
+				 if (searchFilter != null) 
+					 treeViewer.removeFilter(searchFilter);
+				return;
+			}
+			
+
+			if (searchFilter != null)
+				treeViewer.removeFilter(searchFilter);
+
+			searchFilter = new CVSHistorySearchFilter(searchString);
+
+			if (historyFilter != null)
+				treeViewer.removeFilter(historyFilter);
+
+			treeViewer.addFilter(searchFilter);
+		}
+	}
+
+
 	private class RefreshCVSFileHistory extends Job {
 		private final static int NUMBER_OF_CATEGORIES = 4;
 		

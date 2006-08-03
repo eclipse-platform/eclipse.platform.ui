@@ -512,6 +512,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_WRAP_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_SEARCH, false);
 		store.setDefault(ICVSUIConstants.PREF_REVISION_MODE, 0);
 		store.setDefault(ICVSUIConstants.PREF_GROUPBYDATE_MODE, true);
 		store.setDefault(ICVSUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING, false);
