@@ -355,6 +355,10 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 
 		fViewer= viewer;
 		fViewer.addTextInputListener(fInternalListener);
+		
+		IDocument document= viewer.getDocument();
+		if (document != null)
+			fInternalListener.inputDocumentChanged(null, document);
 	}
 
 	/*
