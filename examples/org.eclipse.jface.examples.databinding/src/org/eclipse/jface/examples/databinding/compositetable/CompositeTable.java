@@ -390,7 +390,7 @@ public class CompositeTable extends Canvas {
 		for (int i = 0; i < children.length - 1; i++) {
 			int left = totalSize - widthRemaining;
 			int desiredHeight = computeDesiredHeight(children[i], isHeader);
-			int top = maxHeight - desiredHeight - 1;
+			int top = computeTop(maxHeight, desiredHeight);
 			int width = (int) (((float) weights[i]) / 100 * totalSize);
 			children[i].setBounds(left + 2, top, width - 4, desiredHeight);
 			widthRemaining -= width;
@@ -398,7 +398,7 @@ public class CompositeTable extends Canvas {
 
 		int left = totalSize - widthRemaining;
 		int desiredHeight = computeDesiredHeight(children[children.length - 1], isHeader);
-		int top = maxHeight - desiredHeight - 1;
+		int top = computeTop(maxHeight, desiredHeight);
 		children[children.length - 1].setBounds(left + 2, top,
 				widthRemaining - 4, desiredHeight);
 
@@ -416,12 +416,16 @@ public class CompositeTable extends Canvas {
 		int left = 0;
 		for (int i = 0; i < children.length; i++) {
 			int desiredHeight = computeDesiredHeight(children[i], isHeader);
-			int top = maxHeight - desiredHeight - 1;
+			int top = computeTop(maxHeight, desiredHeight);
 			children[i].setBounds(left + 2, top, weights[i], desiredHeight);
 			left += weights[i]+4;
 		}
 
 		return maxHeight;
+	}
+
+	private int computeTop(int maxHeight, int desiredHeight) {
+		return maxHeight - desiredHeight - 1;
 	}
 
 	private int computeMaxHeight(boolean isHeader, Control[] children) {
@@ -437,20 +441,20 @@ public class CompositeTable extends Canvas {
 	}
 	
 	int computeDesiredHeight(Control control, boolean isHeader) {
-		int rowControlHeight = control.computeSize(SWT.DEFAULT,
+		int controlHeight = control.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT, false).y;
 		if (maxRowsVisible == Integer.MAX_VALUE || isHeader) {
-			return rowControlHeight;
+			return controlHeight;
 		}
 		if (contentPane != null && fittingVertically && isRunTime()) {
 			// FIXME: Yuck: bad code smell here...  (coupling with contentPane)
 			int fitControlHeight = contentPane.clientAreaHeight / maxRowsVisible;
-			if (fitControlHeight < rowControlHeight) {
-				return rowControlHeight;
+			if (fitControlHeight < controlHeight) {
+				return controlHeight;
 			}
 			return fitControlHeight-2;
 		}
-		return rowControlHeight;
+		return controlHeight;
 	}
 
 	/**
