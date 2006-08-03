@@ -51,7 +51,6 @@ public final class RulerColumnPlacementConstraint {
 	 * 
 	 * @return <code>true</code> if the receiver is a <i>before</i> constraint,
 	 *         <code>false</code> if it is an <i>after</i> constraint
-	 * @since 3.3
 	 */
 	public boolean isBefore() {
 		return fBefore;
