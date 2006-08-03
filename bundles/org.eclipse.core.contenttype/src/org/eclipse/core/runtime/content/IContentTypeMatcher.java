@@ -32,7 +32,7 @@ public interface IContentTypeMatcher {
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
+	 * queried. For performance reasons, it is highly recommended 
 	 * to provide a file name if available.
 	 * </p> 
 	 * <p>
@@ -65,7 +65,7 @@ public interface IContentTypeMatcher {
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
+	 * queried. For performance reasons, it is highly recommended 
 	 * to provide a file name if available.
 	 * </p>
 	 * <p>
@@ -101,7 +101,7 @@ public interface IContentTypeMatcher {
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
+	 * queried. For performance reasons, it is highly recommended 
 	 * to provide a file name if available.
 	 * </p> 
 	 *  
@@ -124,7 +124,7 @@ public interface IContentTypeMatcher {
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
+	 * queried. For performance reasons, it is highly recommended 
 	 * to provide a file name if available.
 	 * </p> 
 	 *  
