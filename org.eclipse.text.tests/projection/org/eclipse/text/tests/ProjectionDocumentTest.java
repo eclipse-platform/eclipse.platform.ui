@@ -1598,7 +1598,8 @@ public class ProjectionDocumentTest extends TestCase {
 		}
 		
 		Position[] expected= {
-				new Position(5, 35),
+				new Position(5, 10),
+				new Position(20, 20),
 				new Position(60, 20),
 				new Position(100, 20),
 				new Position(140, 20)
@@ -1624,7 +1625,8 @@ public class ProjectionDocumentTest extends TestCase {
 				new Position(20,20),
 				new Position(60, 20),
 				new Position(100, 20),
-				new Position(140, 35)
+				new Position(140, 20),
+				new Position(165, 10)
 		};
 		assertFragmentation(expected);
 	}
@@ -1645,7 +1647,8 @@ public class ProjectionDocumentTest extends TestCase {
 		
 		Position[] expected= {
 				new Position(20, 20),
-				new Position(45, 35),
+				new Position(45, 10),
+				new Position(60, 20),
 				new Position(100, 20),
 				new Position(140, 20)
 		};
@@ -1670,7 +1673,8 @@ public class ProjectionDocumentTest extends TestCase {
 		Position[] expected= {
 				new Position(20, 20),
 				new Position(60, 20),
-				new Position(85, 35),
+				new Position(85, 10),
+				new Position(100, 20),
 				new Position(140, 20)
 		};
 		assertFragmentation(expected);

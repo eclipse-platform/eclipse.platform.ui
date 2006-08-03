@@ -269,6 +269,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 *             document
 	 */
 	private void internalAddMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
+		System.out.println("ProjectionDocument.internalAddMasterDocumentRange(): offset=" + offsetInMaster + " length=" + lengthInMaster);
 
 		if (lengthInMaster == 0)
 			return;
@@ -664,70 +665,6 @@ public class ProjectionDocument extends AbstractDocument {
 		return event;
 	}
 
-	private boolean includes(IRegion region, int offset) {
-		if (region == null)
-			return false;
-		return region.getOffset() <= offset && offset <= region.getOffset() + region.getLength();
-	}
-
-	private boolean includes(IRegion region1, int offset, int length) {
-		if (region1 == null)
-			return false;
-		return region1.getOffset() <= offset && (offset + length <= region1.getOffset() + region1.getLength());
-	}
-
-	/**
-	 * Compute the gaps that must be covered in order to ensure that the range affected
-	 * by the given document event is completely projected.
-	 *
-	 * @param event the master document event
-	 * @return the gaps to be covered
-	 */
-	private IRegion[] computeCoverageGap(DocumentEvent event) {
-
-		IRegion left= null;
-		List gaps= new ArrayList();
-
-		try {
-			// deal with the beginning of the event region
-			int imageOffset= fMapping.toImageOffset(event.getOffset());
-			if (imageOffset == -1) {
-				Position[] fragments= getFragments();
-				int index= fMasterDocument.computeIndexInCategory(fFragmentsCategory, event.getOffset());
-				if (index < fragments.length) {
-					Fragment fragment= (Fragment) fragments[index];
-					left= new Region(event.getOffset(), fragment.getOffset() - event.getOffset());
-					gaps.add(left);
-				}
-			}
-
-			// the event itself
-			if (!includes(left, event.getOffset(), event.getLength()))
-				gaps.add(new Region(event.getOffset(), event.getLength()));
-
-			// deal with the end of the event region
-			int inclusiveOriginEndOffset= event.getOffset() + Math.max(0, event.getLength() - 1);
-			int inclusiveImageEndOffset= fMapping.toImageOffset(inclusiveOriginEndOffset);
-			if (inclusiveImageEndOffset == -1 && !includes(left, inclusiveOriginEndOffset)) {
-				int index= fMasterDocument.computeIndexInCategory(fFragmentsCategory, inclusiveOriginEndOffset);
-				if (0 < index) {
-					Position[] fragments= getFragments();
-					Fragment fragment= (Fragment) fragments[index - 1];
-					gaps.add(new Region(fragment.getOffset(), inclusiveOriginEndOffset + 1 - fragment.getOffset()));
-				}
-			}
-
-		} catch (BadLocationException e) {
-			internalError();
-		} catch (BadPositionCategoryException e) {
-			internalError();
-		}
-
-		IRegion[] result= new IRegion[gaps.size()];
-		gaps.toArray(result);
-		return result;
-	}
-
 	/**
 	 * Ensures that when the master event affects this projection document, that the whole region described by the
 	 * event is part of this projection document.
@@ -739,11 +676,7 @@ public class ProjectionDocument extends AbstractDocument {
 	protected final boolean adaptProjectionToMasterChange(DocumentEvent masterEvent) throws BadLocationException {
 		if (!isUpdating() && fFragmentsUpdater.affectsPositions(masterEvent) || fIsAutoExpanding) {
 
-			IRegion[] gaps= computeCoverageGap(masterEvent);
-			for (int i= 0; i < gaps.length; i++) {
-				IRegion gap= gaps[i];
-				addMasterDocumentRange(gap.getOffset(), gap.getLength(), masterEvent);
-			}
+			addMasterDocumentRange(masterEvent.getOffset(), masterEvent.getLength(), masterEvent);
 			return true;
 
 		} else if (fMapping.getImageLength() == 0 && masterEvent.getLength() == 0) {
