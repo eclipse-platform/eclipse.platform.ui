@@ -1530,6 +1530,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 	/**
 	 * Handle focusGained events on any child control.
 	 * 
+	 * FIXME: Needs to automatically scroll horizontally if the newly-focused
+	 * control is fully or partially occluded.
+	 * 
 	 * @param sender
 	 *            The row containing the sending control.
 	 * @param e
