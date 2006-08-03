@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.rulers.DAG;
 import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
+import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacementConstraint;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 
 /**
@@ -211,23 +212,22 @@ public final class RulerColumnRegistry {
 			RulerColumnDescriptor desc= (RulerColumnDescriptor) array[i];
 			dag.addVertex(desc);
 			
-			Set before= desc.getPlacement().getBefore();
+			Set before= desc.getPlacement().getConstraints();
 			for (Iterator it= before.iterator(); it.hasNext();) {
-				String id= (String) it.next();
+				RulerColumnPlacementConstraint constraint= (RulerColumnPlacementConstraint) it.next();
+				String id= constraint.getId();
 				RulerColumnDescriptor target= (RulerColumnDescriptor) descriptorsById.get(id);
-				if (target == null)
+				if (target == null) {
 					noteUnknownTarget(desc, id);
-				else if (!dag.addEdge(desc, target))
-					noteCycle(desc, target);
-			}
-			Set after= desc.getPlacement().getAfter();
-			for (Iterator it= after.iterator(); it.hasNext();) {
-				String id= (String) it.next();
-				RulerColumnDescriptor target= (RulerColumnDescriptor) descriptorsById.get(id);
-				if (target == null)
-					noteUnknownTarget(desc, id);
-				else if (!dag.addEdge(target, desc))
-					noteCycle(desc, target);
+				} else {
+					boolean success;
+					if (constraint.isBefore())
+						success= dag.addEdge(desc, target);
+					else
+						success= dag.addEdge(target, desc);
+					if (!success)
+						noteCycle(desc, target);
+				}
 			}
 		}
 		

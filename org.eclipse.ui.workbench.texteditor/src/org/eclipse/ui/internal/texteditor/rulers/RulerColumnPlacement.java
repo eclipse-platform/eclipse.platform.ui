@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.texteditor.rulers;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -39,15 +39,12 @@ public final class RulerColumnPlacement {
 
 	/** The placement weight. */
 	private final float fWeight;
-	/** The ids of columns that this column wants to be placed after. */
-	private final Set fAfter;
-	/** The ids of columns that this column wants to be placed before. */
-	private final Set fBefore;
+	/** The placement constraints (element type: {@link RulerColumnPlacementConstraint}). */
+	private final Set fConstraints;
 
 	public RulerColumnPlacement() {
 		fWeight= 1f;
-		fAfter= Collections.EMPTY_SET;
-		fBefore= Collections.EMPTY_SET;
+		fConstraints= Collections.EMPTY_SET;
 	}
 
 	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException {
@@ -56,29 +53,47 @@ public final class RulerColumnPlacement {
 		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
 		
 		fWeight= helper.getDefaultAttribute(WEIGHT, 1f);
-		fAfter= readIds(log, element.getChildren(AFTER));
-		fBefore= readIds(log, element.getChildren(BEFORE));
+		if (fWeight < 0 || fWeight > 1)
+			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_weight_msg);
+		fConstraints= readIds(log, element.getChildren());
 	}
 
 	private Set readIds(ILog log, IConfigurationElement[] children) {
-		Set ids= new HashSet((int) (children.length / 0.75) + 1, 0.75f);
+		Set constraints= new LinkedHashSet((int) (children.length / 0.75) + 1, 0.75f);
 		for (int i= 0; i < children.length; i++) {
 			IConfigurationElement child= children[i];
+			String name= child.getName();
 			ExtensionPointHelper childHelper= new ExtensionPointHelper(child, log);
-			ids.add(childHelper.getNonNullAttribute(ID));
+			boolean before;
+			if (AFTER.equals(name))
+				before= false;
+			else if (BEFORE.equals(name))
+				before= true;
+			else {
+				childHelper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_child_msg);
+				continue;
+			}
+			constraints.add(new RulerColumnPlacementConstraint(childHelper.getNonNullAttribute(ID), before));
 		}
-		return Collections.unmodifiableSet(ids);
+		return Collections.unmodifiableSet(constraints);
 	}
 	
+	/**
+	 * The weight of the placement specification, a float in the range <code>[0, 1]</code>.
+	 * 
+	 * @return the weight of the placement specification
+	 */
 	public float getWeight() {
 		return fWeight;
 	}
 
-	public Set getBefore() {
-		return fBefore;
-	}
-	
-	public Set getAfter() {
-		return fAfter;
+	/**
+	 * Returns the placement constraints in the order that they appear in the extension declaration.
+	 * 
+	 * @return the unmodifiable set of placement constraints in the order that they appear in the
+	 *         extension declaration
+	 */
+	public Set getConstraints() {
+		return fConstraints;
 	}
 }

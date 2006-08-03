@@ -27,6 +27,8 @@ public final class RulerColumnMessages extends NLS {
 	public static String ExtensionPointHelper_missing_attribute_msg;
 	public static String ExtensionPointHelper_invalid_number_attribute_msg;
 	public static String RulerColumnDescriptor_invalid_placement_msg;
+	public static String RulerColumnPlacement_illegal_child_msg;
+	public static String RulerColumnPlacement_illegal_weight_msg;
 	public static String RulerColumnRegistry_cyclic_placement_msg;
 	public static String RulerColumnRegistry_duplicate_id_msg;
 	public static String RulerColumnRegistry_invalid_msg;
