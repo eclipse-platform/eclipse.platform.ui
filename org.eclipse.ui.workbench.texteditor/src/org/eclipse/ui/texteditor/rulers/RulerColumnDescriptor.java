@@ -93,7 +93,7 @@ public final class RulerColumnDescriptor {
 		Assert.isLegal(registry != null);
 		Assert.isLegal(element != null);
 		fElement= element;
-		
+
 		ILog log= TextEditorPlugin.getDefault().getLog();
 		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
 
@@ -104,10 +104,10 @@ public final class RulerColumnDescriptor {
 		fDefaultEnablement= helper.getDefaultAttribute(ENABLED, true);
 		fIsGlobal= helper.getDefaultAttribute(GLOBAL, true);
 		fIncludeInMenu= helper.getDefaultAttribute(INCLUDE_IN_MENU, true);
-		
+
 		IConfigurationElement[] targetEditors= element.getChildren(TARGET_EDITOR);
 		IConfigurationElement[] targetContentTypes= element.getChildren(TARGET_CONTENT_TYPE);
-		
+
 		if (targetContentTypes.length + targetEditors.length == 0)
 			fTarget= RulerColumnTarget.createAllTarget();
 		else {
@@ -124,7 +124,7 @@ public final class RulerColumnDescriptor {
 			}
 			fTarget= combined;
 		}
-		
+
 		IConfigurationElement[] placements= element.getChildren(PLACEMENT);
 		switch (placements.length) {
 			case 0:
@@ -138,11 +138,11 @@ public final class RulerColumnDescriptor {
 				fRulerColumnPlacement= null; // dummy
 				break;
 		}
-		
+
 		Assert.isTrue(fTarget != null);
 		Assert.isTrue(fRulerColumnPlacement != null);
 	}
-	
+
 	/**
 	 * Returns the identifier of the described extension.
 	 *
@@ -160,7 +160,7 @@ public final class RulerColumnDescriptor {
 	public String getName() {
 		return fName;
 	}
-	
+
 	/**
 	 * Returns the image descriptor of the described extension.
 	 * 
@@ -169,7 +169,7 @@ public final class RulerColumnDescriptor {
 	public ImageDescriptor getIcon() {
 		return fIcon;
 	}
-	
+
 	RulerColumnTarget getTarget() {
 		return fTarget;
 	}
@@ -187,7 +187,7 @@ public final class RulerColumnDescriptor {
 	public boolean getDefaultEnablement() {
 		return fDefaultEnablement;
 	}
-	
+
 	/**
 	 * Returns the global property of the described extension. Changing the visibility of a column
 	 * with the global property set to <code>true</code> should typically affect all matching
@@ -199,7 +199,7 @@ public final class RulerColumnDescriptor {
 	public boolean isGlobal() {
 		return fIsGlobal;
 	}
-	
+
 	/**
 	 * Returns the menu inclusion property of the described extension. A toggle menu entry should be
 	 * inluded in the ruler context menu for columns with this property set to <code>true</code>.
@@ -209,7 +209,7 @@ public final class RulerColumnDescriptor {
 	public boolean isIncludedInMenu() {
 		return fIncludeInMenu;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if this contribution matches the passed editor, <code>false</code> if not.
 	 * 
@@ -219,16 +219,16 @@ public final class RulerColumnDescriptor {
 	public boolean matchesEditor(ITextEditor editor) {
 		Assert.isLegal(editor != null);
 		RulerColumnTarget target= getTarget();
-		
+
 		IWorkbenchPartSite site= editor.getSite();
 		if (site != null && target.matchesEditorId(site.getId()))
 			return true;
-		
+
 		IContentType contentType= getContentType(editor);
 		return contentType != null && target.matchesContentType(contentType);
 
 	}
-	
+
 	/**
 	 * Creates a {@link RulerColumn} instance as described by the receiver. This may load the contributing plug-in.
 	 * 
@@ -245,7 +245,7 @@ public final class RulerColumnDescriptor {
 		column.columnCreated();
 		return column;
 	}
-	
+
 	/**
 	 * Notifies the descriptor of the fact that a column is no longer needed. Calls the
 	 * {@link RulerColumn#columnRemoved()} hook.
@@ -256,7 +256,7 @@ public final class RulerColumnDescriptor {
 		Assert.isLegal(column != null);
 		column.columnRemoved();
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 * @since 3.3
@@ -324,7 +324,7 @@ public final class RulerColumnDescriptor {
 
 	String getContributor() {
 		try {
-		return fElement.getContributor().getName();
+			return fElement.getContributor().getName();
 		} catch (InvalidRegistryObjectException e) {
 			return "unknown"; //$NON-NLS-1$
 		}
