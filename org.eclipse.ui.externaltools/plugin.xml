@@ -75,8 +75,6 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
             name="%PropertyPage.externalToolsBuilders"
             class="org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage"
             id="org.eclipse.ui.externaltools.propertypages.BuilderPropertyPage">
@@ -84,6 +82,11 @@
                name="open"
                value="true">
          </filter>
+         <enabledWhen>
+         	<adapt
+                type="org.eclipse.core.resources.IProject">
+          	</adapt>
+		</enabledWhen>
       </page>
    </extension>
    <extension
