@@ -34,6 +34,11 @@ public abstract class RulerColumnTarget {
 		return new AllTarget();
 	}
 	public static RulerColumnTarget createOrTarget(RulerColumnTarget either, RulerColumnTarget or) {
+		Assert.isLegal(or != null || either != null);
+		if (either == null)
+			return or;
+		if (or == null)
+			return either;
 		return new OrTarget(either, or);
 	}
 	public static RulerColumnTarget createContentTypeTarget(String contentTypeId) {
