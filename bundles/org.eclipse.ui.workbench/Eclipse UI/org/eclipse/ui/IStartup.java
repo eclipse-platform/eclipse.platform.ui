@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public interface IStartup {
      * since they may access SWT.  For example, to obtain the current workbench
      * window, use:
      * <code>
+     * <pre>
      * final IWorkbench workbench = PlatformUI.getWorkbench();
      * workbench.getDisplay().asyncExec(new Runnable() {
      *   public void run() {
@@ -35,6 +36,7 @@ public interface IStartup {
      *     }
      *   }
      * });
+     * </pre>
      * </code>
      * </p>
      * @see org.eclipse.swt.widgets.Display#asyncExec
