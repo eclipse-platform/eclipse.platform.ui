@@ -96,10 +96,6 @@ public class Toc extends Node implements IToc {
 		for (int i=0;i<topics.length;++i) {
 			createHref2TopicMapAux(map, topics[i]);
 		}
-		String[] extraDocs = contribution.getExtraDocuments();
-		for (int i=0;i<extraDocs.length;++i) {
-			map.put(extraDocs[i], new Topic(extraDocs[i], null));
-		}
 		return map;
 	}
 	

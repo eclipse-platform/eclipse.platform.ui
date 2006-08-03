@@ -11,10 +11,7 @@
 
 package org.eclipse.help.ui.internal;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -222,7 +219,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			}
 		}
 		// Find out if any contributed toc that is enabled contains the topic
-		return isInTocSubtree(href, Arrays.asList(tocs));
+		return isInTocSubtree(href, tocs);
 	}
 	/**
 	 * @param href
@@ -231,9 +228,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 *            List of IToc
 	 * @return true if given topic belongs to one of enabled ITocs
 	 */
-	private boolean isInTocSubtree(String href, List tocList) {
-		for (Iterator it = tocList.iterator(); it.hasNext();) {
-			IToc toc = (IToc) it.next();
+	private boolean isInTocSubtree(String href, IToc[] tocList) {
+		for (int i=0;i<tocList.length;++i) {
+			IToc toc = tocList[i];
 			if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref())) {
 				// TOC is not enabled, check other TOCs
 				continue;
@@ -241,6 +238,13 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			// Check topics in navigation
 			if (toc.getTopic(href) != null) {
 				return true;
+			}
+			// Check extra docs
+			String[] extraDocs = toc.getTocContribution().getExtraDocuments();
+			for (int j=0;j<extraDocs.length;++j) {
+				if (extraDocs[j].equals(href)) {
+					return true;
+				}
 			}
 		}
 		return false;
