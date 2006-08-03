@@ -16,13 +16,21 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.webapp.data.*;
 
 public class HighlightFilter implements IFilter {
+	private static final String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
+	
 	private static final String scriptPart1 = "\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
-	private static final String scriptPart3 = ");\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+	private static final String scriptPart2 = ");\nvar pluginDefault = "; //$NON-NLS-1$
+	private static final String scriptPart3 = ";\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
 	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
 
+	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
+	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\">\n"; //$NON-NLS-1$
+	
+	private static final String noHighlightScript1 = "<script language=\"JavaScript\">\n<!--\nif (parent.ContentToolbarFrame) parent.ContentToolbarFrame.setButtonState(\"toggle_highlight\",\"hidden\");\n-->\n</script>\n"; //$NON-NLS-1$
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -37,7 +45,11 @@ public class HighlightFilter implements IFilter {
 
 		Collection keywords = getWords(req);
 		if (keywords.size() == 0) {
-			return out;
+			try {
+				return new FilterHTMLHeadOutputStream(out, noHighlightScript1.getBytes("ASCII")); //$NON-NLS-1$
+			} catch (UnsupportedEncodingException uee) {
+				return out;
+			}
 		}
 		keywords = removeWildCards(keywords);
 		keywords = encodeKeyWords(keywords);
@@ -57,6 +69,7 @@ public class HighlightFilter implements IFilter {
 	 */
 	private byte[] createJScript(HttpServletRequest req, Collection keywords) {
 		StringBuffer buf = new StringBuffer(scriptPart1);
+		StringBuffer buf2 = new StringBuffer(sheetRefPart1);
 		// append comma separated list of keywords
 		Iterator it = keywords.iterator();
 		if (!it.hasNext())
@@ -67,23 +80,35 @@ public class HighlightFilter implements IFilter {
 			keyword = (String) it.next();
 			buf.append(", \"").append(keyword).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		//
+		buf.append(scriptPart2);
+		buf.append(HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(HIGHLIGHT_ON));
 		buf.append(scriptPart3);
 		// append "../" to get to the webapp
-		String path = req.getPathInfo();
-		if (path != null) {
-			for (int i; 0 <= (i = path.indexOf('/')); path = path
-					.substring(i + 1)) {
-				buf.append("../"); //$NON-NLS-1$
-			}
-		}
-		//
+		String path = getPathLength(req);
+		buf.append(path);
+		buf2.append(path);
+		
 		buf.append(scriptPart5);
+		buf.append(buf2.toString());
+		buf.append(sheetRefPart3);
 		try {
 			return buf.toString().getBytes("ASCII"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return new byte[0];
 		}
+	}
+	
+	private String getPathLength(HttpServletRequest req) {
+		// append "../" to get to the webapp
+		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$
+		String path = req.getPathInfo();
+		if (path != null) {
+			for (int i; 0 <= (i = path.indexOf('/')); path = path
+					.substring(i + 1)) {
+				result.append("../"); //$NON-NLS-1$
+			}
+		}
+		return result.toString();
 	}
 	/**
 	 * Extracts keywords from query that contains keywords dobule quoted and

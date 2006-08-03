@@ -62,6 +62,10 @@ BODY {
 	vertical-align:middle;
 }
 
+.buttonHidden a { 
+	display:none;
+}
+
 .button a:hover { 
 	border-top:1px solid ButtonHighlight; 
 	border-<%=isRTL?"right":"left"%>:1px solid ButtonHighlight; 
@@ -215,11 +219,12 @@ function maximizedChanged(maximizedNotRestored){
 function setButtonState(buttonName, pressed) {
 	if(!document.getElementById("tdb_"+buttonName))
 		return;
-	if(pressed){
+	if (pressed == "hidden")
+		document.getElementById("tdb_"+buttonName).className="buttonHidden";
+	else if(pressed == true)
 		document.getElementById("tdb_"+buttonName).className="buttonOn";
-	}else{
+	else
 		document.getElementById("tdb_"+buttonName).className="button";
-	}
 }
 
 function setWindowStatus(buttonName){
@@ -288,7 +293,7 @@ if(buttons.length > 0){
 <%
 		} else {
 %>
-						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].isOn()?"buttonOn":"button"%>" height=18>
+						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].getStyleClass()%>" height=18>
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>', '<%=buttons[i].getParam()%>');" 
 							   onmouseover="javascript:setWindowStatus('<%=buttons[i].getName()%>');return true;" 
 							   onmouseout="window.status='';"

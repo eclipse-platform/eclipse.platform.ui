@@ -73,6 +73,13 @@
 	<jsp:param name="action"   value="<%=bookmarkAction%>"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='<%=bookmarkButtonState%>'/>
+	
+	<jsp:param name="name"     value="toggle_highlight"/>
+	<jsp:param name="tooltip"  value='Highlight search terms'/>
+	<jsp:param name="image"    value="highlight.gif"/>
+	<jsp:param name="action"   value="toggleHighlight"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value='hidden'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>

@@ -129,4 +129,10 @@ public class WebappPreferences {
 	public boolean isIndexExpandAll() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexExpandAll"); //$NON-NLS-1$
 	}
+	public boolean isHighlightDefault() {
+		return prefs.getBoolean("default_highlight"); //$NON-NLS-1$
+	}
+	public void setHighlightDefault(boolean highlight) {
+		prefs.setValue("default_highlight", highlight); //$NON-NLS-1$
+	}
 }

@@ -127,6 +127,22 @@ function resynch(button, param)
 	}
 }
 
+function toggleHighlight(button, param)
+{
+	try {
+		parent.ContentViewFrame.toggleHighlight();
+		var highlight = parent.ContentViewFrame.currentHighlight;
+		window.setButtonState("toggle_highlight",highlight);
+		var date = new Date();
+		date.setTime(date.getTime()+(365*24*60*60*1000));
+		document.cookie = document.cookie = "highlight="+highlight+"; expires="+date.toGMTString() + ";path=/";;
+		
+	} catch(e) {}
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function printContent(button, param)
 {
 	try {

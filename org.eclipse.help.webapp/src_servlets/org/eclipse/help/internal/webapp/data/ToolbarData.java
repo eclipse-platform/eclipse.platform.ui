@@ -49,9 +49,6 @@ public class ToolbarData extends RequestData {
 
 		List buttonList = new ArrayList();
 		for (int i = 0; i < names.length; i++) {
-			if (states[i].startsWith("hid")) { //$NON-NLS-1$
-				continue;
-			}
 			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
 			else
@@ -59,7 +56,7 @@ public class ToolbarData extends RequestData {
 						.getString(tooltips[i], request), preferences
 						.getImagesDirectory()
 						+ "/" + images[i], //$NON-NLS-1$
-						actions[i], params[i], "on".equalsIgnoreCase(states[i]))); //$NON-NLS-1$
+						actions[i], params[i], states[i]));
 		}
 		// add implicit maximize/restore button on all toolbars
 		if (isIE() || isMozilla()
@@ -68,7 +65,7 @@ public class ToolbarData extends RequestData {
 			buttonList.add(new ToolbarButton("maximize_restore", //$NON-NLS-1$
 					getMaximizeTooltip(), preferences.getImagesDirectory()
 							+ "/" + "maximize.gif", //$NON-NLS-1$ //$NON-NLS-2$
-					"restore_maximize", null, false)); //$NON-NLS-1$
+					"restore_maximize", null, "off")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		buttons = (ToolbarButton[]) buttonList
 				.toArray(new ToolbarButton[buttonList.size()]);

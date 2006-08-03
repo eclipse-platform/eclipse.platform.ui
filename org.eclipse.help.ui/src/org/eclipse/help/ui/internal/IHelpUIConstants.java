@@ -42,6 +42,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_SHOW_CATEGORIES = "elcl16/showcat_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_DESC = "elcl16/showdesc_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ADD_BOOKMARK = "elcl16/addbkmrk_co.gif"; //$NON-NLS-1$
+	public static final String IMAGE_HIGHLIGHT = "elcl16/highlight.gif"; //$NON-NLS-1$
 	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SYNC_TOC = "elcl16/synch_toc_nav.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_ALL = "elcl16/show_all.gif"; //$NON-NLS-1$	

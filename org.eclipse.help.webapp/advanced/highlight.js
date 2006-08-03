@@ -17,6 +17,8 @@ var topmostScroll;
 var isSafari = (navigator.userAgent.indexOf('Safari/') != -1)
 			|| (navigator.userAgent.indexOf('AppleWebKit/') != -1);
 var highlighted=false;
+var defaultHighlight;
+var currentHighlight;
 var startTime;
 var MAX_DURATION=3000;
 onload=highlight;
@@ -27,6 +29,16 @@ function highlight(){
 	}
 	highlighted=true;
 	if (!document.body) return;
+	if (parent.ContentToolbarFrame) {
+		loadCookie();
+		parent.ContentToolbarFrame.setButtonState("toggle_highlight",defaultHighlight);
+	} else {
+		defaultHighlight=pluginDefault;
+	}
+	if ((defaultHighlight == false) && document.styleSheets) {
+		setRule(".resultofText","");
+	}
+	currentHighlight = defaultHighlight;
 	
 	if(document.body.innerHTML.length < 50000){
 		for(i=0; i<keywords.length; i++){
@@ -38,7 +50,7 @@ function highlight(){
 			}
 			if (topmostScroll==null||topmostScroll>scroll){
 				topmostScroll=scroll;
-				}
+			}
 		}
 	}else{
 		startTime=new Date().getTime();
@@ -54,8 +66,22 @@ function highlight(){
 				}
 		}
 	}
-	
 	scrollIntoView(topmostScroll);
+}
+
+function setRule(selector, css) {
+	var theRules = new Array();
+	for (var i = 0; i< document.styleSheets.length; i++) {
+		if (document.styleSheets[i].cssRules)
+			theRules = document.styleSheets[i].cssRules;
+		else if (document.styleSheets[i].rules)
+			theRules = document.styleSheets[i].rules;
+		for (var j = theRules.length-1; j>=0; j--) {
+			if (theRules[j].selectorText==selector) {
+				theRules[j].style.cssText=css;
+			}
+		}
+	}
 }
 
 function highlightWordInNode(aWord, aNode){
@@ -99,12 +125,24 @@ function highlightWordInText(aWord, textNode){
 			newBefore=document.createTextNode(before);
 			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
+			spanNode.setAttribute("name","resultofMatch");
 			if(isSafari){
-				spanNode.style.color="#000000";
-				spanNode.style.background="#B5D5FF";
+				if (defaultHighlight == true) {
+					spanNode.style.color="#000000";
+					spanNode.style.background="#B5D5FF";
+				} else {
+					spanNode.style.color=null;
+					spanNode.style.background=null;
+				}
 			}else{
-				spanNode.style.background="Highlight";
-				spanNode.style.color="HighlightText";
+				if ((defaultHighlight == false) && !document.styleSheets) {
+					if (isIE) spanNode.setAttribute("className",null);
+					else spanNode.setAttribute("class",null);
+				}
+				else {
+					if (isIE) spanNode.setAttribute("className","resultofText");
+					else spanNode.setAttribute("class","resultofText");
+				}
 			}
 			replacementNode.appendChild(spanNode);
 			if(!firstNodeHighlighted){
@@ -201,4 +239,52 @@ function getVerticalScroll(node)
 	
     return scroll;
 	
+}
+
+function toggleHighlight() {
+	setHighlight(currentHighlight == false);
+}
+
+function setHighlight(current) {
+	currentHighlight = (current==true);
+	if (isSafari) {
+		var color;
+		var backgnd;
+		if (currentHighlight) {
+			color = "#000000";
+			backgnd = "#B5D5FF";
+		}
+		else {
+			color = null;
+			backgnd = null;
+		}
+		var elements = document.getElementsByName("resultofMatch");
+		for (var i = 0; i<elements.length; i++){
+			elements[i].style.color=color;
+			elements[i].style.backgroundColor= backgnd;
+		}
+	}
+	else if (document.styleSheets){
+		var text;
+		if (currentHighlight) {
+			text = "COLOR: HighlightText; BACKGROUND-COLOR: Highlight;";
+		} else {
+			text = "";
+		}
+		setRule(".resultofText",text);
+	}
+}
+
+function loadCookie() {
+	var i = document.cookie.indexOf("highlight");
+	if (i != -1) {
+		var result = document.cookie.substring(i+10);
+		i = result.indexOf(";");
+		if (i != -1) {
+			result = result.substring(0,i);
+		}
+		defaultHighlight = new Boolean(result == "true");
+	} else {
+		defaultHighlight = new Boolean(true);
+	}
 }

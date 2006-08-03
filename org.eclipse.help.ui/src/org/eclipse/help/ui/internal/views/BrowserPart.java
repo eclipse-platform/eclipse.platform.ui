@@ -49,6 +49,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
+	private final static String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
 
 	private ReusableHelpPart parent;
 
@@ -63,6 +64,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private Action showExternalAction;
 
 	private Action syncTocAction;
+	
+	private Action highlightAction;
 
 	private Action bookmarkAction;
 
@@ -73,7 +76,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private String title;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
-			IToolBarManager tbm) {
+			final IToolBarManager tbm) {
 		browser = new Browser(parent, SWT.NULL);
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent event) {
@@ -91,9 +94,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 			public void changed(LocationEvent event) {
 				String url = event.location;
+				boolean isResult = url.indexOf("resultof")!=-1; //$NON-NLS-1$
 				BrowserPart.this.parent.browserChanged(url);
 				BrowserPart.this.url = url;
 				updateSyncTocAction();
+				BrowserPart.this.highlightAction.setEnabled(isResult);
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
@@ -183,6 +188,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private void contributeToToolBar(IToolBarManager tbm) {
+		boolean highlight = HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(HIGHLIGHT_ON);
 		showExternalAction = new Action() {
 			public void run() {
 				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
@@ -219,9 +225,21 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		bookmarkAction.setToolTipText(Messages.BrowserPart_bookmarkTooltip);
 		bookmarkAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
+		highlightAction = new Action() {
+			public void run() {
+				HelpBasePlugin.getDefault().getPluginPreferences().setValue(HIGHLIGHT_ON, highlightAction.isChecked());
+				if (browser.getUrl().indexOf("resultof")!=-1) browser.execute("setHighlight(" +highlightAction.isChecked()+");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+		};
+		highlightAction.setChecked(highlight);
+		highlightAction.setToolTipText(Messages.BrowserPart_highlightTooltip);
+		highlightAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_HIGHLIGHT));
+			
 		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
 		tbm.insertBefore("back", syncTocAction); //$NON-NLS-1$
 		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
+		tbm.insertBefore("back", highlightAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 		printAction = new Action(ActionFactory.PRINT.getId()) {
 			public void run() {
