@@ -92,11 +92,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public void setModel(IAnnotationModel model) {
 		setAnnotationModel(model);
-		fRevisionPainter.setModel(model);
-		fDiffPainter.setModel(model);
 		updateNumberOfDigits();
 		computeIndentations();
 		layout(true);
+		fRevisionPainter.setModel(model);
+		fDiffPainter.setModel(model);
 		postRedraw();
 	}
 	
@@ -133,9 +133,10 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	protected String createDisplayString(int line) {
 		if (fCharacterDisplay && getModel() != null) {
+			String diffChar= fDiffPainter.getDisplayCharacter(line);
 			if (fShowNumbers)
-				return super.createDisplayString(line) + fDiffPainter.getDisplayCharacter(line);
-			return fDiffPainter.getDisplayCharacter(line);
+				return super.createDisplayString(line) + diffChar;
+			return diffChar;
 		}
 		return super.createDisplayString(line);
 	}
@@ -178,7 +179,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 				fDiffPainter.paint(gc, visibleLines);
 		}
 		gc.setForeground(foreground);
-		if (fShowNumbers)
+		if (fShowNumbers || fCharacterDisplay)
 			super.doPaint(gc, visibleLines);
 	}
 	
@@ -259,9 +260,9 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
     public void showLineNumbers(boolean showNumbers) {
     	if (fShowNumbers != showNumbers) {
     		fShowNumbers= showNumbers;
-    		CompositeRuler parent= getParentRuler();
-    		if (parent != null)
-    			parent.relayout();
+			updateNumberOfDigits();
+			computeIndentations();
+			layout(true);
     	}
     }
 

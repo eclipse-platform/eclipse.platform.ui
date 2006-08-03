@@ -358,7 +358,6 @@ public final class DiffPainter {
 				fLineDiffer= (ILineDiffer) differ;
 				if (fLineDiffer != null)
 					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
-				redraw();
 			}
 		}
 	}
@@ -475,7 +474,7 @@ public final class DiffPainter {
 	 */
 	private String getDisplayCharacter(ILineDiffInfo info) {
 		if (info == null)
-			return ""; //$NON-NLS-1$
+			return " "; //$NON-NLS-1$
 		switch (info.getChangeType()) {
 			case ILineDiffInfo.CHANGED:
 				return "~"; //$NON-NLS-1$

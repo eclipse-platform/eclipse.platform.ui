@@ -791,7 +791,6 @@ public final class RevisionPainter {
 				fLineDiffer= (ILineDiffer) differ;
 				if (fLineDiffer != null)
 					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
-				redraw();
 			}
 		}
 	}

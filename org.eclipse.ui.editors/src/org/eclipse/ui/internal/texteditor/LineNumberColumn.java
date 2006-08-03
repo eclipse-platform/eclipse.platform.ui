@@ -154,7 +154,8 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
 	 */
 	public void setModel(IAnnotationModel model) {
-		fDelegate.setModel(model);
+		if (getQuickDiffPreference())
+			fDelegate.setModel(model);
 	}
 	
 	/*
