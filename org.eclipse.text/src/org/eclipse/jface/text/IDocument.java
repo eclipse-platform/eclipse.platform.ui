@@ -414,7 +414,7 @@ public interface IDocument {
 	 * equivalent to:
 	 * <pre>
 	 *    IDocumentExtension3 extension= (IDocumentExtension3) document;
-	 *    return extension.getContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING, offset, false);
+	 *    return extension.getContentType(IDocumentExtension3.DEFAULT_PARTITIONING, offset, false);
 	 * </pre>
 	 *
 	 * @param offset the document offset
