@@ -269,8 +269,6 @@ public class ProjectionDocument extends AbstractDocument {
 	 *             document
 	 */
 	private void internalAddMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
-		System.out.println("ProjectionDocument.internalAddMasterDocumentRange(): offset=" + offsetInMaster + " length=" + lengthInMaster);
-
 		if (lengthInMaster == 0)
 			return;
 
