@@ -28,8 +28,8 @@ import org.eclipse.ui.IEditorPart;
  * delivers a textual presentation (<code>IDocument</code>) of the editor's
  * input. The editor works on the document and forwards all input element
  * related calls, such as <code>save</code>, to the document provider. The
- * provider also delivers the input's annotation model which is used to control
- * the editor's vertical ruler.
+ * provider also delivers the input's annotation model which is used by the
+ * editor's vertical ruler.
  * </p>
  * <p>
  * Clients may implement this interface from scratch, but the recommended way is
