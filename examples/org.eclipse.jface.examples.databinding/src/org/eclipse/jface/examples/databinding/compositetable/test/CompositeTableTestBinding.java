@@ -78,7 +78,9 @@ public class CompositeTableTestBinding {
 		sShell.setSize(new Point(445,243));
 		table = new CompositeTable(sShell, SWT.NONE);
 		table.setRunTime(true);
-		table.setWeights(new int[] {35, 35, 20, 10});
+//		table.setWeights(new int[] {35, 35, 20, 10});
+		table.setWeights(new int[] {200, 200, 100, 50});
+		table.setFittingHorizontally(false);
 		table.setTraverseOnTabsEnabled(true);
 		header = new Header(table, SWT.NONE);
 		row = new Row(table, SWT.NONE);

@@ -21,9 +21,8 @@ import org.eclipse.jface.examples.databinding.compositetable.internal.ISelectabl
 import org.eclipse.jface.examples.databinding.compositetable.internal.TableRow;
 import org.eclipse.jface.examples.databinding.compositetable.reflect.DuckType;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -57,9 +56,12 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class InternalCompositeTable extends Composite implements Listener {
 	// The internal UI controls that make up this control.
-	private Composite sliderHolder = null;
 	private Composite controlHolder = null;
-	private Slider slider = null;
+	private Composite vSliderHolder = null;
+	private Slider vSlider = null;
+	private Composite hScroller;
+	private Composite hSliderHolder = null;
+	private Slider hSlider = null;
 	private EmptyTablePlaceholder emptyTablePlaceholder = null;
 
 	// My parent CompositeTable
@@ -145,7 +147,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 		gl.horizontalSpacing = 0;
 		this.setLayout(gl);
 		createControlHolder();
-		createSliderHolder();
+		createVSliderHolder();
+		createHSliderHolder();
 	}
 
 	/**
@@ -153,16 +156,15 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * header object (if applicable) and the row objects.
 	 */
 	private void createControlHolder() {
-		final ScrolledComposite scroller = new ScrolledComposite(this, SWT.H_SCROLL);
+		hScroller = new Composite(this, SWT.NULL);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.verticalAlignment = GridData.FILL;
-		scroller.setLayoutData(gridData);
+		hScroller.setLayoutData(gridData);
 		
-		controlHolder = new Composite(scroller, SWT.NONE);
-		scroller.setContent(controlHolder);
+		controlHolder = new Composite(hScroller, SWT.NONE);
 		
 		controlHolder.setLayout(new Layout() {
 			protected Point computeSize(Composite composite, int wHint,
@@ -190,46 +192,84 @@ public class InternalCompositeTable extends Composite implements Listener {
 			}
 		});
 		
-		scroller.addControlListener(new ControlListener() {
-			public void controlMoved(ControlEvent e) {
-				//noop
+		hScroller.addControlListener(scrollerResizeHandler);
+	}
+	
+	ControlAdapter scrollerResizeHandler = new ControlAdapter() {
+		public void controlResized(ControlEvent e) {
+			Point size = hScroller.getSize();
+			
+			if (fittingHorizontally) {
+				controlHolder.setBounds(0, 0, size.x, size.y);
+				return;
 			}
-
-			public void controlResized(ControlEvent e) {
-				Point size = scroller.getSize();
-				if (fittingHorizontally) {
-					controlHolder.setBounds(0, 0, size.x, size.y);
-					return;
+			
+			int preferredWidth = computePreferredWidth(size);
+			
+			if (preferredWidth > size.x && !isHSliderVisible()) {
+				setHSliderVisible(true);
+			}
+			if (preferredWidth <= size.x && isHSliderVisible()) {
+				setHSliderVisible(false);
+			}
+			
+			if (isHSliderVisible()) {
+				hSlider.setMaximum(preferredWidth);
+				hSlider.setPageIncrement(size.x);
+				hSlider.setThumb(preferredWidth - (preferredWidth-size.x));
+				int currentSelection = hSlider.getSelection();
+				if (preferredWidth-currentSelection < size.x) {
+					hSlider.setSelection(preferredWidth-size.x);
 				}
-				
-				Control[] children = controlHolder.getChildren();
-				if (children.length > 0) {
-					if (children[0] instanceof Composite) {
-						Composite child = (Composite) children[0];
-						// children instanceof Composite && programmer supplied a layout manager --> getPreferredSize()
-						if (child.getLayout() != null) {
-							size.x = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
-						} else {
-							// children instanceof Composite && layout == null
-							int[] weights = parent.getWeights();
-							if (weights.length != child.getChildren().length) {
-								throw new IllegalArgumentException("Number of weights != number of child controls");
-							}
-							size.x = 0;
-							for (int i = 0; i < weights.length; i++) {
-								size.x += weights[i]+4;
-							}
-						}
-						controlHolder.setBounds(0, 0, size.x, size.y);
-						
-					} else if (children[0] instanceof Control) {
-						// children instanceof Control --> Use getPreferredSize()
-						size.x = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
-						controlHolder.setBounds(0, 0, size.x, size.y);
+			}
+			hSlider.notifyListeners(SWT.Selection, new Event());
+		}
+
+	};
+
+	protected int computePreferredWidth(Point size) {
+		int preferredWidth = size.x;
+		
+		Control[] children = controlHolder.getChildren();
+		if (children.length > 0) {
+			if (children[0] instanceof Composite) {
+				Composite child = (Composite) children[0];
+				// children instanceof Composite && programmer supplied a layout manager --> getPreferredSize()
+				if (child.getLayout() != null) {
+					preferredWidth = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+				} else {
+					// children instanceof Composite && layout == null
+					int[] weights = parent.getWeights();
+					if (weights.length != child.getChildren().length) {
+						throw new IllegalArgumentException("Number of weights != number of child controls");
+					}
+					preferredWidth = 0;
+					for (int i = 0; i < weights.length; i++) {
+						preferredWidth += weights[i]+4;
 					}
 				}
+			} else {
+				// children instanceof Control --> Use getPreferredSize()
+				preferredWidth = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 			}
-		});
+		}
+		return preferredWidth;
+	}
+
+
+	/**
+	 * Initialize the sliderHolder and slider. The SliderHolder is a Composite
+	 * that is responsible for showing and hiding the vertical slider upon
+	 * request.
+	 */
+	private void createVSliderHolder() {
+		GridData gd = getVSliderGridData();
+		vSliderHolder = new Composite(this, SWT.NULL);
+		vSlider = new Slider(vSliderHolder, SWT.VERTICAL);
+		vSlider.addSelectionListener(sliderSelectionListener);
+		vSliderHolder.setLayout(new FillLayout());
+		vSliderHolder.setLayoutData(gd);
+		vSliderHolder.setTabList(new Control[] {});
 	}
 
 	/**
@@ -237,14 +277,17 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * that is responsible for showing and hiding the vertical slider upon
 	 * request.
 	 */
-	private void createSliderHolder() {
-		GridData gd = getSliderGridData();
-		sliderHolder = new Composite(this, SWT.NONE);
-		slider = new Slider(sliderHolder, SWT.VERTICAL);
-		slider.addSelectionListener(sliderSelectionListener);
-		sliderHolder.setLayout(new FillLayout());
-		sliderHolder.setLayoutData(gd);
-		sliderHolder.setTabList(new Control[] {});
+	private void createHSliderHolder() {
+		GridData gd = getHSliderGridData();
+		hSliderHolder = new Composite(this, SWT.NULL);
+		hSlider = new Slider(hSliderHolder, SWT.HORIZONTAL);
+		hSlider.setMinimum(0);
+		hSlider.setIncrement(20);
+		hSlider.addSelectionListener(sliderSelectionListener);
+		hSliderHolder.setLayout(new FillLayout());
+		hSliderHolder.setLayoutData(gd);
+		hSliderHolder.setTabList(new Control[] {});
+		hSlider.addSelectionListener(hSliderSelectionListener);
 	}
 
 	// Slider utility methods
@@ -257,19 +300,36 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @return A GridData with a widthHint of 0 if the slider is not visible or
 	 *         with a widthHint of SWT.DEFAULT otherwise.
 	 */
-	private GridData getSliderGridData() {
-		GridData gd = new org.eclipse.swt.layout.GridData();
+	private GridData getVSliderGridData() {
+		GridData gd = new GridData();
 		gd.grabExcessVerticalSpace = true;
-		gd.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
+		gd.verticalAlignment = GridData.FILL;
 		gd.verticalSpan = 1;
-		if (!sliderVisible) {
+		if (!vSliderVisible) {
 			gd.widthHint = 0;
 		}
-		gd.horizontalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		return gd;
 	}
 
-	private boolean sliderVisible = false;
+	/**
+	 * Returns a GridData for the SliderHolder appropriate for if the slider is
+	 * visible or not.
+	 * 
+	 * @return A GridData with a heightHint of 0 if the slider is not visible or
+	 *         with a heightHint of SWT.DEFAULT otherwise.
+	 */
+	private GridData getHSliderGridData() {
+		GridData gd = new GridData();
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalAlignment = GridData.FILL;
+		gd.horizontalSpan = 1;
+		if (!hSliderVisible) {
+			gd.heightHint = 0;
+		}
+		return gd;
+	}
+
+	private boolean vSliderVisible = false;
 
 	/**
 	 * Sets if the slider is visible or not.
@@ -277,20 +337,24 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @param visible
 	 *            true if the slider should be visible; false otherwise.
 	 */
-	public void setSliderVisible(boolean visible) {
-		this.sliderVisible = visible;
-		sliderHolder.setLayoutData(getSliderGridData());
-		Display.getCurrent().addFilter(SWT.KeyDown, displayKeyDownFilter);
+	public void setVSliderVisible(boolean visible) {
+		this.vSliderVisible = visible;
+		vSliderHolder.setLayoutData(getVSliderGridData());
+		if (visible) {
+			Display.getCurrent().addFilter(SWT.KeyDown, displayKeyDownFilter);
+		} else {
+			Display.getCurrent().removeFilter(SWT.KeyDown, displayKeyDownFilter);
+		}
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
 				if (!InternalCompositeTable.this.isDisposed() &&
-						!sliderHolder.isDisposed() &&
-						!sliderHolder.getParent().isDisposed()) 
+						!vSliderHolder.isDisposed() &&
+						!vSliderHolder.getParent().isDisposed()) 
 				{
-					sliderHolder.getParent().layout(true);
-					sliderHolder.layout(true);
-					Point sliderHolderSize = sliderHolder.getSize();
-					slider.setBounds(0, 0, sliderHolderSize.x, sliderHolderSize.y);
+					vSliderHolder.getParent().layout(true);
+					vSliderHolder.layout(true);
+					Point sliderHolderSize = vSliderHolder.getSize();
+					vSlider.setBounds(0, 0, sliderHolderSize.x, sliderHolderSize.y);
 				}
 			}
 		});
@@ -301,8 +365,43 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * 
 	 * @return true if the slider is visible; false otherwise.
 	 */
-	public boolean isSliderVisible() {
-		return sliderVisible;
+	public boolean isVSliderVisible() {
+		return vSliderVisible;
+	}
+
+	private boolean hSliderVisible = false;
+
+	/**
+	 * Sets if the slider is visible or not.
+	 * 
+	 * @param visible
+	 *            true if the slider should be visible; false otherwise.
+	 */
+	public void setHSliderVisible(boolean visible) {
+		this.hSliderVisible = visible;
+		hSliderHolder.setLayoutData(getHSliderGridData());
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				if (!InternalCompositeTable.this.isDisposed() &&
+						!hSliderHolder.isDisposed() &&
+						!hSliderHolder.getParent().isDisposed()) 
+				{
+					hSliderHolder.getParent().layout(true);
+					hSliderHolder.layout(true);
+					Point sliderHolderSize = hSliderHolder.getSize();
+					hSlider.setBounds(0, 0, sliderHolderSize.x, sliderHolderSize.y);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Returns if the slider is visible.
+	 * 
+	 * @return true if the slider is visible; false otherwise.
+	 */
+	public boolean isHSliderVisible() {
+		return hSliderVisible;
 	}
 
 	/*
@@ -524,20 +623,20 @@ public class InternalCompositeTable extends Composite implements Listener {
 			if (pageIncrement > extra)
 				pageIncrement = extra;
 
-			slider.setMaximum(numRowsInCollection);
-			slider.setMinimum(0);
-			slider.setIncrement(1);
-			slider.setPageIncrement(pageIncrement);
-			slider.setThumb(numRowsInCollection
+			vSlider.setMaximum(numRowsInCollection);
+			vSlider.setMinimum(0);
+			vSlider.setIncrement(1);
+			vSlider.setPageIncrement(pageIncrement);
+			vSlider.setThumb(numRowsInCollection
 					- (numRowsInCollection - numRowsVisible));
 
-			slider.setSelection(topRow);
+			vSlider.setSelection(topRow);
 
-			if (!isSliderVisible()) {
-				setSliderVisible(true);
+			if (!isVSliderVisible()) {
+				setVSliderVisible(true);
 			}
 		} else {
-			setSliderVisible(false);
+			setVSliderVisible(false);
 		}
 
 		// Lay out the header and rows correctly in the display
@@ -1308,26 +1407,26 @@ public class InternalCompositeTable extends Composite implements Listener {
 	}
 	
 	/**
-	 * The SelectionListener for the table's slider control.
+	 * The SelectionListener for the table's vertical slider control.
 	 */
 	private SelectionListener sliderSelectionListener = new SelectionListener() {
 		public void widgetSelected(SelectionEvent e) {
-			if (slider.getSelection() == topRow) {
+			if (vSlider.getSelection() == topRow) {
 				return;
 			}
 
 			if (!fireRequestRowChangeEvent()) {
-				slider.setSelection(topRow);
+				vSlider.setSelection(topRow);
 				return;
 			}
 
 			deselectCurrentRowIfVisible();
 
-			int delta = topRow - slider.getSelection();
+			int delta = topRow - vSlider.getSelection();
 			int oldCurrentRow = currentRow;
 			currentRow += delta;
 			
-			setTopRow(slider.getSelection());
+			setTopRow(vSlider.getSelection());
 			
 			// If the focused row just became visible, show the focus
 			if (oldCurrentRow < 0 || oldCurrentRow >= getNumRowsVisible()) {
@@ -1356,6 +1455,22 @@ public class InternalCompositeTable extends Composite implements Listener {
 			}
 		}
 
+		public void widgetDefaultSelected(SelectionEvent e) {
+			widgetSelected(e);
+		}
+	};
+	
+	private SelectionListener hSliderSelectionListener = new SelectionListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		public void widgetSelected(SelectionEvent e) {
+			Point scrollerSize = hScroller.getSize();
+			int preferredWidth = computePreferredWidth(scrollerSize);
+			Rectangle controlHolderBounds = new Rectangle(-1 * hSlider.getSelection(), 0, preferredWidth, scrollerSize.y);
+			controlHolder.setBounds(controlHolderBounds);
+		}
+		
 		public void widgetDefaultSelected(SelectionEvent e) {
 			widgetSelected(e);
 		}
