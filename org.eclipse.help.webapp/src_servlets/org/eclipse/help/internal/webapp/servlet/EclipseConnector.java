@@ -115,7 +115,6 @@ public class EclipseConnector {
 					if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
 							|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
 						String error = errorPageBegin
-								+ (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ? "<h1>Infocenter</h1>" : "<h1>Workbench</h1>") //$NON-NLS-1$ //$NON-NLS-2$
 								+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
 								+ errorPageEnd;
 						is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
