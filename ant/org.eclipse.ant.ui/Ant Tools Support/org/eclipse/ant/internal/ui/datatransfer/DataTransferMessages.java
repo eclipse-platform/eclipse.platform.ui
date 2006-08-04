@@ -14,6 +14,8 @@ import org.eclipse.osgi.util.NLS;
 public class DataTransferMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.datatransfer.DataTransferMessages";//$NON-NLS-1$
     
+	public static String AntNewJavaProjectPage_23;
+
 	public static String AntNewJavaProjectWizard_0;
 	public static String AntBuildfileExportWizard_0;
 	public static String AntBuildfileExportPage_0;

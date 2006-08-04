@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -309,10 +310,15 @@ public class AntNewJavaProjectPage extends WizardPage {
 		if (getProjectNameFieldValue().length() == 0) {
 			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_18);
 			return false;
-		} 
-		IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
-		if (existingProject.exists()) {
-			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_19);
+		}
+		try {
+			IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
+			if (existingProject.exists()) {
+				setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_19);
+				return false;
+			}
+		} catch (IllegalArgumentException e) {
+			setErrorMessage(NLS.bind(DataTransferMessages.AntNewJavaProjectPage_23, e.getLocalizedMessage()));
 			return false;
 		}
         
