@@ -390,7 +390,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		IVerticalRuler ruler= getVerticalRuler();
 		if (ruler instanceof CompositeRuler)
-			addRulerContributions((CompositeRuler) ruler);
+			updateRulerContributions((CompositeRuler) ruler);
 
 		if (isLineNumberRulerVisible())
 			fColumnSupport.setColumnVisible(RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID), true);
@@ -1043,6 +1043,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			fLineColumn.hideRevisionInformation();
 
 		super.doSetInput(input);
+		
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler) {
+			updateRulerContributions((CompositeRuler) ruler);
+			RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
+			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+			support.setColumnVisible(registry.getColumnDescriptor(LineNumberColumn.ID), isLineNumberRulerVisible());
+		}
 	}
 	
 	/**
@@ -1468,15 +1476,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @param ruler the composite ruler to add contributions to
 	 * @since 3.3
 	 */
-	private void addRulerContributions(CompositeRuler ruler) {
+	private void updateRulerContributions(CompositeRuler ruler) {
 		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
 		RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS);
 		IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
 		List descriptors= registry.getColumnDescriptors();
 		for (Iterator it= descriptors.iterator(); it.hasNext();) {
 			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) it.next();
-			if (adapter.isEnabled(descriptor))
-				support.setColumnVisible(descriptor, true);
+			support.setColumnVisible(descriptor, adapter.isEnabled(descriptor));
 		}
 	}
 }

@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="column"/>
@@ -53,9 +58,10 @@
       </annotation>
       <complexType>
          <sequence>
-            <choice minOccurs="0" maxOccurs="unbounded">
+            <choice minOccurs="1" maxOccurs="unbounded">
                <element ref="targetEditor"/>
                <element ref="targetContentType"/>
+               <element ref="targetClass"/>
             </choice>
             <element ref="placement"/>
          </sequence>
@@ -106,7 +112,7 @@
          <attribute name="global" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  The enablement behavior of this column. If true, the column is enabled globally, if false, it can be enabled per editor instance.
+                  Controls whether toggling the visibility of this column operates on all targeted editors, or only the active editor. If true, the ruler is added to all applicable editors when the user enables the column; if false, the ruler is only added to the active editor.
                </documentation>
             </annotation>
          </attribute>
@@ -123,7 +129,7 @@
    <element name="targetEditor">
       <annotation>
          <documentation>
-            Describes an editor that the column is contributed to.  See the &lt;tt&gt;org.eclipse.ui.editors&lt;/tt&gt; extension point.Note that the rulerColumn extension point is typically only supported by line based text editors.
+            Describes an editor that the column is contributed to.  See the &lt;tt&gt;org.eclipse.ui.editors&lt;/tt&gt; extension point. Note that the rulerColumn extension point is typically only supported by line based text editors.
          </documentation>
       </annotation>
       <complexType>
@@ -211,6 +217,33 @@
       </complexType>
    </element>
 
+   <element name="targetClass">
+      <annotation>
+         <documentation>
+            Describes an editor class that the column is contributed to. If &lt;code&gt;inherit&lt;/code&gt; is set to &lt;code&gt;true&lt;/code&gt;, all subclasses of the specified class are also targeted by this colum contribution
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a class implementing &lt;code&gt;org.eclipse.ui.texteditor.ITextEditor&lt;/code&gt;. The class does not need to be instantiatable. Note that contributing ruler columns to an internal editor class outside of the contributor&apos;s namespace is considered bad practice, as the class name may change without notice.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.ITextEditor"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="inherit" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  True to let all subclasses of the specified class inherit this ruler column contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -234,7 +267,11 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         This API is provisional and may change any time before the 3.3 API freeze.
+         &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
+
+The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances. Editors that want to support the extension point should provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. &lt;code&gt;AbstractTextEditor&lt;/code&gt; contains code to support the extension point, but disables it by default. Subclasses may call &lt;code&gt;AbstractTextEditor.enableRulerContributions(boolean)&lt;/code&gt; to enable the ruler column support.
+
+&lt;b&gt;Note: as of 3.3 M1, only &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; supports the extension point.&lt;/b&gt;
       </documentation>
    </annotation>
 

@@ -885,6 +885,9 @@
                weight="0.5">
 			   <before id="org.eclipse.ui.editors.columns.linenumbers"/>
          </placement>
+         <targetContentType
+               id="org.eclipse.core.runtime.text">
+         </targetContentType>
       </column>
       <column
             class="org.eclipse.ui.internal.texteditor.LineNumberColumn"
@@ -896,6 +899,10 @@
          <placement
                weight="0.9">
          </placement>
+         <targetClass
+               class="org.eclipse.ui.texteditor.AbstractTextEditor"
+               inherit="true">
+         </targetClass>
       </column>
    </extension>
    

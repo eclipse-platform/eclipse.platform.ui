@@ -66,8 +66,8 @@ public class ColumnSupport implements IColumnSupport {
 			return;
 
 		if (!isColumnSupported(descriptor))
-			return;
-		
+			visible= false;
+
 		if (isColumnVisible(descriptor)) {
 			if (!visible)
 				removeColumn(ruler, descriptor);

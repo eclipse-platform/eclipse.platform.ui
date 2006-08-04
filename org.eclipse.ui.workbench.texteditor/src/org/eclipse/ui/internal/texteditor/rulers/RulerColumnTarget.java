@@ -23,16 +23,16 @@ import org.eclipse.core.runtime.content.IContentType;
 public abstract class RulerColumnTarget {
 	public abstract boolean matchesEditorId(String editorId);
 	public abstract boolean matchesContentType(IContentType contentType);
-//	public abstract boolean matchesEditorInput(IEditorInput input);
-//	public abstract boolean matchesEditor(IEditorReference reference);
+	public abstract boolean matchesClass(Class clazz);
 
 	/* package visible */
 	RulerColumnTarget() {
 	}
-	
+
 	public static RulerColumnTarget createAllTarget() {
 		return new AllTarget();
 	}
+
 	public static RulerColumnTarget createOrTarget(RulerColumnTarget either, RulerColumnTarget or) {
 		Assert.isLegal(or != null || either != null);
 		if (either == null)
@@ -41,11 +41,17 @@ public abstract class RulerColumnTarget {
 			return either;
 		return new OrTarget(either, or);
 	}
+
 	public static RulerColumnTarget createContentTypeTarget(String contentTypeId) {
 		return new ContentTypeTarget(contentTypeId);
 	}
+
 	public static RulerColumnTarget createEditorIdTarget(String editorId) {
 		return new EditorIdTarget(editorId);
+	}
+
+	public static RulerColumnTarget createClassTarget(String className, boolean inherit) {
+		return new ClassTarget(className, inherit);
 	}
 }
 
@@ -58,6 +64,10 @@ final class AllTarget extends RulerColumnTarget {
 	}
 
 	public boolean matchesEditorId(String editorId) {
+		return true;
+	}
+
+	public boolean matchesClass(Class clazz) {
 		return true;
 	}
 
@@ -84,7 +94,11 @@ final class OrTarget extends RulerColumnTarget {
 	public boolean matchesEditorId(String editorId) {
 		return fEither.matchesEditorId(editorId) || fOr.matchesEditorId(editorId);
 	}
-	
+
+	public boolean matchesClass(Class clazz) {
+		return fEither.matchesClass(clazz) || fOr.matchesClass(clazz);
+	}
+
 	public String toString() {
 		return fEither.toString() + " || " + fOr.toString(); //$NON-NLS-1$
 	}
@@ -106,24 +120,69 @@ final class EditorIdTarget extends RulerColumnTarget {
 		return fEditorId.equals(editorId);
 	}
 
+	public boolean matchesClass(Class clazz) {
+		return false;
+	}
+
 	public String toString() {
-		return "editorID="+fEditorId; //$NON-NLS-1$
+		return "editorID=" + fEditorId; //$NON-NLS-1$
+	}
+}
+
+final class ClassTarget extends RulerColumnTarget {
+	private final String fClassName;
+	private final boolean fInherit;
+
+	ClassTarget(String className, boolean inherit) {
+		Assert.isLegal(className != null);
+		fClassName= className;
+		fInherit= inherit;
+	}
+
+	public boolean matchesContentType(IContentType contentType) {
+		return false;
+	}
+
+	public boolean matchesEditorId(String editorId) {
+		return false;
+	}
+
+	public boolean matchesClass(Class clazz) {
+		if (clazz.getName().equals(fClassName))
+			return true;
+		if (!fInherit)
+			return false;
+		do {
+			clazz= clazz.getSuperclass();
+			if (clazz == null)
+				return false;
+			if (clazz.getName().equals(fClassName))
+				return true;
+		} while (true);
+	}
+
+	public String toString() {
+		return "class=" + fClassName + " inherit=" + fInherit; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 
 final class ContentTypeTarget extends RulerColumnTarget {
 	private final IContentType fContentType;
-	
+
 	ContentTypeTarget(String contentTypeId) {
 		Assert.isLegal(contentTypeId != null);
 		fContentType= Platform.getContentTypeManager().getContentType(contentTypeId);
 	}
-	
+
 	public boolean matchesContentType(IContentType contentType) {
 		return fContentType != null && contentType != null && contentType.isKindOf(fContentType);
 	}
-	
+
 	public boolean matchesEditorId(String editorId) {
+		return false;
+	}
+
+	public boolean matchesClass(Class clazz) {
 		return false;
 	}
 
