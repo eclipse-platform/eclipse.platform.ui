@@ -13,7 +13,6 @@ package org.eclipse.ui.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -83,7 +82,10 @@ public class IOConsole extends TextConsole {
         }
         openStreams = new ArrayList();
         inputStream = new IOConsoleInputStream(this);
-        openStreams.add(inputStream);
+        synchronized (openStreams) {
+        	openStreams.add(inputStream);	
+		}
+        
         partitioner = new IOConsolePartitioner(inputStream, this);
         partitioner.connect(getDocument());
     }
@@ -246,23 +248,24 @@ public class IOConsole extends TextConsole {
     protected void dispose() {
         super.dispose();
         partitioner.disconnect();
-        synchronized (openStreams) {
-        	Iterator iterator = openStreams.iterator();
-        	while (iterator.hasNext()) {
-        		Object stream = iterator.next();
-        		if (stream instanceof IOConsoleInputStream) {
-					IOConsoleInputStream is = (IOConsoleInputStream) stream;
-					try {
-						is.close();
-					} catch (IOException e) {
-					}
-				} else if (stream instanceof IOConsoleOutputStream) {
-					IOConsoleOutputStream os = (IOConsoleOutputStream) stream;
-					try {
-						os.close();
-					} catch (IOException e) {
-					}					
-				}
+        //make a copy of the open streams and close them all
+        //a copy is needed as close the streams results in a callback that 
+        //removes the streams from the openStreams collection (bug 152794)
+        Object[] allStreams= openStreams.toArray();
+        for (int i = 0; i < allStreams.length; i++) {
+        	Object stream = allStreams[i];
+        	if (stream instanceof IOConsoleInputStream) {
+        		IOConsoleInputStream is = (IOConsoleInputStream) stream;
+        		try {
+        			is.close();
+        		} catch (IOException e) {
+        		}
+        	} else if (stream instanceof IOConsoleOutputStream) {
+        		IOConsoleOutputStream os = (IOConsoleOutputStream) stream;
+        		try {
+        			os.close();
+        		} catch (IOException e) {
+        		}					
         	}
         }
         inputStream = null;
