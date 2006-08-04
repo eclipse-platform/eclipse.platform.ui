@@ -120,6 +120,8 @@ public class InternalCompositeTable extends Composite implements Listener {
 		rowConstructor = parent.getRowConstructor();
 		headerControl = parent.getHeaderControl();
 		rowControl = parent.getRowControl();
+		
+		setMenu(parent.getMenu());
 
 		currentVisibleTopRow = topRow;
 		showHeader();
@@ -1934,7 +1936,6 @@ public class InternalCompositeTable extends Composite implements Listener {
 	 * @see org.eclipse.swt.widgets.Control#setMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public void setMenu(final Menu menu) {
-		super.setMenu(menu);
 		this.menu = menu;
 		setMenuOnCollection(rows, menu);
 		setMenuOnCollection(spareRows, menu);
