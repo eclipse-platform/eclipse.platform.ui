@@ -377,7 +377,7 @@ public class DocumentTest extends TestCase {
 		}
 		
 		Position[] positions= new Position[] {
-			new Position( 0,   25),
+			new Position( 0,   19),
 			new Position( 26,  15),
 			new Position( 43, 111),
 			new Position( 66,  12),
