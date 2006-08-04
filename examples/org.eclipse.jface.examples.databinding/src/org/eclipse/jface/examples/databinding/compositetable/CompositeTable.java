@@ -205,7 +205,13 @@ public class CompositeTable extends Canvas {
 	 */
 	protected final void resize() {
 		if (isRunTime()) {
-			int childrenLength = getChildren().length;
+			Control[] children = getChildren();
+			int childrenLength = 0;
+			for (int i = 0; i < children.length; i++) {
+				if (!(children[i] instanceof InternalCompositeTable)) {
+					++childrenLength;
+				}
+			}
 			if (numChildrenLastTime != childrenLength) {
 				resizeAndRecordPrototypeRows();
 				showPrototypes(false);
