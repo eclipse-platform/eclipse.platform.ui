@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
@@ -249,8 +250,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				fImplementation.removeFirst();
 			else
 				throw new EmptyStackException();
-			for (int index= 0; index < fHistoryListeners.size(); index++) {
-				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			final Object[] listeners= fHistoryListeners.getListeners();
+			for (int index= 0; index < listeners.length; index++) {
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
 				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(final Throwable throwable) {
@@ -279,8 +281,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final int size= fImplementation.size();
 			if (size > MAX_UNDO_STACK)
 				fImplementation.removeLast();
-			for (int index= 0; index < fHistoryListeners.size(); index++) {
-				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+			final Object[] listeners= fHistoryListeners.getListeners();
+			for (int index= 0; index < listeners.length; index++) {
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
 				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(final Throwable throwable) {
@@ -769,10 +772,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/** The execution listeners */
-	private final List fExecutionListeners= new ArrayList(2);
+	private final ListenerList fExecutionListeners= new ListenerList(ListenerList.EQUALITY);
 
 	/** The history listeners */
-	private final List fHistoryListeners= new ArrayList(2);
+	private final ListenerList fHistoryListeners= new ListenerList(ListenerList.EQUALITY);
 
 	/** The operation listener, or <code>null</code> */
 	private IOperationHistoryListener fOperationListener= null;
@@ -804,8 +807,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public void addExecutionListener(final IRefactoringExecutionListener listener) {
 		Assert.isNotNull(listener);
-		if (!fExecutionListeners.contains(listener))
-			fExecutionListeners.add(listener);
+		fExecutionListeners.add(listener);
 	}
 
 	/**
@@ -813,8 +815,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public void addHistoryListener(final IRefactoringHistoryListener listener) {
 		Assert.isNotNull(listener);
-		if (!fHistoryListeners.contains(listener))
-			fHistoryListeners.add(listener);
+		fHistoryListeners.add(listener);
 	}
 
 	/**
@@ -834,10 +835,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
-			final int size= fHistoryListeners.size();
+			final Object[] listeners= fHistoryListeners.getListeners();
+			final int size= listeners.length;
 			monitor.beginTask("", size); //$NON-NLS-1$
 			for (int index= 0; index < size; index++) {
-				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+				final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
 				SafeRunner.run(new ISafeRunnable() {
 
 					public void handleException(final Throwable throwable) {
@@ -1059,8 +1061,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireAboutToPerformEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public final void handleException(final Throwable throwable) {
@@ -1082,8 +1085,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireAboutToRedoEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
@@ -1105,8 +1109,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireAboutToUndoEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
@@ -1128,8 +1133,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireRefactoringDeletedEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fHistoryListeners.size(); index++) {
-			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) fHistoryListeners.get(index);
+		final Object[] listeners= fHistoryListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
@@ -1151,8 +1157,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireRefactoringPerformedEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
@@ -1174,8 +1181,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireRefactoringRedoneEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
@@ -1197,8 +1205,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	void fireRefactoringUndoneEvent(final RefactoringDescriptorProxy proxy) {
 		Assert.isNotNull(proxy);
-		for (int index= 0; index < fExecutionListeners.size(); index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) fExecutionListeners.get(index);
+		final Object[] listeners= fExecutionListeners.getListeners();
+		for (int index= 0; index < listeners.length; index++) {
+			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
 			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(final Throwable throwable) {
