@@ -94,7 +94,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	protected void adaptToInsert() {
 
 		int myStart= fPosition.offset;
-		int myEnd=   fPosition.offset + fPosition.length - (isAffectingReplace() ? 0 : 1);
+		int myEnd=   fPosition.offset + fPosition.length - 1;
 		myEnd= Math.max(myStart, myEnd);
 
 		int yoursStart= fOffset;

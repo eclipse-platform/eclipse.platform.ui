@@ -22,6 +22,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.Position;
 
+/**
+ * @since 3.3
+ */
 public class ExclusivePositionUpdaterTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(ExclusivePositionUpdaterTest.class);
@@ -124,10 +127,6 @@ public class ExclusivePositionUpdaterTest extends TestCase {
 	}
 
 	public void testReplaceRightBorder() throws BadLocationException {
-		if (true) {
-			System.out.println("this currently fails, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=151591");
-			return;
-		}
 		fDoc.replace(9, 2, "yy");
 		Assert.assertEquals(5, fPos.offset);
 		Assert.assertEquals(4, fPos.length);
