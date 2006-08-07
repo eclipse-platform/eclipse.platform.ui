@@ -87,7 +87,7 @@ public final class RefactoringHistoryEditHelper {
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		final IProject[] result= new IProject[set.size()];
 		int index= 0;
-		for (final Iterator iterator= set.iterator(); iterator.hasNext();) {
+		for (final Iterator iterator= set.iterator(); iterator.hasNext(); index++) {
 			result[index]= root.getProject((String) iterator.next());
 		}
 		return result;
