@@ -460,8 +460,8 @@ public final class RevisionPainter {
 	}
 	
 	private static final String fgStyleSheet= "/* Font definitions */\n" + //$NON-NLS-1$
-		"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 0.9em }\n" + //$NON-NLS-1$ 
-		"pre				{ font-family: monospace; font-size: 0.9em }\n" + //$NON-NLS-1$
+		"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$ 
+		"pre				{ font-family: monospace; font-size: 9pt }\n" + //$NON-NLS-1$
 		"\n" + //$NON-NLS-1$
 		"/* Margins */\n" + //$NON-NLS-1$
 		"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" + //$NON-NLS-1$ 
