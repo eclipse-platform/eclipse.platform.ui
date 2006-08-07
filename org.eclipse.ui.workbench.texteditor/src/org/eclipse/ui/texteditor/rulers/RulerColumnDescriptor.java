@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.rulers;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
@@ -104,7 +106,8 @@ public final class RulerColumnDescriptor {
 		fId= helper.getNonNullAttribute(ID);
 		fName= helper.getDefaultAttribute(NAME, fId);
 		helper.getNonNullAttribute(CLASS); // just check validity
-		fIcon= ImageDescriptor.createFromURL(helper.getDefaultResourceURL(ICON, null));
+		URL iconURL= helper.getDefaultResourceURL(ICON, null);
+		fIcon= iconURL == null ? null : ImageDescriptor.createFromURL(iconURL);
 		fDefaultEnablement= helper.getDefaultAttribute(ENABLED, true);
 		fIsGlobal= helper.getDefaultAttribute(GLOBAL, true);
 		fIncludeInMenu= helper.getDefaultAttribute(INCLUDE_IN_MENU, true);
@@ -174,9 +177,10 @@ public final class RulerColumnDescriptor {
 	}
 
 	/**
-	 * Returns the image descriptor of the described extension.
+	 * Returns the image descriptor of the described extension, <code>null</code> if it does not
+	 * have an image.
 	 * 
-	 * @return the image descriptor of the described extension
+	 * @return the image descriptor of the described extension or <code>null</code> for no image
 	 */
 	public ImageDescriptor getIcon() {
 		return fIcon;

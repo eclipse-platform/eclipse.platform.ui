@@ -882,7 +882,7 @@
             includeInMenu="false"
             name="%AnnotationRuler.name">
          <placement
-               weight="0.5">
+               location="0.5">
 			   <before id="org.eclipse.ui.editors.columns.linenumbers"/>
          </placement>
          <targetContentType
@@ -897,7 +897,7 @@
             includeInMenu="false"
             name="%LineNumberRuler.name">
          <placement
-               weight="0.9">
+               location="0.9">
          </placement>
          <targetClass
                class="org.eclipse.ui.texteditor.AbstractTextEditor"

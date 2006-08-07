@@ -95,7 +95,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class implementing the column. Must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
+                  The class implementing the column. Must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;. An abstract implementation exists in &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.RulerColumn"/>
@@ -173,10 +173,10 @@
                <element ref="after"/>
             </choice>
          </sequence>
-         <attribute name="weight" type="string" use="default" value="1.0">
+         <attribute name="location" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
-                  The weight of the column placement request. Within one placement slot, columns with lower weight are placed further away from the editor area (leftwards in left-to-right environments), columns with higher weight are placed closer to the editor area (rightwards in left-to-right environments). The weight must be a float number between 0.0 and 100.0. By default, 100.0 is assumed.
+                  The requested location within the ruler, a float number between 0.0 and 1.0. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns within one placement slot are ordered by the &lt;i&gt;location&lt;/i&gt; value. Columns with a lower location are placed further away from the editor area (leftwards in left-to-right environments), columns with a higher location are placed closer to the editor area (rightwards in left-to-right environments). By default, 1.0 is assumed.
                </documentation>
             </annotation>
          </attribute>
@@ -186,7 +186,7 @@
    <element name="before">
       <annotation>
          <documentation>
-            Requests placement before another column.
+            Requests placement before another column. The meaning of &lt;i&gt;before&lt;/i&gt; is similar to the SWT.LEAD flag: In left-to-right environments, &lt;i&gt;before&lt;/i&gt; means &lt;i&gt;to the left of&lt;/i&gt;, in right-to-left environments, it means &lt;i&gt;to the right of&lt;/i&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -203,7 +203,7 @@
    <element name="after">
       <annotation>
          <documentation>
-            Requests placement after another column.
+            Requests placement after another column. The meaning of &lt;i&gt;after&lt;/i&gt; is similar to the SWT.TRAIL flag: In left-to-right environments, &lt;i&gt;after&lt;/i&gt; means &lt;i&gt;to the right of&lt;/i&gt;, in right-to-left environments, it means &lt;i&gt;to the left of&lt;/i&gt;.
          </documentation>
       </annotation>
       <complexType>
