@@ -38,6 +38,10 @@
 
  <package name="org.eclipse.ui.texteditor.templates">
  </package>
+ 
+ <package name="org.eclipse.ui.texteditor.rulers">
+   <type name="IColumnSupport" implement="false"/>
+ </package>
 
  <component-depends unrestricted="true"/>
 </component>
