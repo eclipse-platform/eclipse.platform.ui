@@ -89,6 +89,92 @@ public class IProjectTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests the API method IProject#getNature
+	 */
+	public void testGetNature() {
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IProject project = ws.getRoot().getProject("Project");
+
+		//getNature on non-existent project should fail
+		try {
+			project.getNature(NATURE_SIMPLE);
+			fail("1.0");
+		} catch (CoreException e) {
+			// expected
+		}
+		try {
+			project.getNature(NATURE_MISSING);
+			fail("1.1");
+		} catch (CoreException e) {
+			// expected
+		}
+		try {
+			project.create(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//getNature on closed project should fail
+		try {
+			project.getNature(NATURE_SIMPLE);
+			fail("2.0");
+		} catch (CoreException e) {
+			// expected
+		}
+		try {
+			project.getNature(NATURE_MISSING);
+			fail("2.1");
+		} catch (CoreException e) {
+			// expected
+		}
+		try {
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		//getNature on open project with no natures
+		try {
+			assertNull("3.0", project.getNature(NATURE_SIMPLE));
+			assertNull("3.1", project.getNature(NATURE_MISSING));
+			assertNull("3.2", project.getNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		try {
+			IProjectDescription desc = project.getDescription();
+			desc.setNatureIds(new String[] {NATURE_SIMPLE});
+			project.setDescription(desc, getMonitor());
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
+		//getNature on open project with natures
+		IProjectNature nature = null;
+		try {
+			nature = project.getNature(NATURE_SIMPLE);
+			assertNotNull("5.0", nature);
+			assertNull("5.1", project.getNature(NATURE_MISSING));
+			assertNull("5.2", project.getNature(NATURE_EARTH));
+		} catch (CoreException e) {
+			fail("5.99", e);
+			return;
+		}
+		assertEquals("6.0", project, nature.getProject());
+		
+		//ensure nature is preserved on copy
+		IProject project2 = getWorkspace().getRoot().getProject("testGetNature.Destination");
+		IProjectNature nature2 = null;
+		try {
+			project.copy(project2.getFullPath(), IResource.NONE, getMonitor());
+			nature2 = project2.getNature(NATURE_SIMPLE);
+		} catch (CoreException e) {
+			fail("6.99", e);
+			return;
+		}
+		assertNotNull("7.0", nature2);
+		assertEquals("7.1", project2, nature2.getProject());
+		assertEquals("7.2", project, nature.getProject());
+	}
+
+	/**
 	 * Tests the API method IProject#hasNature.
 	 */
 	public void testHasNature() {
