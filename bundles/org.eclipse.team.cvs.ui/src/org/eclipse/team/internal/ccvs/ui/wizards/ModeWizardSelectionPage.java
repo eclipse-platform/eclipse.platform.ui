@@ -173,7 +173,10 @@ public class ModeWizardSelectionPage extends WizardPage {
 			fMode= modeColumn;
 			fPath= pathColumn;
 			
+//			Set initial sorting to file column
 			fIndex= INDEX_FILE;
+			fViewer.getTable().setSortColumn(fFile);
+			fViewer.getTable().setSortDirection(SWT.DOWN);
 			fAscending= true;
 			
 			fileColumn.addSelectionListener(this);
@@ -218,8 +221,25 @@ public class ModeWizardSelectionPage extends WizardPage {
 			if (index == fIndex) {
 				fIndex= index;
 				fAscending= !fAscending;
+				fViewer.getTable().setSortDirection(fAscending ? SWT.DOWN : SWT.UP);
 			} else {
 				fIndex= index;
+				TableColumn tableCol = null;
+				switch(fIndex){
+					case INDEX_FILE:
+						tableCol = fFile;
+					break;
+					
+					case INDEX_MODE:
+						tableCol = fMode;
+					break;
+					
+					case INDEX_PATH:
+						tableCol = fPath;
+					break;
+				}
+				fViewer.getTable().setSortColumn(tableCol);
+				fViewer.getTable().setSortDirection(fAscending ? SWT.DOWN : SWT.UP);
 			}
 			fViewer.refresh();
 		}
@@ -262,7 +282,8 @@ public class ModeWizardSelectionPage extends WizardPage {
 			final TableColumn fileColumn = new TableColumn(table, SWT.NONE, INDEX_FILE);
 			fileColumn.setWidth(converter.convertWidthInCharsToPixels(LARGE_COLUMN));
 			fileColumn.setText(CVSUIMessages.ModeWizardSelectionPage_2); 
-			
+			table.setSortColumn(fileColumn);
+			table.setSortDirection(SWT.DOWN);
 			/**
 			 * The 'Mode' column
 			 */
@@ -303,6 +324,8 @@ public class ModeWizardSelectionPage extends WizardPage {
 					
 				}
 			});
+			
+			fViewer.refresh();
 		}
 		
 		public TableViewer getViewer() {
