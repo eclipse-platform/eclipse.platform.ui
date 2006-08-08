@@ -367,6 +367,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String SitePage_import;
 	public static String SitePage_export;
 	public static String SitePage_ignore;
+	public static String automaticallySelectMirrors;
 	public static String SitePage_new;
 	public static String SitePage_dialogEditLocal;
 	public static String SitePage_dialogEditUpdateSite;

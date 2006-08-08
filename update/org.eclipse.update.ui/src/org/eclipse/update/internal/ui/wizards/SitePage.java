@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
@@ -100,9 +101,12 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private Button exportButton;
 	private Button importButton;
 	private Button envFilterCheck;
+	private Button automaticallySelectMirrorsCheckbox;
 	private EnvironmentFilter envFilter;
 	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
+	
+	private boolean automaticallySelectMirrors = true;
 
 	public SitePage(UpdateSearchRequest searchRequest) {
 		super("SitePage"); //$NON-NLS-1$
@@ -267,6 +271,21 @@ public class SitePage extends BannerPage implements ISearchProvider {
         gd.verticalAlignment = SWT.BOTTOM;
 		envFilterCheck.setLayoutData(gd);
 
+		
+		automaticallySelectMirrorsCheckbox = new Button(client, SWT.CHECK);
+		automaticallySelectMirrorsCheckbox.setText(UpdateUIMessages.SitePage_ignore); 
+		automaticallySelectMirrorsCheckbox.setSelection(true);
+		automaticallySelectMirrorsCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				automaticallySelectMirrors = automaticallySelectMirrorsCheckbox.getSelection();
+				UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR, automaticallySelectMirrors);
+			}
+		});
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+        gd.verticalAlignment = SWT.BOTTOM;
+        automaticallySelectMirrorsCheckbox.setLayoutData(gd);
+		
 		Dialog.applyDialogFont(parent);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.SitePage"); //$NON-NLS-1$
@@ -511,6 +530,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				if (bookmarks[i].isUnavailable())
 					bookmarks[i].setUnavailable(false);
 			}
+			automaticallySelectMirrors = UpdateCore.getPlugin().getPluginPreferences().getBoolean(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR);
+			automaticallySelectMirrorsCheckbox.setSelection(automaticallySelectMirrors);
 		}
 	}
 	
