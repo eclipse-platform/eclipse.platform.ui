@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -45,6 +46,7 @@ import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.IPlatformEnvironment;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.Site;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.InstallAbortedException;
@@ -1042,5 +1044,85 @@ public static class Writer {
 			}
 		}
 		return buf.toString();
+	}
+	
+	public static LiteFeature[] getLightFeatures(ExtendedSite site) {
+		
+		URL fullDigestURL;
+		try {
+			fullDigestURL = getFullDigestURL( site, Locale.getDefault().getCountry(), Locale.getDefault().getLanguage());
+		} catch (MalformedURLException e) {
+			UpdateCore.log("Could not access digest on the site: " + e.getMessage(), null); //$NON-NLS-1$
+			return null;
+		}
+		
+		Digest digest = new Digest( fullDigestURL);
+		try {
+			LiteFeature[] features =  (LiteFeature[])digest.parseDigest();
+			for(int i = 0; i < features.length; i++) {
+				features[i].setSite(site);
+			}
+			return features;
+		} catch(Exception e){ 
+			UpdateCore.log("Digest could not be parsed:" + e.getMessage(), null); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
+	private static URL getFullDigestURL(ExtendedSite site, String country, String language) throws MalformedURLException {
+		
+		String digestURL = (site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		
+		if (digestURL.indexOf("://") == -1) { //$NON-NLS-1$
+			String siteURL = site.getLocationURL().toExternalForm();
+			if (siteURL.endsWith(Site.SITE_XML)) {
+				siteURL = siteURL.substring(0, siteURL.length() - Site.SITE_XML.length());
+			} 
+			if (digestURL.equals("/")) { //$NON-NLS-1$
+				digestURL = siteURL;
+			} else {
+				if (digestURL.startsWith("/")) { //$NON-NLS-1$
+					digestURL = digestURL.substring(1, digestURL.length());
+				}
+				digestURL = siteURL + digestURL;
+			}
+		}
+		
+		digestURL += "digest";  //$NON-NLS-1$
+		
+		if ( isLocalSupported(site, country, language)) {
+			return new URL(digestURL + "_" + language + "_" + country + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		if ( isLangaugeSupported(site, language)) {
+			return new URL(digestURL + "_" + language + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return new URL(digestURL + ".zip"); //$NON-NLS-1$
+	}
+
+	private static boolean isLangaugeSupported(ExtendedSite site, String language) {
+		String[] availableLanguages =  site.getAvailableLocals();
+		if ((availableLanguages == null) || (availableLanguages.length == 0)) {
+			return false;
+		}
+		for(int i = 0; i < availableLanguages.length; i++) {
+			if (availableLanguages[i].equals(language)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isLocalSupported(ExtendedSite site, String country, String language) {
+		String localeCode = language + "_" + country; //$NON-NLS-1$
+		String[] availableLocals =  site.getAvailableLocals();
+		if ((availableLocals == null) || (availableLocals.length == 0)) {
+			return false;
+		}
+		for(int i = 0; i < availableLocals.length; i++) {
+			if (availableLocals[i].equals(localeCode)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -267,11 +267,6 @@ public class DefaultSiteParser extends DefaultHandler {
 					SiteModel site = (SiteModel) objectStack.peek();
 					site.getDescriptionModel().setAnnotation(text);					
 				}
-				SiteModel site = (SiteModel) objectStack.peek();
-				if ( (site instanceof ExtendedSite) && ((ExtendedSite)site).isDigestExist()) {
-					ExtendedSite extendedSite = (ExtendedSite)site;
-					extendedSite.setLiteFeatures(getLightFeatures(extendedSite));
-				}
 				//do not pop the object
 				break;
 
@@ -894,66 +889,4 @@ public class DefaultSiteParser extends DefaultHandler {
 		}
 	}
 	
-	private LiteFeature[] getLightFeatures(ExtendedSite site) {
-		
-		URL fullDigestURL;
-		try {
-			fullDigestURL = getFullDigestURL( site, Locale.getDefault().getCountry(), Locale.getDefault().getLanguage());
-		} catch (MalformedURLException e) {
-			UpdateCore.log("Could not access digest on the site: " + e.getMessage(), null); //$NON-NLS-1$
-			return null;
-		}
-		
-		Digest digest = new Digest( fullDigestURL);
-		try {
-			LiteFeature[] features =  (LiteFeature[])digest.parseDigest();
-			for(int i = 0; i < features.length; i++) {
-				features[i].setSite(site);
-			}
-			return features;
-		} catch(Exception e) { 
-			UpdateCore.log("Digest could not be parsed:" + e.getMessage(), null); //$NON-NLS-1$
-			return null;
-		}
-	}
-
-	private URL getFullDigestURL(ExtendedSite site, String country, String language) throws MalformedURLException {
-		
-		String digestURL = (site.getDigestURL().endsWith("/")? site.getDigestURL(): site.getDigestURL() + "/") + "digest"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-		if ( isLocalSupported(site, country, language)) {
-			return new URL(digestURL + "_" + language + "_" + country + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		if ( isLangaugeSupported(site, language)) {
-			return new URL(digestURL + "_" + language + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return new URL(digestURL + ".zip"); //$NON-NLS-1$
-	}
-
-	private boolean isLangaugeSupported(ExtendedSite site, String language) {
-		String[] availableLanguages =  site.getAvailableLocals();
-		if ((availableLanguages == null) || (availableLanguages.length == 0)) {
-			return false;
-		}
-		for(int i = 0; i < availableLanguages.length; i++) {
-			if (availableLanguages[i].equals(language)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isLocalSupported(ExtendedSite site, String country, String language) {
-		String localeCode = language + "_" + country; //$NON-NLS-1$
-		String[] availableLocals =  site.getAvailableLocals();
-		if ((availableLocals == null) || (availableLocals.length == 0)) {
-			return false;
-		}
-		for(int i = 0; i < availableLocals.length; i++) {
-			if (availableLocals[i].equals(localeCode)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

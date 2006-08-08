@@ -20,7 +20,9 @@ import java.util.TreeSet;
 
 import org.eclipse.update.core.Site;
 import org.eclipse.update.core.SiteFeatureReferenceModel;
+import org.eclipse.update.internal.core.ExtendedSite;
 import org.eclipse.update.internal.core.SiteURLFactory;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.model.ConfiguredSiteModel;
 
 /**
@@ -379,6 +381,11 @@ public class SiteModel extends ModelObject {
 		URL url = resolveURL(base, bundleURL, mirrorsURLString);
 		if (url != null)
 			mirrorsURLString = url.toString();
+		
+		if ( (this instanceof ExtendedSite) && ((ExtendedSite)this).isDigestExist()) {
+			ExtendedSite extendedSite = (ExtendedSite)this;
+			extendedSite.setLiteFeatures(UpdateManagerUtils.getLightFeatures(extendedSite));
+		}
 	}
 
 	/**
