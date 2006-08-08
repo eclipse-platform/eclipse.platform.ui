@@ -220,13 +220,15 @@ public class SiteSearchCategory extends BaseSearchCategory {
 								IFeature feature = null;
 								if(liteFeaturesAreOK) {
 									feature = (IFeature)liteFeatures.get(siteFeatureReference.getVersionedIdentifier());
-								} else {
+								}
+								if (feature == null){
 									feature = siteFeatureReference.getFeature(null);
 								}
 								synchronized(siteFeatureReferences) {
-									if ( (feature != null) && (filter.accept(feature)) ) 								
+									if ( (feature != null) && (filter.accept(feature)) ) {								
 										collector.accept(feature);							    
-									monitor.subTask(feature.getLabel());
+										monitor.subTask(feature.getLabel());
+									}
 								}
 							}
 						}
