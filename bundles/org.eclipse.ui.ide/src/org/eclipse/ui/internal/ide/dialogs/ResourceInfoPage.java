@@ -442,7 +442,7 @@ public class ResourceInfoPage extends PropertyPage {
 		// Not relevant to projects
 		if (resource.getType() != IResource.PROJECT) {
 			URI location = resource.getLocationURI();
-			if (location != null) {
+			if (location != null && location.getScheme() != null) {
 				try {
 					IFileSystem fs = EFS.getFileSystem(location.getScheme());
 					int attributes = fs.attributes();
