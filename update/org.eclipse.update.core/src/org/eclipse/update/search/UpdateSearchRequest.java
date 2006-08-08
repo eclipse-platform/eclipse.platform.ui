@@ -386,7 +386,7 @@ public class UpdateSearchRequest {
 					children,
 					Messages.Search_networkProblems, 
 					null);
-			System.out.println("U ERROR"); //$NON-NLS-1$
+			
 			throw new CoreException(multiStatus);
 		}
 	}
