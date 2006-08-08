@@ -34,4 +34,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.help.appserver,
  org.eclipse.update.configurator,
  org.eclipse.test.performance
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
