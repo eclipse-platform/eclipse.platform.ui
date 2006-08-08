@@ -643,6 +643,7 @@ public class Project extends Container implements IProject {
 
 		//clear properties, markers, and description for the new project, because they shouldn't be copied.
 		info.description = null;
+		info.natures = null;
 		info.setMarkers(null);
 		info.clearSessionProperties();
 	}
