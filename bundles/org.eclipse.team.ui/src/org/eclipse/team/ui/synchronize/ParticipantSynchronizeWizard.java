@@ -49,12 +49,14 @@ public abstract class ParticipantSynchronizeWizard extends Wizard {
 	public void addPages() {
 		if (getRootResources().length == 0) {
 			importWizard = getImportWizard();
-			importWizard.setContainer(getContainer());
-			importWizard.addPages();
-			IWizardPage startingPage = importWizard.getStartingPage();
-			if (startingPage != null) {
-				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getPageTitle() })); 
-				startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); 
+			if (importWizard != null){
+				importWizard.setContainer(getContainer());
+				importWizard.addPages();
+				IWizardPage startingPage = importWizard.getStartingPage();
+				if (startingPage != null) {
+					startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getPageTitle() })); 
+					startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); 
+				}
 			}
 		} else {
 			selectionPage = createScopeSelectionPage();
