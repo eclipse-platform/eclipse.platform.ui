@@ -93,10 +93,12 @@ public class CVSFileHistory extends FileHistory {
 						String remoteFileName = remoteFolderLocation.concat(Session.SERVER_SEPARATOR + cvsFile.getName());
 						//Create remote file
 						CVSTeamProvider pro = (CVSTeamProvider) RepositoryProvider.getProvider(cvsFile.getIResource().getProject());
-						CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
-						CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
-						RemoteFile remFile = RemoteFile.create(remoteFileName, location);
-						entries=remFile.getLogEntries(monitor);
+						if (pro != null){
+							CVSWorkspaceRoot root = pro.getCVSWorkspaceRoot();
+							CVSRepositoryLocation location = CVSRepositoryLocation.fromString(root.getRemoteLocation().getLocation(false));
+							RemoteFile remFile = RemoteFile.create(remoteFileName, location);
+							entries=remFile.getLogEntries(monitor);
+						}
 					}
 				}
 				
