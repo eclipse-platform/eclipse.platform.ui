@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.operations.*;
 
@@ -50,7 +53,9 @@ public class RestartDialog extends MessageDialog {
 	 */
 	public static boolean openQuestion(Shell parent, boolean restartIsReallyNeeded) {
 		String title = UpdateUIMessages.RestartTitle; 
-		String message = restartIsReallyNeeded ? UpdateUIMessages.RestartMessage: UpdateUIMessages.OptionalRestartMessage; 
+		IProduct product = Platform.getProduct();
+		String productName = product != null && product.getName() != null ? product.getName() : UpdateUIMessages.ApplicationInRestartDialog;
+		String message = NLS.bind(restartIsReallyNeeded ? UpdateUIMessages.RestartMessage: UpdateUIMessages.OptionalRestartMessage, productName);
 		RestartDialog dialog = new RestartDialog(parent, title,	message, restartIsReallyNeeded);
 		int button= dialog.open();
 		if (button == 2)

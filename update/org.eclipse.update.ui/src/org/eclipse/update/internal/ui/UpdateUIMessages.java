@@ -23,6 +23,7 @@ public final class UpdateUIMessages extends NLS {
 	public static String RestartTitle;
 	public static String RestartMessage;
 	public static String OptionalRestartMessage;
+	public static String ApplicationInRestartDialog;
 	public static String ApplyChanges;
 	public static String ConfigurationManagerAction_title;
 	public static String ConfigurationManagerWindow_fileMenu;
