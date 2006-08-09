@@ -29,6 +29,7 @@ public class AutomaticUpdatesPreferencePage
 	private Button onStartupRadio;
 	private Button onScheduleRadio;
 	private Combo dayCombo;
+	private Label atLabel;
 	private Combo hourCombo;
 	private Button searchOnlyRadio;
 	private Button searchAndDownloadRadio;
@@ -87,8 +88,8 @@ public class AutomaticUpdatesPreferencePage
 		gd.horizontalIndent = 30;
 		dayCombo.setLayoutData(gd);
 		
-		Label label = new Label(updateScheduleGroup, SWT.NULL);
-		label.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_at); 
+		atLabel = new Label(updateScheduleGroup, SWT.NULL);
+		atLabel.setText(UpdateSchedulerMessages.AutomaticUpdatesPreferencePage_at); 
 		
 		hourCombo = new Combo(updateScheduleGroup, SWT.READ_ONLY);
 		hourCombo.setItems(SchedulerStartup.HOURS);
@@ -175,6 +176,7 @@ public class AutomaticUpdatesPreferencePage
 		onStartupRadio.setEnabled(master);
 		onScheduleRadio.setEnabled(master);
 		dayCombo.setEnabled(master && onScheduleRadio.getSelection());
+		atLabel.setEnabled(master && onScheduleRadio.getSelection());
 		hourCombo.setEnabled(master && onScheduleRadio.getSelection());
 		downloadGroup.setEnabled(master);
 		searchOnlyRadio.setEnabled(master);

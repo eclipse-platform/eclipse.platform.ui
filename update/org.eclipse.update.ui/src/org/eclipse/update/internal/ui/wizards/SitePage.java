@@ -273,7 +273,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 		
 		automaticallySelectMirrorsCheckbox = new Button(client, SWT.CHECK);
-		automaticallySelectMirrorsCheckbox.setText(UpdateUIMessages.SitePage_ignore); 
+		automaticallySelectMirrorsCheckbox.setText(UpdateUIMessages.SitePage_automaticallySelectMirrors); 
 		automaticallySelectMirrorsCheckbox.setSelection(true);
 		automaticallySelectMirrorsCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

@@ -401,18 +401,20 @@ public class InstallWizard2
 		// If download fails, the user is prompted to retry.
 		try {
 			IFeatureOperation[] ops = installOperation.getOperations();
-			monitor.beginTask(UpdateUIMessages.InstallWizard_download, 3*ops.length);
-			for (int i=0; i<ops.length; i++) {
+			monitor.beginTask(UpdateUIMessages.InstallWizard_download, 4 * ops.length);
+			for (int i = 0; i < ops.length; i++) {
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
-				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
+				
 				try {
+					monitor.worked(1);
 					if (op.getFeature() instanceof LiteFeature) {
 						ISiteFeatureReference featureReference = getFeatureReference(op.getFeature());
 						IFeature feature = featureReference.getFeature(null);
 						if (op instanceof InstallOperation) {
 							((InstallOperation)op).setFeature(feature);
 						}
-					}
+					}				
+					SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
 					UpdateUtils.downloadFeatureContent(op.getTargetSite(), op.getFeature(), op.getOptionalFeatures(), subMonitor);
 				} catch (final CoreException e) {
 					if(e instanceof FeatureDownloadException){
