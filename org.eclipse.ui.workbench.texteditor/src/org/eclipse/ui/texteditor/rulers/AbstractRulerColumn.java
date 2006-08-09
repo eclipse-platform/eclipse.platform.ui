@@ -44,7 +44,7 @@ import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Abstract implementation for contributions to the
- * <code>org.eclipse.ui.texteditor.rulerColumn</code> extension point. This class uses a
+ * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point. This class uses a
  * {@link Canvas} to draw the ruler contents and handles scrolling and mouse selection.
  *
  * <h3>Painting</h3>

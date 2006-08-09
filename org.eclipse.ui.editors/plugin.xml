@@ -873,7 +873,7 @@
    </extension>
    
    <extension
-         point="org.eclipse.ui.workbench.texteditor.rulerColumn">
+         point="org.eclipse.ui.workbench.texteditor.rulerColumns">
       <column
             class="org.eclipse.ui.internal.texteditor.AnnotationColumn"
             enabled="true"
@@ -886,8 +886,7 @@
 			   <before id="org.eclipse.ui.editors.columns.linenumbers"/>
          </placement>
          <targetClass
-               class="org.eclipse.ui.texteditor.AbstractTextEditor"
-               inherit="true">
+               class="org.eclipse.ui.texteditor.AbstractDecoratedTextEditor">
          </targetClass>
       </column>
       <column
@@ -901,8 +900,7 @@
                location="0.9">
          </placement>
          <targetClass
-               class="org.eclipse.ui.texteditor.AbstractTextEditor"
-               inherit="true">
+               class="org.eclipse.ui.texteditor.AbstractDecoratedTextEditor">
          </targetClass>
       </column>
    </extension>

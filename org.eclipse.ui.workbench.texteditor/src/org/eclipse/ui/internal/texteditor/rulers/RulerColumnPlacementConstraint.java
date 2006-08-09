@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Describes one placement constraint of a contribution to the
- * <code>org.eclipse.ui.texteditor.rulerColumn</code> extension point.
+ * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
  * 
  * @since 3.3
  */

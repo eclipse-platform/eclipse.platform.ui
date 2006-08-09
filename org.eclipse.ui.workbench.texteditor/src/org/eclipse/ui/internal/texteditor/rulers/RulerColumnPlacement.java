@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Describes the placement specification of a contribution to the
- * <code>org.eclipse.ui.texteditor.rulerColumn</code> extension point.
+ * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
  * 
  * @since 3.3
  */

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
- * Describes the target of a contribution to the <code>org.eclipse.ui.texteditor.rulerColumn</code>
+ * Describes the target of a contribution to the <code>org.eclipse.ui.texteditor.rulerColumns</code>
  * extension point.
  * 
  * @since 3.3

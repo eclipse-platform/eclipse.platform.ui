@@ -49,7 +49,7 @@ import org.eclipse.ui.texteditor.ConfigurationElementSorter;
  */
 public final class RulerColumnRegistry {
 
-	private static final String EXTENSION_POINT= "rulerColumn"; //$NON-NLS-1$
+	private static final String EXTENSION_POINT= "rulerColumns"; //$NON-NLS-1$
 	private static final String QUALIFIED_EXTENSION_POINT= TextEditorPlugin.PLUGIN_ID + '.' + EXTENSION_POINT;
 	
 	/** The singleton instance. */
@@ -94,14 +94,14 @@ public final class RulerColumnRegistry {
 
 	/**
 	 * Returns the list of {@link RulerColumnDescriptor}s describing all extensions to the
-	 * <code>rulerColumn</code> extension point. The list's iterator traverses the descriptors in
+	 * <code>rulerColumns</code> extension point. The list's iterator traverses the descriptors in
 	 * the ordering implied by the placement specifications of the contributions.
 	 * <p>
 	 * The returned list is unmodifiable and guaranteed to never change. Note that the set of
 	 * descriptors may change over time due to dynamic plug-in removal or addition.
 	 * </p>
 	 * 
-	 * @return the sorted list of extensions to the <code>rulerColumn</code> extension point
+	 * @return the sorted list of extensions to the <code>rulerColumns</code> extension point
 	 *         (element type: {@link RulerColumnDescriptor})
 	 */
 	public List getColumnDescriptors() {
