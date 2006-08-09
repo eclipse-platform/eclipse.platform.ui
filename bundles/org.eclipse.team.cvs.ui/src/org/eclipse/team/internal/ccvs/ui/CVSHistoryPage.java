@@ -531,6 +531,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (!toggleSearchAction.isChecked()){
 					if (searchFilter != null)
 					  treeViewer.removeFilter(searchFilter);
+				} else {
+					searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
+					searchField.selectAll();
+					searchField.setFocus();
 				}
 			}
 		};
@@ -1113,7 +1117,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private final class SearchHistoryTable implements Runnable {
 		public void run() {
 			String searchString = searchField.getText();
-			if (searchString.equals("")) { //$NON-NLS-1$
+			if (searchString.equals("") || //$NON-NLS-1$
+				searchString.equals(CVSUIMessages.CVSHistoryPage_EnterSearchTerm)) { 
 				 if (searchFilter != null) 
 					 treeViewer.removeFilter(searchFilter);
 				return;
@@ -1592,10 +1597,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			//to fetch history for
 			this.treeViewer.setInput(null);
 		} 
-	
+		
 		//always refresh the history if the input gets set - in which
 		//case set the selectOnly to false
 		refreshHistory(needRefresh, !needRefresh);
+		
+		if (toggleSearchAction!= null && toggleSearchAction.isChecked()){
+			searchField.selectAll();
+			searchField.setFocus();
+		}
+		
 		return true;
 	}
 	
