@@ -140,7 +140,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		Assert.isNotNull(hyperlinkPresenter);
 		fTextViewer= textViewer;
 		fHyperlinkPresenter= hyperlinkPresenter;
-		Assert.isLegal(!fHyperlinkPresenter.canShowMultipleHyperlinks() && (fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST));
+		Assert.isLegal(fHyperlinkPresenter.canShowMultipleHyperlinks() || fDetectionStrategy == FIRST || fDetectionStrategy == LONGEST_REGION_FIRST);
 		setHyperlinkDetectors(hyperlinkDetectors);
 		setHyperlinkStateMask(eventStateMask);
 
