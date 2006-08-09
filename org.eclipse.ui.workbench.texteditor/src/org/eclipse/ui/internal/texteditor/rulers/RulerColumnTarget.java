@@ -50,8 +50,8 @@ public abstract class RulerColumnTarget {
 		return new EditorIdTarget(editorId);
 	}
 
-	public static RulerColumnTarget createClassTarget(String className, boolean inherit) {
-		return new ClassTarget(className, inherit);
+	public static RulerColumnTarget createClassTarget(String className) {
+		return new ClassTarget(className);
 	}
 }
 
@@ -131,12 +131,10 @@ final class EditorIdTarget extends RulerColumnTarget {
 
 final class ClassTarget extends RulerColumnTarget {
 	private final String fClassName;
-	private final boolean fInherit;
 
-	ClassTarget(String className, boolean inherit) {
+	ClassTarget(String className) {
 		Assert.isLegal(className != null);
 		fClassName= className;
-		fInherit= inherit;
 	}
 
 	public boolean matchesContentType(IContentType contentType) {
@@ -148,21 +146,19 @@ final class ClassTarget extends RulerColumnTarget {
 	}
 
 	public boolean matchesClass(Class clazz) {
-		if (clazz.getName().equals(fClassName))
-			return true;
-		if (!fInherit)
-			return false;
+		Assert.isLegal(clazz != null);
+		
 		do {
-			clazz= clazz.getSuperclass();
-			if (clazz == null)
-				return false;
 			if (clazz.getName().equals(fClassName))
 				return true;
-		} while (true);
+			clazz= clazz.getSuperclass();
+		} while (clazz != null);
+
+		return false;
 	}
 
 	public String toString() {
-		return "class=" + fClassName + " inherit=" + fInherit; //$NON-NLS-1$ //$NON-NLS-2$
+		return "class=" + fClassName; //$NON-NLS-1$
 	}
 }
 

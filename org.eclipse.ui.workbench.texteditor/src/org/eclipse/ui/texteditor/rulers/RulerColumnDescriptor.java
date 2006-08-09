@@ -63,8 +63,6 @@ public final class RulerColumnDescriptor {
 	private static final String TARGET_CONTENT_TYPE= "targetContentType"; //$NON-NLS-1$
 	/** The extension schema name of the targetClass element. */
 	private static final String TARGET_CLASS= "targetClass"; //$NON-NLS-1$
-	/** The extension schema name of the inherit attribute. */
-	private static final String INHERIT= "inherit"; //$NON-NLS-1$
 	/** The extension schema name of the placement element. */
 	private static final String PLACEMENT= "placement"; //$NON-NLS-1$
 
@@ -117,8 +115,8 @@ public final class RulerColumnDescriptor {
 		IConfigurationElement[] targetClasses= element.getChildren(TARGET_CLASS);
 
 		if (targetContentTypes.length + targetEditors.length + targetClasses.length == 0) {
-			helper.fail("RulerColumn extensions must contain at lease one target specification.");
-			fTarget= null;
+			helper.fail(RulerColumnMessages.RulerColumnDescriptor_missing_target_msg);
+			fTarget= null; // dummy
 		} else {
 			RulerColumnTarget combined= null;
 			for (int i= 0; i < targetEditors.length; i++) {
@@ -133,8 +131,7 @@ public final class RulerColumnDescriptor {
 			}
 			for (int i= 0; i < targetClasses.length; i++) {
 				IConfigurationElement targetClass= targetClasses[i];
-				ExtensionPointHelper childHelper= new ExtensionPointHelper(targetClass, log);
-				RulerColumnTarget target= RulerColumnTarget.createClassTarget(childHelper.getNonNullAttribute(CLASS), childHelper.getDefaultAttribute(INHERIT, false));
+				RulerColumnTarget target= RulerColumnTarget.createClassTarget(new ExtensionPointHelper(targetClass, log).getNonNullAttribute(CLASS));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
 			fTarget= combined;
