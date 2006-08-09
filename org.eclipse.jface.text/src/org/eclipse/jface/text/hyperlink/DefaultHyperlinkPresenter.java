@@ -43,7 +43,11 @@ import org.eclipse.jface.text.TextPresentation;
  * The default hyperlink presenter underlines the
  * link and colors the line and the text with
  * the given color.
- *
+ * <p>
+ * It can only be used together with the {@link HyperlinkManager#FIRST}
+ * or the {@link HyperlinkManager#LONGEST_REGION_FIRST} hyperlink strategy.
+ * </p>
+ *   
  * @since 3.1
  */
 public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
