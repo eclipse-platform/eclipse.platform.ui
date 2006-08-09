@@ -31,7 +31,7 @@ public final class RulerColumnPlacement {
 	/** The extension schema name of the id attribute. */
 	private static final String ID= "id"; //$NON-NLS-1$
 	/** The extension schema name of the optional weight attribute. */
-	private static final String WEIGHT= "weight"; //$NON-NLS-1$
+	private static final String LOCATION= "location"; //$NON-NLS-1$
 	/** The extension schema name of the before element. */
 	private static final String BEFORE= "before"; //$NON-NLS-1$
 	/** The extension schema name of the after element. */
@@ -52,7 +52,7 @@ public final class RulerColumnPlacement {
 		ILog log= TextEditorPlugin.getDefault().getLog();
 		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
 		
-		fWeight= helper.getDefaultAttribute(WEIGHT, 1f);
+		fWeight= helper.getDefaultAttribute(LOCATION, 1f);
 		if (fWeight < 0 || fWeight > 1)
 			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_weight_msg);
 		fConstraints= readIds(log, element.getChildren());
