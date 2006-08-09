@@ -30,6 +30,10 @@ import org.eclipse.ui.internal.services.EvaluationResultCache;
  * This caches the command id and the handler, so that they can later be
  * identified.
  * </p>
+ * <p>
+ * <b>Note:</b> this class has a natural ordering that is inconsistent with 
+ * equals.
+ * </p>
  * 
  * @since 3.1
  */
@@ -107,14 +111,40 @@ final class HandlerActivation extends EvaluationResultCache implements
 		clearResult();
 	}
 
+	/**
+	 * Implement {@link Comparable#compareTo(Object)}.
+	 * <p>
+	 * <b>Note:</b> this class has a natural ordering that is inconsistent with
+	 * equals.
+	 * </p>
+	 */
 	public final int compareTo(final Object object) {
 		final IHandlerActivation activation = (IHandlerActivation) object;
 		int difference;
 
 		// Check the priorities
-		final int thisPriority = this.getSourcePriority();
-		final int thatPriority = activation.getSourcePriority();
-		difference = thatPriority - thisPriority;
+		int thisPriority = this.getSourcePriority();
+		int thatPriority = activation.getSourcePriority();
+		
+		// rogue bit problem - ISources.ACTIVE_MENU
+		int thisLsb = 0;
+		int thatLsb = 0;
+		
+		if (((thisPriority & ISources.ACTIVE_MENU) | (thatPriority & ISources.ACTIVE_MENU)) != 0) {
+			thisLsb = thisPriority & 1;
+			thisPriority = (thisPriority >> 1) & 0x7fffffff;
+			thatLsb = thatPriority & 1;
+			thatPriority = (thatPriority  >> 1) & 0x7fffffff;
+		}
+		
+		difference = thisPriority - thatPriority;
+		if (difference != 0) {
+			return difference;
+		}
+		
+		// if all of the higher bits are the same, check the
+		// difference of the LSB
+		difference = thisLsb - thatLsb;
 		if (difference != 0) {
 			return difference;
 		}
@@ -122,7 +152,7 @@ final class HandlerActivation extends EvaluationResultCache implements
 		// Check depth
 		final int thisDepth = this.getDepth();
 		final int thatDepth = activation.getDepth();
-		difference = thatDepth - thisDepth;
+		difference = thisDepth - thatDepth;
 		return difference;
 	}
 

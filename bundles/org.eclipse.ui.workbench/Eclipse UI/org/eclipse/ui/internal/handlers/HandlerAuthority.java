@@ -314,7 +314,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 			// Compare the two handlers.
 			final int comparison = bestActivation.compareTo(currentActivation);
-			if (comparison > 0) {
+			if (comparison < 0) {
 				bestActivation = currentActivation;
 				conflict = false;
 
