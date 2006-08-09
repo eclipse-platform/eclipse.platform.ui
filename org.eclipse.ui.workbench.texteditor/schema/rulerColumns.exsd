@@ -269,9 +269,7 @@
       <documentation>
          &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
 
-The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances. Editors that want to support the extension point should provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. &lt;code&gt;AbstractTextEditor&lt;/code&gt; contains code to support the extension point, but disables it by default. Subclasses may call &lt;code&gt;AbstractTextEditor.enableRulerContributions(boolean)&lt;/code&gt; to enable the ruler column support.
-
-&lt;b&gt;Note: as of 3.3 M1, only &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; supports the extension point.&lt;/b&gt;
+The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances. Editors that want to support the extension point should provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. Subclasses of &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; support the extension point.
       </documentation>
    </annotation>
 
