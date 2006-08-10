@@ -17,6 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -30,7 +31,8 @@ import org.osgi.framework.Constants;
 public class BundleUtil {
 
     private static String NL_TAG = "$nl$/"; //$NON-NLS-1$
-
+	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
+	private final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 
     /**
      * Utility method to validate the state of a bundle. Log invalid bundles to
@@ -143,6 +145,30 @@ public class BundleUtil {
 
         URL localLocation = null;
         try {
+        	// resolve PLUGINS_ROOT
+    		int index = resource.indexOf(PLUGINS_ROOT);
+    		if (index != -1) {
+    			resource = resource.substring(index + PLUGINS_ROOT.length());
+    			index = resource.indexOf('/');
+    			if (index != -1) {
+    				String bundleName = resource.substring(0, index);
+    				if (PRODUCT_PLUGIN.equals(bundleName)) {
+    					IProduct product = Platform.getProduct();
+    					if (product != null) {
+    						Bundle productBundle = product.getDefiningBundle();
+    						if (productBundle != null) {
+    							bundleName = productBundle.getSymbolicName();
+    						}
+    					}
+    				}
+    				resource = resource.substring(index + 1);
+    				Bundle actualBundle = Platform.getBundle(bundleName);
+    				if (actualBundle != null) {
+    					return getResolvedResourceLocation(resource, actualBundle, forceNLResolve);
+    				}
+    			}
+    		}
+    		
             // we need to resolve this URL.
             String copyResource = resource;
             if (forceNLResolve && !copyResource.startsWith(NL_TAG)) {
