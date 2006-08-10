@@ -475,6 +475,9 @@ public class ModelSynchronizeParticipant extends
 				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_REFRESH_SCHEDULE_SETTINGS), createRefreshable());
 				description = settings.getString(CTX_DESCRIPTION);
 				setRefreshSchedule(schedule);
+				if(schedule.isEnabled()) {
+					schedule.startJob();
+				}
 			}
 		}
 	}
