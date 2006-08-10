@@ -191,7 +191,7 @@ public final class RulerColumnRegistry {
 		 * Topological sort of the DAG defined by the plug-in dependencies
 		 * 1. TopoSort descriptors by plug-in dependency
 		 * 2. Insert into Directed Acyclic Graph
-		 * 3. TopoSort DAG: pick the source with the lowest weight and remove from DAG
+		 * 3. TopoSort DAG: pick the source with the lowest gravity and remove from DAG
 		 */
 		ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
 			public IConfigurationElement getConfigurationElement(Object object) {
@@ -231,9 +231,9 @@ public final class RulerColumnRegistry {
 			}
 		}
 		
-		Comparator weightComp= new Comparator() {
+		Comparator gravityComp= new Comparator() {
 			public int compare(Object o1, Object o2) {
-				float diff= ((RulerColumnDescriptor) o1).getPlacement().getWeight() - ((RulerColumnDescriptor) o2).getPlacement().getWeight();
+				float diff= ((RulerColumnDescriptor) o1).getPlacement().getGravity() - ((RulerColumnDescriptor) o2).getPlacement().getGravity();
 				if (diff == 0)
 					return 0;
 				if (diff < 0)
@@ -242,11 +242,11 @@ public final class RulerColumnRegistry {
 			}
 		};
 		
-		/* Topological sort - always select the source with the least weight */
+		/* Topological sort - always select the source with the least gravity */
 		Set toProcess= dag.getSources();
 		int index= 0;
 		while (!toProcess.isEmpty()) {
-			Object next= Collections.min(toProcess, weightComp);
+			Object next= Collections.min(toProcess, gravityComp);
 			array[index]= next;
 			index++;
 			dag.removeVertex(next);

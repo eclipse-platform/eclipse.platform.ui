@@ -30,20 +30,20 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 public final class RulerColumnPlacement {
 	/** The extension schema name of the id attribute. */
 	private static final String ID= "id"; //$NON-NLS-1$
-	/** The extension schema name of the optional weight attribute. */
-	private static final String LOCATION= "location"; //$NON-NLS-1$
+	/** The extension schema name of the optional gravity attribute. */
+	private static final String GRAVITY= "gravity"; //$NON-NLS-1$
 	/** The extension schema name of the before element. */
 	private static final String BEFORE= "before"; //$NON-NLS-1$
 	/** The extension schema name of the after element. */
 	private static final String AFTER= "after"; //$NON-NLS-1$
 
-	/** The placement weight. */
-	private final float fWeight;
+	/** The placement gravity. */
+	private final float fGravity;
 	/** The placement constraints (element type: {@link RulerColumnPlacementConstraint}). */
 	private final Set fConstraints;
 
 	public RulerColumnPlacement() {
-		fWeight= 1f;
+		fGravity= 1f;
 		fConstraints= Collections.EMPTY_SET;
 	}
 
@@ -52,9 +52,9 @@ public final class RulerColumnPlacement {
 		ILog log= TextEditorPlugin.getDefault().getLog();
 		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
 		
-		fWeight= helper.getDefaultAttribute(LOCATION, 1f);
-		if (fWeight < 0 || fWeight > 1)
-			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_weight_msg);
+		fGravity= helper.getDefaultAttribute(GRAVITY, 1f);
+		if (fGravity < 0 || fGravity > 1)
+			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_gravity_msg);
 		fConstraints= readIds(log, element.getChildren());
 	}
 
@@ -79,12 +79,12 @@ public final class RulerColumnPlacement {
 	}
 	
 	/**
-	 * The weight of the placement specification, a float in the range <code>[0, 1]</code>.
+	 * The gravity of the placement specification, a float in the range <code>[0, 1]</code>.
 	 * 
-	 * @return the weight of the placement specification
+	 * @return the gravity of the placement specification
 	 */
-	public float getWeight() {
-		return fWeight;
+	public float getGravity() {
+		return fGravity;
 	}
 
 	/**

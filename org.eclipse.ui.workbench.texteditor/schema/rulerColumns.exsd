@@ -11,11 +11,6 @@
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-            (no description available)
-         </documentation>
-      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="column"/>
@@ -53,7 +48,7 @@
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
-            The specification of a ruler column contribution. Rulers without target specification are considered to target all editors and content types.
+            The specification of a ruler column contribution.
          </documentation>
       </annotation>
       <complexType>
@@ -95,7 +90,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class implementing the column. Must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;. An abstract implementation exists in &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
+                  The class implementing the column; must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.RulerColumn"/>
@@ -129,7 +124,7 @@
    <element name="targetEditor">
       <annotation>
          <documentation>
-            Describes an editor that the column is contributed to.  See the &lt;tt&gt;org.eclipse.ui.editors&lt;/tt&gt; extension point. Note that the rulerColumn extension point is typically only supported by line based text editors.
+            Describes an editor that the column is contributed to.  See the &lt;tt&gt;org.eclipse.ui.editors&lt;/tt&gt; extension point. Note that the rulerColumns extension point is typically only supported by line based text editors.
          </documentation>
       </annotation>
       <complexType>
@@ -146,7 +141,7 @@
    <element name="targetContentType">
       <annotation>
          <documentation>
-            Describes a content type that the column is contributed to. See the &lt;tt&gt;org.eclipse.core.runtime.contentTypes&lt;/tt&gt; extension point. Note that the rulerColumn extension point is typically only supported by line based text editors.
+            Describes a content type that the column is contributed to. See the &lt;tt&gt;org.eclipse.core.runtime.contentTypes&lt;/tt&gt; extension point. Note that the rulerColumns extension point is typically only supported by line based text editors.
          </documentation>
       </annotation>
       <complexType>
@@ -160,10 +155,30 @@
       </complexType>
    </element>
 
+   <element name="targetClass">
+      <annotation>
+         <documentation>
+            Describes an editor class that the column is contributed to. Subclasses of the specified class are also targeted by this colum contribution.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a class implementing &lt;code&gt;org.eclipse.ui.texteditor.ITextEditor&lt;/code&gt;. The class does not need to be instantiatable. Note that contributing ruler columns to an internal editor class outside of the contributor&apos;s namespace is considered bad practice, as the class name may change without notice.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.ITextEditor"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="placement">
       <annotation>
          <documentation>
-            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their location within their slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
+            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their gravity within the slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
          </documentation>
       </annotation>
       <complexType>
@@ -173,10 +188,10 @@
                <element ref="after"/>
             </choice>
          </sequence>
-         <attribute name="location" type="string" use="default" value="1.0">
+         <attribute name="gravity" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
-                  The requested location within the ruler, a float number between 0.0 and 1.0. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns within one placement slot are ordered by the &lt;i&gt;location&lt;/i&gt; value. Columns with a lower location are placed further away from the editor area (leftwards in left-to-right environments), columns with a higher location are placed closer to the editor area (rightwards in left-to-right environments). By default, 1.0 is assumed.
+                  The gravity of the ruler, a float number between 0.0 and 1.0. The &lt;i&gt;gravity&lt;/i&gt; measures the attractive force between the ruler and the editor. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns within one placement slot are ordered by their &lt;i&gt;gravity&lt;/i&gt; value. Columns with a lower gravity are placed further away from the editor area (leftwards in left-to-right environments), columns with a higher gravity are placed closer to the editor area (rightwards in left-to-right environments). By default, 1.0 is assumed.
                </documentation>
             </annotation>
          </attribute>
@@ -217,33 +232,6 @@
       </complexType>
    </element>
 
-   <element name="targetClass">
-      <annotation>
-         <documentation>
-            Describes an editor class that the column is contributed to. If &lt;code&gt;inherit&lt;/code&gt; is set to &lt;code&gt;true&lt;/code&gt;, all subclasses of the specified class are also targeted by this colum contribution
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The fully qualified name of a class implementing &lt;code&gt;org.eclipse.ui.texteditor.ITextEditor&lt;/code&gt;. The class does not need to be instantiatable. Note that contributing ruler columns to an internal editor class outside of the contributor&apos;s namespace is considered bad practice, as the class name may change without notice.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.ITextEditor"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="inherit" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  True to let all subclasses of the specified class inherit this ruler column contribution.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -258,7 +246,23 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;pre&gt;
+&lt;column
+      id=&quot;org.eclipse.ui.editors.columns.linenumbers&quot;
+      name=&quot;Line Numbers&quot;
+      class=&quot;org.eclipse.ui.internal.texteditor.LineNumberColumn&quot;
+      enabled=&quot;false&quot;
+      global=&quot;true&quot;
+      includeInMenu=&quot;false&quot;&gt;
+      &lt;placement
+         gravity=&quot;0.9&quot;&gt;
+         &lt;after id=&quot;org.eclipse.ui.editors.columns.annotations&quot;&gt;
+      &lt;/placement&gt;
+      &lt;targetClass
+         class=&quot;org.eclipse.ui.texteditor.AbstractDecoratedTextEditor&quot;&gt;
+      &lt;/targetClass&gt;
+&lt;/column&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -278,7 +282,7 @@ The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rule
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         All ruler column contributions must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;. Many contributors will find the supplied &lt;code&gt;org.eclipse.ui.texteditor.rulers.AbstractRulerColumn&lt;/code&gt; useful; it takes care of most painting and scrolling aspects of a line based column and can be extended at various granularity levels.
       </documentation>
    </annotation>
 
