@@ -14,6 +14,9 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#overview img, #navigation-links a#overview:hover img { 
+#navigation-links a#overview img, 
+#navigation-links a#overview:hover img,
+#navigation-links a#overview:focus img,
+#navigation-links a#overview:active img {
 	background-image : url(../graphics/icons/ctool/overview48sel.gif); 
 }

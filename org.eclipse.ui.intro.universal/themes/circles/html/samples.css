@@ -10,7 +10,10 @@
  *******************************************************************************/
 
 /* show the "selected" image for this page */
-#navigation-links a#samples img, #navigation-links a#samples:hover img { 
+#navigation-links a#samples img, 
+#navigation-links a#samples:hover img,
+#navigation-links a#samples:focus img,
+#navigation-links a#samples:active img {
 	background-image : url(../graphics/icons/ctool/sa_nav_64.gif); 
 	top : 2px; 
 	left : -3px;

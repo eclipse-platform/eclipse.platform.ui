@@ -14,6 +14,9 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#firststeps img, #navigation-links a#firststeps:hover img { 
+#navigation-links a#firststeps img, 
+#navigation-links a#firststeps:hover img,
+#navigation-links a#firststeps:focus img,
+#navigation-links a#firststeps:active img {
 	background-image : url(../graphics/icons/ctool/firsteps48sel.gif); 
 }

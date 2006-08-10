@@ -19,9 +19,9 @@
 	left : -3px;
 }
 
-/* Selected image should have no link label and the
- * matching decoration
- */
+#navigation-links {
+	background-image: url(../graphics/contentpage/ov_banner.jpg);
+}
 
 #navigation-links a:hover#overview .link-label,
 #navigation-links a:focus#overview .link-label,
@@ -39,12 +39,4 @@
 #navigation-links a:focus#overview .link-extra-div,
 #navigation-links a:active#overview .link-extra-div {
 	display: none;
-}
-
-/*
- * The navigation banner.
- */
-
-#navigation-links {
-	background-image: url(../graphics/contentpage/ov_banner.jpg);
 }

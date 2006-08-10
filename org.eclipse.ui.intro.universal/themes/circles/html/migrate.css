@@ -10,7 +10,10 @@
  *******************************************************************************/
 
 /* show the "selected" image for this page */
-#navigation-links a#migrate img, #navigation-links a#migrate:hover img { 
+#navigation-links a#migrate img, 
+#navigation-links a#migrate:hover img,
+#navigation-links a#migrate:focus img,
+#navigation-links a#migrate:active img {
 	background-image : url(../graphics/icons/ctool/mi_nav_64.gif); 
 	top : 2px;
 	left : -3px;

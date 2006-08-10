@@ -14,6 +14,9 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#tutorials img, #navigation-links a#tutorials:hover img { 
+#navigation-links a#tutorials img, 
+#navigation-links a#tutorials:hover img,
+#navigation-links a#tutorials:focus img,
+#navigation-links a#tutorials:active img {
 	background-image : url(../graphics/icons/ctool/tutorials48sel.gif); 
 }

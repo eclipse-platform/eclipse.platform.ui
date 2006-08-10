@@ -10,7 +10,10 @@
  *******************************************************************************/
 
 /* show the "selected" image for this page */
-#navigation-links a#webresources img, #webresources a#webresources:hover img { 
+#navigation-links a#webresources img, 
+#navigation-links a#webresources:hover img,
+#navigation-links a#webresources:focus img,
+#navigation-links a#webresources:active img {
 	background-image : url(../graphics/icons/ctool/wr_nav_64.gif); 
 	top : 2px;
 	left : -3px;

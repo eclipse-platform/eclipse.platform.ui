@@ -14,7 +14,10 @@ body {
 }
 
 /* show the "selected" image for this page */
-#navigation-links a#whatsnew img, #navigation-links a#whatsnew:hover img { 
+#navigation-links a#whatsnew img, 
+#navigation-links a#whatsnew:hover img,
+#navigation-links a#whatsnew:focus img,
+#navigation-links a#whatsnew:active img {
 	background-image : url(../graphics/icons/ctool/whatsnew48sel.gif); 
 }
 
