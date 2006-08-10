@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.workbench.texteditor">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="rulerColumn" name="Ruler Column"/>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="rulerColumns" name="Ruler Column"/>
       </appInfo>
       <documentation>
          Ruler column contributions are line based information areas shown at text editor sides.
