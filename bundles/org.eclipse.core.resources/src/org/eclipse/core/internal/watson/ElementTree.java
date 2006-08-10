@@ -138,7 +138,7 @@ public class ElementTree {
 	/**
 	 * Collapses this tree so that the given ancestor becomes its
 	 * immediate parent.  Afterwards, this tree will still have exactly the
-	 * same contents, but its internal stucture will be compressed.
+	 * same contents, but its internal structure will be compressed.
 	 *
 	 * <p> This operation should be used to collapse chains of
 	 * element trees created by newEmptyDelta()/immutable().
@@ -708,7 +708,7 @@ public class ElementTree {
 
 	/** 
 	 * Returns a string representation of this element tree's
-	 * structure suitable for debug puposes.
+	 * structure suitable for debug purposes.
 	 */
 	public String toDebugString() {
 		final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
