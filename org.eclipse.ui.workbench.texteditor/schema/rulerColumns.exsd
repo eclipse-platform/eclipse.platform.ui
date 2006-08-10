@@ -163,7 +163,7 @@
    <element name="placement">
       <annotation>
          <documentation>
-            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their weight within their slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
+            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their location within their slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
          </documentation>
       </annotation>
       <complexType>
