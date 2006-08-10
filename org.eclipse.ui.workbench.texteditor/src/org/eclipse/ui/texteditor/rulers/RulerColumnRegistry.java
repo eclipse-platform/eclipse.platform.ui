@@ -40,7 +40,7 @@ import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 
 /**
  * A registry for all extensions to the
- * <code>{@value RulerColumnRegistry#QUALIFIED_EXTENSION_POINT}</code> extension point.
+ * <code>rulerColumns</code> extension point.
  * <p>
  * This API is provisional and may change any time before the 3.3 API freeze.
  * </p>

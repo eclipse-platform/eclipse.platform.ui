@@ -249,7 +249,8 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * The new width in pixels. The default width is {@value #DEFAULT_WIDTH}.
+	 * The new width in pixels. The <code>DEFAULT_WIDTH</code> constant
+	 * specifies the default width.
 	 *
 	 * @param width the new width
 	 */
@@ -293,7 +294,7 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Returns the current font. If a font has not been explicitely set, the widget's font is
+	 * Returns the current font. If a font has not been explicitly set, the widget's font is
 	 * returned.
 	 * 
 	 * @return the font used to render text on the ruler.
@@ -320,7 +321,7 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 
 	/**
 	 * Returns the text inset for text drawn by {@link #paintLine(GC, int, int, int, int)}. The
-	 * default is {@value #DEFAULT_TEXT_INSET} pixels.
+	 * <code>DEFAULT_TEXT_INSET</code> constant specifies the default inset in pixels.
 	 * 
 	 * @return the text inset for text
 	 */
@@ -425,7 +426,7 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Markes the region covered by <code>lines</code> as needing to be redrawn.
+	 * Marks the region covered by <code>lines</code> as needing to be redrawn.
 	 * 
 	 * @param lines the lines to be redrawn in document coordinates
 	 */
@@ -462,7 +463,7 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Computes the widget lines that need repainting givent the clipping region of a paint event.
+	 * Computes the widget lines that need repainting given the clipping region of a paint event.
 	 * 
 	 * @param event the paint event
 	 * @return the lines in widget coordinates that need repainting
