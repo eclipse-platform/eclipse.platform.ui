@@ -38,6 +38,12 @@ public abstract class RulerColumn implements IVerticalRulerColumn {
 	private ITextEditor fEditor;
 
 	/**
+	 * Creates a new ruler column.
+	 */
+	protected RulerColumn() {
+	}
+
+	/**
 	 * Returns the extension point descriptor of this ruler. If the receiver was not created via the
 	 * extension point mechanism, the descriptor may be <code>null</code>.
 	 * 
