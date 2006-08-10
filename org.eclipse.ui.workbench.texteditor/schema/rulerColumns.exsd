@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="rulerColumns" name="Ruler Column"/>
       </appInfo>
       <documentation>
-         Ruler column contributions are line based information areas shown at text editor sides.
+         Ruler column contributions are line based information areas shown at text editor sides. &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
       </documentation>
    </annotation>
 
