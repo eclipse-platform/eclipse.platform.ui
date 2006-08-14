@@ -209,14 +209,19 @@ public class FilteredTree extends Composite {
     }
     
     /**
-     * Create the tree.  Subclasses may override.
-     * 
-     * @param parent parent <code>Composite</code>
-     * @param style SWT style bits used to create the tree
-     * @return the tree
-     */
+	 * Creates and set up the tree and tree viewer. This method calls
+	 * {@link #createTreeViewer(Composite, int)} to create the tree viewer.
+	 * Subclasses should override {@link #createTreeViewer(Composite, int)}
+	 * instead of overriding this method.
+	 * 
+	 * @param parent
+	 *            parent <code>Composite</code>
+	 * @param style
+	 *            SWT style bits used to create the tree
+	 * @return the tree
+	 */
     protected Control createTreeControl(Composite parent, int style){
-        treeViewer = new TreeViewer(parent, style);
+        treeViewer = createTreeViewer(parent, style);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         treeViewer.getControl().setLayoutData(data);
         treeViewer.getControl().addDisposeListener(new DisposeListener(){
@@ -230,6 +235,19 @@ public class FilteredTree extends Composite {
         treeViewer.addFilter(patternFilter);  
         return treeViewer.getControl();
     }
+
+	/**
+	 * Creates the tree viewer.  Subclasses may override.
+	 * 
+	 * @param parent the parent composite
+	 * @param style SWT style bits used to create the tree viewer
+	 * @return the tree viewer
+	 * 
+	 * @since 3.3
+	 */
+	protected TreeViewer createTreeViewer(Composite parent, int style) {
+		return new TreeViewer(parent, style);
+	}
     
     /**
      * Return the first item in the tree that matches the filter pattern.
