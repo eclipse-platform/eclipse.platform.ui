@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -45,7 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
@@ -90,6 +90,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private boolean okButtonState;
 
 	// id constants
+
+	private static final String DIALOG_SETTINGS_SECTION = "CheatSheetCategoryBasedSelectionDialog"; //$NON-NLS-1$
 
 	private final static String STORE_EXPANDED_CATEGORIES_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
@@ -201,13 +203,15 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
+		initializeDialogUnits(parent);
+		
 		IDialogSettings workbenchSettings = CheatSheetPlugin.getPlugin()
 				.getDialogSettings();
 		IDialogSettings dialogSettings = workbenchSettings
-				.getSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
+				.getSection(DIALOG_SETTINGS_SECTION);
 		if (dialogSettings == null)
 			dialogSettings = workbenchSettings
-					.addNewSection("CheatSheetCategoryBasedSelectionDialog");//$NON-NLS-1$
+					.addNewSection(DIALOG_SETTINGS_SECTION);
 
 		setDialogSettings(dialogSettings);
 
@@ -216,6 +220,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, CHEAT_SHEET_SELECTION_HELP_ID);
 		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		gridLayout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		gridLayout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		gridLayout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		outerContainer.setLayout(gridLayout);
 		outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -226,14 +234,14 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		selectRegisteredRadio = new Button(outerContainer, SWT.RADIO);
 		selectRegisteredRadio.setText(Messages.SELECTION_DIALOG_OPEN_REGISTERED);
 		
-		// category tree pane...create SWT tree directly to
-		// get single selection mode instead of multi selection.
-		Tree tree = new Tree(outerContainer, SWT.SINGLE | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.BORDER);
-		treeViewer = new TreeViewer(tree);
+		SashForm sform = new SashForm(outerContainer, SWT.VERTICAL);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = 300;
-		data.heightHint = 220;
+		data.heightHint = 300;
+		sform.setLayoutData(data);
+		
+		// category tree pane
+		treeViewer = new TreeViewer(sform, SWT.SINGLE | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.getTree().setLayoutData(data);
 		treeViewer.setContentProvider(getCheatSheetProvider());
 		treeViewer.setLabelProvider(new CheatsheetLabelProvider());
@@ -242,13 +250,11 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setInput(cheatsheetCategories);
 
-		desc = new Text(outerContainer, SWT.MULTI | SWT.WRAP);
+		desc = new Text(sform, SWT.MULTI | SWT.WRAP);
 		desc.setEditable(false);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = 100;
-		data.heightHint = 40;
-		desc.setLayoutData(data);
 
+		sform.setWeights(new int[] {10, 2});
+		
 		if (activityViewerFilter.getHasEncounteredFilteredItem())
 			createShowAllButton(outerContainer);
 
@@ -266,7 +272,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 				}
 			}
 		});
-
 		
         // Create radio button
 		selectFileRadio = new Button(outerContainer, SWT.RADIO);
@@ -274,6 +279,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		
 		Composite selectFileComposite = new Composite(outerContainer, SWT.NULL);
 		GridLayout selectFileLayout = new GridLayout();
+		selectFileLayout.marginWidth = 0;
+		selectFileLayout.marginHeight = 0;
+		selectFileLayout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		selectFileLayout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		selectFileLayout.numColumns = 2;
 		selectFileComposite.setLayout(selectFileLayout);
 		GridData sfCompositeData = new GridData(GridData.FILL_HORIZONTAL);
@@ -284,6 +293,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		selectFileText.setLayoutData(sfTextData);
 		browseFileButton = new Button(selectFileComposite, SWT.NULL);
 		browseFileButton.setText(Messages.SELECTION_DIALOG_FILEPICKER_BROWSE);
+		setButtonLayoutData(browseFileButton);
 		
 		restoreWidgetValues();
 		restoreFileSettings();
@@ -331,7 +341,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// do nothing			
 		}
-		
 	}
 	
 	private class FileTextListener implements ModifyListener {
@@ -342,11 +351,14 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	}
 
 	/*
-	 * Check the state of the Radio buttons and disable those parts of teh UI that don't apply
+	 * Check the state of the Radio buttons and disable those parts of the UI that don't apply
 	 */
 	private void checkRadioButtons() {
 		selectFileText.setEnabled(selectFileRadio.getSelection());	
 		browseFileButton.setEnabled(selectFileRadio.getSelection());	
+		if (showAllButton != null) {
+			showAllButton.setEnabled(selectRegisteredRadio.getSelection());
+		}
 		treeViewer.getTree().setEnabled(selectRegisteredRadio.getSelection());
 		setOkButton();
 	}
@@ -542,10 +554,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * Restores the state of the radio button and file name fields
 	 */
 	private void restoreFileSettings() {
-	    final boolean isFileSelected = settings.getBoolean(STORE_RADIO_SETTING);
+	    boolean isFileSelected = settings.getBoolean(STORE_RADIO_SETTING);
 		selectFileRadio.setSelection(isFileSelected);	
 		selectRegisteredRadio.setSelection(!isFileSelected);	
-		final String fileName = settings.get(STORE_CHEATSHEET_FILENAME);
+		String fileName = settings.get(STORE_CHEATSHEET_FILENAME);
 		if (fileName != null) {
 			selectFileText.setText(fileName);	
 		}
@@ -631,5 +643,19 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private void storeFileSettings() {
 		settings.put(STORE_RADIO_SETTING, selectFileRadio.getSelection());	
 		settings.put(STORE_CHEATSHEET_FILENAME, selectFileText.getText());	
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.2
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+        IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();
+        IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+        if (section == null) {
+            section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+        } 
+        return section;
 	}
 }
