@@ -218,6 +218,9 @@ public abstract class MarkerView extends TableView {
 			if (getViewer().getControl().isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}
+			
+			if(monitor.isCanceled())
+				return Status.CANCEL_STATUS;
 
 			getViewer().refresh(true);
 
@@ -232,12 +235,17 @@ public abstract class MarkerView extends TableView {
 				} else {// Reexpand the old categories
 					MarkerCategory[] categories = getMarkerAdapter()
 							.getCategories();
+					if(monitor.isCanceled())
+						return Status.CANCEL_STATUS;
+
 					if (categories != null) {
 						if (categories.length == 1)// Expand if there is only
 							// one
 							getViewer().expandAll();
 						else {
 							for (int i = 0; i < categories.length; i++) {
+								if(monitor.isCanceled())
+									return Status.CANCEL_STATUS;
 								MarkerCategory category = categories[i];
 								if (categoriesToExpand.contains(category
 										.getName())) {
@@ -542,6 +550,7 @@ public abstract class MarkerView extends TableView {
 	 * @param monitor
 	 */
 	public void updateForContentsRefresh(IProgressMonitor monitor) {
+		updateJob.cancel();
 		getMarkerAdapter().buildAllMarkers(monitor);
 		getProgressService().schedule(updateJob);
 	}
