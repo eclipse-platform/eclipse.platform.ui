@@ -65,28 +65,19 @@ import org.eclipse.swt.widgets.Scrollable;
     }
 
     private static void applyLayoutDataTo(Control control) {
+    	defaultsFor(control).applyTo(control);
+    }
+    
+    public static GridDataFactory defaultsFor(Control control) {
         if (control instanceof Button) {
             Button button = (Button) control;
 
             if (hasStyle(button, SWT.CHECK)) {
-                nonWrappingLabelData.applyTo(button);
+                return nonWrappingLabelData.copy();
             } else {
-                GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).hint(Geometry.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true), LayoutConstants.getMinButtonSize()))
-                        .applyTo(button);
+                return GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).hint(Geometry.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true), LayoutConstants.getMinButtonSize()));
             }
-            return;
         }
-
-        // if (control instanceof Label) {
-        // Label label = (Label) control;
-        //			
-        // if (hasStyle(label, SWT.WRAP)) {
-        // wrappingLabelData.applyTo(label);
-        // } else {
-        // nonWrappingLabelData.applyTo(label);
-        // }
-        // return;
-        // }
 
         if (control instanceof Scrollable) {
             Scrollable scrollable = (Scrollable) control;
@@ -115,8 +106,7 @@ import org.eclipse.swt.widgets.Scrollable;
                         }
                     }
 
-                    GridDataFactory.fillDefaults().grab(growsHorizontally, growsVertically).applyTo(control);
-                    return;
+                    return GridDataFactory.fillDefaults().grab(growsHorizontally, growsVertically);
                 }
             }
         }
@@ -184,8 +174,7 @@ import org.eclipse.swt.widgets.Scrollable;
             vAlign = SWT.CENTER;
         }
 
-        GridDataFactory.fillDefaults().grab(grabHorizontal, vScroll).align(SWT.FILL, vAlign).hint(hHint, vScroll ? defaultSize.y : SWT.DEFAULT).applyTo(control);
-        return;
+        return GridDataFactory.fillDefaults().grab(grabHorizontal, vScroll).align(SWT.FILL, vAlign).hint(hHint, vScroll ? defaultSize.y : SWT.DEFAULT);
     }
 
     private static boolean hasMethod(Control control, String name, Class[] parameterTypes) {
