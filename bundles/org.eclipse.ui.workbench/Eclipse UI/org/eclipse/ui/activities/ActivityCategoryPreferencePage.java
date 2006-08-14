@@ -19,7 +19,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -118,6 +120,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     
     private class AdvancedDialog extends TrayDialog {
 
+    	private static final String DIALOG_SETTINGS_SECTION = "ActivityCategoryPreferencePageAdvancedDialogSettings"; //$NON-NLS-1$
+
+    	
         ActivityEnabler enabler;
         /**
          * @param parentShell
@@ -132,8 +137,12 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          */
         protected void configureShell(Shell newShell) {
             super.configureShell(newShell);
-            newShell.setText(ActivityMessages.ActivitiesPreferencePage_advancedDialogTitle);
-            newShell.setSize(new Point(400, 500));
+            String activityName = strings.getProperty(ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities);
+            activityName = activityName.replaceAll("&", ""); //strips possible mnemonic //$NON-NLS-1$ //$NON-NLS-2$
+			newShell.setText(NLS.bind(           		
+            		ActivityMessages.ActivitiesPreferencePage_advancedDialogTitle,
+            		activityName		
+            ));
         }
         
         /* (non-Javadoc)
@@ -154,6 +163,20 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             enabler.updateActivityStates();            
             super.okPressed();
         }
+        
+    	/* (non-Javadoc)
+         * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+         * 
+         * @since 3.2
+         */
+    	protected IDialogSettings getDialogBoundsSettings() {
+            IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+            IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+            if (section == null) {
+                section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+            } 
+            return section;
+    	}
     }
     private class CategoryLabelProvider extends LabelProvider implements
             ITableLabelProvider, IActivityManagerListener {
@@ -326,15 +349,17 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
+    	initializeDialogUnits(parent);
+    	
         Composite composite = new Composite(parent, SWT.NONE);  
-        composite.setFont(parent.getFont());
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = 0;
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         composite.setLayout(layout);
         Label label = new Label(composite, SWT.WRAP);
         label
                 .setText(strings.getProperty(CAPTION_MESSAGE, ActivityMessages.ActivitiesPreferencePage_captionMessage));
-        label.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = 400;
         data.horizontalSpan = 2;        
@@ -350,6 +375,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         
         workbench.getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.CAPABILITY_PREFERENCE_PAGE);
+        
+        Dialog.applyDialogFont(composite);
+        
         return composite;
     }
 
@@ -358,7 +386,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
      */
     private void createPromptButton(Composite composite) {
         activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setFont(composite.getFont());
         activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton));
         activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
         GridData data = new GridData();
@@ -373,13 +400,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(4, false);
         layout.marginHeight = layout.marginWidth = 0;
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
         composite.setLayoutData(data);
 
         Button enableAll = new Button(composite, SWT.PUSH);
-        enableAll.setFont(parent.getFont());
         enableAll.addSelectionListener(new SelectionAdapter() {
 
             /*
@@ -396,7 +424,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
-        disableAll.setFont(parent.getFont());
         disableAll.addSelectionListener(new SelectionAdapter() {
             /*
              * (non-Javadoc)
@@ -415,7 +442,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         		data = new GridData(GridData.GRAB_HORIZONTAL);
         		spacer.setLayoutData(data);
             advancedButton = new Button(composite, SWT.PUSH);
-            advancedButton.setFont(parent.getFont());
             advancedButton.addSelectionListener(new SelectionAdapter() {
 
                 /*
@@ -430,12 +456,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 }
             });
             advancedButton.setText(ActivityMessages.ActivitiesPreferencePage_advancedButton);
-            int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-            Point minSize = advancedButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-            data.widthHint = Math.max(widthHint, minSize.x);
-            data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-                    | GridData.VERTICAL_ALIGN_CENTER);
-            advancedButton.setLayoutData(data);
+            setButtonLayoutData(advancedButton);
         }
     }
 
@@ -446,33 +467,26 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = layout.marginWidth = 0;
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        {
-            Label label = new Label(composite, SWT.NONE);
-            label.setFont(parent.getFont());
-            label.setText(ActivityMessages.ActivityEnabler_description);
-            descriptionText = new Text(composite, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
-            descriptionText.setFont(parent.getFont());
-            GridData data = new GridData(GridData.FILL_BOTH);
-            data.heightHint = 100;
-            data.widthHint = 200;
-            descriptionText.setLayoutData(data);
-        }
-        {
-            Label label = new Label(composite, SWT.NONE);
-            label.setFont(parent.getFont());
-            label.setText(ActivityMessages.ActivitiesPreferencePage_requirements);            
-            dependantViewer = new TableViewer(composite, SWT.BORDER);
-            dependantViewer.getControl().setFont(parent.getFont());
-            dependantViewer.getControl().setLayoutData(
-                    new GridData(GridData.FILL_BOTH));
-            dependantViewer.setContentProvider(new CategoryContentProvider());
-            dependantViewer.addFilter(new EmptyCategoryFilter());
-            dependantViewer.setLabelProvider(new CategoryLabelProvider(false));
-            dependantViewer.setInput(Collections.EMPTY_SET);
-        }
+        new Label(composite, SWT.NONE).setText(ActivityMessages.ActivityEnabler_description);
+        descriptionText = new Text(composite, SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = 100;
+        data.widthHint = 200;
+        descriptionText.setLayoutData(data);
+
+        new Label(composite, SWT.NONE).setText(ActivityMessages.ActivitiesPreferencePage_requirements);            
+        dependantViewer = new TableViewer(composite, SWT.BORDER);
+        dependantViewer.getControl().setLayoutData(
+                new GridData(GridData.FILL_BOTH));
+        dependantViewer.setContentProvider(new CategoryContentProvider());
+        dependantViewer.addFilter(new EmptyCategoryFilter());
+        dependantViewer.setLabelProvider(new CategoryLabelProvider(false));
+        dependantViewer.setInput(Collections.EMPTY_SET);
     }
 
     /**
@@ -482,15 +496,15 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = layout.marginWidth = 0;
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);        
         composite.setLayout(layout);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.widthHint = 200;
         composite.setLayoutData(data);
         Label label = new Label(composite, SWT.NONE);
-        label.setFont(parent.getFont());
         label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories) + ':');
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
-        table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {
 
 			/*
@@ -528,7 +542,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 			}
 		});
         categoryViewer = new CheckboxTableViewer(table);
-        categoryViewer.getControl().setFont(parent.getFont());
         categoryViewer.getControl().setLayoutData(
                 new GridData(GridData.FILL_BOTH));
         categoryViewer.setContentProvider(new CategoryContentProvider());

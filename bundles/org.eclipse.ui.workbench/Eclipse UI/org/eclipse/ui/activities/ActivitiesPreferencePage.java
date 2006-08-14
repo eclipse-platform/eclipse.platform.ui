@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -78,7 +80,6 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
         activityPromptButton.setText(strings.getProperty(ACTIVITY_PROMPT_BUTTON, ActivityMessages.activityPromptButton)); 
         activityPromptButton.setToolTipText(strings.getProperty(ACTIVITY_PROMPT_BUTTON_TOOLTIP, ActivityMessages.activityPromptToolTip));
 
-        activityPromptButton.setFont(composite.getFont());
         setActivityButtonState();
     }
 
@@ -94,12 +95,15 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
+    	initializeDialogUnits(parent);
+    	
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         composite.setLayout(layout);
-        composite.setFont(parent.getFont());
 
         createActivityPromptPref(composite);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -109,6 +113,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
         workingCopy = workbench.getActivitySupport().createWorkingCopy();
         enabler = new ActivityEnabler(workingCopy, strings);
         enabler.createControl(composite).setLayoutData(data);
+        
+        Dialog.applyDialogFont(composite);
 
         return composite;
     }

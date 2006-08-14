@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -32,7 +34,9 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -279,57 +283,28 @@ public class ActivityEnabler {
 	 * @return the composite in which the controls exist.
 	 */
 	public Control createControl(Composite parent) {
-		Composite mainComposite = new Composite(parent, SWT.NONE);
-		{
-			GridLayout gridLayout = new GridLayout(1, false);
-			gridLayout.marginHeight = 0;
-			gridLayout.marginWidth = 0;
-			mainComposite.setLayout(gridLayout);
-		}
+        GC gc = new GC(parent);
+        gc.setFont(JFaceResources.getDialogFont());
+        FontMetrics fontMetrics = gc.getFontMetrics();
+        gc.dispose();
+        
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(createGridLayoutWithoutMargins(1, fontMetrics));
 
-		Composite c = new Composite(mainComposite, SWT.NONE);
-		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		new Label(composite, SWT.NONE).setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':');
 
-		{
-			GridLayout gridLayout = new GridLayout(1, true);
-			gridLayout.marginHeight = 0;
-			gridLayout.marginWidth = 0;
-			c.setLayout(gridLayout);
-		}
-
-		Label label = new Label(c, SWT.NONE);
-		label.setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':');
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		label.setFont(parent.getFont());
-
-		dualViewer = new CheckboxTreeViewer(c);
+		dualViewer = new CheckboxTreeViewer(composite);
 		dualViewer.setSorter(new ViewerSorter());
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		GC gc = new GC(dualViewer.getControl());
-		gc.setFont(parent.getFont());
-		// ensure that the viewer is big enough, but no so big in the case where
-		// the dialog font is large
-		data.heightHint = Math.min(Dialog.convertHeightInCharsToPixels(gc
-				.getFontMetrics(), 18), 200);
-		gc.dispose();
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		dualViewer.getControl().setLayoutData(data);
-		dualViewer.getControl().setFont(parent.getFont());
 
-		Composite buttonComposite = new Composite(c, SWT.NONE);
-		buttonComposite.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING));
-		{
-			GridLayout gridLayout = new GridLayout(2, true);
-			gridLayout.marginHeight = 0;
-			gridLayout.marginWidth = 0;
-			buttonComposite.setLayout(gridLayout);
-		}
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		buttonComposite.setLayout(createGridLayoutWithoutMargins(2, fontMetrics));
 
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
-		selectAllButton.setFont(parent.getFont());
 		selectAllButton.setText(ActivityMessages.ActivityEnabler_selectAll);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -341,10 +316,9 @@ public class ActivityEnabler {
 				toggleTreeEnablement(true);
 			}
 		});
-		selectAllButton.setLayoutData(new GridData(GridData.FILL_BOTH));
+		setButtonLayoutData(selectAllButton, fontMetrics);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
-		deselectAllButton.setFont(parent.getFont());
 		deselectAllButton.setText(ActivityMessages.ActivityEnabler_deselectAll); 
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -356,29 +330,15 @@ public class ActivityEnabler {
 				toggleTreeEnablement(false);
 			}
 		});
-		deselectAllButton.setLayoutData(new GridData(GridData.FILL_BOTH));
+		setButtonLayoutData(deselectAllButton, fontMetrics);
 
-		c = new Composite(mainComposite, SWT.NONE);
-		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+		new Label(composite, SWT.NONE).setText(ActivityMessages.ActivityEnabler_description);
 
-		{
-			GridLayout gridLayout = new GridLayout(1, true);
-			gridLayout.marginHeight = 0;
-			gridLayout.marginWidth = 0;
-			c.setLayout(gridLayout);
-		}
-
-		label = new Label(c, SWT.NONE);
-		label
-				.setText(ActivityMessages.ActivityEnabler_description);
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		label.setFont(parent.getFont());
-
-		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER
+		descriptionText = new Text(composite, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER
 				| SWT.V_SCROLL);
-		descriptionText.setFont(parent.getFont());
-		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH
-				| GridData.VERTICAL_ALIGN_BEGINNING));
+		data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics, 5);
+		descriptionText.setLayoutData(data);
 		setInitialStates();
 
 		dualViewer.addCheckStateListener(checkListener);
@@ -386,9 +346,29 @@ public class ActivityEnabler {
 
 		dualViewer.setSelection(new StructuredSelection());
 
-		return mainComposite;
+        Dialog.applyDialogFont(composite);
+        
+		return composite;
 	}
 
+	private GridLayout createGridLayoutWithoutMargins(int nColumns, FontMetrics fontMetrics) {
+		GridLayout layout = new GridLayout(nColumns, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.VERTICAL_SPACING);
+		return layout;
+	}
+
+    private GridData setButtonLayoutData(Button button, FontMetrics fontMetrics) {
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        int widthHint = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
+        Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        data.widthHint = Math.max(widthHint, minSize.x);
+        button.setLayoutData(data);
+        return data;
+    }
+    
 	/**
 	 * @param categoryId
 	 *            the id to fetch.
