@@ -27,11 +27,15 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractRemoveActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
@@ -86,8 +90,22 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 						}
 						else {
 							if(!prompted) {
-								prompted = true;
-								deleteAll = MessageDialog.openConfirm(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0, ActionMessages.RemoveBreakpointAction_1);
+								IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+								prompted = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER);
+								if(prompted) {
+									MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0, 
+											ActionMessages.RemoveBreakpointAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompted, null, null);
+									if(mdwt.getReturnCode() == IDialogConstants.NO_ID) {
+										deleteAll = false;
+									}
+									else {
+										store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, !mdwt.getToggleState());
+										deleteAll = true;
+									}
+								}
+								else {
+									deleteAll = !prompted;
+								}
 							}
 						}
 						if(deleteAll) {
