@@ -385,7 +385,12 @@ public class ProjectContentsLocationArea {
 		IProject project = existingProject;
 		if (project == null) {
 			String name = new Path(locationFieldContents).lastSegment();
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (name != null && Path.EMPTY.isValidSegment(name)){
+				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			}
+			else {
+				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
+			}
 		}
 		IStatus locationStatus = project.getWorkspace()
 				.validateProjectLocationURI(project, newPath);
