@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -153,6 +155,8 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
      */
     protected Control createDialogArea(Composite parent) {
+    	initializeDialogUnits(parent);
+    	
         Composite composite = (Composite) super.createDialogArea(parent);
 
 		createMessageArea(composite);
@@ -194,6 +198,8 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		Composite viewerComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		viewerComposite.setLayout(layout);
 		
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -207,7 +213,6 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		listViewer.getTable().setLayoutData(data);
-		listViewer.getTable().setFont(parent.getFont());
 
         listViewer.setLabelProvider(labelProvider);
         listViewer.setContentProvider(contentProvider);
@@ -254,6 +259,10 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				listViewer.setCheckedElements(initialElementSelections.toArray());
 			}
 		}
+		
+		availableWorkingSetsChanged();
+		Dialog.applyDialogFont(composite);
+		
 		return composite;
     }
 
@@ -440,6 +449,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	protected void availableWorkingSetsChanged() {
 		listViewer.setInput(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets());
+		super.availableWorkingSetsChanged();
 	}
 
 	protected void selectAllSets() {

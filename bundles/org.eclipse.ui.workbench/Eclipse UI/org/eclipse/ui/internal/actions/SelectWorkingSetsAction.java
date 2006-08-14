@@ -23,6 +23,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -262,11 +264,15 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
+		initializeDialogUnits(parent);
+		
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
 		Composite viewerComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		viewerComposite.setLayout(layout);
 		
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -281,6 +287,7 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 		viewer.addFilter(new WorkingSetFilter(null));
 		viewer.setInput(window.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
+		
 		viewer.setCheckedElements(window.getActivePage().getWorkingSets());
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -297,6 +304,10 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 		addModifyButtons(viewerComposite);
 		
 		addSelectionButtons(composite);
+		
+		availableWorkingSetsChanged();
+		
+		Dialog.applyDialogFont(composite);
 		
 		return composite;
 	}
@@ -320,6 +331,7 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 	protected void availableWorkingSetsChanged() {
 		viewer.setInput(window.getWorkbench().getWorkingSetManager()
 				.getWorkingSets());
+		super.availableWorkingSetsChanged();
 	}
 	
     /**

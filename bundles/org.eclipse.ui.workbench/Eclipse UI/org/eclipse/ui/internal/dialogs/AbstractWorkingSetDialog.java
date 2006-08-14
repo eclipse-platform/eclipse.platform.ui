@@ -109,6 +109,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
 		buttonComposite.setLayoutData(data);
@@ -154,9 +155,9 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	 */
 	protected void addSelectionButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.numColumns = 2;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		buttonComposite.setLayoutData(data);
@@ -166,7 +167,6 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				ID_SELECTALL,
 				WorkbenchMessages.SelectionDialog_selectLabel,
 				false);
-
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAllSets();
@@ -178,7 +178,6 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				ID_DESELECTALL,
 				WorkbenchMessages.SelectionDialog_deselectLabel,
 				false);
-		
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				deselectAllSets();
@@ -269,9 +268,20 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	 * Notifies the dialog that there has been a change to the sets available
 	 * for use. In other words, the user has either added, deleted or renamed a
 	 * set.
+     * <p>
+     * Subclasses should override, but should call <code>super.availableWorkingSetsChanged</code>
+     * to update the selection button enablements.
+     * </p>
 	 */
-	protected abstract void availableWorkingSetsChanged();
-
+	protected void availableWorkingSetsChanged() {
+		boolean enable = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets().length > 0;
+		if (!(selectAllButton == null || selectAllButton.isDisposed())){
+			selectAllButton.setEnabled(enable);
+		}
+		if (!(deselectAllButton == null || deselectAllButton.isDisposed())){
+			deselectAllButton.setEnabled(enable);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetSelectionDialog#getSelection()

@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -39,7 +41,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -129,9 +130,14 @@ public class ResourceWorkingSetPage extends WizardPage implements
      * @see org.eclipse.jface.wizard.WizardPage#createControl(Composite)
      */
     public void createControl(Composite parent) {
-        Font font = parent.getFont();
+    	initializeDialogUnits(parent);
+    	
         Composite composite = new Composite(parent, SWT.NULL);
-        composite.setLayout(new GridLayout());
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
         setControl(composite);
 
@@ -143,12 +149,10 @@ public class ResourceWorkingSetPage extends WizardPage implements
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
         label.setLayoutData(data);
-        label.setFont(font);
 
         text = new Text(composite, SWT.SINGLE | SWT.BORDER);
         text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL));
-        text.setFont(font);
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 validateInput();
@@ -163,7 +167,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
                 | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
         label.setLayoutData(data);
-        label.setFont(font);
 
         tree = new CheckboxTreeViewer(composite);
         tree.setUseHashlookup(true);
@@ -180,7 +183,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
         data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
         tree.getControl().setLayoutData(data);
-        tree.getControl().setFont(font);
 
         tree.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
@@ -208,7 +210,11 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(2, false));
+		layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
@@ -220,7 +226,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
 				validateInput();
 			}
 		});
-		selectAllButton.setFont(font);
 		setButtonLayoutData(selectAllButton);
 
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
@@ -232,7 +237,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
 				validateInput();
 			}
 		});
-		deselectAllButton.setFont(font);
 		setButtonLayoutData(deselectAllButton);
 		
 		initializeCheckedState();
@@ -240,6 +244,8 @@ public class ResourceWorkingSetPage extends WizardPage implements
             text.setText(workingSet.getName());
         }
         setPageComplete(false);
+        
+        Dialog.applyDialogFont(composite);
     }
 
     /**
