@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sascha Zelzer <zelzer@mathi.uni-heidelberg.de> -
+ *     	Fix for Bug 152927 [Decorators] ArrayOutOfBoundsException in DecorationBuilder.java
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
@@ -86,7 +88,7 @@ public class DecorationBuilder implements IDecoration {
 	 * @see org.eclipse.jface.viewers.IDecoration#addOverlay(org.eclipse.jface.resource.ImageDescriptor)
 	 */
 	public void addOverlay(ImageDescriptor overlay, int quadrant) {
-		if (quadrant >= 0 && quadrant <= DECORATOR_ARRAY_SIZE) {
+		if (quadrant >= 0 && quadrant < DECORATOR_ARRAY_SIZE) {
 			if (descriptors[quadrant] == null) {
 				descriptors[quadrant] = overlay;
 			}
