@@ -116,7 +116,16 @@ public class TableRow {
 	 */
 	private TraverseListener traverseListener = new TraverseListener() {
 		public void keyTraversed(TraverseEvent e) {
-			parent.keyTraversed(TableRow.this, e);
+			/*
+			 * FEATURE IN SWT: When SWT needs to resolve a mnemonic (accelerator)
+			 * character, it recursively calls the traverse event down all
+			 * controls in the containership hierarchy.  If e.doit is false,
+			 * no control has yet matched the mnemonic, and we don't have to
+			 * do anything since we don't do mnemonic matching.
+			 */
+			if (e.doit) {
+				parent.keyTraversed(TableRow.this, e);
+			}
 		}
 	};
 
