@@ -1548,6 +1548,18 @@
             A test decorator for resource mappings
          </description>
       </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.ui.tests.decorators.BadIndexDecorator"
+            id="org.eclipse.ui.tests.decorators.badIndexDecorator"
+            label="Bad Index Decorator"
+            lightweight="true">
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+      </decorator>
       
    </extension>
 <!-- Working set tests -->
