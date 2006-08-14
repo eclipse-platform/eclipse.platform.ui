@@ -3467,7 +3467,6 @@ public class TextViewer extends Viewer implements
 			case SELECT_ALL:
 				return true;
 			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null;
 			case SHIFT_RIGHT:
 				return isEditable() && fIndentChars != null && areMultipleLinesSelected();
 			case PREFIX:
