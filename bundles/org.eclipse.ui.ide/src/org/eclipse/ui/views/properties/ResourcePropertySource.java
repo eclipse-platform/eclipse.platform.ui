@@ -173,10 +173,14 @@ public class ResourcePropertySource implements IPropertySource {
 			return IDEPropertiesMessages.ResourceProperty_true;
         }
         if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
-            return String.valueOf(element.isDerived());
+            if (element.isDerived())
+            	return IDEPropertiesMessages.ResourceProperty_true;
+        	return IDEPropertiesMessages.ResourceProperty_false;
         }
         if (name.equals(IResourcePropertyConstants.P_LINKED_RES)) {
-            return String.valueOf(element.isLinked());
+        	if (element.isLinked())
+        		return IDEPropertiesMessages.ResourceProperty_true;
+        	return IDEPropertiesMessages.ResourceProperty_false;
         }
         if (name.equals(IResourcePropertyConstants.P_LOCATION_RES)) {
             return TextProcessor.process(IDEResourceInfoUtils.getLocationText(element));
