@@ -145,7 +145,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param description the description
      */
     void setDescription(String description) {
-        if (description == null) {
+        if (this.description == null) {
 			this.description = description;
 		}
     }
