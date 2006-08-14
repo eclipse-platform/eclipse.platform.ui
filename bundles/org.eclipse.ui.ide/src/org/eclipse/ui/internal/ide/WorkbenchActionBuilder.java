@@ -33,6 +33,7 @@ import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -508,14 +509,22 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
         menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
         menu.add(new Separator());
-        menu.add(quitAction);
-        menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
-        return menu;
+        
+        // If we're on OS X we shouldn't show this command in the File menu. It
+		// should be invisible to the user. However, we should not remove it -
+		// the carbon UI code will do a search through our menu structure
+		// looking for it when Cmd-Q is invoked (or Quit is chosen from the
+		// application menu.
+		ActionContributionItem quitItem = new ActionContributionItem(quitAction);
+		quitItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		menu.add(quitItem);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
+		return menu;
     }
 
     /**
-     * Creates and returns the Edit menu.
-     */
+	 * Creates and returns the Edit menu.
+	 */
     private MenuManager createEditMenu() {
         MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_edit, IWorkbenchActionConstants.M_EDIT);
         menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
@@ -645,8 +654,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator());
         addKeyboardShortcuts(menu);
         menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
-        menu.add(openPreferencesAction);
+        
+        // See the comment for quit in createFileMenu
+        ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
+        openPreferencesItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+        menu.add(openPreferencesItem);
 
         menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
         return menu;
@@ -749,7 +761,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		addSeparatorOrGroupMarker(menu, IWorkbenchActionConstants.MB_ADDITIONS);
 		// about should always be at the bottom
 		menu.add(new Separator("group.about")); //$NON-NLS-1$
-		menu.add(aboutAction);
+		
+		ActionContributionItem aboutItem = new ActionContributionItem(aboutAction);
+		aboutItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+        menu.add(aboutItem);
 		menu.add(new GroupMarker("group.about.ext")); //$NON-NLS-1$
 
         /*		

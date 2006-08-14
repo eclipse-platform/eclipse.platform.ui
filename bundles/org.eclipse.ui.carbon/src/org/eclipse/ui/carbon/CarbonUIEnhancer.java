@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.HICommand;
 import org.eclipse.swt.internal.carbon.OS;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IStartup;
@@ -296,30 +296,38 @@ public class CarbonUIEnhancer implements IStartup {
     private int runAction(String actionId) {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (window != null) {
-            Shell shell = window.getShell();
-            Menu menubar = shell.getMenuBar();
-            if (menubar != null) {
-                for (int i = 0; i < menubar.getItemCount(); i++) {
-                    MenuItem mi = menubar.getItem(i);
-                    Menu m = mi.getMenu();
-                    for (int j = 0; j < m.getItemCount(); j++) {
-                        MenuItem mi2 = m.getItem(j);
-                        Object o = mi2.getData();
-                        if (o instanceof ActionContributionItem) {
-                            ActionContributionItem aci = (ActionContributionItem) o;
-                            String id = aci.getId();
-                            if (id != null && id.equals(actionId)) {
-                                IAction action = aci.getAction();
-                                if (action != null && action.isEnabled()) {
-                                    action.run();
-                                    return OS.noErr;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        	IMenuManager manager = ((WorkbenchWindow)window).getActionBars().getMenuManager();
+        	IAction action = findAction(actionId, manager);
+        	if (action != null && action.isEnabled()) {
+        		action.run();
+        		return OS.noErr;
+        	}
         }
         return OS.eventNotHandledErr;
+       
     }
+
+    /**
+	 * Find the action with the given ID by recursivly crawling the provided menu manager.  If the action cannot be found <code>null</code> is returned.
+	 * @param actionId the id to search for
+	 * @param manager the manager to search
+	 * @return the action or <code>null</code>
+	 */
+	private IAction findAction(String actionId, IMenuManager manager) {
+		IContributionItem[] items = manager.getItems();
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			if (item instanceof ActionContributionItem) {
+				ActionContributionItem aci = (ActionContributionItem) item;
+				String id = aci.getId();
+				if (id != null && id.equals(actionId))
+					return aci.getAction();
+			} else if (item instanceof IMenuManager) {
+				IAction found = findAction(actionId, (IMenuManager) item);
+				if (found != null)
+					return found;
+			}
+		}
+		return null;
+	}
 }
