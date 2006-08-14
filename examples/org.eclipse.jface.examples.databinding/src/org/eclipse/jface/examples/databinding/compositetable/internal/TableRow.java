@@ -121,7 +121,8 @@ public class TableRow {
 			 * character, it recursively calls the traverse event down all
 			 * controls in the containership hierarchy.  If e.doit is false,
 			 * no control has yet matched the mnemonic, and we don't have to
-			 * do anything since we don't do mnemonic matching.
+			 * do anything since we don't do mnemonic matching and no mnemonic
+			 * has matched.
 			 */
 			if (e.doit) {
 				parent.keyTraversed(TableRow.this, e);
