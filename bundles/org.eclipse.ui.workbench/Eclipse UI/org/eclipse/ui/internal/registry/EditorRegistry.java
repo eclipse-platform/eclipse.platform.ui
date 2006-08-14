@@ -65,6 +65,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -1652,5 +1653,33 @@ class MockMapping implements IFileEditorMapping {
 	public String getName() {
 		return filename;
     }	
+
+    /* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof MockMapping)) {
+			return false;
+		}
+
+		MockMapping mapping = (MockMapping) obj;
+		if (!this.filename.equals(mapping.filename)) {
+			return false;
+		}
+
+		if (!this.extension.equals(mapping.extension)) {
+			return false;
+		}
+
+		if (!Util.equals(this.getEditors(), mapping.getEditors())) {
+			return false;
+		}
+		return Util.equals(this.getDeletedEditors(), mapping
+				.getDeletedEditors());
+	}
 }
 
