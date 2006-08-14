@@ -1140,9 +1140,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	    		// ensure the wizard does not shrink upon resize
 	    		Point currentSize = shell.getSize();
 	    		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	    		int width = Math.max(currentSize.x, newSize.x);
+	    		// only adjust height for progress bar, adjusting the width will resize 
+	    		// the wizard too wide when there is a long wizard description.
 	    		int height = Math.max(currentSize.y, newSize.y);
-	    		setShellSize(width, height);
+	    		setShellSize(currentSize.x, height);
 	    		progressMonitorPart.getParent().layout(true);
 	    	}
         }
