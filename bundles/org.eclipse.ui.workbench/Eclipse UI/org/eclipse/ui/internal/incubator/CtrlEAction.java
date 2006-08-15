@@ -151,8 +151,6 @@ public class CtrlEAction
 				popup
 						.setLocation(toolItem.getParent().toDisplay(
 								popupLocation));
-			} else {
-				System.out.println(event.toString());
 			}
 		}
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
