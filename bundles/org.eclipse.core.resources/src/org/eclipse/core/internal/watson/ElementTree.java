@@ -147,7 +147,7 @@ public class ElementTree {
 	 * and will be immutable afterwards.
 	 * @return this tree.
 	 */
-	public ElementTree collapseTo(ElementTree parent) {
+	public synchronized ElementTree collapseTo(ElementTree parent) {
 		Assert.isTrue(tree.isImmutable());
 		if (this == parent) {
 			//already collapsed
@@ -311,7 +311,7 @@ public class ElementTree {
 	 * specified by the given path.
 	 * The given element must be present in this tree.
 	 */
-	public int getChildCount(IPath key) {
+	public synchronized int getChildCount(IPath key) {
 		Assert.isNotNull(key);
 		return getChildIDs(key).length;
 	}
@@ -342,7 +342,7 @@ public class ElementTree {
 	 * specified by the given path.
 	 * The given element must be present in this tree.
 	 */
-	public IPath[] getChildren(IPath key) {
+	public synchronized IPath[] getChildren(IPath key) {
 		Assert.isNotNull(key);
 		return getChildIDs(key);
 	}
@@ -393,7 +393,7 @@ public class ElementTree {
 	 * The specified element must exist in the tree.
 	 * If the specified element is null, returns the root element path.
 	 */
-	public String[] getNamesOfChildren(IPath key) {
+	public synchronized String[] getNamesOfChildren(IPath key) {
 		try {
 			if (key == null)
 				return new String[] {""}; //$NON-NLS-1$
