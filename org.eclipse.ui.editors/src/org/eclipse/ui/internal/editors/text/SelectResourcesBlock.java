@@ -45,6 +45,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
 
+/* 
+ * XXX: This is an copy of the internal ResourceTreeAndListGroup class, see:
+ *      https://bugs.eclipse.org/bugs/show_bug.cgi?id=147027
+ */ 
 
 /**
  * Workbench-level composite that combines a CheckboxTreeViewer and
