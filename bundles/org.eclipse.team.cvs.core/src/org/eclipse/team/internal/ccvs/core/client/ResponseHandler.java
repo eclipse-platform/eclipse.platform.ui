@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -98,10 +97,22 @@ public abstract class ResponseHandler {
 	            	CVSTeamProvider.markAsTempShare(project);
             	}
             }
+            try{
             folder.setFolderSyncInfo(new FolderSyncInfo(
 				relativePath,
 				session.getCVSRepositoryLocation().getLocation(false),
 				null, false));
+            } catch (CVSException ex){
+            	IStatus status = ex.getStatus();
+            	if (status != null){
+            		if (status.getCode() == IResourceStatus.INVALID_VALUE){
+            			//if it's an invalid value, just ignore the exception (see Bug# 152053),
+            			//else throw it again
+            		} else {
+            			throw ex;
+            		}
+            	}
+            }
 		}
 		return folder;
 	}
