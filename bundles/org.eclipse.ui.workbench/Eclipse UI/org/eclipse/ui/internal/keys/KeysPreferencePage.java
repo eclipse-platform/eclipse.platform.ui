@@ -15,8 +15,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -100,6 +96,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
+
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The preference page for defining keyboard shortcuts. While some of its
@@ -1929,7 +1928,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		 * identifiers. The parameterized commands will be sorted based on their
 		 * names.
 		 */
-		final SortedSet commands = new TreeSet();
+		List commands = new ArrayList();
 		final Iterator commandIdItr = commandIds.iterator();
 		while (commandIdItr.hasNext()) {
 			final String currentCommandId = (String) commandIdItr.next();
@@ -1942,6 +1941,11 @@ public final class KeysPreferencePage extends PreferencePage implements
 				// It is safe to just ignore undefined commands.
 			}
 		}
+		
+		// sort the commands with a collator, so they appear in the
+		// combo correctly
+		commands = sortParameterizedCommands(commands);
+		
 		final int commandCount = commands.size();
 		this.commands = (ParameterizedCommand[]) commands
 				.toArray(new ParameterizedCommand[commandCount]);
@@ -1982,6 +1986,44 @@ public final class KeysPreferencePage extends PreferencePage implements
 		if ((comboCommand.getSelectionIndex() == -1) && (commandCount > 0)) {
 			comboCommand.select(0);
 		}
+	}
+	
+	/**
+	 * Sort the commands using the correct language.
+	 * @param commands the List of ParameterizedCommands
+	 * @return The sorted List
+	 */
+	private List sortParameterizedCommands(List commands) {
+		final Collator collator = Collator.getInstance();
+		
+		// this comparator is based on the ParameterizedCommands#compareTo(*)
+		// method, but uses the collator.
+		Comparator comparator = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String name1 = null;
+				String name2 = null;
+				try {
+					name1 = ((ParameterizedCommand) o1).getName();
+				} catch (NotDefinedException e) {
+					return -1;
+				}
+				try {
+					name2 = ((ParameterizedCommand) o2).getName();
+				} catch (NotDefinedException e) {
+					return 1;
+				}
+				int rc = collator.compare(name1, name2);
+				if (rc != 0) {
+					return rc;
+				}
+
+				String id1 = ((ParameterizedCommand) o1).getId();
+				String id2 = ((ParameterizedCommand) o2).getId();
+				return collator.compare(id1, id2);
+			}
+		};
+		Collections.sort(commands, comparator);
+		return commands;
 	}
 
 	/**
