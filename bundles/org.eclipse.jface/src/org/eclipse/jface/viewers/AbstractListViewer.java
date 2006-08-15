@@ -193,19 +193,19 @@ public abstract class AbstractListViewer extends StructuredViewer {
      */
     protected Widget doFindItem(Object element) {
         if (element != null) {
-            if (listMap.contains(element)) {
+            if (listMapContains(element)) {
 				return getControl();
 			}
         }
         return null;
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * Method declared on StructuredViewer.
      */
     protected void doUpdateItem(Widget data, Object element, boolean fullMap) {
         if (element != null) {
-            int ix = listMap.indexOf(element);
+            int ix = getElementIndex(element);
             if (ix >= 0) {
                 ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
                 listSetItem(ix, getLabelProviderText(labelProvider,element));
@@ -363,7 +363,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
                 setInput(null);
                 return;
             }
-            int ix = listMap.indexOf(elements[i]);
+            int ix = getElementIndex(elements[i]);
             if (ix >= 0) {
                 listRemove(ix);
                 listMap.remove(ix);
@@ -434,7 +434,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
             int count = 0;
             for (int i = 0; i < n; ++i) {
                 Object el = in.get(i);
-                int ix = listMap.indexOf(el);
+                int ix = getElementIndex(el);
                 if (ix >= 0) {
 					ixs[count++] = ix;
 				}
@@ -449,8 +449,34 @@ public abstract class AbstractListViewer extends StructuredViewer {
         }
     }
 
+    /**
+     * Returns the index of the given element in listMap, or -1 if the element cannot be found.
+     * As of 3.3, uses the element comparer if available.
+     * 
+     * @param element
+     * @return the index
+     */
     int getElementIndex(Object element) {
-        return listMap.indexOf(element);
-    }
+		IElementComparer comparer = getComparer();
+		if (comparer == null) {
+			return listMap.indexOf(element);
+		}
+		int size = listMap.size();
+		for (int i = 0; i < size; i++) {
+			if (comparer.equals(element, listMap.get(i)))
+				return i;
+		}
+		return -1;
+	}
+
+    /**
+	 * @param element
+	 * @return true if listMap contains the given element
+	 * 
+	 * @since 3.3
+	 */
+	private boolean listMapContains(Object element) {
+		return getElementIndex(element) != -1;
+	}
 
 }
