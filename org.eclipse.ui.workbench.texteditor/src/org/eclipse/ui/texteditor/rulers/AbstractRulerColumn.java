@@ -236,7 +236,9 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 
 	/**
 	 * Hook method that informs subclasses about the fact that
-	 * {@link #createControl(CompositeRuler, Composite)} has been called.
+	 * {@link #createControl(CompositeRuler, Composite)} has been called. When this method is
+	 * called, {@link #getTextViewer()} and {@link #getTextWidget()} will return non-<code>null</code>
+	 * values until {@link #columnRemoved()} is called.
 	 */
 	protected void controlCreated() {
 	}
@@ -597,8 +599,8 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Returns the editor's text widget, <code>null</code> before
-	 * {@link #createControl(CompositeRuler, Composite)} has been called.
+	 * Returns the editor's text widget, <code>null</code> before {@link #controlCreated()} and
+	 * after {@link #columnRemoved()} have been called.
 	 * 
 	 * @return the editor's text widget or <code>null</code>
 	 */
@@ -607,8 +609,8 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Returns the editor's text viewer, <code>null</code> before
-	 * {@link #createControl(CompositeRuler, Composite)} has been called.
+	 * Returns the editor's text viewer, <code>null</code> before {@link #controlCreated()} and
+	 * after {@link #columnRemoved()} have been called.
 	 * 
 	 * @return the editor's text viewer or <code>null</code>
 	 */

@@ -13,6 +13,8 @@ package org.eclipse.ui.texteditor.rulers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
@@ -86,15 +88,36 @@ public abstract class RulerColumn implements IVerticalRulerColumn {
 
 	/**
 	 * Hook method called after a column has been instantiated, but before it is added to a
-	 * {@link CompositeRuler}. The {@link #getEditor()} and {@link #getDescriptor()} methods are
-	 * guaranteed to return non-<code>null</code> values after this call. Subclasses may replace.
+	 * {@link CompositeRuler} and before
+	 * {@linkplain IVerticalRulerColumn#createControl(CompositeRuler, Composite) createControl} is
+	 * called. This happens when
+	 * <ul>
+	 * <li>the column is set visible by the user or programmatically</li>
+	 * <li>the editor is created, if this ruler targets the editor and is enabled by default</li>
+	 * <li>the editor input changes and the column now targets the new editor contents.</li>
+	 * </ul>
+	 * The {@link #getEditor()} and {@link #getDescriptor()} methods are guaranteed to return non-<code>null</code>
+	 * values when this method is called.
+	 * <p>
+	 * Subclasses may replace.
+	 * </p>
 	 */
 	protected void columnCreated() {
 	}
 
 	/**
-	 * Hook method called after a column has been removed from the {@link CompositeRuler}.
+	 * Hook method called after a column has been removed from the {@link CompositeRuler}. This
+	 * happens when
+	 * <ul>
+	 * <li>the column is hidden by the user or programmatically</li>
+	 * <li>the editor is closed</li>
+	 * <li>the editor input changes and the column no longer targets the editor contents.</li>
+	 * </ul>
+	 * The column will not be used after this method has been called; a new column will be
+	 * instantiated if the same column kind is shown for the same editor.
+	 * <p>
 	 * Subclasses may replace.
+	 * </p>
 	 */
 	protected void columnRemoved() {
 	}
