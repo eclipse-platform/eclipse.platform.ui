@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
@@ -62,19 +61,9 @@ public class PerspectiveBarManager extends ToolBarManager {
     // TODO begin refactor this out? it is not good that we know we are inside a
     // CoolBar
     private CoolBar coolBar;
-
-    private Menu popup;
-
+    private Menu chevronMenu = null;
+    
     public void handleChevron(SelectionEvent event) {
-        /*
-         * If the popup menu is already there, then pop it down. This doesn't
-         * work... still need to figure this out.
-         */
-        if (popup != null) {
-            popup.dispose();
-            popup = null;
-            return;
-        }
         CoolItem item = (CoolItem) event.widget;
         //ToolBar toolbar = (ToolBar)getControl();
         Control control = getControl();
@@ -117,12 +106,18 @@ public class PerspectiveBarManager extends ToolBarManager {
 			}
             i++;
         }
+        
         /* Create a pop-up menu with items for each of the hidden buttons. */
-        popup = new Menu(coolBar);
+        // Out with the old...
+        if (chevronMenu != null && !chevronMenu.isDisposed())
+        	chevronMenu.dispose();
+        
+        // ...In with the new
+        chevronMenu = new Menu(coolBar);
 
         for (int j = i; j < toolCount; j++) {
             ToolItem tool = tools[j];
-            MenuItem menuItem = new MenuItem(popup, SWT.NONE);
+            MenuItem menuItem = new MenuItem(chevronMenu, SWT.NONE);
             if (tool.getSelection()) {
 				menuItem.setEnabled(false);
 			}
@@ -159,18 +154,8 @@ public class PerspectiveBarManager extends ToolBarManager {
          * relative to CoolBar).
          */
         pt = coolBar.toDisplay(new Point(event.x, event.y));
-        popup.setLocation(pt.x, pt.y);
-        popup.setVisible(true);
-        Display display = coolBar.getDisplay();
-        while (popup != null && !popup.isDisposed() && popup.isVisible()) {
-            if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-        }
-        if (popup != null) {
-            popup.dispose();
-            popup = null;
-        }
+        chevronMenu.setLocation(pt.x, pt.y);
+        chevronMenu.setVisible(true);
     }
 
     /* (non-Javadoc)
