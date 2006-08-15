@@ -294,20 +294,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 	}
 
 	/**
-	 * This is the amount the used to control how much the tooltip is shifted
-	 * from the current mouse position
-	 * 
-	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @param columnIndex
-	 *            the column-index
-	 * @return shift of the tooltip
-	 */
-	public Point getTooltipShift(Object object, int columnIndex) {
-		return null;
-	}
-
-	/**
 	 * If you want your tooltip to be using the native Tooltip you can force
 	 * this by returning true from this method. If native tooltips are used only
 	 * the text-value is used all other feature are of custom tooltips are not
@@ -321,45 +307,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 */
 	public boolean useNativeTooltip(Object object, int columnIndex) {
 		return false;
-	}
-
-	/**
-	 * The time in milliseconds after the tooltip is hidden
-	 * 
-	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @param columnIndex
-	 *            the column-index
-	 * @return milliseconds
-	 */
-	public int getTooltipTimeDisplayed(Object object, int columnIndex) {
-		return 0;
-	}
-
-	/**
-	 * The time in milliseconds until the tooltip pops up
-	 * 
-	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @param columnIndex
-	 *            the column-index
-	 * @return milliseconds
-	 */
-	public int getTooltipDisplayDelayTime(Object object, int columnIndex) {
-		return 0;
-	}
-
-	/**
-	 * The style used to create the label
-	 * 
-	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @param columnIndex
-	 *            the column-index
-	 * @return style mask
-	 */
-	public int getTooltipImageStyle(Object object, int columnIndex) {
-		return SWT.SHADOW_NONE;
 	}
 
 	/**
@@ -417,7 +364,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 *            the element for which the tooltip is shown
 	 * @return style mask
 	 */
-	public int getTooltipImageStyle(Object object) {
+	public int getTooltipStyle(Object object) {
 		return SWT.SHADOW_NONE;
 	}
 

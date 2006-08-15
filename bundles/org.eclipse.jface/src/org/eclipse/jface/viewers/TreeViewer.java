@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of RowPart
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -930,6 +931,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		return getRowPartFromItem(new TreeItem((TreeItem)parent.getItem(),SWT.NONE));
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#createColumnViewer(org.eclipse.swt.widgets.Widget, org.eclipse.jface.viewers.ViewerLabelProvider)
+	 */
 	protected ColumnViewerPart createColumnViewer(Widget columnOwner, ViewerLabelProvider labelProvider) {
 		if( columnOwner instanceof TreeColumn ) {
 			return new TreeColumnViewerPart((TreeColumn)columnOwner,labelProvider);

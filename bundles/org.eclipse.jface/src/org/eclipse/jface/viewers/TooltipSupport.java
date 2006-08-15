@@ -127,7 +127,7 @@ class TooltipSupport {
 				
 				tip = new Shell(viewer.getControl().getShell(), SWT.ON_TOP | SWT.TOOL);
 				tip.setLayout(new FillLayout());
-				CLabel label = new CLabel(tip, labelProvider.getTooltipImageStyle(element));
+				CLabel label = new CLabel(tip, labelProvider.getTooltipStyle(element));
 				label.setText(text);
 				label.addListener(SWT.MouseExit, hideListener);
 				label.addListener(SWT.MouseDown, hideListener);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;

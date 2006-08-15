@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> (bug 83200)
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of RowPart
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1247,9 +1247,9 @@ public class TableViewer extends ColumnViewer {
 		TableItem item;
 		
 		if( rowIndex >= 0 ) {
-			item = new TableItem(table,SWT.NONE,rowIndex);
+			item = new TableItem(table,style,rowIndex);
 		} else {
-			item = new TableItem(table,SWT.NONE);
+			item = new TableItem(table,style);
 		}
 		
 		return getRowPartFromItem(item);
