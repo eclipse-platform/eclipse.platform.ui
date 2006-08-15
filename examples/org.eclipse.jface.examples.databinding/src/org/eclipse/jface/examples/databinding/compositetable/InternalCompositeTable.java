@@ -237,12 +237,12 @@ public class InternalCompositeTable extends Composite implements Listener {
 			if (children[0] instanceof Composite) {
 				Composite child = (Composite) children[0];
 				// children instanceof Composite && programmer supplied a layout manager --> getPreferredSize()
-				if (child.getLayout() != null) {
+				if (child.getLayout() != null || child instanceof EmptyTablePlaceholder) {
 					preferredWidth = controlHolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 				} else {
 					// children instanceof Composite && layout == null
 					int[] weights = parent.getWeights();
-					if (weights.length != child.getChildren().length) {
+					if (weights == null || weights.length != child.getChildren().length) {
 						throw new IllegalArgumentException("Number of weights != number of child controls");
 					}
 					preferredWidth = 0;
