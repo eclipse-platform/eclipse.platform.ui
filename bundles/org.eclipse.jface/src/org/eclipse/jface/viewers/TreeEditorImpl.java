@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Shindl <tom.schindl@bestsolution.at> - Refactored to use ColumnViewerPart
+ *     Tom Shindl <tom.schindl@bestsolution.at> - Refactored to use ViewerColumn
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Item;
     }
 
     private void activateCellEditor() {
-    	ColumnViewerPart part = viewer.getColumnViewer(columnNumber);
+    	ViewerColumn part = viewer.getColumnViewer(columnNumber);
     	Object element = treeItem.getData();
     	
     	if( part != null && part.getEditingSupport() != null && part.getEditingSupport().canEdit(element) ) {
@@ -221,7 +221,7 @@ import org.eclipse.swt.widgets.Item;
     abstract Rectangle getBounds(Item item, int columnNumber);
 
     /**
-     * Get the Cell Editors for the receiver.
+     * Get the ViewerCell Editors for the receiver.
      * @return CellEditor[]
      */
     public CellEditor[] getCellEditors() {
@@ -310,7 +310,7 @@ import org.eclipse.swt.widgets.Item;
      * by delegating to the cell modifier.
      */
     private void saveEditorValue(CellEditor cellEditor, Item treeItem) {
-    	ColumnViewerPart part = (ColumnViewerPart)treeItem.getData(ColumnViewerPart.COLUMN_VIEWER_KEY);
+    	ViewerColumn part = (ViewerColumn)treeItem.getData(ViewerColumn.COLUMN_VIEWER_KEY);
     	
     	if( part != null && part.getEditingSupport() != null ) {
         	part.getEditingSupport().setValue(treeItem.getData(), cellEditor.getValue());

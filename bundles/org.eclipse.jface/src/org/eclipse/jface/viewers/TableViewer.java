@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - concept of RowPart
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -364,7 +364,7 @@ public class TableViewer extends ColumnViewer {
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
-				ColumnViewerPart columnViewer = getColumnViewer(column);
+				ViewerColumn columnViewer = getColumnViewer(column);
 				columnViewer.refresh( getRowPartFromItem(item),column);
 
 				// As it is possible for user code to run the event
@@ -401,9 +401,9 @@ public class TableViewer extends ColumnViewer {
 	 * @param viewerPart
 	 * @param columnIndex
 	 */
-	public void setColumnPart(ColumnViewerPart viewerPart, int columnIndex) {
+	public void setColumnPart(ViewerColumn viewerPart, int columnIndex) {
 		TableColumn column = getTable().getColumn(columnIndex);
-		column.setData(ColumnViewerPart.COLUMN_VIEWER_KEY, viewerPart);
+		column.setData(ViewerColumn.COLUMN_VIEWER_KEY, viewerPart);
 	}
 
 
@@ -1005,10 +1005,10 @@ public class TableViewer extends ColumnViewer {
 	private void clearColumnParts() {
 		TableColumn[] columns = getTable().getColumns();
 		if(columns.length == 0)
-			getTable().setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+			getTable().setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
 		else{
 			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
 				
 			}
 		}
@@ -1230,11 +1230,11 @@ public class TableViewer extends ColumnViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
-	protected RowPart getRowPartFromItem(Widget item) {
-		RowPart part = (RowPart)item.getData(RowPart.ROWPART_KEY);
+	protected ViewerRow getRowPartFromItem(Widget item) {
+		ViewerRow part = (ViewerRow)item.getData(ViewerRow.ROWPART_KEY);
 		
 		if( part == null ) {
-			part = new TableRowPart(((TableItem)item));
+			part = new TableViewerRow(((TableItem)item));
 		}
 		
 		return part;
@@ -1243,7 +1243,7 @@ public class TableViewer extends ColumnViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#createNewRowPart(org.eclipse.jface.internal.viewers.RowPart, int, int)
 	 */
-	protected RowPart createNewRowPart(RowPart parent, int style, int rowIndex) {
+	protected ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
 		TableItem item;
 		
 		if( rowIndex >= 0 ) {
@@ -1271,17 +1271,6 @@ public class TableViewer extends ColumnViewer {
 	 */
 	protected Item getItem(int x, int y) {
 		return table.getItem(new Point(x,y));
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#createColumnViewer(org.eclipse.swt.widgets.Widget, org.eclipse.jface.viewers.ViewerLabelProvider)
-	 */
-	protected ColumnViewerPart createColumnViewer(Widget columnOwner, ViewerLabelProvider labelProvider) {
-		if( columnOwner instanceof TableColumn ) {
-			return new TableColumnViewerPart((TableColumn)columnOwner,labelProvider);
-		}
-		
-		return super.createColumnViewer(columnOwner, labelProvider);
 	}
 	
 	

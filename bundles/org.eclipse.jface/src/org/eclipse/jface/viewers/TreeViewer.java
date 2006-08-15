@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - concept of RowPart
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -153,7 +153,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			columnCount = 1;
 
 		for (int column = 0; column < columnCount; column++) {
-			ColumnViewerPart columnViewer = getColumnViewer(column);
+			ViewerColumn columnViewer = getColumnViewer(column);
 			columnViewer.refresh(getRowPartFromItem(treeItem),column);
 
 			// As it is possible for user code to run the event
@@ -541,10 +541,10 @@ public class TreeViewer extends AbstractTreeViewer {
 	private void clearColumnParts() {
 		TreeColumn[] columns = getTree().getColumns();
 		if(columns.length == 0)
-			getTree().setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+			getTree().setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
 		else{
 			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
 				
 			}
 		}
@@ -899,24 +899,24 @@ public class TreeViewer extends AbstractTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
-	protected RowPart getRowPartFromItem(Widget item) {
-		RowPart part = (RowPart)item.getData(RowPart.ROWPART_KEY);
+	protected ViewerRow getRowPartFromItem(Widget item) {
+		ViewerRow part = (ViewerRow)item.getData(ViewerRow.ROWPART_KEY);
 		
 		if( part == null ) {
-			part = new TreeRowPart(((TreeItem)item));
+			part = new TreeViewerRow(((TreeItem)item));
 		}
 		
 		return part;
 	}
 		
 	/**
-	 * Create a new RowPart at rowIndex
+	 * Create a new ViewerRow at rowIndex
 	 * @param parent
 	 * @param style
 	 * @param rowIndex
-	 * @return RowPart
+	 * @return ViewerRow
 	 */
-	private RowPart createNewRowPart(RowPart parent, int style, int rowIndex) {
+	private ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
 		if( parent == null ) {
 			if( rowIndex >= 0 ) {
 				return getRowPartFromItem(new TreeItem(tree,style,rowIndex));
@@ -930,15 +930,5 @@ public class TreeViewer extends AbstractTreeViewer {
 		
 		return getRowPartFromItem(new TreeItem((TreeItem)parent.getItem(),SWT.NONE));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#createColumnViewer(org.eclipse.swt.widgets.Widget, org.eclipse.jface.viewers.ViewerLabelProvider)
-	 */
-	protected ColumnViewerPart createColumnViewer(Widget columnOwner, ViewerLabelProvider labelProvider) {
-		if( columnOwner instanceof TreeColumn ) {
-			return new TreeColumnViewerPart((TreeColumn)columnOwner,labelProvider);
-		}
-		
-		return super.createColumnViewer(columnOwner, labelProvider);
-	}
+
 }

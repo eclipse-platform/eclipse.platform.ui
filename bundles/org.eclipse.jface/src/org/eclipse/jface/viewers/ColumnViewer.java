@@ -52,8 +52,8 @@ abstract class ColumnViewer extends StructuredViewer {
 	 *            search only in selection
 	 * @return the cell or if no cell is found at this point
 	 */
-	Cell getCell(Point point) {
-		RowPart row = getRowPart(point);
+	ViewerCell getCell(Point point) {
+		ViewerRow row = getRowPart(point);
 		if (row != null) {
 			return row.getCell(point);
 		}
@@ -62,12 +62,12 @@ abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Get the RowPart at point.
+	 * Get the ViewerRow at point.
 	 * 
 	 * @param point
-	 * @return RowPart
+	 * @return ViewerRow
 	 */
-	protected RowPart getRowPart(Point point) {
+	protected ViewerRow getRowPart(Point point) {
 		Item item = getItem(point.x, point.y);
 
 		if (item != null) {
@@ -77,8 +77,8 @@ abstract class ColumnViewer extends StructuredViewer {
 		return null;
 	}
 
-	protected RowPart getRowPartFromItem(Widget item) {
-		return (RowPart) item.getData(RowPart.ROWPART_KEY);
+	protected ViewerRow getRowPartFromItem(Widget item) {
+		return (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 	}
 
 	/**
@@ -121,17 +121,17 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @param columnIndex
 	 * @return TableColumnViewer
 	 */
-	public ColumnViewerPart getColumnViewer(final int columnIndex) {
+	public ViewerColumn getColumnViewer(final int columnIndex) {
 
-		ColumnViewerPart viewer;
+		ViewerColumn viewer;
 		Widget columnOwner = getColumnViewerOwner(columnIndex);
 
 		if (columnOwner == null) {
 			return null;
 		}
 
-		viewer = (ColumnViewerPart) columnOwner
-				.getData(ColumnViewerPart.COLUMN_VIEWER_KEY);
+		viewer = (ViewerColumn) columnOwner
+				.getData(ViewerColumn.COLUMN_VIEWER_KEY);
 
 		if (viewer == null) {
 			viewer = createColumnViewer(columnOwner, ViewerLabelProvider
@@ -190,15 +190,15 @@ abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Create a ColumnViewerPart for the columnOwner.
+	 * Create a ViewerColumn for the columnOwner.
 	 * 
 	 * @param columnOwner
 	 * @param labelProvider
-	 * @return ColumnViewerPart
+	 * @return ViewerColumn
 	 */
-	protected ColumnViewerPart createColumnViewer(Widget columnOwner,
+	protected ViewerColumn createColumnViewer(Widget columnOwner,
 			ViewerLabelProvider labelProvider) {
-		return new ColumnViewerPart(columnOwner, labelProvider);
+		return new ViewerColumn(columnOwner, labelProvider);
 	}
 
 	/**

@@ -16,7 +16,7 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * The ColumnViewerPart is abstract implementation of the column parts.
+ * The ViewerColumn is abstract implementation of the column parts.
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as
  * part of a work in progress. This API may change at any given time. Please 
  * do not use this API without consulting with the Platform/UI team.
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  * 
  */
-public class ColumnViewerPart {
+public class ViewerColumn {
 
 	private ViewerLabelProvider labelProvider;
 
@@ -41,9 +41,9 @@ public class ColumnViewerPart {
 	 * @param columnOwner
 	 * @param provider
 	 */
-	public ColumnViewerPart(Widget columnOwner, ViewerLabelProvider provider) {
+	public ViewerColumn(Widget columnOwner, ViewerLabelProvider provider) {
 		labelProvider = provider;
-		columnOwner.setData(ColumnViewerPart.COLUMN_VIEWER_KEY, this);
+		columnOwner.setData(ViewerColumn.COLUMN_VIEWER_KEY, this);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class ColumnViewerPart {
 	 * @param element
 	 * @param columnIndex
 	 */
-	public void refresh(RowPart row, int columnIndex) {
+	public void refresh(ViewerRow row, int columnIndex) {
 		ViewerLabel label = new ViewerLabel(row.getText(columnIndex), row
 				.getImage(columnIndex));
 		getLabelProvider().updateLabel(label, row.getItem().getData(), columnIndex);

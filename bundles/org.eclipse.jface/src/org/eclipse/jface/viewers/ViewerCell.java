@@ -15,23 +15,23 @@ package org.eclipse.jface.viewers;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * The Cell is the JFace representation of a cell entry in a RowPart.
+ * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
  * @since 3.3
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as
  * part of a work in progress. This API may change at any given time. Please 
  * do not use this API without consulting with the Platform/UI team.
  *
  */
-public class Cell {
+public class ViewerCell {
 	private int columnIndex;
-	private RowPart row;
+	private ViewerRow row;
 	
 	/**
 	 * Create a new instance of the receiver on the row.
 	 * @param row
 	 * @param columnIndex
 	 */
-	public Cell(RowPart row, int columnIndex) {
+	public ViewerCell(ViewerRow row, int columnIndex) {
 		this.row = row;
 		this.columnIndex = columnIndex;
 	}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Shindl <tom.schindl@bestsolution.at> - Refactored to use ColumnViewerPart
+ *     Tom Shindl <tom.schindl@bestsolution.at> - Refactored to use ViewerColumn
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Item;
     }
 
     private void activateCellEditor() {
-    	ColumnViewerPart part = viewer.getColumnViewer(columnNumber);
+    	ViewerColumn part = viewer.getColumnViewer(columnNumber);
     	Object element = tableItem.getData();
     	
     	if( part != null && part.getEditingSupport() != null && part.getEditingSupport().canEdit(element) ) {
@@ -305,7 +305,7 @@ import org.eclipse.swt.widgets.Item;
      * by delegating to the cell modifier.
      */
     private void saveEditorValue(CellEditor cellEditor, Item tableItem) {
-    	ColumnViewerPart part = (ColumnViewerPart)tableItem.getData(ColumnViewerPart.COLUMN_VIEWER_KEY);
+    	ViewerColumn part = (ViewerColumn)tableItem.getData(ViewerColumn.COLUMN_VIEWER_KEY);
     	
         if( part != null && part.getEditingSupport() != null ) {
         	part.getEditingSupport().setValue(tableItem.getData(), cellEditor.getValue());

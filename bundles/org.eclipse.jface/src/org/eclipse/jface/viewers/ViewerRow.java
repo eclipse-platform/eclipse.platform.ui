@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 
 /**
- * RowPart is the abstract superclass of the part that represents items in a 
+ * ViewerRow is the abstract superclass of the part that represents items in a 
  * Table or Tree.
  * @since 3.3
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as
@@ -31,9 +31,9 @@ import org.eclipse.swt.widgets.Item;
  * do not use this API without consulting with the Platform/UI team.
  * 
  */
-public abstract class RowPart {
+public abstract class ViewerRow {
 	/**
-	 * Key used to reference RowPart in the widgets data-map
+	 * Key used to reference ViewerRow in the widgets data-map
 	 */
 	public static final String ROWPART_KEY = Policy.JFACE + ".ROWPART"; //$NON-NLS-1$
 		
@@ -41,8 +41,8 @@ public abstract class RowPart {
 	 * Create a new instance of the receiver.
 	 * @param item
 	 */
-	RowPart(final Item item) {
-		item.setData(RowPart.ROWPART_KEY, this);
+	ViewerRow(final Item item) {
+		item.setData(ViewerRow.ROWPART_KEY, this);
 		item.addDisposeListener(new DisposeListener() {
 
 			/* (non-Javadoc)
@@ -152,15 +152,15 @@ public abstract class RowPart {
 	
 	
 	/**
-	 * Get the Cell at point.
+	 * Get the ViewerCell at point.
 	 * @param point
-	 * @return Cell
+	 * @return ViewerCell
 	 */
-	public Cell getCell(Point point) {
+	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
 		
 		if( index >= 0 ) {
-			return new Cell(this,index);
+			return new ViewerCell(this,index);
 		}
 
 		return null;

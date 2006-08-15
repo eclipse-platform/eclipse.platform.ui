@@ -88,7 +88,7 @@ class TooltipSupport {
 				break;
 			case SWT.MouseHover:
 				Point p = new Point(event.x, event.y);
-				RowPart row = viewer.getRowPart(p);
+				ViewerRow row = viewer.getRowPart(p);
 				viewer.getControl().setToolTipText(""); //$NON-NLS-1$
 
 				if (row != null) {
@@ -104,11 +104,11 @@ class TooltipSupport {
 		 * @param row
 		 * @param p
 		 */
-		private void popupTooltip(RowPart row, Point p) {
+		private void popupTooltip(ViewerRow row, Point p) {
 			Object element = row.getItem().getData();
 			disposeTooltip(tip);
 
-			ColumnViewerPart viewPart = viewer.getColumnViewer(row.getColumnIndex(p));
+			ViewerColumn viewPart = viewer.getColumnViewer(row.getColumnIndex(p));
 			
 			if( viewPart == null ) {
 				return;
