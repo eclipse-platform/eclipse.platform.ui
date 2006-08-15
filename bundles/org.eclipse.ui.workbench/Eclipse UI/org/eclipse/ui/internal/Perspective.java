@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -47,7 +48,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -84,6 +88,9 @@ public class Perspective {
     private ArrayList perspectiveShortcuts;
 
     private ArrayList fastViews;
+    private List globalFastViews;
+    private boolean globalFVBsaved = false;
+    private ArrayList fastViewBars;
 
     private Map mapIDtoViewLayoutRec;
 
@@ -136,6 +143,8 @@ public class Perspective {
         alwaysOnActionSets = new ArrayList(2);
         alwaysOffActionSets = new ArrayList(2);
         fastViews = new ArrayList(2);
+        globalFastViews = new ArrayList(2);
+        fastViewBars = new ArrayList(2);
         mapIDtoViewLayoutRec = new HashMap();
     }
 
@@ -310,6 +319,71 @@ public class Perspective {
         return array;
     }
 
+    public void closeTrimGroup(FastViewBar groupBar) {
+    	groupBar.restoreGroup();
+    	
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+    	ITrimManager tbm = wbw.getTrimManager();
+    	tbm.removeTrim(groupBar);
+    	
+    	groupBar.dispose();
+    }
+    
+    private String getUniqueGroupId() {
+		// Get a unique id
+    	boolean found = false;
+    	int count = 0;
+    	String id = ""; //$NON-NLS-1$
+    	while (!found) {
+    		id = getDesc().getId() + " (" + count  + ")";  //$NON-NLS-1$//$NON-NLS-2$
+    		boolean matchFound = false;
+    		for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+				FastViewBar fvb = (FastViewBar) fvbIter.next();
+				if (fvb.getId().equals(id)) {
+					matchFound = true;
+					break;
+				}
+			}
+    		
+    		if (matchFound)
+    			count++;
+    		else
+    			found = true;
+    	}
+    	
+    	return id;
+    }
+    
+    public void moveToTrim(ViewStack stack) {
+    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), FastViewBar.GROUP_FVB , SWT.BOTTOM);
+    	
+    	ArrayList refs = new ArrayList();
+    	List parts = stack.getPresentableParts();
+    	for (Iterator partIter = parts.iterator(); partIter.hasNext();) {
+    		PresentablePart part = (PresentablePart) partIter.next();
+    		if (part.getPane().getPartReference() instanceof ViewReference) {
+    			refs.add(part.getPane().getPartReference());
+    		}
+		}
+    	fvb.setViewRefs(refs);
+    	fvb.collapseGroup();
+    }
+    
+    private FastViewBar createFastViewBar(String id, int style, int side) {   	
+    	// Create the FVB on the given side
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+    	FastViewBar newFVB = new FastViewBar(wbw, style, id);
+    	newFVB.createControl(wbw.getShell());
+    	newFVB.getControl().setVisible(true);
+    	ITrimManager tbm = wbw.getTrimManager();
+    	tbm.addTrim(side, newFVB);
+    	
+    	fastViewBars.add(newFVB);
+    	LayoutUtil.resize(newFVB.getControl());
+    	
+    	return newFVB;
+    }
+    
     /**
      * Returns the new wizard shortcuts associated with this perspective.
      * 
@@ -802,7 +876,24 @@ public class Perspective {
                 ctrl.setEnabled(false); // Remove focus support.
             }
         }
+        
+        // update the 'global' FVB
+        FastViewBar fvb = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar();
+        fvb.setViewRefs(globalFastViews);
+        globalFVBsaved = false;
 
+        // Show the trim groups
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+    	ITrimManager tbm = wbw.getTrimManager();
+        for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+        	fvb = (FastViewBar) fvbIter.next();
+        	fvb.update(false);
+			tbm.setTrimVisible(fvb, true);
+		}
+		
+		// if we're done then force an update...optimize out if possible
+		LayoutUtil.resize(fvb.getControl());
+        
         setAllPinsVisible(true);
         presentation.activate(getClientComposite());
 
@@ -822,6 +913,11 @@ public class Perspective {
         setActiveFastView(null);
         setAllPinsVisible(false);
 
+        // remember the list of 'global' fast views
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+        globalFastViews = new ArrayList(wbw.getFastViewBar().getViewRefs());
+        globalFVBsaved = true;
+        
         // Update fast views.
         for (int i = 0; i < fastViews.size(); i++) {
             ViewPane pane = getPane((IViewReference) fastViews.get(i));
@@ -832,6 +928,13 @@ public class Perspective {
 				}
             }
         }
+
+        // Hide the trim groups
+    	ITrimManager tbm = wbw.getTrimManager();
+        for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+			FastViewBar fvb = (FastViewBar) fvbIter.next();
+			tbm.setTrimVisible(fvb, false);
+		}
     }
 
     /**
@@ -902,11 +1005,13 @@ public class Perspective {
         IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
         result.merge(createReferences(views));
 
+        // Restore the list of fast views
         memento = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
         if (memento != null) {
             views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
             result.merge(createReferences(views));
         }
+        
         return result;
     }
 
@@ -1106,6 +1211,54 @@ public class Perspective {
             }
         }
 
+        // Restore the list of 'global' fast views
+        globalFastViews = new ArrayList();
+        IMemento globalFastViewsMem = memento.getChild(IWorkbenchConstants.TAG_GLOBAL_FAST_VIEWS);
+        if (globalFastViewsMem != null) {
+        	IMemento[] globalRefs = globalFastViewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
+        	for (int i = 0; i < globalRefs.length; i++) {
+    			String viewId = globalRefs[i].getID();
+                String secondaryId = ViewFactory.extractSecondaryId(viewId);
+                if (secondaryId != null) {
+                	viewId = ViewFactory.extractPrimaryId(viewId);
+                }
+                
+                // Resolve the ref
+                IViewReference ref = viewFactory.getView(viewId, secondaryId);
+                globalFastViews.add(ref);
+			}
+        }
+        else {
+        	// Old format, all fast views are 'global'
+        	globalFastViews = new ArrayList(fastViews);
+        }
+
+        // Restore the trim groups
+        IMemento groupsMem = memento.getChild(IWorkbenchConstants.TAG_FAST_GROUPS);
+        IMemento[] group = groupsMem.getChildren(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+        for (int i = 0; i < group.length; i++) {
+        	String id = group[i].getString(IWorkbenchConstants.TAG_ID);
+        	FastViewBar fvb = createFastViewBar(id, FastViewBar.GROUP_FVB, SWT.BOTTOM);
+        	fvb.restoreState(group[i]);
+
+        	IMemento viewsMem = group[i].getChild(IWorkbenchConstants.TAG_VIEWS);
+    		IMemento[] fvMems = viewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
+    		ArrayList viewRefs = new ArrayList(fvMems.length);
+    		for (int j = 0; j < fvMems.length; j++) {
+    			String viewId = fvMems[j].getID();
+                String secondaryId = ViewFactory.extractSecondaryId(viewId);
+                if (secondaryId != null) {
+                	viewId = ViewFactory.extractPrimaryId(viewId);
+                }
+                
+                // Resolve the ref
+                IViewReference ref = viewFactory.getView(viewId, secondaryId);
+                viewRefs.add(ref);
+    		}
+        	
+    		fvb.setViewRefs(viewRefs);
+		}
+        
         HashSet knownActionSetIds = new HashSet();
 
         // Load the always on action sets.
@@ -1403,6 +1556,7 @@ public class Perspective {
                     .getKey(ref));
         }
 
+        // Save the set of all fast Views
         if (fastViews.size() > 0) {
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
@@ -1416,6 +1570,23 @@ public class Perspective {
                 float ratio = getFastViewWidthRatio(ref);
                 viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
             }
+        }
+
+        // Save the set of all 'global' fast Views for this perspective        
+        // update the list of 'global' fast views
+        if (!globalFVBsaved) {
+	    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+	        globalFastViews = new ArrayList(wbw.getFastViewBar().getViewRefs());
+	        globalFVBsaved = true;
+        }
+    
+        IMemento globalFVBMem = memento
+                .createChild(IWorkbenchConstants.TAG_GLOBAL_FAST_VIEWS);
+        itr = globalFastViews.iterator();
+        while (itr.hasNext()) {
+            IViewReference ref = (IViewReference) itr.next();
+            String id = ViewFactory.getKey(ref);
+            globalFVBMem.createChild(IWorkbenchConstants.TAG_VIEW, id);
         }
 
         // Save the view layout recs.
@@ -1445,6 +1616,24 @@ public class Perspective {
             }
         }
 
+        // Save the list of group FVB's
+        IMemento fvbMem = memento.createChild(IWorkbenchConstants.TAG_FAST_GROUPS);
+        for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+        	FastViewBar fvb = (FastViewBar) fvbIter.next();
+    		IMemento fastViewBarMem = fvbMem.createChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+    		fastViewBarMem.putString(IWorkbenchConstants.TAG_ID, fvb.getId());
+    		fvb.saveState(fastViewBarMem);
+    		
+    		// Store the view references for this FVB
+    		List viewRefs = fvb.getViewRefs();
+    		IMemento viewsMem = fastViewBarMem.createChild(IWorkbenchConstants.TAG_VIEWS);
+    		for (Iterator fvIter = viewRefs.iterator(); fvIter.hasNext();) {
+    			IViewReference ref = (IViewReference) fvIter.next();
+                String id = ViewFactory.getKey(ref);
+                viewsMem.createChild(IWorkbenchConstants.TAG_VIEW, id);
+    		}
+		}
+        
         if (errors > 0) {
             String message = WorkbenchMessages.Perspective_multipleErrors;
             if (errors == 1) {
@@ -1554,12 +1743,24 @@ public class Perspective {
         }
     }
 
+    public FastViewBar getFVBForRef(IViewReference ref) {
+    	for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+			FastViewBar fvb = (FastViewBar) fvbIter.next();
+			if (fvb.hasViewRef(ref))
+				return fvb;
+		}
+    	
+    	return null;
+    }
     /**
      * Sets the selection for the shortcut bar icon representing the givevn fast view.
      */
     private void setFastViewIconSelection(IViewReference ref, boolean selected) {
         WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-        FastViewBar bar = window.getFastViewBar();
+        FastViewBar bar = getFVBForRef(ref);
+        if (bar == null)
+        	bar = window.getFastViewBar();
+        
         if (bar != null) {
             if (selected) {
                 bar.setSelection(ref);
@@ -1635,7 +1836,10 @@ public class Perspective {
         saveFastViewWidthRatio();
 
         WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-        FastViewBar bar = window.getFastViewBar();
+        FastViewBar bar = getFVBForRef(ref);
+        if (bar == null)
+        	bar = window.getFastViewBar();
+        
         if (bar == null) {
             return false;
         }
@@ -1676,8 +1880,8 @@ public class Perspective {
         int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
         if (openViewMode == IPreferenceConstants.OVM_FAST) {
-            showFastView(ref);
-            addFastView(ref);
+        	FastViewBar fvb = ((WorkbenchWindow)pane.getWorkbenchWindow()).getFastViewBar();
+        	fvb.adoptView(ref, -1, true, true, false);
         } else if (openViewMode == IPreferenceConstants.OVM_FLOAT
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);

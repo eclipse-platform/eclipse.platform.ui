@@ -68,10 +68,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
                         ref = (IViewReference)wp.getReference(part); 
                     }
                     
-                    if (!wp.isFastView(ref)) {
-                        wp.addFastView(ref);
-                    }
-                    wp.activate(ref.getPart(true));
+                    FastViewBar bar = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar();
+                    bar.adoptView(ref, -1, true, true, false);
                 } else {
                     page.showView(desc.getId());
                 }

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -31,13 +34,15 @@ import org.eclipse.ui.internal.util.Util;
 public class ShowFastViewContribution extends ContributionItem {
     public static final String FAST_VIEW = "FastView"; //$NON-NLS-1$
 
+    private FastViewBar fvb;
     private IWorkbenchWindow window;
 
     /**
      * Create a new menu item.
      */
-    public ShowFastViewContribution(IWorkbenchWindow window) {
+    public ShowFastViewContribution(FastViewBar fvb, IWorkbenchWindow window) {
         super("showFastViewContr"); //$NON-NLS-1$
+        this.fvb = fvb;
         this.window = window;
     }
 
@@ -49,8 +54,15 @@ public class ShowFastViewContribution extends ContributionItem {
         if (!Util.equals(item.getToolTipText(), ref.getTitle())) {
             item.setToolTipText(ref.getTitle());
         }
+
+        // TODO: This gets called during shutdown; hide/remove the items?
+        if (fvb.getWindow().getActiveWorkbenchPage() == null)
+        	return;
+        
+        Perspective persp = fvb.getWindow().getActiveWorkbenchPage().getActivePerspective();
+        item.setEnabled(persp.isFastView(ref));
     }
-    
+
     public static ToolItem getItem(ToolBar toSearch, IWorkbenchPartReference ref) {
         ToolItem[] items = toSearch.getItems();
         
@@ -77,12 +89,11 @@ public class ShowFastViewContribution extends ContributionItem {
 		}
 
         // Get views.
-        IViewReference[] refs = page.getFastViews();
+        List refs = fvb.getViewRefs();
 
         // Create tool item for each view.
-        int size = refs.length;
-        for (int nX = 0; nX < size; nX++) {
-            final IViewReference ref = refs[nX];
+        for (Iterator iterator = refs.iterator(); iterator.hasNext();) {
+            final IViewReference ref = (IViewReference) iterator.next();
             final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
             updateItem(item, ref);
             item.setData(FAST_VIEW, ref);

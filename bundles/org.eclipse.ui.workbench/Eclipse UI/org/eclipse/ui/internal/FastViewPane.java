@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuFastViewOrientation;
+import org.eclipse.ui.internal.presentations.SystemMenuMoveToTrim;
 import org.eclipse.ui.internal.presentations.SystemMenuSizeFastView;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -169,6 +170,8 @@ public class FastViewPane {
             appendToGroupIfPossible(menuManager,
                     "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
             appendToGroupIfPossible(menuManager,
+                    "misc", new UpdatingActionContributionItem(moveToTrimViewAction)); //$NON-NLS-1$
+            appendToGroupIfPossible(menuManager,
                     "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
         }
 
@@ -218,6 +221,7 @@ public class FastViewPane {
     };
 
     private SystemMenuFastView fastViewAction = new SystemMenuFastView(site);
+    private SystemMenuMoveToTrim moveToTrimViewAction = new SystemMenuMoveToTrim(site);
 
     private static void appendToGroupIfPossible(IMenuManager m, String groupId,
             ContributionItem item) {
@@ -392,6 +396,7 @@ public class FastViewPane {
         currentPane = new PresentablePart(pane, newClientComposite);
         
         fastViewAction.setPane(currentPane);
+        moveToTrimViewAction.setPane(currentPane);
         clientComposite = newClientComposite;
 
         clientComposite.addListener(SWT.Resize, resizeListener);
@@ -507,6 +512,8 @@ public class FastViewPane {
         }
 
         fastViewAction.setPane(null);
+        moveToTrimViewAction.setPane(null);
+        
         //unzoom before hiding
         currentPane.getPane().setZoomed(false);
 

@@ -76,21 +76,36 @@ public class FastViewBar implements IWindowTrim {
 
     private WorkbenchWindow window;
     private IViewReference selection;
+    private List viewRefs = new ArrayList();
     
     // "New Fast View" 'Button' fields
     private MenuManager newFastViewMenuMgr;
     private Composite fvbComposite;
     private ToolBar menuTB;
-    private ToolItem menuItem;
+    private ToolItem showItem = null;
+    private ToolItem groupItem = null;
+    private FastGroupTrimButton groupBtn = null;
     private CellData toolBarData;
 
+    /** Causes the FVB to remove the ref for any view restored to the workbench */
+    public static final int REMOVE_UNFAST_REFS = 0x0001;
+    /** Causes the FVB to show the 'group mode' button set */
+    public static final int SHOW_GROUP_BUTTON = 0x0002;
+    /** Causes the FVB to show the 'Add View' popup button */
+    public static final int SHOW_ADD_BUTTON = 0x0004;
+    
+    public static final int LEGACY_FVB = REMOVE_UNFAST_REFS | SHOW_ADD_BUTTON;
+    public static final int GROUP_FVB = SHOW_GROUP_BUTTON;
+    
+    private boolean testStyleBit(int toTest) { return (style & toTest) != 0; }
+    private int style = LEGACY_FVB;
+    
     private static final int HIDDEN_WIDTH = 5;
-
 
     private int oldLength = 0;
     
+    // Dnd
     private ViewDropTarget dropTarget;
-
     private Listener dragListener = new Listener() {
         public void handleEvent(Event event) {
             Point position = DragUtil.getEventLoc(event);
@@ -126,6 +141,9 @@ public class FastViewBar implements IWindowTrim {
         }
     };
 	private int fCurrentSide = SWT.DEFAULT;
+	
+	private static final String GLOBAL_FVB_ID ="org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$ 
+	private String id = GLOBAL_FVB_ID;
 
     class ViewDropTarget extends AbstractDropTarget {
         List panes;
@@ -148,14 +166,24 @@ public class FastViewBar implements IWindowTrim {
          * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
          */
         public void drop() {
-            IViewReference view = getViewFor(position);
+            IViewReference beforeRef = getViewFor(position);
 
             Iterator iter = panes.iterator();
             while (iter.hasNext()) {
                 ViewPane pane = (ViewPane) iter.next();
-                getPage().addFastView(pane.getViewReference());
-                getPage().getActivePerspective().moveFastView(
-                        pane.getViewReference(), view);
+                IViewReference ref = pane.getViewReference();
+                
+                // Only allow one reference in an FVB per perspective
+                FastViewBar curFVB = getPage().getActivePerspective().getFVBForRef(ref);
+                if (curFVB == null && window.getFastViewBar().hasViewRef(ref))
+                	curFVB = window.getFastViewBar();
+                	
+                if (curFVB != null) {
+                	curFVB.removeViewRef(ref);
+                }
+                
+                int insertIdx = viewRefs.indexOf(beforeRef);
+                adoptView(ref, insertIdx, true, false, !iter.hasNext());
             }
             update(true);
         }
@@ -199,67 +227,22 @@ public class FastViewBar implements IWindowTrim {
            
            public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
                if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
-                    
-                   ToolBar bar = fastViewBar.getControl();
-                   
                    // Handle removals immediately just in case the part (and its image) is about to be disposed
-                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE) 
-                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
-                          
-                       ToolItem item = null;
-                       
-                       if (bar != null) {
-                           item = ShowFastViewContribution.getItem(bar, partRef);
-                       }
-                       
-                       if (item != null) {
-                           item.dispose();
-                           updateLayoutData();
-                           return;
-                       }
-                   }
-                   
-                   // Ignore changes to non-fastviews
-                   if (page instanceof WorkbenchPage && partRef instanceof IViewReference) {
-                       if (!((WorkbenchPage)page).isFastView((IViewReference)partRef)) {
-                           return;
-                       }
+                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
+                       removeViewRef((IViewReference) partRef);
+                       return;
                    }
 
-                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW) 
-                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_ADD)) {
-                       
-                       ToolItem item = null;
-                       
-                       if (bar != null) {
-                           item = ShowFastViewContribution.getItem(bar, partRef);
-                       }
-                       
-                       if (item != null) {
-                           // If this part is already in the fast view bar, there is nothing to do
-                           return;
-                       }
-                       fastViewBar.markDirty();
+                   // If a view becomes 'unfast' we might want to remove it
+                   if (changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
+                	   if ((style & REMOVE_UNFAST_REFS) != 0)
+                		   removeViewRef((IViewReference) partRef);
+                       return;
                    }
                } 
            }
            
            public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-               if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE) 
-                       || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
-                   
-                   // In these cases, we've aleady updated the fast view bar in the pre-change
-                   // listener
-                   return;
-               }
-               
-               // Ignore changes to anything but the active perspective
-               if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
-                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW) 
-                           || changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_ADD)) {
-                       update(false);
-                   }
-               }
            }
         });
 
@@ -280,6 +263,19 @@ public class FastViewBar implements IWindowTrim {
     }
 
     /**
+     * Special constructor that sets the ID
+     * 
+	 * @param wbw The Workbench window
+     * @param style The style of FVB desired
+	 * @param id The trim id 
+	 */
+	public FastViewBar(WorkbenchWindow wbw, int style, String id) {
+		this(wbw);
+		this.style = style;
+		this.id = id;
+	}
+
+	/**
      * Returns the platform's idea of where the fast view bar should be docked in a fresh
      * workspace.  This value is meaningless after a workspace has been setup, since the
      * fast view bar state is then persisted in the workbench.  This preference is just
@@ -417,36 +413,51 @@ public class FastViewBar implements IWindowTrim {
         // Create a toolbar to show an 'Add FastView' menu 'button'
         menuTB = new ToolBar(fvbComposite, SWT.FLAT | orientation);
 
-        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
-        menuItem = new  ToolItem(menuTB, SWT.PUSH, 0);
+        if (testStyleBit(SHOW_ADD_BUTTON)) {
+	        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
+	        showItem = new  ToolItem(menuTB, SWT.PUSH, 0);
+	        
+	        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
+	        showItem.setImage(tbImage);
+	        
+	        String menuTip = WorkbenchMessages.FastViewBar_0;
+	        showItem.setToolTipText(menuTip);
+	        
+	        // Bring up the 'Add Fast View' menu on a left -or- right button click
+	        // Right click (context menu)
+	        showItem.addListener(SWT.MenuDetect, addMenuListener);        
+	        
+	        // Left Click...
+	        showItem.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					Rectangle bb = DragUtil.getDisplayBounds(menuTB);
+					showAddFastViewPopup(new Point(bb.x,bb.y+bb.height));
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+	        	
+	        });
+        }
         
-        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
-        menuItem.setImage(tbImage);
+        if (testStyleBit(SHOW_GROUP_BUTTON)) {
+        	groupBtn = new FastGroupTrimButton(menuTB, this);
+        	groupBtn.setSize(20);
+        	groupItem = new ToolItem(menuTB, SWT.SEPARATOR, 0);
+        	groupItem.setControl(groupBtn.getControl());
+        	groupItem.setWidth(20);
+        	
+        }
         
-        String menuTip = WorkbenchMessages.FastViewBar_0;
-        menuItem.setToolTipText(menuTip);
         //new ToolItem(menuTB, SWT.SEPARATOR, 1);
-        
+
         // Now that the ToolBar is populated calculate its size...
         Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         menuTB.setBounds(0, 0, size.x, size.y);
         
         // Bring up the 'Add Fast View' menu on a left -or- right button click
         // Right click (context menu)
-        menuItem.addListener(SWT.MenuDetect, addMenuListener);        
         menuTB.addListener(SWT.MenuDetect, addMenuListener);
-        
-        // Left Click...
-        menuItem.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				Rectangle bb = DragUtil.getDisplayBounds(menuTB);
-				showAddFastViewPopup(new Point(bb.x,bb.y+bb.height));
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-        	
-        });
         
         // try to get the layout correct...
         toolBarData = new CellData();
@@ -455,7 +466,7 @@ public class FastViewBar implements IWindowTrim {
 
         // Construct the ToolBar containing the 'Fast' views
         fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | orientation);
-        fastViewBar.add(new ShowFastViewContribution(window));
+        fastViewBar.add(new ShowFastViewContribution(this, window));
 
         fastViewBar.createControl(fvbComposite);
 
@@ -678,7 +689,16 @@ public class FastViewBar implements IWindowTrim {
         fastViewBar.dispose();
         fastViewBar = null;
         
-        menuItem.dispose();
+        if (showItem != null) {
+        	showItem.dispose();
+        	showItem = null;
+        }
+        
+        if (groupItem != null) {
+        	groupItem.dispose();
+        	groupItem = null;
+        }
+        
         menuTB.dispose();
         
         oldLength = 0;
@@ -859,7 +879,6 @@ public class FastViewBar implements IWindowTrim {
             orientation.putInteger(IWorkbenchConstants.TAG_POSITION,
                     ((Integer) viewOrientation.get(next)).intValue());
         }
-
     }
 
     /**
@@ -908,7 +927,45 @@ public class FastViewBar implements IWindowTrim {
         return window;
     }
     
-    public void restoreView(IViewReference selectedView) {
+    public void adoptView(IViewReference ref, int insertIndex, boolean makeFast, boolean activate, boolean animate) {
+        if (ref != null) {
+            WorkbenchPage page = window.getActiveWorkbenchPage();
+            if (page != null) {
+            	// Remember the pane -before- we adopt the view for animations
+                ViewPane pane = (ViewPane) ((WorkbenchPartReference) ref)
+                .getPane();
+            	
+                if (makeFast)
+                	page.addFastView(ref);
+
+                // we -must- have a ref since we're adopting the view
+                if (!viewRefs.contains(ref))
+                	addViewRef(ref, insertIndex, true);
+                
+                if (activate) {
+	                IWorkbenchPart toActivate = ref.getPart(true);
+	                if (toActivate != null) {
+	                    page.activate(toActivate);
+	                }
+                }
+
+                if (animate && pane != null) {
+                    int idx = getIndex(ref);
+                    ToolItem item = getItem(idx);
+                    Rectangle bounds = item.getBounds();
+                    Rectangle endBounds = Geometry.toDisplay(item
+                            .getParent(), bounds);
+
+	                RectangleAnimation animation = new RectangleAnimation(
+	                        window.getShell(), pane.getParentBounds(), endBounds);
+	
+	                animation.schedule();
+                }
+            }
+        }
+    }
+    
+    public void restoreView(IViewReference selectedView, boolean activate, boolean animate) {
         if (selectedView != null) {
             WorkbenchPage page = window.getActiveWorkbenchPage();
             if (page != null) {
@@ -919,21 +976,25 @@ public class FastViewBar implements IWindowTrim {
                         .getParent(), bounds);
 
                 page.removeFastView(selectedView);
-
-                IWorkbenchPart toActivate = selectedView
-                        .getPart(true);
-                if (toActivate != null) {
-                    page.activate(toActivate);
+                
+                if (activate) {
+	                IWorkbenchPart toActivate = selectedView
+	                        .getPart(true);
+	                if (toActivate != null) {
+	                    page.activate(toActivate);
+	                }
                 }
 
                 ViewPane pane = (ViewPane) ((WorkbenchPartReference) selectedView)
                         .getPane();
 
-                RectangleAnimation animation = new RectangleAnimation(
-                        window.getShell(), startBounds, pane
-                                .getParentBounds());
-
-                animation.schedule();
+                if (animate) {
+	                RectangleAnimation animation = new RectangleAnimation(
+	                        window.getShell(), startBounds, pane
+	                                .getParentBounds());
+	
+	                animation.schedule();
+                }
             }
         }
     }
@@ -956,7 +1017,7 @@ public class FastViewBar implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
 	public String getId() {
-		return "org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$
+		return id;
 	}
 
 	/* (non-Javadoc)
@@ -997,4 +1058,104 @@ public class FastViewBar implements IWindowTrim {
 	public boolean isResizeable() {
 		return false;
 	}
+
+	/**
+	 * @return Returns the viewRefs.
+	 */
+	public List getViewRefs() {
+		return viewRefs;
+	}
+
+	/**
+	 * @param viewRefs The viewRefs to set.
+	 */
+	public void setViewRefs(List viewRefs) {
+		this.viewRefs = new ArrayList(viewRefs);
+        fastViewBar.markDirty();
+        update(true);
+	}
+	
+	/**
+	 * Add a new view reference into the list
+	 * @param ref The reference to add
+	 * @param insertIndex The index to insert it at
+	 * @param update 
+	 */
+	public void addViewRef(IViewReference ref, int insertIndex, boolean update) {
+		if (ref == null)
+			return;
+		
+		viewRefs.remove(ref);
+		if (insertIndex < 0 || insertIndex >= viewRefs.size())
+			viewRefs.add(ref);
+		else
+			viewRefs.add(insertIndex, ref);
+		
+		if (update) {
+	        fastViewBar.markDirty();
+	        update(true);
+		}
+	}
+	
+	/**
+	 * Remove a reference from the list
+	 * @param ref The view reference to remove
+	 */
+	public void removeViewRef(IViewReference ref) {
+		if (ref == null)
+			return;
+		
+		viewRefs.remove(ref);
+        
+        // Remove the ToolItem associated with the reference
+        ToolItem item = ShowFastViewContribution.getItem(fastViewBar.getControl(), ref);        
+        if (item != null) {
+            item.dispose();
+            updateLayoutData();
+            update(true);
+        }
+	}
+
+	/**
+	 * Deteremine if this fast view contains the given reference
+	 * @param ref The reference to check
+	 * @return <code>true</code> iff this FVB contains the reference
+	 */
+	public boolean hasViewRef(IViewReference ref) {
+		return viewRefs.contains(ref);
+	}
+	
+	/**
+	 * Restore all refs and close the group
+	 */
+	public void closeGroup() {
+		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+		persp.closeTrimGroup(this);
+	}
+
+	/**
+	 * Move all referenced views to the trim (ie. make
+	 * them fast views...)
+	 */
+	public void collapseGroup() {
+		for (Iterator refIter = viewRefs.iterator(); refIter.hasNext();) {
+			IViewReference ref = (IViewReference) refIter.next();
+			adoptView(ref, -1, true, false, !refIter.hasNext());
+		}
+		
+		update(false);
+	}
+
+	/**
+	 * Restore all referenced views to the layout
+	 */
+	public void restoreGroup() {
+		for (Iterator refIter = viewRefs.iterator(); refIter.hasNext();) {
+			IViewReference ref = (IViewReference) refIter.next();
+			restoreView(ref, false, !refIter.hasNext());
+		}
+		
+		update(false);
+	}
 }
+

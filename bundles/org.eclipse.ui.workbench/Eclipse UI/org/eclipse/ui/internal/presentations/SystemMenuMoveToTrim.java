@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,27 @@ package org.eclipse.ui.internal.presentations;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.ViewPane;
+import org.eclipse.ui.internal.Perspective;
+import org.eclipse.ui.internal.ViewStack;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
+/**
+ * mplements the 'Move to Trim' action
+ * 
+ * @since 3.2
+ *
+ */
+public class SystemMenuMoveToTrim extends Action implements ISelfUpdatingAction {
 
     private PresentablePart viewPane;
 
     private IStackPresentationSite site;
 
-    public SystemMenuFastView(IStackPresentationSite site) {
+    public SystemMenuMoveToTrim(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.ViewPane_fastView);
+        setText(WorkbenchMessages.ViewPane_moveToTrim);
         update();
     }
 
@@ -71,6 +78,10 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
             return false;
         }
 
+        String enabled  = System.getProperty("MultiFVB"); //$NON-NLS-1$
+        if (enabled == null)
+        	return false;
+        
         return getWorkbenchWindow().getShowFastViewBars() && viewPane != null
                 && site.isPartMoveable(viewPane);
     }
@@ -80,12 +91,7 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     }
 
     public void run() {
-        if (viewPane.getPane() instanceof ViewPane) {
-            if (!isChecked()) {
-                getWorkbenchWindow().getFastViewBar().adoptView(getReference(), -1, true, false, true);
-            } else {
-                getWorkbenchWindow().getFastViewBar().restoreView(getReference(), true, true);
-            }
-        }
+        Perspective psp = viewPane.getPane().getPage().getActivePerspective();
+        psp.moveToTrim((ViewStack) viewPane.getPane().getStack());
     }
 }

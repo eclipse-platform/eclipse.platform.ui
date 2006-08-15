@@ -66,7 +66,7 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
         restoreItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                bar.restoreView(selectedView);
+                bar.restoreView(selectedView, true, true);
             }
         });
 

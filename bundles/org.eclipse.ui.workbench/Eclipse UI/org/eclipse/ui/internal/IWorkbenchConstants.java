@@ -210,6 +210,10 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 
+    public static final String TAG_GLOBAL_FAST_VIEWS = "globalFastViews"; //$NON-NLS-1$
+
+    public static final String TAG_FAST_GROUPS = "fastGroups"; //$NON-NLS-1$
+
     public static final String TAG_FIXED = "fixed";//$NON-NLS-1$
 
     public static final String TAG_CLOSEABLE = "closeable";//$NON-NLS-1$
