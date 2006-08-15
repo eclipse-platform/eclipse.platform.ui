@@ -210,8 +210,8 @@ public class FilteredTree extends Composite {
     
     /**
 	 * Creates and set up the tree and tree viewer. This method calls
-	 * {@link #createTreeViewer(Composite, int)} to create the tree viewer.
-	 * Subclasses should override {@link #createTreeViewer(Composite, int)}
+	 * {@link #doCreateTreeViewer(Composite, int)} to create the tree viewer.
+	 * Subclasses should override {@link #doCreateTreeViewer(Composite, int)}
 	 * instead of overriding this method.
 	 * 
 	 * @param parent
@@ -221,7 +221,7 @@ public class FilteredTree extends Composite {
 	 * @return the tree
 	 */
     protected Control createTreeControl(Composite parent, int style){
-        treeViewer = createTreeViewer(parent, style);
+        treeViewer = doCreateTreeViewer(parent, style);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         treeViewer.getControl().setLayoutData(data);
         treeViewer.getControl().addDisposeListener(new DisposeListener(){
@@ -245,7 +245,7 @@ public class FilteredTree extends Composite {
 	 * 
 	 * @since 3.3
 	 */
-	protected TreeViewer createTreeViewer(Composite parent, int style) {
+	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 		return new TreeViewer(parent, style);
 	}
     
@@ -347,12 +347,15 @@ public class FilteredTree extends Composite {
 	}
 	
 	/**
-	 * Create the filter text and adds listeners.
+	 * Creates the filter text and adds listeners. This method calls
+	 * {@link #doCreateFilterText(Composite)} to create the text control.
+	 * Subclasses should override {@link #doCreateFilterText(Composite)}
+	 * instead of overriding this method.
 	 * 
 	 * @param parent <code>Composite</code> of the filter text
 	 */
 	protected void createFilterText(Composite parent) {
-		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
+		filterText =  doCreateFilterText(parent);
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter(){
 					/* (non-Javadoc)
@@ -445,6 +448,18 @@ public class FilteredTree extends Composite {
         });
 
         filterText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+	}
+
+	/**
+	 * Creates the text control for entering the filter text.  Subclasses may override.
+	 * 
+	 * @param parent the parent composite
+	 * @return the text widget
+	 * 
+	 * @since 3.3
+	 */
+	protected Text doCreateFilterText(Composite parent) {
+		return new Text(parent, SWT.SINGLE | SWT.BORDER);
 	}
 
 	/**
