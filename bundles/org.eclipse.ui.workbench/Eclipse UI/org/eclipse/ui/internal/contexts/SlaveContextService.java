@@ -152,9 +152,13 @@ public class SlaveContextService implements IContextService {
 			andExpression = (AndExpression) expression;
 		} else {
 			andExpression = new AndExpression();
-			andExpression.add(expression);
+			if (expression!=null) {
+				andExpression.add(expression);
+			}
 		}
-		andExpression.add(fDefaultExpression);
+		if (fDefaultExpression!=null) {
+			andExpression.add(fDefaultExpression);
+		}
 		ContextActivation activation = new ContextActivation(contextId,
 				andExpression, this);
 		return doActivateContext(activation);
