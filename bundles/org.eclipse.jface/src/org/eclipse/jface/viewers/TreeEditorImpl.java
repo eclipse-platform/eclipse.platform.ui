@@ -49,9 +49,9 @@ import org.eclipse.swt.widgets.Item;
 
     private int doubleClickExpirationTime;
 
-    private StructuredViewer viewer;
+    private ColumnViewer viewer;
 
-    TreeEditorImpl(StructuredViewer viewer) {
+    TreeEditorImpl(ColumnViewer viewer) {
         this.viewer = viewer;
         initCellEditorListener();
     }
@@ -66,52 +66,48 @@ import org.eclipse.swt.widgets.Item;
     }
 
     private void activateCellEditor() {
-        if (cellEditors != null) {
-            if (cellEditors[columnNumber] != null && cellModifier != null) {
-                Object element = treeItem.getData();
-                String property = columnProperties[columnNumber];
-                if (cellModifier.canModify(element, property)) {
-                    cellEditor = cellEditors[columnNumber];
-                    //tree.showSelection();
-                    cellEditor.addListener(cellEditorListener);
-                    Object value = cellModifier.getValue(element, property);
-                    cellEditor.setValue(value);
-                    // Tricky flow of control here:
-                    // activate() can trigger callback to cellEditorListener which will clear cellEditor
-                    // so must get control first, but must still call activate() even if there is no control.
-                    final Control control = cellEditor.getControl();
-                    cellEditor.activate();
-                    if (control == null) {
-						return;
-					}
-                    setLayoutData(cellEditor.getLayoutData());
-                    setEditor(control, treeItem, columnNumber);
-                    cellEditor.setFocus();
-                    if (focusListener == null) {
-                        focusListener = new FocusAdapter() {
-                            public void focusLost(FocusEvent e) {
-                                applyEditorValue();
-                            }
-                        };
+    	ColumnViewerPart part = viewer.getColumnViewer(columnNumber);
+    	Object element = treeItem.getData();
+    	
+    	if( part != null && part.getEditingSupport() != null && part.getEditingSupport().canEdit(element) ) {
+    		cellEditor = part.getEditingSupport().getCellEditor(element);
+    		cellEditor.addListener(cellEditorListener);
+            Object value = part.getEditingSupport().getValue(element);
+            cellEditor.setValue(value);
+            // Tricky flow of control here:
+            // activate() can trigger callback to cellEditorListener which will clear cellEditor
+            // so must get control first, but must still call activate() even if there is no control.
+            final Control control = cellEditor.getControl();
+            cellEditor.activate();
+            if (control == null) {
+				return;
+			}
+            setLayoutData(cellEditor.getLayoutData());
+            setEditor(control, treeItem, columnNumber);
+            cellEditor.setFocus();
+            if (focusListener == null) {
+                focusListener = new FocusAdapter() {
+                    public void focusLost(FocusEvent e) {
+                        applyEditorValue();
                     }
-                    control.addFocusListener(focusListener);
-                    mouseListener = new MouseAdapter() {
-                        public void mouseDown(MouseEvent e) {
-                            // time wrap?	
-                            // check for expiration of doubleClickTime
-                            if (e.time <= doubleClickExpirationTime) {
-                                control.removeMouseListener(mouseListener);
-                                cancelEditing();
-                                handleDoubleClickEvent();
-                            } else if (mouseListener != null) {
-                                control.removeMouseListener(mouseListener);
-                            }
-                        }
-                    };
-                    control.addMouseListener(mouseListener);
-                }
+                };
             }
-        }
+            control.addFocusListener(focusListener);
+            mouseListener = new MouseAdapter() {
+                public void mouseDown(MouseEvent e) {
+                    // time wrap?	
+                    // check for expiration of doubleClickTime
+                    if (e.time <= doubleClickExpirationTime) {
+                        control.removeMouseListener(mouseListener);
+                        cancelEditing();
+                        handleDoubleClickEvent();
+                    } else if (mouseListener != null) {
+                        control.removeMouseListener(mouseListener);
+                    }
+                }
+            };
+            control.addMouseListener(mouseListener);
+    	}
     }
 
     /**
@@ -313,13 +309,10 @@ import org.eclipse.swt.widgets.Item;
      * by delegating to the cell modifier.
      */
     private void saveEditorValue(CellEditor cellEditor, Item treeItem) {
-        if (cellModifier != null) {
-            String property = null;
-            if (columnProperties != null
-                    && columnNumber < columnProperties.length) {
-				property = columnProperties[columnNumber];
-			}
-            cellModifier.modify(treeItem, property, cellEditor.getValue());
+    	ColumnViewerPart part = (ColumnViewerPart)treeItem.getData(ColumnViewerPart.COLUMN_VIEWER_KEY);
+    	
+    	if( part != null && part.getEditingSupport() != null ) {
+        	part.getEditingSupport().setValue(treeItem.getData(), cellEditor.getValue());
         }
     }
 

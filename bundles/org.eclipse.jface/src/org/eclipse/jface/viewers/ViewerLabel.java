@@ -13,6 +13,7 @@ package org.eclipse.jface.viewers;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * The ViewerLabel is the class that is passed to a viewer to handle updates of
@@ -43,6 +44,14 @@ public class ViewerLabel {
 	private Image startImage;
 
 	private boolean hasPendingDecorations;
+	
+	private String tooltipText;
+	
+	private Color tooltipForegroundColor;
+	
+	private Color tooltipBackgroundColor;
+	
+	private Point tooltipShift;
 
 	/**
 	 * Create a new instance of the receiver with the supplied
@@ -240,5 +249,89 @@ public class ViewerLabel {
 
 	/* public */ boolean hasPendingDecorations() {
 		return hasPendingDecorations;
+	}
+
+	/**
+	 * @return Returns the tooltipText.
+	 */
+	public String getTooltipText() {
+		return tooltipText;
+	}
+
+	/**
+	 * @param tooltipText The tooltipText to set.
+	 */
+	public void setTooltipText(String tooltipText) {
+		this.tooltipText = tooltipText;
+	}
+	
+	/**
+	 * @return Return whether or not the tooltip text has been set.
+	 */
+	public boolean hasNewTooltipText() {
+		return this.tooltipText != null;
+	}
+
+	/**
+	 * @return Returns the tooltipBackgroundColor.
+	 */
+	public Color getTooltipBackgroundColor() {
+		return tooltipBackgroundColor;
+	}
+
+	/**
+	 * @param tooltipBackgroundColor The tooltipBackgroundColor to set.
+	 */
+	public void setTooltipBackgroundColor(Color tooltipBackgroundColor) {
+		this.tooltipBackgroundColor = tooltipBackgroundColor;
+	}
+
+	/**
+	 * @return Return whether or not the tooltip background color has been set.
+	 */
+	public boolean hasNewTooltipBackgroundColor() {
+		return tooltipBackgroundColor != null;
+	}
+	
+	/**
+	 * @return Returns the tooltipForegroundColor.
+	 */
+	public Color getTooltipForegroundColor() {
+		return tooltipForegroundColor;
+	}
+
+	/**
+	 * @param tooltipForegroundColor The tooltipForegroundColor to set.
+	 */
+	public void setTooltipForegroundColor(Color tooltipForegroundColor) {
+		this.tooltipForegroundColor = tooltipForegroundColor;
+	}
+	
+	/**
+	 * @return Return whether or not the tooltip foreground color has been set.
+	 */
+	public boolean hasNewTooltipForegroundColor() {
+		return tooltipForegroundColor != null;
+	}
+
+	/**
+	 * @return Returns the tooltipShift.
+	 */
+	public Point getTooltipShift() {
+		return tooltipShift;
+	}
+
+	/**
+	 * @param tooltipShift The tooltipShift to set.
+	 */
+	public void setTooltipShift(Point tooltipShift) {
+		this.tooltipShift = tooltipShift;
+	}
+	
+	/**
+	 * @return Return whether or not the tooltip shift has been set.
+	 */
+	public boolean hasTooltipShift() {
+		return this.tooltipShift != null;
 	}
 }

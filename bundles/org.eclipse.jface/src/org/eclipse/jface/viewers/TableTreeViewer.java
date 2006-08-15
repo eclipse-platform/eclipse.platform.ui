@@ -519,4 +519,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
     protected void showItem(Item item) {
         getTableTree().showItem((TableTreeItem) item);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
+     */
+    protected Widget getColumnViewerOwner(int columnIndex) {
+    	return null;
+    }
 }

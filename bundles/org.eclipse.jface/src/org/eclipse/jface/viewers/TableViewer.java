@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> (bug 83200)
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -21,6 +22,7 @@ import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -28,8 +30,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
 
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
@@ -63,178 +67,101 @@ import org.eclipse.swt.widgets.Widget;
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
  */
-public class TableViewer extends StructuredViewer {
-		
-	private class VirtualManager{
+public class TableViewer extends ColumnViewer {
+
+	private class VirtualManager {
 
 		/**
-		 * The currently invisible elements as provided 
-		 * by the content provider or by addition.
-		 * This will not be populated by an ILazyStructuredContentProvider
-		 * as an ILazyStructuredContentProvider is only queried
-		 * on the virtual callback.
+		 * The currently invisible elements as provided by the content provider
+		 * or by addition. This will not be populated by an
+		 * ILazyStructuredContentProvider as an ILazyStructuredContentProvider
+		 * is only queried on the virtual callback.
 		 */
 		private Object[] cachedElements = new Object[0];
+
 		/**
 		 * Create a new instance of the receiver.
-		 *
+		 * 
 		 */
-		public VirtualManager(){
+		public VirtualManager() {
 			addTableListener();
 		}
 
-		
 		/**
 		 * Add the listener for SetData on the table
 		 */
 		private void addTableListener() {
-			table.addListener(SWT.SetData,new Listener(){
-				/* (non-Javadoc)
+			table.addListener(SWT.SetData, new Listener() {
+				/*
+				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
 				public void handleEvent(Event event) {
 					TableItem item = (TableItem) event.item;
 					final int index = table.indexOf(item);
 					Object element = resolveElement(index);
-					if(element == null){
-						//Didn't find it so make a request
-						//Keep looking if it is not in the cache.
+					if (element == null) {
+						// Didn't find it so make a request
+						// Keep looking if it is not in the cache.
 						IContentProvider contentProvider = getContentProvider();
-						//If we are building lazily then request lookup now
-						if(contentProvider instanceof ILazyContentProvider){
-							((ILazyContentProvider) contentProvider).
-								updateElement(index);
+						// If we are building lazily then request lookup now
+						if (contentProvider instanceof ILazyContentProvider) {
+							((ILazyContentProvider) contentProvider)
+									.updateElement(index);
 							return;
-						}	
+						}
 					}
-						
-					
-					associate(element,item);
-					updateItem(item,element);
+
+					associate(element, item);
+					updateItem(item, element);
 				}
 
 			});
 		}
-		
+
 		/**
-		 * Get the element at index.Resolve it lazily if this
-		 * is available.
+		 * Get the element at index.Resolve it lazily if this is available.
+		 * 
 		 * @param index
-		 * @return Object or <code>null</code> if it could
-		 * not be found
+		 * @return Object or <code>null</code> if it could not be found
 		 */
 		protected Object resolveElement(int index) {
-			
+
 			Object element = null;
-			if(index < cachedElements.length) {
-				element =  cachedElements[index];
+			if (index < cachedElements.length) {
+				element = cachedElements[index];
 			}
-			
+
 			return element;
 		}
 
 		/**
 		 * A non visible item has been added.
+		 * 
 		 * @param element
 		 * @param index
 		 */
 		public void notVisibleAdded(Object element, int index) {
-			
+
 			int requiredCount = index + 1;
-			
-			if(requiredCount > getTable().getItemCount()){
+
+			if (requiredCount > getTable().getItemCount()) {
 				getTable().setItemCount(requiredCount);
 				Object[] newCache = new Object[requiredCount];
-				System.arraycopy(cachedElements, 0, newCache, 0, cachedElements.length);
+				System.arraycopy(cachedElements, 0, newCache, 0,
+						cachedElements.length);
 				cachedElements = newCache;
 			}
-			
-			
+
 			cachedElements[index] = element;
-			
+
 		}
-		
-	}
-	
-	private VirtualManager virtualManager;
-	
-	/**
-	 * TableColorAndFontNoOp is an optimization for tables without
-	 * color and font support.
-	 * @see ITableColorProvider
-	 * @see ITableFontProvider
-	 */
-	private class TableColorAndFontNoOp{
-		
-		/**
-		 * Create a new instance of the receiver.
-		 *
-		 */
-		TableColorAndFontNoOp(){
-			
-		}
-		
-		/**
-		 * Set the fonts and colors for the tableItem if there is a color
-		 * and font provider available.
-		 * @param tableItem The item to update.
-		 * @param element The element being represented
-		 * @param column The column index
-		 */
-		public void setFontsAndColors(TableItem tableItem, Object element, int column){
-		}	
-		
+
 	}
 
-	/**
-	 * TableColorAndFontCollector is an helper class for color and font
-	 * support for tables that support the ITableFontProvider and
-	 * the ITableColorProvider.
-	 * @see ITableColorProvider
-	 * @see ITableFontProvider
-	 */
-	
-	private class TableColorAndFontCollector extends TableColorAndFontNoOp{
-		
-		ITableFontProvider fontProvider = null;
-		ITableColorProvider colorProvider = null;
-		
-		/**
-		 * Create an instance of the receiver. Set the color and font
-		 * providers if provider can be cast to the correct type.
-		 * @param provider IBaseLabelProvider
-		 */
-		public TableColorAndFontCollector(IBaseLabelProvider provider){
-			if(provider instanceof ITableFontProvider) {
-				fontProvider = (ITableFontProvider) provider;
-			}
-			if(provider instanceof ITableColorProvider) {
-				colorProvider = (ITableColorProvider) provider;
-			}
-		}
-	
-		
-		/**
-		 * Set the fonts and colors for the tableItem if there is a color
-		 * and font provider available.
-		 * @param tableItem The item to update.
-		 * @param element The element being represented
-		 * @param column The column index
-		 */
-		public void setFontsAndColors(TableItem tableItem, Object element, int column){
-			if (colorProvider != null) {
-				tableItem.setBackground(column, colorProvider.getBackground(element,
-						column));
-				tableItem.setForeground(column, colorProvider.getForeground(element,
-						column));
-			}
-			if(fontProvider != null) {
-				tableItem.setFont(column,fontProvider.getFont(element,column));
-			}
-		}	
-		
-	}
-	
+	private VirtualManager virtualManager;
+
 	/**
 	 * Internal table viewer implementation.
 	 */
@@ -249,11 +176,6 @@ public class TableViewer extends StructuredViewer {
 	 * This viewer's table editor.
 	 */
 	private TableEditor tableEditor;
-	
-	/**
-	 * The color and font collector for the cells.
-	 */
-	private TableColorAndFontNoOp tableColorAndFont = new TableColorAndFontNoOp();
 	
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -281,7 +203,7 @@ public class TableViewer extends StructuredViewer {
 	 *            SWT style bits
 	 */
 	public TableViewer(Composite parent, int style) {
-		this(new Table(parent, style));			
+		this(new Table(parent, style));
 	}
 
 	/**
@@ -299,19 +221,19 @@ public class TableViewer extends StructuredViewer {
 		initTableViewerImpl();
 		initializeVirtualManager(table.getStyle());
 	}
-	
+
 	/**
-	 * Initialize the virtual manager to manage the virtual state
-	 * if the table is VIRTUAL. If not use the default no-op
-	 * version.
+	 * Initialize the virtual manager to manage the virtual state if the table
+	 * is VIRTUAL. If not use the default no-op version.
+	 * 
 	 * @param style
 	 */
 	private void initializeVirtualManager(int style) {
-		if((style & SWT.VIRTUAL) == 0) {
+		if ((style & SWT.VIRTUAL) == 0) {
 			return;
 		}
-			
-		virtualManager = new VirtualManager();	
+
+		virtualManager = new VirtualManager();
 	}
 
 	/**
@@ -330,7 +252,7 @@ public class TableViewer extends StructuredViewer {
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
 		Object[] filtered = filter(elements);
-		
+
 		for (int i = 0; i < filtered.length; i++) {
 			Object element = filtered[i];
 			int index = indexForElement(element);
@@ -340,17 +262,18 @@ public class TableViewer extends StructuredViewer {
 
 	/**
 	 * Create a new TableItem at index if required.
+	 * 
 	 * @param element
 	 * @param index
 	 * 
 	 * @since 3.1
 	 */
 	private void createItem(Object element, int index) {
-		if(virtualManager == null) {
-			updateItem(new TableItem(getTable(), SWT.NONE, index), element);
-		} else{
-			virtualManager.notVisibleAdded(element,index);
-			
+		if (virtualManager == null) {
+			updateItem(createNewRowPart(null, SWT.NONE, index).getItem(), element);
+		} else {
+			virtualManager.notVisibleAdded(element, index);
+
 		}
 	}
 
@@ -382,7 +305,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
 	 */
 	protected Widget doFindInputItem(Object element) {
@@ -393,11 +317,12 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		
+
 		TableItem[] children = table.getItems();
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
@@ -411,8 +336,10 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
+	 *      java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		if (widget instanceof TableItem) {
@@ -422,85 +349,63 @@ public class TableViewer extends StructuredViewer {
 			if (fullMap) {
 				associate(element, item);
 			} else {
-            	Object data = item.getData();
-            	if (data != null) {
-            		unmapElement(data, item);
-            	}
+				Object data = item.getData();
+				if (data != null) {
+					unmapElement(data, item);
+				}
 				item.setData(element);
 				mapElement(element, item);
 			}
 
-			IBaseLabelProvider prov = getLabelProvider();
-			ITableLabelProvider tprov = null;		
-			ILabelProvider lprov = null;
-			IViewerLabelProvider vprov = null;
-			
-			if(prov instanceof ILabelProvider) {
-				lprov = (ILabelProvider) prov;
-			}
-			
-			if (prov instanceof IViewerLabelProvider) {
-				vprov = (IViewerLabelProvider) prov;
-			} 
-
-			if (prov instanceof ITableLabelProvider) {
-				tprov = (ITableLabelProvider) prov;
-			} 
-			
 			int columnCount = table.getColumnCount();
-			TableItem ti = item;
-			getColorAndFontCollector().setFontsAndColors(element);
-			
+			if(columnCount == 0)
+				columnCount = 1;//If there are no columns do the first one 
+
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
-				// Similar code in TreeViewer.doUpdateItem()
-				String text = "";//$NON-NLS-1$
-				Image image = null;
-				tableColorAndFont.setFontsAndColors(ti,element,column);
+				ColumnViewerPart columnViewer = getColumnViewer(column);
+				columnViewer.refresh( getRowPartFromItem(item),column);
 
-				if (tprov == null) {
-					if (column == 0) {
-						ViewerLabel updateLabel = new ViewerLabel(item
-								.getText(), item.getImage());
-						
-						if(vprov != null) {
-							buildLabel(updateLabel,element,vprov);
-						} else{
-							if(lprov != null) {
-								buildLabel(updateLabel,element,lprov);
-							}
-						}
-						
-//						As it is possible for user code to run the event 
-			            //loop check here.
-						if (item.isDisposed()) {
-			                unmapElement(element, item);
-			                return;
-			            }   
-						
-						text = updateLabel.getText();
-						image = updateLabel.getImage();
-					}
-				} else {
-					text = tprov.getColumnText(element, column);
-					image = tprov.getColumnImage(element, column);
+				// As it is possible for user code to run the event
+				// loop check here.
+				if (item.isDisposed()) {
+					unmapElement(element, item);
+					return;
 				}
 
-				//Avoid setting text to null
-				if (text == null) {
-					text = ""; //$NON-NLS-1$
-				}
-				ti.setText(column, text);
-				if (ti.getImage(column) != image) {
-					ti.setImage(column, image);
-				}
 			}
-			
-			
-			getColorAndFontCollector().applyFontsAndColors(ti);
+
 		}
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
+	 */
+	protected Widget getColumnViewerOwner(int columnIndex) {
+		if( columnIndex < 0 || columnIndex > getTable().getColumnCount() ) {
+			return null;
+		}
+		
+		if (getTable().getColumnCount() == 0)// Hang it off the table if it
+			return getTable();
+		
+		
+		return getTable().getColumn(columnIndex);
+	}
+	
+	/**
+	 * Set the TableColumnViewerPart at columnIndex to be viewerPart.
+	 * 
+	 * @param viewerPart
+	 * @param columnIndex
+	 */
+	public void setColumnPart(ColumnViewerPart viewerPart, int columnIndex) {
+		TableColumn column = getTable().getColumn(columnIndex);
+		column.setData(ColumnViewerPart.COLUMN_VIEWER_KEY, viewerPart);
+	}
+
 
 	/**
 	 * Starts editing the given element.
@@ -514,37 +419,32 @@ public class TableViewer extends StructuredViewer {
 		tableViewerImpl.editElement(element, column);
 	}
 
-	/**
-	 * Returns the cell editors of this table viewer.
-	 * 
-	 * @return the list of cell editors
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
 	 */
 	public CellEditor[] getCellEditors() {
 		return tableViewerImpl.getCellEditors();
 	}
 
-	/**
-	 * Returns the cell modifier of this table viewer.
-	 * 
-	 * @return the cell modifier
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
 	 */
 	public ICellModifier getCellModifier() {
 		return tableViewerImpl.getCellModifier();
 	}
 
-	/**
-	 * Returns the column properties of this table viewer. The properties must
-	 * correspond with the columns of the table control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @return the list of column properties
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
 	 */
 	public Object[] getColumnProperties() {
 		return tableViewerImpl.getColumnProperties();
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
@@ -588,11 +488,12 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
-		if(virtualManager != null) {
+		if (virtualManager != null) {
 			return getVirtualSelection();
 		}
 		Widget[] items = table.getSelection();
@@ -606,50 +507,49 @@ public class TableViewer extends StructuredViewer {
 		}
 		return list;
 	}
-	
+
 	/**
-	 * Get the virtual selection. Avoid calling SWT whenever possible
-	 * to prevent extra widget creation.
+	 * Get the virtual selection. Avoid calling SWT whenever possible to prevent
+	 * extra widget creation.
+	 * 
 	 * @return List of Object
 	 */
 
 	private List getVirtualSelection() {
-		
+
 		List result = new ArrayList();
-		int[] selectionIndices = getTable().getSelectionIndices(); 
-		if(getContentProvider() instanceof ILazyContentProvider){
+		int[] selectionIndices = getTable().getSelectionIndices();
+		if (getContentProvider() instanceof ILazyContentProvider) {
 			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
 			for (int i = 0; i < selectionIndices.length; i++) {
 				int selectionIndex = selectionIndices[i];
-				lazy.updateElement(selectionIndex);//Start the update
+				lazy.updateElement(selectionIndex);// Start the update
 				Object element = getTable().getItem(selectionIndex).getData();
-				//Only add the element if it got updated.
-				//If this is done deferred the selection will
-				//be incomplete until selection is finished.
+				// Only add the element if it got updated.
+				// If this is done deferred the selection will
+				// be incomplete until selection is finished.
 				if (element != null) {
 					result.add(element);
-				}				
+				}
 			}
-		}
-		else{
+		} else {
 			for (int i = 0; i < selectionIndices.length; i++) {
 				Object element = null;
-				//See if it is cached
+				// See if it is cached
 				int selectionIndex = selectionIndices[i];
-				if (selectionIndex < virtualManager.cachedElements.length){
+				if (selectionIndex < virtualManager.cachedElements.length) {
 					element = virtualManager.cachedElements[selectionIndex];
 				}
-				if (element == null){
+				if (element == null) {
 					// Not cached so try the item's data
 					TableItem item = getTable().getItem(selectionIndex);
 					element = item.getData();
 				}
 				if (element != null) {
 					result.add(element);
-				}				
+				}
 			}
-			
-			
+
 		}
 		return result;
 	}
@@ -664,7 +564,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ContentViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
 	protected void hookControl(Control control) {
@@ -757,8 +658,10 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object,
+	 *      java.lang.Object)
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
 		getControl().setRedraw(false);
@@ -795,12 +698,13 @@ public class TableViewer extends StructuredViewer {
 		if (position == -1) {
 			position = table.getItemCount();
 		}
-		
-		createItem(element,position);
+
+		createItem(element, position);
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
@@ -808,15 +712,17 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object, boolean)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object,
+	 *      boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		tableViewerImpl.applyEditorValue();
 		if (element == null || equals(element, getRoot())) {
-			if(virtualManager == null) {
+			if (virtualManager == null) {
 				internalRefreshAll(updateLabels);
-			} else{
+			} else {
 				internalVirtualRefreshAll();
 			}
 		} else {
@@ -833,17 +739,17 @@ public class TableViewer extends StructuredViewer {
 	 * @since 3.1
 	 */
 	private void internalVirtualRefreshAll() {
-		
+
 		Object root = getRoot();
 		IContentProvider contentProvider = getContentProvider();
-		
-		//Invalidate for lazy
-		if(!(contentProvider instanceof ILazyContentProvider) 
+
+		// Invalidate for lazy
+		if (!(contentProvider instanceof ILazyContentProvider)
 				&& (contentProvider instanceof IStructuredContentProvider)) {
-			//Don't cache if the root is null but cache if it is not lazy.
-			if(root != null){
-				virtualManager.cachedElements = 
-					((IStructuredContentProvider) getContentProvider()).getElements(root);
+			// Don't cache if the root is null but cache if it is not lazy.
+			if (root != null) {
+				virtualManager.cachedElements = ((IStructuredContentProvider) getContentProvider())
+						.getElements(root);
 				getTable().setItemCount(virtualManager.cachedElements.length);
 			}
 		}
@@ -851,8 +757,9 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Refresh all of the elements of the table. update the
-	 * labels if updatLabels is true;
+	 * Refresh all of the elements of the table. update the labels if
+	 * updatLabels is true;
+	 * 
 	 * @param updateLabels
 	 * 
 	 * @since 3.1
@@ -871,10 +778,9 @@ public class TableViewer extends StructuredViewer {
 		TableItem[] items = getTable().getItems();
 		int min = Math.min(children.length, items.length);
 		for (int i = 0; i < min; ++i) {
-			
-			
+
 			TableItem item = items[i];
-				
+
 			// if the element is unchanged, update its label if appropriate
 			if (equals(children[i], item.getData())) {
 				if (updateLabels) {
@@ -893,14 +799,16 @@ public class TableViewer extends StructuredViewer {
 				// So, if the object associated with this item has changed,
 				// just disassociate it for now, and update it below.
 				item.setText(""); //$NON-NLS-1$
-				item.setImage(new Image[Math.max(1,table.getColumnCount())]);//Clear all images
+				item.setImage(new Image[Math.max(1, table.getColumnCount())]);// Clear
+				// all
+				// images
 				disassociate(item);
 			}
 		}
 		// dispose of all items beyond the end of the current elements
 		if (min < items.length) {
 			for (int i = items.length; --i >= min;) {
-				
+
 				disassociate(items[i]);
 			}
 			table.remove(min, items.length - 1);
@@ -912,7 +820,7 @@ public class TableViewer extends StructuredViewer {
 		}
 		// Update items which were removed above
 		for (int i = 0; i < min; ++i) {
-							
+
 			TableItem item = items[i];
 			if (item.getData() == null) {
 				updateItem(item, children[i]);
@@ -920,10 +828,9 @@ public class TableViewer extends StructuredViewer {
 		}
 		// add any remaining elements
 		for (int i = min; i < children.length; ++i) {
-			createItem(children[i],i);
+			createItem(children[i], i);
 		}
 	}
-
 
 	/**
 	 * Removes the given elements from this table viewer.
@@ -987,9 +894,9 @@ public class TableViewer extends StructuredViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
-        if (elements.length == 0) {
-        	return;
-        }
+		if (elements.length == 0) {
+			return;
+		}
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRemove(elements);
@@ -1007,8 +914,8 @@ public class TableViewer extends StructuredViewer {
 	 * the model. Note that there is another method for efficiently processing
 	 * the simultaneous removal of multiple elements.
 	 * </p>
-	 * <strong>NOTE:</strong> removing an object from a virtual
-	 * table will decrement the itemCount.
+	 * <strong>NOTE:</strong> removing an object from a virtual table will
+	 * decrement the itemCount.
 	 * 
 	 * @param element
 	 *            the element
@@ -1018,7 +925,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
 	 */
 	public void reveal(Object element) {
@@ -1079,34 +987,51 @@ public class TableViewer extends StructuredViewer {
 	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
 	 * provide colors and/or fonts.
 	 * </p>
+	 * <p>
+	 * If the label provider implements the mixin interface ITooltipProvider, it
+	 * can provide custom tooltips.
+	 * </p>
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider);
+		clearColumnParts();//Clear before refresh
 		super.setLabelProvider(labelProvider);
-		if(labelProvider instanceof ITableFontProvider || labelProvider instanceof ITableColorProvider) {
-			tableColorAndFont = new TableColorAndFontCollector(labelProvider);
-		} else {
-			tableColorAndFont = new TableColorAndFontNoOp();
-		}
-				
 	}
 	
 	/**
+	 * Clear the viewer parts for the columns
+	 */
+	private void clearColumnParts() {
+		TableColumn[] columns = getTable().getColumns();
+		if(columns.length == 0)
+			getTable().setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+		else{
+			for (int i = 0; i < columns.length; i++) {
+				columns[i].setData(ColumnViewerPart.COLUMN_VIEWER_KEY,null);
+				
+			}
+		}
+		
+	}
+
+	/**
 	 * <p>
-	 * Sets a new selection for this viewer and optionally makes it visible.
-	 * The TableViewer implmentation of this method is ineffecient for the
+	 * Sets a new selection for this viewer and optionally makes it visible. The
+	 * TableViewer implmentation of this method is ineffecient for the
 	 * ILazyContentProvider as lookup is done by indices rather than elements
-	 * and may require population of the entire table in worse case. 
+	 * and may require population of the entire table in worse case.
 	 * </p>
 	 * <p>
-	 * Use Table#setSelection(int[] indices) and Table#showSelection() if
-	 * you wish to set selection more effeciently when using a ILazyContentProvider.
+	 * Use Table#setSelection(int[] indices) and Table#showSelection() if you
+	 * wish to set selection more effeciently when using a ILazyContentProvider.
 	 * </p>
 	 * 
-	 * @param selection the new selection
-     * @param reveal <code>true</code> if the selection is to be made
-     *   visible, and <code>false</code> otherwise
+	 * @param selection
+	 *            the new selection
+	 * @param reveal
+	 *            <code>true</code> if the selection is to be made visible,
+	 *            and <code>false</code> otherwise
 	 * @see Table#setSelection(int[])
 	 * @see Table#showSelection()
 	 */
@@ -1115,21 +1040,23 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
+	 *      boolean)
 	 */
 	protected void setSelectionToWidget(List list, boolean reveal) {
-		
+
 		if (list == null) {
 			table.deselectAll();
 			return;
 		}
-		
-		if(virtualManager != null){
+
+		if (virtualManager != null) {
 			virtualSetSelectionToWidget(list, reveal);
 			return;
 		}
-		
+
 		int size = list.size();
 		TableItem[] items = new TableItem[size];
 		int count = 0;
@@ -1149,22 +1076,24 @@ public class TableViewer extends StructuredViewer {
 		if (reveal) {
 			table.showSelection();
 		}
-			
+
 	}
-	
-	
+
 	/**
 	 * Set the selection on a virtual table
-	 * @param list The elements to set
-	 * @param reveal Whether or not reveal the first item.
+	 * 
+	 * @param list
+	 *            The elements to set
+	 * @param reveal
+	 *            Whether or not reveal the first item.
 	 */
 	private void virtualSetSelectionToWidget(List list, boolean reveal) {
 		int size = list.size();
 		int[] indices = new int[list.size()];
-		
+
 		TableItem firstItem = null;
 		int count = 0;
-		HashSet virtualElements = new HashSet(); 
+		HashSet virtualElements = new HashSet();
 		for (int i = 0; i < size; ++i) {
 			Object o = list.get(i);
 			Widget w = findItem(o);
@@ -1178,37 +1107,38 @@ public class TableViewer extends StructuredViewer {
 				virtualElements.add(o);
 			}
 		}
-		
-		if(getContentProvider() instanceof ILazyContentProvider){
-			ILazyContentProvider provider = 
-				(ILazyContentProvider) getContentProvider();
-		
-			//Now go through it again until all is done or we are no longer virtual
-			//This may create all items so it is not a good
-			//idea in general.
-			//Use #setSelection (int [] indices,boolean reveal) instead
-			for (int i = 0; virtualElements.size() > 0 && i < getTable().getItemCount(); i++) {
+
+		if (getContentProvider() instanceof ILazyContentProvider) {
+			ILazyContentProvider provider = (ILazyContentProvider) getContentProvider();
+
+			// Now go through it again until all is done or we are no longer
+			// virtual
+			// This may create all items so it is not a good
+			// idea in general.
+			// Use #setSelection (int [] indices,boolean reveal) instead
+			for (int i = 0; virtualElements.size() > 0
+					&& i < getTable().getItemCount(); i++) {
 				provider.updateElement(i);
 				TableItem item = getTable().getItem(i);
-				if(virtualElements.contains(item.getData())){
-					indices[count++] = i;	
+				if (virtualElements.contains(item.getData())) {
+					indices[count++] = i;
 					virtualElements.remove(item.getData());
 					if (firstItem == null) {
 						firstItem = item;
 					}
 				}
 			}
-		}
-		else{
-			
-			if(count != list.size()){//As this is expensive skip it if all have been found
-				//If it is not lazy we can use the cache
+		} else {
+
+			if (count != list.size()) {// As this is expensive skip it if all
+				// have been found
+				// If it is not lazy we can use the cache
 				for (int i = 0; i < virtualManager.cachedElements.length; i++) {
 					Object element = virtualManager.cachedElements[i];
-					if(virtualElements.contains(element)){
+					if (virtualElements.contains(element)) {
 						TableItem item = getTable().getItem(i);
-						item.getText();//Be sure to fire the update
-						indices[count++] = i;	
+						item.getText();// Be sure to fire the update
+						indices[count++] = i;
 						virtualElements.remove(element);
 						if (firstItem == null) {
 							firstItem = item;
@@ -1217,7 +1147,7 @@ public class TableViewer extends StructuredViewer {
 				}
 			}
 		}
-		
+
 		if (count < size) {
 			System.arraycopy(indices, 0, indices = new int[count], 0, count);
 		}
@@ -1230,35 +1160,39 @@ public class TableViewer extends StructuredViewer {
 
 	/**
 	 * Set the item count of the receiver.
-	 * @param count the new table size.
+	 * 
+	 * @param count
+	 *            the new table size.
 	 * 
 	 * @since 3.1
 	 */
-	public void setItemCount(int count){
+	public void setItemCount(int count) {
 		getTable().setItemCount(count);
 		getTable().redraw();
 	}
-	
+
 	/**
-	 * Replace the entries starting at index with elements.
-	 * This method assumes all of these values are correct
-	 * and will not call the content provider to verify.
-	 * <strong>Note that this method will create a TableItem
-	 * for all of the elements provided</strong>.
+	 * Replace the entries starting at index with elements. This method assumes
+	 * all of these values are correct and will not call the content provider to
+	 * verify. <strong>Note that this method will create a TableItem for all of
+	 * the elements provided</strong>.
+	 * 
 	 * @param element
 	 * @param index
 	 * @see ILazyContentProvider
 	 * 
 	 * @since 3.1
 	 */
-	public void replace(Object element, int index){
+	public void replace(Object element, int index) {
 		TableItem item = getTable().getItem(index);
 		refreshItem(item, element);
 	}
 
 	/**
 	 * Clear the table item at the specified index
-	 * @param index the index of the table item to be cleared
+	 * 
+	 * @param index
+	 *            the index of the table item to be cleared
 	 * 
 	 * @since 3.1
 	 */
@@ -1269,26 +1203,86 @@ public class TableViewer extends StructuredViewer {
 		}
 		table.clear(index);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRawChildren(java.lang.Object)
 	 */
 	protected Object[] getRawChildren(Object parent) {
 
-		Assert.isTrue(!(getContentProvider() instanceof ILazyContentProvider),"Cannot get raw children with an ILazyContentProvider");//$NON-NLS-1$
+		Assert.isTrue(!(getContentProvider() instanceof ILazyContentProvider),
+				"Cannot get raw children with an ILazyContentProvider");//$NON-NLS-1$
 		return super.getRawChildren(parent);
-	
+
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#assertContentProviderType(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	protected void assertContentProviderType(IContentProvider provider) {
-		Assert.isTrue(provider instanceof IStructuredContentProvider ||
-				provider instanceof ILazyContentProvider);
+		Assert.isTrue(provider instanceof IStructuredContentProvider
+				|| provider instanceof ILazyContentProvider);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
+	 */
+	protected RowPart getRowPartFromItem(Widget item) {
+		RowPart part = (RowPart)item.getData(RowPart.ROWPART_KEY);
+		
+		if( part == null ) {
+			part = new TableRowPart(((TableItem)item));
+		}
+		
+		return part;
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#createNewRowPart(org.eclipse.jface.internal.viewers.RowPart, int, int)
+	 */
+	protected RowPart createNewRowPart(RowPart parent, int style, int rowIndex) {
+		TableItem item;
+		
+		if( rowIndex >= 0 ) {
+			item = new TableItem(table,SWT.NONE,rowIndex);
+		} else {
+			item = new TableItem(table,SWT.NONE);
+		}
+		
+		return getRowPartFromItem(item);
+	}
+	
+	/**
+	 * Returns the item at the given display-relative coordinates, or
+	 * <code>null</code> if there is no item at that location.
+	 * <p>
+	 * The default implementation of this method returns <code>null</code>.
+	 * </p>
+	 * 
+	 * @param x
+	 *            horizontal coordinate
+	 * @param y
+	 *            vertical coordinate
+	 * @return the item, or <code>null</code> if there is no item at the given
+	 *         coordinates
+	 */
+	protected Item getItem(int x, int y) {
+		return table.getItem(new Point(x,y));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#createColumnViewer(org.eclipse.swt.widgets.Widget, org.eclipse.jface.viewers.ViewerLabelProvider)
+	 */
+	protected ColumnViewerPart createColumnViewer(Widget columnOwner, ViewerLabelProvider labelProvider) {
+		if( columnOwner instanceof TableColumn ) {
+			return new TableColumnViewerPart((TableColumn)columnOwner,labelProvider);
+		}
+		
+		return super.createColumnViewer(columnOwner, labelProvider);
 	}
 	
 	
-	
 }
-

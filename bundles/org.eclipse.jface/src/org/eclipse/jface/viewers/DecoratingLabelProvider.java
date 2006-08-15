@@ -22,10 +22,8 @@ import org.eclipse.swt.graphics.Image;
  * The decorator decorates the label text, image, font and colors provided by 
  * the nested label provider.
  */
-public class DecoratingLabelProvider extends LabelProvider implements
-        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
+public class DecoratingLabelProvider extends TreeColumnViewerLabelProvider  {
 		
-    private ILabelProvider provider;
 
     private ILabelDecorator decorator;
 
@@ -43,8 +41,8 @@ public class DecoratingLabelProvider extends LabelProvider implements
      */
     public DecoratingLabelProvider(ILabelProvider provider,
             ILabelDecorator decorator) {
+        super(provider);
         Assert.isNotNull(provider);
-        this.provider = provider;
         this.decorator = decorator;
     }
 
@@ -56,7 +54,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      */
     public void addListener(ILabelProviderListener listener) {
         super.addListener(listener);
-        provider.addListener(listener);
+        getLabelProvider().addListener(listener);
         if (decorator != null) {
             decorator.addListener(listener);
         }
@@ -68,7 +66,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * disposes both the nested label provider and the label decorator.
      */
     public void dispose() {
-        provider.dispose();
+        getLabelProvider().dispose();
         if (decorator != null) {
             decorator.dispose();
         }
@@ -82,7 +80,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * <code>decorateImage</code> method.
      */
     public Image getImage(Object element) {
-        Image image = provider.getImage(element);
+        Image image = getLabelProvider().getImage(element);
         if (decorator != null) {
         	if (decorator instanceof LabelDecorator) {
 				LabelDecorator ld2 = (LabelDecorator) decorator;
@@ -110,15 +108,6 @@ public class DecoratingLabelProvider extends LabelProvider implements
     }
 
     /**
-     * Returns the nested label provider.
-     *
-     * @return the nested label provider
-     */
-    public ILabelProvider getLabelProvider() {
-        return provider;
-    }
-
-    /**
      * The <code>DecoratingLabelProvider</code> implementation of this 
      * <code>ILabelProvider</code> method returns the text label provided
      * by the nested label provider's <code>getText</code> method, 
@@ -126,7 +115,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * <code>decorateText</code> method.
      */
     public String getText(Object element) {
-        String text = provider.getText(element);
+        String text = getLabelProvider().getText(element);
         if (decorator != null) {
         	if (decorator instanceof LabelDecorator) {
 				LabelDecorator ld2 = (LabelDecorator) decorator;
@@ -151,7 +140,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      * decorator returns <code>true</code>.
      */
     public boolean isLabelProperty(Object element, String property) {
-        if (provider.isLabelProperty(element, property)) {
+        if (getLabelProvider().isLabelProperty(element, property)) {
 			return true;
 		}
         if (decorator != null && decorator.isLabelProperty(element, property)) {
@@ -168,7 +157,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
      */
     public void removeListener(ILabelProviderListener listener) {
         super.removeListener(listener);
-        provider.removeListener(listener);
+        getLabelProvider().removeListener(listener);
         if (decorator != null) {
             decorator.removeListener(listener);
         }
@@ -260,36 +249,6 @@ public class DecoratingLabelProvider extends LabelProvider implements
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	public Color getBackground(Object element) {
-		if(provider instanceof IColorProvider) {
-			return ((IColorProvider) provider).getBackground(element);
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
-	public Font getFont(Object element) {
-		if(provider instanceof IFontProvider) {
-			return ((IFontProvider) provider).getFont(element);
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	public Color getForeground(Object element) {
-		if(provider instanceof IColorProvider) {
-			return ((IColorProvider) provider).getForeground(element);
-		}
-		return null;
-	}
-
     /**
      * Return the decoration context associated with this label provider.
      * It will be passed to the decorator if the decorator is an 
@@ -314,8 +273,10 @@ public class DecoratingLabelProvider extends LabelProvider implements
 		this.decorationContext = decorationContext;
 	}
 
+	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
+	 * @see org.eclipse.jface.viewers.TreeViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
 	 */
 	public void updateLabel(ViewerLabel settings, TreePath elementPath) {
         ILabelDecorator currentDecorator = getLabelDecorator();
@@ -338,8 +299,8 @@ public class DecoratingLabelProvider extends LabelProvider implements
         settings.setHasPendingDecorations(!decorationReady);
         // update icon and label
 
-        if (provider instanceof ITreePathLabelProvider) {
-			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+        if (getTreePathProvider() == null) {
+			ITreePathLabelProvider pprov = (ITreePathLabelProvider) getLabelProvider();
 			if (decorationReady || oldText == null
 	                || settings.getText().length() == 0) {
 				pprov.updateLabel(settings, elementPath);

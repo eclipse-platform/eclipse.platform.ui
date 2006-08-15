@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Widget;
  * @see TreeViewer
  * @see TableTreeViewer
  */
-public abstract class AbstractTreeViewer extends StructuredViewer {
+public abstract class AbstractTreeViewer extends ColumnViewer {
 
     /**
      * Constant indicating that all levels of the tree should be expanded or
