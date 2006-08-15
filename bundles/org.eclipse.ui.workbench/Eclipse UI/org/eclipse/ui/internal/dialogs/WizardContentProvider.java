@@ -69,7 +69,8 @@ public class WizardContentProvider implements ITreeContentProvider {
                 handleChild(children[i], list);
             }
             // if there is only one category, return it's children directly (flatten list)
-            if (list.size() == 1) {
+            if (list.size() == 1
+            		&& list.get(0) instanceof WizardCollectionElement) {
                 return getChildren(list.get(0));
             }
                 
