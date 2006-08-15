@@ -62,6 +62,12 @@ public class WorkbenchNavigatorMessages extends NLS {
 	/** Message key. */
 	public static String MoveResourceAction_checkMoveMessage;
 
+	public static String WorkingSetRootModeActionGroup_Top_Level_Element_;
+
+	public static String WorkingSetRootModeActionGroup_Project_;
+
+	public static String WorkingSetRootModeActionGroup_Working_Set_;
+
 	static {
 		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
 	}

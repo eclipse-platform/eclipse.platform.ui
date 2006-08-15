@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.navigator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -786,9 +786,9 @@ public class NavigatorContentServiceContentProvider implements
 
 	private Set findPaths(TreePathCompiler aPathCompiler) {
 
-		Set/* <Object> */parents = findParents(aPathCompiler.getFirstSegment());
-		Set/* <TreePathCompiler> */parentPaths = new HashSet();
-		Set/* <TreePathCompiler> */foundPaths = Collections.EMPTY_SET;
+		Set/* <Object> */ parents = findParents(aPathCompiler.getFirstSegment());
+		Set/* <TreePathCompiler> */ parentPaths = new LinkedHashSet();
+		Set/* <TreePathCompiler> */ foundPaths = Collections.EMPTY_SET;
 		if (parents.size() > 0) {
 			for (Iterator parentIter = parents.iterator(); parentIter.hasNext();) {
 				Object parent = (Object) parentIter.next();
@@ -814,7 +814,7 @@ public class NavigatorContentServiceContentProvider implements
 
 		Set descriptors = contentService.findDescriptorsWithPossibleChild(
 				anElement, false);
-		Set parents = new HashSet();
+		Set parents = new LinkedHashSet();
 		NavigatorContentDescriptor foundDescriptor;
 		NavigatorContentExtension foundExtension;
 		Object parent = null;

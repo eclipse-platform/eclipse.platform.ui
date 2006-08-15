@@ -55,6 +55,7 @@
        	      <contentExtension pattern="org.eclipse.ui.navigator.resourceContent" />		       	      
 	          <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
            <contentExtension pattern="org.eclipse.ui.navigator.resources.linkHelper"/>
+           <contentExtension pattern="org.eclipse.ui.navigator.resources.workingSets"/>
           </includes>
        </viewerContentBinding>
        <viewerActionBinding
@@ -244,7 +245,34 @@
             	<test property="org.eclipse.core.resources.open" value="false"/>	            
 	        </and>
          </filterExpression>
-      </commonFilter>  
+      </commonFilter>
+      <actionProvider
+            class="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider"
+            id="org.eclipse.ui.navigator.resources.WorkingSetActions">
+           <enablement>
+                <or>
+					<adapt type="org.eclipse.core.resources.IResource" />	 
+					<adapt type="java.util.Collection"> 
+						<count value="0" />
+					</adapt>
+				</or>
+           </enablement>            
+      </actionProvider>
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider"
+            icon="icons/full/obj16/workingsets.gif"
+            id="org.eclipse.ui.navigator.resources.workingSets"
+            labelProvider="org.eclipse.ui.navigator.resources.WorkingSetsLabelProvider"
+            name="%workingsets.extension.name"
+            priority="higher">
+         <triggerPoints>
+            <instanceof value="org.eclipse.ui.IWorkingSet"/>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof value="java.lang.Object"/>
+         </possibleChildren>  
+      </navigatorContent>
       
    </extension>
     <extension
