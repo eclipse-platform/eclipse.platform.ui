@@ -23,6 +23,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -39,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -83,11 +86,20 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 			setChecked(isWorkingSetEnabled(set));
 		}
 
-		public void run() {
+		public void runWithEvent(Event event) {
+			
 			Set newList = new HashSet(Arrays.asList(window.getActivePage()
 					.getWorkingSets()));
 
 			if (isChecked()) {
+				// if the primary modifier key is down then clear the list
+				// first. this makes the selection exclusive rather than
+				// additive.
+				boolean modified = (event.stateMask & KeyLookupFactory
+						.getDefault().formalModifierLookup(IKeyLookup.M1_NAME)) != 0;
+				
+				if (modified) 
+					newList.clear();
 				newList.add(set);
 			} else {
 				newList.remove(set);
