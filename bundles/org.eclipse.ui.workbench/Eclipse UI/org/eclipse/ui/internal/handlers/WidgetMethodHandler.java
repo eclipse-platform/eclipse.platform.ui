@@ -67,16 +67,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
                      * be carried out asynchronously to the SWT event queue.
                      */
                     try {
-                        final Class focusManagerClass = Class
-                                .forName("javax.swing.FocusManager"); //$NON-NLS-1$
-                        final Method focusManagerGetCurrentManagerMethod = focusManagerClass
-                                .getMethod("getCurrentManager", null); //$NON-NLS-1$
-                        final Object focusManager = focusManagerGetCurrentManagerMethod
-                                .invoke(focusManagerClass, null);
-                        final Method focusManagerGetFocusOwner = focusManagerClass
-                                .getMethod("getFocusOwner", null); //$NON-NLS-1$
-                        final Object focusComponent = focusManagerGetFocusOwner
-                                .invoke(focusManager, null);
+                        final Object focusComponent = getFocusComponent();
                         if (focusComponent != null) {
                             Runnable methodRunnable = new Runnable() {
                                 public void run() {
@@ -112,14 +103,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
                                 }
                             };
 
-                            final Class swingUtilitiesClass = Class
-                                    .forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
-                            final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass
-                                    .getMethod("invokeLater", //$NON-NLS-1$
-                                            new Class[] { Runnable.class });
-                            swingUtilitiesInvokeLaterMethod.invoke(
-                                    swingUtilitiesClass,
-                                    new Object[] { methodRunnable });
+                            swingInvokeLater(methodRunnable);
                         }
                     } catch (final ClassNotFoundException e) {
                         // There is no Swing support, so do nothing.
@@ -147,6 +131,53 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		}
 
 		return null;
+	}
+
+	/**
+	 * Invoke a runnable on the swing EDT.
+	 * 
+	 * @param methodRunnable
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	protected void swingInvokeLater(Runnable methodRunnable)
+			throws ClassNotFoundException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		final Class swingUtilitiesClass = Class
+		        .forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
+		final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass
+		        .getMethod("invokeLater", //$NON-NLS-1$
+		                new Class[] { Runnable.class });
+		swingUtilitiesInvokeLaterMethod.invoke(
+		        swingUtilitiesClass,
+		        new Object[] { methodRunnable });
+	}
+
+	/**
+	 * Find the swing focus component, if it is available.
+	 * 
+	 * @return Hopefully, the swing focus component, but it can return <code>null</code>.
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	protected Object getFocusComponent() throws ClassNotFoundException,
+			NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
+		final Class focusManagerClass = Class
+		        .forName("javax.swing.FocusManager"); //$NON-NLS-1$
+		final Method focusManagerGetCurrentManagerMethod = focusManagerClass
+		        .getMethod("getCurrentManager", null); //$NON-NLS-1$
+		final Object focusManager = focusManagerGetCurrentManagerMethod
+		        .invoke(focusManagerClass, null);
+		final Method focusManagerGetFocusOwner = focusManagerClass
+		        .getMethod("getFocusOwner", null); //$NON-NLS-1$
+		final Object focusComponent = focusManagerGetFocusOwner
+		        .invoke(focusManager, null);
+		return focusComponent;
 	}
 
 	public final boolean isEnabled() {
@@ -183,23 +214,16 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			 * this will work.
 			 */
             try {
-                final Class focusManagerClass = Class
-                        .forName("javax.swing.FocusManager"); //$NON-NLS-1$
-                final Method focusManagerGetCurrentManagerMethod = focusManagerClass
-                        .getMethod("getCurrentManager", null); //$NON-NLS-1$
-                final Object focusManager = focusManagerGetCurrentManagerMethod
-                        .invoke(focusManagerClass, null);
-                final Method focusManagerGetFocusOwner = focusManagerClass
-                        .getMethod("getFocusOwner", null); //$NON-NLS-1$
-                final Object focusComponent = focusManagerGetFocusOwner.invoke(
-                        focusManager, null);
-                final Class clazz = focusComponent.getClass();
+                final Object focusComponent = getFocusComponent();
+                if (focusComponent != null) {
+					final Class clazz = focusComponent.getClass();
 
-                try {
-                    method = clazz.getMethod(methodName, NO_PARAMETERS);
-                } catch (NoSuchMethodException e) {
-                    // Do nothing.
-                }
+					try {
+						method = clazz.getMethod(methodName, NO_PARAMETERS);
+					} catch (NoSuchMethodException e) {
+						// Do nothing.
+					}
+				}
             } catch (final ClassNotFoundException e) {
                 // There is no Swing support, so do nothing.
 

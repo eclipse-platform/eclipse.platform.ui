@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
  * This handler is an adaptation of the widget method handler allowing select
@@ -45,15 +46,89 @@ public class SelectAllHandler extends WidgetMethodHandler {
 				final Control focusControl = Display.getCurrent()
 						.getFocusControl();
 				
-				// if it's an embedded swing component, fail gracefully for now.
-				if ((focusControl instanceof Composite)
-                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
-					return null;
-				}
-				
 				final int numParams = methodToExecute.getParameterTypes().length;
 
-				if (numParams == 0) {
+				if ((focusControl instanceof Composite)
+                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+					
+					// we only support selectAll for swing components
+					if (numParams != 0) {
+						return null;
+					}
+
+					/*
+					 * Okay. Have a seat. Relax a while. This is going to be a
+					 * bumpy ride. If it is an embedded widget, then it *might*
+					 * be a Swing widget. At the point where this handler is
+					 * executing, the key event is already bound to be
+					 * swallowed. If I don't do something, then the key will be
+					 * gone for good. So, I will try to forward the event to the
+					 * Swing widget. Unfortunately, we can't even count on the
+					 * Swing libraries existing, so I need to use reflection
+					 * everywhere. And, to top it off, I need to dispatch the
+					 * event on the Swing event queue, which means that it will
+					 * be carried out asynchronously to the SWT event queue.
+					 */
+					try {
+						final Object focusComponent = getFocusComponent();
+						if (focusComponent != null) {
+							Runnable methodRunnable = new Runnable() {
+								public void run() {
+									try {
+										methodToExecute.invoke(focusComponent,
+												null);
+										// and back to the UI thread :-)
+										focusControl.getDisplay().asyncExec(
+												new Runnable() {
+													public void run() {
+														if (!focusControl
+																.isDisposed()) {
+															focusControl
+																	.notifyListeners(
+																			SWT.Selection,
+																			null);
+														}
+													}
+												});
+									} catch (final IllegalAccessException e) {
+										// The method is protected, so do
+										// nothing.
+									} catch (final InvocationTargetException e) {
+										/*
+										 * I would like to log this exception --
+										 * and possibly show a dialog to the
+										 * user -- but I have to go back to the
+										 * SWT event loop to do this. So, back
+										 * we go....
+										 */
+										focusControl.getDisplay().asyncExec(
+												new Runnable() {
+													public void run() {
+														ExceptionHandler
+																.getInstance()
+																.handleException(
+																		new ExecutionException(
+																				"An exception occurred while executing " //$NON-NLS-1$
+																						+ methodToExecute
+																								.getName(),
+																				e
+																						.getTargetException()));
+													}
+												});
+									}
+								}
+							};
+
+							swingInvokeLater(methodRunnable);
+						}
+					} catch (final ClassNotFoundException e) {
+						// There is no Swing support, so do nothing.
+
+					} catch (final NoSuchMethodException e) {
+						// The API has changed, which seems amazingly unlikely.
+						throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+					}
+				} else if (numParams == 0) {
 					// This is a no-argument selectAll method.
 					methodToExecute.invoke(focusControl, null);
 					focusControl.notifyListeners(SWT.Selection, null);
