@@ -19,19 +19,23 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.CoreTest;
 
 /**
- * @since 3.2
- *
+ * Tests an error that occurs when a thread tries to read the workspace
+ * during snapshot.  Since snapshot collapses unused trees, it is a destructive
+ * operation on the tree's parent chain.  Any reader traversing the tree parent
+ * chain during that destructive operation risks encountering the tree in a 
+ * malformed state.  The fix was to synchronize the routine that collapses
+ * unused trees in ElementTree.
  */
-public class TestBug134364 extends CoreTest {
+public class Bug_134364 extends CoreTest {
 	public static Test suite() {
-		return new TestSuite(TestBug134364.class);
+		return new TestSuite(Bug_134364.class);
 	}
 
-	public TestBug134364() {
+	public Bug_134364() {
 		super("");
 	}
 
-	public TestBug134364(String name) {
+	public Bug_134364(String name) {
 		super(name);
 	}
 
