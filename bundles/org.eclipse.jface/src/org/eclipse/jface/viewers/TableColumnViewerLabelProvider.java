@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -23,9 +24,6 @@ import org.eclipse.swt.graphics.Image;
  * part of a work in progress. This API may change at any given time. Please 
  * do not use this API without consulting with the Platform/UI team.
  * @since 3.3
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
  * @see ITableLabelProvider
  * @see ITableColorProvider
  * @see ITableFontProvider
