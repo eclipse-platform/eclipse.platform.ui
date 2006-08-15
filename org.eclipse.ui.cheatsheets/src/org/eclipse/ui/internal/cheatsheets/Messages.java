@@ -77,6 +77,7 @@ public final class Messages extends NLS {
 	public static String ERROR_PARSING_PARAM_INVALIDRANGE;
 	public static String ERROR_PARSING_PARAM_INVALIDNUMBER;
 	public static String ERROR_PARSING_NO_DESCRIPTION;
+	public static String ERROR_PARSING_MULTIPLE_DESCRIPTION;
 	public static String ERROR_PARSING_NO_SUBITEM;
 	public static String ERROR_PARSING_NO_ACTION;
 	public static String ERROR_PARSING_NO_TITLE;

@@ -14,14 +14,13 @@ package org.eclipse.ui.internal.cheatsheets.composite.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
@@ -29,6 +28,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParserException;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
+import org.eclipse.ui.internal.cheatsheets.data.ParserStatusUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -67,26 +67,9 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		}
 		return documentBuilder;
 	}
-	
-	private final int PARSER_ERROR = 1001; // TODO is there another number that would be more meaningful
-	
-	/**
-	 * If the status is OK set it to reflect the new error condition, otherwise
-	 * add to the existing status making it a MultiStatus if necessary.
-	 */
-	public void addStatus(int severity, String message, Throwable exception) {       
-		Status newStatus = new Status(severity, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, PARSER_ERROR, message, exception);
-		if (status.isOK()) {
-			status = newStatus;
-		} else if (status instanceof MultiStatus) {
-			((MultiStatus)status).add(newStatus);
-		} else {
-			MultiStatus multiStatus = new MultiStatus(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, 
-					Messages.ERROR_MULTIPLE_ERRORS,  exception);
-			multiStatus.add(status);
-			multiStatus.add(newStatus);
-			status = multiStatus;
-		}
+		
+	public void addStatus(int severity, String message, Throwable exception) { 
+		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}
 	
 	/**

@@ -189,6 +189,10 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
 		reg.put(ICheatSheetResource.CHEATSHEET_RETURN, imageDescriptor);
 	
+		path = ICONS_PATH.append(T_OBJ).append("error.gif");//$NON-NLS-1$
+		imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
+		reg.put(ICheatSheetResource.ERROR, imageDescriptor);
+		
 		// Images used by composites
 
 		path = ICONS_PATH.append(T_OBJ).append("composite_obj.gif");//$NON-NLS-1$

@@ -19,7 +19,6 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
@@ -53,7 +52,8 @@ public class CheatSheetParser {
 	public static final int SIMPLE_ONLY = 2;
 	public static final int ANY = 3;
 	
-
+	private IStatus status;
+	
 
 	/**
 	 * Java constructor comment.
@@ -61,6 +61,17 @@ public class CheatSheetParser {
 	public CheatSheetParser() {
 		super();
 		documentBuilder = CheatSheetPlugin.getPlugin().getDocumentBuilder();
+	}
+	
+	/**
+	 *  Gets the status of the last call to parse()
+	 */
+	public IStatus getStatus() {
+		return status;
+	}
+	
+	public void addStatus(int severity, String message, Throwable exception) { 
+		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}
 
 	/**
@@ -202,16 +213,15 @@ public class CheatSheetParser {
 							params[num] = attribute.getNodeValue();
 						} else {
 							String message = NLS.bind(Messages.ERROR_PARSING_PARAM_INVALIDRANGE, (new Object[] {attributeName, paramNum}));
-							throw new NumberFormatException(message);
+							addStatus(IStatus.ERROR, message, null);
 						}
 					} catch(NumberFormatException e) {
 						String message = Messages.ERROR_PARSING_PARAM_INVALIDNUMBER;
-						logMessage(IStatus.ERROR, false, message, null, e);
-						throw new CheatSheetParserException(message);
+						addStatus(IStatus.ERROR, message, e);
 					}
 				} else if (!executable.handleAttribute(attribute)) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, executableNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 			String errorMessage = executable.checkAttributes(executableNode);
@@ -219,11 +229,22 @@ public class CheatSheetParser {
 				throw new CheatSheetParserException(errorMessage);
 			}
 		}
+        checkForNoChildren(executableNode);
 		executable.setParams(params);
 		item.setExecutable(executable);
 	}
 
-	private void handleCheatSheet(CheatSheet cheatSheet, Node cheatSheetNode) throws CheatSheetParserException {
+	private void checkForNoChildren(Node parentNode) {
+		// Handle nodes
+		NodeList nodes = parentNode.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), parentNode.getNodeName()}));
+			addStatus(IStatus.WARNING, message, null);
+		}
+	}
+
+	private void handleCheatSheetAttributes(CheatSheet cheatSheet, Node cheatSheetNode) throws CheatSheetParserException {
 		Assert.isNotNull(cheatSheet);
 		Assert.isNotNull(cheatSheetNode);
 		Assert.isTrue(cheatSheetNode.getNodeName().equals(IParserTags.CHEATSHEET));
@@ -243,7 +264,7 @@ public class CheatSheetParser {
 					cheatSheet.setTitle(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, cheatSheetNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -277,7 +298,7 @@ public class CheatSheetParser {
 					conditionalSubItem.setCondition(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, conditionalSubItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -300,7 +321,7 @@ public class CheatSheetParser {
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), conditionalSubItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -408,7 +429,7 @@ public class CheatSheetParser {
 		} else {
 			message = NLS.bind(Messages.WARNING_PARSING_ON_COMPLETION_UNKNOWN_ELEMENT, (new Object[] {parentNode.getNodeName(), node.getNodeName()}));
 		}
-		logMessage(IStatus.WARNING, false, message, null, null);
+		addStatus(IStatus.WARNING, message, null);
 
 	}
 	
@@ -417,28 +438,39 @@ public class CheatSheetParser {
 		item.setCompletionMessage(text);
 	}
 	
-	private void handleIntro(CheatSheet cheatSheet, Document document) throws CheatSheetParserException {
-		Assert.isNotNull(cheatSheet);
-		Assert.isNotNull(document);
-
-		//Get the Intro item.
-		NodeList introList = document.getElementsByTagName(IParserTags.INTRO);
-		Node introNode = introList.item(0);
-		
-		if(introNode == null) {
-			// Error: there is no intro
-			throw new CheatSheetParserException(Messages.ERROR_PARSING_NO_INTRO);
-		}
-		if(introList.getLength() > 1) {
-			// Error: there are more than 1 intro
-			throw new CheatSheetParserException(Messages.ERROR_PARSING_MORE_THAN_ONE_INTRO);
-		}
-
+	private void handleIntroNode(CheatSheet cheatSheet, Node introNode)
+			throws CheatSheetParserException {
 		Item introItem = new Item();
 		introItem.setTitle(Messages.CHEAT_SHEET_INTRO_TITLE);
 
 		handleIntroAttributes(introItem, introNode);
-		handleDescription(introItem, introNode);
+		
+        boolean hasDescription = false;
+		
+		NodeList nodes = introNode.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+
+			if(node.getNodeName().equals(IParserTags.DESCRIPTION)) {
+				if (hasDescription) {
+					String message = NLS.bind(Messages.ERROR_PARSING_MULTIPLE_DESCRIPTION, (new Object[] {introNode.getNodeName()}));
+					addStatus(IStatus.ERROR, message, null);
+				} else {
+				    hasDescription = true;
+				    handleDescription(introItem, node);
+				}
+			} else {
+				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), introNode.getNodeName()}));
+					addStatus(IStatus.WARNING, message, null);
+				}
+			}
+		}
+
+		if(!hasDescription) {
+			String message = NLS.bind(Messages.ERROR_PARSING_NO_DESCRIPTION, (new Object[] {introNode.getNodeName()}));
+			addStatus(IStatus.ERROR, message, null);
+		}
 
 		cheatSheet.setIntroItem(introItem);
 	}
@@ -461,7 +493,7 @@ public class CheatSheetParser {
 					item.setHref(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, introNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -475,7 +507,7 @@ public class CheatSheetParser {
 
 		handleItemAttributes(item, itemNode);
 
-		boolean description = false;
+		boolean hasDescription = false;
 		
 		NodeList nodes = itemNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -486,8 +518,13 @@ public class CheatSheetParser {
 			} else if(node.getNodeName().equals(IParserTags.COMMAND)) {
 				handleExecutable(item, node, new CheatSheetCommand());
 			} else if(node.getNodeName().equals(IParserTags.DESCRIPTION)) {
-				description = true;
-				handleDescription(item, node);
+				if (hasDescription) {
+					String message = NLS.bind(Messages.ERROR_PARSING_MULTIPLE_DESCRIPTION, (new Object[] {itemNode.getNodeName()}));
+					addStatus(IStatus.ERROR, message, null);
+				} else {
+				    hasDescription = true;
+				    handleDescription(item, node);
+				}
 			} else if(node.getNodeName().equals(IParserTags.ON_COMPLETION)) {
 				handleOnCompletion(item, node);
 			} else if(node.getNodeName().equals(IParserTags.SUBITEM)) {
@@ -501,14 +538,14 @@ public class CheatSheetParser {
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), itemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
 
-		if(!description) {
+		if(!hasDescription) {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_DESCRIPTION, (new Object[] {itemNode.getNodeName()}));
-			throw new CheatSheetParserException(message);
+			addStatus(IStatus.ERROR, message, null);
 		}
 
 		return item;
@@ -543,8 +580,12 @@ public class CheatSheetParser {
 					item.setDialog(attribute.getNodeValue().equals(TRUE_STRING));
 				} else {
 					AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(attribute, itemNode);
-					if (ie != null)
+					if (ie != null) {
 						itemExtensionElements.add(ie);
+					} else {
+						String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, itemNode.getNodeName()}));
+						addStatus(IStatus.WARNING, message, null);
+					}
 				}
 			}
 		}
@@ -556,41 +597,6 @@ public class CheatSheetParser {
 
 		if (itemExtensionElements != null)
 			item.setItemExtensions(itemExtensionElements);
-	}
-	
-	private void handleItems(CheatSheet cheatSheet, Document document) throws CheatSheetParserException {
-		//Get the items.
-		NodeList itemList = document.getElementsByTagName(IParserTags.ITEM);
-
-		if (itemList == null || itemList.getLength() == 0) {
-			throw new CheatSheetParserException(Messages.ERROR_PARSING_NO_ITEM);
-		}
-		
-		//parse the items.  assemble CheatSheetItem objects.
-		ArrayList items = handleItems(itemList);
-
-		if (items == null || items.size() == 0) {
-			// This should never occur but just to be safe let's check.
-			throw new CheatSheetParserException(Messages.ERROR_PARSING_NO_ITEM);
-		}
-
-		cheatSheet.addItems(items);
-	}
-
-	private ArrayList handleItems(NodeList itemList) throws CheatSheetParserException {
-		CheatSheetRegistryReader reader = CheatSheetRegistryReader.getInstance();
-		itemExtensionContainerList = reader.readItemExtensions();
-
-		ArrayList localList = new ArrayList();
-
-		for (int i = 0; i < itemList.getLength(); i++) {
-			//get the item node.  
-			Node itemNode = itemList.item(i);
-			Item item = handleItem(itemNode);
-			
-			localList.add(item);
-		}
-		return localList;
 	}
 
 	private void handlePerformWhen(IPerformWhenItem item, Node performWhenNode) throws CheatSheetParserException {
@@ -616,7 +622,7 @@ public class CheatSheetParser {
 					performWhen.setCondition(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, performWhenNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING,message, null);
 				}
 			}
 		}
@@ -641,7 +647,7 @@ public class CheatSheetParser {
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), performWhenNode .getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -677,7 +683,7 @@ public class CheatSheetParser {
 					repeatedSubItem.setValues(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, repeatedSubItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -700,7 +706,7 @@ public class CheatSheetParser {
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), repeatedSubItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -735,7 +741,7 @@ public class CheatSheetParser {
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), subItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -765,7 +771,7 @@ public class CheatSheetParser {
 					subItem.setWhen(attribute.getNodeValue());
 				} else {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {attributeName, subItemNode.getNodeName()}));
-					logMessage(IStatus.WARNING, false, message, null, null);
+					addStatus(IStatus.WARNING, message, null);
 				}
 			}
 		}
@@ -795,31 +801,13 @@ public class CheatSheetParser {
 
 		if(al.size() == 0) {
 			String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {item.getNodeName(), node.getNodeName()}));
-			logMessage(IStatus.WARNING, false, message, null, null);
+			addStatus(IStatus.WARNING, message, null);
 		}
 		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
 	}
 
-	/**
-	 * @param severity
-	 * @param informUser
-	 * @param message
-	 * @param title
-	 * @param exception
-	 */
-	private void logMessage(int severity, boolean informUser, String message, String title, Throwable exception) {
-		IStatus status = new Status(severity, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, exception);
-		logMessage(informUser, title, status);
-	}
-
-	private void logMessage(boolean informUser, String title, IStatus status) {
-		CheatSheetPlugin.getPlugin().getLog().log(status);		
-		if(informUser) {
-			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, null, status);
-		}
-	}
-
 	public ICheatSheet parse(URL url, int cheatSheetKind) {
+		status = Status.OK_STATUS;
 		if(url == null) {
 			return null;
 		}
@@ -836,28 +824,28 @@ public class CheatSheetParser {
 			}
 		} catch (Exception e) {
 			String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {url.getFile()}));
-			logMessage(IStatus.ERROR, true, message, Messages.ERROR_TITLE, e);
+			addStatus(IStatus.ERROR, message, e);
 			return null;
 		}
 
 		Document document;
 		try {
 			if(documentBuilder == null) {
-				logMessage(IStatus.ERROR, false, Messages.ERROR_DOCUMENT_BUILDER_NOT_INIT, null, null);
+				addStatus(IStatus.ERROR, Messages.ERROR_DOCUMENT_BUILDER_NOT_INIT, null);
 				return null;
 			}
 			document = documentBuilder.parse(inputSource);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {url.getFile()}));
-			logMessage(IStatus.ERROR, false, message, null, e);
+			addStatus(IStatus.ERROR, message, e);
 			return null;
 		} catch (SAXParseException spe) {
 			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {url.getFile(), new Integer(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
-			logMessage(IStatus.ERROR, false, message, null, spe);
+			addStatus(IStatus.ERROR, message, spe);
 			return null;
 		} catch (SAXException se) {
 			String message = NLS.bind(Messages.ERROR_SAX_PARSING, (new Object[] {url.getFile()}));
-			logMessage(IStatus.ERROR, false, message, null, se);
+			addStatus(IStatus.ERROR, message, se);
 			return null;
 		} finally {
 			try {
@@ -869,15 +857,13 @@ public class CheatSheetParser {
 		if ( cheatSheetKind == COMPOSITE_ONLY  ||  (cheatSheetKind == ANY && isComposite(document))) {
 			CompositeCheatSheetParser compositeParser = new CompositeCheatSheetParser();
 			CompositeCheatSheetModel result = compositeParser.parseCompositeCheatSheet(document, url);
-			if (!compositeParser.getStatus().isOK()) {
-				logMessage(true, Messages.ERROR_TITLE, compositeParser.getStatus());
-			}
+			status = compositeParser.getStatus();
 			return result;
 		}
 		try {
 			return parseCheatSheet(document);
 		} catch(CheatSheetParserException e) {
-			logMessage(IStatus.ERROR, true, e.getMessage(), Messages.ERROR_TITLE, e);
+			addStatus(IStatus.ERROR, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -904,16 +890,57 @@ public class CheatSheetParser {
 			// Create the cheat sheet model object
 			CheatSheet cheatSheet = new CheatSheet();
 
-			handleCheatSheet(cheatSheet, rootnode);
-	
-			handleIntro(cheatSheet, document);
+			handleCheatSheetAttributes(cheatSheet, rootnode);
 
-			handleItems(cheatSheet, document);
+			boolean hasItem = false;
+			boolean hasIntro = false;
+			
+			CheatSheetRegistryReader reader = CheatSheetRegistryReader.getInstance();
+			itemExtensionContainerList = reader.readItemExtensions();
+			
+			NodeList nodes = rootnode.getChildNodes();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node node = nodes.item(i);
+
+				if(node.getNodeName().equals(IParserTags.ITEM)) {
+					hasItem = true;
+					Item item = handleItem(node);
+					cheatSheet.addItem(item);
+				} else if(node.getNodeName().equals(IParserTags.INTRO)) {
+					if (hasIntro) {
+						addStatus(IStatus.ERROR, Messages.ERROR_PARSING_MORE_THAN_ONE_INTRO, null);
+					} else {
+					    hasIntro = true;
+					    handleIntroNode(cheatSheet, node);
+					}
+				} else {
+					if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+						String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), rootnode.getNodeName()}));
+						addStatus(IStatus.WARNING, message, null);
+					}
+				}
+			}
+			
+			if(!hasIntro) {
+				addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_INTRO, null);
+			}
+			if(!hasItem) {
+				addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ITEM, null);
+			}
+
+			//handleIntro(cheatSheet, document);
+
+			//handleItems(cheatSheet, document);
+			
+			if (status.getSeverity() == IStatus.ERROR) {
+				return null;
+			}
 			
 			return cheatSheet;
 		} 
 		throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
 	}
+
 /*
 	private String getNormalizedText(String text) {
 		int [] spaceCounter = new int[1];

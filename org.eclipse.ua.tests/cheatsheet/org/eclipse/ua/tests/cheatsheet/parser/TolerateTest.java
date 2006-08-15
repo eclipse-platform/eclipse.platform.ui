@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
@@ -44,6 +45,7 @@ public class TolerateTest extends TestCase {
 		for (int i=0;i<urls.length;++i) {
 			CheatSheetParser parser = new CheatSheetParser();
 			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], CheatSheetParser.SIMPLE_ONLY);
+			Assert.assertEquals("Warning not generated: " + urls[i], IStatus.WARNING, parser.getStatus().getSeverity());
 			Assert.assertNotNull("Tried parsing a tolerable cheat sheet but parser returned null: " + urls[i], sheet);
 		}
 	}

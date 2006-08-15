@@ -18,7 +18,7 @@ import java.util.Dictionary;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.ua.tests.cheatsheet.util.StatusCheck;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
@@ -44,7 +44,7 @@ public class TestCompositeParser extends TestCase {
 	public void testNullInput() {
 		assertNull(parser.parseGuide(null));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Could not open");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Could not open");
 	}
 	
 	public void testBadURL() {
@@ -54,7 +54,7 @@ public class TestCompositeParser extends TestCase {
 			fail("Exception thrown");
 		}
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Could not open");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Could not open");
 	}
 	
 	public void testSimpleGuide() {
@@ -68,31 +68,31 @@ public class TestCompositeParser extends TestCase {
 		CompositeCheatSheetModel model = parseTestFile("GuideWithoutTasks.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Missing root task");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Missing root task");
 	}
 	
 	public void testInvalidRoot() {
 		assertNull(parseTestFile("InvalidRoot.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Root node is not");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Root node is not");
 	}
 	
 	public void testTwoRootTasksGuide() {
 		assertNull(parseTestFile("TwoRootTasks.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "more than one root task");
+		StatusCheck.assertStatusContains(parser.getStatus(), "more than one root task");
 	}
 	
 	public void testParamNoName() {
 		assertNotNull(parseTestFile("ParamNoName.xml"));
 		assertEquals(IStatus.WARNING, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Parameter has no name");		
+		StatusCheck.assertStatusContains(parser.getStatus(), "Parameter has no name");		
 	}
 
 	public void testParamNoValue() {
 		assertNotNull(parseTestFile("ParamNoValue.xml"));
 		assertEquals(IStatus.WARNING, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Parameter has no value");		
+		StatusCheck.assertStatusContains(parser.getStatus(), "Parameter has no value");		
 	}
 	
 	public void testValidParameters() {
@@ -137,95 +137,77 @@ public class TestCompositeParser extends TestCase {
 	public void testDependencyWithoutId() {
 		assertNull(parseTestFile("DependencyWithoutId.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Missing task id");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Missing task id");
 	}
 
 	public void testDependencyWithInvalidId() {
 		assertNull(parseTestFile("DependencyInvalidId.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Invalid id");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Invalid id");
 	}
 	
 	public void testCircularDependency() {
 		assertNull(parseTestFile("CircularDependency.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertMultiStatusContains(parser.getStatus(), "Cycle detected");
+		StatusCheck.assertMultiStatusContains(parser.getStatus(), "Cycle detected");
 	}
 	
 	public void testSelfDependency() {
 		assertNull(parseTestFile("SelfDependency.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertMultiStatusContains(parser.getStatus(), "Cycle detected");
+		StatusCheck.assertMultiStatusContains(parser.getStatus(), "Cycle detected");
 	}
 	
 	public void testDuplicateId() {
 		assertNull(parseTestFile("DuplicateTaskId.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Duplicate task id");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Duplicate task id");
 	}
 
-	public void assertStatusContains(IStatus status, String text) {
-		if (status.getMessage().indexOf(text) == -1) {
-			fail("Expected status message to contain '" + text + "' actual message is '"
-					+ status.getMessage() + "'");
-		}
-	}
 	
 	public void testNoTaskKind() {
 		assertNull(parseTestFile("LeafTaskWithoutKind.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Missing kind attribute in task");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Missing kind attribute in task");
 	}
 
 	public void testLeafTaskInvalidKind() {
 		assertNull(parseTestFile("LeafTaskInvalidKind.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Invalid kind");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Invalid kind");
 	}
 
 	public void testLeafTaskNoName() {
 		assertNull(parseTestFile("TaskNoName.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Missing name attribute in task");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Missing name attribute in task");
 	}
 
 	public void testCompositeNoName() {
 		assertNull(parseTestFile("CompositeNoName.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Missing name attribute in composite");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Missing name attribute in composite");
 	}
 
 	public void testTaskGroupInvalidKind() {
 		assertNull(parseTestFile("InvalidTaskGroupKind.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Invalid kind");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Invalid kind");
 	}
 	
 	public void testSetNoChild() {
 		assertNull(parseTestFile("SetWithNoChildren.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "Task group");
-		assertStatusContains(parser.getStatus(), "has no children");
+		StatusCheck.assertStatusContains(parser.getStatus(), "Task group");
+		StatusCheck.assertStatusContains(parser.getStatus(), "has no children");
 	}
 	
 	public void testChoiceOneChild() {
 		assertNull(parseTestFile("SingleChoice.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		assertStatusContains(parser.getStatus(), "must have at least two child tasks");
+		StatusCheck.assertStatusContains(parser.getStatus(), "must have at least two child tasks");
 	}
 	
-	public void assertMultiStatusContains(IStatus status, String text) {
-		assertTrue(status instanceof MultiStatus);
-		IStatus[] children = status.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getMessage().indexOf(text) >= 0) {
-				return;
-			}
-		}
-		if (status.getMessage().indexOf(text) == -1) {
-			fail("Expected status message to contain '" + text + "' status.toString = '"
-					+ status.toString() + "'");
-		}
-	}
+	
 
 }

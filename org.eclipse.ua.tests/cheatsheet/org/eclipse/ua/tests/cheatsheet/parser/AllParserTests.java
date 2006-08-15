@@ -30,7 +30,7 @@ public class AllParserTests extends TestSuite {
 	 */
 	public AllParserTests() {
 		addTest(ValidTest.suite());
-		addTest(InvalidTest.suite());
 		addTest(TolerateTest.suite());
+		addTestSuite(InvalidCheatsheet.class);
 	}
 }

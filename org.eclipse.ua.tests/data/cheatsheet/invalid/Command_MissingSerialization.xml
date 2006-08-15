@@ -12,6 +12,7 @@ Simple test
 		<description>
 Did it work? Of course not, it is suppose to cause a parsing error.
 		</description>
+		<command/>
 </item>
 
 </cheatsheet>

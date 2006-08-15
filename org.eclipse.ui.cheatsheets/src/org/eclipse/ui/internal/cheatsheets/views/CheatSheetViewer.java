@@ -577,6 +577,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		currentPage.createPart(control);
 		control.layout(true);
 	}
+	
+	private void createErrorPage(IStatus status) {
+		setCollapseExpandButtonEnabled(false);
+		currentPage = new ErrorPage(status);
+		currentPage.createPart(control);
+		control.layout(true);
+	}
 
 	/**
 	 * Creates the SWT controls for this workbench part.
@@ -818,23 +825,29 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			howToBegin = null;
 		}
 		
+		// If a null cheat sheet id was specified, return leaving the cheat sheet empty.
+		if(nullCheatSheetId) {
+			return;
+		}
+		
+		if(invalidCheatSheetId) {
+			createErrorPage(Messages.ERROR_CHEATSHEET_DOESNOT_EXIST);
+			return;
+		}
+		
 		// read our contents, if there are problems reading the file an error page should be created.
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() before readFile() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-		boolean parsedOK = readFile();
+		IStatus parseStatus = readFile();
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after readFile() call: "); //$NON-NLS-1$ //$NON-NLS-2$
-		if(!parsedOK){
-			// If a null cheat sheet id was specified, return leaving the cheat sheet empty.
-			if(nullCheatSheetId) {
-				return;
-			}
+		if (!parseStatus.isOK()) {
+			CheatSheetPlugin.getPlugin().getLog().log(parseStatus);
+		}
+		if(parseStatus.getSeverity() == Status.ERROR){
 
-			// Exception thrown during parsing.
+			// Error during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
-			if(invalidCheatSheetId) {
-				createErrorPage(Messages.ERROR_CHEATSHEET_DOESNOT_EXIST);
-			} else {
-				createErrorPage(null);
-			}
+
+			createErrorPage(parseStatus);
 			return;
 		}
 		
@@ -946,10 +959,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	* Read the contents of the cheat sheet file
 	* @return true if the file was read and parsed without error
 	*/
-	private boolean readFile() {
-		if (contentElement == null) {
-			return false;
-		}
+	private IStatus readFile() {
 		if(parser == null)
 			parser = new CheatSheetParser();
 		// If the cheat sheet was registered then
@@ -963,7 +973,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			}
 		}
 		model = parser.parse(contentURL, cheatSheetKind);
-		return model == null ? false : true;
+		return parser.getStatus();
 	}
 
 	private void restoreExpandStates() {
