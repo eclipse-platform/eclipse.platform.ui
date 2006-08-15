@@ -612,6 +612,23 @@ public class CVSProviderTest extends EclipseTest {
     	updateResources(project, new String[] { "a.txt"}, false);
     }
     
+    public void testUpdateOfRemotelyRemovedFile() throws CoreException, IOException {
+    	IProject project = createProject(new String[] { "a.txt"});
+    	IProject copy = checkoutCopy(project, "-copy");
+    	//Create a file and add it to version control (but don't commit)
+    	addResources(copy, new String[] { "b.txt"}, false);
+    	// Change the revision of the file so it appears to exist remotely
+    	ICVSFile file = CVSWorkspaceRoot.getCVSFileFor(copy.getFile("b.txt"));
+    	byte[] syncBytes = file.getSyncBytes();
+    	syncBytes = ResourceSyncInfo.setRevision(syncBytes, "1.1");
+    	file.setSyncBytes(syncBytes, ICVSFile.UNKNOWN);
+    	file.checkedIn(null, true);
+    	// Update the project and verify that the file gets removed
+    	updateProject(copy, null, false);
+    	assertEquals(project, copy);
+    	
+    }
+    
     public void testMergeWithTrailingLineFeeds() throws CoreException, IOException {
 		IProject project = createProject("testFileConflict", new String[] { "file1.txt"});
 		// Set the contents of file1.txt to ensure proper merging 

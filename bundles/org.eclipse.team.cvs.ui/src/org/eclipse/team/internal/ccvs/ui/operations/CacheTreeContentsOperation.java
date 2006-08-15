@@ -27,6 +27,8 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -151,7 +153,21 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
                 Command.NO_GLOBAL_OPTIONS,
                 getLocalOptions(true),
                 resources,
-                null,
+                new UpdateListener(new IUpdateMessageListener() {
+					public void fileInformation(int type, ICVSFolder parent, String filename) {
+						// Do nothing
+					}
+					public void fileDoesNotExist(ICVSFolder parent, String filename) {
+						// Do nothing
+					}
+					public void directoryInformation(ICVSFolder commandRoot, String path,
+							boolean newDirectory) {
+						// Do nothing
+					}
+					public void directoryDoesNotExist(ICVSFolder commandRoot, String path) {
+						// Do nothing
+					}
+				}),
                 monitor);
 	}
 
@@ -189,6 +205,13 @@ public abstract class CacheTreeContentsOperation extends SingleCommandOperation 
 	 */
 	public boolean consultModelsForMappings() {
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#isReportableError(org.eclipse.core.runtime.IStatus)
+	 */
+	protected boolean isReportableError(IStatus status) {
+		return super.isReportableError(status) && status.getSeverity() == IStatus.ERROR;
 	}
 
 }

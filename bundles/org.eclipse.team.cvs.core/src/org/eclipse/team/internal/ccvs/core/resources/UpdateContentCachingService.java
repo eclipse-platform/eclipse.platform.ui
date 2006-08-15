@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -23,7 +22,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -32,13 +31,14 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 /**
  * This class can be used to fetch and cache file contents for remote files.
  */
-public class UpdateContentCachingService {
+public class UpdateContentCachingService implements IUpdateMessageListener {
 
 	private CVSRepositoryLocation repository;
 	private ICVSFolder remoteRoot;
 	private final CVSTag tag;
 	private final int depth;
 	private boolean fetchAbsentDirectories = true;
+	private ArrayList removed = new ArrayList();
 
 	public class SandboxUpdate extends Update {
 		
@@ -228,7 +228,7 @@ public class UpdateContentCachingService {
 				Command.NO_GLOBAL_OPTIONS,
 				getLocalOptions(),
 				new String[] { Session.CURRENT_LOCAL_FOLDER },
-				null,
+				new UpdateListener(this),
 				Policy.subMonitorFor(monitor, 90));
 			if (!status.isOK()) {
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -239,6 +239,11 @@ public class UpdateContentCachingService {
 				} else if (status.getSeverity() == IStatus.ERROR && isReportableError(status)) {
 					throw new CVSException(status);
 				}
+			}
+			for (Iterator iterator = removed.iterator(); iterator.hasNext();) {
+				ICVSResource resource = (ICVSResource) iterator.next();
+				if (resource.exists())
+					resource.delete();
 			}
 		} finally {
 			session.close();
@@ -269,5 +274,30 @@ public class UpdateContentCachingService {
 			return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
 		
 		return Command.NO_LOCAL_OPTIONS;
+	}
+
+	public void directoryDoesNotExist(ICVSFolder commandRoot, String path) {
+		try {
+			removed.add(commandRoot.getChild(path));
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+	}
+
+	public void directoryInformation(ICVSFolder commandRoot, String path,
+			boolean newDirectory) {
+		// Nothing to do
+	}
+
+	public void fileDoesNotExist(ICVSFolder parent, String filename) {
+		try {
+			removed.add(parent.getChild(filename));
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+	}
+
+	public void fileInformation(int type, ICVSFolder parent, String filename) {
+		// Nothing to do
 	}
 }
