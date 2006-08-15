@@ -124,6 +124,10 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		
 		public void add(Object event) {
 			eventsList.add(event);
+			addMultiDayEventToMap(event);
+		}
+
+		private void addMultiDayEventToMap(Object event) {
 			Date beginningDate = getBeginningDate(event);
 			Date endingDate = getEndingDate(event);
 			for (Date currentDate = beginningDate; 
@@ -178,6 +182,7 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 		}
 		
 		public void update(EventDateTimeDiff diff, Object event) {
+			// Remove the event in the old position
 			Date oldStartDateTime = setToStartOfDay(diff.getOldStartDateTime());
 			Date oldEndDateTime = incrementDay(setToStartOfDay(diff.getOldEndDateTime()), 1);
 			for (Date currentDate = oldStartDateTime; 
@@ -186,7 +191,8 @@ public class EventEditorObservableLazyDataRequestor extends AbstractObservable i
 			{
 				removeEventFromMap(currentDate, event);
 			}
-			add(event);
+			addMultiDayEventToMap(event);
+//			add(event);	Can't do this because it adds dupes to the eventsList
 		}
 
 		private List get(Date date) {
