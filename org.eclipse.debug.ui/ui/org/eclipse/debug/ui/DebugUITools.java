@@ -661,6 +661,18 @@ public class DebugUITools {
 	}
 	
 	/**
+	 * Returns the last configuration that was launched for the given group or
+	 * <code>null</code>, if there is not one.
+	 * 
+	 * @param groupId the id of the launch group
+	 * @return the last launched configuration for the specified group or <code>null</code>.
+	 * @since 3.3
+	 */
+	public static ILaunchConfiguration getLastLaunched(String groupId) {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(groupId);
+	}
+	
+	/**
 	 * Returns the launch group that the given launch configuration belongs
 	 * to, for the specified mode, or <code>null</code> if none.
 	 * 
