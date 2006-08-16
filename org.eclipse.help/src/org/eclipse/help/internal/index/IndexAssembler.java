@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IIndex;
@@ -50,18 +52,63 @@ public class IndexAssembler {
 	}
 	
 	/*
-	 * Merge all indexes into one large index, not necessarily sorted.
+	 * Merge all indexes into one large index, not sorted.
 	 */
 	private void processMerge() {
-		List rootEntries = new ArrayList();
+		index = new Index();
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
-			IIndexEntry[] entries = contribution.getIndex().getEntries();
-			rootEntries.addAll(Arrays.asList(entries));
+			mergeChildren(index, (Index)contribution.getIndex());
 		}
-		index = new Index();
-		index.addChildren((Node[])rootEntries.toArray(new Node[rootEntries.size()]));
+	}
+	
+	/*
+	 * Merges the children of nodes a and b, and stores them into a. If the two
+	 * contain the same keyword, only one is kept but its children are merged,
+	 * recursively. If multiple topics exist with the same href, only the
+	 * first one found is kept.
+	 */
+	private void mergeChildren(Node a, Node b) {
+		// create data structures for fast lookup
+		Map entriesByKeyword = new HashMap();
+		Set topicHrefs = new HashSet();
+		Node[] childrenA = a.getChildrenInternal();
+		for (int i=0;i<childrenA.length;++i) {
+			Node childA = childrenA[i];
+			if (childA instanceof IndexEntry) {
+				entriesByKeyword.put(((IndexEntry)childA).getKeyword(), childA);
+			}
+			else if (childA instanceof Topic) {
+				topicHrefs.add(((Topic)childA).getHref());
+			}
+		}
+		
+		// now do the merge
+		Node[] childrenB = b.getChildrenInternal();
+		for (int i=0;i<childrenB.length;++i) {
+			Node childB = childrenB[i];
+			if (childB instanceof IndexEntry) {
+				String keyword = ((IndexEntry)childB).getKeyword();
+				if (entriesByKeyword.containsKey(keyword)) {
+					// duplicate keyword; merge children
+					mergeChildren((IndexEntry)entriesByKeyword.get(keyword), childB);
+				}
+				else {
+					// wasn't a duplicate
+					a.addChild(childB);
+					entriesByKeyword.put(keyword, childB);
+				}
+			}
+			else if (childB instanceof Topic) {
+				String href = ((Topic)childB).getHref();
+				if (!topicHrefs.contains(href)) {
+					// add topic only if href doesn't exist yet
+					a.addChild(childB);
+					topicHrefs.add(((Topic)childB).getHref());
+				}
+			}
+		}
 	}
 	
 	/*
