@@ -803,7 +803,10 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 	}
 	
-	private void initCheatSheetView() {
+	/*
+	 * return true if a cheat sheet was opened successfully
+	 */
+	private boolean initCheatSheetView() {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.initCheatSheetView()"); //$NON-NLS-1$
 		//Re-initialize list to store items collapsed by expand/restore action on c.s. toolbar.
 		expandRestoreList = new ArrayList();
@@ -827,12 +830,12 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		
 		// If a null cheat sheet id was specified, return leaving the cheat sheet empty.
 		if(nullCheatSheetId) {
-			return;
+			return false;
 		}
 		
 		if(invalidCheatSheetId) {
 			createErrorPage(Messages.ERROR_CHEATSHEET_DOESNOT_EXIST);
-			return;
+			return false;
 		}
 		
 		// read our contents, if there are problems reading the file an error page should be created.
@@ -848,7 +851,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			// Something is wrong with the Cheat sheet content file at the xml level.
 
 			createErrorPage(parseStatus);
-			return;
+			return false;
 		}
 		
 		control.setRedraw(false);
@@ -873,7 +876,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				// An error occurred when apply the saved state data.
 				control.setRedraw(true);
 				control.layout();
-				return;
+				return true;
 			}
 
 			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
@@ -888,6 +891,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (currentItem != null && !currentItem.isCompleted())
 			currentItem.getMainItemComposite().setFocus();
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() at end of method: "); //$NON-NLS-1$ //$NON-NLS-2$
+	    return true;
 	}
 
 	private void internalDispose() {
@@ -1106,9 +1110,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() before initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 		// Initialize the view with the new contents
+		boolean cheatSheetOpened = false;
 		if (control != null) {
-			initCheatSheetView();
+			cheatSheetOpened = initCheatSheetView();
 		}
+		if (!cheatSheetOpened) {
+			contentElement = null;
+			stateManager = null;
+		}
+		// If the cheat sheet failed to open clear the content element so we don't see an 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() after initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
