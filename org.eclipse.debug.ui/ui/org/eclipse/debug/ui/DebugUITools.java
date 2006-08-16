@@ -668,7 +668,7 @@ public class DebugUITools {
 	 * @return the last launched configuration for the specified group or <code>null</code>.
 	 * @since 3.3
 	 */
-	public static ILaunchConfiguration getLastLaunched(String groupId) {
+	public static ILaunchConfiguration getLastLaunch(String groupId) {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(groupId);
 	}
 	
