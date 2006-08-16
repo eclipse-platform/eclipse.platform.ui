@@ -661,11 +661,12 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the last configuration that was launched for the given group or
+	 * Returns the last configuration that was launched for specified launch group or
 	 * <code>null</code>, if there is not one.
 	 * 
-	 * @param groupId the id of the launch group
+	 * @param groupId the unique identifier of a launch group
 	 * @return the last launched configuration for the specified group or <code>null</code>.
+	 * @see DebugUITools#getLaunchGroups()
 	 * @since 3.3
 	 */
 	public static ILaunchConfiguration getLastLaunch(String groupId) {
