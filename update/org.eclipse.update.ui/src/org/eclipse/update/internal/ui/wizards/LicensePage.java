@@ -106,7 +106,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		buttonContainer.setLayoutData(gd);
 
 		acceptButton = new Button(buttonContainer, SWT.RADIO);
-		acceptButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_accept
+		acceptButton.setText(multiLicenseMode?UpdateUIMessages.InstallWizard_LicensePage_accept2
                 : UpdateUIMessages.InstallWizard_LicensePage_accept);
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -131,6 +131,14 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 		boolean jobsChanged = didJobsChange(jobs);
 		declineButton.setSelection(!jobsChanged && declineButton.getSelection());
 		acceptButton.setSelection(!jobsChanged && acceptButton.getSelection());
+		
+		if (jobs.length == 1) {
+			acceptButton.setText(UpdateUIMessages.InstallWizard_LicensePage_accept);
+			declineButton.setText(UpdateUIMessages.InstallWizard_LicensePage_decline);
+		} else if (jobs.length > 1) {
+			acceptButton.setText(UpdateUIMessages.InstallWizard_LicensePage_accept2);
+			declineButton.setText(UpdateUIMessages.InstallWizard_LicensePage_decline2);
+		}
 		
 		if (visible) {
 			if (multiLicenseMode) {
