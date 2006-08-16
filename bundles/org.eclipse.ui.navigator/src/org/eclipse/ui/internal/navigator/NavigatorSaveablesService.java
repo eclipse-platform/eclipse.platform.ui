@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -210,6 +211,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private Saveable[] computeSaveables() {
 		ITreeContentProvider contentProvider = (ITreeContentProvider) viewer
 				.getContentProvider();
+		boolean isTreepathContentProvider = contentProvider instanceof ITreePathContentProvider;
 		Object viewerInput = viewer.getInput();
 		List result = new ArrayList();
 		Set roots = new HashSet(Arrays.asList(contentProvider
@@ -228,7 +230,12 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				for (int k = 0; !foundRoot && k < elements.length; k++) {
 					Object element = elements[k];
 					while (!foundRoot && element != null) {
-						if (roots.contains(element)) {
+						if (false && isTreepathContentProvider) {
+							ITreePathContentProvider treePathContentProvider = (ITreePathContentProvider) contentProvider;
+							foundRoot = treePathContentProvider.getParents(element).length > 0;
+							System.out.println("found root for " + element + " : " + foundRoot);  //$NON-NLS-1$//$NON-NLS-2$
+							element = null;
+						} else if (roots.contains(element)) {
 							// found a parent chain leading to a root. The
 							// saveable is part of the tree.
 							result.add(saveable);
