@@ -307,16 +307,16 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	/**
-	 * @param editorsToClose
+	 * @param partsToClose
 	 * @param save
 	 * @param window
 	 * @return the post close info to be passed to postClose
 	 */
-	public Object preCloseParts(List editorsToClose, boolean save,
+	public Object preCloseParts(List partsToClose, boolean save,
 			final IWorkbenchWindow window) {
 		// reference count (how many occurrences of a model will go away?)
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
-		for (Iterator it = editorsToClose.iterator(); it.hasNext();) {
+		for (Iterator it = partsToClose.iterator(); it.hasNext();) {
 			IWorkbenchPart part = (IWorkbenchPart) it.next();
 			postCloseInfo.partsClosing.add(part);
 			if (part instanceof ISaveablePart) {
