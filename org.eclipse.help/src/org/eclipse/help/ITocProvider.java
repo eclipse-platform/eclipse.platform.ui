@@ -13,8 +13,7 @@ package org.eclipse.help;
 /**
  * An <code>ITocProvider</code> is a mechanism to provide arbitrary content to
  * the table of contents (TOC). <code>ITocProvider</code>s must be registered
- * via the <code>org.eclipse.help.toc</code> extension point, and are queried
- * once only per session.
+ * via the <code>org.eclipse.help.toc</code> extension point.
  * 
  * This interface is intended to be implemented by clients.
  * 

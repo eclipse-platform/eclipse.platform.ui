@@ -65,8 +65,7 @@ public interface ITocContribution {
 	public String getLocale();
 	
 	/**
-	 * Returns the TOC data for this contribution. This will be called only
-	 * once per session.
+	 * Returns the TOC data for this contribution.
 	 * 
 	 * @return the TOC data for this contribution
 	 */
