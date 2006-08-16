@@ -1359,42 +1359,41 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			zoomOut();
 		}
 
-        if (saveEditors) {
-	        List partsToSave = new ArrayList();
-	        // collect views that will go away and are dirty
-	        IViewReference[] viewReferences = persp.getViewReferences();
-	        for (int i = 0; i < viewReferences.length; i++) {
-				IViewReference reference = viewReferences[i];
-		        if (getViewFactory().getReferenceCount(reference) == 1) {
-		        	if (reference.isDirty()) {
-		        		IViewPart viewPart = reference.getView(false);
-		        		if (viewPart != null) {
-		        			partsToSave.add(viewPart);
-		        		}
-		        	}
-		        }
-			}
-	        if (perspList.size() == 1) {
-	        	// collect editors that are dirty
-	        	IEditorReference[] editorReferences = getEditorReferences();
-	        	for (int i = 0; i < editorReferences.length; i++) {
-					IEditorReference reference = editorReferences[i];
+        List partsToSave = new ArrayList();
+        List viewsToClose = new ArrayList();
+        // collect views that will go away and views that are dirty
+        IViewReference[] viewReferences = persp.getViewReferences();
+        for (int i = 0; i < viewReferences.length; i++) {
+			IViewReference reference = viewReferences[i];
+	        if (getViewFactory().getReferenceCount(reference) == 1) {
+	        	IViewPart viewPart = reference.getView(false);
+	        	if (viewPart != null) {
+	        		viewsToClose.add(viewPart);
+	        		if (saveEditors && reference.isDirty()) {
+	        			partsToSave.add(viewPart);
+	        		}
+	        	}
+	        }
+		}
+        if (saveEditors && perspList.size() == 1) {
+        	// collect editors that are dirty
+        	IEditorReference[] editorReferences = getEditorReferences();
+        	for (int i = 0; i < editorReferences.length; i++) {
+				IEditorReference reference = editorReferences[i];
 					if (reference.isDirty()) {
 						IEditorPart editorPart = reference.getEditor(false);
 						if (editorPart != null) {
 							partsToSave.add(editorPart);
 						}
 					}
-				}
-	        }
-	        if (!partsToSave.isEmpty()) {
-	        	if (!EditorManager.saveAll(partsToSave, true, true, false, window)) {
-	        		// user canceled
-	        		return;
-	        	}
-	        }
+			}
         }
-        
+        if (saveEditors && !partsToSave.isEmpty()) {
+        	if (!EditorManager.saveAll(partsToSave, true, true, false, window)) {
+        		// user canceled
+        		return;
+        	}
+	    }
         // Close all editors on last perspective close
         if (perspList.size() == 1 && getEditorManager().getEditorCount() > 0) {
             // Close all editors
@@ -1402,6 +1401,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				return;
 			}
         }
+        
+        // closeAllEditors already notified the saveables list about the editors.
+        SaveablesList saveablesList = (SaveablesList) getWorkbenchWindow().getWorkbench().getService(ISaveablesLifecycleListener.class);
+        // we took care of the saving already, so pass in false (postCloseInfo will be non-null)
+        Object postCloseInfo = saveablesList.preCloseParts(viewsToClose, false, getWorkbenchWindow());
+        saveablesList.postClose(postCloseInfo);
 
         // Dispose of the perspective
         boolean isActive = (perspList.getActive() == persp);
