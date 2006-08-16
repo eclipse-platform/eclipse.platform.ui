@@ -452,7 +452,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			endOperation();
 		}
 		try {
-			return folder.members(true);
+			
+			return synchronizerCache.members(folder);
+			
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}

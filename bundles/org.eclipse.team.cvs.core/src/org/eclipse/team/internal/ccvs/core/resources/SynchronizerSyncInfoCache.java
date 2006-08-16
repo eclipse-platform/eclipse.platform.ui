@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -326,5 +324,25 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	
 	public boolean isPhantom(IResource resource) {
 		return resource.isPhantom() || pendingCacheWrites.containsKey(resource);
+	}
+	public IResource[] members(IContainer folder) throws CoreException {
+		if (!pendingCacheWrites.isEmpty()){
+			HashSet cachedResources = new HashSet();
+			for (Iterator iter = pendingCacheWrites.keySet().iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (resource.getParent().equals(folder))
+					cachedResources.add(resource);
+			}
+			
+			if (cachedResources.size() != 0){
+				IResource[] resources = folder.members(true);
+				IResource[] cachedResourcesArray = (IResource[]) cachedResources.toArray(new IResource[cachedResources.size()]);
+				IResource[]finalResources = new IResource[resources.length + cachedResourcesArray.length];
+				System.arraycopy(resources, 0, finalResources, 0, resources.length);
+				System.arraycopy(cachedResourcesArray, 0, finalResources, resources.length, cachedResourcesArray.length);
+				return finalResources;
+			}
+		}
+		return folder.members(true);
 	}
 }

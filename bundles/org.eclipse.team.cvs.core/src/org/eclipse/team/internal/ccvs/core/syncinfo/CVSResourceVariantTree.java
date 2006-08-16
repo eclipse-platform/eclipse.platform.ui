@@ -99,7 +99,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		Set members = new HashSet();
 		members.addAll(Arrays.asList(super.members(resource)));
 		try {
-			IResource[]  localMembers = ((IContainer)resource).members(true);
+			IResource[]  localMembers = EclipseSynchronizer.getInstance().members((IContainer) resource); //((IContainer)resource).members(true);
 			for (int i = 0; i < localMembers.length; i++) {
 				IResource local = localMembers[i];
 				if (local.getType() != IResource.FILE) {
