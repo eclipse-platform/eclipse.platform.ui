@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * The ViewerColumn is abstract implementation of the column parts.
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
  * 
  * @since 3.3
  * 
@@ -31,9 +31,6 @@ public class ViewerColumn {
 	static String COLUMN_VIEWER_KEY = Policy.JFACE + ".columnViewer";//$NON-NLS-1$
 
 	private EditingSupport editingSupport;
-	
-	
-	
 
 	/**
 	 * Create a new instance of the receiver at columnIndex.
@@ -79,26 +76,29 @@ public class ViewerColumn {
 	}
 
 	/**
-	 * Refresh the row for the given columnIndex
+	 * Refresh the cell for the given columnIndex.
+	 * <strong>NOTE:</strong>the {@link ViewerCell}
+	 * provided to this method is no longer valid after
+	 * this method is exited. Do not cache the cell for
+	 * future use.
 	 * 
-	 * @param row
+	 * @param cell
 	 * @param element
 	 * @param columnIndex
 	 */
-	public void refresh(ViewerRow row, int columnIndex) {
-		ViewerLabel label = new ViewerLabel(row.getText(columnIndex), row
-				.getImage(columnIndex));
-		getLabelProvider().updateLabel(label, row.getItem().getData(), columnIndex);
+	public void refresh(ViewerCell cell) {
+		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
+		getLabelProvider().updateLabel(label, cell.getElement(), cell.getColumnIndex());
 
-		row.setBackground(columnIndex, label.getBackground());
-		row.setForeground(columnIndex, label.getForeground());
-		row.setFont(columnIndex, label.getFont());
+		cell.setBackground(label.getBackground());
+		cell.setForeground(label.getForeground());
+		cell.setFont(label.getFont());
 
 		if (label.hasNewText())
-			row.setText(columnIndex, label.getText());
+			cell.setText(label.getText());
 
 		if (label.hasNewImage())
-			row.setImage(columnIndex, label.getImage());
+			cell.setImage(label.getImage());
 	}
 
 	/**
@@ -108,25 +108,20 @@ public class ViewerColumn {
 	 * @param element
 	 * @param columnIndex
 	 */
-/*	public void refresh(TreeItem item, Object element, int columnIndex) {
-
-		ViewerLabel label = new ViewerLabel(item.getText(columnIndex), item
-				.getImage(columnIndex));
-		getLabelProvider().updateLabel(label, element, columnIndex);
-
-		// We can not make a null check because then we could not
-		// set the items back to default state
-		item.setBackground(columnIndex, label.getBackground());
-		item.setForeground(columnIndex, label.getForeground());
-		item.setFont(columnIndex, label.getFont());
-
-		if (label.hasNewText())
-			item.setText(columnIndex, label.getText());
-
-		if (label.hasNewImage())
-			item.setImage(columnIndex, label.getImage());
-	}
-*/
+	/*
+	 * public void refresh(TreeItem item, Object element, int columnIndex) {
+	 * 
+	 * ViewerLabel label = new ViewerLabel(item.getText(columnIndex), item
+	 * .getImage(columnIndex)); getLabelProvider().updateLabel(label, element,
+	 * columnIndex); // We can not make a null check because then we could not //
+	 * set the items back to default state item.setBackground(columnIndex,
+	 * label.getBackground()); item.setForeground(columnIndex,
+	 * label.getForeground()); item.setFont(columnIndex, label.getFont());
+	 * 
+	 * if (label.hasNewText()) item.setText(columnIndex, label.getText());
+	 * 
+	 * if (label.hasNewImage()) item.setImage(columnIndex, label.getImage()); }
+	 */
 	/**
 	 * Refresh the TableItem for element.
 	 * 
@@ -134,25 +129,23 @@ public class ViewerColumn {
 	 * @param element
 	 * @param columnIndex
 	 */
-/*	public void refresh(TableItem item, Object element, int columnIndex) {
-
-		ViewerLabel label = new ViewerLabel(item.getText(columnIndex), item
-				.getImage(columnIndex));
-		getLabelProvider().updateLabel(label, element, columnIndex);
-
-		if (label.hasNewBackground())
-			item.setBackground(columnIndex, label.getBackground());
-
-		if (label.hasNewForeground())
-			item.setForeground(columnIndex, label.getForeground());
-
-		if (label.hasNewFont())
-			item.setFont(columnIndex, label.getFont());
-
-		if (label.hasNewText())
-			item.setText(columnIndex, label.getText());
-
-		if (label.hasNewImage())
-			item.setImage(columnIndex, label.getImage());
-	}*/
+	/*
+	 * public void refresh(TableItem item, Object element, int columnIndex) {
+	 * 
+	 * ViewerLabel label = new ViewerLabel(item.getText(columnIndex), item
+	 * .getImage(columnIndex)); getLabelProvider().updateLabel(label, element,
+	 * columnIndex);
+	 * 
+	 * if (label.hasNewBackground()) item.setBackground(columnIndex,
+	 * label.getBackground());
+	 * 
+	 * if (label.hasNewForeground()) item.setForeground(columnIndex,
+	 * label.getForeground());
+	 * 
+	 * if (label.hasNewFont()) item.setFont(columnIndex, label.getFont());
+	 * 
+	 * if (label.hasNewText()) item.setText(columnIndex, label.getText());
+	 * 
+	 * if (label.hasNewImage()) item.setImage(columnIndex, label.getImage()); }
+	 */
 }

@@ -29,6 +29,11 @@ import org.eclipse.swt.widgets.Widget;
 abstract class ColumnViewer extends StructuredViewer {
 
 	private TooltipSupport tooltipSupport;
+	
+	/**
+	 * The cell is a cached viewer cell used for refreshing.
+	 */
+	private ViewerCell cell = new ViewerCell(null,0);
 
 	/**
 	 * Create a new instance of the receiver.
@@ -213,6 +218,17 @@ abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public void deactivateCustomTooltips() {
 		tooltipSupport.deactivate();
+	}
+	
+	/**
+	 * Update the cached cell with the row and column.
+	 * @param rowPartFromItem
+	 * @param column
+	 * @return ViewerCell
+	 */
+	ViewerCell updateCell(ViewerRow rowItem, int column) {
+		cell.update(rowItem,column);
+		return cell;
 	}
 
 }

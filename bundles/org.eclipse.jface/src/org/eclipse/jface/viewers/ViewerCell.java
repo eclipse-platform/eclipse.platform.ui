@@ -12,6 +12,9 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
@@ -58,5 +61,85 @@ public class ViewerCell {
 	 */
 	public Object getElement() {
 		return row.getItem().getData();
+	}
+
+	/**
+	 * Return the text for the cell.
+	 * @return String
+	 */
+	public String getText() {
+		return row.getText(columnIndex);
+	}
+
+	/**
+	 * Return the Image for the cell.
+	 * @return Image
+	 */
+	public Image getImage() {
+		return row.getImage(columnIndex);
+	}
+
+	/**
+	 * Set the background color of the cell.
+	 * @param background
+	 */
+	public void setBackground(Color background) {
+		row.setBackground(columnIndex, background);
+		
+	}
+
+	/**
+	 * Set the foreground color of the cell.
+	 * @param foreground
+	 */
+	public void setForeground(Color foreground) {
+		row.setForeground(columnIndex, foreground);
+		
+	}
+
+	/**
+	 * Set the font of the cell.
+	 * @param font
+	 */
+	public void setFont(Font font) {
+		row.setFont(columnIndex, font);
+		
+	}
+
+	/**
+	 * Set the text for the cell.
+	 * @param text
+	 */
+	public void setText(String text) {
+		row.setText(columnIndex, text);
+		
+	}
+
+	/**
+	 * Set the Image for the cell.
+	 * @param image
+	 */
+	public void setImage(Image image) {
+		row.setImage(columnIndex, image);
+		
+	}
+
+	/**
+	 * Set the columnIndex.
+	 * @param column
+	 */
+	void setColumn(int column) {
+		columnIndex = column;
+		
+	}
+
+	/**
+	 * Set the ro to rowItem and the columnIndex to column.
+	 * @param rowItem
+	 * @param column
+	 */
+	void update(ViewerRow rowItem, int column) {
+		row = rowItem;
+		columnIndex = column;		
 	}
 }

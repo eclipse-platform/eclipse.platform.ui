@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
-
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
  * <p>
@@ -176,7 +175,7 @@ public class TableViewer extends ColumnViewer {
 	 * This viewer's table editor.
 	 */
 	private TableEditor tableEditor;
-	
+
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
 	 * parent. The table control is created using the SWT style bits
@@ -270,7 +269,8 @@ public class TableViewer extends ColumnViewer {
 	 */
 	private void createItem(Object element, int index) {
 		if (virtualManager == null) {
-			updateItem(createNewRowPart(null, SWT.NONE, index).getItem(), element);
+			updateItem(createNewRowPart(null, SWT.NONE, index).getItem(),
+					element);
 		} else {
 			virtualManager.notVisibleAdded(element, index);
 
@@ -358,14 +358,14 @@ public class TableViewer extends ColumnViewer {
 			}
 
 			int columnCount = table.getColumnCount();
-			if(columnCount == 0)
-				columnCount = 1;//If there are no columns do the first one 
+			if (columnCount == 0)
+				columnCount = 1;// If there are no columns do the first one
 
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
 				ViewerColumn columnViewer = getColumnViewer(column);
-				columnViewer.refresh( getRowPartFromItem(item),column);
+				columnViewer.refresh(updateCell(getRowPartFromItem(item),column));
 
 				// As it is possible for user code to run the event
 				// loop check here.
@@ -379,22 +379,22 @@ public class TableViewer extends ColumnViewer {
 		}
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
-		if( columnIndex < 0 || columnIndex > getTable().getColumnCount() ) {
+		if (columnIndex < 0 || columnIndex > getTable().getColumnCount()) {
 			return null;
 		}
-		
+
 		if (getTable().getColumnCount() == 0)// Hang it off the table if it
 			return getTable();
-		
-		
+
 		return getTable().getColumn(columnIndex);
 	}
-	
+
 	/**
 	 * Set the TableColumnViewerPart at columnIndex to be viewerPart.
 	 * 
@@ -405,7 +405,6 @@ public class TableViewer extends ColumnViewer {
 		TableColumn column = getTable().getColumn(columnIndex);
 		column.setData(ViewerColumn.COLUMN_VIEWER_KEY, viewerPart);
 	}
-
 
 	/**
 	 * Starts editing the given element.
@@ -419,23 +418,27 @@ public class TableViewer extends ColumnViewer {
 		tableViewerImpl.editElement(element, column);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
 	 */
 	public CellEditor[] getCellEditors() {
 		return tableViewerImpl.getCellEditors();
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
 	 */
 	public ICellModifier getCellModifier() {
 		return tableViewerImpl.getCellModifier();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
 	 */
 	public Object[] getColumnProperties() {
@@ -995,24 +998,24 @@ public class TableViewer extends ColumnViewer {
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider);
-		clearColumnParts();//Clear before refresh
+		clearColumnParts();// Clear before refresh
 		super.setLabelProvider(labelProvider);
 	}
-	
+
 	/**
 	 * Clear the viewer parts for the columns
 	 */
 	private void clearColumnParts() {
 		TableColumn[] columns = getTable().getColumns();
-		if(columns.length == 0)
-			getTable().setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
-		else{
+		if (columns.length == 0)
+			getTable().setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
+		else {
 			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
-				
+				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
+
 			}
 		}
-		
+
 	}
 
 	/**
@@ -1226,35 +1229,41 @@ public class TableViewer extends ColumnViewer {
 		Assert.isTrue(provider instanceof IStructuredContentProvider
 				|| provider instanceof ILazyContentProvider);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
 	protected ViewerRow getRowPartFromItem(Widget item) {
-		ViewerRow part = (ViewerRow)item.getData(ViewerRow.ROWPART_KEY);
-		
-		if( part == null ) {
-			part = new TableViewerRow(((TableItem)item));
+		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
+
+		if (part == null) {
+			part = new TableViewerRow(((TableItem) item));
 		}
-		
+
 		return part;
 	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#createNewRowPart(org.eclipse.jface.internal.viewers.RowPart, int, int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#createNewRowPart(org.eclipse.jface.internal.viewers.RowPart,
+	 *      int, int)
 	 */
-	protected ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
+	protected ViewerRow createNewRowPart(ViewerRow parent, int style,
+			int rowIndex) {
 		TableItem item;
-		
-		if( rowIndex >= 0 ) {
-			item = new TableItem(table,style,rowIndex);
+
+		if (rowIndex >= 0) {
+			item = new TableItem(table, style, rowIndex);
 		} else {
-			item = new TableItem(table,style);
+			item = new TableItem(table, style);
 		}
-		
+
 		return getRowPartFromItem(item);
 	}
-	
+
 	/**
 	 * Returns the item at the given display-relative coordinates, or
 	 * <code>null</code> if there is no item at that location.
@@ -1270,8 +1279,7 @@ public class TableViewer extends ColumnViewer {
 	 *         coordinates
 	 */
 	protected Item getItem(int x, int y) {
-		return table.getItem(new Point(x,y));
+		return table.getItem(new Point(x, y));
 	}
-	
-	
+
 }

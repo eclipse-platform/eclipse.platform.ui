@@ -23,12 +23,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 
 /**
- * ViewerRow is the abstract superclass of the part that represents items in a 
+ * ViewerRow is the abstract superclass of the part that represents items in a
  * Table or Tree.
- * @since 3.3
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
+ * 
+ * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
+ *        added as part of a work in progress. This API may change at any given
+ *        time. Please do not use this API without consulting with the
+ *        Platform/UI team.
  * 
  */
 public abstract class ViewerRow {
@@ -36,27 +37,31 @@ public abstract class ViewerRow {
 	 * Key used to reference ViewerRow in the widgets data-map
 	 */
 	public static final String ROWPART_KEY = Policy.JFACE + ".ROWPART"; //$NON-NLS-1$
-		
+
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param item
 	 */
 	ViewerRow(final Item item) {
 		item.setData(ViewerRow.ROWPART_KEY, this);
 		item.addDisposeListener(new DisposeListener() {
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
 			public void widgetDisposed(DisposeEvent e) {
 				item.setData(ROWPART_KEY, null);
 			}
-			
+
 		});
 	}
-	
+
 	/**
 	 * Get the bounds of the entry at the columnIndex,
+	 * 
 	 * @param columnIndex
 	 * @return Rectangle
 	 */
@@ -64,123 +69,146 @@ public abstract class ViewerRow {
 
 	/**
 	 * Return the bounds for the whole item.
+	 * 
 	 * @return Rectangle
 	 */
 	public abstract Rectangle getBounds();
 
 	/**
 	 * Return the item for the receiver.
+	 * 
 	 * @return Item
 	 */
 	public abstract Item getItem();
 
 	/**
 	 * Return the number of columns for the receiver.
+	 * 
 	 * @return int
 	 */
 	public abstract int getColumnCount();
-	
+
 	/**
 	 * Return the image at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @return Image
 	 */
 	public abstract Image getImage(int columnIndex);
-	
+
 	/**
 	 * Set the image at the columnIndex
+	 * 
 	 * @param columnIndex
 	 * @param image
 	 */
-	public abstract void setImage(int columnIndex,Image image);
-	
+	public abstract void setImage(int columnIndex, Image image);
+
 	/**
 	 * Get the text at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @return String
 	 */
 	public abstract String getText(int columnIndex);
-	
+
 	/**
 	 * Set the text at the columnIndex
+	 * 
 	 * @param columnIndex
 	 * @param text
 	 */
-	public abstract void setText(int columnIndex,String text);
-	
+	public abstract void setText(int columnIndex, String text);
+
 	/**
 	 * Get the background at the columnIndex,
+	 * 
 	 * @param columnIndex
 	 * @return Color
 	 */
 	public abstract Color getBackground(int columnIndex);
-	
+
 	/**
 	 * Set the background at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @param color
 	 */
 	public abstract void setBackground(int columnIndex, Color color);
-	
+
 	/**
 	 * Get the foreground at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @return Color
 	 */
 	public abstract Color getForeground(int columnIndex);
-	
+
 	/**
 	 * Set the foreground at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @param color
 	 */
 	public abstract void setForeground(int columnIndex, Color color);
-	
+
 	/**
 	 * Get the font at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @return Font
 	 */
 	public abstract Font getFont(int columnIndex);
-	
+
 	/**
 	 * Set the font at the columnIndex.
+	 * 
 	 * @param columnIndex
 	 * @param font
 	 */
-	public abstract void setFont(int columnIndex,Font font);
-	
-	
+	public abstract void setFont(int columnIndex, Font font);
+
 	/**
 	 * Get the ViewerCell at point.
+	 * 
 	 * @param point
 	 * @return ViewerCell
 	 */
 	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
-		
-		if( index >= 0 ) {
-			return new ViewerCell(this,index);
-		}
 
-		return null;
+		return getCell(index);
 	}
-	
+
 	/**
 	 * Get the columnIndex of the point.
+	 * 
 	 * @param point
 	 * @return the column index or -1 if it cannot be found.
 	 */
 	public int getColumnIndex(Point point) {
 		int count = getColumnCount();
-		
-		for(int i = 0; i < count; i++ ) {
-			if( getBounds(i).contains(point) ) {
+
+		for (int i = 0; i < count; i++) {
+			if (getBounds(i).contains(point)) {
 				return i;
 			}
 		}
-		
+
 		return -1;
 	}
-	
+
+	/**
+	 * Get a ViewerCell for the column at index.
+	 * 
+	 * @param column
+	 * @return ViewerCell or <code>null</code> if the index is negative.
+	 */
+	public ViewerCell getCell(int column) {
+		if (column >= 0)
+			return new ViewerCell(this, column);
+
+		return null;
+	}
+
 }

@@ -74,6 +74,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	private boolean treeIsDisposed = false;
 
+
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
 	 * parent. The tree control is created using the SWT style bits
@@ -154,7 +155,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		for (int column = 0; column < columnCount; column++) {
 			ViewerColumn columnViewer = getColumnViewer(column);
-			columnViewer.refresh(getRowPartFromItem(treeItem),column);
+			columnViewer.refresh(updateCell(getRowPartFromItem(treeItem),column));
 
 			// As it is possible for user code to run the event
 			// loop check here.
