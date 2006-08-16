@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test for two commands">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro>
+  
+  <item title="New Item">
+    <description>Item with subitem containing two commands</description>
+    <subitem label="New SubItem">
+        <command serialization="org.eclipse.jdt.ui.PackageExplorer"/>  
+        <command serialization="CommandSerialization"/>
+    </subitem>
+    <subitem label = "Another subitem"/>
+  </item>
+</cheatsheet>

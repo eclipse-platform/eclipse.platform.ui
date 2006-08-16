@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.CompositeCheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.IStatusContainer;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -39,9 +40,8 @@ import org.xml.sax.*;
  * <code>getTitle()</code>.
  * 
  */
-public class CheatSheetParser {
+public class CheatSheetParser implements IStatusContainer {
 
-	
 	private static final String TRUE_STRING = "true"; //$NON-NLS-1$
 
 	private DocumentBuilder documentBuilder;
@@ -510,9 +510,11 @@ public class CheatSheetParser {
 		boolean hasDescription = false;
 		
 		NodeList nodes = itemNode.getChildNodes();
+		
+		IncompatibleSiblingChecker checker = new IncompatibleSiblingChecker(this, itemNode);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-
+			checker.checkElement(node.getNodeName());
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
 				handleExecutable(item, node, new Action());
 			} else if(node.getNodeName().equals(IParserTags.COMMAND)) {
@@ -727,10 +729,13 @@ public class CheatSheetParser {
 		SubItem subItem = new SubItem();
 
 		handleSubItemAttributes(subItem, subItemNode);
+		
+		IncompatibleSiblingChecker checker = new IncompatibleSiblingChecker(this, subItemNode);
 
 		NodeList nodes = subItemNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
+			checker.checkElement(node.getNodeName());
 
 			if(node.getNodeName().equals(IParserTags.ACTION)) {
 				handleExecutable(subItem, node, new Action());

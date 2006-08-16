@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test with action and perform-when">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro> 
+  <item title="New Item">
+    <description>Item with action and perform-when.</description>
+    <action class="action_class" pluginId="action_plugin_id"/>
+    <perform-when condition="Condition">
+      <command serialization="CommandSerialization" when="true"/>
+      <action class="action_class" pluginId="action_plugin_id" when="false"/>
+    </perform-when>
+  </item>
+</cheatsheet>

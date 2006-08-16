@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test with command and action">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro>
+  
+  <item title="New Item">
+    <description>Item with command and action</description>
+    <command serialization="org.eclipse.jdt.ui.PackageExplorer"/>
+    
+    <action class="action_class" pluginId="action_plugin_id"/>
+  </item>
+</cheatsheet>

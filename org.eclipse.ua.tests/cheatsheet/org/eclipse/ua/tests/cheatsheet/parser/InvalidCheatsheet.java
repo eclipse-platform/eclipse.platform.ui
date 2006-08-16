@@ -193,12 +193,61 @@ public class InvalidCheatsheet extends TestCase {
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a subitem");
 	}
-	
+
 	public void testRepeatedSubitemMissingValues() {
 		ICheatSheet model = parseTestFile("RepeatedSubitem_MissingValues.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a values");
+	}
+
+	public void testActionAndPerformWhen() {
+		ICheatSheet model = parseTestFile("ActionAndPerformWhen.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "incompatible");
+	}
+
+	public void testCommandAndAction() {
+		ICheatSheet model = parseTestFile("CommandAndAction.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "incompatible");
+	}
+
+	public void testCommandAndSubitem() {
+		ICheatSheet model = parseTestFile("CommandAndSubitem.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "incompatible");
+	}
+
+	public void testSubitemAndPerformWhen() {
+		ICheatSheet model = parseTestFile("SubitemAndPerformWhen.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "incompatible");
+	}
+
+	public void testTwoActions() {
+		ICheatSheet model = parseTestFile("TwoActions.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "more than one");
+	}
+
+	public void testTwoCommands() {
+		ICheatSheet model = parseTestFile("TwoCommands.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "more than one");
+	}
+
+	public void testTwoPerformWhen() {
+		ICheatSheet model = parseTestFile("TwoPerformWhen.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "more than one");
 	}
 
 }

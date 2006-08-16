@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test with two actions">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro> 
+  <item title="New Item">
+    <description>Item with two actions</description>
+    <action class="action_class" pluginId="action_plugin_id"/> 
+    
+    <action class="action_class" pluginId="action_plugin_id"/>
+  </item>
+</cheatsheet>

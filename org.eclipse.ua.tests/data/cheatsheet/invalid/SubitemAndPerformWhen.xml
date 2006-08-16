@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test with two perform-when elements">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro> 
+  <item title="Select a number">
+    <description>Select a number between one and three.</description>
+    <command serialization="org.eclipse.ui.dialogs.openMessageDialog(buttonLabel2=Three,title=Number selection,message=Select a number,buttonLabel0=One ,buttonLabel1=Two)" returns="result"/>
+    <onCompletion>Result is ${result}</onCompletion>
+  </item>
+  <item title="New Item">
+    <description>Item with two perform when elements</description>  
+    <perform-when condition="${result}">
+      <command serialization="CommandSerialization" when="One"/>
+      <action class="action_class" pluginId="action_plugin_id" when="Two"/>
+    </perform-when>
+    <subitem label="New SubItem"/>
+    
+  </item>
+</cheatsheet>

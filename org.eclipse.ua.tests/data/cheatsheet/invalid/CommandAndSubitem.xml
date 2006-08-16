@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test with command and subitem">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro>
+  
+  <item title="New Item">
+    <description>Item with command and subitems</description>
+    <command serialization="org.eclipse.jdt.ui.PackageExplorer"/>
+    
+    <subitem label="New SubItem"/>
+    <subitem label="New SubItem"/>
+  </item>
+</cheatsheet>
