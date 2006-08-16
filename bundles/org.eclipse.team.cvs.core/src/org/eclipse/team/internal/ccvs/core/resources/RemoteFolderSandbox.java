@@ -46,7 +46,7 @@ public class RemoteFolderSandbox extends RemoteFolder {
 			if (e.getStatus().getCode() == CHILD_DOES_NOT_EXIST) {
 				IPath path = new Path(null, name);
 				String fileName = path.lastSegment();
-				RemoteFolderSandbox parent = getFolder(path);
+				RemoteFolderSandbox parent = getParentFolder(path);
 				RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, fileName, null, null, getTag());
 				parent.addChild(file);
 				return file;
@@ -63,7 +63,7 @@ public class RemoteFolderSandbox extends RemoteFolder {
 		setChildren(newChildren);
 	}
 
-	private RemoteFolderSandbox getFolder(IPath path) throws CVSException {
+	private RemoteFolderSandbox getParentFolder(IPath path) throws CVSException {
 		IPath parentPath = path.removeLastSegments(1);
 		String parentString;
 		if (parentPath.isEmpty()) {
@@ -84,8 +84,8 @@ public class RemoteFolderSandbox extends RemoteFolder {
 		} catch (CVSException e) {
 			if (e.getStatus().getCode() == CHILD_DOES_NOT_EXIST) {
 				IPath path = new Path(null, name);
-				RemoteFolderSandbox parent = getFolder(path);
-				String repoPath = new Path(null, getRepositoryRelativePath()).append(name).removeTrailingSeparator().toString();
+				RemoteFolderSandbox parent = getParentFolder(path);
+				String repoPath = new Path(null, parent.getRepositoryRelativePath()).append(path.lastSegment()).removeTrailingSeparator().toString();
 				RemoteFolderSandbox folder = new RemoteFolderSandbox(parent, getRepository(), repoPath, getTag());
 				parent.addChild(folder);
 				return folder;
