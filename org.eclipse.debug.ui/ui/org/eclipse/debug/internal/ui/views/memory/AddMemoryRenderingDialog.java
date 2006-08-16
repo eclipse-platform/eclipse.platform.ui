@@ -43,9 +43,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -73,8 +71,8 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	private Button addNew;
 	
 	private ISelectionChangedListener fSelectionChangedListener;
-	private MouseListener fMouseListener;
 	private SelectionListener fSelectionListener;
+	private SelectionAdapter fAddNewSelectionAdapter;
 	private IMemoryRenderingSite fSite;
 	
 	private IMemoryBlockListener fMemoryBlockListener = new IMemoryBlockListener(){
@@ -181,7 +179,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fViewer.removeSelectionChangedListener(fSelectionChangedListener);
 		memoryBlock.removeSelectionListener(fSelectionListener);
-		addNew.removeMouseListener(fMouseListener);
+		addNew.removeSelectionListener(fAddNewSelectionAdapter);
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
 		
 		return super.close();
@@ -279,15 +277,15 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		specButton.verticalAlignment= GridData.CENTER;
 		addNew.setLayoutData(specButton);
 		
-		fMouseListener =new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
+		fAddNewSelectionAdapter = new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
 				RetargetAddMemoryBlockAction action = new RetargetAddMemoryBlockAction(fSite, false);
 				action.run();
 				action.dispose();
-			}
-		}; 
+			}};
 		
-		addNew.addMouseListener(fMouseListener);
+		addNew.addSelectionListener(fAddNewSelectionAdapter);
 		
 		fSelectionListener = new SelectionListener(){
 
