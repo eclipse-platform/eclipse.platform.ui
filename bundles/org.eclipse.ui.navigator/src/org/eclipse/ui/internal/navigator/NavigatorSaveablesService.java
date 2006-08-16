@@ -233,7 +233,6 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 						if (false && isTreepathContentProvider) {
 							ITreePathContentProvider treePathContentProvider = (ITreePathContentProvider) contentProvider;
 							foundRoot = treePathContentProvider.getParents(element).length > 0;
-							System.out.println("found root for " + element + " : " + foundRoot);  //$NON-NLS-1$//$NON-NLS-2$
 							element = null;
 						} else if (roots.contains(element)) {
 							// found a parent chain leading to a root. The
