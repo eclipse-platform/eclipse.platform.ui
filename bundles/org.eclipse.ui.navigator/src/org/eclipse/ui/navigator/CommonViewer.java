@@ -12,6 +12,7 @@ package org.eclipse.ui.navigator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
@@ -42,12 +44,18 @@ import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
  * Clients may extend this class.
  * </p>
  * 
+ * <p>
+ * Note that as of 3.2.1 and 3.3, the common viewer caches its selection.
+ * Clients must not set the selection of the viewer's tree control directly.
+ * </p>
  * 
  * @since 3.2
  */
 public class CommonViewer extends TreeViewer {
 
 	private final NavigatorContentService contentService;
+	
+	private ISelection cachedSelection;
 
 	/**
 	 * <p>
@@ -211,6 +219,7 @@ public class CommonViewer extends TreeViewer {
 		if (contentService != null) {
 			contentService.dispose();
 		}
+		clearSelectionCache();
 	}
 
 	/**
@@ -345,6 +354,69 @@ public class CommonViewer extends TreeViewer {
 				super.setSelection(selection, reveal);
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelectionToWidget(java.util.List, boolean)
+	 */
+	protected void setSelectionToWidget(List v, boolean reveal) {
+		clearSelectionCache();
+		super.setSelectionToWidget(v, reveal);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleDoubleSelect(org.eclipse.swt.events.SelectionEvent)
+	 */
+	protected void handleDoubleSelect(SelectionEvent event) {
+		clearSelectionCache();
+		super.handleDoubleSelect(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handleOpen(org.eclipse.swt.events.SelectionEvent)
+	 */
+	protected void handleOpen(SelectionEvent event) {
+		clearSelectionCache();
+		super.handleOpen(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handlePostSelect(org.eclipse.swt.events.SelectionEvent)
+	 */
+	protected void handlePostSelect(SelectionEvent e) {
+		clearSelectionCache();
+		super.handlePostSelect(e);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
+	 */
+	protected void handleSelect(SelectionEvent event) {
+		clearSelectionCache();
+		super.handleSelect(event);
+	}
+	
+	/**
+	 * Clears the selection cache.
+	 */
+	private void clearSelectionCache() {
+		cachedSelection = null;
+	}
+	
+	/**
+	 * Returns the current selection.
+	 * <p>
+	 * Note that as of 3.2.1 and 3.3, the common viewer caches its selection.
+	 * Clients must not set the selection of the viewer's tree control directly.
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getSelection()
+	 */
+	public ISelection getSelection() {
+		if (cachedSelection == null) {
+			cachedSelection = super.getSelection();
+		}
+		return cachedSelection;
 	}
 
 	/*
