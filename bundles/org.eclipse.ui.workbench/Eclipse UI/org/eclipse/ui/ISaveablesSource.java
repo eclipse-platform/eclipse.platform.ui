@@ -14,13 +14,16 @@ package org.eclipse.ui;
 import org.eclipse.ui.part.EditorPart;
 
 /**
- * Workbench parts that work in terms of units of saveability should implement
- * this interface in order to provide better integration with workbench
- * facilities like the Save command, prompts to save on part close or shutdown,
- * etc.
+ * Represents a source of Saveable objects (units of saveability). Workbench
+ * parts that show more than one unit of saveability, or whose units of
+ * saveability change over time, should implement this interface in order to
+ * provide better integration with workbench facilities like the Save command,
+ * prompts to save on part close or shutdown, etc.
  * <p>
  * IMPORTANT: As of 3.2, implementers of <code>ISaveablesSource</code> must
  * satisfy the following conditions:
+ * <ul>
+ * <li>If ISaveablesSource is implemented by an IWorkbenchPart:
  * <ul>
  * <li>the part must implement <code>ISaveablePart</code></li>
  * <li>if any of its Saveable objects are dirty, the part must return
@@ -30,8 +33,19 @@ import org.eclipse.ui.part.EditorPart;
  * behaviour implemented by {@link EditorPart})</li>
  * <li>the part must not implement {@link ISaveablePart2}</li>
  * </ul>
+ * </li>
+ * <li>If ISaveablesSource is implemented by a non-part (possible as of 3.2.1 and 3.3):
+ * <ul>
+ * <li>the Workbench's {@link ISaveablesLifecycleListener} (obtained from the
+ * Workbench by calling
+ * <code>workbench.getService(ISaveablesLifecycleListener.class)</code>) must
+ * be notified of any change to the result of {@link #getSaveables()} </li>
+ * <li>getActiveSaveables() should be implemented to return an empty array
+ * </li>
+ * </ul>
+ * </ul>
  * If any of these conditions are not met, it is undefined whether the Workbench
- * will prompt to save dirty Saveables when closing parts.
+ * will prompt to save dirty Saveables when closing parts or the Workbench.
  * </p>
  * <p>
  * These conditions may be relaxed in future releases.
