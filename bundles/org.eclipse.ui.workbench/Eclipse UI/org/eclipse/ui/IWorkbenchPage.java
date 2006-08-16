@@ -947,21 +947,22 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 
 	/**
 	 * Closes the specified perspective in this page. If the last perspective in
-	 * this page is closed, then all editors are closed, prompting to save any
-	 * unsaved changes if <code>saveEditors</code> is <code>true</code>,
-	 * and the page itself is closed if <code>closePage</code> is
-	 * <code>true</code>.
+	 * this page is closed, then all editors are closed. Views that are not
+	 * shown in other perspectives are closed as well. If <code>saveParts</code>
+	 * is <code>true</code>, the user will be prompted to save any unsaved
+	 * changes for parts that are being closed. The page itself is closed if
+	 * <code>closePage</code> is <code>true</code>.
 	 * 
 	 * @param desc
 	 *            the descriptor of the perspective to be closed
-	 * @param saveEditors
-	 *            whether the page's editors should be saved if last perspective
+	 * @param saveParts
+	 *            whether the page's parts should be saved if closed
 	 * @param closePage
 	 *            whether the page itself should be closed if last perspective
 	 * @since 3.1
 	 */
 	public void closePerspective(IPerspectiveDescriptor desc,
-			boolean saveEditors, boolean closePage);
+			boolean saveParts, boolean closePage);
 
 	/**
 	 * Closes all perspectives in this page. All editors are closed, prompting

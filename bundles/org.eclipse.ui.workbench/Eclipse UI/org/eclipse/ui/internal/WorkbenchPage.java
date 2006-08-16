@@ -1335,24 +1335,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * @see IWorkbenchPage#closePerspective(IPerspectiveDescriptor, boolean, boolean)
      */
-    public void closePerspective(IPerspectiveDescriptor desc, boolean saveEditors, boolean closePage) {
+    public void closePerspective(IPerspectiveDescriptor desc, boolean saveParts, boolean closePage) {
         Perspective persp = findPerspective(desc);
         if (persp != null) {
-			closePerspective(persp, saveEditors, closePage);
+			closePerspective(persp, saveParts, closePage);
 		}
     }
 
     /**
-     * Closes the specified perspective. If last perspective, then entire page
-     * is closed.
-     * 
-     * @param persp
-     *            the perspective to be closed
-     * @param saveEditors
-     *            whether the page's editors should be save if last perspective
-     */
+	 * Closes the specified perspective. If last perspective, then entire page
+	 * is closed.
+	 * 
+	 * @param persp
+	 *            the perspective to be closed
+	 * @param saveParts
+	 *            whether the parts that are being closed should be saved
+	 *            (editors if last perspective, views if not shown in other
+	 *            parspectives)
+	 */
     /* package */
-    void closePerspective(Perspective persp, boolean saveEditors, boolean closePage) {
+    void closePerspective(Perspective persp, boolean saveParts, boolean closePage) {
 
         // Always unzoom
         if (isZoomed()) {
@@ -1369,13 +1371,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	        	IViewPart viewPart = reference.getView(false);
 	        	if (viewPart != null) {
 	        		viewsToClose.add(viewPart);
-	        		if (saveEditors && reference.isDirty()) {
+	        		if (saveParts && reference.isDirty()) {
 	        			partsToSave.add(viewPart);
 	        		}
 	        	}
 	        }
 		}
-        if (saveEditors && perspList.size() == 1) {
+        if (saveParts && perspList.size() == 1) {
         	// collect editors that are dirty
         	IEditorReference[] editorReferences = getEditorReferences();
         	for (int i = 0; i < editorReferences.length; i++) {
@@ -1388,7 +1390,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					}
 			}
         }
-        if (saveEditors && !partsToSave.isEmpty()) {
+        if (saveParts && !partsToSave.isEmpty()) {
         	if (!EditorManager.saveAll(partsToSave, true, true, false, window)) {
         		// user canceled
         		return;
