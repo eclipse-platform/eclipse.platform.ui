@@ -144,6 +144,7 @@ public class FastViewBar implements IWindowTrim {
 	
 	private static final String GLOBAL_FVB_ID ="org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$ 
 	private String id = GLOBAL_FVB_ID;
+	private IPerspectiveListener2 perspectiveListener;
 
     class ViewDropTarget extends AbstractDropTarget {
         List panes;
@@ -220,31 +221,33 @@ public class FastViewBar implements IWindowTrim {
     public FastViewBar(WorkbenchWindow theWindow) {
         window = theWindow;
 
-        window.addPerspectiveListener(new IPerspectiveListener2() {
-           public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-               update(true);
-           }
-           
-           public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
-               if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
-                   // Handle removals immediately just in case the part (and its image) is about to be disposed
-                   if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
-                       removeViewRef((IViewReference) partRef);
-                       return;
-                   }
+        perspectiveListener = new IPerspectiveListener2() {
+            public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+                update(true);
+            }
+            
+            public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+                if (page != null && page == window.getActivePage() && page.getPerspective() == perspective) {
+                    // Handle removals immediately just in case the part (and its image) is about to be disposed
+                    if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
+                        removeViewRef((IViewReference) partRef);
+                        return;
+                    }
 
-                   // If a view becomes 'unfast' we might want to remove it
-                   if (changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
-                	   if ((style & REMOVE_UNFAST_REFS) != 0)
-                		   removeViewRef((IViewReference) partRef);
-                       return;
-                   }
-               } 
-           }
-           
-           public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-           }
-        });
+                    // If a view becomes 'unfast' we might want to remove it
+                    if (changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
+                 	   if ((style & REMOVE_UNFAST_REFS) != 0)
+                 		   removeViewRef((IViewReference) partRef);
+                        return;
+                    }
+                } 
+            }
+            
+            public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+            }
+         };
+         
+        window.addPerspectiveListener(perspectiveListener);
 
         // Construct the context menu for the fast view bar area
         fastViewBarMenuManager = new MenuManager();
@@ -680,6 +683,7 @@ public class FastViewBar implements IWindowTrim {
     }
 
     public void dispose() {
+    	window.removePerspectiveListener(perspectiveListener);
         fastViewBarMenuManager.dispose();
 
         disposeChildControls();

@@ -325,8 +325,12 @@ public class Perspective {
     	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
     	ITrimManager tbm = wbw.getTrimManager();
     	tbm.removeTrim(groupBar);
-    	
+    	groupBar.getControl().setVisible(false);
     	groupBar.dispose();
+    	
+    	fastViewBars.remove(groupBar);
+    	
+    	tbm.forceLayout();
     }
     
     private String getUniqueGroupId() {

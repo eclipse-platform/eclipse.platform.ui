@@ -312,12 +312,13 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	}
 
 	/**
-	 * Force a layout of the trim...we hack this by calling the
-	 * LayoutUtil with the first piece of trim that we find...(kludge!!)
+	 * Force a layout of the trim
 	 */
-	protected void forceLayout() {
+	public void forceLayout() {
 		removeDisposed();
-		
+
+		// we hack this by calling the LayoutUtil with the
+		// first piece of trim that we find...(kludge!!)
 		Iterator d = fTrimDescriptors.values().iterator();
 		while (d.hasNext()) {
 			TrimDescriptor desc = (TrimDescriptor) d.next();

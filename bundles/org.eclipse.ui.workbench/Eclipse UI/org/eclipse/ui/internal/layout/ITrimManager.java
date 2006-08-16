@@ -169,4 +169,11 @@ public interface ITrimManager {
 	 * @since 3.2
 	 */
 	public void setTrimVisible(IWindowTrim trim, boolean visible);
+	
+	/**
+	 * Force the trim areas to layout to pick up changes
+	 * 
+	 * @since 3.2
+	 */
+	public void forceLayout();
 }
