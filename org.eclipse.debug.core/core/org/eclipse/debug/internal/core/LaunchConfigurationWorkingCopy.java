@@ -146,7 +146,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#doSave()
 	 */
-	public ILaunchConfiguration doSave() throws CoreException {
+	public synchronized ILaunchConfiguration doSave() throws CoreException {
 		if (isDirty()) {
 			boolean useRunnable= true;
 			if (isLocal()) {
