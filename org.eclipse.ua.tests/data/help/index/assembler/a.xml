@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+   <entry keyword="keyword3">
+      <topic href="topic3.html" label="topic3"/>
+   </entry>
+   <entry keyword="keyword1">
+      <entry keyword="keyword2">
+         <topic href="topic2.html" label="topic2"/>
+      </entry>
+   </entry>
+</index>

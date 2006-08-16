@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help;
 
@@ -16,7 +17,8 @@ package org.eclipse.help;
  * 
  * @since 3.2
  */
-public interface IIndex {
+public interface IIndex extends INode {
+	
 	/**
 	 * Obtains the index entries contained in the index.
 	 * 

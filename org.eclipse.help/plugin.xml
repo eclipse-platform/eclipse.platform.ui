@@ -18,5 +18,10 @@
          point="org.eclipse.help.toc">
       <tocProvider class="org.eclipse.help.internal.toc.TocFileProvider"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.help.index">
+      <indexProvider class="org.eclipse.help.internal.index.IndexFileProvider"/>
+   </extension>
 
 </plugin>

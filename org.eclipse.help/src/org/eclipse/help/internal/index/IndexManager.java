@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,155 +7,180 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IIndex;
+import org.eclipse.help.IIndexContribution;
+import org.eclipse.help.IIndexProvider;
 import org.eclipse.help.internal.HelpPlugin;
 
-
-/**
- * @author sturmash
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class IndexManager {
-	public static final String INDEX_XP_NAME = "index"; //$NON-NLS-1$
 
-    private Collection contributingPlugins;
-    private Map indexesByLang;
+	private static final String EXTENSION_POINT_ID_INDEX = HelpPlugin.PLUGIN_ID + ".index"; //$NON-NLS-1$
+	private static final String ELEMENT_NAME_INDEX_PROVIDER = "indexProvider"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
+	
+	private Map indexContributionsByLocale = new HashMap();
+	private Map indexesByLocale = new HashMap();
+	private IIndexProvider[] indexProviders;
 
-    /**
-     * IndexManager constructor
-     */
-    public IndexManager() {
-        indexesByLang = new HashMap();
-    }
-    
-    /**
-     * Builds the index from all contributed index files
-     * @param locale
-     */
-    private void build(String locale) {
-        Collection contributedIndexFiles = getContributedIndexFiles(locale);
-        IndexBuilder builder = new IndexBuilder(Collator.getInstance(getLocale(locale)));
-        builder.build(contributedIndexFiles);
-        IIndex index = builder.getBuiltIndex();
-        indexesByLang.put(locale, index);
-    }
-    
-    /**
-     * Returns all index files contributed by separate help plugins
-     * @param locale
-     * @return
-     */
-    private Collection getContributedIndexFiles(String locale) {
-        contributingPlugins = new HashSet();
-        Collection contributedIndexFiles = new ArrayList();
-        Collection ignored = getIgnoredIndexes();
-
-        IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, INDEX_XP_NAME);
-        if (xpt == null)
-             return contributedIndexFiles;
-        
-        IExtension[] extensions = xpt.getExtensions();
-        for (int i = 0; i < extensions.length; i++) {
-            contributingPlugins.add(extensions[i].getContributor().getName());
-            IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-            for (int j = 0; j < configElements.length; j++) {
-                if (configElements[j].getName().equals("index")) { //$NON-NLS-1$
-                    String pluginId = configElements[j].getDeclaringExtension().getContributor().getName();
-                    String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
-                    if (href == null
-                    		|| ignored.contains("/" + pluginId + "/" + href)) { //$NON-NLS-1$ //$NON-NLS-2$)
-                    	continue;
-                    }
-                    contributedIndexFiles.add(new IndexFile(pluginId, href, locale));
-                }
-            }
-        }
-        return contributedIndexFiles;
-    }
-    
-    public Index getIndex(String locale) {
-        if (locale == null)
-            return new Index();
-
-        Index index = (Index) indexesByLang.get(locale);
-        if (index == null) {
-            synchronized(this) {
-                if (index == null) {
-                    build(locale);
-                }
-            }
-            index = (Index) indexesByLang.get(locale);
-            if (index == null)
-                index = new Index();
-        }
-
-        return index;
-            
-    }
-
-    private Collection getIgnoredIndexes() {
-    	HashSet ignored = new HashSet();
-		try {
-			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String ignoredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
-			if (ignoredIndexes != null) {
-				StringTokenizer tokens = new StringTokenizer(
-						ignoredIndexes, " ;,"); //$NON-NLS-1$
-
-				while (tokens.hasMoreTokens()) {
-					ignored.add(tokens.nextToken());
+	public synchronized IIndex getIndex(String locale) {
+		IIndex index = (IIndex)indexesByLocale.get(locale);
+		if (index == null) {
+			List contributions = Arrays.asList(getIndexContributions(locale));
+			filterIndexContributions(contributions);
+			IndexAssembler assembler = new IndexAssembler();
+			index = assembler.assemble(contributions);
+			indexesByLocale.put(locale, index);
+		}
+		return index;
+	}
+	
+	/*
+	 * Returns all index contributions for the given locale, from all
+	 * providers.
+	 */
+	public synchronized IIndexContribution[] getIndexContributions(String locale) {
+		IIndexContribution[] cached = (IIndexContribution[])indexContributionsByLocale.get(locale);
+		if (cached == null) {
+			List contributions = new ArrayList();
+			IIndexProvider[] providers = getIndexProviders();
+			for (int i=0;i<providers.length;++i) {
+				IIndexContribution[] contrib;
+				try {
+					contrib = providers[i].getIndexContributions(locale);
+				}
+				catch (Throwable t) {
+					// log, and skip the offending provider
+					String msg = "Error getting " + IIndexContribution.class.getName() + " from " + IIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					HelpPlugin.logError(msg, t);
+					continue;
+				}
+				
+				// check for nulls
+				for (int j=0;j<contrib.length;++j) {
+					// null means no contribution
+					if (contrib[j] != null) {
+						// pre-fetch everything and cache for safety
+						try {
+							IIndexContribution prefetched = IndexPrefetcher.prefetch(contrib[j]);
+							contributions.add(prefetched);
+						}
+						catch (Throwable t) {
+							// log, and skip this offending contribution
+							String msg = "Error getting IIndexContribution information from " + contrib[j].getClass().getName(); //$NON-NLS-1$
+							HelpPlugin.logError(msg, t);
+							continue;
+						}
+					}
 				}
 			}
-		} catch (Exception e) {
-			HelpPlugin.logError(
-					"Problems occurred reading plug-in preferences.", e); //$NON-NLS-1$
+			cached = (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
+			indexContributionsByLocale.put(locale, cached);
 		}
-    	return ignored;
-    }
+		return cached;
+	}
 
-    public boolean isIndexContributed() {
-        return isIndexContributed(Platform.getNL());
-    }
-
-    public boolean isIndexContributed(String locale) {
-        if (locale == null)
-            return false;
-        return !getContributedIndexFiles(locale).isEmpty();
-    }
-
-    /**
-	 * Returns the locale object from the provided string.
-	 * @param localeStr the encoded locale string
-	 * @return the Locale object
+	/*
+	 * Returns all registered index providers (potentially cached).
 	 */
-	private static Locale getLocale(String localeStr) {
-		if (localeStr.length() >= 5) {
-			return new Locale(localeStr.substring(0, 2), localeStr.substring(3,
-					5));
-		} else if (localeStr.length() >= 2) {
-			return new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
-		} else {
-			return Locale.getDefault();
+	private IIndexProvider[] getIndexProviders() {
+		if (indexProviders == null) {
+			List providers = new ArrayList();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_INDEX);
+			for (int i=0;i<elements.length;++i) {
+				IConfigurationElement elem = elements[i];
+				try {
+					if (elem.getName().equals(ELEMENT_NAME_INDEX_PROVIDER)) {
+						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
+						if (className != null) {
+							try {
+								IIndexProvider provider = (IIndexProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+								providers.add(provider);
+							}
+							catch (CoreException e) {
+								// log and skip
+								String msg = "Error instantiating " + ELEMENT_NAME_INDEX_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
+								HelpPlugin.logError(msg, e);
+							}
+							catch (ClassCastException e) {
+								// log and skip
+								String msg = ELEMENT_NAME_INDEX_PROVIDER + " class must implement " + IIndexProvider.class.getName(); //$NON-NLS-1$
+								HelpPlugin.logError(msg, e);
+							}
+						}
+						else {
+							// log the missing class attribute and skip
+							String msg = ELEMENT_NAME_INDEX_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_INDEX + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							try {
+								msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							catch (InvalidRegistryObjectException e) {
+								// skip the declaring plugin part
+							}
+							HelpPlugin.logError(msg, null);
+						}
+					}
+				}
+				catch (InvalidRegistryObjectException e) {
+					// no longer valid; skip it
+				}
+			}
+			indexProviders = (IIndexProvider[])providers.toArray(new IIndexProvider[providers.size()]);
+		}
+		return indexProviders;
+	}
+	
+	public boolean isIndexContributed() {
+		IIndex index = getIndex(Platform.getNL());
+		return index.getEntries().length > 0;
+	}
+	
+	/*
+	 * Filters the given contributions according to product preferences. If
+	 * either the contribution's id or its category's id is listed in the
+	 * ignoredIndexes, filter the contribution.
+	 */
+	private void filterIndexContributions(List unfiltered) {
+		Set indexesToFilter = getIgnoredIndexContributions();
+		ListIterator iter = unfiltered.listIterator();
+		while (iter.hasNext()) {
+			IIndexContribution contribution = (IIndexContribution)iter.next();
+			if (indexesToFilter.contains(contribution.getId())) {
+				iter.remove();
+			}
 		}
 	}
 
+	private Set getIgnoredIndexContributions() {
+		HashSet ignored = new HashSet();
+		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+		String preferredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+		if (preferredIndexes.length() > 0) {
+			StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$
+			while (suggestdOrderedInfosets.hasMoreTokens()) {
+				ignored.add(suggestdOrderedInfosets.nextToken());
+			}
+		}
+		return ignored;
+	}
 }

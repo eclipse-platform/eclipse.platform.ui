@@ -11,6 +11,8 @@
 package org.eclipse.help.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.help.INode;
@@ -87,5 +89,11 @@ public class Node implements INode {
 	
 	public void setParent(Node parent) {
 		this.parent = parent;
+	}
+	
+	public void sortChildren(Comparator c) {
+		if (children != null) {
+			Collections.sort(children, c);
+		}
 	}
 }

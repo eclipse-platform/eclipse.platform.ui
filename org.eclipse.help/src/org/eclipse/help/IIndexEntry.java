@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 2006 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help;
 
@@ -16,7 +17,7 @@ package org.eclipse.help;
  * 
  * @since 3.2
  */
-public interface IIndexEntry {
+public interface IIndexEntry extends INode {
     /**
      * Returns the keyword that this entry is associated with
      *
@@ -25,11 +26,11 @@ public interface IIndexEntry {
     public String getKeyword();
 
     /**
-     * Obtains help resources assosiated with this index entry (i.e. keyword).
+     * Obtains topics assosiated with this index entry (i.e. keyword).
      * 
-     * @return Array of IHelpResource
+     * @return array of ITopic
      */
-    public IHelpResource[] getTopics();
+    public ITopic[] getTopics();
 
     /**
      * Obtains the index subentries contained in the entry.

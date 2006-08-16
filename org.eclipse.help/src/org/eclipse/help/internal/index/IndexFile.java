@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -16,74 +17,34 @@ import java.io.InputStream;
 
 import org.eclipse.help.internal.util.ResourceLocator;
 
-/**
- * @author sturmash
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class IndexFile {
 
-    private String plugin;
-
-    private String href;
-
+    private String pluginId;
+    private String file;
     private String locale;
 
-    protected IndexFile(String plugin, String href, String locale) {
-        this.plugin = plugin;
-        this.href = href;
+    public IndexFile(String pluginId, String file, String locale) {
+        this.pluginId = pluginId;
+        this.file = file;
         this.locale = locale;
     }
 
-    /**
-     * @return Returns the href.
-     */
-    public String getHref() {
-        return href;
+    public String getFile() {
+        return file;
     }
 
-    /**
-     * @return Returns the locale.
-     */
     public String getLocale() {
         return locale;
     }
 
-    /**
-     * @return Returns the plugin.
-     */
-    public String getPluginID() {
-        return plugin;
+    public String getPluginId() {
+        return pluginId;
     }
 
-    /**
-     * @param builder
-     */
-    public void build(IndexBuilder builder) {
-        builder.buildIndexFile(this);
-    }
-
-    /**
-     * @return
-     */
-    protected InputStream getInputStream() {
-        InputStream stream = null;
-        try {
-            if (plugin != null)
-                stream = ResourceLocator.openFromPlugin(plugin, href, locale);
-            else
-                stream = new FileInputStream(href);
-        } catch (IOException e) {
-            // Nothing to do
-        }
-        return stream;
-    }
-
-    /**
-     * Used by debugger
-     */
-    public String toString() {
-        return plugin + "/" + href; //$NON-NLS-1$
+    public InputStream getInputStream() throws IOException {
+        if (pluginId != null)
+            return ResourceLocator.openFromPlugin(pluginId, file, locale);
+        else
+        	return new FileInputStream(file);
     }
 }

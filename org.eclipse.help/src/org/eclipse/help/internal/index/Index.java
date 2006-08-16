@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,71 +7,41 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.INode;
+import org.eclipse.help.internal.Node;
 
-
-/**
- * @author sturmash
+/*
  * Help index implementation
  */
-public class Index implements IIndex {
+public class Index extends Node implements IIndex {
     
-    protected TreeMap entries;
-    
-    public Index() {
-    	entries = new TreeMap();
-    }
-
-    public Index(Comparator comparator) {
-        entries = new TreeMap(comparator);
-    }
-
-    public Index(Comparator comparator, List entries) {
-    	this(comparator);
-    	for (Iterator i = entries.iterator(); i.hasNext();) {
-    		IndexEntry entry = (IndexEntry)i.next();
-    		this.entries.put(entry.getKeyword(), entry);
-    	}
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.help.internal.index.IIndex#addEntry(java.lang.String, java.util.Collection)
-     */
-    protected IndexEntry addEntry(String keyword) {
-        IndexEntry oldEntry = (IndexEntry) entries.get(keyword);
-        if (oldEntry == null) {
-			oldEntry = new IndexEntry(entries.comparator(), keyword);
-	        entries.put(keyword, oldEntry);
-        }
-		return oldEntry;
-    }
-
-	public Map getEntryMap() {
-		return entries;
-	}
-
+	private IIndexEntry[] entries;
+	
 	public IIndexEntry[] getEntries() {
-		if (entries == null)
-			return new IIndexEntry[0];
-
-		Collection entryCollection = entries.values(); 
-		IIndexEntry[] entryArray = new IIndexEntry[entryCollection.size()];
-		entryCollection.toArray(entryArray);
-		return entryArray;
-	}
-
-	public Comparator getComparator() {
-		return entries.comparator();
+		if (entries == null) {
+			INode[] children = getChildren();
+			if (children.length > 0) {
+				List list = new ArrayList();
+				for (int i=0;i<children.length;++i) {
+					if (children[i] instanceof IIndexEntry) {
+						list.add(children[i]);
+					}
+				}
+				entries = (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
+			}
+			else {
+				entries = new IIndexEntry[0];
+			}
+		}
+		return entries;
 	}
 }

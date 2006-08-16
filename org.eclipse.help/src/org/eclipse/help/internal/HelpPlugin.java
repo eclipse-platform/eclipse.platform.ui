@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
+import org.eclipse.help.internal.index.IndexFileProvider;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.toc.TocFileProvider;
@@ -163,7 +164,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 				((ITocsChangedListener) it.next()).tocsChanged();
 			}
 		}
-		deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, IndexManager.INDEX_XP_NAME);
+		deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, IndexFileProvider.ELEMENT_NAME_INDEX);
 		if (deltas.length > 0) {
 			indexManager = null;
 		}

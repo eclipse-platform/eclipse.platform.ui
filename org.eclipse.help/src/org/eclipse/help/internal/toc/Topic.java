@@ -54,4 +54,12 @@ public class Topic extends Node implements ITopic {
 	public String getLabel() {
 		return label;
 	}
+	
+	public void setHref(String href) {
+		this.href = href;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,133 +7,117 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Node;
 import org.eclipse.help.internal.toc.HrefUtil;
+import org.eclipse.help.internal.toc.Topic;
+import org.eclipse.help.internal.util.FastStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * @author sturmash
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class IndexFileParser extends DefaultHandler {
 
-    private IndexBuilder builder;
+	private FastStack elementStack;
+	private IndexFile indexFile;
+	private IndexContribution indexContribution;
+	private SAXParser parser;
 
-    private IndexFile indexFile;
-
-    private static SAXParserFactory parserFactory = SAXParserFactory
-            .newInstance();
-
-    private static XMLParserPool parserPool = new XMLParserPool();
-    
-    /**
-     * @param builder
-     */
-    public IndexFileParser(IndexBuilder builder) {
-        this.builder = builder;
-    }
-
-    /**
-     * @param file
-     */
-    public void parse(IndexFile file) {
-        this.indexFile = file;
-        InputStream istream = indexFile.getInputStream();
-        if (istream == null) return;
-        InputSource isource = new InputSource(istream);
-        String filePath = "/" + file.getPluginID() + "/" + file.getHref(); //$NON-NLS-1$ //$NON-NLS-2$
-        isource.setSystemId(filePath);
-        try {
-            SAXParser parser = parserPool.obtainParser();
-            try {
-                parser.parse(isource, this);
-                istream.close();
-            } finally {
-                parserPool.releaseParser(parser);
-            }
+    public IIndexContribution parse(IndexFile indexFile) throws IOException, SAXException {
+		this.indexFile = indexFile;
+		elementStack = new FastStack();
+		indexContribution = null;
+		try {
+			parser = SAXParserFactory.newInstance().newSAXParser();
+			InputStream in = indexFile.getInputStream();
+			parser.parse(in, this);
+			in.close();
 		} catch (ParserConfigurationException pce) {
 			HelpPlugin.logError(
 					"SAXParser implementation could not be loaded.", pce); //$NON-NLS-1$
-		} catch (SAXException se) {
-			HelpPlugin.logError("Error loading Index file " + file //$NON-NLS-1$
-					+ ".", se); //$NON-NLS-1$
-		} catch (IOException ioe) {
-			HelpPlugin.logError("Error loading Index file " + file //$NON-NLS-1$
-					+ ".", ioe); //$NON-NLS-1$
 		}
+		
+		return indexContribution;
     }
 
-    /**
-     * This class maintain pool of parsers that can be used for parsing TOC
-     * files. The parsers should be returned to the pool for reuse.
-     */
-    static class XMLParserPool {
+	public final void startElement(String namespaceURI, String localName,
+			String qName, Attributes atts) throws SAXException {
+		
+		Node node = null;
+		if (qName.equals("index")) { //$NON-NLS-1$
+			node = handleIndexElement(atts);
+		} else if (qName.equals("entry")) { //$NON-NLS-1$
+			node = handleEntryElement(atts);
+		} else if (qName.equals("topic")) { //$NON-NLS-1$
+			node = handleTopicElement(atts);
+		} else {
+			// ignore unknown elements
+			return;
+		}
 
-        private ArrayList pool = new ArrayList();
+		if (!elementStack.empty())
+			((Node)elementStack.peek()).addChild(node);
+		elementStack.push(node);		
+	}
 
-        SAXParser obtainParser() throws ParserConfigurationException,
-                SAXException {
-            SAXParser p;
-            int free = pool.size();
-            if (free > 0) {
-                p = (SAXParser) pool.remove(free - 1);
-            } else {
-                p = parserFactory.newSAXParser();
-            }
-            return p;
-        }
+	public final void endElement(String namespaceURI, String localName,
+			String qName) throws SAXException {
+		if (qName.equals("index") || qName.equals("entry") //$NON-NLS-1$ //$NON-NLS-2$
+				|| qName.equals("topic")) { //$NON-NLS-1$
+			elementStack.pop();
+		}
+	}
 
-        void releaseParser(SAXParser parser) {
-            pool.add(parser);
-        }
-    }
+	public InputSource resolveEntity(String publicId, String systemId) {
+		InputSource source = new InputSource(new ByteArrayInputStream(
+				new byte[0]));
+		source.setPublicId(publicId);
+		source.setSystemId(systemId);
+		return source;
+	}
+	
+	private Node handleIndexElement(Attributes atts) {
+		String id = HrefUtil.normalizeHref(indexFile.getPluginId(), indexFile.getFile());
+		String locale = indexFile.getLocale();
+		Index index = new Index();
+		indexContribution = new IndexContribution(id, index, locale);
+		return index;
+	}
+	
+	private Node handleEntryElement(Attributes atts) {
+		String keyword = atts.getValue("keyword"); //$NON-NLS-1$
+		// label is required
+		if (keyword == null) {
+			String msg = "Required attribute \"keyword\" missing from entry element in " + indexFile.getPluginId() + "/" + indexFile.getFile();; //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+			// continue with empty keyword
+			keyword = new String();
+		}
+		return new IndexEntry(keyword);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-     *      java.lang.String, java.lang.String)
-     */
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-        if (qName.equals("entry")) { //$NON-NLS-1$
-            builder.exitIndexEntry();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
-     */
-    public void startElement(String uri, String localName, String qName,
-            Attributes attributes) throws SAXException {
-        if (qName.equals("entry")) { //$NON-NLS-1$
-            builder.addIndexEntry(attributes.getValue("keyword")); //$NON-NLS-1$
-        } else if (qName.equals("topic")) { //$NON-NLS-1$
-			builder.addTopic( attributes.getValue("title"),  //$NON-NLS-1$
-					          HrefUtil.normalizeHref(indexFile.getPluginID(), attributes.getValue("href")), //$NON-NLS-1$
-					          attributes.getValue("location")); //$NON-NLS-1$
-        } else {
-            return;
-        }
-    }
-     
+	private Node handleTopicElement(Attributes atts) {
+		String href = HrefUtil.normalizeHref(indexFile.getPluginId(), atts.getValue("href")); //$NON-NLS-1$
+		// href is required
+		if (href == null) {
+			String msg = "Required attribute \"href\" missing from topic element in " + indexFile.getPluginId() + "/" + indexFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg, null);
+		}
+		String label = atts.getValue("label"); //$NON-NLS-1$
+		return new Topic(href, label);
+	}
 }

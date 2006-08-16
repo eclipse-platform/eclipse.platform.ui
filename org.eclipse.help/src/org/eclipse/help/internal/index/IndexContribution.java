@@ -8,29 +8,32 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help.index;
+package org.eclipse.help.internal.index;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.eclipse.help.IIndex;
+import org.eclipse.help.IIndexContribution;
 
-/*
- * Tests help keyword index functionality.
- */
-public class AllIndexTests extends TestSuite {
+public class IndexContribution implements IIndexContribution {
 
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllIndexTests();
+	private String id;
+	private IIndex index;
+	private String locale;
+	
+	public IndexContribution(String id, IIndex index, String locale) {
+		this.id = id;
+		this.index = index;
+		this.locale = locale;
+	}
+	
+	public String getId() {
+		return id;
 	}
 
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllIndexTests() {
-		addTest(IgnoredTocsTest.suite());
-		addTest(IndexFileParserTest.suite());
-		addTest(IndexAssemblerTest.suite());
+	public IIndex getIndex() {
+		return index;
+	}
+
+	public String getLocale() {
+		return locale;
 	}
 }

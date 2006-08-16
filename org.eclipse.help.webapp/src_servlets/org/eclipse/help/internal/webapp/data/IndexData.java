@@ -7,33 +7,33 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 122967 [Help] Remote help system
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Node;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
-import org.eclipse.help.internal.index.IIndexTopic;
 
 /**
  * Helper class for Index view initialization
  */
 public class IndexData extends ActivitiesData {
-	private Index index;
+	private IIndex index;
 
 	// images directory
 	private String imagesDirectory;
@@ -93,9 +93,9 @@ public class IndexData extends ActivitiesData {
 	 */
 	public void generateIds(Writer out) throws IOException {
 		boolean first = true;
-		Iterator iter = index.getEntryMap().values().iterator();
-		while (iter.hasNext()) {
-			IndexEntry entry = (IndexEntry)iter.next();
+		IIndexEntry[] entries = index.getEntries();
+		for (int i=0;i<entries.length;++i) {
+			IIndexEntry entry = entries[i];
 			if (entry != null) {
 				if (first) {
 					first = false;
@@ -117,11 +117,9 @@ public class IndexData extends ActivitiesData {
 	 */
 	public void generateIndex(Writer out) throws IOException {
 		this.out = out;
-
-		Iterator iter = index.getEntryMap().values().iterator();
-		while(iter.hasNext()) {
-			IndexEntry entry = (IndexEntry)iter.next();
-			generateEntry(entry, 0);
+		IIndexEntry[] entries = index.getEntries();
+		for (int i=0;i<entries.length;++i) {
+			generateEntry(entries[i], 0);
 		}
 	}
 
@@ -147,8 +145,8 @@ public class IndexData extends ActivitiesData {
 	 *   </ul>]
 	 *   </li>
 	 */
-	private void generateEntry(IndexEntry entry, int level) throws IOException {
-		IHelpResource[] topics = entry.getTopics();
+	private void generateEntry(IIndexEntry entry, int level) throws IOException {
+		ITopic[] topics = entry.getTopics();
 		IIndexEntry[] subentries = entry.getSubentries();
 		boolean multipleTopics = topics.length > 1;
 		boolean singleTopic = topics.length == 1;
@@ -178,11 +176,9 @@ public class IndexData extends ActivitiesData {
 	 */
 	public void generateBasicIndex(Writer out) throws IOException {
 		this.out = out;
-
-		Iterator iter = index.getEntryMap().values().iterator();
-		while(iter.hasNext()) {
-			IndexEntry entry = (IndexEntry)iter.next();
-			generateBasicEntry(entry, 0);
+		IIndexEntry[] entries = index.getEntries();
+		for (int i=0;i<entries.length;++i) {
+			generateBasicEntry(entries[i], 0);
 		}
 	}
 
@@ -203,8 +199,8 @@ public class IndexData extends ActivitiesData {
 	 *   nested entries
 	 * </ul></td></tr>]
 	 */
-	private void generateBasicEntry(IndexEntry entry, int level) throws IOException {
-		IHelpResource[] topics = entry.getTopics();
+	private void generateBasicEntry(IIndexEntry entry, int level) throws IOException {
+		ITopic[] topics = entry.getTopics();
 		IIndexEntry[] subentries = entry.getSubentries();
 		boolean multipleTopics = topics.length > 1;
 		boolean singleTopic = topics.length == 1;
@@ -269,7 +265,7 @@ public class IndexData extends ActivitiesData {
 	 * For basic UI:
 	 *   <a href="...">...</a>
 	 */
-	private void generateAnchor(boolean singleTopic, IndexEntry entry, int level) throws IOException {
+	private void generateAnchor(boolean singleTopic, IIndexEntry entry, int level) throws IOException {
 		out.write("<a "); //$NON-NLS-1$
 		if (level == 0 && advancedUI) {
 			out.write("id=\""); //$NON-NLS-1$
@@ -278,7 +274,7 @@ public class IndexData extends ActivitiesData {
 		}
 		if (singleTopic) {
 			out.write("href=\""); //$NON-NLS-1$
-			out.write(UrlUtil.getHelpURL(((IIndexTopic)entry.getTopicList().get(0)).getHref()));
+			out.write(UrlUtil.getHelpURL((entry.getTopics()[0]).getHref()));
 			out.write("\">"); //$NON-NLS-1$
 		} else {
 			if (advancedUI) {
@@ -307,17 +303,16 @@ public class IndexData extends ActivitiesData {
 	 *   <li><a href="..."><img src="images/topic.gif" border=0 alt="">...</a></li>
 	 *   <li>...
 	 */
-	private void generateTopicList(IndexEntry entry) throws IOException {
-		List topics = entry.getTopicList();
-		int size = topics.size();
+	private void generateTopicList(IIndexEntry entry) throws IOException {
+		ITopic[] topics = entry.getTopics();
 
 		if (advancedUI) {
 			out.write("\n<ul class=\""); //$NON-NLS-1$
 			out.write(expandedCollapsed);
 			out.write("\">\n"); //$NON-NLS-1$
 		}
-		for (int i = 0; i < size; ++i) {
-			IIndexTopic topic = (IIndexTopic)topics.get(i); 
+		for (int i = 0; i < topics.length; ++i) {
+			ITopic topic = (ITopic)topics[i]; 
 
 			out.write("<li>"); //$NON-NLS-1$
 			if (usePlusMinus && advancedUI) {
@@ -359,19 +354,16 @@ public class IndexData extends ActivitiesData {
 	 * For basic UI:
 	 *   entries...
 	 */
-	private void generateSubentries(IndexEntry entry, int level) throws IOException {
-		Iterator iter = entry.getEntryMap().values().iterator();
-		if (iter.hasNext()) {
-			if (advancedUI) {
-				out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
-			}
-			do {
-				IndexEntry childEntry = (IndexEntry)iter.next();
-				generateEntry(childEntry, level);
-			} while (iter.hasNext());
-			if (advancedUI) {
-				out.write("</ul>\n"); //$NON-NLS-1$
-			}
+	private void generateSubentries(IIndexEntry entry, int level) throws IOException {
+		if (advancedUI) {
+			out.write("<ul class=\"expanded\">\n"); //$NON-NLS-1$
+		}
+		IIndexEntry[] subentries = entry.getSubentries();
+		for (int i=0;i<subentries.length;++i) {
+			generateEntry(subentries[i], level);
+		}
+		if (advancedUI) {
+			out.write("</ul>\n"); //$NON-NLS-1$
 		}
 	}
 
@@ -381,19 +373,20 @@ public class IndexData extends ActivitiesData {
 	 * @param index
 	 * @return
 	 */
-	private Index extractEnabled(Index index) {
+	private IIndex extractEnabled(IIndex index) {
 		if (!advancedUI) {
 			// activities never filtered for basic browsers
 			return index;
 		}
-		List enabledEntries = new ArrayList();
-		Iterator iter = index.getEntryMap().values().iterator();
-		while (iter.hasNext()) {
-			IndexEntry entry = extractEnabled((IndexEntry)iter.next());
-			if (entry != null)
-				enabledEntries.add(entry);
+		Index enabledIndex = new Index();
+		IIndexEntry[] entries = index.getEntries();
+		for (int i=0;i<entries.length;++i) {
+			IndexEntry entry = extractEnabled(entries[i]);
+			if (entry != null) {
+				enabledIndex.addChild(entry);
+			}
 		}
-		return new Index(index.getComparator(), enabledEntries);
+		return enabledIndex;
 	}
 
 	/**
@@ -404,46 +397,31 @@ public class IndexData extends ActivitiesData {
 	 * @param entry
 	 * @return
 	 */
-	private IndexEntry extractEnabled(IndexEntry entry) {
-		List enabledTopics = new ArrayList();
-		List enabledSubentries = new ArrayList();
-
-		List topics = entry.getTopicList();
-		if (topics != null) {
-			Iterator iter = topics.iterator();
-			while (iter.hasNext()) {
-				IIndexTopic topic = (IIndexTopic)iter.next(); 
-				if (isEnabled(topic)) {
-					enabledTopics.add(topic);
-				}
+	private IndexEntry extractEnabled(IIndexEntry entry) {
+		List enabledChildren = new ArrayList();
+		ITopic[] topics = entry.getTopics();
+		for (int i=0;i<topics.length;++i) {
+			if (isEnabled(topics[i])) {
+				enabledChildren.add(topics[i]);
+			}
+		}
+		IIndexEntry[] subentries = entry.getSubentries();
+		for (int i=0;i<subentries.length;++i) {
+			IIndexEntry subentry = extractEnabled(subentries[i]); 
+			if (subentry != null) {
+				enabledChildren.add(subentry);
 			}
 		}
 
-		Map subentries = entry.getEntryMap();
-		if (subentries != null) {
-			Iterator iter = subentries.values().iterator();
-			while (iter.hasNext()) {
-				IndexEntry subentry = extractEnabled((IndexEntry)iter.next()); 
-				if (subentry != null) {
-					enabledSubentries.add(subentry);
-				}
-			}
+		if (!enabledChildren.isEmpty()) {
+			IndexEntry newEntry = new IndexEntry(entry.getKeyword());
+			newEntry.addChildren((Node[])enabledChildren.toArray(new Node[enabledChildren.size()]));
+			return newEntry;
 		}
-
-		if (enabledTopics.isEmpty() && enabledSubentries.isEmpty())
-			return null;
-
-		return new IndexEntry(entry.getComparator(), entry.getKeyword(),
-				enabledTopics, enabledSubentries);
+		return null;
 	}
 
-	/**
-	 * Checks if topic matches an enabled activity.
-	 * 
-	 * @param topic
-	 * @return
-	 */
-	private boolean isEnabled(IIndexTopic topic) {
+	private boolean isEnabled(ITopic topic) {
 		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
 	}
 }
