@@ -32,6 +32,7 @@ import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -116,6 +117,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private ICheatSheetStateManager stateManager; // The state manager to use when saving
 	private ICheatSheetStateManager preTrayManager; // The state manager in use before a tray was opened
 	private String restorePath;
+	
+	private int dialogReturnCode;
+	
 	/**
 	 * The constructor.
 	 * 
@@ -641,7 +645,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * 
 	 * @param dialog the dialog that was opened
 	 */
-	private void dialogOpened(TrayDialog dialog) {
+	private void dialogOpened(final TrayDialog dialog) {
 		if (isActive()) {
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {
@@ -676,6 +680,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 						stateManager = preTrayManager;
 						preTrayManager = null;
 					}
+					dialogReturnCode = dialog.getReturnCode();
 				}
 			});
 		}
@@ -1002,8 +1007,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (coreItem != null) {
 			try {
 				hookDialogListener();
+				dialogReturnCode = -1;
 				IStatus status = coreItem.runExecutable(getManager());
-				if ( status.isOK() && !coreItem.hasConfirm()) {					
+				if (status.isOK() && !coreItem.hasConfirm() && dialogReturnCode != Window.CANCEL) {
 					coreItem.setRestartImage();
 					//set that item as complete.
 					advanceItem(link, true);
