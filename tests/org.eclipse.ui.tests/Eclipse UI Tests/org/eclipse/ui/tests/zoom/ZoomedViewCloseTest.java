@@ -87,7 +87,6 @@ public class ZoomedViewCloseTest extends CloseTest {
      */
     public void testCloseUnzoomedStackedViewAfterActivatingView() {
         IWorkbenchPart activePart = getStackedPart1();
-        IWorkbenchPart otherStackedPart = getStackedPart2();
         IWorkbenchPart unstackedPart = unstackedView;
         
         page.activate(unstackedPart);

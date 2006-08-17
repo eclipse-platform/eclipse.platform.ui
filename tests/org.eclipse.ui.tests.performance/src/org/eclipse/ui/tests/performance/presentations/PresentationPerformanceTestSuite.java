@@ -108,7 +108,6 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         }
         
         // Loop through the config elements.
-        IConfigurationElement targetElement = null;
         IConfigurationElement[] elements = extensionPoint
                 .getConfigurationElements();
         for (int j = 0; j < elements.length; j++) {

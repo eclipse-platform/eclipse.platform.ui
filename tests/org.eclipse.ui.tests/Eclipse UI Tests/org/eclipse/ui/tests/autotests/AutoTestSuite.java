@@ -90,15 +90,4 @@ public class AutoTestSuite extends TestSuite {
             }
         }
     }
-    
-    private int findInArray(String[] hayStack, String needle) {
-        for (int i = 0; i < hayStack.length; i++) {
-            String next = hayStack[i];
-            if (next.equals(needle)) {
-                return i;
-            }
-        }
-        
-        return hayStack.length;
-    }
 }

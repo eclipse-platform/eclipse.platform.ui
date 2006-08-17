@@ -113,8 +113,6 @@ public class LazySortedCollectionTest extends TestCase {
     
     public static void printArray(Object[] array) {
         for (int i = 0; i < array.length; i++) {
-            Object object = array[i];
-            
             System.out.println("[" + i + "] = " + array[i]);
         }
     }
@@ -197,8 +195,6 @@ public class LazySortedCollectionTest extends TestCase {
 
         // Alternative remove implementation that removes one-at-a-time
         for (int i = 0; i < expected.length; i++) {
-            Object object = expected[i];
-            
             comparisonCollection.remove(expected[i]);
         }
     }
@@ -482,7 +478,6 @@ public class LazySortedCollectionTest extends TestCase {
      * Tests moving an entire right subtree, and a left subtree including the tree itself
      */
     public void testRemoveRightSubtree() {
-        int start = 20;
         removeRange(9, 5);
         assertContentsValid();
     }

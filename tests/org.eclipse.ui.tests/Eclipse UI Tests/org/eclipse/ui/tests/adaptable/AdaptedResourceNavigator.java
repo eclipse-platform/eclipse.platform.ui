@@ -517,8 +517,6 @@ public class AdaptedResourceNavigator extends ViewPart {
      */
     void updateTitle() {
         Object input = getViewer().getInput();
-        String viewName = getConfigurationElement().getAttribute("name");
-        //$NON-NLS-1$
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         if (input == null || input.equals(workspace)
                 || input.equals(workspace.getRoot())) {

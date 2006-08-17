@@ -53,7 +53,6 @@ public class ZoomedEditorCloseTest extends CloseTest {
      *    an editor to a view when an editor is closed.</p>
      */
     public void testCloseZoomedUnstackedEditorAfterActivatingView() {
-        IWorkbenchPart previousEditor = editor1;
         IWorkbenchPart previousActive = stackedView1;
         IWorkbenchPart zoomedPart = editor3;
         
@@ -76,11 +75,6 @@ public class ZoomedEditorCloseTest extends CloseTest {
      *    ensures that activation WILL move between editor stacks to follow the activation order.</p> 
      */
     public void testCloseUnzoomedStackedEditorAfterActivatingView() {
-        IWorkbenchPart previousActiveEditor = editor2;
-        IWorkbenchPart activePart = getStackedPart1();
-        IWorkbenchPart otherStackedPart = getStackedPart2();
-        IWorkbenchPart unstackedPart = unstackedView;
-        
         page.activate(editor3);
         page.activate(unstackedView);
         page.activate(editor1);

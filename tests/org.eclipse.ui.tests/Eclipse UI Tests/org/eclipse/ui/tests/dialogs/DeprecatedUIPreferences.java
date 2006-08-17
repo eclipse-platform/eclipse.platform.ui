@@ -35,154 +35,146 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class DeprecatedUIPreferences extends TestCase {
-    private IProject _project;
+	private IProject _project;
 
-    private static final String PROJECT_NAME = "DummyProject";
+	private static final String PROJECT_NAME = "DummyProject";
 
-    public DeprecatedUIPreferences(String name) {
-        super(name);
-    }
+	public DeprecatedUIPreferences(String name) {
+		super(name);
+	}
 
-    private Shell getShell() {
-        return DialogCheck.getShell();
-    }
+	private Shell getShell() {
+		return DialogCheck.getShell();
+	}
 
-    private IProject getDummyProject() {
-        try {
-            IProject projects[] = ResourcesPlugin.getWorkspace().getRoot()
-                    .getProjects();
-            for (int i = 0; i < projects.length; i++) {
-                if (projects[i].getName().equals(PROJECT_NAME)) {
-                    projects[i].delete(true, null);
-                    break;
-                }
-            }
-            _project = ResourcesPlugin.getWorkspace().getRoot().getProject(
-                    PROJECT_NAME);
-            _project.create(null);
-        } catch (CoreException e) {
-            System.out.println(e);
-        }
-        return _project;
-    }
+	private IProject getDummyProject() {
+		try {
+			IProject projects[] = ResourcesPlugin.getWorkspace().getRoot()
+					.getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				if (projects[i].getName().equals(PROJECT_NAME)) {
+					projects[i].delete(true, null);
+					break;
+				}
+			}
+			_project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+					PROJECT_NAME);
+			_project.create(null);
+		} catch (CoreException e) {
+			System.out.println(e);
+		}
+		return _project;
+	}
 
-    private void deleteDummyProject() {
-        try {
-            if (_project != null) {
-                _project.delete(true, null);
-            }
-        } catch (CoreException e) {
-            System.out.println(e);
-        }
-    }
+	private PreferenceDialog getPreferenceDialog(String id) {
+		PreferenceDialogWrapper dialog = null;
+		PreferenceManager manager = WorkbenchPlugin.getDefault()
+				.getPreferenceManager();
+		if (manager != null) {
+			dialog = new PreferenceDialogWrapper(getShell(), manager);
+			dialog.create();
+			WorkbenchHelp
+					.setHelp(
+							dialog.getShell(),
+							new Object[] { IWorkbenchHelpContextIds.PREFERENCE_DIALOG });
 
-    private PreferenceDialog getPreferenceDialog(String id) {
-        PreferenceDialogWrapper dialog = null;
-        PreferenceManager manager = WorkbenchPlugin.getDefault()
-                .getPreferenceManager();
-        if (manager != null) {
-            dialog = new PreferenceDialogWrapper(getShell(), manager);
-            dialog.create();
-            WorkbenchHelp.setHelp(dialog.getShell(),
-                    new Object[] { IWorkbenchHelpContextIds.PREFERENCE_DIALOG });
+			for (Iterator iterator = manager.getElements(
+					PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
+				IPreferenceNode node = (IPreferenceNode) iterator.next();
+				if (node.getId().equals(id)) {
+					dialog.showPage(node);
+					break;
+				}
+			}
+		}
+		return dialog;
+	}
 
-            for (Iterator iterator = manager.getElements(
-                    PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
-                IPreferenceNode node = (IPreferenceNode) iterator.next();
-                if (node.getId().equals(id)) {
-                    dialog.showPage(node);
-                    break;
-                }
-            }
-        }
-        return dialog;
-    }
+	private PropertyDialog getPropertyDialog(String id) {
+		PropertyDialogWrapper dialog = null;
 
-    private PropertyDialog getPropertyDialog(String id) {
-        PropertyDialogWrapper dialog = null;
+		PropertyPageManager manager = new PropertyPageManager();
+		String title = "";
+		String name = "";
 
-        PropertyPageManager manager = new PropertyPageManager();
-        String title = "";
-        String name = "";
+		IProject element = getDummyProject();
+		if (element == null) {
+			return null;
+		}
+		// load pages for the selection
+		// fill the manager with contributions from the matching contributors
+		PropertyPageContributorManager.getManager()
+				.contribute(manager, element);
 
-        IProject element = getDummyProject();
-        if (element == null) {
-            return null;
-        }
-        // load pages for the selection
-        // fill the manager with contributions from the matching contributors
-        PropertyPageContributorManager.getManager()
-                .contribute(manager, element);
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
+				.getAdapter(IWorkbenchAdapter.class);
+		if (adapter != null) {
+			name = adapter.getLabel(element);
+		}
 
-        IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
-                .getAdapter(IWorkbenchAdapter.class);
-        if (adapter != null) {
-            name = adapter.getLabel(element);
-        }
+		// testing if there are pages in the manager
+		Iterator pages = manager.getElements(PreferenceManager.PRE_ORDER)
+				.iterator();
+		if (!pages.hasNext()) {
+			return null;
+		}
+		title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage,
+				(new Object[] { name }));
+		dialog = new PropertyDialogWrapper(getShell(), manager,
+				new StructuredSelection(element));
+		dialog.create();
+		dialog.getShell().setText(title);
+		WorkbenchHelp.setHelp(dialog.getShell(),
+				new Object[] { IWorkbenchHelpContextIds.PROPERTY_DIALOG });
+		for (Iterator iterator = manager.getElements(
+				PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
+			IPreferenceNode node = (IPreferenceNode) iterator.next();
+			if (node.getId().equals(id)) {
+				dialog.showPage(node);
+				break;
+			}
 
-        // testing if there are pages in the manager
-        Iterator pages = manager.getElements(PreferenceManager.PRE_ORDER)
-                .iterator();
-        if (!pages.hasNext()) {
-            return null;
-        } else {
-            title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage, (new Object[] { name }));
-            dialog = new PropertyDialogWrapper(getShell(), manager,
-                    new StructuredSelection(element));
-            dialog.create();
-            dialog.getShell().setText(title);
-            WorkbenchHelp.setHelp(dialog.getShell(),
-                    new Object[] { IWorkbenchHelpContextIds.PROPERTY_DIALOG });
-            for (Iterator iterator = manager.getElements(
-                    PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
-                IPreferenceNode node = (IPreferenceNode) iterator.next();
-                if (node.getId().equals(id)) {
-                    dialog.showPage(node);
-                    break;
-                }
-            }
-        }
-        return dialog;
-    }
+		}
+		return dialog;
+	}
 
-    public void testWorkbenchPref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Workbench");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testWorkbenchPref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Workbench");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testAppearancePref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testAppearancePref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testDefaultTextEditorPref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testDefaultTextEditorPref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testFileEditorsPref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileEditors");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testFileEditorsPref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileEditors");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testLocalHistoryPref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileStates");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testLocalHistoryPref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileStates");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testPerspectivesPref() {
-        Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testPerspectivesPref() {
+		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testInfoProp() {
-        Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testInfoProp() {
+		Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
+		DialogCheck.assertDialog(dialog, this);
+	}
 
-    public void testProjectReferencesProp() {
-        Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
-        DialogCheck.assertDialog(dialog, this);
-    }
+	public void testProjectReferencesProp() {
+		Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
+		DialogCheck.assertDialog(dialog, this);
+	}
 }
-

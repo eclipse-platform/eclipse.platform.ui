@@ -102,7 +102,6 @@ public abstract class CloseTest extends ZoomTestCase {
      */
     public void testCloseUnzoomedStackedPartAfterActivatingEditor() {
         IWorkbenchPart activePart = getStackedPart1();
-        IWorkbenchPart otherStackedPart = getStackedPart2();
         IWorkbenchPart unstackedPart = editor3;
         
         page.activate(unstackedPart);

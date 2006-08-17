@@ -140,21 +140,6 @@ public class PresentationTestbed {
         site.setActive(activeState);
     }
     
-    private Control getPresentationControl() {
-        StackPresentation presentation = site.getPresentation();
-        if (presentation == null) {
-            return null;
-        }
-        
-        Control ctrl = presentation.getControl();
-        
-        if (ctrl == null || ctrl.isDisposed()) {
-            return null;
-        }
-        
-        return ctrl;
-    }
-    
     public IPresentablePart[] getPartList() {
         return (IPresentablePart[]) partList.toArray(new IPresentablePart[partList.size()]);
     }

@@ -134,7 +134,7 @@ public class ShowViewTest extends ZoomTestCase {
      */
     public void testCreateViewInZoomedStack() {
         zoom(stackedView1);
-        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, 
+        showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, 
                 IWorkbenchPage.VIEW_CREATE);
         
         assertZoomed(stackedView1);
@@ -161,7 +161,7 @@ public class ShowViewTest extends ZoomTestCase {
      */
     public void testCreateViewInOtherStack() {
         zoom(unstackedView);
-        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
+        showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
 
         assertZoomed(unstackedView);
         assertActive(unstackedView);
@@ -185,7 +185,7 @@ public class ShowViewTest extends ZoomTestCase {
      */
     public void testCreateViewWhileEditorZoomed() {
         zoom(editor1);
-        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
+        showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
         
         assertZoomed(editor1);
         assertActive(editor1);

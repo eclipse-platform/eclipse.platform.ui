@@ -45,7 +45,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
                 
         for (int i = 0; i < 100; i++) {
             IFile file = getProject().getFile(i + "." + extension);
-            IEditorPart part = IDE.openEditor(activePage, file, true);
+            IDE.openEditor(activePage, file, true);
             processEvents();
         }
         if (closeAll) {

@@ -72,7 +72,7 @@ public class HeavyResourceView extends ViewPart {
         int count = 0;
         try {
             for(;;) {
-                Composite next = new Composite(tempShell, SWT.NONE);
+                new Composite(tempShell, SWT.NONE);
                 count++;
             }
         } catch (SWTError e) {

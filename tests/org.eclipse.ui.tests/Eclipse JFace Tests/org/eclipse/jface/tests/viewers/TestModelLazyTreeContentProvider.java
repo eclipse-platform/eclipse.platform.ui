@@ -53,9 +53,6 @@ public class TestModelLazyTreeContentProvider extends TestModelContentProvider
 			final Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
 		treeViewer.getTree().setItemCount(0);
-		if (newInput != null) {
-			final TestElement testElement = (TestElement) newInput;
-		}
 	}
 
 	public void updateChildCount(Object element, int currentChildCount) {

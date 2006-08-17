@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -68,17 +66,11 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
         getDecoratorManager().removeListener(this);
     }
 
-    /**
-     * Make a label changed event for resource.
-     */
-    private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
-        return new LabelProviderChangedEvent(getDecoratorManager(), resource);
-    }
 
     /**
      * Test enabling the contributor
      */
-    public void testEnableDecorator() throws CoreException {
+    public void testEnableDecorator()  {
         getDecoratorManager().clearCaches();
         definition.setEnabled(true);
         getDecoratorManager().updateForEnablementChange();
@@ -88,7 +80,7 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
     /**
      * Test disabling the contributor
      */
-    public void testDisableDecorator() throws CoreException {
+    public void testDisableDecorator() {
         getDecoratorManager().clearCaches();
         definition.setEnabled(false);
         getDecoratorManager().updateForEnablementChange();

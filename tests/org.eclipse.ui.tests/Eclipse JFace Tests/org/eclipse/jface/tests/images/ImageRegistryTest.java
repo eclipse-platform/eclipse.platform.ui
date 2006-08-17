@@ -43,7 +43,7 @@ public class ImageRegistryTest extends TestCase {
 
         // note, we must touch the class to ensure the static initialer runs
         // so the image registry is up to date
-        Class clazz = Dialog.class;
+        Dialog.getBlockedHandler();
 
         String[] imageNames = new String[] { Dialog.DLG_IMG_ERROR,
                 Dialog.DLG_IMG_INFO, Dialog.DLG_IMG_QUESTION,

@@ -20,7 +20,6 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -39,7 +38,6 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
     private IWorkbenchWindow fWin;
 
-    private IWorkbenchPart partMask;
 
     private IProject proj;
 

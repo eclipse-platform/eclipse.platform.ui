@@ -24,7 +24,6 @@ public class TestResults {
     private Map results = new HashMap();
     private final static String ATT_NAME = "name";
     private final static String ATT_TEST = "test";
-    private final static String ATT_RESULT = "result";
     
     public TestResults() {
     }

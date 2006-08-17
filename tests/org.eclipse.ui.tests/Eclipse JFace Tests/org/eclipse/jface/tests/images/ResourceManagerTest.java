@@ -194,7 +194,6 @@ public class ResourceManagerTest extends TestCase {
     }
     
     public void testDeviceManagerAllocations() throws Exception {
-        Display display = Display.getCurrent();
         
         // Allocate resources directly using the descriptors.
         Object[] resources = new Object[descriptors.length];
@@ -234,7 +233,7 @@ public class ResourceManagerTest extends TestCase {
         }
     }
     
-    private void deallocateResources(ResourceManager mgr, int[] toDeallocate) throws DeviceResourceException {
+    private void deallocateResources(ResourceManager mgr, int[] toDeallocate) {
         for (int i = 0; i < toDeallocate.length; i++) {
             int j = toDeallocate[i];
             

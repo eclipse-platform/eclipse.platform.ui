@@ -66,16 +66,6 @@ public class UIPreferences extends TestCase {
         return _project;
     }
 
-    private void deleteDummyProject() {
-        try {
-            if (_project != null) {
-                _project.delete(true, null);
-            }
-        } catch (CoreException e) {
-            System.out.println(e);
-        }
-    }
-
     private PreferenceDialog getPreferenceDialog(String id) {
         PreferenceDialogWrapper dialog = null;
         PreferenceManager manager = WorkbenchPlugin.getDefault()
@@ -125,7 +115,7 @@ public class UIPreferences extends TestCase {
                 .iterator();
         if (!pages.hasNext()) {
             return null;
-        } else {
+        } 
             title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage, (new Object[] { name }));
             dialog = new PropertyDialogWrapper(getShell(), manager,
                     new StructuredSelection(element));
@@ -141,7 +131,7 @@ public class UIPreferences extends TestCase {
                     break;
                 }
             }
-        }
+        
         return dialog;
     }
 

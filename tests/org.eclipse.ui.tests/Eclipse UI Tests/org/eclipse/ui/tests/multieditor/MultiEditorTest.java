@@ -46,7 +46,6 @@ import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -389,78 +388,6 @@ public class MultiEditorTest extends UITestCase {
 		}
 		testProject.open(null);
 		return testProject;
-	}
-
-	/**
-	 * Internal printing method, only used for investigation.
-	 * 
-	 * @param page
-	 *            the workbench page
-	 */
-	private void checkView(WorkbenchPage page) {
-		IViewPart[] views = page.getViews();
-		for (int i = 0; i < views.length; ++i) {
-			System.err.println("view: " + views[i].getViewSite().getId() + "/"
-					+ views[i].getViewSite().getRegisteredName());
-		}
-	}
-
-	/**
-	 * Print the call history to console. Only used for investigation.
-	 * 
-	 * @param history
-	 *            the editor call history object.
-	 */
-	private void listHistory(CallHistory history) {
-		history.printToConsole();
-	}
-
-	/**
-	 * List bits and internals of the coolbar manager contribution items. Only
-	 * used for investigation.
-	 * 
-	 * @param page
-	 *            the workbench page
-	 */
-	private void listItems(WorkbenchPage page) {
-		checkView(page);
-		IContributionItem[] items = ((IActionBars2) page.getActionBars())
-				.getCoolBarManager().getItems();
-		System.err.println("Length: " + items.length);
-		for (int i = 0; i < items.length; ++i) {
-			System.err.println("" + items[i].isEnabled() + ":"
-					+ items[i].isVisible() + " " + items[i].getId() + "\n\t"
-					+ items[i].getClass().getName());
-			if (items[i] instanceof ToolBarContributionItem) {
-				displayItem(items[i]);
-			}
-		}
-		System.err.println("----");
-	}
-
-	/**
-	 * Display bits of contribution item internals to the console. Only used for
-	 * investigation.
-	 * 
-	 * @param contributionItem
-	 *            the IContributionItem to display
-	 */
-	private void displayItem(IContributionItem contributionItem) {
-		ToolBarManager toolBarManager = (ToolBarManager) ((ToolBarContributionItem) contributionItem)
-				.getToolBarManager();
-		ToolBar bar = toolBarManager.getControl();
-		if (bar == null) {
-			System.err.println("\tInfo-items: -1");
-		} else {
-			System.err.println("\tInfo-items: " + bar.getItemCount() + "/"
-					+ bar.getEnabled() + "/" + bar.isEnabled() + "/"
-					+ bar.isVisible());
-			ToolItem[] tools = bar.getItems();
-			for (int t = 0; t < tools.length; ++t) {
-				System.err.println("\t\titem: " + tools[t].getEnabled() + " "
-						+ tools[t].getToolTipText());
-			}
-		}
 	}
 
 	/**

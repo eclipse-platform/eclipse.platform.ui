@@ -21,11 +21,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
@@ -35,8 +33,6 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
 public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 
 	static final String CATEGORY_TEST_MARKER = "org.eclipse.ui.tests.categoryTestMarker";
-
-	private IWorkbenchWindow window;
 
 	/*
 	 * (non-Javadoc)
@@ -54,7 +50,6 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow workbenchWindow) {
-		this.window = workbenchWindow;
 	}
 
 	/*
@@ -99,21 +94,6 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 
 	}
 
-	private void openError(Exception e) {
-		String msg = e.getMessage();
-		if (msg == null) {
-			msg = e.getClass().getName();
-		}
-
-		e.printStackTrace();
-
-		IStatus status = new Status(IStatus.ERROR, TestPlugin.getDefault()
-				.getDescriptor().getUniqueIdentifier(), 0, msg, e);
-
-		TestPlugin.getDefault().getLog().log(status);
-
-		ErrorDialog.openError(window.getShell(), "Error", msg, status);
-	}
 
 	/*
 	 * (non-Javadoc)

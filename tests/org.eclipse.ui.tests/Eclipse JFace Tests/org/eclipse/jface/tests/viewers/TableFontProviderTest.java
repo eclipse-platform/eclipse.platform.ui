@@ -61,7 +61,6 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		//refresh so that the colors are set
 		fViewer.refresh();
 
-		TestElement first = fRootElement.getFirstChild();
 		compareFontDatas(viewer.getTable().getItem(0).getFont(0), font1);//$NON-NLS-1$
 		compareFontDatas(viewer.getTable().getItem(0).getFont(1), font1);//$NON-NLS-1$
 		

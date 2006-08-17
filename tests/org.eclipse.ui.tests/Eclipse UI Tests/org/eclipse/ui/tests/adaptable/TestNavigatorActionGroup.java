@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.AddBookmarkAction;
-import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
@@ -31,7 +30,6 @@ public class TestNavigatorActionGroup extends ActionGroup {
 
     private PropertyDialogAction propertyDialogAction;
 
-    private NewWizardAction newWizardAction;
 
     public TestNavigatorActionGroup(AdaptedResourceNavigator navigator) {
         this.navigator = navigator;
@@ -40,7 +38,6 @@ public class TestNavigatorActionGroup extends ActionGroup {
     protected void makeActions() {
         Shell shell = navigator.getSite().getShell();
         addBookmarkAction = new AddBookmarkAction(shell);
-        newWizardAction = new NewWizardAction();
         propertyDialogAction = new PropertyDialogAction(shell, navigator
                 .getViewer());
     }

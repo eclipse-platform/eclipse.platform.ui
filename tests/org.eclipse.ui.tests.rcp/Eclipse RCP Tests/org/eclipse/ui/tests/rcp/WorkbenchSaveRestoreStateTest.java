@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -73,8 +72,7 @@ public class WorkbenchSaveRestoreStateTest extends TestCase {
 		
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			IWorkbenchWindow window = null;
-
+		
 			public IStatus saveState (IMemento memento) {
 				assertNotNull(memento);
 				memento.putString(ADVISOR_STATE_KEY, advisorStateData);
@@ -127,7 +125,6 @@ public class WorkbenchSaveRestoreStateTest extends TestCase {
 		
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			IWorkbenchWindow window = null;
 			
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
@@ -189,7 +186,6 @@ public class WorkbenchSaveRestoreStateTest extends TestCase {
 		
 		// launch workbench and save some state data
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			IWorkbenchWindow window = null;
 			
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 				return new WorkbenchWindowAdvisor(configurer) {
@@ -258,7 +254,6 @@ public class WorkbenchSaveRestoreStateTest extends TestCase {
 		
 		// save some window state on demand
         WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver(1) {
-			IWorkbenchWindow window = null;
 			
 			public void initialize(IWorkbenchConfigurer c) {
                 super.initialize(c);

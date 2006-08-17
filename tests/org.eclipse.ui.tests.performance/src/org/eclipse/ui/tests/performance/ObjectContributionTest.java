@@ -164,7 +164,7 @@ public final class ObjectContributionTest extends UITestCase {
      * 
      * @since 3.1
      */
-    public final void testAdaptables() throws CoreException {
+    public final void testAdaptables()  {
     	assertPopupMenus("1", 
     			new String[] {"ICommon.1"}, 
     			new StructuredSelection(new Object[] {
@@ -258,7 +258,7 @@ public final class ObjectContributionTest extends UITestCase {
      * 
      * @since 3.1
      */
-    public final void testDuplicateAdaptables() throws CoreException {
+    public final void testDuplicateAdaptables() {
     	assertPopupMenus("1",
     			new String[] {"ICommon.1"}, 
     			new StructuredSelection(new Object[] {
@@ -317,7 +317,7 @@ public final class ObjectContributionTest extends UITestCase {
      * 
      * @since 3.1
      */
-    public final void testNonAdaptableContributions() throws CoreException {
+    public final void testNonAdaptableContributions()  {
     	assertPopupMenus("1",
     			new String[] {"ICommon.2"}, 
     			new StructuredSelection(new Object[] {
@@ -416,11 +416,10 @@ public final class ObjectContributionTest extends UITestCase {
 				if (item instanceof PluginActionContributionItem) {
 					// Verify that the selection passed to the action has been
 					// converted
-					PluginActionContributionItem pa = (PluginActionContributionItem) item;
 					ISelection s = null;
 					if (s instanceof IStructuredSelection) {
 						for (Iterator it = ((IStructuredSelection) s).iterator(); it.hasNext();) {
-							Object element = (Object) it.next();
+							Object element = it.next();
 							assertTrue(name + " selection not converted", selectionType.isInstance(element));
 						}
 					}

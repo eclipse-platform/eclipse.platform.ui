@@ -30,8 +30,6 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase
 
     private DecoratorDefinition light;
 
-    private boolean updated = false;
-
     /**
      * Constructor for DecoratorTestCase.
      * @param testName

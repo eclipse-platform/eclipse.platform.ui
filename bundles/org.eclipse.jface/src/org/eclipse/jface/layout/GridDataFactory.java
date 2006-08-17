@@ -107,7 +107,7 @@ import org.eclipse.swt.widgets.Control;
  * <strong>IMPORTANT</strong>: 
  * When assigning layout data to a control, be sure to use
  * {@link GridDataFactory#applyTo(Control)} and never
- * {@link Control#setLayoutData(GridDataFactory)}
+ * {@link Control#setLayoutData(Object)}
  * </p>
  * 
  * @since 3.2
@@ -245,7 +245,7 @@ public final class GridDataFactory {
      * 
      * @see GridLayoutFactory#generateLayout(org.eclipse.swt.widgets.Composite)
      * @param theControl
-     * @param the new span. The x coordinate indicates the number of
+     * @param span The x coordinate indicates the number of
      * columns spanned, and the y coordinate indicates the number of rows.
      * @since 3.3
      */

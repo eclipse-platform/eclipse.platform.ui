@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -27,8 +25,6 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
         org.eclipse.ui.IPerspectiveListener {
     private IWorkbenchWindow fWindow;
 
-    private IWorkspace fWorkspace;
-
     private boolean pageEventReceived;
 
     private boolean perspEventReceived;
@@ -40,7 +36,6 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
     protected void doSetUp() throws Exception {
         super.doSetUp();
         fWindow = openTestWindow();
-        fWorkspace = ResourcesPlugin.getWorkspace();
     }
 
     /**
