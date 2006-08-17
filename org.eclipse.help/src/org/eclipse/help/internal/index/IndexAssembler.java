@@ -127,8 +127,8 @@ public class IndexAssembler {
 				int c2 = getCategory(o2);
 				if (c1 == c2) {
 					// same type of object; compare alphabetically
-					String s1 = getLabel(o1);
-					String s2 = getLabel(o2);
+					String s1 = getLabel(o1).toLowerCase();
+					String s2 = getLabel(o2).toLowerCase();
 					return s1.compareTo(s2);
 				}
 				else {
