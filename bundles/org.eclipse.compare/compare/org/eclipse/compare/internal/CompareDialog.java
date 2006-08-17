@@ -51,7 +51,7 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 	public boolean close() {
 		if (super.close()) {
 			if (fCompareEditorInput != null)
-				fCompareEditorInput.addPropertyChangeListener(this);
+				fCompareEditorInput.removePropertyChangeListener(this);
 			return true;
 		}
 		return false;
