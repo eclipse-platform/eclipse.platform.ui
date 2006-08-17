@@ -202,7 +202,7 @@ public class OwnerDrawExample {
 
 		for (int i = 0; i < COLUMN_COUNT; i++) {
 			TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
-			viewer.setColumnViewer(i, new OwnerDrawColumn(tc));
+			viewer.setViewerColumn(i, new OwnerDrawColumn(tc));
 		}
 		;
 	}
