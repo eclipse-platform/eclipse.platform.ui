@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
@@ -37,6 +38,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractExecutable;
 import org.eclipse.ui.internal.cheatsheets.data.AbstractSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.ConditionalSubItem;
+import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.data.RepeatedSubItem;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
@@ -579,9 +581,9 @@ public class CoreItem extends ViewItem {
 			completionComposite.setLayoutData(completionData);
 			completionComposite.setBackground(backgroundColor);
 
-			Label completionLabel = page.getToolkit().createLabel(completionComposite,
-					completionMessage, SWT.WRAP);
-			completionLabel.setBackground(backgroundColor);
+			FormText completionText = page.getToolkit().createFormText(completionComposite, false);
+			completionText.setText(item.getCompletionMessage(), item.getCompletionMessage().startsWith(IParserTags.FORM_START_TAG), false);
+			completionText.setBackground(backgroundColor);
 			final ImageHyperlink completeButton = createButtonWithText(
 					completionComposite,
 					getCompletionButtonIcon(isFinalItem),
