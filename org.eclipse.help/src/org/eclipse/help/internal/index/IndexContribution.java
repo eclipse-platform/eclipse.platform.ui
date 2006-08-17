@@ -36,4 +36,8 @@ public class IndexContribution implements IIndexContribution {
 	public String getLocale() {
 		return locale;
 	}
+
+	public void setIndex(IIndex index) {
+		this.index = index;
+	}
 }

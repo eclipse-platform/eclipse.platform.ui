@@ -174,5 +174,11 @@
             class="org.eclipse.help.internal.base.remote.RemoteTocProvider">
       </tocProvider>
    </extension>
+   <extension
+         point="org.eclipse.help.index">
+      <indexProvider
+            class="org.eclipse.help.internal.base.remote.RemoteIndexProvider">
+      </indexProvider>
+   </extension>
 
 </plugin>
