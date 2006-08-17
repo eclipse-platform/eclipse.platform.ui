@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.net.URI;
+
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -85,14 +88,17 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 		}
         IResource resource = (IResource) element;
         if (resource.isLinked()) {
-            IPath location = resource.getLocation();
-
-            if (location != null && location.toFile().exists()) {
+			IFileInfo fileInfo = null;
+			URI location = resource.getLocationURI();
+			if (location != null) {
+				fileInfo = IDEResourceInfoUtils.getFileInfo(location);
+			}
+			if (fileInfo != null && fileInfo.exists()) {
 				decoration.addOverlay(LINK);
 			} else {
 				decoration.addOverlay(LINK_WARNING);
 			}
-        }
+		}
 
     }
 
