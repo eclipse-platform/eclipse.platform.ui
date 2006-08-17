@@ -13,13 +13,15 @@ The handlers extension point is an elaboration of the experimental &lt;code&gt;h
 The handlers extension point allows a plug-in developer to specify a handler that should become active and/or enabled under certain conditions.  If a handler is inactive, then no command will delegate its behaviour to the handler.  If a handler is disabled, then the handler will not be asked to execute; execution of the handler is blocked.  The conditions are defined using the expression language facility added during 3.0.  They are expressed using &lt;code&gt;activeWhen&lt;/code&gt; and &lt;code&gt;enabledWhen&lt;/code&gt; clauses.
 &lt;/p&gt;
 &lt;p&gt;
-The workbench provides some variables that these expressions can rely on.  The variables supported are: the active contexts, the active editor, the active part and the current selection.  While not supported in this initial design, it is easy to see how it would be possible to add other variables or even allow plug-in developers to contribute other variables.
+The workbench provides some variables that these expressions can rely on.  Variables that are valid in activeWhen and enabledWhen expressions can be found in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.  The types of the variables are determined by the &lt;code&gt;org.eclipse.ui.ISourceProvider&lt;/code&gt; that provides them.
 &lt;/p&gt;
 &lt;p&gt;
 A handler that specifies no conditions is a default handler.  A default handler is only active if no other handler has all of its conditions satisfied.  If two handlers still have conditions that are satisfied, then the conditions are compared.  The idea is to select a handler whose condition is more specific or more local.  To do this, the variables referred to by the condition are looked at.  The condition that refers to the most specific variable &quot;wins&quot;.  The order of specificity (from least specific to most specific) is defined in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;
 If this still doesn&apos;t resolve the conflict, then no handler is active.  If a particular tracing option is turned on, then this leads to a message in the log.  A conflict can also occur if there are two default handlers.  It is the responsibility of the plug-in developers and integration testers to ensure that this does not happen.
+&lt;/p&gt;
+&lt;p&gt;
 These conditions are used to avoid unnecessary plug-in loading.  These handler definitions are wrapped in a proxy.  For a proxy to load its underlying handler, two things must happen: the conditions for the proxy must be met so that it becomes active, and the command must be asked to do something which it must delegate (e.g., execute()).
 &lt;/p&gt;
       </documentation>
@@ -182,7 +184,10 @@ The identifier of the help context that relates to this specific handler.  While
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;pre&gt;
+         &lt;p&gt;
+Variables that are valid in activeWhen and enabledWhen expressions can be found in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.  The types of the variables are determined by the &lt;code&gt;org.eclipse.ui.ISourceProvider&lt;/code&gt; that provides them.
+&lt;/p&gt;
+&lt;pre&gt;
 &lt;extension
  point=&quot;org.eclipse.ui.handlers&quot;&gt;
  &lt;handler
@@ -194,6 +199,15 @@ The identifier of the help context that relates to this specific handler.  While
     &lt;iterate operator=&quot;and&quot;&gt;
      &lt;adapt type=&quot;IResource&quot; /&gt;
     &lt;/iterate&gt;
+   &lt;/with&gt;
+  &lt;/activeWhen&gt;
+ &lt;/handler&gt;
+ &lt;handler
+  commandId=&quot;other.commandId&quot;
+  class=&quot;org.eclipse.ui.TalkToMe&quot;&gt;
+  &lt;activeWhen&gt;
+   &lt;with variable=&quot;activePartId&quot;&gt;
+    &lt;equals value=&quot;org.eclipse.ui.views.SampleView&quot;/&gt;
    &lt;/with&gt;
   &lt;/activeWhen&gt;
  &lt;/handler&gt;
@@ -209,10 +223,10 @@ To further avoid plug-in loading, it is possible to specify when the handler is 
   commandId=&quot;commandId&quot;
   class=&quot;org.eclipse.Handler&quot;&gt;
   &lt;enabledWhen&gt;
-   &lt;with variable=&quot;context&quot;&gt;
-    &lt;property
-     id=&quot;id&quot;
-     value=&quot;debugging&quot; /&gt;
+   &lt;with variable=&quot;activeContexts&quot;&gt;
+     &lt;iterator operator=&quot;or&quot;&gt;
+       &lt;equals value=&quot;org.eclipse.ui.contexts.window&quot;/&gt;
+     &lt;/iterator&gt;
    &lt;/with&gt;
   &lt;/enabledWhen&gt;
  &lt;/handler&gt;
