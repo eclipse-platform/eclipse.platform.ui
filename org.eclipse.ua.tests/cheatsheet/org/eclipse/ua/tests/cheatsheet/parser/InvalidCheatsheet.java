@@ -97,14 +97,14 @@ public class InvalidCheatsheet extends TestCase {
 	}
 
 	public void testConditionalSubitemMissingCondition() {
-		ICheatSheet model = parseTestFile("CondSubitem_MissingCondition.xml");
+		ICheatSheet model = parseTestFile("CondSubItem_MissingCondition.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a condition");
 	}
 
 	public void testConditionalSubitemMissingSubitem() {
-		ICheatSheet model = parseTestFile("CondSubitem_MissingSubitem.xml");
+		ICheatSheet model = parseTestFile("CondSubItem_MissingSubItem.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a subitem");
@@ -181,21 +181,21 @@ public class InvalidCheatsheet extends TestCase {
 	}
 	
 	public void testSubitemElementMissingLabel() {
-		ICheatSheet model = parseTestFile("Subitem_MissingLabel.xml");
+		ICheatSheet model = parseTestFile("SubItem_MissingLabel.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a label");
 	}
 	
 	public void testRepeatedSubitemMissingSubitem() {
-		ICheatSheet model = parseTestFile("RepSubitem_MissingSubitem.xml");
+		ICheatSheet model = parseTestFile("RepSubItem_MissingSubItem.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a subitem");
 	}
 
 	public void testRepeatedSubitemMissingValues() {
-		ICheatSheet model = parseTestFile("RepSubitem_MissingValues.xml");
+		ICheatSheet model = parseTestFile("RepSubItem_MissingValues.xml");
 		assertNull(model);
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "must specify a values");
