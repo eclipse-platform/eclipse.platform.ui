@@ -358,9 +358,28 @@ public class Perspective {
     	return id;
     }
     
-    public void moveToTrim(ViewStack stack) {
-    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), FastViewBar.GROUP_FVB , SWT.BOTTOM);
+    private int calcStackSide (ViewStack stack) {
+    	// Where is the stack in relation to the EditorArea?
+    	Rectangle stackBounds = stack.getBounds();
+    	Rectangle editorAreaBounds = editorArea.getBounds();
     	
+    	if ((stackBounds.x+stackBounds.width) < editorAreaBounds.x)
+    		return SWT.LEFT;
+    	if (stackBounds.x > (editorAreaBounds.x+editorAreaBounds.width))
+    		return SWT.RIGHT;
+    	if ((stackBounds.y+stackBounds.height) < editorAreaBounds.y)
+    		return SWT.TOP;
+    	if (stackBounds.y > (editorAreaBounds.y+editorAreaBounds.height))
+    		return SWT.BOTTOM;
+    	
+    	return SWT.BOTTOM; // shouldn't be able to get here...
+    }
+    
+    public void moveToTrim(ViewStack stack) {
+    	int side = calcStackSide(stack);
+    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), FastViewBar.GROUP_FVB , side);
+    	
+    	// Add all the views in the stack to teh new FVB
     	ArrayList refs = new ArrayList();
     	List parts = stack.getPresentableParts();
     	for (Iterator partIter = parts.iterator(); partIter.hasNext();) {
@@ -370,6 +389,13 @@ public class Perspective {
     		}
 		}
     	fvb.setViewRefs(refs);
+    	
+    	// Set the display orientation based on the stack's geometry
+    	Rectangle stackBounds = stack.getBounds();
+    	int orientation = (stackBounds.width > stackBounds.height) ? SWT.HORIZONTAL : SWT.VERTICAL;
+    	fvb.setOrientation(orientation);
+    	
+    	// Move the views 'into' the new group
     	fvb.collapseGroup();
     }
     
@@ -378,6 +404,7 @@ public class Perspective {
     	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
     	FastViewBar newFVB = new FastViewBar(wbw, style, id);
     	newFVB.createControl(wbw.getShell());
+    	newFVB.dock(side);
     	newFVB.getControl().setVisible(true);
     	ITrimManager tbm = wbw.getTrimManager();
     	tbm.addTrim(side, newFVB);

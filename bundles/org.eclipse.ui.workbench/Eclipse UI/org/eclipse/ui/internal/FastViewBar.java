@@ -340,6 +340,13 @@ public class FastViewBar implements IWindowTrim {
         }
     }
 
+    public void setOrientation(int orientation) {
+    	for (Iterator vrefIter = viewRefs.iterator(); vrefIter.hasNext();) {
+			IViewReference ref = (IViewReference) vrefIter.next();
+			setOrientation(ref, orientation);
+		}
+    }
+    
     /**
      * Returns the active workbench page or null if none
      */
