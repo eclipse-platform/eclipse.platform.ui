@@ -161,7 +161,7 @@ public class CarbonUIEnhancer implements IStartup {
 	 */
     protected void hookToolbarButtonCallback() {
 		Object target = new Object() {
-			int toolbarProc (int nextHandler, int theEvent, int userData) {
+			public int toolbarProc (int nextHandler, int theEvent, int userData) {
 				int eventKind = OS.GetEventKind (theEvent);
 				if (eventKind != OS.kEventWindowToolbarSwitchMode)
 					return OS.eventNotHandledErr;
@@ -228,7 +228,7 @@ public class CarbonUIEnhancer implements IStartup {
 
         // Callback target
         Object target = new Object() {
-            int commandProc(int nextHandler, int theEvent, int userData) {
+            public int commandProc(int nextHandler, int theEvent, int userData) {
                 if (OS.GetEventKind(theEvent) == OS.kEventProcessCommand) {
                     HICommand command = new HICommand();
                     OS.GetEventParameter(theEvent, OS.kEventParamDirectObject,
