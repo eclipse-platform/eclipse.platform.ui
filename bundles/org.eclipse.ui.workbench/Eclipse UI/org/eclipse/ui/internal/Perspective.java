@@ -910,20 +910,24 @@ public class Perspective {
         
         // update the 'global' FVB
         FastViewBar fvb = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar();
-        fvb.setViewRefs(globalFastViews);
-        globalFVBsaved = false;
+        if (fvb != null) {
+	        fvb.setViewRefs(globalFastViews);
+	        globalFVBsaved = false;
+        }
 
         // Show the trim groups
     	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
     	ITrimManager tbm = wbw.getTrimManager();
-        for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
-        	fvb = (FastViewBar) fvbIter.next();
-        	fvb.update(false);
-			tbm.setTrimVisible(fvb, true);
-		}
-		
-		// if we're done then force an update...optimize out if possible
-		LayoutUtil.resize(fvb.getControl());
+    	if (tbm != null) {
+	        for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+	        	fvb = (FastViewBar) fvbIter.next();
+	        	fvb.update(false);
+				tbm.setTrimVisible(fvb, true);
+			}
+			
+			// if we're done then force an update...optimize out if possible
+			tbm.forceLayout();
+    	}
         
         setAllPinsVisible(true);
         presentation.activate(getClientComposite());
@@ -946,8 +950,11 @@ public class Perspective {
 
         // remember the list of 'global' fast views
     	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
-        globalFastViews = new ArrayList(wbw.getFastViewBar().getViewRefs());
-        globalFVBsaved = true;
+    	FastViewBar globalFVB = wbw.getFastViewBar();
+    	if (globalFVB != null) {
+	        globalFastViews = new ArrayList(globalFVB.getViewRefs());
+	        globalFVBsaved = true;
+    	}
         
         // Update fast views.
         for (int i = 0; i < fastViews.size(); i++) {
@@ -1605,9 +1612,10 @@ public class Perspective {
 
         // Save the set of all 'global' fast Views for this perspective        
         // update the list of 'global' fast views
-        if (!globalFVBsaved) {
-	    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
-	        globalFastViews = new ArrayList(wbw.getFastViewBar().getViewRefs());
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+    	FastViewBar globalFVB = wbw.getFastViewBar();
+        if (globalFVB != null && !globalFVBsaved) {
+	        globalFastViews = new ArrayList(globalFVB.getViewRefs());
 	        globalFVBsaved = true;
         }
     
