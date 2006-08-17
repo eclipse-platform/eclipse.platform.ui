@@ -168,7 +168,7 @@ public class MergeWizardPage extends CVSWizardPage {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
                         CVSUIMessages.MergeWizardPage_8, 
                         CVSUIMessages.MergeWizardPage_9, 
-                        TagSelectionDialog.INCLUDE_VERSIONS,
+                        TagSelectionDialog.INCLUDE_VERSIONS | TagSelectionDialog.INCLUDE_DATES,
                         false, IHelpContextIds.MERGE_START_PAGE);
                 if (dialog.open() == Window.OK) {
                     CVSTag selectedTag = dialog.getResult();
