@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.Widget;
 abstract class ColumnViewer extends StructuredViewer {
 
 	private TooltipSupport tooltipSupport;
-	
+
 	/**
 	 * The cell is a cached viewer cell used for refreshing.
 	 */
-	private ViewerCell cell = new ViewerCell(null,0);
+	private ViewerCell cell = new ViewerCell(null, 0);
 
 	/**
 	 * Create a new instance of the receiver.
@@ -126,7 +126,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @param columnIndex
 	 * @return TableColumnViewer
 	 */
-	public ViewerColumn getColumnViewer(final int columnIndex) {
+	public ViewerColumn getViewerColumn(final int columnIndex) {
 
 		ViewerColumn viewer;
 		Widget columnOwner = getColumnViewerOwner(columnIndex);
@@ -141,57 +141,68 @@ abstract class ColumnViewer extends StructuredViewer {
 		if (viewer == null) {
 			viewer = createColumnViewer(columnOwner, ViewerLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
-			if (getCellModifier() != null) {
-				viewer.setEditingSupport(new EditingSupport() {
+			setViewerColumn(columnIndex, viewer);
+		} else
+			// Reset the colum-index because maybe it changed from the last time
+			viewer.getLabelProvider().setColumnIndex(columnIndex);
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
-					 */
-					public boolean canEdit(Object element) {
-						return getCellModifier().canModify(element,
-								(String) getColumnProperties()[columnIndex]);
-					}
+		return viewer;
+	}
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
-					 */
-					public CellEditor getCellEditor(Object element) {
-						return getCellEditors()[columnIndex];
-					}
+	/**
+	 * Set the ViewerColumn at columnIndex
+	 * @param columnIndex
+	 * @param viewer
+	 */
+	public void setViewerColumn(final int columnIndex, ViewerColumn viewer) {
+		if (getCellModifier() != null) {
+			viewer.setEditingSupport(new EditingSupport() {
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
-					 */
-					public Object getValue(Object element) {
-						return getCellModifier().getValue(element,
-								(String) getColumnProperties()[columnIndex]);
-					}
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
+				 */
+				public boolean canEdit(Object element) {
+					return getCellModifier().canModify(element,
+							(String) getColumnProperties()[columnIndex]);
+				}
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
-					 *      java.lang.Object)
-					 */
-					public void setValue(Object element, Object value) {
-						getCellModifier().modify(findItem(element),
-								(String) getColumnProperties()[columnIndex],
-								value);
-					}
-				});
-			}
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+				 */
+				public CellEditor getCellEditor(Object element) {
+					return getCellEditors()[columnIndex];
+				}
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
+				 */
+				public Object getValue(Object element) {
+					return getCellModifier().getValue(element,
+							(String) getColumnProperties()[columnIndex]);
+				}
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
+				 *      java.lang.Object)
+				 */
+				public void setValue(Object element, Object value) {
+					getCellModifier().modify(findItem(element),
+							(String) getColumnProperties()[columnIndex], value);
+				}
+			});
 		}
 
 		// Reset the colum-index because maybe it changed from the last time
 		viewer.getLabelProvider().setColumnIndex(columnIndex);
 
-		return viewer;
 	}
 
 	/**
@@ -219,15 +230,16 @@ abstract class ColumnViewer extends StructuredViewer {
 	public void deactivateCustomTooltips() {
 		tooltipSupport.deactivate();
 	}
-	
+
 	/**
 	 * Update the cached cell with the row and column.
+	 * 
 	 * @param rowPartFromItem
 	 * @param column
 	 * @return ViewerCell
 	 */
 	ViewerCell updateCell(ViewerRow rowItem, int column) {
-		cell.update(rowItem,column);
+		cell.update(rowItem, column);
 		return cell;
 	}
 

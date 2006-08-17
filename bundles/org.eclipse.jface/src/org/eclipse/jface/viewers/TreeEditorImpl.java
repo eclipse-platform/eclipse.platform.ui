@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Item;
     }
 
     private void activateCellEditor() {
-    	ViewerColumn part = viewer.getColumnViewer(columnNumber);
+    	ViewerColumn part = viewer.getViewerColumn(columnNumber);
     	Object element = treeItem.getData();
     	
     	if( part != null && part.getEditingSupport() != null && part.getEditingSupport().canEdit(element) ) {

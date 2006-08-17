@@ -154,7 +154,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			columnCount = 1;
 
 		for (int column = 0; column < columnCount; column++) {
-			ViewerColumn columnViewer = getColumnViewer(column);
+			ViewerColumn columnViewer = getViewerColumn(column);
 			columnViewer.refresh(updateCell(getRowPartFromItem(treeItem),column));
 
 			// As it is possible for user code to run the event

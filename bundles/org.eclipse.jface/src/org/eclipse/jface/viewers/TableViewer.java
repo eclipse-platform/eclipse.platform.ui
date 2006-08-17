@@ -364,7 +364,7 @@ public class TableViewer extends ColumnViewer {
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
-				ViewerColumn columnViewer = getColumnViewer(column);
+				ViewerColumn columnViewer = getViewerColumn(column);
 				columnViewer.refresh(updateCell(getRowPartFromItem(item),column));
 
 				// As it is possible for user code to run the event

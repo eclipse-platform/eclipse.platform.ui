@@ -108,7 +108,7 @@ class TooltipSupport {
 			Object element = row.getItem().getData();
 			disposeTooltip(tip);
 
-			ViewerColumn viewPart = viewer.getColumnViewer(row.getColumnIndex(p));
+			ViewerColumn viewPart = viewer.getViewerColumn(row.getColumnIndex(p));
 			
 			if( viewPart == null ) {
 				return;
