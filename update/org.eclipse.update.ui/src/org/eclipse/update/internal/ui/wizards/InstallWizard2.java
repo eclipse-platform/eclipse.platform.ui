@@ -37,6 +37,7 @@ import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.FeatureDownloadException;
@@ -401,19 +402,28 @@ public class InstallWizard2
 		// If download fails, the user is prompted to retry.
 		try {
 			IFeatureOperation[] ops = installOperation.getOperations();
-			monitor.beginTask(UpdateUIMessages.InstallWizard_download, 4 * ops.length);
+			monitor.beginTask(UpdateUIMessages.InstallWizard_download, 5 * ops.length);
 			for (int i = 0; i < ops.length; i++) {
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
 				
 				try {
-					monitor.worked(1);
+					String featureName = op.getFeature().getLabel();
+					if ((featureName == null ) || (featureName.trim() == "") ) { //$NON-NLS-1$
+						featureName = op.getFeature().getVersionedIdentifier().getIdentifier();
+					}
+					SubProgressMonitor featureDownloadMonitor = new SubProgressMonitor(monitor, 2);
+					//featureDownloadMonitor.setTaskName(featureName);
+					featureDownloadMonitor.beginTask(featureName, 2);
+					featureDownloadMonitor.subTask(featureName);
+					//featureDownloadMonitor.worked(1);
 					if (op.getFeature() instanceof LiteFeature) {
 						ISiteFeatureReference featureReference = getFeatureReference(op.getFeature());
-						IFeature feature = featureReference.getFeature(null);
+						IFeature feature = featureReference.getFeature(featureDownloadMonitor);
 						if (op instanceof InstallOperation) {
 							((InstallOperation)op).setFeature(feature);
 						}
-					}				
+					}
+					//featureDownloadMonitor.worked(1);
 					SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
 					UpdateUtils.downloadFeatureContent(op.getTargetSite(), op.getFeature(), op.getOptionalFeatures(), subMonitor);
 				} catch (final CoreException e) {
