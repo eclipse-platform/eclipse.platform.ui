@@ -103,7 +103,7 @@ public class IndexData extends ActivitiesData {
 					out.write(",\n"); //$NON-NLS-1$
 				}
 				out.write("\""); //$NON-NLS-1$
-				out.write(entry.getKeyword());
+				out.write(UrlUtil.JavaScriptEncode(entry.getKeyword()));
 				out.write("\""); //$NON-NLS-1$
 			}
 		}

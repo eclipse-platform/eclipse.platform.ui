@@ -142,17 +142,32 @@ public class IndexAssembler {
 	
 	/*
 	 * Returns the category of the object. The order is:
-	 * topics, entries, other.
+	 * 1. topics
+	 * 2. entries starting with non-alphanumeric
+	 * 3. entries starting with digit
+	 * 4. entries starting with alpha
+	 * 5. other
 	 */
 	private static int getCategory(Object o) {
 		if (o instanceof ITopic) {
 			return 0;
 		}
 		else if (o instanceof IIndexEntry) {
-			return 1;
+			String keyword = ((IIndexEntry)o).getKeyword();
+			if (keyword != null && keyword.length() > 0) {
+				char c = keyword.charAt(0);
+				if (Character.isDigit(c)) {
+					return 2;
+				}
+				else if (Character.isLetter(c)) {
+					return 3;
+				}
+				return 1;
+			}
+			return 4;
 		}
 		else {
-			return 2;
+			return 5;
 		}
 	}
 	
