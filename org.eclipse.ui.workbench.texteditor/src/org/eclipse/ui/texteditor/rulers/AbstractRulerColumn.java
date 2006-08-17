@@ -214,8 +214,12 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 
 		fStyledText= fViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE);
-		Assert.isLegal(fCanvas != null);
+		fCanvas= new Canvas(parentControl, SWT.NONE
+//				| SWT.DOUBLE_BUFFERED // not needed as long as painting does not take long. Flickering is avoided by NO_BACKGROUND
+				| SWT.NO_BACKGROUND // avoids the flash due to first painting the background
+				| SWT.NO_REDRAW_RESIZE // unless the viewport changes, we don't need to redraw on resize
+//				| SWT.NO_MERGE_PAINTS
+		);
 
 		fCanvas.setBackground(getDefaultBackground());
 		fCanvas.setFont(getFont());
@@ -349,15 +353,20 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 	}
 
 	/**
-	 * Sets the default background color for this column.
+	 * Sets the default background color for this column. The default background is used as default
+	 * implementation of {@link #computeBackground(int)} and also to paint the area of the ruler
+	 * that does not correspond to any lines (when the viewport is not entirely filled with lines).
 	 * 
 	 * @param background the default background color, <code>null</code> to use the text widget's
 	 *        background
 	 */
 	protected final void setDefaultBackground(Color background) {
-		fBackground= background;
-		if (fCanvas != null && !fCanvas.isDisposed())
-			fCanvas.setBackground(getDefaultBackground());
+		if (fBackground != background) {
+			fBackground= background;
+			if (fCanvas != null && !fCanvas.isDisposed())
+				fCanvas.setBackground(getDefaultBackground());
+			redraw();
+		}
 	}
 
 	/**
@@ -459,9 +468,17 @@ public abstract class AbstractRulerColumn extends RulerColumn implements IVertic
 
 		ILineRange lines= computeDirtyWidgetLines(event);
 		GC gc= event.gc;
-		gc.setFont(getFont());
-		gc.setBackground(getDefaultBackground());
 		paint(gc, lines);
+
+		if ((fCanvas.getStyle() & SWT.NO_BACKGROUND) != 0) {
+			// fill empty area below any lines
+			int firstEmpty= Math.max(event.y, fStyledText.getLinePixel(fStyledText.getLineCount()));
+			int lastEmpty= event.y + event.height;
+			if (lastEmpty > firstEmpty) {
+				gc.setBackground(getDefaultBackground());
+				gc.fillRectangle(0, firstEmpty, getWidth(), lastEmpty - firstEmpty);
+			}
+		}
 	}
 
 	/**
