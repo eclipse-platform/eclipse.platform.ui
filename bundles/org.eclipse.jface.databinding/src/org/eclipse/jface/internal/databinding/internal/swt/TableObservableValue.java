@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Table;
  * @since 1.0
  * 
  */
-public class TableObservableValue extends AbstractObservableValue {
+public class TableObservableValue extends AbstractSWTObservableValue {
 
 	private final Table table;
 
@@ -34,6 +34,7 @@ public class TableObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public TableObservableValue(Table table, String attribute) {
+		super(table);
 		this.table = table;
 		currentSelection = table.getSelectionIndex();
 		if (attribute.equals(SWTProperties.SELECTION)) {

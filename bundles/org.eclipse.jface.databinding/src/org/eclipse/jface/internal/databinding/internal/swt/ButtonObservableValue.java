@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Listener;
  * @since 1.0
  * 
  */
-public class ButtonObservableValue extends AbstractObservableValue {
+public class ButtonObservableValue extends AbstractSWTObservableValue {
 
 	private final Button button;
 
@@ -41,6 +41,7 @@ public class ButtonObservableValue extends AbstractObservableValue {
 	 * @param updatePolicy
 	 */
 	public ButtonObservableValue(Button button) {
+		super(button);
 		this.button = button;
 		button.addListener(SWT.Selection, updateListener);
 		button.addListener(SWT.DefaultSelection, updateListener);

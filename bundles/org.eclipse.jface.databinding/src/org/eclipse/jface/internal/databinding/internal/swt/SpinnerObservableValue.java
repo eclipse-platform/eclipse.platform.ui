@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Spinner;
  * @since 1.0
  * 
  */
-public class SpinnerObservableValue extends AbstractObservableValue {
+public class SpinnerObservableValue extends AbstractSWTObservableValue {
 
 	private final Spinner spinner;
 
@@ -37,6 +37,7 @@ public class SpinnerObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public SpinnerObservableValue(Spinner spinner, String attribute) {
+		super(spinner);
 		this.spinner = spinner;
 		this.attribute = attribute;
 		if (attribute.equals(SWTProperties.SELECTION)) {

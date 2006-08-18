@@ -19,7 +19,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindi
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.util.Assert;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  * 
  */
-public class ComboObservableValue extends AbstractObservableValue {
+public class ComboObservableValue extends AbstractSWTObservableValue {
 
 	private final Combo combo;
 	private final String attribute;
@@ -48,6 +48,7 @@ public class ComboObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public ComboObservableValue(Combo combo, String attribute) {
+		super(combo);
 		this.combo = combo;
 		this.attribute = attribute;
 		

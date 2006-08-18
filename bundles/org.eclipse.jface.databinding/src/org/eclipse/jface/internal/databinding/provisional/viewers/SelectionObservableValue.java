@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * @since 1.0
  * 
  */
-public class SelectionObservableValue extends AbstractObservableValue {
+public class SelectionObservableValue extends AbstractSWTObservableValue {
 
 	private StructuredViewer viewer;
 
@@ -45,6 +45,7 @@ public class SelectionObservableValue extends AbstractObservableValue {
 	 * @param viewer
 	 */
 	public SelectionObservableValue(StructuredViewer viewer) {
+		super(viewer.getControl());
 		this.viewer = viewer;
 		viewer.addSelectionChangedListener(selectionChangedListener);
 		this.currentSelection = ((IStructuredSelection) viewer.getSelection())

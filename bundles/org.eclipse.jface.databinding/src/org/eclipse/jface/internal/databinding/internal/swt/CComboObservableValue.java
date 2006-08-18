@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
@@ -22,7 +22,7 @@ import org.eclipse.swt.events.ModifyListener;
  * @since 3.2
  * 
  */
-public class CComboObservableValue extends AbstractObservableValue {
+public class CComboObservableValue extends AbstractSWTObservableValue {
 
 	/**
 	 * 
@@ -41,6 +41,7 @@ public class CComboObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public CComboObservableValue(CCombo ccombo, String attribute) {
+		super(ccombo);
 		this.ccombo = ccombo;
 		this.attribute = attribute;
 

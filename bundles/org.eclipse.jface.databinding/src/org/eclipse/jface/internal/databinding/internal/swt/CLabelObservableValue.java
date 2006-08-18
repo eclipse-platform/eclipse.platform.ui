@@ -11,14 +11,14 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.custom.CLabel;
 
 /**
  * @since 1.0
  * 
  */
-public class CLabelObservableValue extends AbstractObservableValue {
+public class CLabelObservableValue extends AbstractSWTObservableValue {
 
 	private final CLabel label;
 
@@ -26,6 +26,7 @@ public class CLabelObservableValue extends AbstractObservableValue {
 	 * @param label
 	 */
 	public CLabelObservableValue(CLabel label) {
+		super(label);
 		this.label = label;
 	}
 

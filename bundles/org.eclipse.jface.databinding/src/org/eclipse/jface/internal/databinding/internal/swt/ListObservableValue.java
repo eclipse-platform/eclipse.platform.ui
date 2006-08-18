@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Listener;
  * @since 3.2
  * 
  */
-public class ListObservableValue extends AbstractObservableValue {
+public class ListObservableValue extends AbstractSWTObservableValue {
 
 	private final List list;
 
@@ -34,6 +34,7 @@ public class ListObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public ListObservableValue(List list) {
+		super(list);
 		this.list = list;
 		this.currentValue = (String) doGetValue();
 

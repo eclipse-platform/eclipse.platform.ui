@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTVetoableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since 1.0
  */
-public class TextObservableValue extends AbstractVetoableValue {
+public class TextObservableValue extends AbstractSWTVetoableValue {
 
 	/**
 	 * {@link Text} widget that this is being observed.
@@ -120,8 +120,7 @@ public class TextObservableValue extends AbstractVetoableValue {
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */
 	public TextObservableValue(final Text text, int updateEventType) {
-		if (text == null)
-			throw new IllegalArgumentException("The 'text' parameter is null."); //$NON-NLS-1$
+		super(text);
 		boolean eventValid = false;
 		for (int i = 0; !eventValid && i < validUpdateEventTypes.length; i++) {
 			eventValid = (updateEventType == validUpdateEventTypes[i]);

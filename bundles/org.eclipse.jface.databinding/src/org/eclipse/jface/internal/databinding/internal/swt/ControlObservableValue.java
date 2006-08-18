@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
+import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.swt.widgets.Control;
 
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 1.0
  * 
  */
-public class ControlObservableValue extends AbstractObservableValue {
+public class ControlObservableValue extends AbstractSWTObservableValue {
 
 	private final Control control;
 
@@ -30,6 +30,7 @@ public class ControlObservableValue extends AbstractObservableValue {
 	 * @param attribute
 	 */
 	public ControlObservableValue(Control control, String attribute) {
+		super(control);
 		this.control = control;
 		this.attribute = attribute;
 		if (!attribute.equals(SWTProperties.ENABLED)
