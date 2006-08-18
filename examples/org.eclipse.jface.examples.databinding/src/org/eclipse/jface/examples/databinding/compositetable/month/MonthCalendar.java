@@ -245,7 +245,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		Date nextMonth = nextMonthCalendar.getTime();
 		
 		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
 		
 		LinkedList newWeeksArray = new LinkedList();
 		
