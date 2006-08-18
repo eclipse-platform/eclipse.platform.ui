@@ -79,7 +79,7 @@ public final class DataBindingContext {
 	 * should be triggered late, typically on focus lost.
 	 */
 	public static final int TIME_LATE = 1;
-
+	
 	/**
 	 * Returns a new data binding context with the given parent.
 	 * 
@@ -172,6 +172,9 @@ public final class DataBindingContext {
 	private ObservableList validationErrors = new ValidationErrorList(bindings,
 			false);
 
+	
+	private List childContexts = new ArrayList();
+	
 	/**
 	 * 
 	 */
@@ -184,6 +187,11 @@ public final class DataBindingContext {
 	 */
 	public DataBindingContext(DataBindingContext parent) {
 		this.parent = parent;
+		parent.addChild(this);
+	}
+	
+	void addChild(DataBindingContext context) {
+		childContexts.add(context);
 	}
 
 	/**
@@ -429,6 +437,10 @@ public final class DataBindingContext {
 		for (Iterator it = createdObservables.iterator(); it.hasNext();) {
 			IObservable observable = (IObservable) it.next();
 			observable.dispose();
+		}
+		for (Iterator it = childContexts.iterator(); it.hasNext();) {
+			DataBindingContext context = (DataBindingContext) it.next();
+			context.dispose();
 		}
 	}
 
