@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEvent;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
 import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
@@ -39,7 +38,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -66,18 +64,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	public MonthCalendar(Composite parent, int style) {
 		super(parent, style);
 		initialize();
-		weeks = new Week[] {createWeek(), createWeek(), createWeek(), 
-				createWeek(), createWeek(), createWeek()};
-		
-		for (int week = 0; week < weeks.length; week++) {
-			for (int day = 0; day < 7; day++) {
-				Day currentDay = weeks[week].getDay(day);
-				currentDay.setMonthPosition(new Point(day, week));
-				currentDay.addKeyListener(dayKeyListener);
-				currentDay.addMouseListener(dayMouseListener);
-				currentDay.addFocusListener(dayFocusListener);
-			}
-		}
+		weeks = new Week[0];
 		setStartDate(new Date());
 	}
 
@@ -90,7 +77,6 @@ public class MonthCalendar extends Composite implements IEventEditor {
         createWeekHeader();
         this.setLayout(gl);
         createWeeksHolder();
-        this.setSize(new Point(788, 488));
 	}
 
     /**
@@ -104,7 +90,6 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		gridData.verticalAlignment = GridData.CENTER;
 		weekHeader = new WeekHeader(this, SWT.NONE);
 		weekHeader.setLayoutData(gridData);
-		weekHeader.setBounds(new Rectangle(56, 57, 552, 150));
 	}
 
 	/**
@@ -186,6 +171,11 @@ public class MonthCalendar extends Composite implements IEventEditor {
 	public void refresh(Date date) {
 		checkWidget();
 		
+		if (date == null) {
+			refresh();
+			return;
+		}
+		
 		Calendar currentDay = new GregorianCalendar();
 		currentDay.setTime(startDate);
 		currentDay.set(Calendar.DAY_OF_MONTH, 1);
@@ -260,6 +250,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 					newDay.setMonthPosition(new Point(day, week));
 					newDay.addKeyListener(dayKeyListener);
 					newDay.addMouseListener(dayMouseListener);
+					newDay.addFocusListener(dayFocusListener);
 				}
 			}
 			for (int day = 0; day < 7; day++) {
@@ -267,6 +258,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 				currentDay.setInCurrentMonth(c.get(Calendar.MONTH) == currentMonth);
 				currentDay.setDayNumber(c.get(Calendar.DAY_OF_MONTH));
 				refresh(c.getTime(), currentDay);
+				currentDay.layout(true);
 				c.add(Calendar.DAY_OF_MONTH, 1);
 			}
 		}
@@ -276,9 +268,7 @@ public class MonthCalendar extends Composite implements IEventEditor {
 			}
 		}
 		if (weeks.length != newWeeksArray.size()) {
-			Point size = getSize();
-			setSize(size.x, size.y+1);
-			setSize(size.x, size.y);
+			weeksHolder.layout(true);
 		}
 		weeks = (Week[]) newWeeksArray.toArray(new Week[newWeeksArray.size()]);
 	}
@@ -309,25 +299,28 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		this.eventCountProvider = eventCountProvider;
 	}
 
-	private boolean fireEvents(CalendarableItem calendarableItem, List handlers) {
-		CalendarableItemEvent e = new CalendarableItemEvent();
-		e.calendarableItem = calendarableItem;
-		for (Iterator iter = handlers.iterator(); iter.hasNext();) {
-			CalendarableItemEventHandler handler = (CalendarableItemEventHandler) iter.next();
-			handler.handleRequest(e);
-			if (!e.doit) {
-				break;
-			}
-		}
-		for (Iterator i = handlers.iterator(); i.hasNext();) {
-			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
-			h.requestHandled(e);
-			if (!e.doit) {
-				break;
-			}
-		}
-		return e.doit;
-	}
+	/*
+	 * FIXME: To be used when we support full editing
+	 */
+//	private boolean fireEvents(CalendarableItem calendarableItem, List handlers) {
+//		CalendarableItemEvent e = new CalendarableItemEvent();
+//		e.calendarableItem = calendarableItem;
+//		for (Iterator iter = handlers.iterator(); iter.hasNext();) {
+//			CalendarableItemEventHandler handler = (CalendarableItemEventHandler) iter.next();
+//			handler.handleRequest(e);
+//			if (!e.doit) {
+//				break;
+//			}
+//		}
+//		for (Iterator i = handlers.iterator(); i.hasNext();) {
+//			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
+//			h.requestHandled(e);
+//			if (!e.doit) {
+//				break;
+//			}
+//		}
+//		return e.doit;
+//	}
 	
 	private List deleteHandlers = new ArrayList();
 	
