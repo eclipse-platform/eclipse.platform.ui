@@ -640,7 +640,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			TableViewer viewer = createTableViewer(parent);
 			fViewer = viewer;
 			configureTableViewer(viewer);
-			fSelectAllAction.setViewer(viewer);
 		} else if ((layout & FLAG_LAYOUT_TREE) != 0) {
 			TreeViewer viewer = createTreeViewer(parent);
 			fViewer = viewer;
@@ -648,8 +647,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		
 		fCopyToClipboardAction.setViewer(fViewer);
-		
-
+		fSelectAllAction.setViewer(fViewer);
 		
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
 		tbm.removeAll();
