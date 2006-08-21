@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - Fix for
+ *     		Bug 154289 [Viewers] - NPE in TreeEditorImpl.activateCellEditor
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
