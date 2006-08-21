@@ -1066,7 +1066,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public void setActive(int activeState) {
 
-        if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
+        if (activeState == StackPresentation.AS_ACTIVE_FOCUS && isMinimized) {
             setMinimized(false);
         }
 
@@ -1160,6 +1160,14 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * itself. The minimized state only affects the view when unzoomed. If the 
      */
     public void setMinimized(boolean minimized) {
+    	// 'Smart' minimize; move the stack to the trim
+    	Perspective persp = getPage().getActivePerspective();
+    	boolean useMultiFVB = (System.getProperty("MultiFVB")!= null && persp != null); //$NON-NLS-1$
+    	if (minimized && useMultiFVB && this instanceof ViewStack) {
+    		persp.moveToTrim((ViewStack) this, FastViewBar.GROUP_FVB);
+    		return;
+    	}
+    	
         if (minimized != isMinimized) {
             isMinimized = minimized;
             

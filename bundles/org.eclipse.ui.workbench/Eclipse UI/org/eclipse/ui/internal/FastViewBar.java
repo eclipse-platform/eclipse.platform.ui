@@ -93,11 +93,13 @@ public class FastViewBar implements IWindowTrim {
     public static final int SHOW_GROUP_BUTTON = 0x0002;
     /** Causes the FVB to show the 'Add View' popup button */
     public static final int SHOW_ADD_BUTTON = 0x0004;
+    /** Indicates that the FVB was added during 'zoomIn' */
+    public static final int ZOOM_GROUP = 0x0008;
     
     public static final int LEGACY_FVB = REMOVE_UNFAST_REFS | SHOW_ADD_BUTTON;
     public static final int GROUP_FVB = SHOW_GROUP_BUTTON;
     
-    private boolean testStyleBit(int toTest) { return (style & toTest) != 0; }
+    public boolean testStyleBit(int toTest) { return (style & toTest) != 0; }
     private int style = LEGACY_FVB;
     
     private static final int HIDDEN_WIDTH = 5;

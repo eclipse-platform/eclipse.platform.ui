@@ -375,9 +375,9 @@ public class Perspective {
     	return SWT.BOTTOM; // shouldn't be able to get here...
     }
     
-    public void moveToTrim(ViewStack stack) {
+    public void moveToTrim(ViewStack stack, int style) {
     	int side = calcStackSide(stack);
-    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), FastViewBar.GROUP_FVB , side);
+    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), style, side);
     	
     	// Add all the views in the stack to teh new FVB
     	ArrayList refs = new ArrayList();
@@ -397,6 +397,23 @@ public class Perspective {
     	
     	// Move the views 'into' the new group
     	fvb.collapseGroup();
+    }
+    
+    public void restoreZoomGroups() {
+		List toClose = new ArrayList();
+		
+		// Get the groups to close in another list and...
+    	for (Iterator fvbIter = fastViewBars.iterator(); fvbIter.hasNext();) {
+			FastViewBar fvb = (FastViewBar) fvbIter.next();
+			if (fvb.testStyleBit(FastViewBar.ZOOM_GROUP))
+				toClose.add(fvb);
+		}
+    	
+    	// ... close them
+    	for (Iterator closeIter = toClose.iterator(); closeIter.hasNext();) {
+			FastViewBar fvb = (FastViewBar) closeIter.next();
+				fvb.closeGroup();
+		}
     }
     
     private FastViewBar createFastViewBar(String id, int style, int side) {   	

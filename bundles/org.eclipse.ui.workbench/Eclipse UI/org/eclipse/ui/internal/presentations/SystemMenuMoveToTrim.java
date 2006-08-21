@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.ViewStack;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -92,6 +93,6 @@ public class SystemMenuMoveToTrim extends Action implements ISelfUpdatingAction 
 
     public void run() {
         Perspective psp = viewPane.getPane().getPage().getActivePerspective();
-        psp.moveToTrim((ViewStack) viewPane.getPane().getStack());
+        psp.moveToTrim((ViewStack) viewPane.getPane().getStack(), FastViewBar.GROUP_FVB);
     }
 }
