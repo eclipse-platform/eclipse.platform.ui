@@ -72,42 +72,44 @@ import org.eclipse.swt.widgets.Item;
     	
     	if( part != null && part.getEditingSupport() != null && part.getEditingSupport().canEdit(element) ) {
     		cellEditor = part.getEditingSupport().getCellEditor(element);
-    		cellEditor.addListener(cellEditorListener);
-            Object value = part.getEditingSupport().getValue(element);
-            cellEditor.setValue(value);
-            // Tricky flow of control here:
-            // activate() can trigger callback to cellEditorListener which will clear cellEditor
-            // so must get control first, but must still call activate() even if there is no control.
-            final Control control = cellEditor.getControl();
-            cellEditor.activate();
-            if (control == null) {
-				return;
-			}
-            setLayoutData(cellEditor.getLayoutData());
-            setEditor(control, tableItem, columnNumber);
-            cellEditor.setFocus();
-            if (focusListener == null) {
-                focusListener = new FocusAdapter() {
-                    public void focusLost(FocusEvent e) {
-                        applyEditorValue();
+    		if( cellEditor != null ) {
+        		cellEditor.addListener(cellEditorListener);
+                Object value = part.getEditingSupport().getValue(element);
+                cellEditor.setValue(value);
+                // Tricky flow of control here:
+                // activate() can trigger callback to cellEditorListener which will clear cellEditor
+                // so must get control first, but must still call activate() even if there is no control.
+                final Control control = cellEditor.getControl();
+                cellEditor.activate();
+                if (control == null) {
+    				return;
+    			}
+                setLayoutData(cellEditor.getLayoutData());
+                setEditor(control, tableItem, columnNumber);
+                cellEditor.setFocus();
+                if (focusListener == null) {
+                    focusListener = new FocusAdapter() {
+                        public void focusLost(FocusEvent e) {
+                            applyEditorValue();
+                        }
+                    };
+                }
+                control.addFocusListener(focusListener);
+                mouseListener = new MouseAdapter() {
+                    public void mouseDown(MouseEvent e) {
+                        // time wrap?	
+                        // check for expiration of doubleClickTime
+                        if (e.time <= doubleClickExpirationTime) {
+                            control.removeMouseListener(mouseListener);
+                            cancelEditing();
+                            handleDoubleClickEvent();
+                        } else if (mouseListener != null) {
+                            control.removeMouseListener(mouseListener);
+                        }
                     }
                 };
-            }
-            control.addFocusListener(focusListener);
-            mouseListener = new MouseAdapter() {
-                public void mouseDown(MouseEvent e) {
-                    // time wrap?	
-                    // check for expiration of doubleClickTime
-                    if (e.time <= doubleClickExpirationTime) {
-                        control.removeMouseListener(mouseListener);
-                        cancelEditing();
-                        handleDoubleClickEvent();
-                    } else if (mouseListener != null) {
-                        control.removeMouseListener(mouseListener);
-                    }
-                }
-            };
-            control.addMouseListener(mouseListener);
+                control.addMouseListener(mouseListener);
+    		}
     	}    	
     }
 
@@ -305,7 +307,7 @@ import org.eclipse.swt.widgets.Item;
      * by delegating to the cell modifier.
      */
     private void saveEditorValue(CellEditor cellEditor, Item tableItem) {
-    	ViewerColumn part = (ViewerColumn)tableItem.getData(ViewerColumn.COLUMN_VIEWER_KEY);
+    	ViewerColumn part = viewer.getViewerColumn(columnNumber);
     	
         if( part != null && part.getEditingSupport() != null ) {
         	part.getEditingSupport().setValue(tableItem.getData(), cellEditor.getValue());

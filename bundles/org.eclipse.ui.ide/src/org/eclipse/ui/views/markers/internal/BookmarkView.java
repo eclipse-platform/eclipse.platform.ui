@@ -50,6 +50,9 @@ public class BookmarkView extends MarkerView {
 			new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
 	private ICellModifier cellModifier = new ICellModifier() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
+		 */
 		public Object getValue(Object element, String property) {
 			if (element instanceof ConcreteMarker
 					&& IMarker.MESSAGE.equals(property)) {
@@ -58,10 +61,16 @@ public class BookmarkView extends MarkerView {
 			return null;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
+		 */
 		public boolean canModify(Object element, String property) {
-			return true;
+			return element instanceof ConcreteMarker && IMarker.MESSAGE.equals(property);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
+		 */
 		public void modify(Object element, String property, Object value) {
 			if (element instanceof Item) {
 				Item item = (Item) element;
