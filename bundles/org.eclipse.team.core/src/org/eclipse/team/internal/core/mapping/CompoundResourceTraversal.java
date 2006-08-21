@@ -28,14 +28,14 @@ public class CompoundResourceTraversal {
 	private Set zeroFolders = new HashSet();
 	private Set files = new HashSet();
 	
-	public void addTraversals(ResourceTraversal[] traversals) {
+	public synchronized void addTraversals(ResourceTraversal[] traversals) {
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			addTraversal(traversal);
 		}
 	}
 
-	public void addTraversal(ResourceTraversal traversal) {
+	public synchronized void addTraversal(ResourceTraversal traversal) {
 		IResource[] resources = traversal.getResources();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -43,7 +43,7 @@ public class CompoundResourceTraversal {
 		}
 	}
 
-	public void addResource(IResource resource, int depth) {
+	public synchronized void addResource(IResource resource, int depth) {
 		if (resource.getType() == IResource.FILE) {
 			if (!isCovered(resource, IResource.DEPTH_ZERO))
 				files.add(resource);
@@ -68,7 +68,7 @@ public class CompoundResourceTraversal {
 		}
 	}
 
-	public boolean isCovered(IResource resource, int depth) {
+	public synchronized boolean isCovered(IResource resource, int depth) {
 		IPath fullPath = resource.getFullPath();
 		// Regardless of the depth, look for a deep folder that covers the resource
 		for (Iterator iter = deepFolders.iterator(); iter.hasNext();) {
@@ -149,7 +149,10 @@ public class CompoundResourceTraversal {
 		}
 	}
 
-	public void add(CompoundResourceTraversal compoundTraversal) {
+	public synchronized void add(CompoundResourceTraversal compoundTraversal) {
+		// Technically, this code should synchronize on compoundTraversal.
+		// However, this makes deadlock possible and, in practive, I don't think that 
+		// the provided traversal will be modified after it is passed to this method.
 		addResources(
 				(IResource[]) compoundTraversal.deepFolders.toArray(new IResource[compoundTraversal.deepFolders.size()]), 
 				IResource.DEPTH_INFINITE);
@@ -164,7 +167,7 @@ public class CompoundResourceTraversal {
 				IResource.DEPTH_ZERO);
 	}
 
-	public void addResources(IResource[] resources, int depth) {
+	public synchronized void addResources(IResource[] resources, int depth) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			addResource(resource, depth);
@@ -177,7 +180,7 @@ public class CompoundResourceTraversal {
 	 * @param traversals the traversals being testes
 	 * @return the resources contained in the given traversals that are not covered by this traversal
 	 */
-	public IResource[] getUncoveredResources(ResourceTraversal[] traversals) {
+	public synchronized IResource[] getUncoveredResources(ResourceTraversal[] traversals) {
 		CompoundResourceTraversal newTraversals = new CompoundResourceTraversal();
 		newTraversals.addTraversals(traversals);
 		return getUncoveredResources(newTraversals);
@@ -215,7 +218,7 @@ public class CompoundResourceTraversal {
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	public ResourceTraversal[] asTraversals() {
+	public synchronized ResourceTraversal[] asTraversals() {
 		List result = new ArrayList();
 		if (!files.isEmpty() || ! zeroFolders.isEmpty()) {
 			Set combined = new HashSet();
@@ -232,7 +235,7 @@ public class CompoundResourceTraversal {
 		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
 	}
 
-	public IResource[] getRoots() {
+	public synchronized IResource[] getRoots() {
 		List result = new ArrayList();
 		result.addAll(files);
 		result.addAll(zeroFolders);
@@ -241,42 +244,44 @@ public class CompoundResourceTraversal {
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 
-	public ResourceTraversal[] getUncoveredTraversals(ResourceTraversal[] traversals) {
+	public synchronized ResourceTraversal[] getUncoveredTraversals(ResourceTraversal[] traversals) {
 		CompoundResourceTraversal other = new CompoundResourceTraversal();
 		other.addTraversals(traversals);
 		return getUncoveredTraversals(other);
 	}
 
 	public ResourceTraversal[] getUncoveredTraversals(CompoundResourceTraversal otherTraversal) {
-		CompoundResourceTraversal uncovered = new CompoundResourceTraversal();
-		for (Iterator iter = otherTraversal.files.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			if (!isCovered(resource, IResource.DEPTH_ZERO)) {
-				uncovered.addResource(resource, IResource.DEPTH_ZERO);
+		synchronized (otherTraversal) {
+			CompoundResourceTraversal uncovered = new CompoundResourceTraversal();
+			for (Iterator iter = otherTraversal.files.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (!isCovered(resource, IResource.DEPTH_ZERO)) {
+					uncovered.addResource(resource, IResource.DEPTH_ZERO);
+				}
 			}
-		}
-		for (Iterator iter = otherTraversal.zeroFolders.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			if (!isCovered(resource, IResource.DEPTH_ZERO)) {
-				uncovered.addResource(resource, IResource.DEPTH_ZERO);
+			for (Iterator iter = otherTraversal.zeroFolders.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (!isCovered(resource, IResource.DEPTH_ZERO)) {
+					uncovered.addResource(resource, IResource.DEPTH_ZERO);
+				}
 			}
-		}
-		for (Iterator iter = otherTraversal.shallowFolders.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			if (!isCovered(resource, IResource.DEPTH_ONE)) {
-				uncovered.addResource(resource, IResource.DEPTH_ONE);
+			for (Iterator iter = otherTraversal.shallowFolders.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (!isCovered(resource, IResource.DEPTH_ONE)) {
+					uncovered.addResource(resource, IResource.DEPTH_ONE);
+				}
 			}
-		}
-		for (Iterator iter = otherTraversal.deepFolders.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			if (!isCovered(resource, IResource.DEPTH_INFINITE)) {
-				uncovered.addResource(resource, IResource.DEPTH_INFINITE);
+			for (Iterator iter = otherTraversal.deepFolders.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (!isCovered(resource, IResource.DEPTH_INFINITE)) {
+					uncovered.addResource(resource, IResource.DEPTH_INFINITE);
+				}
 			}
+			return uncovered.asTraversals();
 		}
-		return uncovered.asTraversals();
 	}
 
-	public void clear() {
+	public synchronized void clear() {
 		deepFolders.clear();
 		shallowFolders.clear();
 		zeroFolders.clear();
