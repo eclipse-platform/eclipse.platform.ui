@@ -291,7 +291,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 */
 	private String[] getDebugModelIds(Object object) {
 		if (object instanceof IAdaptable) {
-			IDebugModelProvider modelProvider= (IDebugModelProvider) Platform.getAdapterManager().getAdapter(object, IDebugModelProvider.class);
+            IDebugModelProvider modelProvider= (IDebugModelProvider)((IAdaptable)object).getAdapter(IDebugModelProvider.class);
 			if (modelProvider != null) {
 				String[] modelIds= modelProvider.getModelIdentifiers();
 				if (modelIds != null) {
