@@ -96,7 +96,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
 		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
-		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		menu.add(new Separator(IContextMenuConstants.GROUP_EDIT));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_REMOVE_MATCHES));
 		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
 		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
@@ -117,7 +118,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
 		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
-		menu.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		menu.add(new Separator(IContextMenuConstants.GROUP_EDIT));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_REMOVE_MATCHES));
 		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
 		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
@@ -139,7 +141,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_SHOW));
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_BUILD));
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
-		toolbar.add(new Separator(IContextMenuConstants.GROUP_REMOVE_MATCHES));
+		toolbar.add(new Separator(IContextMenuConstants.GROUP_EDIT));
+		toolbar.add(new GroupMarker(IContextMenuConstants.GROUP_REMOVE_MATCHES));
 		toolbar.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
 		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		toolbar.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));

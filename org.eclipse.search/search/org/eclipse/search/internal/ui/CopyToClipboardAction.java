@@ -32,6 +32,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+
 public class CopyToClipboardAction extends Action {
 
 	private StructuredViewer fViewer;
@@ -44,7 +47,12 @@ public class CopyToClipboardAction extends Action {
 	
 	public CopyToClipboardAction() {
 		setText(SearchMessages.CopyToClipboardAction_label); 
-		setToolTipText(SearchMessages.CopyToClipboardAction_tooltip); 
+		setToolTipText(SearchMessages.CopyToClipboardAction_tooltip);
+		ISharedImages workbenchImages= PlatformUI.getWorkbench().getSharedImages();
+		setDisabledImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		setImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		setHoverImageDescriptor(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+
 	}
 	
 	/**

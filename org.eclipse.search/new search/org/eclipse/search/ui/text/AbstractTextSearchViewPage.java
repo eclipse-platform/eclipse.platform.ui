@@ -65,11 +65,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
@@ -439,9 +439,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @param mgr the menu manager representing the context menu
 	 */
 	protected void fillContextMenu(IMenuManager mgr) {
-		mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fCopyToClipboardAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_EDIT, fCopyToClipboardAction);
 		if (getCurrentMatch() != null)
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveCurrentMatch);
 		if (canRemoveMatchesWith(getViewer().getSelection()))
@@ -970,18 +970,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void initActionDefinitionIDs(IWorkbenchWindow window) {
-		fCopyToClipboardAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.COPY));
-		fRemoveSelectedMatches.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.DELETE));
-		fShowNextAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.NEXT));
-		fShowPreviousAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.PREVIOUS));
-		fSelectAllAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.SELECT_ALL));
-	}
-
-	private String getActionDefinitionId(IWorkbenchWindow window, ActionFactory factory) {
-		IWorkbenchAction action= factory.create(window);
-		String id= action.getActionDefinitionId();
-		action.dispose();
-		return id;
+		fCopyToClipboardAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		fShowNextAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
+		fShowPreviousAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+		fSelectAllAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 	}
 
 	/**
@@ -996,7 +989,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
 		tbm.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
 		IActionBars actionBars = getSite().getActionBars();
-		getSite().getWorkbenchWindow();
 		if (actionBars != null) {
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
