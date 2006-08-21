@@ -11,14 +11,14 @@
 <body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
 <font color="#8080ff" size="-2">platform search</font>
 <p>This document lists the breaking API changes that occurred between
-R3.1 and R3.2 and
-how to migrate from the R3.1 API to the R3.2 API.
+R3.2 and R3.3 and
+how to migrate from the R3.2 API to the R3.3 API.
 </p>
 <table border="0" cellpadding="2" cellspacing="5" width="100%">
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>search -
-Breaking API changes from R3.1 to R3.2</b></font> <br>
+Breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
     <tr>
@@ -32,55 +32,17 @@ Breaking API changes from R3.1 to R3.2</b></font> <br>
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>search -
-Non-breaking API changes from R3.1 to R3.2</b></font> <br>
+Non-breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
     <tr>
-      <td>new API added to use the text search programmatically
+      <td>new constant added to org.eclipse.search.ui.IContextMenuConstants
       <ul>
-      <li>TextSearchEngine</li>
-      <li>TextSearchScope</li>
-      <li>TextSearchMatchAccess</li>
-      <li>TextSearchRequestor</li>
-      <li>extension point textSearchQueryProvider</li>
+      <li>GROUP_EDIT</li>
       </ul> </td>
     </tr>
-    <tr>
-      <td>new API on AbstractTextSearchViewPage
-      <ul>
-        <li>handleSearchResultChanged(SearchResultEvent) protected to participate  on search result events</li>
-        <li>getCurrentMatchLocation(Match match)</li>
-        <li>canRemoveMatchesWith(ISelection selection)</li>
-        <li>postEnsureSelection()</li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>new API on NewSearchUI to start a query in a particular view
-      <ul>
-        <li>runQueryInBackground(ISearchQuery query, ISearchResultViewPart view)</li>
-        <li>runQueryInForeground(IRunnableContext context, ISearchQuery query, ISearchResultViewPart view)</li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>new API added to provide a new search query provider
-      <ul>
-        <li>TextSearchQueryProvider</li>
-        <li>FileTextSearchScope</li>
-        <li>extension point textSearchQueryProvider</li>
-      </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>new action group containing the text search actions
-      <ul>
-        <li>TextSearchGroup</li>
-      </ul>
-      </td>
-    </tr>        
    </tbody>
 </table>
-<p> </p>
+<p><a href="./notes/r3.2/apichanges_search.html">Changes from 3.1 to 3.2</a></p>
 </body>
 </html>
