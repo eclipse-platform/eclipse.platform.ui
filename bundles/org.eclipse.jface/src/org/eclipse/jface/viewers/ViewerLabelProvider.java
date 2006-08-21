@@ -294,22 +294,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 	}
 
 	/**
-	 * If you want your tooltip to be using the native Tooltip you can force
-	 * this by returning true from this method. If native tooltips are used only
-	 * the text-value is used all other feature are of custom tooltips are not
-	 * supported.
-	 * 
-	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @param columnIndex
-	 *            the column-index
-	 * @return true if native tooltips should be used
-	 */
-	public boolean useNativeTooltip(Object object, int columnIndex) {
-		return false;
-	}
-
-	/**
 	 * This is the amount the used to control how much the tooltip is shifted
 	 * from the current mouse position
 	 * 
