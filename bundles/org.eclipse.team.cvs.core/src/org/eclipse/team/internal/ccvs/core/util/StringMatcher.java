@@ -11,13 +11,45 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
 import java.util.Vector;
+import java.util.HashMap;
 
 /**
- * A string pattern matcher, suppporting * and ? wildcards.
+ * A StringMatcher contains a glob and matches it against strings.
+ * StringMatcher supports * and ? wildcards and character classes, possibly
+ * negated by !, that contain single characters and/or ranges.
  * Note: code copied from org.eclipse.jdt.internal.core.util.StringMatcher on April 3, 2001
  * (version 0.1 - 010901H18 [rename jbl]).
  */
 public class StringMatcher {
+
+	protected static class CharacterClass {
+		final boolean isNegated;
+		final String text;
+
+		CharacterClass(boolean isNegated, String text) {
+			this.isNegated = isNegated;
+			this.text = text;
+		}
+
+		boolean listed(char c) {
+			for (int i = 0; i < text.length(); ) {
+				if (i + 2 < text.length() && text.charAt(i + 1) == '-') {
+					if (c >= text.charAt(i) && c <= text.charAt(i + 2))
+						return true;
+					i += 3;
+				} else {
+					if (c == text.charAt(i))
+						return true;
+					i++;
+				}
+			}
+			return false;
+		}
+		boolean match(char c) {
+			return listed(c) ^ isNegated;
+		}
+	}
+	
 	protected String fPattern;
 	protected int fLength; // pattern length
 	protected boolean fIgnoreWildCards;
@@ -25,11 +57,12 @@ public class StringMatcher {
 	protected boolean fHasLeadingStar;
 	protected boolean fHasTrailingStar;
 	protected String fSegments[]; //the given pattern is split into * separated segments
+	protected HashMap/*<Integer, CharacterClass>*/ fCharacterClassMaps[];
 
 	/* boundary value beyond which we don't need to search in the text */
 	protected int fBound = 0;
 	
-
+	/** \? in pattern becomes ? in fSegments, while ? in pattern becomes this */
 	protected static final char fSingleWildCard = '\u0000';
 	
 	public static class Position {
@@ -46,20 +79,20 @@ public class StringMatcher {
 			return end;
 		}
 	}
+
 	/**
-	 * Find the first occurrence of the pattern between <code>start</code)(inclusive) 
-	 * and <code>end</code>(exclusive).  
-	 * @param <code>text</code>, the String object to search in 
-	 * @param <code>start</code>, the starting index of the search range, inclusive
-	 * @param <code>end</code>, the ending index of the search range, exclusive
-	 * @return an <code>StringMatcher.Position</code> object that keeps the starting 
+	 * Find the first occurrence of the pattern between <code>start</code> (inclusive) 
+	 * and <code>end</code> (exclusive).  
+	 * @param text the String object to search in 
+	 * @param start the starting index of the search range, inclusive
+	 * @param end the ending index of the search range, exclusive
+	 * @return a <code>StringMatcher.Position</code> object that keeps the starting 
 	 * (inclusive) and ending positions (exclusive) of the first occurrence of the 
 	 * pattern in the specified range of the text; return null if not found or subtext
 	 * is empty (start==end). A pair of zeros is returned if pattern is empty string
 	 * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
 	 * is returned. For a pattern like"*??*" in text "abcdf", (1,3) is returned
 	 */
-
 	public StringMatcher.Position find(String text, int start, int end) {
 		if (fPattern  == null|| text == null)
 			throw new IllegalArgumentException();
@@ -89,7 +122,7 @@ public class StringMatcher {
 		int i; 
 		for (i = 0; i < segCount && curPos < end; ++i) {
 			String current = fSegments[i];
-			int nextMatch = regExpPosIn(text, curPos, end, current);
+			int nextMatch = regExpPosIn(text, curPos, end, current, fCharacterClassMaps[i]);
 			if (nextMatch < 0 )
 				return null;
 			if(i == 0)
@@ -100,25 +133,32 @@ public class StringMatcher {
 			return null;
 		return new Position(matchStart, curPos);
 	}
+
 	/**
-	 * StringMatcher constructor takes in a String object that is a simple 
-	 * pattern which may contain  *  for 0 and many characters and
-	 *  ?  for exactly one character.  
-	 *
-	 * Literal '*' and '?' characters must be escaped in the pattern 
-	 * e.g., "\*" means literal "*", etc.
-	 *
-	 * Escaping any other character (including the escape character itself), 
-	 * just results in that character in the pattern.
-	 * e.g., "\a" means "a" and "\\" means "\"
-	 *
-	 * If invoking the StringMatcher with string literals in Java, don't forget
-	 * escape characters are represented by "\\".
-	 *
-	 * @param aPattern the pattern to match text with
+	 * Constructs a StringMatcher that matches strings against the glob
+	 * <code>aPattern</code>.
+	 * 
+	 * <code>aPattern</code> may contain "?"s, which match single characters,
+	 * "*"s, which match zero or more characters, and character classes in
+	 * "[...]".  All characters other than "*", "?", and "[" match themselves,
+	 * except for "\", which escapes the following character.  For example,
+	 * "\*" matches "*" and "\a" matches "a", while "\\" matches "\".  Remember
+	 * that Java string literals have an additional level of escaping, so a
+	 * string literal for a glob matching a single backslash is written "\\\\".
+	 * 
+	 * "[" begins a character class, which may contain characters and/or ranges;
+	 * "]" ends the class.  A character class matches any single character in
+	 * it; for example, "[ac-e]" matches an "a", a "c", a "d", or an "e".  A
+	 * negated character class begins with "[!" and matches any single character
+	 * not listed.  Inside a character class, "\" loses its special meaning as
+	 * an escape character.  The fancier POSIX requirements for character
+	 * classes are not supported: ranges use Unicode character numbers, and
+	 * (for example) [:alpha:], [.ch.], and [=a=] are not recognized.
+	 * 
+	 * @param aPattern the glob to match text with
 	 * @param ignoreCase if true, case is ignored
-	 * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
-	 * 		  (everything is taken literally).
+	 * @param ignoreWildCards if true, the pattern is taken literally instead of
+	 * as a glob
 	 */
 	public StringMatcher(String aPattern, boolean ignoreCase, boolean ignoreWildCards) {
 		fIgnoreCase = ignoreCase;
@@ -142,9 +182,9 @@ public class StringMatcher {
 	 * Given the starting (inclusive) and the ending (exclusive) poisitions in the   
 	 * <code>text</code>, determine if the given substring matches with aPattern  
 	 * @return true if the specified portion of the text matches the pattern
-	 * @param String <code>text</code>, a String object that contains the substring to match 
-	 * @param int <code>start<code> marks the starting position (inclusive) of the substring
-	 * @param int <code>end<code> marks the ending index (exclusive) of the substring 
+	 * @param text a String object that contains the substring to match 
+	 * @param start marks the starting position (inclusive) of the substring
+	 * @param end marks the ending index (exclusive) of the substring 
 	 */
 	public boolean match(String text, int start, int end) {
 		if (null == text)
@@ -179,7 +219,7 @@ public class StringMatcher {
 
 		/* process first segment */
 		if (!fHasLeadingStar){
-			if(!regExpRegionMatches(text, start, current, 0, segLength)) {
+			if(!regExpRegionMatches(text, start, current, 0, segLength, fCharacterClassMaps[i])) {
 				return false;
 			} else {
 				++i;
@@ -200,7 +240,7 @@ public class StringMatcher {
 				if (currentMatch < 0)
 					return false;
 			} else {
-				currentMatch= regExpPosIn(text, tCurPos, end, current);
+				currentMatch= regExpPosIn(text, tCurPos, end, current, fCharacterClassMaps[i]);
 				if (currentMatch < 0)
 					return false;
 			}
@@ -211,14 +251,14 @@ public class StringMatcher {
 		/* process final segment */
 		if (!fHasTrailingStar && tCurPos != end) {
 			int clen= current.length();
-			return regExpRegionMatches(text, end - clen, current, 0, clen);
+			return regExpRegionMatches(text, end - clen, current, 0, clen, fCharacterClassMaps[i]);
 		}
 		return i == segCount ;
 	}
 	/**
 	 * match the given <code>text</code> with the pattern 
 	 * @return true if matched eitherwise false
-	 * @param <code>text</code>, a String object 
+	 * @param text the String object to match against the pattern 
 	 */
 	public boolean  match(String text) {
 		return match(text, 0, text.length());
@@ -233,49 +273,62 @@ public class StringMatcher {
 		fBound = fLength;
 	}
 	/**
-	 *  This method parses the given pattern into segments separated by wildcard '*' characters.
-	 * @param p, a String object that is a simple regular expression with  *  and/or  ? 
+	 * This method parses the given pattern into segments separated by wildcard '*' characters.
+	 * @param p a String object that is a simple regular expression with *  and/or  ? 
 	 */
 	private void parseWildCards() {
 		if(fPattern.startsWith("*"))//$NON-NLS-1$
 			fHasLeadingStar = true;
-		if(fPattern.endsWith("*")) {//$NON-NLS-1$
-			/* make sure it's not an escaped wildcard */
-			if (fLength > 1 && fPattern.charAt(fLength - 2) != '\\') {
-				fHasTrailingStar = true;
-			}
-		}
 
 		Vector temp = new Vector();
+		HashMap/*<Integer, CharacterClass>*/ segmentCCs = null;
+		Vector/*<HashMap<Integer, CharacterClass>>*/ allCCs = new Vector();
 
 		int pos = 0;
 		StringBuffer buf = new StringBuffer();
 		while (pos < fLength) {
 			char c = fPattern.charAt(pos++);
+			fHasTrailingStar = false;
 			switch (c) {
 				case '\\':
 					if (pos >= fLength) {
 						buf.append(c);
 					} else {
-						char next = fPattern.charAt(pos++);
-						/* if it's an escape sequence */
-						if (next == '*' || next == '?' || next == '\\') {
-							buf.append(next);
-						} else {
-							/* not an escape sequence, just insert literally */
-							buf.append(c);
-							buf.append(next);
-						}
+						c = fPattern.charAt(pos++);
+						buf.append(c);
 					}
 				break;
 				case '*':
+					fHasTrailingStar = true;
 					if (buf.length() > 0) {
 						/* new segment */
 						temp.addElement(buf.toString());
+						allCCs.addElement(segmentCCs);
 						fBound += buf.length();
 						buf.setLength(0);
+						segmentCCs = null;
 					}
 				break;
+				case '[':
+					if (segmentCCs == null)
+						segmentCCs = new HashMap/*<Integer, CharacterClass>*/();
+					if (pos >= fLength) {
+						// Unterminated; take [ literally for lack of anything better to do
+						buf.append(c);
+						break;
+					}
+					boolean negated = (fPattern.charAt(pos) == '!');
+					int beginPos = (negated ? pos + 1 : pos);
+					int endPos = fPattern.indexOf(']', beginPos + 1);
+					if (endPos == -1) {
+						// Unterminated; take [ literally for lack of anything better to do
+						buf.append(c);
+						break;
+					}
+					CharacterClass cc = new CharacterClass(negated, fPattern.substring(beginPos, endPos));
+					segmentCCs.put(new Integer(buf.length()), cc);
+					pos = endPos + 1;
+					/* fall through; fSingleWildCard can also represent a character class */
 				case '?':
 					/* append special character representing single match wildcard */
 					buf.append(fSingleWildCard);
@@ -288,49 +341,38 @@ public class StringMatcher {
 		/* add last buffer to segment list */
 		if (buf.length() > 0) {
 			temp.addElement(buf.toString());
+			allCCs.addElement(segmentCCs);
 			fBound += buf.length();
 		}
 			
 		fSegments = new String[temp.size()];
 		temp.copyInto(fSegments);
+		fCharacterClassMaps = new HashMap[allCCs.size()];
+		allCCs.copyInto(fCharacterClassMaps);
 	}
 	/** 
-	 * @param <code>text</code>, a string which contains no wildcard
-	 * @param <code>start</code>, the starting index in the text for search, inclusive
-	 * @param <code>end</code>, the stopping point of search, exclusive
+	 * @param text a string which contains no wildcard
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end the stopping point of search, exclusive
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	protected int posIn(String text, int start, int end) {//no wild card in pattern
-		int max = end - fLength;
-		
-		if (!fIgnoreCase) {
-			int i = text.indexOf(fPattern, start);
-			if (i == -1 || i > max)
-				return -1;
-			return i;
-		}
-		
-		for (int i = start; i <= max; ++i) {
-			if (text.regionMatches(true, i, fPattern, 0, fLength))
-				return i;
-		}
-		
-		return -1;
+		return textPosIn(text, start, end, fPattern);
 	}
 	/** 
-	 * @param <code>text</code>, a simple regular expression that may only contain '?'(s)
-	 * @param <code>start</code>, the starting index in the text for search, inclusive
-	 * @param <code>end</code>, the stopping point of search, exclusive
-	 * @param <code>p</code>, a simple regular expression that may contains '?'
-	 * @param <code>caseIgnored</code>, wether the pattern is not casesensitive
+	 * @param text a simple regular expression that may only contain '?'(s)
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end the stopping point of search, exclusive
+	 * @param p a simple regular expression that may contains '?'
+	 * @param caseIgnored whether the pattern is not casesensitive
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
-	protected int regExpPosIn(String text, int start, int end, String p) {
+	protected int regExpPosIn(String text, int start, int end, String p, HashMap/*<Integer, CharacterClass>*/ ccMap) {
 		int plen = p.length();
 		
 		int max = end - plen;
 		for (int i = start; i <= max; ++i) {
-			if (regExpRegionMatches(text, i, p, 0, plen))
+			if (regExpRegionMatches(text, i, p, 0, plen, ccMap))
 				return i;
 		}
 		return -1;
@@ -338,14 +380,16 @@ public class StringMatcher {
 	/**
 	 * 
 	 * @return boolean
-	 * @param <code>text</code>, a String to match
-	 * @param <code>start</code>, int that indicates the starting index of match, inclusive
-	 * @param <code>end</code> int that indicates the ending index of match, exclusive
-	 * @param <code>p</code>, String,  String, a simple regular expression that may contain '?'
-	 * @param <code>ignoreCase</code>, boolean indicating wether code>p</code> is case sensitive
+	 * @param text a String to match
+	 * @param start int that indicates the starting index of match, inclusive
+	 * @param end int that indicates the ending index of match, exclusive
+	 * @param p String, a simple regular expression that may contain '?'
+	 * @param ignoreCase boolean indicating whether <code>p</code> is case sensitive
+	 * @param ccMap maps each index of p at which fSingleWildCard occurs (as an 
+	 * Integer) to CharacterClass data, or null for a plain old ?
 	 */
-	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen) {
-		while (plen-- > 0) {
+	protected boolean regExpRegionMatches(String text, int tStart, String p, int pStart, int plen, HashMap/*<Integer, CharacterClass>*/ ccMap) {
+		for (int ppos = 0; plen-- > 0; ppos++) {
 			char tchar = text.charAt(tStart++);
 			char pchar = p.charAt(pStart++);
 
@@ -353,7 +397,13 @@ public class StringMatcher {
 			if (!fIgnoreWildCards) {
 				/* skip single wild cards */
 				if (pchar == fSingleWildCard) {
-					continue;
+					if (ccMap == null)
+						continue;
+					CharacterClass cc = (CharacterClass) ccMap.get(new Integer(ppos));
+					if (cc == null || cc.match(tchar))
+						continue;
+					else
+						return false;
 				}
 			}
 			if (pchar == tchar)
@@ -368,11 +418,11 @@ public class StringMatcher {
 		return true;
 	}
 	/** 
-	 * @param <code>text</code>, the string to match
-	 * @param <code>start</code>, the starting index in the text for search, inclusive
-	 * @param <code>end</code>, the stopping point of search, exclusive
-	 * @param code>p</code>, a string that has no wildcard
-	 * @param <code>ignoreCase</code>, boolean indicating wether code>p</code> is case sensitive
+	 * @param text the string to match
+	 * @param start the starting index in the text for search, inclusive
+	 * @param end the stopping point of search, exclusive
+	 * @param p a string that has no wildcard
+	 * @param ignoreCase boolean indicating whether p is case sensitive
 	 * @return the starting index in the text of the pattern , or -1 if not found 
 	 */
 	protected int textPosIn(String text, int start, int end, String p) { 
