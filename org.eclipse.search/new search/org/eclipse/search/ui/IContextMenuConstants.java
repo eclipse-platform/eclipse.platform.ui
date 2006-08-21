@@ -107,8 +107,8 @@ public interface IContextMenuConstants {
 	public static final String GROUP_PROPERTIES= "group.properties"; //$NON-NLS-1$
 
 	/**
-	 * Pop-up menu: name of group for properties actions (value <code>"group.edit"</code>).
-	 * 	@since 3.2
+	 * Pop-up menu: name of group for cut/copy/paste actions (value <code>"group.edit"</code>).
+	 * 	@since 3.3
 	 */
 	public static final String GROUP_EDIT = "group.edit"; //$NON-NLS-1$ 
 	
