@@ -14,6 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 
 public class MarkerSnapshotReader {
 	protected Workspace workspace;
@@ -33,7 +34,7 @@ public class MarkerSnapshotReader {
 			case 2 :
 				return new MarkerSnapshotReader_2(workspace);
 			default :
-				throw new IOException(Messages.resources_format);
+				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
 		}
 	}
 

@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.DataInputStream;
 import java.io.IOException;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.osgi.util.NLS;
 
 public class SyncInfoSnapReader {
 	protected Workspace workspace;
@@ -32,7 +33,7 @@ public class SyncInfoSnapReader {
 			case 3 :
 				return new SyncInfoSnapReader_3(workspace, synchronizer);
 			default :
-				throw new IOException(Messages.resources_format);
+				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
 		}
 	}
 

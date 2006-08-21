@@ -44,7 +44,7 @@ public class SyncInfoReader {
 			case 3 :
 				return new SyncInfoReader_3(workspace, synchronizer);
 			default :
-				throw new IOException(Messages.resources_format);
+				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
 		}
 	}
 

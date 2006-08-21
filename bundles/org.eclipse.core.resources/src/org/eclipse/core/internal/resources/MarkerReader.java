@@ -14,6 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * This class is used to read markers from disk. Subclasses implement
@@ -39,7 +40,7 @@ public class MarkerReader {
 			case 3 :
 				return new MarkerReader_3(workspace);
 			default :
-				throw new IOException(Messages.resources_format);
+				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
 		}
 	}
 

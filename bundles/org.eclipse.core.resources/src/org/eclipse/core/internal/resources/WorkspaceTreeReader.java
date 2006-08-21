@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Default tree reader that does not read anything. This is used in cases
@@ -35,7 +36,8 @@ public abstract class WorkspaceTreeReader {
 				return new WorkspaceTreeReader_2(workspace);
 			default :
 				// Unknown tree version - fail to read the tree
-				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, Messages.resources_format, null);
+				String msg = NLS.bind(Messages.resources_format, new Integer(version));
+				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
 	}
 
