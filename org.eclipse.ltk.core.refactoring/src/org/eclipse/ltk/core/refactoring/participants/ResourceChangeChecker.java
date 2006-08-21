@@ -89,15 +89,24 @@ public class ResourceChangeChecker implements IConditionChecker {
 		final List result= new ArrayList();
 		root.accept(new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) throws CoreException {
-				final int kind= delta.getKind();
 				final IResource resource= delta.getResource();
-				if ((kind & IResourceDelta.CHANGED) != 0 && resource.getType() == IResource.FILE) {
-					result.add(resource);
+				if (resource.getType() == IResource.FILE) {
+					final int kind= delta.getKind();
+					if (isSet(kind, IResourceDelta.CHANGED)) {
+						result.add(resource);
+					} else if (isSet(kind, IResourceDelta.ADDED) && isSet(delta.getFlags(), IResourceDelta.CONTENT | IResourceDelta.MOVED_FROM)) {
+						final IFile movedFrom= resource.getWorkspace().getRoot().getFile(delta.getMovedFromPath());
+						result.add(movedFrom);
+					}
 				}
 				return true;
 			}
 		});
 		return (IFile[]) result.toArray(new IFile[result.size()]);
+	}
+		
+	private static final boolean isSet(int flags, int flag) {
+		return (flags & flag) == flag;
 	}
 	
 	private static RefactoringStatus createFrom(IStatus status) {
