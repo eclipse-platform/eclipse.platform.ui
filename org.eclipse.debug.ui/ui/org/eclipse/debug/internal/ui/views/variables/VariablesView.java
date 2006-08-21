@@ -529,6 +529,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		super.dispose();
 	}
 
+	/**
+	 * Sets the input to the viewer
+	 * @param context the object context
+	 */
 	protected void setViewerInput(Object context) {
 		
 		getDetailViewer().setEditable(context != null);
@@ -594,6 +598,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return (AbstractViewerState) fSelectionStates.get(generateKey(input));
 	}
     
+    /**
+     * Restores the state of the viewer
+     */
     protected void restoreState() {
         VariablesViewer viewer = (VariablesViewer) getViewer();
         if (viewer != null) {
@@ -717,19 +724,28 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
         	}
         }
         IMemento mem = getMemento();
+        // check the weights to makes sure they are valid -- bug 154025
+        setLastSashWeights(DEFAULT_SASH_WEIGHTS);
 		if (mem != null) {
 			Integer sw = mem.getInteger(SASH_VIEW_PART);
 			if(sw != null) {
-				setLastSashWeights(new int[] {sw.intValue(), mem.getInteger(SASH_DETAILS_PART).intValue()});
-			}
-			else {
-				setLastSashWeights(DEFAULT_SASH_WEIGHTS);
+				int view = sw.intValue();
+				sw = mem.getInteger(SASH_DETAILS_PART);
+				if(sw != null) {
+					int details = sw.intValue();
+					if(view > -1 & details > -1) {
+						setLastSashWeights(new int[] {view, details});
+					}
+				}
 			}
 		}
 		site.getWorkbenchWindow().addPerspectiveListener(this);
     }
     
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+     */
     public void partDeactivated(IWorkbenchPart part) {
 		String id = part.getSite().getId();
 		if (id.equals(getSite().getId())) {
@@ -756,6 +772,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		super.partDeactivated(part);
 	}
 
+	/**
+	 * Saves the current state of the viewer
+	 * @param memento the memento to write the viewer state into
+	 */
 	public void saveViewerState(IMemento memento) {
 		if (fSashForm != null && !fSashForm.isDisposed()) {
 	        int[] weights = fSashForm.getWeights();
@@ -765,6 +785,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getVariablesViewer().saveState(memento);
 	}
 
+	/**
+	 * @return the pref key for the variables view details pane
+	 */
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION;
 	}
@@ -879,6 +902,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		DebugUIPlugin.getDefault().getPreferenceStore().setValue(getDetailPanePreferenceKey(), orientation);
 	}
 	
+	/**
+	 * Hides the details pane
+	 */
 	private void hideDetailPane() {
 		if (fToggledDetailOnce) {
 			setLastSashWeights(fSashForm.getWeights());
@@ -886,12 +912,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fSashForm.setMaximizedControl(getViewer().getControl());		
 	}
 	
+	/**
+	 * Shows the details pane 
+	 */
 	private void showDetailPane() {
 		fSashForm.setMaximizedControl(null);
 		fSashForm.setWeights(getLastSashWeights());
 		populateDetailPane();
 		revealTreeSelection();
-		fToggledDetailOnce = true;		
+		fToggledDetailOnce = true;
 	}
 
 	/**
@@ -919,11 +948,18 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	
 	/**
 	 * Return the relative weights that were in effect the last time both panes were
-	 * visible in the sash form, or the default weights if both panes have not yet been
-	 * made visible.
+	 * visible in the sash form, or the default weights if:
+	 * <ul>
+	 * <li> both panes have not yet been made visible</li>
+	 * <li> one of the values persisted before is an invalid value</li>
+	 * </ul>
 	 */
 	protected int[] getLastSashWeights() {
 		if (fLastSashWeights == null) {
+			fLastSashWeights = DEFAULT_SASH_WEIGHTS;
+		}
+		//check the weights to makes sure they are valid -- bug 154025
+		else if(fLastSashWeights[0] < 0 || fLastSashWeights[1] < 0) {
 			fLastSashWeights = DEFAULT_SASH_WEIGHTS;
 		}
 		return fLastSashWeights;
