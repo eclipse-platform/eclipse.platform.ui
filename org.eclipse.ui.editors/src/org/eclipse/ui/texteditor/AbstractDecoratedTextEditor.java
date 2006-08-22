@@ -47,6 +47,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
@@ -941,6 +943,24 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		setAction(ITextEditorActionConstants.REVISION_HIDE_INFO, action);
 
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.CycleRevisionRenderingAction.") { //$NON-NLS-1$
+			public void run() {
+				final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
+				IPreferenceStore store= EditorsUI.getPreferenceStore();
+				String current= store.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
+				for (int i= 0; i < modes.length; i++) {
+					String mode= modes[i].name();
+					if (mode.equals(current)) {
+						int nextIndex= (i + 1) % modes.length;
+						RenderingMode nextMode= modes[nextIndex];
+						store.setValue(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, nextMode.name());
+					}
+				}
+			}
+		};
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVISION_RENDERING_CYCLE);
+		setAction(ITextEditorActionConstants.REVISION_RENDERING_CYCLE, action);
+		
 		final Shell shell;
 		if (getSourceViewer() != null)
 			shell= getSourceViewer().getTextWidget().getShell();
@@ -1253,6 +1273,25 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		// revision info
 		if (fLineColumn != null && fLineColumn.isShowingRevisionInformation()) {
+			IMenuManager revisionMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor__revision_colors_menu);
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, revisionMenu);
+			
+			String[] labels= { TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_date, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer_and_date };
+			final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
+			String current= EditorsUI.getPreferenceStore().getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
+			for (int i= 0; i < modes.length; i++) {
+				final String mode= modes[i].name();
+				IAction action= new Action(labels[i], IAction.AS_RADIO_BUTTON) {
+					public void run() {
+						// set preference globally, LineNumberColumn reacts on preference change
+						IPreferenceStore store= EditorsUI.getPreferenceStore();
+						store.setValue(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, mode);
+					}
+				};
+				action.setChecked(mode.equals(current));
+				revisionMenu.add(action);
+			}
+			
 			IAction hideRevisionInfoAction= getAction(ITextEditorActionConstants.REVISION_HIDE_INFO);
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, hideRevisionInfoAction);
 		}

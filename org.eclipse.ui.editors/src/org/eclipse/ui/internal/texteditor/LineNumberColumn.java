@@ -24,7 +24,9 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -243,6 +245,7 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 		updateLineNumbersVisibility(fDelegate);
 		updateQuickDiffVisibility(fDelegate);
 		updateCharacterMode(store, fDelegate);
+		updateRevisionRenderingMode(store, fDelegate);
 
 		Map annotationPrefs= getAnnotationPreferenceMap();
 		final AnnotationPreference changedPref= (AnnotationPreference) annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
@@ -285,6 +288,12 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 			}
 		});
 
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				updateRevisionRenderingMode(store, fDelegate);
+			}
+		});
+		
 		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				updateQuickDiffVisibility(fDelegate);
@@ -380,6 +389,19 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 	private void updateLineNumbersVisibility(IVerticalRulerColumn column) {
 		if (column instanceof LineNumberChangeRulerColumn)
 			((LineNumberChangeRulerColumn) column).showLineNumbers(getLineNumberPreference());
+	}
+	
+	private void updateRevisionRenderingMode(IPreferenceStore store, IVerticalRulerColumn column) {
+		if (column instanceof IRevisionRulerColumnExtension) {
+			String option= store.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
+			RenderingMode[] modes= { IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE };
+			for (int i= 0; i < modes.length; i++) {
+				if (modes[i].name().equals(option)) {
+					((IRevisionRulerColumnExtension) column).setRevisionRenderingMode(modes[i]);
+					return;
+				}
+			}
+		}
 	}
 	
 	private void updateQuickDiffVisibility(IVerticalRulerColumn column) {
@@ -704,8 +726,18 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 	 * @return the revision selection provider
 	 */
 	public ISelectionProvider getRevisionSelectionProvider() {
-		if (fDelegate instanceof LineNumberChangeRulerColumn)
-			return ((LineNumberChangeRulerColumn) fDelegate).getRevisionSelectionProvider();
+		if (fDelegate instanceof IRevisionRulerColumnExtension)
+			return ((IRevisionRulerColumnExtension) fDelegate).getRevisionSelectionProvider();
 		return null;
+	}
+	
+	/**
+	 * Changes the rendering mode and triggers redrawing if needed.
+	 *  
+	 * @param mode the rendering mode
+	 */
+	public void setRevisionRenderingMode(RenderingMode mode) {
+		if (fDelegate instanceof IRevisionRulerColumnExtension)
+			((IRevisionRulerColumnExtension) fDelegate).setRevisionRenderingMode(mode);
 	}
 }

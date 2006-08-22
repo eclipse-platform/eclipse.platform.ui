@@ -54,8 +54,10 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -104,16 +106,16 @@ public final class RevisionPainter {
 		 * revision color perceived as light such as yellow will be darkened, while colors perceived
 		 * as dark such as blue will be lightened up.
 		 */
-		private static final float AVERAGE_INTENSITY= 0.6f;
+		private static final float AVERAGE_INTENSITY= 0.5f;
 		/**
 		 * The maximum shading in [0, 1] - this is the shade that the most recent revision will
 		 * receive.
 		 */
-		private static final float MAX_SHADING= 0.8f;
+		private static final float MAX_SHADING= 0.7f;
 		/**
 		 * The minimum shading in [0, 1] - this is the shade that the oldest revision will receive.
 		 */
-		private static final float MIN_SHADING= 0.3f;
+		private static final float MIN_SHADING= 0.2f;
 		/**
 		 * The shade for the focus boxes.
 		 */
@@ -128,7 +130,7 @@ public final class RevisionPainter {
 		 */
 		private final Map fColors= new HashMap();
 		/**
-		 * The st
+		 * The stored focus colors.
 		 */
 		private final Map fFocusColors= new HashMap();
 
@@ -153,19 +155,46 @@ public final class RevisionPainter {
 			fRevisions= revisions;
 		}
 
-		private RGB adaptColorToAge(Revision revision, RGB rgb, boolean focus) {
-			long age= computeAge(revision);
-			// relative age: newest is 0, oldest is 1
-			// if there is only one revision, use an intermediate value to avoid extreme coloring
-			int size= fRevisions.size();
-			int index= fRevisions.indexOf(new Long(age));
-			float relativeAge;
-			if (index == -1 || size <= 1)
-				relativeAge= 0.5f;
-			else
-				relativeAge= (float) index / (size - 1);
+		private RGB adaptColor(Revision revision, boolean focus) {
+			RGB rgb;
+			float scale;
+			if (fRenderingMode == IRevisionRulerColumnExtension.AGE) {
+				int index= computeAgeIndex(revision);
+				if (index == -1 || fRevisions.size() < 2) {
+					rgb= getBackground().getRGB();
+				} else {
+					// gradient from intense red for most recent to faint yellow for oldest
+					RGB[] gradient= Colors.palette(new RGB(0f, 1f, 1f), new RGB(60f, 0.3f, 1f), fRevisions.size());
+					rgb= gradient[gradient.length - index - 1];
+				}
+				scale= 0.99f;
+			} else if (fRenderingMode == IRevisionRulerColumnExtension.COMMITTER) {
+				rgb= revision.getColor();
+				rgb= Colors.adjustBrightness(rgb, AVERAGE_INTENSITY);
+				scale= 0.6f;
+			} else if (fRenderingMode == IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE) {
+				rgb= revision.getColor();
+				rgb= Colors.adjustBrightness(rgb, AVERAGE_INTENSITY);
+				int index= computeAgeIndex(revision);
+				int size= fRevisions.size();
+				// relative age: newest is 0, oldest is 1
+				// if there is only one revision, use an intermediate value to avoid extreme coloring
+				if (index == -1 || size < 2)
+					scale= 0.5f;
+				else
+					scale= (float) index / (size - 1);
+			} else {
+				Assert.isTrue(false);
+				return null; // dummy
+			}
+			rgb= getShadedColor(rgb, scale, focus);
+			return rgb;
+		}
 
-			return getShadedColor(rgb, 1 - relativeAge, focus);
+		private int computeAgeIndex(Revision revision) {
+			long age= computeAge(revision);
+			int index= fRevisions.indexOf(new Long(age));
+			return index;
 		}
 		
 		private RGB getShadedColor(RGB color, float scale, boolean focus) {
@@ -175,150 +204,22 @@ public final class RevisionPainter {
 			
 			// focus coloring
 			if (focus) {
-				scale-= FOCUS_COLOR_SHADING;
-				if (scale < 0) {
+				scale+= FOCUS_COLOR_SHADING;
+				if (scale > 1) {
 					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
-					scale= -scale;
+					scale= 2 - scale;
 				}
 			}
 			
-			color= normalizeColor(color);
-
 			// normalize to lie within [MIN_SHADING, MAX_SHADING]
-			scale= (MAX_SHADING - MIN_SHADING) * scale + MIN_SHADING;
+			// use more intense colors if the ruler is narrow (i.e. not showing line numbers)
+			boolean makeIntense= getWidth() <= 10;
+			float intensityShift= makeIntense ? 0.3f : 0f;
+			float max= MAX_SHADING + intensityShift;
+			float min= MIN_SHADING + intensityShift;
+			scale= (max - min) * scale + min;
 
-			return interpolate(color, background, scale);
-		}
-
-		/**
-		 * Normalizes a color in its perceived lightness.
-		 * 
-		 * @param color the color to normalize
-		 * @return a normalized version of <code>color</code>
-		 */
-		private RGB normalizeColor(RGB color) {
-			/*
-			 * Normalize the gray value (this helps e.g. yellow colors to not look fainter than red
-			 * colors). The gray level of the resulting color shall lie within [MIN_SHADING,
-			 * MAX_SHADING].
-			 */
-			float[] hsi= toHSI(color);
-			float psychoFactor= AVERAGE_INTENSITY - grayLevel(color);
-			float weight= 0.4f; // found by trial and error
-			hsi[2]= Math.max(0, Math.min(1.0f, hsi[2] + psychoFactor * weight));
-			color= fromHSI(hsi);
-			return color;
-		}
-		
-		/**
-		 * Returns the human-perceived gray value in which the given color would be drawn in
-		 * gray-scale in [0.0, 1.0].
-		 * 
-		 * @param rgb the color
-		 * @return the gray-scale value
-		 */
-		private float grayLevel(RGB rgb) {
-			if (rgb.red == rgb.green && rgb.green == rgb.blue)
-				return rgb.red;
-//			return Math.min(1f, (0.299f * rgb.red + 0.587f * rgb.green + 0.114f * rgb.blue + 0.5f) / 255f);
-			return Math.min(1f, (0.2126f * rgb.red + 0.7152f * rgb.green + 0.0722f * rgb.blue + 0.5f) / 255f);
-		}
-
-		/**
-		 * Converts an {@link RGB} to HSI.
-		 * 
-		 * @param color the color to convert
-		 * @return the HSI float array of length 3
-		 */
-		private float[] toHSI(RGB color) {
-			float r = color.red / 255f;
-			float g = color.green / 255f;
-			float b = color.blue / 255f;
-			float max = Math.max(Math.max(r, g), b);
-			float min = Math.min(Math.min(r, g), b);
-			float delta = max - min;
-			float maxPlusMin= max + min;
-			float intensity = maxPlusMin / 2;
-			float saturation= intensity < 0.5 ? delta / maxPlusMin : delta / (2 - maxPlusMin);
-			
-			float hue = 0;
-			if (delta != 0) {
-				if (r == max) {
-					hue = (g  - b) / delta;
-				} else {
-					if (g == max) {
-						hue = 2 + (b - r) / delta;	
-					} else {
-						hue = 4 + (r - g) / delta;
-					}
-				}
-				hue *= 60;
-				if (hue < 0) hue += 360;
-			}
-			return new float[] {hue, saturation, intensity};
-		}
-		
-		/**
-		 * Converts a HSI float array of length 3 to an RGB.
-		 * 
-		 * @param hsi the HSI values
-		 * @return the RGB corresponding to the HSI spec
-		 */
-		private RGB fromHSI(float[] hsi) {
-			float r, g, b;
-			float hue= hsi[0];
-			float saturation= hsi[1];
-			float intensity= hsi[2];
-			if (saturation == 0) {
-				r = g = b = intensity; 
-			} else {
-				float temp2= intensity < 0.5f ? intensity * (1.0f + saturation) : (intensity + saturation) - (intensity * saturation);
-				float temp1= 2f * intensity - temp2;
-				if (hue == 360) hue = 0;
-				hue /= 360;
-				
-				r= hue2RGB(temp1, temp2, hue + 1f/3f);
-				g= hue2RGB(temp1, temp2, hue);
-				b= hue2RGB(temp1, temp2, hue - 1f/3f);
-			}
-			
-			int red = (int)(r * 255 + 0.5);
-			int green = (int)(g * 255 + 0.5);
-			int blue = (int)(b * 255 + 0.5);	
-			return new RGB(red, green, blue);
-		}
-		
-		float hue2RGB(float t1, float t2, float hue) {
-			if (hue < 0)
-				hue += 1;
-			if (hue > 1)
-				hue -= 1;
-			if (6f * hue < 1)
-				return t1 +(t2 - t1) * 6f * hue;
-			if (2f * hue < 1)
-				return t2;
-			if (3f * hue < 2)
-				return t1 + (t2 - t1) * (2f/3f - hue) * 6f;
-			return t1;
-		}
-
-		/**
-		 * Returns a specification of a color that lies between the given foreground and background
-		 * color using the given scale factor. A <code>scale</code> factor of 1.0 will produce a
-		 * color equal to <code>fg</code>, while a <code>scale</code> of 0.0 will produce one
-		 * equal to <code>bg</code>.
-		 * 
-		 * @param fg the foreground color
-		 * @param bg the background color
-		 * @param scale the scale factor
-		 * @return the interpolated color
-		 */
-		private RGB interpolate(RGB fg, RGB bg, float scale) {
-			return new RGB(
-				(int) ((1.0f - scale) * fg.red + scale * bg.red),
-				(int) ((1.0f - scale) * fg.green + scale * bg.green),
-				(int) ((1.0f - scale) * fg.blue + scale * bg.blue)
-			);
+			return Colors.blend(background, color, scale);
 		}
 
 		private long computeAge(Revision revision) {
@@ -335,10 +236,11 @@ public final class RevisionPainter {
 		public RGB getColor(Revision revision, boolean focus) {
 			Map map= focus ? fFocusColors : fColors;
 			RGB color= (RGB) map.get(revision);
-			if (color == null) {
-				color= adaptColorToAge(revision, revision.getColor(), focus);
-				map.put(revision, color);
-			}
+			if (color != null)
+				return color;
+			
+			color= adaptColor(revision, focus);
+			map.put(revision, color);
 			return color;
 		}
 	}
@@ -637,6 +539,10 @@ public final class RevisionPainter {
 	 * otherwise.
 	 */
 	private boolean fIsOverviewShowing= false;
+	/**
+	 * The revision rendering mode.
+	 */
+	private RenderingMode fRenderingMode= IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE;
 
 	/**
 	 * Creates a new revision painter for a vertical ruler column.
@@ -663,6 +569,21 @@ public final class RevisionPainter {
 		updateFocusRegion(null);
 		fColorTool.setInfo(info);
 		postRedraw();
+	}
+	
+	/**
+	 * Changes the rendering mode and triggers redrawing if needed.
+	 *  
+	 * @param renderingMode the rendering mode
+	 * @since 3.3
+	 */
+	public void setRenderingMode(RenderingMode renderingMode) {
+		Assert.isLegal(renderingMode != null);
+		if (fRenderingMode != renderingMode) {
+			fRenderingMode= renderingMode;
+			fColorTool.setInfo(fRevisionInfo);
+			postRedraw();
+		}
 	}
 
 	/**

@@ -17,8 +17,18 @@ import org.eclipse.jface.text.source.IVerticalRulerInfoExtension;
 /**
  * A vertical ruler column capable of displaying revision (annotate) information.
  *
+ * In order to provide backward compatibility for clients of
+ * <code>IRevisionRulerColumn</code>, extension interfaces are used as a means
+ * of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link IRevisionRulerColumnExtension} since
+ * version 3.3 allowing to register a selection listener on revisions and a configurable rendering mode.
+ * </li>
+ * </ul>
+ * 
  * @since 3.2
  * @see RevisionInformation
+ * @see IRevisionRulerColumnExtension
  */
 public interface IRevisionRulerColumn extends IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	/**

@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
@@ -29,7 +30,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  *
  * @since 3.0
  */
-public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn, IRevisionRulerColumn {
+public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn, IRevisionRulerColumn, IRevisionRulerColumnExtension {
 	/** The ruler's annotation model. */
 	private IAnnotationModel fAnnotationModel;
 	/** <code>true</code> if changes should be displayed using character indications instead of background colors. */
@@ -240,17 +241,23 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		fRevisionPainter.setRevisionInformation(info);
 	}
 
-	/**
-     * Returns the revision selection provider.
-     * 
-     * @return the revision selection provider
+    /*
+     * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#getRevisionSelectionProvider()
      * @since 3.2
      */
     public ISelectionProvider getRevisionSelectionProvider() {
 	    return fRevisionPainter.getRevisionSelectionProvider();
     }
-    
-    /**
+
+    /*
+     * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#setRenderingMode(org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode)
+     * @since 3.3
+     */
+    public void setRevisionRenderingMode(RenderingMode renderingMode) {
+		fRevisionPainter.setRenderingMode(renderingMode);
+	}
+
+	/**
 	 * Sets the line number display mode.
 	 * 
 	 * @param showNumbers <code>true</code> to show numbers, <code>false</code> to only show
@@ -273,7 +280,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
     public int getWidth() {
     	if (fShowNumbers || fCharacterDisplay)
     		return super.getWidth();
-    	return 5;
+    	return 10;
     }
 
     /**

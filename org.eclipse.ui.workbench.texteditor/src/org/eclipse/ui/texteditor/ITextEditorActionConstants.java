@@ -576,12 +576,19 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.2
 	 */
 	String REVISION_HIDE_INFO= "Revision.HideInfo"; //$NON-NLS-1$
-	
+
 	/**
 	 * Name of the quick assist action
 	 * Value: <code>"QuickAssist"</code>
 	 * @since 3.2
 	 */
 	String QUICK_ASSIST= "QuickAssist"; //$NON-NLS-1$
-	
+
+	/**
+	 * Name of the action for cycling through the revision rendering modes.
+	 * Value: <code>"Revision.Rendering.Cycle"</code>
+	 * @since 3.3
+	 */
+	String REVISION_RENDERING_CYCLE= "Revision.Rendering.Cycle"; //$NON-NLS-1$
+
 }

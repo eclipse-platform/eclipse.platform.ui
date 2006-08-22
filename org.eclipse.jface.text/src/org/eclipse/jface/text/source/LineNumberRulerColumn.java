@@ -12,6 +12,8 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -489,13 +491,14 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			fIndentation= new int[fCachedNumberOfDigits + 1];
 
-			Float number= new Float(Math.pow(10, fCachedNumberOfDigits) - 1);
-			Point p= gc.stringExtent(Integer.toString(number.intValue()));
+			char[] nines= new char[fCachedNumberOfDigits];
+			Arrays.fill(nines, '9');
+			String nineString= new String(nines);
+			Point p= gc.stringExtent(nineString);
 			fIndentation[0]= p.x;
 
 			for (int i= 1; i <= fCachedNumberOfDigits; i++) {
-				number= new Float(Math.pow(10, i) - 1);
-				p= gc.stringExtent(Integer.toString(number.intValue()));
+				p= gc.stringExtent(nineString.substring(0, i));
 				fIndentation[i]= fIndentation[0] - p.x;
 			}
 

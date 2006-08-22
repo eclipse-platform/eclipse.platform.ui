@@ -35,11 +35,12 @@ public final class ChangeRegion {
 	 * 
 	 * @param revision the revision of the new region
 	 * @param lines the line range of the new region
+	 * @throws IndexOutOfBoundsException if the line range is not well-formed
 	 */
-	public ChangeRegion(Revision revision, ILineRange lines) {
+	public ChangeRegion(Revision revision, ILineRange lines) throws IndexOutOfBoundsException {
 		Assert.isLegal(revision != null);
 		Assert.isLegal(lines != null);
-		fLines= lines;
+		fLines= Range.copy(lines);
 		fRevision=revision;
 		clearDiff();
 	}

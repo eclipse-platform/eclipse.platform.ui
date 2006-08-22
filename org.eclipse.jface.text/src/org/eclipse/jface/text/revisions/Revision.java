@@ -45,8 +45,9 @@ public abstract class Revision {
 	 * (not -1).
 	 * 
 	 * @param range a line range that was changed with this revision
+	 * @throws IndexOutOfBoundsException if the line range is empty or has a negative start line
 	 */
-	public final void addRange(ILineRange range) {
+	public final void addRange(ILineRange range) throws IndexOutOfBoundsException {
 		fChangeRegions.add(new ChangeRegion(this, range));
 	}
 

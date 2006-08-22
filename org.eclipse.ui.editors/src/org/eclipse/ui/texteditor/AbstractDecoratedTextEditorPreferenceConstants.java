@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
@@ -368,6 +369,20 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_RULER_COLUMNS= "rulerColumns"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls the rendering mode of the revision ruler.
+	 * <p>
+	 * Value is of type <code>String</code> and should contains the name of a
+	 * {@link IRevisionRulerColumnExtension.RenderingMode}.
+	 * </p>
+	 * <p>
+	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String REVISION_RULER_RENDERING_MODE= "revisionRulerRenderingMode"; //$NON-NLS-1$
+
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -430,6 +445,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		
 		PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, new RGB(185, 176 , 180));
 		store.setDefault(EDITOR_RULER_COLUMNS, ""); //$NON-NLS-1$
+		store.setDefault(REVISION_RULER_RENDERING_MODE, IRevisionRulerColumnExtension.AGE.name());
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

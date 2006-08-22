@@ -508,4 +508,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.1
 	 */
 	String HIPPIE_COMPLETION= "org.eclipse.ui.edit.text.hippieCompletion"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the command to cycle the revision rendering mode.
+	 * Value: <code>"org.eclipse.ui.editors.revisions.rendering.cycle"</code>).
+	 * @since 3.3
+	 */
+	String REVISION_RENDERING_CYCLE= "org.eclipse.ui.editors.revisions.rendering.cycle"; //$NON-NLS-1$
 }
