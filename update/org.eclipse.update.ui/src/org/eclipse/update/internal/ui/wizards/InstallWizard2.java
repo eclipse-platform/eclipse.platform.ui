@@ -38,7 +38,6 @@ import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteFeatureReference;
 import org.eclipse.update.core.IVerificationListener;
-import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.FeatureDownloadException;
