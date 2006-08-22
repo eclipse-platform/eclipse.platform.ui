@@ -2215,8 +2215,12 @@ public final class KeysPreferencePage extends PreferencePage implements
 				tableItem.setImage(0, IMAGE_CHANGE);
 			}
 
-			tableItem.setText(1, (String) contextUniqueNamesById.get(binding
-					.getContextId()));
+			String contextName = (String) contextUniqueNamesById.get(binding
+					.getContextId());
+			if (contextName == null) {
+				contextName = Util.ZERO_LENGTH_STRING;
+			}
+			tableItem.setText(1, contextName);
 			tableItem.setText(2, binding.getTriggerSequence().format());
 		}
 	}
@@ -2277,7 +2281,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 				tableItem.setText(2, parameterizedCommand.getName());
 			} catch (final NotDefinedException e) {
 				throw new Error(
-						"Context or command became undefined on a non-UI thread will the UI thread was processing."); //$NON-NLS-1$
+						"Context or command became undefined on a non-UI thread while the UI thread was processing."); //$NON-NLS-1$
 			}
 		}
 	}
