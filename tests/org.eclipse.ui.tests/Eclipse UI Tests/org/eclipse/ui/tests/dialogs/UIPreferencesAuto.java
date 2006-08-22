@@ -14,7 +14,6 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -26,10 +25,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 public class UIPreferencesAuto extends TestCase {
-
-    private IProject _project;
-
-    private static final String PROJECT_NAME = "DummyProject";
 
     public UIPreferencesAuto(String name) {
         super(name);
