@@ -27,6 +27,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Handles the redirection of the global actions Cut, Copy, Paste,
@@ -148,6 +149,19 @@ public class CellEditorActionHandler {
             if (event.getProperty().equals(IAction.ENABLED)) {
                 Boolean bool = (Boolean) event.getNewValue();
                 actionHandler.setEnabled(bool.booleanValue());
+                return;
+            }
+            // If the underlying action's text has changed, we need to
+            // change the text.  See
+            // https://bugs.eclipse.org/bugs/show_bug.cgi?id=154410
+            if (event.getProperty().equals(IAction.TEXT)) {
+                String text = (String) event.getNewValue();
+                actionHandler.setText(text);
+                return;
+            }
+            if (event.getProperty().equals(IAction.TOOL_TIP_TEXT)) {
+                String text = (String) event.getNewValue();
+                actionHandler.setToolTipText(text);
                 return;
             }
         }
@@ -401,10 +415,14 @@ public class CellEditorActionHandler {
         public void updateEnabledState() {
             if (activeEditor != null) {
                 setEnabled(activeEditor.isUndoEnabled());
+                setText(WorkbenchMessages.Workbench_undo);
+                setToolTipText(WorkbenchMessages.Workbench_undoToolTip);
                 return;
             }
             if (undoAction != null) {
                 setEnabled(undoAction.isEnabled());
+                setText(undoAction.getText());
+                setToolTipText(undoAction.getToolTipText());
                 return;
             }
             setEnabled(false);
@@ -432,10 +450,14 @@ public class CellEditorActionHandler {
         public void updateEnabledState() {
             if (activeEditor != null) {
                 setEnabled(activeEditor.isRedoEnabled());
+                setText(WorkbenchMessages.Workbench_redo);
+                setToolTipText(WorkbenchMessages.Workbench_redoToolTip);
                 return;
             }
             if (redoAction != null) {
                 setEnabled(redoAction.isEnabled());
+                setText(redoAction.getText());
+                setToolTipText(redoAction.getToolTipText());
                 return;
             }
             setEnabled(false);
