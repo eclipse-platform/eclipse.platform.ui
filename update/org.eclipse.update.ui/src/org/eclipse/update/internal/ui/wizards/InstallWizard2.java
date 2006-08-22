@@ -29,6 +29,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.IFeature;
@@ -412,10 +413,10 @@ public class InstallWizard2
 						featureName = op.getFeature().getVersionedIdentifier().getIdentifier();
 					}
 					SubProgressMonitor featureDownloadMonitor = new SubProgressMonitor(monitor, 2);
-					//featureDownloadMonitor.setTaskName(featureName);
+					
 					featureDownloadMonitor.beginTask(featureName, 2);
-					featureDownloadMonitor.subTask(featureName);
-					//featureDownloadMonitor.worked(1);
+					featureDownloadMonitor.subTask(NLS.bind(UpdateUIMessages.InstallWizard_downloadingFeatureJar, featureName));
+					
 					if (op.getFeature() instanceof LiteFeature) {
 						ISiteFeatureReference featureReference = getFeatureReference(op.getFeature());
 						IFeature feature = featureReference.getFeature(featureDownloadMonitor);
