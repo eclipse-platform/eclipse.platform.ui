@@ -1290,29 +1290,31 @@ public class Perspective {
 
         // Restore the trim groups
         IMemento groupsMem = memento.getChild(IWorkbenchConstants.TAG_FAST_GROUPS);
-        IMemento[] group = groupsMem.getChildren(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
-        for (int i = 0; i < group.length; i++) {
-        	String id = group[i].getString(IWorkbenchConstants.TAG_ID);
-        	FastViewBar fvb = createFastViewBar(id, FastViewBar.GROUP_FVB, SWT.BOTTOM);
-        	fvb.restoreState(group[i]);
-
-        	IMemento viewsMem = group[i].getChild(IWorkbenchConstants.TAG_VIEWS);
-    		IMemento[] fvMems = viewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
-    		ArrayList viewRefs = new ArrayList(fvMems.length);
-    		for (int j = 0; j < fvMems.length; j++) {
-    			String viewId = fvMems[j].getID();
-                String secondaryId = ViewFactory.extractSecondaryId(viewId);
-                if (secondaryId != null) {
-                	viewId = ViewFactory.extractPrimaryId(viewId);
-                }
-                
-                // Resolve the ref
-                IViewReference ref = viewFactory.getView(viewId, secondaryId);
-                viewRefs.add(ref);
-    		}
-        	
-    		fvb.setViewRefs(viewRefs);
-		}
+        if (groupsMem != null) {
+	        IMemento[] group = groupsMem.getChildren(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+	        for (int i = 0; i < group.length; i++) {
+	        	String id = group[i].getString(IWorkbenchConstants.TAG_ID);
+	        	FastViewBar fvb = createFastViewBar(id, FastViewBar.GROUP_FVB, SWT.BOTTOM);
+	        	fvb.restoreState(group[i]);
+	
+	        	IMemento viewsMem = group[i].getChild(IWorkbenchConstants.TAG_VIEWS);
+	    		IMemento[] fvMems = viewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
+	    		ArrayList viewRefs = new ArrayList(fvMems.length);
+	    		for (int j = 0; j < fvMems.length; j++) {
+	    			String viewId = fvMems[j].getID();
+	                String secondaryId = ViewFactory.extractSecondaryId(viewId);
+	                if (secondaryId != null) {
+	                	viewId = ViewFactory.extractPrimaryId(viewId);
+	                }
+	                
+	                // Resolve the ref
+	                IViewReference ref = viewFactory.getView(viewId, secondaryId);
+	                viewRefs.add(ref);
+	    		}
+	        	
+	    		fvb.setViewRefs(viewRefs);
+			}
+        }
         
         HashSet knownActionSetIds = new HashSet();
 
