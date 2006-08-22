@@ -194,14 +194,16 @@ public class WizardNewProjectCreationPage extends WizardPage {
     }
 
     /**
-     * Creates a project resource handle for the current project name field value.
-     * <p>
-     * This method does not create the project resource; this is the responsibility
-     * of <code>IProject::create</code> invoked by the new project resource wizard.
-     * </p>
-     *
-     * @return the new project resource handle
-     */
+	 * Creates a project resource handle for the current project name field
+	 * value. The project handle is created relative to the workspace root.
+	 * <p>
+	 * This method does not create the project resource; this is the
+	 * responsibility of <code>IProject::create</code> invoked by the new
+	 * project resource wizard.
+	 * </p>
+	 * 
+	 * @return the new project resource handle
+	 */
     public IProject getProjectHandle() {
         return ResourcesPlugin.getWorkspace().getRoot().getProject(
                 getProjectName());
