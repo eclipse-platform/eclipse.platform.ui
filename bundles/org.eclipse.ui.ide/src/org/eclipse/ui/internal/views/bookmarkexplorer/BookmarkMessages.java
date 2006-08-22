@@ -30,6 +30,7 @@ public class BookmarkMessages extends NLS {
 	public static String CopyBookmark_text;
 
 	public static String PasteBookmark_text;
+	public static String PasteBookmark_undoText;
 	public static String PasteBookmark_errorTitle;
 
 	public static String OpenBookmark_text;
@@ -37,6 +38,7 @@ public class BookmarkMessages extends NLS {
 	public static String OpenBookmark_errorTitle;
 
 	public static String RemoveBookmark_text;
+	public static String RemoveBookmark_undoText;
 	public static String RemoveBookmark_toolTip;
 	public static String RemoveBookmark_errorTitle;
 
@@ -76,6 +78,8 @@ public class BookmarkMessages extends NLS {
 	public static String CopyToClipboardProblemDialog_title;
 	public static String CopyToClipboardProblemDialog_message;
 
+	public static String CreateBookmark_undoText;
+	public static String ModifyBookmark_undoText;	
 
 	static {
 		// load message values from bundle file

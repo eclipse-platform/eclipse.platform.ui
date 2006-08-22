@@ -73,6 +73,7 @@ public class TaskListMessages extends NLS {
 
 	public static String RemoveTask_text;
 	public static String RemoveTask_tooltip;
+	public static String RemoveTask_undoText;
 	public static String RemoveTask_errorMessage;
 
 	public static String Filters_text;
