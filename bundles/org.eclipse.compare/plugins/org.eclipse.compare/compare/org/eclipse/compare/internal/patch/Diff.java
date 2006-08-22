@@ -97,10 +97,26 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 	}
 	
 	/* package */ int getType() {
-		if (fOldDate == 0)
+	
+		boolean add = false;
+		boolean delete = false;
+		Iterator iter = fHunks.iterator();
+		while (iter.hasNext()){
+			Hunk hunk = (Hunk) iter.next();
+			int type =hunk.getHunkType();
+			if (type == Hunk.ADDED){
+				add = true;
+			} else if (type == Hunk.DELETED ){
+				delete = true;
+			}
+		}
+		
+		if (add && !delete){
 			return Differencer.ADDITION;
-		if (fNewDate == 0)
+		} else if (!add && delete){
 			return Differencer.DELETION;
+		}
+		
 		return Differencer.CHANGE;
 	}
 	

@@ -21,7 +21,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * A Hunk describes a range of changed lines and some context lines.
  */
 /* package */ class Hunk implements IWorkbenchAdapter, IAdaptable {
-
+	
+	static final int ADDED = 0x1;
+	static final int DELETED = 0x2;
+	static final int CHANGED = 0x4;
+	static final int UNKNOWN = 0x8;
+	
 	Diff fParent;
 	int fOldStart, fOldLength;
 	int fNewStart, fNewLength;
@@ -29,8 +34,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	boolean fMatches= false;
 	private boolean fIsEnabled= true;
 	boolean fHunkProblem= false;
-
-	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines) {
+	int hunkType;
+	
+	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines, boolean encounteredPlus, boolean encounteredMinus, boolean encounteredSpace) {
 		
 		fParent= parent;
 		if (fParent != null)
@@ -48,6 +54,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		fNewLength= newRange[1];
 		
 		fLines= (String[]) lines.toArray(new String[lines.size()]);
+		
+		if (encounteredSpace && (encounteredPlus || encounteredMinus)){
+			hunkType = CHANGED;
+		} else if (encounteredPlus && !encounteredMinus && !encounteredSpace){
+			hunkType = ADDED;
+		} else if (!encounteredPlus && encounteredMinus && !encounteredSpace) { 
+			hunkType = DELETED;
+		} else {
+			hunkType = UNKNOWN;
+		}
 	}
 		
 	boolean isEnabled() {
@@ -168,5 +184,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	
 	protected boolean getHunkProblem() {
 		return fHunkProblem;
+	}
+
+	int getHunkType() {
+		return hunkType;
+	}
+
+	void setHunkType(int hunkType) {
+		this.hunkType = hunkType;
 	}
 }

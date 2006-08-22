@@ -223,6 +223,10 @@ public class Patcher {
 		int[] newRange= new int[2];
 		List lines= new ArrayList();
 
+		boolean encounteredPlus = false;
+		boolean encounteredMinus = false;
+		boolean encounteredSpace = false;
+		
 		try {
 			// read lines of hunk
 			while (true) {
@@ -243,7 +247,7 @@ public class Patcher {
 					if (line.startsWith("@@ ")) { //$NON-NLS-1$
 						// flush old hunk
 						if (lines.size() > 0) {
-							new Hunk(diff, oldRange, newRange, lines);
+							new Hunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
 							lines.clear();
 						}
 								
@@ -254,8 +258,15 @@ public class Patcher {
 					}
 					break;
 				case ' ':
+					encounteredSpace = true;
+					lines.add(line);
+					continue;
 				case '+':
+					encounteredPlus = true;
+					lines.add(line);
+					continue;
 				case '-':
+					encounteredMinus = true;
 					lines.add(line);
 					continue;
 				case '\\':
@@ -291,7 +302,7 @@ public class Patcher {
 			}
 		} finally {
 			if (lines.size() > 0)
-				new Hunk(diff, oldRange, newRange, lines);
+				new Hunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
 			diff.finish();
 		}
 	}
@@ -320,6 +331,11 @@ public class Patcher {
 		List newLines= new ArrayList();
 		List lines= oldLines;
 		
+
+		boolean encounteredPlus = false;
+		boolean encounteredMinus = false;
+		boolean encounteredSpace = false;
+		
 		try {
 			// read lines of hunk
 			while (true) {
@@ -337,7 +353,7 @@ public class Patcher {
 						if (line.startsWith("***************")) {	// new hunk //$NON-NLS-1$
 							// flush old hunk
 							if (oldLines.size() > 0 || newLines.size() > 0) {
-								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines));
+								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 								oldLines.clear();
 								newLines.clear();
 							}
@@ -352,15 +368,28 @@ public class Patcher {
 						}
 						break;
 					case ' ':	// context line
+						if (line.charAt(1) == ' ') {
+							lines.add(line);
+							continue;
+						}
+						break;
 					case '+':	// addition
+						if (line.charAt(1) == ' ') {
+							encounteredPlus = true;
+							lines.add(line);
+							continue;
+						}
+						break;
 					case '!':	// change
 						if (line.charAt(1) == ' ') {
+							encounteredSpace = true;
 							lines.add(line);
 							continue;
 						}
 						break;
 					case '-':
 						if (line.charAt(1) == ' ') {	// deletion
+							encounteredMinus = true;
 							lines.add(line);
 							continue;
 						}
@@ -381,7 +410,7 @@ public class Patcher {
 		} finally {
 			// flush last hunk
 			if (oldLines.size() > 0 || newLines.size() > 0)
-				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines));
+				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 			diff.finish();
 		}
 	}
