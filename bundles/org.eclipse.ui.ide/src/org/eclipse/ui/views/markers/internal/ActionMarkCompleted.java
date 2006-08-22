@@ -11,15 +11,15 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 
 /**
  * ActionMarkCompleted is the action for marking task completion.
@@ -43,25 +43,12 @@ public class ActionMarkCompleted extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
-
-					IMarker[] markers = getSelectedMarkers();
-					for (int i = 0; i < markers.length; i++) {
-						try {
-							markers[i].setAttribute(IMarker.DONE, true);
-						} catch (CoreException e) {
-							Util.log(e);
-						}
-
-					}
-
-				}
-			}, null);
-		} catch (CoreException e) {
-			Util.log(e);
-		}
+		IMarker[] markers = getSelectedMarkers();
+		Map attrs = new HashMap();
+		attrs.put(IMarker.DONE, Boolean.TRUE);
+		IUndoableOperation op = new UpdateMarkersOperation(markers, attrs,
+				getText(), true);
+		execute(op, getText(), null, null);
 
 	}
 

@@ -17,48 +17,57 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 /**
- * ActionMarkerProperties is the action for opening a properties
- * dialog.
- *
+ * ActionMarkerProperties is the action for opening a properties dialog.
+ * 
  */
 public class ActionMarkerProperties extends SelectionProviderAction {
 
-    private IWorkbenchPart part;
+	private IWorkbenchPart part;
 
-    /**
-     * Create a new instance of the receiver.
-     * @param part
-     * @param provider
-     */
-    public ActionMarkerProperties(IWorkbenchPart part,
-            ISelectionProvider provider) {
-        super(provider, MarkerMessages.propertiesAction_title);
-        setEnabled(false);
-        this.part = part;
-    }
+	private String markerName;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        if (!isEnabled()) {
-            return;
-        }
-        Object obj = getStructuredSelection().getFirstElement();
-        if (!(obj instanceof ConcreteMarker)) {
-            return;
-        }
-        ConcreteMarker marker = (ConcreteMarker) obj;
-        DialogMarkerProperties dialog = new DialogMarkerProperties(part
-                .getSite().getShell());
-        dialog.setMarker(marker.getMarker());
-        dialog.open();
-    }
+	/**
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param part
+	 * @param provider
+	 * @param markerName
+	 *            the name describing the specific type of marker.
+	 */
+	public ActionMarkerProperties(IWorkbenchPart part,
+			ISelectionProvider provider, String markerName) {
+		super(provider, MarkerMessages.propertiesAction_title);
+		setEnabled(false);
+		this.part = part;
+		this.markerName = markerName;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(selection != null && selection.size() == 1);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		if (!isEnabled()) {
+			return;
+		}
+		Object obj = getStructuredSelection().getFirstElement();
+		if (!(obj instanceof ConcreteMarker)) {
+			return;
+		}
+		ConcreteMarker marker = (ConcreteMarker) obj;
+		DialogMarkerProperties dialog = new DialogMarkerProperties(part
+				.getSite().getShell(), MarkerMessages.propertiesDialog_title, markerName);
+		dialog.setMarker(marker.getMarker());
+		dialog.open();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(selection != null && selection.size() == 1);
+	}
 }

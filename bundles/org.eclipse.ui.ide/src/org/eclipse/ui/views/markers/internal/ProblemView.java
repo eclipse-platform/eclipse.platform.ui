@@ -639,4 +639,13 @@ public class ProblemView extends MarkerView {
 		}
 
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
+	 */
+	protected String getMarkerName() {
+		return MarkerMessages.problem_title;
+	}
 }

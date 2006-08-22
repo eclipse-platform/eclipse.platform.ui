@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -93,6 +94,8 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ShowInContext;
@@ -218,7 +221,7 @@ public abstract class MarkerView extends TableView {
 			if (getViewer().getControl().isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}
-			
+
 			if(monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 
@@ -487,6 +490,10 @@ public abstract class MarkerView extends TableView {
 	protected SelectionProviderAction selectAllAction;
 
 	protected SelectionProviderAction propertiesAction;
+	
+	protected UndoActionHandler undoAction;
+	
+	protected RedoActionHandler redoAction;
 
 	private ISelectionListener focusListener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -752,7 +759,6 @@ public abstract class MarkerView extends TableView {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 		});
-
 	}
 
 	/*
@@ -827,8 +833,7 @@ public abstract class MarkerView extends TableView {
 		getSite().getPage().removeSelectionListener(focusListener);
 
 		// dispose of selection provider actions (may not have been created yet
-		// if
-		// createPartControls was never called)
+		// if createPartControls was never called)
 		if (openAction != null) {
 			openAction.dispose();
 			copyAction.dispose();
@@ -836,8 +841,9 @@ public abstract class MarkerView extends TableView {
 			deleteAction.dispose();
 			revealAction.dispose();
 			propertiesAction.dispose();
+			undoAction.dispose();
+			redoAction.dispose();
 			clipboard.dispose();
-
 		}
 		if (showInMenu != null) {
 			showInMenu.dispose();
@@ -855,13 +861,16 @@ public abstract class MarkerView extends TableView {
 		copyAction = new ActionCopyMarker(this, getViewer());
 		copyAction.setClipboard(clipboard);
 		copyAction.setProperties(getSortingFields());
-		pasteAction = new ActionPasteMarker(this, getViewer());
+		pasteAction = new ActionPasteMarker(this, getViewer(), getMarkerName());
 		pasteAction.setClipboard(clipboard);
 		pasteAction.setPastableTypes(getMarkerTypes());
-		deleteAction = new ActionRemoveMarker(this, getViewer());
+		deleteAction = new ActionRemoveMarker(this, getViewer(), getMarkerName());
 		selectAllAction = new ActionSelectAll(this);
-
-		propertiesAction = new ActionMarkerProperties(this, getViewer());
+		propertiesAction = new ActionMarkerProperties(this, getViewer(), getMarkerName());
+		
+		IUndoContext undoContext = getUndoContext();
+		undoAction = new UndoActionHandler(getSite(), undoContext);
+		redoAction = new RedoActionHandler(getSite(), undoContext);
 
 		super.createActions();
 
@@ -937,6 +946,10 @@ public abstract class MarkerView extends TableView {
 				selectAllAction);
 		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
 				propertiesAction);
+		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), 
+				undoAction);
+		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), 
+				redoAction);
 	}
 
 	protected void initDragAndDrop() {
@@ -1742,6 +1755,21 @@ public abstract class MarkerView extends TableView {
 	protected void preserveSelection() {
 		updateJob.saveSelection(getViewer().getSelection());
 
+	}
+	
+	/**
+	 * Return the string name of the specific type of marker shown in this view.
+	 */
+	protected abstract String getMarkerName();
+	
+	/**
+	 * Return the undo context associated with operations performed 
+	 * in this view.  By default, return the workspace undo context.
+	 * Subclasses should override if a more specific undo context should
+	 * be used.
+	 */
+	protected IUndoContext getUndoContext() {
+		return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 	}
 
 }

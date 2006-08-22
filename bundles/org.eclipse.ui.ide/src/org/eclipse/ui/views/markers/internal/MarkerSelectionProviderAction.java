@@ -12,40 +12,52 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * MarkerSelectionProviderAction is the abstract super class of the
- * selection provider actions used by marker views.
- *
+ * MarkerSelectionProviderAction is the abstract super class of the selection
+ * provider actions used by marker views.
+ * 
  */
-public abstract class MarkerSelectionProviderAction extends SelectionProviderAction {
+public abstract class MarkerSelectionProviderAction extends
+		SelectionProviderAction {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param provider
 	 * @param text
 	 */
-	public MarkerSelectionProviderAction(ISelectionProvider provider, String text) {
+	public MarkerSelectionProviderAction(ISelectionProvider provider,
+			String text) {
 		super(provider, text);
-		
+
 	}
-	
+
 	/**
 	 * Get the selected markers in the receiver.
+	 * 
 	 * @return IMarker[]
 	 */
-	IMarker[] getSelectedMarkers(){
-		
+	IMarker[] getSelectedMarkers() {
+
 		return getSelectedMarkers(getStructuredSelection());
 	}
 
 	/**
 	 * Return the selected markers for the structured selection.
-	 * @param structured IStructuredSelection
+	 * 
+	 * @param structured
+	 *            IStructuredSelection
 	 * @return IMarker[]
 	 */
 	IMarker[] getSelectedMarkers(IStructuredSelection structured) {
@@ -53,26 +65,40 @@ public abstract class MarkerSelectionProviderAction extends SelectionProviderAct
 		ArrayList markers = new ArrayList();
 		for (int i = 0; i < selection.length; i++) {
 			Object object = selection[i];
-			if(!(object instanceof MarkerNode)) {
-				return new IMarker[0];//still pending
+			if (!(object instanceof MarkerNode)) {
+				return new IMarker[0];// still pending
 			}
-			MarkerNode marker =(MarkerNode) object;
-			if(marker.isConcrete()) {
+			MarkerNode marker = (MarkerNode) object;
+			if (marker.isConcrete()) {
 				markers.add(((ConcreteMarker) object).getMarker());
 			}
 		}
-		
+
 		return (IMarker[]) markers.toArray(new IMarker[markers.size()]);
 	}
-	
+
 	/**
 	 * Get the selected marker in the receiver.
+	 * 
 	 * @return IMarker
 	 */
-	IMarker getSelectedMarker(){
-		
-		ConcreteMarker selection = (ConcreteMarker) getStructuredSelection().getFirstElement();
+	IMarker getSelectedMarker() {
+
+		ConcreteMarker selection = (ConcreteMarker) getStructuredSelection()
+				.getFirstElement();
 		return selection.getMarker();
 	}
 
+	/**
+	 * Execute the specified undoable operation
+	 */
+	void execute(IUndoableOperation operation, String message,
+			IProgressMonitor monitor, IAdaptable uiInfo) {
+		try {
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(operation, monitor, uiInfo);
+		} catch (ExecutionException e) {
+			IDEWorkbenchPlugin.log(message, e);
+		}
+	}
 }

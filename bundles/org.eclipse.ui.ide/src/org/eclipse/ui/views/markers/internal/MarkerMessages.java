@@ -231,4 +231,19 @@ public class MarkerMessages extends NLS{
 
 	public static String Util_ProjectRoot;
 	public static String Util_WorkspaceRoot;
+	
+	public static String DialogMarkerProperties_CreateMarker;
+	public static String DialogMarkerProperties_ModifyMarker;
+	public static String DialogMarkerProperties_Create;
+	public static String DialogMarkerProperties_Modify;
+	
+	public static String DialogTaskProperties_CreateTask;
+	
+	public static String modifyBookmark_title;
+	public static String modifyTask_title;
+	
+	public static String qualifiedMarkerCommand_title;
+	public static String task_title;
+	public static String problem_title;
+	public static String bookmark_title;
 }

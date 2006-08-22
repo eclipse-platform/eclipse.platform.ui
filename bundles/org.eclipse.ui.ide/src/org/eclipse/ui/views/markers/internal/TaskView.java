@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -28,8 +33,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoSupport;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -95,23 +103,31 @@ public class TaskView extends MarkerView {
 					try {
 						Object oldValue = getValue(data, property);
 						if (oldValue != null && !oldValue.equals(value)) {
-							if (COMPLETION.equals(property)) {
-								marker.setAttribute(IMarker.DONE, value);
-							} else if (IMarker.PRIORITY.equals(property)) {
-								marker.setAttribute(IMarker.PRIORITY,
-										IMarker.PRIORITY_HIGH
-												- ((Integer) value).intValue());
-							} else if (IMarker.MESSAGE.equals(property)) {
-								marker.setAttribute(IMarker.MESSAGE, value);
+							Map attrs = new HashMap();
+							if (COMPLETION.equals(property))
+								attrs.put(IMarker.DONE, value);
+							else if (IMarker.PRIORITY.equals(property))
+								attrs.put(IMarker.PRIORITY,
+										new Integer(IMarker.PRIORITY_HIGH
+												- ((Integer) value).intValue()));
+							else if (IMarker.MESSAGE.equals(property))
+								attrs.put(IMarker.MESSAGE, value);
+							if (!attrs.isEmpty()) {
+								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyTask_title, true);
+						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, new IAdaptable() {
+						            	public Object getAdapter(Class clazz) {
+						            		if (clazz == Shell.class) {
+						            			return getSite().getShell();
+						            		}
+						            		return null;
+						            	}
+						            });
 							}
 						}
-
 						concreteMarker.refresh();
-					} catch (CoreException e) {
-						ErrorDialog.openError(getSite().getShell(),
-								MarkerMessages.errorModifyingTask, null, e
-										.getStatus());
-					}
+					} catch (ExecutionException e) {
+						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingTask, e);
+					}				
 				}
 			}
 		}
@@ -152,6 +168,9 @@ public class TaskView extends MarkerView {
 		cellEditorActionHandler.setPasteAction(pasteAction);
 		cellEditorActionHandler.setDeleteAction(deleteAction);
 		cellEditorActionHandler.setSelectAllAction(selectAllAction);
+		cellEditorActionHandler.setUndoAction(undoAction);
+		cellEditorActionHandler.setRedoAction(redoAction);
+
 	}
 
 	public void dispose() {
@@ -321,5 +340,22 @@ public class TaskView extends MarkerView {
 	 */
 	void updateDirectionIndicator(TreeColumn column) {
 		// Do nothing due to images being obscured
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
+	 */
+	protected String getMarkerName() {
+		return MarkerMessages.task_title;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
+	 */
+	protected IUndoContext getUndoContext() {
+		return WorkspaceUndoSupport.getTasksUndoContext();
 	}
 }

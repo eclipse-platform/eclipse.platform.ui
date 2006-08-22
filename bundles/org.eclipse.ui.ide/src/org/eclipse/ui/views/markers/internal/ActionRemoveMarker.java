@@ -13,17 +13,15 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 
 /**
  * Action to remove the selected bookmarks.
@@ -31,15 +29,22 @@ import org.eclipse.ui.PlatformUI;
 public class ActionRemoveMarker extends MarkerSelectionProviderAction {
 
 	private IWorkbenchPart part;
+	
+	private String markerName;
 
 	/**
 	 * Creates the action.
+	 * 
 	 * @param part
 	 * @param provider
+	 * @param markerName
+	 *            the name describing the specific kind of marker being removed
 	 */
-	public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider) {
+	public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider,
+			String markerName) {
 		super(provider, MarkerMessages.deleteAction_title);
 		this.part = part;
+		this.markerName = markerName;
 		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
@@ -52,24 +57,18 @@ public class ActionRemoveMarker extends MarkerSelectionProviderAction {
 	 * Delete the marker selection.
 	 */
 	public void run() {
-
-		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-
-					IMarker[] markers = getSelectedMarkers();
-					for (int i = 0; i < markers.length; i++) {
-						markers[i].delete();
+		String operationTitle = NLS.bind(MarkerMessages.qualifiedMarkerCommand_title,
+				MarkerMessages.deleteAction_title, markerName);
+		DeleteMarkersOperation op = new DeleteMarkersOperation(
+				getSelectedMarkers(), operationTitle);
+		execute(op, MarkerMessages.RemoveMarker_errorTitle, null,
+				new IAdaptable() {
+					public Object getAdapter(Class clazz) {
+						if (clazz == Shell.class)
+							return part.getSite().getShell();
+						return null;
 					}
-
-				}
-			}, null);
-		} catch (CoreException e) {
-			ErrorDialog
-					.openError(part.getSite().getShell(),
-							MarkerMessages.RemoveMarker_errorTitle, null, e
-									.getStatus());
-		}
+				});
 	}
 
 	public void selectionChanged(IStructuredSelection selection) {

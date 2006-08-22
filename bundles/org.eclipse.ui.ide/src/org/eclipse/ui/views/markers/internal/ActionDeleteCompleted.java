@@ -14,112 +14,106 @@ package org.eclipse.ui.views.markers.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 
 /**
- * ActionDeleteCompleted is the action for deleting completed
- * markers.
- *
+ * ActionDeleteCompleted is the action for deleting completed markers.
+ * 
  */
 public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 
-    private TaskView part;
+	private TaskView part;
 
-    /**
-     * Constructs an ActionDeleteCompleted instance
-     * 
-     * @param part
-     * @param provider
-     */
-    public ActionDeleteCompleted(TaskView part, ISelectionProvider provider) {
-        super(provider, MarkerMessages.deleteCompletedAction_title);
-        this.part = part;
-        setEnabled(false);
-    }
+	/**
+	 * Constructs an ActionDeleteCompleted instance
+	 * 
+	 * @param part
+	 * @param provider
+	 */
+	public ActionDeleteCompleted(TaskView part, ISelectionProvider provider) {
+		super(provider, MarkerMessages.deleteCompletedAction_title);
+		this.part = part;
+		setEnabled(false);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        final List completed = getCompletedTasks();
-        // Check if there is anything to do
-        if (completed.size() == 0) {
-            MessageDialog.openInformation(part.getSite().getShell(), 
-            		MarkerMessages.deleteCompletedTasks_dialogTitle,
-                    MarkerMessages.deleteCompletedTasks_noneCompleted);
-            return;
-        }
-        String message;
-        if (completed.size() == 1) {
-            message = MarkerMessages
-                    .deleteCompletedTasks_permanentSingular;
-        } else {
-            message = NLS.bind(
-            		MarkerMessages.deleteCompletedTasks_permanentPlural,
-            		String.valueOf(completed.size()));
-        }
-        // Verify.
-        if (!MessageDialog.openConfirm(part.getSite().getShell(), MarkerMessages
-                .deleteCompletedTasks_dialogTitle,
-                message)) {
-            return;
-        }
-        try {
-            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) {
-                    for (int i = 0; i < completed.size(); i++) {
-                        IMarker marker = (IMarker) completed.get(i);
-                        try {
-                            marker.delete();
-                        } catch (CoreException e) {
-                        }
-                    }
-                }
-            }, null);
-        } catch (CoreException e) {
-            ErrorDialog
-                    .openError(
-                            part.getSite().getShell(),
-                            MarkerMessages
-                                    .deleteCompletedTasks_errorMessage, null, e.getStatus()); 
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		final List completed = getCompletedTasks();
+		// Check if there is anything to do
+		if (completed.size() == 0) {
+			MessageDialog.openInformation(part.getSite().getShell(),
+					MarkerMessages.deleteCompletedTasks_dialogTitle,
+					MarkerMessages.deleteCompletedTasks_noneCompleted);
+			return;
+		}
+		String message;
+		if (completed.size() == 1) {
+			message = MarkerMessages.deleteCompletedTasks_permanentSingular;
+		} else {
+			message = NLS.bind(
+					MarkerMessages.deleteCompletedTasks_permanentPlural, String
+							.valueOf(completed.size()));
+		}
+		// Verify.
+		if (!MessageDialog.openConfirm(part.getSite().getShell(),
+				MarkerMessages.deleteCompletedTasks_dialogTitle, message)) {
+			return;
+		}
+		IMarker[] markers = (IMarker[]) completed.toArray(new IMarker[completed
+				.size()]);
+		IUndoableOperation op = new DeleteMarkersOperation(markers, getText());
+		execute(op, MarkerMessages.deleteCompletedTasks_errorMessage, null,
+				new IAdaptable() {
+					public Object getAdapter(Class clazz) {
+						if (clazz == Shell.class && part != null) {
+							return part.getSite().getShell();
+						}
+						return null;
+					}
+				});
 
-    private List getCompletedTasks() {
-        List completed = new ArrayList();
+	}
 
-        MarkerList markerList = part.getVisibleMarkers();
+	private List getCompletedTasks() {
+		List completed = new ArrayList();
 
-        ConcreteMarker[] markers = markerList.toArray();
+		MarkerList markerList = part.getVisibleMarkers();
 
-        for (int i = 0; i < markers.length; i++) {
-            ConcreteMarker marker = markers[i];
-            if (marker instanceof TaskMarker) {
-                TaskMarker taskMarker = (TaskMarker) marker;
+		ConcreteMarker[] markers = markerList.toArray();
 
-                if (taskMarker.getDone() == 1) {
-                    completed.add(taskMarker.getMarker());
-                }
-            }
-        }
+		for (int i = 0; i < markers.length; i++) {
+			ConcreteMarker marker = markers[i];
+			if (marker instanceof TaskMarker) {
+				TaskMarker taskMarker = (TaskMarker) marker;
 
-        return completed;
-    }
+				if (taskMarker.getDone() == 1) {
+					completed.add(taskMarker.getMarker());
+				}
+			}
+		}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void selectionChanged(IStructuredSelection selection) {
-        setEnabled(!selection.isEmpty());
-    }
+		return completed;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(!selection.isEmpty());
+	}
 
 }

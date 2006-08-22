@@ -13,10 +13,16 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -25,7 +31,10 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoSupport;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -84,14 +93,27 @@ public class BookmarkView extends MarkerView {
 					try {
 						if (!marker.getAttribute(property).equals(value)) {
 							if (IMarker.MESSAGE.equals(property)) {
-								marker.setAttribute(IMarker.MESSAGE, value);
+								Map attrs = new HashMap();
+								attrs.put(IMarker.MESSAGE, value);
+								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyBookmark_title, true);
+						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, new IAdaptable() {
+						            	public Object getAdapter(Class clazz) {
+						            		if (clazz == Shell.class) {
+						            			return getSite().getShell();
+						            		}
+						            		return null;
+						            	}
+						            });
+								
+								
+								
 							}
 						}
+					} catch (ExecutionException e) {
+						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
 					} catch (CoreException e) {
-						ErrorDialog
-								.openError(
-										getSite().getShell(),
-										MarkerMessages.errorModifyingBookmark, null, e.getStatus()); 
+						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
+										
 					}
 				}
 			}
@@ -123,6 +145,8 @@ public class BookmarkView extends MarkerView {
 		cellEditorActionHandler.setPasteAction(pasteAction);
 		cellEditorActionHandler.setDeleteAction(deleteAction);
 		cellEditorActionHandler.setSelectAllAction(selectAllAction);
+		cellEditorActionHandler.setUndoAction(undoAction);
+		cellEditorActionHandler.setRedoAction(redoAction);
 	}
 
 	public void dispose() {
@@ -241,6 +265,23 @@ public class BookmarkView extends MarkerView {
 	 */
 	String getFiltersPreferenceName() {
 		return IDEInternalPreferences.BOOKMARKS_FILTERS;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerName()
+	 */
+	protected String getMarkerName() {
+		return MarkerMessages.bookmark_title;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
+	 */
+	protected IUndoContext getUndoContext() {
+		return WorkspaceUndoSupport.getBookmarksUndoContext();
 	}
 	
 }
