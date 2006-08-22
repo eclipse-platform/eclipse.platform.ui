@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -95,6 +96,7 @@ public class WizardNewProjectReferencePage extends WizardPage {
         referenceProjectsViewer.setLabelProvider(WorkbenchLabelProvider
                 .getDecoratingWorkbenchLabelProvider());
         referenceProjectsViewer.setContentProvider(getContentProvider());
+        referenceProjectsViewer.setComparator(new ViewerComparator());
         referenceProjectsViewer.setInput(ResourcesPlugin.getWorkspace());
 
         setControl(composite);
