@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.views.tasklist;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 
 class MarkCompletedAction extends TaskAction {
 
@@ -36,15 +41,24 @@ class MarkCompletedAction extends TaskAction {
      * actions.
      */
     public void run() {
-        ISelection markers = getTaskList().getSelection();
-        if (markers instanceof IStructuredSelection) {
-            Iterator selections = ((IStructuredSelection) markers).iterator();
+        ISelection selectedMarkers = getTaskList().getSelection();
+        if (selectedMarkers instanceof IStructuredSelection) {
+            Iterator selections = ((IStructuredSelection) selectedMarkers).iterator();
+            ArrayList markers = new ArrayList();
             while (selections.hasNext()) {
-                IMarker nextMarker = (IMarker) selections.next();
-                getTaskList().setProperty(nextMarker, IMarker.DONE,
-                        Boolean.TRUE);
+                Object marker = selections.next();
+                if (marker instanceof IMarker) {
+                	markers.add(marker);
+                }
             }
+    		Map attrs = new HashMap();
+    		attrs.put(IMarker.DONE, Boolean.TRUE);
+    		IUndoableOperation op = new UpdateMarkersOperation((IMarker [])markers.toArray(new IMarker [markers.size()]), 
+    				attrs, getText(), true);
+    		execute(op, getText(), null, null);
+
         }
+        
     }
 
     /**

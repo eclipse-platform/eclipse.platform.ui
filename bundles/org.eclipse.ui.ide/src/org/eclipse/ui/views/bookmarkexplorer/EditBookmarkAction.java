@@ -14,16 +14,12 @@ package org.eclipse.ui.views.bookmarkexplorer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
- * Opens a properties dialog allowing the user to edit the bookmark's description. 
+ * Opens a properties dialog allowing the user to edit the bookmark's description.
  */
 class EditBookmarkAction extends BookmarkAction {
 
@@ -70,20 +66,9 @@ class EditBookmarkAction extends BookmarkAction {
     }
 
     private void editBookmark() {
-        IFile file = (IFile) marker.getResource();
-
-        try {
-            file.getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) throws CoreException {
-                    BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(
-                            getView().getSite().getShell());
-                    dialog.setMarker(marker);
-                    dialog.open();
-                }
-            }, null);
-        } catch (CoreException e) {
-            IDEWorkbenchPlugin.log(null, e.getStatus()); // We don't care
-        }
+    	BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(
+    			getView().getSite().getShell());
+    	dialog.setMarker(marker);
+    	dialog.open();
     }
-
 }

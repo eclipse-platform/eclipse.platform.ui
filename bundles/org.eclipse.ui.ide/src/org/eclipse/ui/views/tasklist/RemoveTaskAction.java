@@ -13,13 +13,15 @@ package org.eclipse.ui.views.tasklist;
 
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
@@ -56,25 +58,28 @@ class RemoveTaskAction extends TaskAction {
         // get the index of the selected item which has focus
         Table table = viewer.getTable();
         int focusIndex = table.getSelectionIndex();
-        try {
-            List list = selection.toList();
-            IMarker[] markers = new IMarker[list.size()];
-            list.toArray(markers);
-            // be sure to only invoke one workspace operation
-            taskList.getWorkspace().deleteMarkers(markers);
-            // set the selection to be the one which took the place of the one with focus
-            int count = table.getItemCount();
-            if (focusIndex < count) {
-                table.setSelection(focusIndex);
-            } else if (count != 0) {
-                table.setSelection(count - 1);
-            }
-            // update the viewer's selection, since setting the table selection does not notify the viewer
-            viewer.setSelection(viewer.getSelection(), true);
+        List list = selection.toList();
+        IMarker[] markers = new IMarker[list.size()];
+        list.toArray(markers);
+     	IUndoableOperation op = new DeleteMarkersOperation(markers, TaskListMessages.RemoveTask_undoText);
+   		execute(op, TaskListMessages.RemoveTask_errorMessage, null,
+   				new IAdaptable() {
+   					public Object getAdapter(Class clazz) {
+   						if (clazz == Shell.class) {
+   							return getShell();
+   						}
+   						return null;
+   					}
+   				});
 
-        } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), TaskListMessages.RemoveTask_errorMessage,
-                    null, e.getStatus());
+        // set the selection to be the one which took the place of the one with focus
+        int count = table.getItemCount();
+        if (focusIndex < count) {
+        	table.setSelection(focusIndex);
+        } else if (count != 0) {
+        	table.setSelection(count - 1);
         }
+        // update the viewer's selection, since setting the table selection does not notify the viewer
+        viewer.setSelection(viewer.getSelection(), true);
     }
 }

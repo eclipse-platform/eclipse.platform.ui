@@ -11,9 +11,15 @@
 
 package org.eclipse.ui.views.tasklist;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This is the base class of all the local actions used
@@ -59,4 +65,18 @@ abstract class TaskAction extends Action {
 		}
         settings.put(getId(), isChecked());
     }
+    
+	/**
+	 * Execute the specified undoable operation
+	 */
+	void execute(IUndoableOperation operation, String message,
+			IProgressMonitor monitor, IAdaptable uiInfo) {
+		try {
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(operation, monitor, uiInfo);
+		} catch (ExecutionException e) {
+			IDEWorkbenchPlugin.log(message, e);
+		}
+	}
+
 }

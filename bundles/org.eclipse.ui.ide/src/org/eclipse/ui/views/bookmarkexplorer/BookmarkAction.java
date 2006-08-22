@@ -11,7 +11,13 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * An abstract class for all bookmark view actions.
@@ -33,4 +39,18 @@ abstract class BookmarkAction extends SelectionProviderAction {
     public BookmarkNavigator getView() {
         return view;
     }
+    
+	/**
+	 * Execute the specified undoable operation
+	 */
+	void execute(IUndoableOperation operation, String message,
+			IProgressMonitor monitor, IAdaptable uiInfo) {
+		try {
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(operation, monitor, uiInfo);
+		} catch (ExecutionException e) {
+			IDEWorkbenchPlugin.log(message, e);
+		}
+	}
+
 }

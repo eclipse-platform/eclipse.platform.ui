@@ -17,11 +17,15 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.CreateMarkersOperation;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
@@ -57,26 +61,20 @@ class PasteBookmarkAction extends BookmarkAction {
         if (markerData == null) {
 			return;
 		}
-
-        final ArrayList newMarkers = new ArrayList();
-
-        try {
-            view.getWorkspace().run(new IWorkspaceRunnable() {
+        final ArrayList newMarkerAttributes = new ArrayList();
+        final ArrayList newMarkerResources = new ArrayList();
+        try {   
+            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
                 public void run(IProgressMonitor monitor) throws CoreException {
-                    for (int i = 0; i < markerData.length; i++) {
-                        // Only paste tasks (not problems)
-                        if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
+					for (int i = 0; i < markerData.length; i++) {
+						// Collect the info about the markers to be pasted.
+						// Ignore any markers that aren't bookmarks.
+						if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
 							continue;
 						}
-
-                        // Paste to the same resource as the original
-                        IResource resource = markerData[i].getResource();
-                        Map attributes = markerData[i].getAttributes();
-                        IMarker marker = resource
-                                .createMarker(IMarker.BOOKMARK);
-                        marker.setAttributes(attributes);
-                        newMarkers.add(marker);
-                    }
+						newMarkerResources.add(markerData[i].getResource());
+						newMarkerAttributes.add(markerData[i].getAttributes());
+					}
                 }
             }, null);
         } catch (CoreException e) {
@@ -84,17 +82,30 @@ class PasteBookmarkAction extends BookmarkAction {
                     null, e.getStatus());
             return;
         }
+		final Map [] attrs = (Map []) newMarkerAttributes.toArray(new Map [newMarkerAttributes.size()]);
+		final IResource [] resources = (IResource []) newMarkerResources.toArray(new IResource [newMarkerResources.size()]);
+		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs,
+				resources, BookmarkMessages.PasteBookmark_undoText);
+		execute(op, BookmarkMessages.PasteBookmark_errorTitle, null,
+   				new IAdaptable() {
+   					public Object getAdapter(Class clazz) {
+   						if (clazz == Shell.class) {
+   							return view.getShell();
+   						}
+   						return null;
+   					}
+   				});
 
         // Need to do this in an asyncExec, even though we're in the UI thread here,
         // since the bookmark navigator updates itself with the addition in an asyncExec,
         // which hasn't been processed yet.
-        // Must be done outside IWorkspaceRunnable above since notification for add is
-        // sent after IWorkspaceRunnable is run.
-        if (newMarkers.size() > 0) {
+        // Must be done outside the create marker operation above since notification for add is
+        // sent after the operation is executed.
+        if (op.getMarkers() != null) {
             view.getShell().getDisplay().asyncExec(new Runnable() {
                 public void run() {
                     view.getViewer().setSelection(
-                            new StructuredSelection(newMarkers));
+                            new StructuredSelection(op.getMarkers()));
                     view.updatePasteEnablement();
                 }
             });

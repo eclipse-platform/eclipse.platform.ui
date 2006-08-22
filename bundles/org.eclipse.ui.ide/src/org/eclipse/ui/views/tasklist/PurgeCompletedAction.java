@@ -14,13 +14,17 @@ package org.eclipse.ui.views.tasklist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
@@ -45,38 +49,50 @@ class PurgeCompletedAction extends TaskAction {
      * Fetches all the completed tasks in the workspace and deletes them.
      */
     public void run() {
+        IResource resource = getTaskList().getResource();
+        int depth = getTaskList().getResourceDepth();
+        IMarker[] tasks;
         try {
-            IResource resource = getTaskList().getResource();
-            int depth = getTaskList().getResourceDepth();
-            IMarker[] tasks = resource.findMarkers(IMarker.TASK, true, depth);
-            final List completed = new ArrayList();
-            for (int i = 0; i < tasks.length; i++) {
-                IMarker task = tasks[i];
-                if (MarkerUtil.isComplete(task) && !MarkerUtil.isReadOnly(task)) {
-                    completed.add(task);
-                }
-            }
-            // Check if there is anything to do
-            if (completed.size() == 0) {
-                MessageDialog.openInformation(getShell(), TaskListMessages.PurgeCompleted_title, 
-                        TaskListMessages.PurgeCompleted_noneCompleted); 
-                return;
-            }
-
-            // Verify.
-            if (!MessageDialog.openConfirm(getShell(), TaskListMessages.PurgeCompleted_title,
-                    NLS.bind(TaskListMessages.PurgeCompleted_permanent,String.valueOf(completed.size())))) {
-                return;
-            }
-
-            IMarker[] toDelete = new IMarker[completed.size()];
-            completed.toArray(toDelete);
-            getTaskList().getWorkspace().deleteMarkers(toDelete);
+        	tasks = resource.findMarkers(IMarker.TASK, true, depth);
         } catch (CoreException e) {
-            ErrorDialog
-                    .openError(
-                            getShell(),
-                            TaskListMessages.PurgeCompleted_errorMessage, null, e.getStatus()); 
+            ErrorDialog.openError(
+                    getShell(),
+                    TaskListMessages.PurgeCompleted_errorMessage, null, e.getStatus()); 
+
+        	return;
         }
+        final List completed = new ArrayList();
+        for (int i = 0; i < tasks.length; i++) {
+            IMarker task = tasks[i];
+            if (MarkerUtil.isComplete(task) && !MarkerUtil.isReadOnly(task)) {
+                completed.add(task);
+            }
+        }
+        // Check if there is anything to do
+        if (completed.size() == 0) {
+            MessageDialog.openInformation(getShell(), TaskListMessages.PurgeCompleted_title, 
+                    TaskListMessages.PurgeCompleted_noneCompleted); 
+            return;
+        }
+
+        // Verify.
+        if (!MessageDialog.openConfirm(getShell(), TaskListMessages.PurgeCompleted_title,
+                NLS.bind(TaskListMessages.PurgeCompleted_permanent,String.valueOf(completed.size())))) {
+            return;
+        }
+
+        IMarker[] toDelete = new IMarker[completed.size()];
+        completed.toArray(toDelete);
+		IUndoableOperation op = new DeleteMarkersOperation(toDelete, getText());
+		execute(op, TaskListMessages.PurgeCompleted_errorMessage, null,
+				new IAdaptable() {
+					public Object getAdapter(Class clazz) {
+						if (clazz == Shell.class) {
+							return getShell();
+						}
+						return null;
+					}
+				});
+
     }
 }

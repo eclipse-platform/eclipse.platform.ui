@@ -11,15 +11,15 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
-import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
@@ -48,24 +48,19 @@ class RemoveBookmarkAction extends BookmarkAction {
         if (sel.isEmpty()) {
 			return;
 		}
-        try {
-            getView().getWorkspace().run(new IWorkspaceRunnable() {
-                public void run(IProgressMonitor monitor) throws CoreException {
-                    for (Iterator iter = sel.iterator(); iter.hasNext();) {
-                        Object o = iter.next();
-                        if (o instanceof IMarker) {
-                            IMarker marker = (IMarker) o;
-                            marker.delete();
-                        }
-                    }
-                }
-            }, null);
-        } catch (CoreException e) {
-            ErrorDialog
-                    .openError(
-                            getView().getShell(),
-                            BookmarkMessages.RemoveBookmark_errorTitle, null, e.getStatus());
-        }
+        List list = sel.toList();
+        IMarker[] markers = new IMarker[list.size()];
+        list.toArray(markers);
+     	IUndoableOperation op = new DeleteMarkersOperation(markers, BookmarkMessages.RemoveBookmark_undoText);
+   		execute(op, BookmarkMessages.RemoveBookmark_errorTitle, null,
+   				new IAdaptable() {
+   					public Object getAdapter(Class clazz) {
+   						if (clazz == Shell.class) {
+   							return getView().getShell();
+   						}
+   						return null;
+   					}
+   				});
     }
 
     public void selectionChanged(IStructuredSelection sel) {
