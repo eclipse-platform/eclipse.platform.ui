@@ -70,8 +70,6 @@ public class TextFileChange extends TextChange {
 	// the mapped text buffer
 	private int fAcquireCount;
 	private ITextFileBuffer fBuffer;
-	
-	private boolean fDirty;
 	private BufferValidationState fValidationState;
 	private ContentStamp fContentStamp;
 	
@@ -167,10 +165,9 @@ public class TextFileChange extends TextChange {
 	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 1); //$NON-NLS-1$
-			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
-			fDirty= buffer != null && buffer.isDirty();
-			RefactoringStatus result= fValidationState.isValid(needsSaving());
-			if (needsSaving()) {
+			boolean needsSaving= needsSaving();
+			RefactoringStatus result= fValidationState.isValid(needsSaving);
+			if (needsSaving) {
 				result.merge(Changes.validateModifiesFiles(new IFile[] { fFile}));
 			} else {
 				// we are reading the file. So it should be at least in sync
@@ -210,7 +207,7 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 * <p>
 	 * The implementation of this method only commits the underlying buffer if
-	 * {@link #needsSaving()} returns <code>true</code>.
+	 * {@link #needsSaving()} and {@link #isDocumentModified()} returns <code>true</code>.
 	 * </p>
 	 */
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
@@ -239,27 +236,16 @@ public class TextFileChange extends TextChange {
 	}
 
 	/**
-	 * Is the document to be changed by this text file change currently
-	 * acquired?
+	 * Is the document currently acquired?
 	 * 
 	 * @return <code>true</code> if the document is currently acquired,
 	 *         <code>false</code> otherwise
 	 * @since 3.2
 	 */
-	protected final boolean isDocumentAcquired() {
+	protected boolean isDocumentAcquired() {
 		return fAcquireCount > 0;
 	}
-	
-	/**
-	 * Returns the number of times the document has been acquired and not released.
-	 * 
-	 * @return the number of times the document has been acquired and not released.
-	 * @since 3.3
-	 */
-	protected final int getAcquireCount() {
-		return fAcquireCount;
-	}
-	
+		
 	/**
 	 * Has the document been modified since it has been first acquired by the change?
 	 * 
@@ -289,7 +275,13 @@ public class TextFileChange extends TextChange {
 	 *         state and the save mode flags, <code>false</code> otherwise
 	 * @since 3.3
 	 */
-	protected final boolean needsSaving() {
-		return (fSaveMode & FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & KEEP_SAVE_STATE) != 0);
+	protected boolean needsSaving() {
+		if ((fSaveMode & FORCE_SAVE) != 0) {
+			return true;
+		}
+		if ((fSaveMode & KEEP_SAVE_STATE) != 0) {
+			return fValidationState != null && !fValidationState.wasDirty();
+		}
+		return false;
 	}
 }

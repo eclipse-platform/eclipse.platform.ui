@@ -83,6 +83,8 @@ public abstract class BufferValidationState {
 		}
 	}
 	
+	public abstract boolean wasDirty();
+	
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		if (!fExisted) {
 			if (fFile.exists())
@@ -174,6 +176,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 	private IDocumentListener fDocumentListener;
 	private FileBufferListener fFileBufferListener;
 	private boolean fChanged;
+	private boolean fWasDirty;
 	private long fContentStamp= IResource.NULL_STAMP;
 	
 	class DocumentChangedListener implements IDocumentListener {
@@ -232,6 +235,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fFileBufferListener);
 		fDocumentListener= new DocumentChangedListener();
 		getDocument().addDocumentListener(fDocumentListener);
+		fWasDirty= isDirty(fFile);
 	}
 
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
@@ -249,6 +253,13 @@ class DirtyBufferValidationState extends BufferValidationState {
 				)); 
 		}
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.internal.core.refactoring.BufferValidationState#wasDirty()
+	 */
+	public boolean wasDirty() {
+		return fWasDirty;
 	}
 	
 	public void dispose() {
@@ -280,6 +291,13 @@ class ModificationStampValidationState extends BufferValidationState {
 	public ModificationStampValidationState(IFile file) {
 		super(file);
 		fModificationStamp= getModificationStamp();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.internal.core.refactoring.BufferValidationState#wasDirty()
+	 */
+	public boolean wasDirty() {
+		return false;
 	}
 
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
