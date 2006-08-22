@@ -12,25 +12,21 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -43,164 +39,239 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
  * Shows the properties of a new or existing marker
+ * 
+ * In 3.3, this class was refactored to allow pre-existing public dialog classes
+ * to share the implementation.  Note that certain methods are exposed as API
+ * in public subclasses, so changes to the methods in this class should be
+ * treated carefully as they may affect API methods in subclasses.  The specific
+ * methods affected are documented in the method comment.
  */
-class DialogMarkerProperties extends TrayDialog {
+public class DialogMarkerProperties extends TrayDialog {
 
 	private static final String DIALOG_SETTINGS_SECTION = "DialogMarkerPropertiesDialogSettings"; //$NON-NLS-1$
 	
-    /**
-     * The marker being shown, or <code>null</code> for a new marker
-     */
-    private IMarker marker = null;
+	/**
+	 * The marker being shown, or <code>null</code> for a new marker
+	 */
+	private IMarker marker = null;
 
-    /**
-     * The resource on which to create a new marker
-     */
-    private IResource resource = null;
+	/**
+	 * The resource on which to create a new marker
+	 */
+	private IResource resource = null;
 
-    /**
-     * The type of marker to be created
-     */
-    private String type = IMarker.MARKER;
+	/**
+	 * The type of marker to be created
+	 */
+	private String type = IMarker.MARKER;
 
-    /**
-     * The initial attributes to use when creating a new marker
-     */
-    private Map initialAttributes = null;
+	/**
+	 * The initial attributes to use when creating a new marker
+	 */
+	private Map initialAttributes = null;
 
-    /**
-     * The text control for the Description field.
-     */
-    private Text descriptionText;
+	/**
+	 * The text control for the Description field.
+	 */
+	private Text descriptionText;
 
-    /**
-     * The control for the Creation Time field.
-     */
-    private Label creationTime;
+	/**
+	 * The control for the Creation Time field.
+	 */
+	private Label creationTime;
 
-    /**
-     * The text control for the Resource field.
-     */
-    private Text resourceText;
+	/**
+	 * The text control for the Resource field.
+	 */
+	private Text resourceText;
 
-    /**
-     * The text control for the Folder field.
-     */
-    private Text folderText;
+	/**
+	 * The text control for the Folder field.
+	 */
+	private Text folderText;
 
-    /**
-     * The text control for the Location field.
-     */
-    private Text locationText;
+	/**
+	 * The text control for the Location field.
+	 */
+	private Text locationText;
 
-    /**
-     * Dirty flag.  True if any changes have been made.
-     */
-    private boolean dirty;
+	/**
+	 * Dirty flag. True if any changes have been made.
+	 */
+	private boolean dirty;
 
-    private String title;
+	private String title;
+	
+	/**
+	 * The name used to describe the specific kind of marker.  Used when
+	 * creating an undo command for the dialog, so that a specific name such
+	 * as "Undo Create Task" or "Undo Modify Bookmark" can be used.
+	 */
+	private String markerName;
 
-    /**
-     * Creates the dialog.  By default this dialog creates a new marker.
-     * To set the resource and initial attributes for the new marker, 
-     * use <code>setResource</code> and <code>setInitialAttributes</code>.
-     * To show or modify an existing marker, use <code>setMarker</code>.
-     * 
-     * @param shell the parent shell
-     */
-    DialogMarkerProperties(Shell parentShell) {
-        super(parentShell);
+	/**
+	 * Creates the dialog. By default this dialog creates a new marker. To set
+	 * the resource and initial attributes for the new marker, use
+	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
+	 * show or modify an existing marker, use <code>setMarker</code>.
+	 * 
+	 * @param parentShell
+	 *            the parent shell
+	 */
+	public DialogMarkerProperties(Shell parentShell) {
+		super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
-    }
+	}
 
-    /**
-     * Creates the dialog.  By default this dialog creates a new marker.
-     * To set the resource and initial attributes for the new marker, 
-     * use <code>setResource</code> and <code>setInitialAttributes</code>.
-     * To show or modify an existing marker, use <code>setMarker</code>.
-     * 
-     * @param shell the parent shell
-     * @param title the title of the dialog
-     */
-    DialogMarkerProperties(Shell parentShell, String title) {
-        super(parentShell);
+	/**
+	 * Creates the dialog. By default this dialog creates a new marker. To set
+	 * the resource and initial attributes for the new marker, use
+	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
+	 * show or modify an existing marker, use <code>setMarker</code>.
+	 * 
+	 * @param parentShell
+	 *            the parent shell
+	 * @param title
+	 *            the title of the dialog
+	 */
+	public DialogMarkerProperties(Shell parentShell, String title) {
+		super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        this.title = title;
-    }
+		this.title = title;
+	}
+	
+	/**
+	 * Creates the dialog. By default this dialog creates a new marker. To set
+	 * the resource and initial attributes for the new marker, use
+	 * <code>setResource</code> and <code>setInitialAttributes</code>. To
+	 * show or modify an existing marker, use <code>setMarker</code>.
+	 * 
+	 * @param parentShell
+	 *            the parent shell
+	 * @param title
+	 *            the title of the dialog
+	 * @param markerName
+	 *            the name used to describe the specific kind of marker shown
+	 *            
+	 * @since 3.3
+	 */
+	public DialogMarkerProperties(Shell parentShell, String title, String markerName) {
+		super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+		this.title = title;
+		this.markerName = markerName;
+	}
 
-    /**
+	/**
      * Sets the marker to show or modify.
+     * <p>IMPORTANT:  Although this class is internal, there are public 
+     * subclasses that expose this method as API.  Changes in 
+     * this implementation should be treated as API changes.
      * 
      * @param marker the marker, or <code>null</code> to create a new marker
-     */
-    void setMarker(IMarker marker) {
-        this.marker = marker;
-        if (marker != null) {
-            try {
-                type = marker.getType();
-            } catch (CoreException e) {
-            }
-        }
-    }
+     * 
+     * @since 3.3
+	 */
+	public void setMarker(IMarker marker) {
+		this.marker = marker;
+		if (marker != null) {
+			try {
+				type = marker.getType();
+			} catch (CoreException e) {
+			}
+		}
+	}
 
-    /**
+	/**
      * Returns the marker being created or modified.
      * For a new marker, this returns <code>null</code> until
      * the dialog returns, but is non-null after.
-     */
-    IMarker getMarker() {
-        return marker;
-    }
-
-    /**
-     * Sets the resource to use when creating a new marker.
-     * If not set, the new marker is created on the workspace root.
+     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * internal, there are public subclasses that expose this method as API.
+     * Changes in this implementation should be treated as API changes.
      * 
-     * @param resource the marker's resource
-     */
-    public void setResource(IResource resource) {
-        this.resource = resource;
-    }
+     * @return the marker
+     * 
+     * @since 3.3
+	 */
+	protected IMarker getMarker() {
+		return marker;
+	}
 
-    /**
-     * Returns the resource to use when creating a new marker,
+	/**
+     * Sets the resource to use when creating a new task.
+     * If not set, the new task is created on the workspace root.
+     * <p>IMPORTANT:  Although this class is internal, there are public 
+     * subclasses that expose this method as API.  Changes in 
+     * this implementation should be treated as API changes.
+     * 
+     * @param resource the resource
+	 */
+	public void setResource(IResource resource) {
+		this.resource = resource;
+	}
+
+	/**
+     * Returns the resource to use when creating a new task,
      * or <code>null</code> if none has been set.
-     * If not set, the new marker is created on the workspace root.
-     */
-    IResource getResource() {
-        return resource;
-    }
+     * If not set, the new task is created on the workspace root.
+     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * internal, there are public subclasses that expose this method as API.
+     * Changes in this implementation should be treated as API changes.
+     * 
+     * @return the resource
+     * 
+     * @since 3.3
+	 */
+	protected IResource getResource() {
+		return resource;
+	}
 
-    /**
-     * Sets initial attributes to use when creating a new marker.
-     * If not set, the new marker is created with default attributes.
-     */
-    void setInitialAttributes(Map initialAttributes) {
-        this.initialAttributes = initialAttributes;
-    }
+	/**
+     * Sets initial attributes to use when creating a new task.
+     * If not set, the new task is created with default attributes.
+     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * internal, there are public subclasses that expose this method as API.
+     * Changes in this implementation should be treated as API changes.
+     * 
+     * @param initialAttributes the initial attributes
+     * 
+     * @since 3.3
+	 */
+	protected void setInitialAttributes(Map initialAttributes) {
+		this.initialAttributes = initialAttributes;
+	}
 
-    /**
-     * Returns the initial attributes to use when creating a new marker,
+	/**
+     * Returns the initial attributes to use when creating a new task,
      * or <code>null</code> if not set.
-     * If not set, the new marker is created with default attributes.
-     */
-    Map getInitialAttributes() {
-        if (initialAttributes == null) {
-            initialAttributes = new HashMap();
-        }
-        return initialAttributes;
-    }
+     * If not set, the new task is created with default attributes.
+     * <p>IMPORTANT:  Although this method is protected and the class is 
+     * internal, there are public subclasses that expose this method as API.
+     * Changes in this implementation should be treated as API changes.
+     * 
+     * @return the initial attributes
+     * 
+     * @since 3.3
+	 */
+	protected Map getInitialAttributes() {
+		if (initialAttributes == null) {
+			initialAttributes = new HashMap();
+		}
+		return initialAttributes;
+	}
 
-    /**
-     * Method declared on Window.
-     */
-    protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
+	/**
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
         if (title == null) {
 			newShell.setText(MarkerMessages.propertiesDialog_title);
 		} else {
@@ -208,20 +279,20 @@ class DialogMarkerProperties extends TrayDialog {
 		}
     }
 
-    /**
-     * Method declared on Dialog.
-     */
-    protected Control createDialogArea(Composite parent) {
-        //initialize resources/properties
-        if (marker != null) {
-            resource = marker.getResource();
-            try {
-                initialAttributes = marker.getAttributes();
-            } catch (CoreException e) {
-            }
-        } else if (resource == null) {
-            resource = ResourcesPlugin.getWorkspace().getRoot();
-        }
+	/**
+	 * Method declared on Dialog.
+	 */
+	protected Control createDialogArea(Composite parent) {
+		// initialize resources/properties
+		if (marker != null) {
+			resource = marker.getResource();
+			try {
+				initialAttributes = marker.getAttributes();
+			} catch (CoreException e) {
+			}
+		} else if (resource == null) {
+			resource = ResourcesPlugin.getWorkspace().getRoot();
+		}
 
         Composite comp = (Composite) super.createDialogArea(parent);
         Composite composite = new Composite(comp, SWT.NULL);
@@ -232,28 +303,26 @@ class DialogMarkerProperties extends TrayDialog {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         composite.setLayoutData(gridData);
     
-        initializeDialogUnits(composite);
-
-        createDescriptionArea(composite);
-        if (marker != null) {
+		initializeDialogUnits(composite);
+		createDescriptionArea(composite);
+		if (marker != null) {
             createSeperator(composite);
-            createCreationTimeArea(composite);
-        }
-        createAttributesArea(composite);
+			createCreationTimeArea(composite);
+		}
+		createAttributesArea(composite);
         if (resource != null) {
             createSeperator(composite);
-            createResourceArea(composite);
-        }
-
-        updateDialogFromMarker();
-        updateEnablement();
+			createResourceArea(composite);
+		}
+		updateDialogFromMarker();
+		updateEnablement();
         
         Dialog.applyDialogFont(composite);
         
-        return composite;
-    }
+		return composite;
+	}
 
-    /**
+	/**
      * Creates a seperator.
      */
     protected void createSeperator(Composite parent) {
@@ -264,79 +333,80 @@ class DialogMarkerProperties extends TrayDialog {
 	}
     
     /**
-     * Method createCreationTimeArea.
-     * @param parent
-     */
-    private void createCreationTimeArea(Composite parent) {
+	 * Method createCreationTimeArea.
+	 * @param parent
+	 */
+	private void createCreationTimeArea(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(MarkerMessages
                 .propertiesDialog_creationTime_text);
 
         creationTime = new Label(parent, SWT.NONE);
-    }
+	}
 
-    /**
-     * Creates the OK and Cancel buttons.
-     */
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-                true);
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
-    }
+	/**
+	 * Creates the OK and Cancel buttons.
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+				true);
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
+	}
 
-    /**
-     * Creates the area for the Description field.
-     */
-    private void createDescriptionArea(Composite parent) {
+	/**
+	 * Creates the area for the Description field.
+	 */
+	private void createDescriptionArea(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(MarkerMessages.propertiesDialog_description_text);
         descriptionText = new Text(parent, (SWT.SINGLE | SWT.BORDER));
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.widthHint =  convertHorizontalDLUsToPixels(400);
-        descriptionText.setLayoutData(gridData);
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = convertHorizontalDLUsToPixels(400);
+		descriptionText.setLayoutData(gridData);
 
-        descriptionText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                markDirty();
-            }
-        });
-    }
+		descriptionText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				markDirty();
+			}
+		});
+	}
 
-    /**
-     * This method is intended to be overridden by subclasses. The attributes area is created between
-     * the creation time area and the resource area.
-     * 
-     * @param parent the parent composite
-     */
-    protected void createAttributesArea(Composite parent) {
-    }
+	/**
+	 * This method is intended to be overridden by subclasses. The attributes
+	 * area is created between the creation time area and the resource area.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 */
+	protected void createAttributesArea(Composite parent) {
+	}
 
-    /**
-     * Creates the area for the Resource field.
-     */
-    private void createResourceArea(Composite parent) {
+	/**
+	 * Creates the area for the Resource field.
+	 */
+	private void createResourceArea(Composite parent) {
         Label resourceLabel = new Label(parent, SWT.NONE);
-        resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
+		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
         resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP
-                | SWT.READ_ONLY | SWT.BORDER);
+				| SWT.READ_ONLY | SWT.BORDER);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        resourceText.setLayoutData(gridData);
+		resourceText.setLayoutData(gridData);
 
         Label folderLabel = new Label(parent, SWT.NONE);
-        folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
+		folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
         folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY
-                | SWT.BORDER);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
-        folderText.setLayoutData(gridData);
+				| SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		folderText.setLayoutData(gridData);
 
         Label locationLabel = new Label(parent, SWT.NONE);
-        locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
+		locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
         locationText = new Text(parent, SWT.SINGLE | SWT.WRAP
-                | SWT.READ_ONLY | SWT.BORDER);
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
-        locationText.setLayoutData(gridData);
-    }
+				| SWT.READ_ONLY | SWT.BORDER);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		locationText.setLayoutData(gridData);
+	}
 
     /**
      * Updates the dialog from the marker state.
@@ -367,7 +437,7 @@ class DialogMarkerProperties extends TrayDialog {
 
         descriptionText.selectAll();
     }
-
+    
     /**
      * Updates the dialog from the predefined attributes.
      */
@@ -411,175 +481,115 @@ class DialogMarkerProperties extends TrayDialog {
 			}
         }
     }
-
-    /**
-     * Method declared on Dialog
-     */
-    protected void okPressed() {
-        if (marker == null || Util.isEditable(marker)) {
-            saveChanges();
-        }
-        super.okPressed();
-    }
-
-    /**
-     * Sets the dialog's dirty flag to <code>true</code>
-     */
-    protected void markDirty() {
-        dirty = true;
-    }
-
-    /**
-     * @return
-     * <ul>
-     * <li><code>true</code> if the dirty flag has been set to true.</li>
-     * <li><code>false</code> otherwise.</li>
-     * </ul>
-     */
-    protected boolean isDirty() {
-        return dirty;
-    }
-
-    /**
-     * Saves the changes made in the dialog if needed.
-     * Creates a new marker if needed.
-     * Updates the existing marker only if there have been changes.
-     */
-    private void saveChanges() {
-
-        final CoreException[] coreExceptions = new CoreException[1];
-
-        try {
-            final Map attrs = getMarkerAttributes();
-
-            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-                    new IRunnableWithProgress() {
-                        /* (non-Javadoc)
-                         * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-                         */
-                        public void run(IProgressMonitor monitor) {
-                            try {
-
-                                monitor.beginTask("", 100);//$NON-NLS-1$
-                                ResourcesPlugin.getWorkspace().run(
-                                        new IWorkspaceRunnable() {
-                                            public void run(
-                                                    IProgressMonitor monitor)
-                                                    throws CoreException {
-                                                if (marker == null) {
-													createMarker(monitor);
-												}
-                                                if (isDirty()) {
-													updateMarker(monitor, attrs);
-												}
-                                            }
-                                        }, monitor);
-                                monitor.done();
-                            } catch (CoreException e) {
-                                coreExceptions[0] = e;
-                            }
-                        }
-
-                    });
-        } catch (InvocationTargetException e) {
-            IDEWorkbenchPlugin.log(e.getMessage(), StatusUtil.newStatus(
-                    IStatus.ERROR, e.getMessage(), e));
-            return;
-        }
-
-        catch (InterruptedException e) {
-        }
-
-        if (coreExceptions[0] != null) {
-			ErrorDialog
-                    .openError(
-                            getShell(),
-                            MarkerMessages.Error, null, coreExceptions[0].getStatus());
-		} 
-
-    }
-
-    /**
-     * Creates or updates the marker.  Must be called within a workspace runnable.
-     * @param monitor the monitor we report to. 
-     * @param attrs the attributes from the dialog
-     */
-    private void updateMarker(IProgressMonitor monitor, Map attrs)
-            throws CoreException {
-        // Set the marker attributes from the current dialog field values.
-        // Do not use setAttributes(Map) as that overwrites any attributes
-        // not covered by the dialog.
-
-        int increment = 50 / attrs.size();
-
-        for (Iterator i = attrs.keySet().iterator(); i.hasNext();) {
-            monitor.worked(increment);
-            String key = (String) i.next();
-            Object val = attrs.get(key);
-            marker.setAttribute(key, val);
-        }
-    }
-
-    /**
-     * Returns the marker attributes to save back to the marker, 
-     * based on the current dialog fields.
-     */
-    protected Map getMarkerAttributes() {
-        Map attrs;
-        if (initialAttributes == null) {
-            attrs = initialAttributes;
-        } else {
-            attrs = new HashMap();
-        }
-        attrs.put(IMarker.MESSAGE, descriptionText.getText());
-        return attrs;
-    }
-
-    /**
-     * Create the marker and report progress
-     * to the monitor.
-     * @param monitor
-     * @throws CoreException
-     */
-    private void createMarker(IProgressMonitor monitor) throws CoreException {
-        if (resource == null) {
-			return;
+    
+	/**
+	 * Method declared on Dialog
+	 */
+	protected void okPressed() {
+		if (marker == null || Util.isEditable(marker)) {
+			saveChanges();
 		}
+		super.okPressed();
+	}
 
-        monitor.worked(10);
-        marker = resource.createMarker(type);
-        monitor.worked(40);
-    }
+	/**
+	 * Sets the dialog's dirty flag to <code>true</code>
+	 */
+	protected void markDirty() {
+		dirty = true;
+	}
 
-    /**
-     * Updates widget enablement for the dialog. Should be overridden by subclasses. 
-     */
-    protected void updateEnablement() {
-        descriptionText.setEditable(isEditable());
-    }
+	/**
+	 * @return
+	 * <ul>
+	 * <li><code>true</code> if the dirty flag has been set to true.</li>
+	 * <li><code>false</code> otherwise.</li>
+	 * </ul>
+	 */
+	protected boolean isDirty() {
+		return dirty;
+	}
 
-    /**
-     * @return
-     * <ul>
-     * <li><code>true</code> if the marker is editable or the dialog is creating a new marker.</li>
-     * <li><code>false</code> if the marker is not editable.</li>
-     * </ul>
-     */
-    protected boolean isEditable() {
-        if (marker == null) {
-            return true;
-        }
-        return Util.isEditable(marker);
-    }
+	/**
+	 * Saves the changes made in the dialog if needed. Creates a new marker if
+	 * needed. Updates the existing marker only if there have been changes.
+	 */
+	private void saveChanges() {
+		Map attrs = getMarkerAttributes();
+		IUndoableOperation op = null;
+		if (marker == null) {
+			if (resource == null)
+				return;
+			op = new CreateMarkersOperation(type, attrs,
+					resource, getCreateOperationTitle()); 
+		} else {
+			if (isDirty()) {
+				op = new UpdateMarkersOperation(marker, attrs,
+						getModifyOperationTitle(), true);
+			}
+		}
+		if (op != null) {
+			try {
+				PlatformUI.getWorkbench()
+						.getOperationSupport()
+						.getOperationHistory().execute(op,
+								null, new IAdaptable() {
+									public Object getAdapter(
+											Class clazz) {
+										if (clazz == Shell.class) {
+											return getShell();
+										}
+										return null;
+									}
+								});
+			} catch (ExecutionException e) {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
+			}
+		}
+	}
 
-    /**
-     * Sets the marker type when creating a new marker.
-     * 
-     * @param type the marker type
-     */
-    void setType(String type) {
-        this.type = type;
-    }
+	/**
+	 * Returns the marker attributes to save back to the marker, based on the
+	 * current dialog fields.
+	 */
+	protected Map getMarkerAttributes() {
+		Map attrs = getInitialAttributes();
+		attrs.put(IMarker.MESSAGE, descriptionText.getText());
+		return attrs;
+	}
+	
+	/**
+	 * Updates widget enablement for the dialog. Should be overridden by
+	 * subclasses.
+	 */
+	protected void updateEnablement() {
+		descriptionText.setEditable(isEditable());
+	}
+
+	/**
+	 * @return
+	 * <ul>
+	 * <li><code>true</code> if the marker is editable or the dialog is
+	 * creating a new marker.</li>
+	 * <li><code>false</code> if the marker is not editable.</li>
+	 * </ul>
+	 */
+	protected boolean isEditable() {
+		if (marker == null) {
+			return true;
+		}
+		return Util.isEditable(marker);
+	}
+
+	/**
+	 * Sets the marker type when creating a new marker.
+	 * 
+	 * @param type
+	 *            the marker type
+	 */
+	void setType(String type) {
+		this.type = type;
+	}
     
 	/* (non-Javadoc)
      * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
@@ -591,7 +601,38 @@ class DialogMarkerProperties extends TrayDialog {
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) {
             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-        } 
+        }
         return section;
+	}
+	
+	/**
+	 * Return the string that describes a modify marker operation.
+	 * Subclasses may override to more specifically describe the marker.
+	 * 
+	 * @since 3.3
+	 */
+	protected String getModifyOperationTitle() {
+		if (markerName == null) {
+			// we don't know what kind of marker is being modified
+			return MarkerMessages.DialogMarkerProperties_ModifyMarker;
+		} 
+		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title, 
+				MarkerMessages.DialogMarkerProperties_Modify, markerName);
+	}
+	
+	/**
+	 * Return the string that describes a create marker operation.
+	 * Subclasses may override to more specifically describe the marker.
+	 * 
+	 * @since 3.3
+	 */
+	protected String getCreateOperationTitle() {
+		if (markerName == null) {
+			// we don't know what kind of marker is being created
+			return MarkerMessages.DialogMarkerProperties_CreateMarker;
+		}
+		return NLS.bind(MarkerMessages.qualifiedMarkerCommand_title, 
+				MarkerMessages.DialogMarkerProperties_Create, markerName);
+		
 	}
 }

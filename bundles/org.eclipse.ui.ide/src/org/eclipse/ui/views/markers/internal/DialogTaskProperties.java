@@ -226,5 +226,24 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         }
         return attrs;
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getModifyOperationTitle()
+     * 
+     * @since 3.3
+     */
+	protected String getModifyOperationTitle() {
+		return MarkerMessages.modifyTask_title;
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getCreateOperationTitle()
+     * 
+     * @since 3.3
+     */
+	protected String getCreateOperationTitle() {
+		return MarkerMessages.DialogTaskProperties_CreateTask;
+		
+	}
 
 }
