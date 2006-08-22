@@ -26,7 +26,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
@@ -254,20 +256,120 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				.getContentProvider();
 		IStructuredSelection selection = (IStructuredSelection) viewer
 				.getSelection();
+		if (selection instanceof ITreeSelection) {
+			return getActiveSaveablesFromTreeSelection((ITreeSelection) selection);
+		} else if (contentProvider instanceof ITreePathContentProvider) {
+			return getActiveSaveablesFromTreePathProvider(selection, (ITreePathContentProvider) contentProvider);
+		} else {
+			return getActiveSaveablesFromTreeProvider(selection, contentProvider);
+		}
+	}
+	
+	/**
+	 * @param selection
+	 * @return the active saveables
+	 */
+	private Saveable[] getActiveSaveablesFromTreeSelection(
+			ITreeSelection selection) {
 		Set result = new HashSet();
-		for (Iterator it = selection.iterator(); it.hasNext();) {
-			Object element = it.next();
-			// try to find a saveable that contains the selected element
-			while (element != null) {
-				Saveable saveable = getSaveable(element);
-				if (saveable != null) {
-					result.add(saveable);
-					break;
-				}
-				element = contentProvider.getParent(element);
+		TreePath[] paths = selection.getPaths();
+		for (int i = 0; i < paths.length; i++) {
+			TreePath path = paths[i];
+			Saveable saveable = findSaveable(path);
+			if (saveable != null) {
+				result.add(saveable);
 			}
 		}
 		return (Saveable[]) result.toArray(new Saveable[result.size()]);
+	}
+
+	/**
+	 * @param selection
+	 * @param provider
+	 * @return the active saveables
+	 */
+	private Saveable[] getActiveSaveablesFromTreePathProvider(
+			IStructuredSelection selection, ITreePathContentProvider provider) {
+		Set result = new HashSet();
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object element = it.next();
+			Saveable saveable = getSaveable(element);
+			if (saveable != null) {
+				result.add(saveable);
+			} else {
+				TreePath[] paths = provider.getParents(element);
+				saveable = findSaveable(paths);
+				if (saveable != null) {
+					result.add(saveable);
+				}
+			}
+		}
+		return (Saveable[]) result.toArray(new Saveable[result.size()]);
+	}
+
+	/**
+	 * @param selection
+	 * @param contentProvider
+	 * @return the active saveables
+	 */
+	private Saveable[] getActiveSaveablesFromTreeProvider(
+			IStructuredSelection selection, ITreeContentProvider contentProvider) {
+		Set result = new HashSet();
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object element = it.next();
+			Saveable saveable = findSaveable(element, contentProvider);
+			if (saveable != null) {
+				result.add(saveable);
+			}
+		}
+		return (Saveable[]) result.toArray(new Saveable[result.size()]);
+	}
+
+	/**
+	 * @param element
+	 * @param contentProvider
+	 * @return the saveable, or null
+	 */
+	private Saveable findSaveable(Object element,
+			ITreeContentProvider contentProvider) {
+		while (element != null) {
+			Saveable saveable = getSaveable(element);
+			if (saveable != null) {
+				return saveable;
+			}
+			element = contentProvider.getParent(element);
+		}
+		return null;
+	}
+
+	/**
+	 * @param paths
+	 * @return the saveable, or null
+	 */
+	private Saveable findSaveable(TreePath[] paths) {
+		for (int i = 0; i < paths.length; i++) {
+			Saveable saveable = findSaveable(paths[i]);
+			if (saveable != null) {
+				return saveable;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @param path
+	 * @return a saveable, or null
+	 */
+	private Saveable findSaveable(TreePath path) {
+		int count = path.getSegmentCount();
+		for (int j = count - 1; j >= 0; j--) {
+			Object parent = path.getSegment(j);
+			Saveable saveable = getSaveable(parent);
+			if (saveable != null) {
+				return saveable;
+			}
+		}
+		return null;
 	}
 
 	/**
