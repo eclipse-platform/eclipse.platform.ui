@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
@@ -30,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
@@ -43,6 +44,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -60,6 +62,9 @@ import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * IDE-specified workbench advisor which configures the workbench for use as an
@@ -185,6 +190,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						Dialog.DLG_IMG_HELP,
 						IDEInternalWorkbenchImages
 								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP));
+		
+		Policy.setComparator(new Comparator(){
+			private Collator collator = Collator.getInstance();
+			/* (non-Javadoc)
+			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Object arg0, Object arg1) {
+	            String s1 = arg0.toString();
+	            String s2 = arg1.toString();
+	            return collator.compare(s1, s2);
+			}
+		});
 	}
 
 	/*
@@ -466,7 +483,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 				String version = info.getVersionId();
 				version = version == null ? "0.0.0" //$NON-NLS-1$
-						: new PluginVersionIdentifier(version).toString();
+						: new Version(version).toString();
 				String versionedFeature = group.getIdentifier() + ":" + version; //$NON-NLS-1$
 
 				ids.put(versionedFeature, info);
@@ -694,7 +711,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private void declareWorkbenchImage(Bundle ideBundle, String symbolicName,
 			String path, boolean shared) {
-		URL url = Platform.find(ideBundle, new Path(path));
+		URL url = FileLocator.find(ideBundle, new Path(path), null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
 	}
