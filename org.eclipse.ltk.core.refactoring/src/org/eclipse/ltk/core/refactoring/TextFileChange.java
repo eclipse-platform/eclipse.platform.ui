@@ -249,6 +249,33 @@ public class TextFileChange extends TextChange {
 	protected final boolean isDocumentAcquired() {
 		return fAcquireCount > 0;
 	}
+	
+	/**
+	 * Returns the number of times the document has been acquired and not released.
+	 * 
+	 * @return the number of times the document has been acquired and not released.
+	 * @since 3.3
+	 */
+	protected final int getAcquireCount() {
+		return fAcquireCount;
+	}
+	
+	/**
+	 * Has the document been modified since it has been first acquired by the change?
+	 * 
+	 * @return Returns true if the document has been modified since it got acquired by the change.
+	 * <code>false</code> is returned if the document has not been acquired yet, or has been released
+	 * already.
+	 * 
+	 * @since 3.3
+	 */
+	protected boolean isDocumentModified() {
+		if (fAcquireCount > 0) {
+			ContentStamp currentStamp= ContentStamps.get(fFile, fBuffer.getDocument());
+			return !currentStamp.equals(fContentStamp);
+		}
+		return false;
+	}
 
 	/**
 	 * Does the text file change need saving?
