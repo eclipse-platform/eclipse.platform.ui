@@ -29,7 +29,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.ContentReference;
 import org.eclipse.update.core.IFeatureContentConsumer;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.PluginEntry;
@@ -49,9 +48,6 @@ public class JarDeltaInstallHandler extends DeltaInstallHandler {
 				super.overlayPlugin(oldPlugin, newPlugin, consumer);
 			}
 			
-			ContentReference[] oldReferences = oldFeature.getFeatureContentProvider().getPluginEntryContentReferences(oldPlugin, null);
-			ContentReference[] newReferences = feature.getFeatureContentProvider().getPluginEntryContentReferences(newPlugin, null);
-
 			URL oldURI = null;
 			try {
 				oldURI = new URL(consumer.getFeature().getSite().getURL().getPath() + 
