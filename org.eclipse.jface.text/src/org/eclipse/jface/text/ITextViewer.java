@@ -431,8 +431,6 @@ public interface ITextViewer {
 	IFindReplaceTarget getFindReplaceTarget();
 
 	/**
-	 * Sets the string that is used as prefix when lines of the given
-	 * content type are prefixed by the prefix text operation.
 	 * Sets the strings that are used as prefixes when lines of the given content type
 	 * are prefixed using the prefix text operation. The prefixes are considered equivalent.
 	 * Inserting a prefix always inserts the defaultPrefixes[0].
