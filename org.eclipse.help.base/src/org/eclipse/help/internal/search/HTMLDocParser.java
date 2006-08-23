@@ -327,14 +327,9 @@ public class HTMLDocParser {
 									contentValue = tokenizer.sval;
 								} else {
 									// value for the attribute is missing
-									// reset states of seeked attributes,
-									// unless successfully processed earlier
-									if (stateHttp != STATE_HTTP_DONE) {
-										stateHttp = STATE_HTTP_START;
-									}
-									if (stateContent != STATE_CONTENT_DONE) {
-										stateContent = STATE_CONTENT_START;
-									}
+									// reset states of seeked attributes
+									stateHttp = STATE_HTTP_START;
+									stateContent = STATE_CONTENT_START;
 								}
 								break;
 							default :
