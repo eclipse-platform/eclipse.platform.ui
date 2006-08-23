@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.ide;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -191,17 +190,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						IDEInternalWorkbenchImages
 								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP));
 		
-		Policy.setComparator(new Comparator(){
-			private Collator collator = Collator.getInstance();
-			/* (non-Javadoc)
-			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-			 */
-			public int compare(Object arg0, Object arg1) {
-	            String s1 = arg0.toString();
-	            String s2 = arg1.toString();
-	            return collator.compare(s1, s2);
-			}
-		});
+		Policy.setComparator(Collator.getInstance());
 	}
 
 	/*
