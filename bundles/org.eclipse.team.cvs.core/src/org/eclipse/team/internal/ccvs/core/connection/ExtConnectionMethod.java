@@ -25,6 +25,9 @@ public class ExtConnectionMethod implements IConnectionMethod {
 	 * @see IConnectionMethod#createConnection
 	 */
 	public IServerConnection createConnection(ICVSRepositoryLocation repositoryRoot, String password) {
+		if(password==null){
+			password=""; //$NON-NLS-1$
+		}
 		return new ExtConnection(repositoryRoot, password);
 	}
 	

@@ -18,6 +18,9 @@ public class PServerConnectionMethod implements IConnectionMethod {
 	 * @see IConnectionMethod#createConnection(ICVSRepositoryLocation, String)
 	 */
 	public IServerConnection createConnection(ICVSRepositoryLocation location, String password) {
+		if(password==null){
+			password=""; //$NON-NLS-1$
+		}
 		return new PServerConnection(location, password);
 	}
 	/**

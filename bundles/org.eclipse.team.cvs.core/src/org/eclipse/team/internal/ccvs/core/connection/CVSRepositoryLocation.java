@@ -775,8 +775,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 						// This is possible if the cache was cleared somehow for a location with a mutable username
 						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, CVSMessages.CVSRepositoryLocation_usernameRequired)); 
 					}
-					if (password == null)
-						password = "";//$NON-NLS-1$ 
+					//if (password == null)
+					//	password = "";//$NON-NLS-1$ 
 					Connection connection = createConnection(password, monitor);
 					if (cacheNeedsUpdate)
 					    updateCachedLocation();

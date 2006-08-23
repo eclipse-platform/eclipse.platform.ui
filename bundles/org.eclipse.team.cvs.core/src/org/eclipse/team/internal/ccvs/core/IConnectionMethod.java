@@ -32,6 +32,7 @@ public interface IConnectionMethod {
 	/**
 	 * Creates a new server connection using the given repository root
 	 * (which includes the user name) and the given password.
+	 * If password is not given, null will be passed.
 	 */
 	public IServerConnection createConnection(ICVSRepositoryLocation location, String password);
 	
