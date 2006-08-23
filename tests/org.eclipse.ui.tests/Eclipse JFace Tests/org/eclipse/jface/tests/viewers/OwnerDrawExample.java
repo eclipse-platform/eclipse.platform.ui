@@ -3,12 +3,14 @@ package org.eclipse.jface.tests.viewers;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.ViewerLabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -147,9 +149,7 @@ public class OwnerDrawExample {
 		 * @param event
 		 */
 		private void drawCupYear(Event event) {
-			GC gc = event.gc;
-			initializeGC(gc);
-			gc.drawText(cupYear, event.x, event.y);
+			event.gc.drawText(cupYear, event.x, event.y);
 
 		}
 
@@ -160,9 +160,7 @@ public class OwnerDrawExample {
 		 */
 		protected void drawName(Event event) {
 
-			GC gc = event.gc;
-			initializeGC(gc);
-			gc.drawText(name, event.x, event.y);
+			event.gc.drawText(name, event.x, event.y);
 
 		}
 
@@ -389,6 +387,37 @@ public class OwnerDrawExample {
 			}
 		});
 
+		viewer.getTable().addListener(SWT.EraseItem, new Listener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+
+				Rectangle bounds = event.getBounds();
+				if ((event.detail & SWT.SELECTED) > 0) {
+
+					Color oldForeground = event.gc.getForeground();
+					Color oldBackground = event.gc.getBackground();
+
+					event.gc.setBackground(viewer.getControl().getDisplay()
+							.getSystemColor(SWT.COLOR_LIST_SELECTION));
+					event.gc.setForeground(viewer.getControl().getDisplay()
+							.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+					event.gc.fillRectangle(bounds);
+					/* restore the old GC colors */
+					event.gc.setForeground(oldForeground);
+					event.gc.setBackground(oldBackground);
+					/* ensure that default selection is not drawn */
+					event.detail &= ~SWT.SELECTED;
+
+				}
+
+			}
+		});
+
+		viewer.setSelection(new StructuredSelection(entries[1]));
 	}
 
 	/**
