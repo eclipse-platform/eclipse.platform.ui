@@ -280,7 +280,7 @@ public class TextFileChange extends TextChange {
 			return true;
 		}
 		if ((fSaveMode & KEEP_SAVE_STATE) != 0) {
-			return fValidationState != null && !fValidationState.wasDirty();
+			return fValidationState == null || !fValidationState.wasDirty();
 		}
 		return false;
 	}
