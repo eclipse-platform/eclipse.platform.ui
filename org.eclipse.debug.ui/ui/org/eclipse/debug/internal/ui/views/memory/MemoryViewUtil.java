@@ -73,7 +73,8 @@ public class MemoryViewUtil {
 		SWT.PRINT_SCREEN,
 		SWT.ESC,
 		SWT.CTRL,
-		SWT.ALT
+		SWT.ALT,
+		SWT.SHIFT
 	};	
 	
 	public static ArrayList MEMORY_BLOCKS_HISTORY = new ArrayList();
