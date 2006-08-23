@@ -213,7 +213,7 @@
             sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            commandId="org.eclipse.ui.window.openEditorDropDown"
+            commandId="org.eclipse.ui.window.quickAccess"
             sequence="M1+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
@@ -730,6 +730,12 @@
             description="%command.openEditorDropDown.description"
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.openEditorDropDown" />
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.incubator.CtrlEAction"
+            description="%command.quickAccess.description"
+            id="org.eclipse.ui.window.quickAccess"
+            name="%command.quickAccess.name"/>
       <command
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"
@@ -1284,20 +1290,6 @@
             <bar  path="" type="trim"/>
          </location>
       </group>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="org.eclipse.ui.internal.incubator.ctrlEActionSet"
-            label="%CtrlE.actionSet.label"
-            visible="false">
-         <action
-               class="org.eclipse.ui.internal.incubator.CtrlEAction"
-               id="org.eclipse.ui.internal.incubator.CtrlEAction"
-               label="%CtrlE.action.label"
-               toolbarPath="ctrlEGroup"
-               tooltip="%CtrlE.action.tooltip"/>
-      </actionSet>
    </extension>
    
 </plugin>

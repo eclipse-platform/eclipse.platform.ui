@@ -19,6 +19,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class IncubatorMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.incubator.messages"; //$NON-NLS-1$
+	public static String CtrlEAction_Perspectives;
 	public static String CtrlEAction_Commands;
 	public static String CtrlEAction_Editors;
 	public static String CtrlEAction_Menus;

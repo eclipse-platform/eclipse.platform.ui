@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -26,12 +28,16 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -40,16 +46,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.SaveablesList;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
@@ -61,13 +68,12 @@ import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
- * Experimental Action for search-based navigation to UI elements such as editors, views, commands.
+ * Experimental Action for search-based navigation to UI elements such as
+ * editors, views, commands.
  * 
  */
-public class CtrlEAction
-		implements
-			IWorkbenchWindowActionDelegate,
-			IActionDelegate2 {
+public class CtrlEAction extends AbstractHandler {
+
 	private IWorkbenchWindow window;
 
 	/**
@@ -76,57 +82,9 @@ public class CtrlEAction
 	public CtrlEAction() {
 	}
 
-	/**
-	 * The action has been activated. The argument of the method represents the
-	 * 'real' action sitting in the workbench UI.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#run
-	 */
-	public void run(IAction action) {
-		runWithEvent(action, null);
-	}
-
-	/**
-	 * Selection in the workbench has been changed. We can change the state of
-	 * the 'real' action here if we want, but this can only happen after the
-	 * delegate has been created.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
-
-	/**
-	 * We can use this method to dispose of any system resources we previously
-	 * allocated.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#dispose
-	 */
-	public void dispose() {
-	}
-
-	/**
-	 * We will cache window object in order to be able to provide parent shell
-	 * for the message dialog.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
-	public void init(IAction action) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
-	public void runWithEvent(IAction action, Event event) {
-
-		// need to get commands here because opening the popup changes which commands are "handled"
+	public Object execute(ExecutionEvent executionEvent) {
+		// need to get commands here because opening the popup changes which
+		// commands are "handled"
 		BindingService bindingService = (BindingService) PlatformUI
 				.getWorkbench().getService(IBindingService.class);
 		Binding[] bindings = bindingService.getBindings();
@@ -139,19 +97,31 @@ public class CtrlEAction
 			}
 		}
 
+		window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			return null;
+		}
 		FilteringInfoPopup popup = new MyInfoPopup(window.getShell(), commands);
 		popup.setInput(new Object());
-		popup.setSize(300, 400);
-		if (event != null) {
-			if (event.widget instanceof ToolItem) {
-				ToolItem toolItem = (ToolItem) event.widget;
-				Rectangle bounds = toolItem.getBounds();
-				Point popupLocation = new Point(bounds.x, bounds.y
-						+ bounds.height);
-				popup
-						.setLocation(toolItem.getParent().toDisplay(
-								popupLocation));
-			}
+		Event event = null;
+		if (executionEvent.getTrigger() instanceof Event) {
+			event = (Event) executionEvent.getTrigger();
+		}
+		if (event != null && event.widget instanceof ToolItem) {
+			ToolItem toolItem = (ToolItem) event.widget;
+			Rectangle bounds = toolItem.getBounds();
+			Point popupLocation = new Point(bounds.x, bounds.y
+					+ bounds.height);
+			popup
+					.setLocation(toolItem.getParent().toDisplay(
+							popupLocation));
+		} else {
+			Point size = new Point(300, 400);
+			Rectangle parentBounds = window.getShell().getBounds();
+			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
+			int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
+			popup.setLocation(new Point(x,y));
+			popup.setSize(size.x, size.y);
 		}
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
 				.getItems();
@@ -159,13 +129,16 @@ public class CtrlEAction
 			((Tree) popup.getTreeViewer().getControl())
 					.setTopItem(rootItems[0]);
 		popup.open();
+		return null;
 	}
+
 	/**
 	 * @since 3.2
-	 *
+	 * 
 	 */
 	private final class MyInfoPopup extends FilteringInfoPopup {
 		private SortedSet commands;
+
 		/**
 		 * @param parent
 		 * @param style
@@ -176,16 +149,20 @@ public class CtrlEAction
 			super(shell, SWT.RESIZE, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE,
 					false);
 			MyInfoPopup.this.commands = commands;
-			getTreeViewer().setContentProvider(new MyContentProvider(MyInfoPopup.this.commands));
+			getTreeViewer().setContentProvider(
+					new MyContentProvider(MyInfoPopup.this.commands));
 		}
+
 		protected TreeViewer createTreeViewer(Composite parent, int style) {
 			TreeViewer viewer = new TreeViewer(parent, style);
 			viewer.setLabelProvider(new MyLabelProvider());
 			return viewer;
 		}
+
 		protected String getId() {
 			return "org.eclipse.ui.internal.incubator.ctrlE"; //$NON-NLS-1$
 		}
+
 		protected void handleElementSelected(Object selectedElement) {
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
@@ -196,6 +173,10 @@ public class CtrlEAction
 						return;
 					} catch (PartInitException e) {
 					}
+				}
+				if (selectedElement instanceof IPerspectiveDescriptor) {
+					IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) selectedElement;
+					activePage.setPerspective(perspectiveDescriptor);
 				}
 				if (selectedElement instanceof Saveable) {
 					Saveable saveable = (Saveable) selectedElement;
@@ -241,6 +222,7 @@ public class CtrlEAction
 				}
 			}
 		}
+
 		public void setInput(Object information) {
 			getTreeViewer().setAutoExpandLevel(2);
 			getTreeViewer().setInput(information);
@@ -249,11 +231,20 @@ public class CtrlEAction
 
 	private static class Node {
 		private String name;
-		Node(String name) {
+
+		private String imageId;
+
+		Node(String name, String imageId) {
 			this.name = name;
+			this.imageId = imageId;
 		}
+
 		public String toString() {
 			return name;
+		}
+
+		public String getImageId() {
+			return imageId;
 		}
 	}
 
@@ -261,14 +252,25 @@ public class CtrlEAction
 		private Object input;
 
 		private Node editorNode = new Node(
-				IncubatorMessages.CtrlEAction_Editors);
-		private Node viewNode = new Node(IncubatorMessages.CtrlEAction_Views);
+				IncubatorMessages.CtrlEAction_Editors, null);
+
+		private Node viewNode = new Node(IncubatorMessages.CtrlEAction_Views,
+				IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC);
+
+		private Node perspectiveNode = new Node(
+				IncubatorMessages.CtrlEAction_Perspectives,
+				IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+
 		private Node commandNode = new Node(
-				IncubatorMessages.CtrlEAction_Commands);
-		private Node menusNode = new Node(IncubatorMessages.CtrlEAction_Menus);
-		private Node newNode = new Node(IncubatorMessages.CtrlEAction_New);
+				IncubatorMessages.CtrlEAction_Commands, null);
+
+		private Node menusNode = new Node(IncubatorMessages.CtrlEAction_Menus,
+				null);
+
+		private Node newNode = new Node(IncubatorMessages.CtrlEAction_New, null);
+
 		private Node preferencesNode = new Node(
-				IncubatorMessages.CtrlEAction_Preferences);
+				IncubatorMessages.CtrlEAction_Preferences, null);
 
 		private SortedSet commands;
 
@@ -278,6 +280,7 @@ public class CtrlEAction
 		public MyContentProvider(SortedSet commands) {
 			MyContentProvider.this.commands = commands;
 		}
+
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof Node) {
 				if (editorNode.equals(parentElement)) {
@@ -288,6 +291,9 @@ public class CtrlEAction
 				} else if (viewNode.equals(parentElement)) {
 					return PlatformUI.getWorkbench().getViewRegistry()
 							.getViews();
+				} else if (perspectiveNode.equals(parentElement)) {
+					return PlatformUI.getWorkbench().getPerspectiveRegistry()
+							.getPerspectives();
 				} else if (commandNode.equals(parentElement)) {
 					return commands.toArray();
 				} else if (preferencesNode.equals(parentElement)) {
@@ -311,11 +317,12 @@ public class CtrlEAction
 				}
 			}
 			if (parentElement == input) {
-				return new Node[]{editorNode, viewNode, commandNode, menusNode,
-						newNode, preferencesNode};
+				return new Node[] { editorNode, viewNode, perspectiveNode,
+						commandNode, menusNode, newNode, preferencesNode };
 			}
 			return new Object[0];
 		}
+
 		private void collectContributions(MenuManager menu, Set result) {
 			IContributionItem[] items = menu.getItems();
 			for (int i = 0; i < items.length; i++) {
@@ -330,6 +337,7 @@ public class CtrlEAction
 				}
 			}
 		}
+
 		private void collectWizards(IWizardCategory category, List result) {
 			result.addAll(Arrays.asList(category.getWizards()));
 			IWizardCategory[] childCategories = category.getCategories();
@@ -337,61 +345,136 @@ public class CtrlEAction
 				collectWizards(childCategories[i], result);
 			}
 		}
+
 		public Object getParent(Object element) {
 			return null;
 		}
+
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
+
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
+
 		public void dispose() {
 		}
+
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			this.input = newInput;
 		}
 	}
 
 	private static final class MyLabelProvider extends LabelProvider {
+		private LocalResourceManager resourceManager = new LocalResourceManager(
+				JFaceResources.getResources());
+
+		public Image getImage(Object element) {
+			if (element instanceof Node) {
+				Node node = (Node) element;
+				return findOrCreateImage(WorkbenchImages
+						.getImageDescriptor(node.getImageId()));
+			}
+			if (element instanceof Saveable) {
+				Saveable saveable = (Saveable) element;
+				return findOrCreateImage(saveable.getImageDescriptor());
+			}
+			if (element instanceof IViewDescriptor) {
+				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
+				return findOrCreateImage(viewDescriptor.getImageDescriptor());
+			}
+			if (element instanceof IPerspectiveDescriptor) {
+				IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) element;
+				return findOrCreateImage(perspectiveDescriptor
+						.getImageDescriptor());
+			}
+			if (element instanceof IPreferenceNode) {
+				IPreferenceNode preferenceNode = (IPreferenceNode) element;
+				return preferenceNode.getLabelImage();
+			}
+			if (element instanceof IWizardDescriptor) {
+				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
+				return findOrCreateImage(wizardDescriptor.getDescriptionImage());
+			}
+			return super.getImage(element);
+		}
+
+		/**
+		 * @param imageDescriptor
+		 * @return image, or null
+		 * @throws DeviceResourceException
+		 */
+		private Image findOrCreateImage(ImageDescriptor imageDescriptor) {
+			if (imageDescriptor == null) {
+				return null;
+			}
+			Image image = (Image) resourceManager.find(imageDescriptor);
+			if (image == null) {
+				try {
+					image = resourceManager.createImage(imageDescriptor);
+				} catch (DeviceResourceException e) {
+					WorkbenchPlugin.log(e);
+				}
+			}
+			return image;
+		}
+
+		public void dispose() {
+			resourceManager.dispose();
+			resourceManager = null;
+			super.dispose();
+		}
+
 		public String getText(Object element) {
 			String separator = " - "; //$NON-NLS-1$
 			if (element instanceof Saveable) {
 				Saveable saveable = (Saveable) element;
-				return saveable.getName() + separator + saveable.getToolTipText();
+				return saveable.getName() + separator
+						+ saveable.getToolTipText();
 			}
 			if (element instanceof IViewDescriptor) {
 				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
 				return viewDescriptor.getLabel();
 			}
+			if (element instanceof IPerspectiveDescriptor) {
+				IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) element;
+				return perspectiveDescriptor.getLabel();
+			}
 			if (element instanceof IPreferenceNode) {
 				IPreferenceNode preferenceNode = (IPreferenceNode) element;
 				IPreferencePage page = preferenceNode.getPage();
-				if (page != null && page.getDescription()!=null && page.getDescription().length()!=0) {
-					return preferenceNode.getLabelText() + separator + page.getDescription();
+				if (page != null && page.getDescription() != null
+						&& page.getDescription().length() != 0) {
+					return preferenceNode.getLabelText() + separator
+							+ page.getDescription();
 				}
-                return preferenceNode.getLabelText();
+				return preferenceNode.getLabelText();
 			}
-            if (element instanceof IWizardDescriptor) {
+			if (element instanceof IWizardDescriptor) {
 				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
-				return wizardDescriptor.getLabel() + separator + wizardDescriptor.getDescription();
+				return wizardDescriptor.getLabel() + separator
+						+ wizardDescriptor.getDescription();
 			}
 			if (element instanceof ActionContributionItem) {
 				ActionContributionItem item = (ActionContributionItem) element;
 				IAction action = item.getAction();
-				if (action.getToolTipText()!=null && action.getToolTipText().length() != 0) {
-					return LegacyActionTools.removeMnemonics(action
-							.getText()) + separator + action.getToolTipText();
+				if (action.getToolTipText() != null
+						&& action.getToolTipText().length() != 0) {
+					return LegacyActionTools.removeMnemonics(action.getText())
+							+ separator + action.getToolTipText();
 				}
-				return LegacyActionTools.removeMnemonics(action
-						.getText());
+				return LegacyActionTools.removeMnemonics(action.getText());
 			}
 			if (element instanceof ParameterizedCommand) {
 				ParameterizedCommand command = (ParameterizedCommand) element;
 				try {
 					Command nestedCommand = command.getCommand();
-					if (nestedCommand!=null && nestedCommand.getDescription()!=null && nestedCommand.getDescription().length()!=0) {
-						return command.getName() + separator + nestedCommand.getDescription(); 
+					if (nestedCommand != null
+							&& nestedCommand.getDescription() != null
+							&& nestedCommand.getDescription().length() != 0) {
+						return command.getName() + separator
+								+ nestedCommand.getDescription();
 					}
 					return command.getName();
 				} catch (NotDefinedException e) {
@@ -401,4 +484,5 @@ public class CtrlEAction
 			return super.getText(element);
 		}
 	}
+
 }
