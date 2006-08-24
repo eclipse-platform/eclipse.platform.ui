@@ -87,7 +87,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 		int retry = 1;
 		while (true) {
 			try {
-				session = JSchSession.getSession(location, ssh_user, "", ssh_host, ssh_port, monitor).getSession(); //$NON-NLS-1$
+				session = JSchSession.getSession(location, ssh_user, null, ssh_host, ssh_port, monitor).getSession();
 				String[] list = session.getPortForwardingL();
 				String name = ":" + rhost + ":" + rport; //$NON-NLS-1$ //$NON-NLS-2$
 				boolean done = false;
@@ -123,10 +123,14 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 		
 		// CVSROOT=":pserver:localhost:"+lport+""cvs_root
 		try {
+			// If user does not give a password, it must be null.
+			String _password = ""; //$NON-NLS-1$
+			if (password != null)
+				_password = password;
 			Properties prop = new Properties();
 			prop.put("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
 			prop.put("user", location.getUsername()); //$NON-NLS-1$
-			prop.put("password", password); //$NON-NLS-1$
+			prop.put("password", _password); //$NON-NLS-1$
 			prop.put("host", "localhost"); //$NON-NLS-1$ //$NON-NLS-2$
 			prop.put("port", Integer.toString(lport)); //$NON-NLS-1$
 			prop.put("root", cvs_root); //$NON-NLS-1$
@@ -134,7 +138,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			CVSRepositoryLocation cvsrl = CVSRepositoryLocation.fromProperties(prop);
 
 			IConnectionMethod method = cvsrl.getMethod();
-			psc = method.createConnection(cvsrl, password);
+			psc = method.createConnection(cvsrl, _password);
 		} catch (Exception e) {
 			throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
 		}

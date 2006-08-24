@@ -474,7 +474,8 @@ class JSchSession {
             session.setProxy(proxy);
         }
         session.setTimeout(getCVSTimeoutInMillis());
-        session.setPassword(password);
+        if (password != null)
+			session.setPassword(password);
         session.setUserInfo(wrapperUI);
         session.setSocketFactory(socketFactory);
         // This is where the server is contacted and authentication occurs
