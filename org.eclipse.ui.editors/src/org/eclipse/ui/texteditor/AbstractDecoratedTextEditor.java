@@ -47,6 +47,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.revisions.RevisionInformation;
@@ -1013,6 +1014,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					return new ShowInContext(getEditorInput(), selection);
 				}
 			};
+		}
+		
+		if (IRevisionRulerColumn.class.equals(adapter)) {
+			if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
+				return fLineNumberRulerColumn;
 		}
 		
 		// XXX: This will go away in 3.3, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=135231
