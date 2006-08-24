@@ -259,7 +259,7 @@ public class OwnerDrawExample {
 
 			Rectangle bounds = event.getBounds();
 			bounds.width += 100;
-			int stripeHeight = bounds.height / 2;
+			int stripeHeight = bounds.height / 3;
 			Rectangle stripe = new Rectangle(bounds.x, bounds.y, bounds.width,
 					stripeHeight);
 
@@ -271,6 +271,12 @@ public class OwnerDrawExample {
 
 			event.gc.setBackground(viewer.getControl().getDisplay()
 					.getSystemColor(SWT.COLOR_WHITE));
+			event.gc.fillRectangle(stripe);
+
+			stripe.y += stripeHeight;
+
+			event.gc.setBackground(viewer.getControl().getDisplay()
+					.getSystemColor(SWT.COLOR_RED));
 			event.gc.fillRectangle(stripe);
 
 		}
