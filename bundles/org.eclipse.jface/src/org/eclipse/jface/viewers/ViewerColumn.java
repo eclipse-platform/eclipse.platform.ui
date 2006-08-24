@@ -83,8 +83,6 @@ public class ViewerColumn {
 	 * future use.
 	 * 
 	 * @param cell
-	 * @param element
-	 * @param columnIndex
 	 */
 	public void refresh(ViewerCell cell) {
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
