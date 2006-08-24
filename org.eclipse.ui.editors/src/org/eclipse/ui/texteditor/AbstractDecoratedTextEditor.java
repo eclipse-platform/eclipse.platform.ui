@@ -1084,7 +1084,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			updateRulerContributions((CompositeRuler) ruler);
 			RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
 			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
-			support.setColumnVisible(registry.getColumnDescriptor(LineNumberColumn.ID), isLineNumberRulerVisible());
+			support.setColumnVisible(registry.getColumnDescriptor(LineNumberColumn.ID), isLineNumberRulerVisible() || isPrefQuickDiffAlwaysOn());
 		}
 	}
 	
