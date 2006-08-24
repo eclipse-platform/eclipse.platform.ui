@@ -12,10 +12,16 @@ individual plug-in.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
-         <sequence>
-            <element ref="contexts" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="contexts"/>
+            <element ref="contextProvider"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -44,6 +50,11 @@ individual plug-in.
    </element>
 
    <element name="contexts">
+      <annotation>
+         <documentation>
+            a context-sensitive help contribution made by supplying an XML file
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="file" type="string" use="required">
             <annotation>
@@ -78,6 +89,26 @@ with topics that are part of on line help.
                   Plugin to which its context definitions are extended with extra information.
 &lt;p&gt;If a plugin defines some context id&apos;s, one can extend the description or related links of a context by declaring another context with the same id.&lt;/p&gt;
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextProvider">
+      <annotation>
+         <documentation>
+            (&lt;b&gt;since 3.3&lt;/b&gt;) a context-sensitive help contribution made by supplying a java class to generate the content at run-time
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the implementation class for the context help provider.  This class must implement the &lt;samp&gt;org.eclipse.help.IContextProvider&lt;/samp&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.IContextProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -138,9 +169,7 @@ to plugin directory.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         No code is required to use this extension point. All 
-that is needed is to supply the appropriate manifest 
-file(s) mentioned in the plugin.xml file.
+         An implementation of &lt;samp&gt;org.eclipse.help.IContextProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;contextProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 
@@ -149,9 +178,7 @@ file(s) mentioned in the plugin.xml file.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The optional default implementation of the help 
-system UI supplied with the Eclipse platform 
-fully supports the &lt;samp&gt;contexts&lt;/samp&gt; extension point.
+         The default implementation of the help system UI supplied with the Eclipse platform fully supports this extension point.
       </documentation>
    </annotation>
 
@@ -160,7 +187,7 @@ fully supports the &lt;samp&gt;contexts&lt;/samp&gt; extension point.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;

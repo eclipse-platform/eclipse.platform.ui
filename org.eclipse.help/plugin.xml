@@ -23,5 +23,11 @@
          point="org.eclipse.help.index">
       <indexProvider class="org.eclipse.help.internal.index.IndexFileProvider"/>
    </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contextProvider
+            class="org.eclipse.help.internal.context.ContextsFileProvider">
+      </contextProvider>
+   </extension>
 
 </plugin>

@@ -180,5 +180,11 @@
             class="org.eclipse.help.internal.base.remote.RemoteIndexProvider">
       </indexProvider>
    </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contextProvider
+            class="org.eclipse.help.internal.base.remote.RemoteContextProvider">
+      </contextProvider>
+   </extension>
 
 </plugin>

@@ -33,7 +33,7 @@ public class ContextServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_ID = "id"; //$NON-NLS-1$
-	private static Map locale2Response = new WeakHashMap();
+	private static Map localeAndId2Response = new WeakHashMap();
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -42,12 +42,13 @@ public class ContextServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		String id = req.getParameter(PARAMETER_ID);
 		if (id != null) {
-			String response = (String)locale2Response.get(locale);
+			String localeAndId = locale + id;
+			String response = (String)localeAndId2Response.get(localeAndId);
 			if (response == null) {
 				IContext context = HelpSystem.getContext(id);
 				if (context != null) {
 					response = ContextSerializer.serialize(context, id);
-					locale2Response.put(locale, response);
+					localeAndId2Response.put(localeAndId, response);
 				}
 			}
 			if (response != null) {
