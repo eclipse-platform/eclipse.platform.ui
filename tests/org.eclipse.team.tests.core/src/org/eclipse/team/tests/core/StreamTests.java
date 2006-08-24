@@ -21,9 +21,6 @@ import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
 public class StreamTests extends TestCase {
-	private static final byte[] EMPTY_SEQ = new byte[] { };
-	private static final byte[] LF_SEQ = new byte[] { '\n' };
-	private static final byte[] CRLF_SEQ = new byte[] { '\r', '\n' };
 
 	public StreamTests(String name) {
 		super(name);

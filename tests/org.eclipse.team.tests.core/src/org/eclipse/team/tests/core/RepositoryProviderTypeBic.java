@@ -13,11 +13,8 @@ package org.eclipse.team.tests.core;
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.ProjectSetCapability;
-import org.eclipse.team.core.RepositoryProviderType;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.*;
 
 public class RepositoryProviderTypeBic extends RepositoryProviderType {
 	File createdFile;
@@ -26,20 +23,15 @@ public class RepositoryProviderTypeBic extends RepositoryProviderType {
 	 */
 	public ProjectSetCapability getProjectSetCapability() {
 		return new ProjectSetCapability() {
-			public IProject[] addToWorkspace(
-				String[] referenceStrings,
-				String filename,
-				IPath root,
-				Object context,
-				IProgressMonitor monitor)
-				throws TeamException {
-				return null;
+			public IProject[] addToWorkspace(String[] referenceStrings,
+					ProjectSetSerializationContext context,
+					IProgressMonitor monitor) throws TeamException {
+				return new IProject[0];
 			}
 
-			public void projectSetCreated(
-				File file,
-				IProgressMonitor monitor) {
-					
+			public void projectSetCreated(File file,
+					ProjectSetSerializationContext context,
+					IProgressMonitor monitor) {
 				createdFile = file;
 			}
 		};

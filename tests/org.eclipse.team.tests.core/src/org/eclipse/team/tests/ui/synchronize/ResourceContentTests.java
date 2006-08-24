@@ -178,8 +178,8 @@ public class ResourceContentTests extends TeamTest {
 	}
 	
 	public void testFileChange() throws CoreException {
-		String[] files = new String[] {"file.txt", "file2.txt", "folder1/file3.txt", "folder1/folder2/file4.txt"};
-		IProject project = createProject(files);
+//		String[] files = new String[] {"file.txt", "file2.txt", "folder1/file3.txt", "folder1/folder2/file4.txt"};
+//		IProject project = createProject(files);
 		
 	}
 
