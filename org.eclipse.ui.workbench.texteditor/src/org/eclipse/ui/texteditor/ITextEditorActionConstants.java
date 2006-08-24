@@ -591,4 +591,18 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	String REVISION_RENDERING_CYCLE= "Revision.Rendering.Cycle"; //$NON-NLS-1$
 
+	/**
+	 * Name of the action for toggling the display of the revision author.
+	 * Value: <code>"Revision.ShowAuthor.Toggle"</code>
+	 * @since 3.3
+	 */
+	String REVISION_SHOW_AUTHOR_TOGGLE= "Revision.ShowAuthor.Toggle"; //$NON-NLS-1$
+	
+	/**
+	 * Name of the action for toggling the display of the revision id.
+	 * Value: <code>"Revision.ShowId.Toggle"</code>
+	 * @since 3.3
+	 */
+	String REVISION_SHOW_ID_TOGGLE= "Revision.ShowId.Toggle"; //$NON-NLS-1$
+	
 }

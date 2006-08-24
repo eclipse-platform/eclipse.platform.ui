@@ -246,6 +246,8 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 		updateQuickDiffVisibility(fDelegate);
 		updateCharacterMode(store, fDelegate);
 		updateRevisionRenderingMode(store, fDelegate);
+		updateRevisionAuthorVisibility(store, fDelegate);
+		updateRevisionIdVisibility(store, fDelegate);
 
 		Map annotationPrefs= getAnnotationPreferenceMap();
 		final AnnotationPreference changedPref= (AnnotationPreference) annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
@@ -291,6 +293,18 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				updateRevisionRenderingMode(store, fDelegate);
+			}
+		});
+		
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR, new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				updateRevisionAuthorVisibility(store, fDelegate);
+			}
+		});
+		
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION, new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				updateRevisionIdVisibility(store, fDelegate);
 			}
 		});
 		
@@ -401,6 +415,20 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 					return;
 				}
 			}
+		}
+	}
+	
+	private void updateRevisionAuthorVisibility(IPreferenceStore store, IVerticalRulerColumn column) {
+		if (column instanceof IRevisionRulerColumnExtension) {
+			boolean show= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR);
+			((IRevisionRulerColumnExtension) column).showRevisionAuthor(show);
+		}
+	}
+	
+	private void updateRevisionIdVisibility(IPreferenceStore store, IVerticalRulerColumn column) {
+		if (column instanceof IRevisionRulerColumnExtension) {
+			boolean show= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION);
+			((IRevisionRulerColumnExtension) column).showRevisionId(show);
 		}
 	}
 	
@@ -729,15 +757,5 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 		if (fDelegate instanceof IRevisionRulerColumnExtension)
 			return ((IRevisionRulerColumnExtension) fDelegate).getRevisionSelectionProvider();
 		return null;
-	}
-	
-	/**
-	 * Changes the rendering mode and triggers redrawing if needed.
-	 *  
-	 * @param mode the rendering mode
-	 */
-	public void setRevisionRenderingMode(RenderingMode mode) {
-		if (fDelegate instanceof IRevisionRulerColumnExtension)
-			((IRevisionRulerColumnExtension) fDelegate).setRevisionRenderingMode(mode);
 	}
 }

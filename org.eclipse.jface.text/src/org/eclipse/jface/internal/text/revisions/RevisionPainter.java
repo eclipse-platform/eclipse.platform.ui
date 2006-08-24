@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.text.revisions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -213,7 +215,7 @@ public final class RevisionPainter {
 			
 			// normalize to lie within [MIN_SHADING, MAX_SHADING]
 			// use more intense colors if the ruler is narrow (i.e. not showing line numbers)
-			boolean makeIntense= getWidth() <= 10;
+			boolean makeIntense= getWidth() <= 15;
 			float intensityShift= makeIntense ? 0.3f : 0f;
 			float max= MAX_SHADING + intensityShift;
 			float min= MIN_SHADING + intensityShift;
@@ -543,6 +545,36 @@ public final class RevisionPainter {
 	 * The revision rendering mode.
 	 */
 	private RenderingMode fRenderingMode= IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE;
+	/**
+	 * The required with in characters.
+	 * @since 3.3
+	 */
+	private int fRequiredWidth= -1;
+	/**
+	 * The width of the revision field in chars to compute {@link #fAuthorInset} from.
+	 * @since 3.3
+	 */
+	private int fRevisionIdChars= 0;
+	/**
+	 * <code>true</code> to show revision ids, <code>false</code> otherwise.
+	 * @since 3.3
+	 */
+	private boolean fShowRevision= false;
+	/**
+	 * <code>true</code> to show committers, <code>false</code> otherwise.
+	 * @since 3.3
+	 */
+	private boolean fShowAuthor= false;
+	/**
+	 * The author inset in pixels for when author *and* revision id are shown.
+	 * @since 3.3
+	 */
+	private int fAuthorInset;
+	/**
+	 * The remembered ruler width (as changing the ruler width triggers recomputation of the colors.
+	 * @since 3.3
+	 */
+	private int fLastWidth= -1;
 
 	/**
 	 * Creates a new revision painter for a vertical ruler column.
@@ -564,11 +596,15 @@ public final class RevisionPainter {
 	 * @param info the revision information to show, <code>null</code> to draw none
 	 */
 	public void setRevisionInformation(RevisionInformation info) {
-		fRevisionInfo= info;
-		fChangeRegions= null;
-		updateFocusRegion(null);
-		fColorTool.setInfo(info);
-		postRedraw();
+		if (fRevisionInfo != info) {
+			fRequiredWidth= -1;
+			fRevisionIdChars= 0;
+			fRevisionInfo= info;
+			fChangeRegions= null;
+			updateFocusRegion(null);
+			fColorTool.setInfo(info);
+			postRedraw();
+		}
 	}
 	
 	/**
@@ -620,6 +656,25 @@ public final class RevisionPainter {
 		if (!isConnected())
 			return;
 
+		// compute the horizontal indent of the committer for the case that we show both committer
+		// and author
+		if (fShowAuthor && fShowRevision) {
+			char[] string= new char[fRevisionIdChars + 1];
+			Arrays.fill(string, '9');
+			if (string.length > 1) {
+				string[0]= '.';
+				string[1]= ' ';
+			}
+			fAuthorInset= gc.stringExtent(new String(string)).x;
+		}
+		
+		// recompute colors (show intense colors if ruler is narrow)
+		int width= getWidth();
+		if (width != fLastWidth) {
+			fColorTool.setInfo(fRevisionInfo);
+			fLastWidth= width;
+		}
+		
 		// draw change regions
 		List/* <ChangeRegion> */changes= getChangeRegions(visibleLines);
 		for (Iterator it= changes.iterator(); it.hasNext();) {
@@ -739,24 +794,71 @@ public final class RevisionPainter {
 	private void paintChangeRegion(ChangeRegion region, GC gc) {
 		Revision revision= region.getRevision();
 		gc.setBackground(lookupColor(revision, false));
+		Color foreground= gc.getForeground();
 		if (revision == fFocusRevision)
 			gc.setForeground(lookupColor(revision, true));
 
 		List ranges= region.getAdjustedRanges();
 		for (Iterator it= ranges.iterator(); it.hasNext();) {
 			ILineRange range= (ILineRange) it.next();
-			Rectangle box= computeBoxBounds(range);
-			if (box == null)
+			ILineRange widgetRange= modelLinesToWidgetLines(range);
+			if (widgetRange == null)
 				return;
+			Rectangle box= computeBoxBounds(widgetRange);
 
 			if (revision == fFocusRevision)
 				paintHighlight(gc, box);
 			else
 				gc.fillRectangle(box);
+			
+			boolean drawText= fShowAuthor || fShowRevision;
+			if (drawText) {
+				gc.setForeground(foreground);
+				int widgetLine= range.getStartLine();
+				
+				int indentation= 1;
+				int baselineBias= getBaselineBias(gc, widgetLine);
+				if (fShowAuthor && fShowRevision) {
+					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
+					gc.drawString(revision.getAuthor(), fAuthorInset, box.y + baselineBias, true);
+				} else if (fShowAuthor) {
+					gc.drawString(revision.getAuthor(), indentation, box.y + baselineBias, true);
+				} else if (fShowRevision) {
+					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
+				}
+			}
 
 		}
 	}
 
+	/**
+	 * Returns the difference between the baseline of the widget and the
+	 * baseline as specified by the font for <code>gc</code>. When drawing
+	 * line numbers, the returned bias should be added to obtain text lined up
+	 * on the correct base line of the text widget.
+	 *
+	 * @param gc the <code>GC</code> to get the font metrics from
+	 * @param widgetLine the widget line
+	 * @return the baseline bias to use when drawing text that is lined up with
+	 *         <code>fCachedTextWidget</code>
+	 * @since 3.3
+	 */
+	private int getBaselineBias(GC gc, int widgetLine) {
+		/*
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=62951
+		 * widget line height may be more than the font height used for the
+		 * line numbers, since font styles (bold, italics...) can have larger
+		 * font metrics than the simple font used for the numbers.
+		 */
+		int offset= fWidget.getOffsetAtLine(widgetLine);
+		int widgetBaseline= fWidget.getBaseline(offset);
+		
+		FontMetrics fm = gc.getFontMetrics();
+		int fontBaseline = fm.getAscent() + fm.getLeading();
+		int baselineBias= widgetBaseline - fontBaseline;
+		return Math.max(0, baselineBias);
+	}
+	
 	/**
 	 * Paints the box for highlighted regions.
 	 * 
@@ -764,48 +866,8 @@ public final class RevisionPainter {
 	 * @param box the box to draw
 	 */
 	private void paintHighlight(GC gc, Rectangle box) {
-		boolean fillGradient= false;
-		if (fillGradient) {
-			fillGradientRectangle(gc, box);
-		} else {
-			// simple box
-			gc.fillRectangle(box); // background
-			gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
-		}
-	}
-
-	/**
-	 * Draws a gradient rectangle inside the box.
-	 * 
-	 * @param gc the {@link GC}
-	 * @param box the highlighting box
-	 */
-	private void fillGradientRectangle(GC gc, Rectangle box) {
-		int half= (box.width + 1) / 2;
-		// left
-		gc.fillGradientRectangle(box.x, box.y, half, box.height, false);
-		// right
-		gc.fillGradientRectangle(box.x + box.width, box.y, -half, box.height, false);
-
-		org.eclipse.swt.graphics.Region reg= new org.eclipse.swt.graphics.Region(gc.getDevice());
-		try {
-			int[] triangle= { box.x, box.y, box.x + box.width, box.y, box.x + half, box.y + half };
-			reg.add(triangle);
-			triangle[1]+= box.height;
-			triangle[3]+= box.height;
-			triangle[5]+= box.height - box.width;
-			reg.add(triangle);
-			gc.setClipping(reg);
-
-			// top
-			gc.fillGradientRectangle(box.x, box.y, box.width, half, true);
-			// bottom
-			gc.fillGradientRectangle(box.x, box.y + box.height, box.width, -half, true);
-
-			gc.setClipping((org.eclipse.swt.graphics.Region) null);
-		} finally {
-			reg.dispose();
-		}
+		gc.fillRectangle(box); // background
+		gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
 	}
 
 	/**
@@ -1002,20 +1064,16 @@ public final class RevisionPainter {
 	}
 
 	/**
-	 * Computes and returns the bounds of the rectangle corresponding to a document line range. The
+	 * Computes and returns the bounds of the rectangle corresponding to a widget line range. The
 	 * rectangle is in pixel coordinates relative to the text widget's
 	 * {@link StyledText#getClientArea() client area} and has the width of the ruler.
 	 * 
-	 * @param range the document line range
+	 * @param range the widget line range
 	 * @return the box bounds corresponding to <code>range</code>
 	 */
 	private Rectangle computeBoxBounds(ILineRange range) {
-		ILineRange widgetRange= modelLinesToWidgetLines(range);
-		if (widgetRange == null)
-			return null;
-
-		int y1= fWidget.getLinePixel(widgetRange.getStartLine());
-		int y2= fWidget.getLinePixel(widgetRange.getStartLine() + widgetRange.getNumberOfLines());
+		int y1= fWidget.getLinePixel(range.getStartLine());
+		int y2= fWidget.getLinePixel(range.getStartLine() + range.getNumberOfLines());
 
 		return new Rectangle(0, y1, getWidth(), y2 - y1 - 1);
 	}
@@ -1391,4 +1449,62 @@ public final class RevisionPainter {
     public boolean hasInformation() {
 	    return fRevisionInfo != null;
     }
+
+	/**
+	 * Returns the width in chars required to display information.
+	 * 
+	 * @return the width in chars required to display information
+	 * @since 3.3
+	 */
+	public int getRequiredWidth() {
+		if (fRequiredWidth == -1) {
+			if (hasInformation() && (fShowRevision || fShowAuthor)) {
+				int revisionWidth= 0;
+				int authorWidth= 0;
+				for (Iterator it= fRevisionInfo.getRevisions().iterator(); it.hasNext();) {
+					Revision revision= (Revision) it.next();
+					revisionWidth= Math.max(revisionWidth, revision.getId().length());
+					authorWidth= Math.max(authorWidth, revision.getAuthor().length());
+				}
+				fRevisionIdChars= revisionWidth + 1;
+				if (fShowAuthor && fShowRevision)
+					fRequiredWidth= revisionWidth + authorWidth + 2;
+				else if (fShowAuthor)
+					fRequiredWidth= authorWidth + 1;
+				else
+					fRequiredWidth= revisionWidth + 1;
+			} else {
+				fRequiredWidth= 0;
+			}
+		}
+		return fRequiredWidth;
+	}
+
+	/**
+	 * Enables showing the revision id.
+	 *  
+	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
+	 */
+	public void showRevisionId(boolean show) {
+		if (fShowRevision != show) {
+			fRequiredWidth= -1;
+			fRevisionIdChars= 0;
+			fShowRevision= show;
+			postRedraw();
+		}
+	}
+	
+	/**
+	 * Enables showing the revision author.
+	 *  
+	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
+	 */
+	public void showRevisionAuthor(boolean show) {
+		if (fShowAuthor != show) {
+			fRequiredWidth= -1;
+			fRevisionIdChars= 0;
+			fShowAuthor= show;
+			postRedraw();
+		}
+	}
 }

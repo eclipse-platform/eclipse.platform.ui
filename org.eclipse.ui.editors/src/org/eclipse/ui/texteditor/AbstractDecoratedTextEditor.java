@@ -112,6 +112,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
+import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
 import org.eclipse.ui.internal.texteditor.ColumnSupport;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.internal.texteditor.StringSetSerializer;
@@ -961,6 +962,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVISION_RENDERING_CYCLE);
 		setAction(ITextEditorActionConstants.REVISION_RENDERING_CYCLE, action);
 		
+		action= new BooleanPreferenceToggleAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleRevisionAuthorAction.", IAction.AS_CHECK_BOX, EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVISION_AUTHOR_TOGGLE);
+		setAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE, action);
+		
+		action= new BooleanPreferenceToggleAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleRevisionIdAction.", IAction.AS_CHECK_BOX, EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION); //$NON-NLS-1$
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVISION_ID_TOGGLE);
+		setAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE, action);
+
 		final Shell shell;
 		if (getSourceViewer() != null)
 			shell= getSourceViewer().getTextWidget().getShell();
@@ -1273,27 +1282,35 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		// revision info
 		if (fLineColumn != null && fLineColumn.isShowingRevisionInformation()) {
-			IMenuManager revisionMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor__revision_colors_menu);
+			IMenuManager revisionMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_revisions_menu);
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, revisionMenu);
 			
 			String[] labels= { TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_date, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer_and_date };
 			final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
-			String current= EditorsUI.getPreferenceStore().getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
+			final IPreferenceStore uiStore= EditorsUI.getPreferenceStore();
+			String current= uiStore.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
 			for (int i= 0; i < modes.length; i++) {
 				final String mode= modes[i].name();
 				IAction action= new Action(labels[i], IAction.AS_RADIO_BUTTON) {
 					public void run() {
 						// set preference globally, LineNumberColumn reacts on preference change
-						IPreferenceStore store= EditorsUI.getPreferenceStore();
-						store.setValue(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, mode);
+						uiStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, mode);
 					}
 				};
 				action.setChecked(mode.equals(current));
 				revisionMenu.add(action);
 			}
 			
+			revisionMenu.add(new Separator());
+
+			// XXX enable author toggle once CVS provides committer info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=154996
+//			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE));
+			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE));
+
+			revisionMenu.add(new Separator());
+
 			IAction hideRevisionInfoAction= getAction(ITextEditorActionConstants.REVISION_HIDE_INFO);
-			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, hideRevisionInfoAction);
+			revisionMenu.add(hideRevisionInfoAction);
 		}
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
@@ -1357,8 +1374,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	private void toggleQuickDiffRuler() {
+		// change the visibility locally if this editor is not in sync with the global preference
+		// toggle the preference if we are in sync.
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, !isChangeInformationShowing());
+		boolean current= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
+		if (current == isChangeInformationShowing())
+			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, !current);
+		else
+			showChangeInformation(current);
 	}
 
 	/*

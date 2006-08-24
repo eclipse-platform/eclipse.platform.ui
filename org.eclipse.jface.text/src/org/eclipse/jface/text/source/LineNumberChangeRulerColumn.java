@@ -93,11 +93,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public void setModel(IAnnotationModel model) {
 		setAnnotationModel(model);
+		fRevisionPainter.setModel(model);
+		fDiffPainter.setModel(model);
 		updateNumberOfDigits();
 		computeIndentations();
 		layout(true);
-		fRevisionPainter.setModel(model);
-		fDiffPainter.setModel(model);
 		postRedraw();
 	}
 	
@@ -133,25 +133,41 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createDisplayString(int)
 	 */
 	protected String createDisplayString(int line) {
+		String string;
 		if (fCharacterDisplay && getModel() != null) {
 			String diffChar= fDiffPainter.getDisplayCharacter(line);
 			if (fShowNumbers)
-				return super.createDisplayString(line) + diffChar;
-			return diffChar;
+				string= super.createDisplayString(line) + diffChar;
+			else
+				string= diffChar;
+		} else {
+			if (fShowNumbers)
+				string= super.createDisplayString(line);
+			else
+				string= ""; //$NON-NLS-1$
 		}
-		return super.createDisplayString(line);
+		return string;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#computeNumberOfDigits()
 	 */
 	protected int computeNumberOfDigits() {
+		int digits;
 		if (fCharacterDisplay && getModel() != null) {
 			if (fShowNumbers)
-				return super.computeNumberOfDigits() + 1;
-			return 1;
+				digits= super.computeNumberOfDigits() + 1;
+			else
+				digits= 1;
+		} else {
+			if (fShowNumbers)
+				digits= super.computeNumberOfDigits();
+			else
+				digits= 0;
 		}
-		return super.computeNumberOfDigits();
+		if (fRevisionPainter.hasInformation())
+			digits+= fRevisionPainter.getRequiredWidth();
+		return digits;
 	}
 
 	/*
@@ -239,6 +255,10 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public void setRevisionInformation(RevisionInformation info) {
 		fRevisionPainter.setRevisionInformation(info);
+		updateNumberOfDigits();
+		computeIndentations();
+		layout(true);
+		postRedraw();
 	}
 
     /*
@@ -278,9 +298,8 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
      * @since 3.3
      */
     public int getWidth() {
-    	if (fShowNumbers || fCharacterDisplay)
-    		return super.getWidth();
-    	return 10;
+   		int width= super.getWidth();
+		return width > 0 ? width : 10; // minimal width to display quick diff / revisions if no textual info is shown
     }
 
     /**
@@ -314,5 +333,29 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 */
 	public boolean isShowingChangeInformation() {
 		return fDiffPainter.hasInformation();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#showRevisionAuthor(boolean)
+	 * @since 3.3
+	 */
+	public void showRevisionAuthor(boolean show) {
+		fRevisionPainter.showRevisionAuthor(show);
+		updateNumberOfDigits();
+		computeIndentations();
+		layout(true);
+		postRedraw();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#showRevisionId(boolean)
+	 * @since 3.3
+	 */
+	public void showRevisionId(boolean show) {
+		fRevisionPainter.showRevisionId(show);
+		updateNumberOfDigits();
+		computeIndentations();
+		layout(true);
+		postRedraw();
 	}
 }

@@ -383,6 +383,32 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String REVISION_RULER_RENDERING_MODE= "revisionRulerRenderingMode"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls the rendering of the author on the revision ruler.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * <p>
+	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String REVISION_RULER_SHOW_AUTHOR= "revisionRulerShowAuthor"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls rendering of the revision on the revision ruler.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * <p>
+	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String REVISION_RULER_SHOW_REVISION= "revisionRulerShowRevision"; //$NON-NLS-1$
+
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -446,6 +472,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, new RGB(185, 176 , 180));
 		store.setDefault(EDITOR_RULER_COLUMNS, ""); //$NON-NLS-1$
 		store.setDefault(REVISION_RULER_RENDERING_MODE, IRevisionRulerColumnExtension.AGE.name());
+		store.setDefault(REVISION_RULER_SHOW_AUTHOR, false);
+		store.setDefault(REVISION_RULER_SHOW_REVISION, false);
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

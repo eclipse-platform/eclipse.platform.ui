@@ -98,4 +98,17 @@ public abstract class Revision {
 	public String toString() {
 		return "Revision " + getId(); //$NON-NLS-1$
 	}
+
+	/**
+	 * Returns the display string for the author (committer) of the receiver.
+	 * <p>
+	 * Subclasses should replace - the default implementation returns the empty string.
+	 * </p>
+	 * 
+	 * @return the author name
+	 * @since 3.3
+	 */
+	public String getAuthor() {
+		return ""; //$NON-NLS-1$
+	}
 }

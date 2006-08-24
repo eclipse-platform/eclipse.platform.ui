@@ -118,6 +118,18 @@
             description="%command.revisions.renderingCycle.description"
             id="org.eclipse.ui.editors.revisions.rendering.cycle">
       </command>
+      <command
+            name="%command.revisions.authorToggle.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            description="%command.revisions.authorToggle.description"
+            id="org.eclipse.ui.editors.revisions.author.toggle">
+      </command>
+      <command
+            name="%command.revisions.idToggle.name"
+            categoryId="org.eclipse.ui.category.textEditor"
+            description="%command.revisions.idToggle.description"
+            id="org.eclipse.ui.editors.revisions.id.toggle">
+      </command>
    </extension>
    
    <extension

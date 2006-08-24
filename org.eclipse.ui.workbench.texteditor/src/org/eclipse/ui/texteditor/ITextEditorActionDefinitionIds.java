@@ -515,4 +515,18 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String REVISION_RENDERING_CYCLE= "org.eclipse.ui.editors.revisions.rendering.cycle"; //$NON-NLS-1$
+	
+	/**
+	 * Command ID of the command to toggle the revision author display.
+	 * Value: <code>"org.eclipse.ui.editors.revisions.author.toggle"</code>).
+	 * @since 3.3
+	 */
+	String REVISION_AUTHOR_TOGGLE= "org.eclipse.ui.editors.revisions.author.toggle"; //$NON-NLS-1$
+	
+	/**
+	 * Command ID of the command to toggle the revision ID display.
+	 * Value: <code>"org.eclipse.ui.editors.revisions.id.toggle"</code>).
+	 * @since 3.3
+	 */
+	String REVISION_ID_TOGGLE= "org.eclipse.ui.editors.revisions.id.toggle"; //$NON-NLS-1$
 }

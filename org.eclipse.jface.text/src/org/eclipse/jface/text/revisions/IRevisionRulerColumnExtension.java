@@ -17,9 +17,9 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 /**
  * Extension interface for {@link IRevisionRulerColumn}.
  * <p>
- * Introduces the ability to register a selection listener on revisions and a configurable rendering
- * mode.
- *
+ * Introduces the ability to register a selection listener on revisions and configurable rendering
+ * modes.
+ * 
  * @see IRevisionRulerColumn
  * @since 3.3
  */
@@ -62,7 +62,18 @@ public interface IRevisionRulerColumnExtension {
 	 * @param mode the rendering mode
 	 */
 	public void setRevisionRenderingMode(RenderingMode mode);
-
+	/**
+	 * Enables showing the revision id.
+	 *  
+	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
+	 */
+	public void showRevisionId(boolean show);
+	/**
+	 * Enables showing the revision author.
+	 *  
+	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
+	 */
+	public void showRevisionAuthor(boolean show);
 	/**
 	 * Returns the revision selection provider.
 	 * 

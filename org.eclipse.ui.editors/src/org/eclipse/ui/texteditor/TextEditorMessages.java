@@ -38,7 +38,7 @@ final class TextEditorMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String AbstractDecoratedTextEditor__revision_colors_menu;
+	public static String AbstractDecoratedTextEditor_revisions_menu;
 	public static String AbstractDecoratedTextEditor_revision_colors_option_by_committer;
 	public static String AbstractDecoratedTextEditor_revision_colors_option_by_committer_and_date;
 	public static String AbstractDecoratedTextEditor_revision_colors_option_by_date;
