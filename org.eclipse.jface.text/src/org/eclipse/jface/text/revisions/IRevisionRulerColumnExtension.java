@@ -61,23 +61,23 @@ public interface IRevisionRulerColumnExtension {
 	 *  
 	 * @param mode the rendering mode
 	 */
-	public void setRevisionRenderingMode(RenderingMode mode);
+	void setRevisionRenderingMode(RenderingMode mode);
 	/**
 	 * Enables showing the revision id.
 	 *  
 	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
 	 */
-	public void showRevisionId(boolean show);
+	void showRevisionId(boolean show);
 	/**
 	 * Enables showing the revision author.
 	 *  
 	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
 	 */
-	public void showRevisionAuthor(boolean show);
+	void showRevisionAuthor(boolean show);
 	/**
 	 * Returns the revision selection provider.
 	 * 
 	 * @return the revision selection provider
 	 */
-	public ISelectionProvider getRevisionSelectionProvider();
+	ISelectionProvider getRevisionSelectionProvider();
 }
