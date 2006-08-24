@@ -192,9 +192,9 @@ public class IsModifiedTests extends EclipseTest {
 //					}
 //				}
 			}
-			public boolean wasPreviouslyModified(IResource iResource) {
-				return previouslyModified.contains(iResource);
-			}
+//			public boolean wasPreviouslyModified(IResource iResource) {
+//				return previouslyModified.contains(iResource);
+//			}
 		});
 		changedResources.clear();
 		previouslyModified.clear();
@@ -251,7 +251,7 @@ public class IsModifiedTests extends EclipseTest {
 		// delete, recreate and commit
 		project.getFile("folder1/a.txt").delete(false, DEFAULT_MONITOR);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt"}, true);
-		IResource[] addedResources = buildResources(project, new String[] {"folder1/a.txt"}, false);
+		buildResources(project, new String[] {"folder1/a.txt"}, false);
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt"}, true);
 		commitResources(project, new String[] {"folder1/a.txt"});
 		assertModificationState(project, null, true);

@@ -11,30 +11,14 @@
 package org.eclipse.team.tests.ccvs.core.compatible;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.tests.ccvs.core.CommandLineCVSClient;
-import org.eclipse.team.tests.ccvs.core.EclipseCVSClient;
-import org.eclipse.team.tests.ccvs.core.ICVSClient;
-import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
+import org.eclipse.team.tests.ccvs.core.*;
 
 
 /**
@@ -406,16 +390,6 @@ public final class SameResultEnv extends JUnitTestCase {
 		// assertTimestampEquals(info1.getTimeStamp(), info2.getTimeStamp());
 		
 		// We are not able to check for the permissions, as the reference-client doesn't save them
-	}
-
-	private static void assertTimestampEquals(Date timestamp1, Date timestamp2) {
-		assertEquals(timestamp1!=null, timestamp2!=null);
-		if(timestamp1!=null) {
-			long time1 = timestamp1.getTime();
-			long time2 = timestamp2.getTime();
-			long difference = Math.abs(time1 - time2);
-			assertTrue("timestamps should be in same timezone:" + timestamp1 + ":" + timestamp2, difference < (10*60*1000)); // 10 minutes
-		}
 	}
 	
 	/**

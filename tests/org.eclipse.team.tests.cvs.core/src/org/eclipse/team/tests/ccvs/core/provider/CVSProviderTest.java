@@ -264,7 +264,7 @@ public class CVSProviderTest extends EclipseTest {
 	}
 	
 	public void testReadOnly() throws TeamException, CoreException, IOException {
-		IProject project = createProject("testReadOnly", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		// IProject project = createProject("testReadOnly", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		// Need to check the project out as read-only
 	}
 	

@@ -373,7 +373,6 @@ public class BenchmarkUtils {
 	 * @param count the number of files to touch
 	 */
 	public static void renameRandomDeepFiles(SequenceGenerator gen, IContainer root, int count) throws CoreException  {
-		IProject project = root.getProject();
 		while (count-- > 0) {
 			IFile file = pickRandomDeepFile(gen, root);
 			if (file == null) break;

@@ -11,34 +11,18 @@
 package org.eclipse.team.tests.ccvs.core.cvsresources;
 
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -48,7 +32,6 @@ import org.eclipse.team.tests.ccvs.core.EclipseTest;
  * Does not test state change broadcasts.
  */
 public class EclipseSynchronizerTest extends EclipseTest {
-	private IProject project;
 	private static EclipseSynchronizer sync = EclipseSynchronizer.getInstance();
 	
 	public EclipseSynchronizerTest() {
@@ -270,7 +253,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	public void testIsIgnored() throws CoreException, TeamException {
 		IProject project = getUniqueTestProject("isIgnoredTests");
 		CVSTeamProvider.markAsTempShare(project);
-		IResource[] resources = buildResources(project, new String[] {"a.txt", "c.java", "folder1/", "folder1/b.txt", "folder2/"}, true /* include project */);
+		buildResources(project, new String[] {"a.txt", "c.java", "folder1/", "folder1/b.txt", "folder2/"}, true /* include project */);
 		
 		sync.addIgnored(project, "*.txt");
 		

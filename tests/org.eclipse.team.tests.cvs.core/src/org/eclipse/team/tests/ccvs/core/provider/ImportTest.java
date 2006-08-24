@@ -113,7 +113,7 @@ public class ImportTest extends EclipseTest {
 	public void testImportAndCheckout() throws TeamException, CoreException {
 		// Create a test project and import it into cvs
 		IProject project = getUniqueTestProject("testImport");
-		IResource[] result = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
 		importProject(project);
 		
 		// Check it out under a different name and validate that the results are the same
@@ -165,7 +165,7 @@ public class ImportTest extends EclipseTest {
 	public void testRootShare() throws CoreException {
 		// Create a test project 
 		IProject project = getUniqueTestProject(getName());
-		IResource[] result = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
 		// Share the project
 		shareProject(getRepository(), project, null, DEFAULT_MONITOR);
 		addResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
@@ -177,7 +177,7 @@ public class ImportTest extends EclipseTest {
 	public void testNonRootShare() throws CoreException {
 		// Create a test project 
 		IProject project = getUniqueTestProject(getName());
-		IResource[] result = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
 		// Share it as a non-root folder in the repository
 		String moduleName = "root" + Long.toString(System.currentTimeMillis()) + "/" + project.getName();
 		shareProject(getRepository(), project, moduleName, DEFAULT_MONITOR);

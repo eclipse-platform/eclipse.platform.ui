@@ -59,8 +59,8 @@ public class ModuleTest extends EclipseTest {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ModuleTest.class);
-		//return new CVSTestSetup(suite);
-		return new CVSTestSetup(new ModuleTest("testAliasForFiles"));
+		return new CVSTestSetup(suite);
+		//return new CVSTestSetup(new ModuleTest("testAliasForFiles"));
 	}
 	
 	private static boolean isSetUp = false;
@@ -213,20 +213,20 @@ public class ModuleTest extends EclipseTest {
 	 * project3-src_file -a project3-src/file.c mc-src/file.h
 	 * project3-sub  project3/sub &project3-src_file
 	 */
-	public void testAliasForFiles() throws TeamException, CoreException, IOException {
-		uploadProject("project3");
-		IProject project3 = checkoutProject("project3-sub", null);
-		ICVSRemoteResource tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//	public void testAliasForFiles() throws TeamException, CoreException, IOException {
+//		uploadProject("project3");
+//		IProject project3 = checkoutProject("project3-sub", null);
+//		ICVSRemoteResource tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
-
-		project3 = checkoutProject("project3-src", null);
-		tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//
+//		project3 = checkoutProject("project3-src", null);
+//		tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
-
-		project3 = checkoutProject("project3-src_file", null);
-		tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//
+//		project3 = checkoutProject("project3-src_file", null);
+//		tree = getRemoteTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
-	}
+//	}
 	
 	/*
 	 * Test the following definition
@@ -236,20 +236,20 @@ public class ModuleTest extends EclipseTest {
 	 * project7-pc -a project7-common project7/pc
 	 * project7-linux -a project7-common project7/linux
 	 */
-	public void testAliases() throws TeamException, CoreException, IOException {
-		uploadProject("project7");
-		IProject project7 = checkoutProject("project7-common", null);
-		ICVSRemoteResource tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//	public void testAliases() throws TeamException, CoreException, IOException {
+//		uploadProject("project7");
+//		IProject project7 = checkoutProject("project7-common", null);
+//		ICVSRemoteResource tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
-
-		project7 = checkoutProject("project7-pc", null);
-		tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//
+//		project7 = checkoutProject("project7-pc", null);
+//		tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
-
-		project7 = checkoutProject("project7-linux", null);
-		tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
+//
+//		project7 = checkoutProject("project7-linux", null);
+//		tree = getRemoteTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
-	}
+//	}
 	
 
 	/*
@@ -264,7 +264,7 @@ public class ModuleTest extends EclipseTest {
 		// XXX Module checkout will not work yet
 		// IProject project8 = checkoutProject("project8-alias", null);
 		
-		RemoteModule module = getRemoteModule("project8-alias");
+		//RemoteModule module = getRemoteModule("project8-alias");
 	}
 	
 	public RemoteModule getRemoteModule(String moduleName) {

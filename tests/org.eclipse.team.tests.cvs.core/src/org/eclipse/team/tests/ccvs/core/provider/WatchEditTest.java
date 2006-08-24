@@ -15,11 +15,7 @@ import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -54,21 +50,6 @@ public class WatchEditTest extends EclipseTest {
 	
 	private void setReadOnly(boolean b) {
 		CVSProviderPlugin.getPlugin().getPluginPreferences().setValue(CVSProviderPlugin.READ_ONLY, b);
-	}
-	
-	/**
-	 * Method assertAllFilesReadOnly.
-	 * @param copy
-	 */
-	private void assertAllFilesReadOnly(IContainer folder) throws CoreException {
-		folder.accept(new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
-				if (resource.getType() == IResource.FILE) {
-					assertTrue(resource.isReadOnly());
-				}
-				return true;
-			}
-		});
 	}
 	
 	public void testReadOnlyCheckout() throws CoreException, TeamException {

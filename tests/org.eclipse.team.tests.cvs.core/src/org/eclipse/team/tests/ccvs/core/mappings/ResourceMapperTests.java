@@ -34,7 +34,8 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheBaseContentsOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CacheRemoteContentsOperation;
 import org.eclipse.team.internal.core.ResourceVariantCache;
 import org.eclipse.team.internal.core.ResourceVariantCacheEntry;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
@@ -292,9 +293,6 @@ public class ResourceMapperTests extends EclipseTest {
 			public String getModelProviderId() {
 				return "org.eclipse.team.tests.cvs.core.modelProvider";
 			}
-		    public boolean isAncestorOf(ResourceMapping mapping) {
-		    	return false;
-		    }
         };
     }
     
