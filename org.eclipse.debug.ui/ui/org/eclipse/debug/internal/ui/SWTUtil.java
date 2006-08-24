@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -138,6 +139,26 @@ public class SWTUtil {
 		l.setText(text);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
+	 * Creates a wrapping label
+	 * @param parent the parent composite to add this label to
+	 * @param text the text to be displayed in the label
+	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @param wrapwidth the width hint that the label should wrap at
+	 * @return a new label that wraps at a specified width
+	 * @since 3.3
+	 */
+	public static Label createWrapLabel(Composite parent, String text, int hspan, int wrapwidth) {
+		Label l = new Label(parent, SWT.NONE | SWT.WRAP);
+		l.setFont(parent.getFont());
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		gd.widthHint = wrapwidth;
 		l.setLayoutData(gd);
 		return l;
 	}
@@ -273,6 +294,48 @@ public class SWTUtil {
 		gd.horizontalSpan = hspan;
     	g.setLayoutData(gd);
     	return g;
+	}
+	
+	/**
+	 * This method is used to make a combo box
+	 * @param parent the parent composite to add the new combo to
+	 * @param style the style for the Combo
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param fill how the combo will fill into the composite
+	 * Can be one of <code>GridData.FILL_HORIZONAL</code>, <code>GridData.FILL_BOTH</code> or <code>GridData.FILL_VERTICAL</code>
+	 * @param items the item to put into the combo
+	 * @return a new Combo instance
+	 * @since 3.3
+	 */
+	public static Combo createCombo(Composite parent, int style, int hspan, int fill, String[] items) {
+		Combo c = new Combo(parent, style);
+		c.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		c.setLayoutData(gd);
+		c.setItems(items);
+		c.select(0);
+		return c;
+	}
+	
+	/**
+	 * This method is used to make a combo box with a default fill style of GridData.FILL_HORIZONTAL
+	 * @param parent the parent composite to add the new combo to
+	 * @param style the style for the Combo
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param items the item to put into the combo
+	 * @return a new Combo instance
+	 * @since 3.3
+	 */
+	public static Combo createCombo(Composite parent, int style, int hspan, String[] items) {
+		Combo c = new Combo(parent, style);
+		c.setFont(parent.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		c.setLayoutData(gd);
+		c.setItems(items);
+		c.select(0);
+		return c;
 	}
 	
 	/**

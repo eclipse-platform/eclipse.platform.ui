@@ -15,18 +15,16 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -43,6 +41,12 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	private boolean needLength = true;
 	private String fPrefillExp = null;
 	private String fPrefillLength = null;
+	
+	/**
+	 * the predefined width of the wrapping label for the expression to enter combo
+	 * @since 3.3
+	 */
+	private static final int LABEL_WIDTH = 210;
 	
 	/**
 	 * @param parentShell
@@ -62,64 +66,24 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
-		parent.setLayout(new GridLayout());
-		GridData spec2= new GridData();
-		spec2.grabExcessVerticalSpace= true;
-		spec2.grabExcessHorizontalSpace= true;
-		spec2.horizontalAlignment= GridData.FILL;
-		spec2.verticalAlignment= GridData.CENTER;
-		parent.setLayoutData(spec2);
-
-		Label textLabel = new Label(parent, SWT.NONE);
-		textLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor);
-		GridData textLayout = new GridData();
-		textLabel.setLayoutData(textLayout);
-		
-		expressionInput = new Combo(parent, SWT.BORDER);
-		GridData spec= new GridData();
-		spec.grabExcessVerticalSpace= false;
-		spec.grabExcessHorizontalSpace= true;
-		spec.horizontalAlignment= GridData.FILL;
-		spec.verticalAlignment= GridData.BEGINNING;
-		expressionInput.setLayoutData(spec);
-		
-		// add HISTORY
-		String[] historyExpression = MemoryViewUtil.getHistory();
-		for (int i=0; i<historyExpression.length; i++)
-		{
-			expressionInput.add(historyExpression[i]);
-		}
-		
-		// must be done before the listener is added
-		// otherwise, will get into exception when trying to validate
-		// input
-		// This will be validated when the OK & Cancel button is added.
-		if (fPrefillExp != null)
+		Composite comp = (Composite) super.createDialogArea(parent);
+		SWTUtil.createWrapLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor, 1, LABEL_WIDTH);
+		expressionInput = SWTUtil.createCombo(comp, SWT.BORDER, 1, MemoryViewUtil.getHistory());
+		if (fPrefillExp != null) {
 			expressionInput.setText(fPrefillExp);
-		
+		}
 		expressionInput.addModifyListener(this);
 		
-		if (needLength)
-		{
-			Label lengthLabel = new Label(parent, SWT.NONE);
-			lengthLabel.setText(DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes);
-			GridData lengthLayout = new GridData();
-			lengthLabel.setLayoutData(lengthLayout);
-			
-			lengthInput = new Text(parent, SWT.BORDER);
-			GridData lengthSpec= new GridData();
-			lengthSpec.grabExcessVerticalSpace= false;
-			lengthSpec.grabExcessHorizontalSpace= true;
-			lengthSpec.horizontalAlignment= GridData.FILL;
-			lengthInput.setLayoutData(lengthSpec);
-			
-			if (fPrefillLength != null)
+		if (needLength) {
+			SWTUtil.createLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes, 1);
+			lengthInput = SWTUtil.createSingleText(comp, 1);
+			if (fPrefillLength != null) {
 				lengthInput.setText(fPrefillLength);
-			
+			}
 			lengthInput.addModifyListener(this);
 		}
-		return parent;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugUIConstants.PLUGIN_ID + ".MonitorMemoryBlockDialog_context"); //$NON-NLS-1$
+		return comp;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
@@ -130,13 +94,17 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		newShell.setText(DebugUIMessages.MonitorMemoryBlockDialog_MonitorMemory);
 	}
 	
-	public String getExpression()
-	{
+	/**
+	 * @return the entered expression
+	 */
+	public String getExpression() {
 		return expression;
 	}
 	
-	public String getLength()
-	{
+	/**
+	 * @return the entered length
+	 */
+	public String getLength() {
 		return length;
 	}
 	
