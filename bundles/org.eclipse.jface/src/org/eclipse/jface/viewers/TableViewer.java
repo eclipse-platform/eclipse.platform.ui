@@ -13,6 +13,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -143,18 +144,80 @@ public class TableViewer extends ColumnViewer {
 		 */
 		public void notVisibleAdded(Object element, int index) {
 
-			int requiredCount = index + 1;
+			int requiredCount = getTable().getItemCount() + 1;
 
-			if (requiredCount > getTable().getItemCount()) {
-				getTable().setItemCount(requiredCount);
-				Object[] newCache = new Object[requiredCount];
-				System.arraycopy(cachedElements, 0, newCache, 0,
-						cachedElements.length);
+			Object[] newCache = new Object[requiredCount];
+			System.arraycopy(cachedElements, 0, newCache, 0, index);
+			if (index < cachedElements.length) {
+				System.arraycopy(cachedElements, index, newCache, index + 1, cachedElements.length - index);
+			}
+			newCache[index] = element;
+			cachedElements = newCache;
+
+			getTable().setItemCount(requiredCount);
+		}
+
+		/**
+		 * The elements with the given indices need to be removed from the cache.
+		 * @param indices
+		 */
+		public void removeIndices(int[] indices) {
+			if (indices.length==1) {
+				removeIndicesFromTo(indices[0], indices[0]);
+			}
+			int requiredCount = getTable().getItemCount() - indices.length;
+
+			Arrays.sort(indices);
+			Object[] newCache = new Object[requiredCount];
+			int indexInNewCache = 0;
+			int nextToSkip = 0; 
+			for (int i=0; i<cachedElements.length; i++) {
+				if (nextToSkip < indices.length && i == indices[nextToSkip]) {
+					nextToSkip++;
+				} else {
+					newCache[indexInNewCache++] = cachedElements[i];
+				}
+			}
+			cachedElements = newCache;
+		}
+
+		/**
+		 * The elements between the given indices (inclusive) need to be removed from the cache.
+		 * @param from
+		 * @param to
+		 */
+		public void removeIndicesFromTo(int from, int to) {
+			int indexAfterTo = to + 1;
+			Object[] newCache = new Object[cachedElements.length - (indexAfterTo - from)];
+			System.arraycopy(cachedElements, 0, newCache, 0, from);
+			if (indexAfterTo < cachedElements.length) {
+				System.arraycopy(cachedElements, indexAfterTo, newCache, from, cachedElements.length - indexAfterTo);
+			}
+		}
+
+		/**
+		 * @param element
+		 * @return the index of the element in the cache, or null
+		 */
+		public int find(Object element) {
+			return Arrays.asList(cachedElements).indexOf(element);
+		}
+
+		/**
+		 * @param count
+		 */
+		public void adjustCacheSize(int count) {
+			if (count == cachedElements.length) {
+				return;
+			} else if (count < cachedElements.length) {
+				Object[] newCache = new Object[count];
+				System.arraycopy(cachedElements, 0, newCache, 0, count);
+				cachedElements = newCache;
+			} else {
+				Object[] newCache = new Object[count];
+				System.arraycopy(cachedElements, 0, newCache, 0, cachedElements.length);
 				cachedElements = newCache;
 			}
-
-			cachedElements[index] = element;
-
 		}
 
 	}
@@ -814,6 +877,9 @@ public class TableViewer extends ColumnViewer {
 
 				disassociate(items[i]);
 			}
+			if (virtualManager != null) {
+				virtualManager.removeIndicesFromTo(min, items.length - 1);
+			}
 			table.remove(min, items.length - 1);
 		}
 		// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get
@@ -855,7 +921,12 @@ public class TableViewer extends ColumnViewer {
 		int count = 0;
 		for (int i = 0; i < elements.length; ++i) {
 			Widget w = findItem(elements[i]);
-			if (w instanceof TableItem) {
+			if (w == null && virtualManager != null) {
+				int index = virtualManager.find(elements[i]);
+				if (index != -1) {
+					indices[count++] = index;
+				}
+			} else if (w instanceof TableItem) {
 				TableItem item = (TableItem) w;
 				disassociate(item);
 				indices[count++] = table.indexOf(item);
@@ -863,6 +934,9 @@ public class TableViewer extends ColumnViewer {
 		}
 		if (count < indices.length) {
 			System.arraycopy(indices, 0, indices = new int[count], 0, count);
+		}
+		if (virtualManager != null) {
+			virtualManager.removeIndices(indices);
 		}
 		table.remove(indices);
 
@@ -1171,6 +1245,9 @@ public class TableViewer extends ColumnViewer {
 	 */
 	public void setItemCount(int count) {
 		getTable().setItemCount(count);
+		if (virtualManager != null) {
+			virtualManager.adjustCacheSize(count);
+		}
 		getTable().redraw();
 	}
 
