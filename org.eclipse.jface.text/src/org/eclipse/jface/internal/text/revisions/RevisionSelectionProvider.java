@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -31,7 +32,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * <li>when the caret is moved to a revision's line (only on post-selection)</li>
  * </ul>
  * <p>
- * The is read-only, i.e.it does not support {@link #setSelection(ISelection)}.
+ * Calling {@link #setSelection(ISelection)} will set the current sticky revision on the ruler.
  * </p>
  * 
  * @since 3.2
@@ -76,11 +77,16 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 	 * The selection listener on the viewer, or <code>null</code>.
 	 */
 	private PostSelectionListener fSelectionListener;
-	
 	/**
 	 * The last selection, or <code>null</code>.
 	 */
 	private Revision fSelection;
+	/**
+	 * Incoming selection changes are ignored while sending out events.
+	 *
+	 * @since 3.3
+	 */
+	private boolean fIgnoreEvents= false;
 
 	/**
 	 * Creates a new selection provider.
@@ -118,7 +124,17 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
      * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
      */
     public void setSelection(ISelection selection) {
-    	throw new UnsupportedOperationException();
+    	if (fIgnoreEvents)
+    		return;
+    	if (selection instanceof IStructuredSelection) {
+    		Object first= ((IStructuredSelection) selection).getFirstElement();
+    		if (first instanceof Revision) {
+    			Revision revision= (Revision) first;
+    			fPainter.handleRevisionSelected(revision);
+    		} else if (selection.isEmpty()) {
+    			fPainter.handleRevisionSelected(null);
+    		}
+    	}
     }
 
     /**
@@ -171,12 +187,16 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
     }
 
     private void fireSelectionEvent() {
-	    ISelection selection= getSelection();
-	    SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-	    
-	    Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-	        ((ISelectionChangedListener) listeners[i]).selectionChanged(event);
-        }
+    	fIgnoreEvents= true;
+    	try {
+    		ISelection selection= getSelection();
+    		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+
+    		Object[] listeners= fListeners.getListeners();
+    		for (int i= 0; i < listeners.length; i++)
+    			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+    	} finally {
+    		fIgnoreEvents= false;
+    	}
     }
 }

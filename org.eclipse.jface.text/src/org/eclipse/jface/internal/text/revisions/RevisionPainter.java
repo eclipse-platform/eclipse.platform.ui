@@ -265,6 +265,8 @@ public final class RevisionPainter {
 
 				if (upRegion == downRegion) {
 					Revision revision= upRegion == null ? null : upRegion.getRevision();
+					if (revision == fSelectedRevision)
+						revision= null; // deselect already selected revision
 					handleRevisionSelected(revision);
 				}
 			}
@@ -534,6 +536,15 @@ public final class RevisionPainter {
 	private ChangeRegion fFocusRegion= null;
 	/** The current focus revision, <code>null</code> if none. */
 	private Revision fFocusRevision= null;
+	/**
+	 * The currently selected revision, <code>null</code> if none. The difference between
+	 * {@link #fFocusRevision} and {@link #fSelectedRevision} may not be obvious: the focus revision
+	 * is the one focused by the mouse (by hovering over a block of the revision), while the
+	 * selected revision is sticky, i.e. is not removed when the mouse leaves the ruler.
+	 *
+	 * @since 3.3
+	 */
+	private Revision fSelectedRevision= null;
 	/** <code>true</code> if the mouse wheel handler is installed, <code>false</code> otherwise. */
 	private boolean fWheelHandlerInstalled= false;
 	/**
@@ -795,7 +806,8 @@ public final class RevisionPainter {
 		Revision revision= region.getRevision();
 		gc.setBackground(lookupColor(revision, false));
 		Color foreground= gc.getForeground();
-		if (revision == fFocusRevision)
+		boolean drawFocus= fFocusRevision != null ? revision == fFocusRevision : revision == fSelectedRevision;
+		if (drawFocus)
 			gc.setForeground(lookupColor(revision, true));
 
 		List ranges= region.getAdjustedRanges();
@@ -806,7 +818,7 @@ public final class RevisionPainter {
 				return;
 			Rectangle box= computeBoxBounds(widgetRange);
 
-			if (revision == fFocusRevision)
+			if (drawFocus)
 				paintHighlight(gc, box);
 			else
 				gc.fillRectangle(box);
@@ -1152,8 +1164,12 @@ public final class RevisionPainter {
 	 * 
      * @param revision the selected revision, <code>null</code> for none
      */
-    private void handleRevisionSelected(Revision revision) {
+    void handleRevisionSelected(Revision revision) {
+   		fSelectedRevision= revision;
     	fRevisionSelectionProvider.revisionSelected(revision);
+    	fIsOverviewShowing= revision != null;
+		showOverviewAnnotations(fFocusRevision != null ? fFocusRevision : fSelectedRevision);
+    	postRedraw();
     }
     
     /**
@@ -1230,7 +1246,7 @@ public final class RevisionPainter {
 		fFocusRevision= nextRevision;
 		uninstallWheelHandler();
 		installWheelHandler();
-		showOverviewAnnotations(fFocusRevision);
+		showOverviewAnnotations(fFocusRevision != null ? fFocusRevision : fSelectedRevision);
 		redraw(); // pick up new highlights
 	}
 
@@ -1269,7 +1285,7 @@ public final class RevisionPainter {
 	 * Handles a mouse exit event on the focus revision
 	 */
 	private void onExit() {
-		fIsOverviewShowing= false;
+		fIsOverviewShowing= fSelectedRevision != null;
 	}
 
 	/**
