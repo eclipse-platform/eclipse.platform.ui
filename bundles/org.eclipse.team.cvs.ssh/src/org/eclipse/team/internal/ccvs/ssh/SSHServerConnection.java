@@ -42,6 +42,9 @@ public class SSHServerConnection implements IServerConnection {
 	Client client;
 
 	public SSHServerConnection(ICVSRepositoryLocation location, String password) {
+		if (password == null) {
+			password = ""; //$NON-NLS-1$
+		}
 		this.location = location;
 		this.password = password;
 	}
