@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.configurator.IPlatformConfiguration.ISitePolicy;
 import org.w3c.dom.*;
 
 /**

@@ -30,7 +30,7 @@ public class TestBackward extends UpdateManagerTestCase {
 
 		// cleanup
 		LocalSite siteLocal = ((LocalSite)SiteManager.getLocalSite());
-		File localFile = new File(((LocalSite)SiteManager.getLocalSite()).getLocationURL().getFile());
+		File localFile = new File((siteLocal).getLocationURL().getFile());
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();

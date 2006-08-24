@@ -169,7 +169,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicyModel(configPolicy);	
-		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			
 		
@@ -187,7 +186,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// check
 		// there are 2 configuration
-		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
 		URL location = ((LocalSite)site).getLocationURL();		
 		File file = new File(new URL(location,"platform.xml").getFile());
 		assertTrue("new configuration does not exist", file.exists());

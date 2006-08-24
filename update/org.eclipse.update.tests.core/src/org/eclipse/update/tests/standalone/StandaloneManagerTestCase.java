@@ -282,13 +282,9 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 			System.out.println("reading from : " + localFile.getAbsolutePath());
 				FileReader freader = new FileReader(localFile);
 				BufferedReader breader = new BufferedReader(freader);
-				String configFileName="", line;
 				while (breader.ready()) {
-					line = breader.readLine();
+					breader.readLine();
 //					System.out.println(line);
-					if (line.trim().startsWith("<config url")) {
-						configFileName = line.split("\"")[1];
-					}
 				}
 				// read config file
 				File parent = new File(localFile.getParent());

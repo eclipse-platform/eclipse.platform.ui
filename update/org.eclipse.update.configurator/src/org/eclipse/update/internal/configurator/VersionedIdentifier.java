@@ -13,8 +13,6 @@ package org.eclipse.update.internal.configurator;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.osgi.framework.Version;
-
 public class VersionedIdentifier {
 	private String identifier = ""; //$NON-NLS-1$
 	private int major = 0;
@@ -83,32 +81,6 @@ public class VersionedIdentifier {
 			return EQUIVALENT;
 		else
 			return EQUAL;
-	}
-
-	private void parseVersion(String v) {
-		if (v == null || (v = v.trim()).equals("")) //$NON-NLS-1$
-			return;
-
-		try {
-			StringTokenizer st = new StringTokenizer(v, VER_SEPARATOR);
-			ArrayList elements = new ArrayList(4);
-
-			while (st.hasMoreTokens()) {
-				elements.add(st.nextToken());
-			}
-
-			if (elements.size() >= 1)
-				this.major = (new Integer((String) elements.get(0))).intValue();
-			if (elements.size() >= 2)
-				this.minor = (new Integer((String) elements.get(1))).intValue();
-			if (elements.size() >= 3)
-				this.service = (new Integer((String) elements.get(2))).intValue();
-			if (elements.size() >= 4)
-				this.qualifier = removeWhiteSpace((String) elements.get(3));
-
-		} catch (Exception e) {
-			// use what we got so far ...
-		}
 	}
 
 	private String removeWhiteSpace(String s) {

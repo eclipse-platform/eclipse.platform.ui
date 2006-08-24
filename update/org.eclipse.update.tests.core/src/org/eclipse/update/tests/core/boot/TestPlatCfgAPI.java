@@ -53,12 +53,10 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		
 		// create some urls
 		URL u1 = null;
-		URL u2 = null;
 
 		URL u4 = null;
 		try {
 			u1 = new URL("file:/d:/temp_test_dummy");
-//			u2 = new URL("file://localhost/temp");
 			new URL("http://some.server/temp/");
 			u4 = new URL("http://bad.url");
 		} catch (MalformedURLException e) {

@@ -56,9 +56,6 @@ public class TestRemoteDoubleEmbeddedFeatureMirror extends MirrorManagerTestCase
 
 	// make sure each feature is under its correct category names
 	public void testFeatureCategories() throws Exception{
-		String fromRemoteSiteUrl =
-		        dataPath
-				+ "mirrors/update-site5";
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteDoubleEmbeddedFeatureMirror";

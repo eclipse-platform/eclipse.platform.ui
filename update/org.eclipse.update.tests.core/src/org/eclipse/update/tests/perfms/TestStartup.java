@@ -11,15 +11,15 @@
 package org.eclipse.update.tests.perfms;
 //import java.net.*;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.URL;
 
-import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
-import org.eclipse.test.performance.*;
-import org.eclipse.update.tests.*;
-
-
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
+import org.eclipse.update.internal.configurator.PlatformConfigurationFactory;
+import org.eclipse.update.internal.configurator.SiteEntry;
+import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestStartup extends UpdateManagerTestCase {
 	public TestStartup(String arg0) {
@@ -37,7 +37,7 @@ public class TestStartup extends UpdateManagerTestCase {
 				performanceMeter.start();
 				try {
 					URL platformXml = new URL("file", "",dataPath + "/" + "perf/platform.xml");
-					IPlatformConfiguration config = new PlatformConfigurationFactory().getPlatformConfiguration(platformXml);
+					new PlatformConfigurationFactory().getPlatformConfiguration(platformXml);
 				} catch (IOException e) {
 					System.out.println("Cannot create configuration for performance measurement");
 				}

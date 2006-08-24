@@ -23,7 +23,6 @@ public class UpdateTestsPlugin extends Plugin {
 	private static String appServerHost = null;
 	private static int appServerPort = 0;
 	private static UpdateTestsPlugin plugin;
-	private static BundleContext bundleContext;
 	private static boolean initialized=false;
 
 	public static UpdateTestsPlugin getPlugin() {
@@ -36,7 +35,6 @@ public class UpdateTestsPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		bundleContext = context;
 	}
 	
 	/* (non-Javadoc)
@@ -45,7 +43,6 @@ public class UpdateTestsPlugin extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		WebappManager.stop("org.eclipse.update.tests.core.updatetests");
 		plugin = null;
-		bundleContext = null;
 		super.stop(context);
 	}
 
