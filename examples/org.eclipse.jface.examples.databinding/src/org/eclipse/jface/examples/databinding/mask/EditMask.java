@@ -91,6 +91,7 @@ public class EditMask {
 	public static final String FIELD_COMPLETE = "complete";
 	protected Text text;
 	protected EditMaskParser editMaskParser;
+	private boolean fireChangeOnKeystroke = false;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	
 	protected String oldValidRawText = "";
@@ -240,6 +241,33 @@ public class EditMask {
 	}
 
 	/**
+	 * Indicates if change notifications will be fired after every keystroke
+	 * that affects the value of the rawText or only when the value is either
+	 * complete or empty.
+	 * 
+	 * @return true if every change (including changes from one invalid state to
+	 *         another) triggers a change event; false if only empty or valid
+	 *         values trigger a change event.  Defaults to false.
+	 */
+	public boolean isFireChangeOnKeystroke() {
+		return fireChangeOnKeystroke;
+	}
+
+	/**
+	 * Sets if change notifications will be fired after every keystroke that
+	 * affects the value of the rawText or only when the value is either
+	 * complete or empty.
+	 * 
+	 * @param fireChangeOnKeystroke
+	 *            true if every change (including changes from one invalid state
+	 *            to another) triggers a change event; false if only empty or
+	 *            valid values trigger a change event.  Defaults to false.
+	 */
+	public void setFireChangeOnKeystroke(boolean fireChangeOnKeystroke) {
+		this.fireChangeOnKeystroke = fireChangeOnKeystroke;
+	}
+
+	/**
 	 * JavaBeans boilerplate code...
 	 * 
 	 * @param listener
@@ -369,7 +397,7 @@ public class EditMask {
 				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
 			}
 			if (!newRawText.equals(oldValidRawText)) {
-				if ( newIsComplete.booleanValue() || "".equals(newRawText)) {
+				if ( newIsComplete.booleanValue() || "".equals(newRawText) || fireChangeOnKeystroke) {
 					firePropertyChange(FIELD_RAW_TEXT, oldValidRawText, newRawText);
 					firePropertyChange(FIELD_TEXT, oldValidText, text.getText());
 					oldValidText = text.getText();
@@ -393,4 +421,5 @@ public class EditMask {
 			text.removeDisposeListener(disposeListener);
 		}
 	};
+
 }
