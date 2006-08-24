@@ -21,9 +21,7 @@ public interface IIndexProvider {
 
 	/**
 	 * Returns all <code>IIndexContribution</code>s for this provider. Providers
-	 * are free to provide any number of contributions (zero or more). A return
-	 * value of <code>null</code> will be treated the same as an array of size
-	 * zero.
+	 * are free to provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the index contributions for this provider
