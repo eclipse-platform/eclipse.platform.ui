@@ -603,7 +603,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @param shell the shell to compute the placement for
 		 * @param preferred the preferred size for <code>shell</code>
 		 * @param offset the caret offset in the subject control
-		 * @return the point right below <code>offset</code> in display coordinates
+		 * @return the point right above <code>offset</code> in display coordinates
 		 * @since 3.3
 		 */
 		protected Rectangle computeBoundsAboveBelow(Shell shell, Point preferred, int offset) {
