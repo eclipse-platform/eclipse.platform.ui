@@ -96,7 +96,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
      */
     public ImageDescriptor getImageDescriptor() {
         if (fImageDescriptor == null) {
-            String path = fConfig.getAttributeAsIs("icon"); //$NON-NLS-1$
+            String path = fConfig.getAttribute("icon"); //$NON-NLS-1$
             if (path != null) {
                 Bundle bundle = Platform.getBundle(getPluginId());
                 URL url = FileLocator.find(bundle, new Path(path), null);

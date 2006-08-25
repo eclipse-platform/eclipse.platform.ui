@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.console;
 
 import java.lang.reflect.Field;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -27,6 +26,8 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class PatternMatchListenerExtension implements IPluginContribution {
 
@@ -101,7 +102,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
      */
     public String getPattern() {
         if (fPattern == null) {
-            fPattern = fConfig.getAttributeAsIs("regex"); //$NON-NLS-1$
+            fPattern = fConfig.getAttribute("regex"); //$NON-NLS-1$
             try {
             	fPattern = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fPattern, false);
             } catch (CoreException e) {
@@ -116,7 +117,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
      */
     public int getCompilerFlags() {
         if(fFlags < 0) {
-            String flagsAttribute = fConfig.getAttributeAsIs("flags"); //$NON-NLS-1$
+            String flagsAttribute = fConfig.getAttribute("flags"); //$NON-NLS-1$
             fFlags = parseFlags(flagsAttribute);
         }
         return fFlags;
