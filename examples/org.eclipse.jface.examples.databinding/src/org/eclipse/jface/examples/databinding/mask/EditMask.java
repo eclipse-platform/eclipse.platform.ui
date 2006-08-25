@@ -91,7 +91,7 @@ public class EditMask {
 	public static final String FIELD_COMPLETE = "complete";
 	protected Text text;
 	protected EditMaskParser editMaskParser;
-	private boolean fireChangeOnKeystroke = false;
+	private boolean fireChangeOnKeystroke = true;
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	
 	protected String oldValidRawText = "";
