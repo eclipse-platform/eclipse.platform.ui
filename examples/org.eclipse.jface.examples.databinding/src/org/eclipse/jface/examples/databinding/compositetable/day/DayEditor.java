@@ -1034,11 +1034,15 @@ public class DayEditor extends Composite implements IEventEditor {
 	 */
 	public void refresh(Date date) {
 		checkWidget();
+		computeLayoutFor(date);
+		layoutEventControls();
+	}
+
+	private void computeLayoutFor(Date date) {
 		List removedDays = model.refresh(date);
 		freeObsoleteCalendarableEventControls(removedDays);
 		updateVisibleRows();
 		computeEventRowsForDate(date);
-		layoutEventControls();
 	}
 	
 	private boolean refreshing = false;
@@ -1057,9 +1061,10 @@ public class DayEditor extends Composite implements IEventEditor {
 					GregorianCalendar gc = new GregorianCalendar();
 					gc.setTime(dateToRefresh);
 					for (int i=0; i < getNumberOfDays(); ++i) {
-						refresh(gc.getTime());
+						computeLayoutFor(gc.getTime());
 						gc.add(Calendar.DATE, 1);
 					}
+					layoutEventControls();
 					refreshing = false;
 				}
 			});
