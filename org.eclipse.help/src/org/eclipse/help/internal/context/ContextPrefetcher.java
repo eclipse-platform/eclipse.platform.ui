@@ -29,8 +29,10 @@ public class ContextPrefetcher {
 		String text = original.getText();
 		Context context = new Context(text);
 		IHelpResource[] topics = original.getRelatedTopics();
-		for (int i=0;i<topics.length;++i) {
-			context.addChild(prefetch(topics[i]));
+		if (topics != null) {
+			for (int i=0;i<topics.length;++i) {
+				context.addChild(prefetch(topics[i]));
+			}
 		}
 		return context;
 	}
