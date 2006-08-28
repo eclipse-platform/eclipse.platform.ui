@@ -61,7 +61,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -122,7 +121,8 @@ public class ProgressManager extends ProgressProvider implements
 	 * The key for the locked job icon.
 	 */
 	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
-
+	
+	
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 
 	final Object monitorKey = new Object();
@@ -355,12 +355,12 @@ public class ProgressManager extends ProgressProvider implements
 		Dialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
 		createChangeListener();
 		Platform.getJobManager().addJobChangeListener(this.changeListener);
-		URL iconsRoot = BundleUtility.find(PlatformUI.PLUGIN_ID,
-				ProgressManager.PROGRESS_FOLDER);
+		URL iconsRoot = ProgressManagerUtil.getIconsRoot();
 		try {
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
+			
 			// Let the error manager set up its own icons
 			errorManager.setUpImages(iconsRoot);
 		} catch (MalformedURLException e) {

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
@@ -39,6 +42,18 @@ import org.eclipse.ui.views.IViewDescriptor;
  * The ProgressUtil is a class that contains static utility methods used for the
  * progress API.
  */
+/**
+ * @since 3.2
+ *
+ */
+/**
+ * @since 3.2
+ *
+ */
+/**
+ * @since 3.2
+ *
+ */
 public class ProgressManagerUtil {
 	/**
 	 * A constant used by the progress support to determine if an operation is
@@ -53,6 +68,7 @@ public class ProgressManagerUtil {
 	static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 	
 	static final QualifiedName INFRASTRUCTURE_PROPERTY = new QualifiedName(WorkbenchPlugin.PI_WORKBENCH,"INFRASTRUCTURE_PROPERTY");//$NON-NLS-1$
+	
 
 	private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 
@@ -64,7 +80,7 @@ public class ProgressManagerUtil {
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
 		return StatusUtil.newStatus(IStatus.ERROR,
-				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$, 
+				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
 				exception);
 	}
 
@@ -402,5 +418,26 @@ public class ProgressManagerUtil {
 				return getDefaultParent();
 			}
 		};
+	}
+
+	/**
+	 * Get the icons root for the progress support.
+	 * @return URL
+	 */
+	public static URL getIconsRoot() {
+		return BundleUtility.find(PlatformUI.PLUGIN_ID,
+				ProgressManager.PROGRESS_FOLDER);
+	}
+	
+	/**
+	 * Return the location of the progress spinner.
+	 * @return URL or <code>null</code> if it cannot be found
+	 */
+	public static URL getProgressSpinnerLocation(){
+		try {
+			return new URL(getIconsRoot(), "progress_spinner.gif");//$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			return null;
+		} 
 	}
 }
