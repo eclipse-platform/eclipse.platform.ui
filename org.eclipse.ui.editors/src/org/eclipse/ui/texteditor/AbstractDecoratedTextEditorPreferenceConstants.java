@@ -372,7 +372,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * A named preference that controls the rendering mode of the revision ruler.
 	 * <p>
 	 * Value is of type <code>String</code> and should contains the name of a
-	 * {@link IRevisionRulerColumnExtension.RenderingMode}.
+	 * {@link org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode}.
 	 * </p>
 	 * <p>
 	 * This API is provisional and may change any time before the 3.3 API freeze.
