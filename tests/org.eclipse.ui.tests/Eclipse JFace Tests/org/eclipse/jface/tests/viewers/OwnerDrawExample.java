@@ -1,6 +1,5 @@
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -11,8 +10,6 @@ import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.ViewerLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -164,23 +161,7 @@ public class OwnerDrawExample {
 
 		}
 
-		/**
-		 * @param gc
-		 */
-		private void initializeGC(GC gc) {
-			gc.setForeground(viewer.getControl().getDisplay().getSystemColor(
-					SWT.COLOR_BLACK));
-			gc.setFont(getFont());
-		}
 
-		/**
-		 * Get the font we are using.
-		 * 
-		 * @return Font
-		 */
-		protected Font getFont() {
-			return JFaceResources.getFont(JFaceResources.HEADER_FONT);
-		}
 
 		/**
 		 * @param event
@@ -373,7 +354,6 @@ public class OwnerDrawExample {
 			public void handleEvent(Event event) {
 				TableItem item = (TableItem) event.item;
 				CountryEntry country = (CountryEntry) item.getData();
-				event.gc.setFont(country.getFont());
 
 				event.setBounds(measure(country, event));
 			}
