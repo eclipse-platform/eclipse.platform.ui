@@ -35,7 +35,7 @@ public class EditMaskParserTest extends TestCase {
 	 * Test method for {@link org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser#EditMaskParser(java.lang.String)}.
 	 */
 	public void testEditMaskParser_validMask() {
-		EditMaskParser parser = new EditMaskParser("(###) ###-####");
+		new EditMaskParser("(###) ###-####");
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class EditMaskParserTest extends TestCase {
 	 */
 	public void testEditMaskParser_invalidMask() {
 		try {
-			EditMaskParser parser = new EditMaskParser("(###) ###-####\\");
+			new EditMaskParser("(###) ###-####\\");
 			fail("Should have thrown exception");
 		} catch (EditMaskParseException e) {
 			// success

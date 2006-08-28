@@ -60,7 +60,7 @@ public class LazyDataRequestor extends AbstractObservable implements ILazyDataRe
 	public void remove(int position) {
 		size--;
 		if (position < windowSize) {
-			Object removed = windowData.remove(position);
+			windowData.remove(position);
 			Object refreshed = fireElementProviders(windowData.size());
 			windowData.add(refreshed);
 		}

@@ -367,8 +367,7 @@ public class DatabindingContextTest extends TestCase {
 			DataBindingContext ctx = new DataBindingContext();
 			ctx.addObservableFactory(new MockObservableFactory());
 			ctx.addObservableFactory(new NestedObservableFactory(ctx));
-			MockObservableValue observableValue = (MockObservableValue) ctx
-					.createObservable(nestedProperty);
+			ctx.createObservable(nestedProperty);
 			fail("Expected binding exception.");
 		} catch (BindingException be) {
 		}

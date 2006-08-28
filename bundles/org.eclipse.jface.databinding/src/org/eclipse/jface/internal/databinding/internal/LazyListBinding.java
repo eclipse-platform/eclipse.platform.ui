@@ -56,10 +56,13 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	private LazyInsertDeleteProvider lazyInsertDeleteProvider;
 
 	private class DelegatingInsertDeleteProvider extends LazyInsertDeleteProvider {
-		private LazyInsertDeleteProvider lazyInsertDeleteProvider;
+		private LazyInsertDeleteProvider localLazyInsertDeleteProvider;
 		
+		/**
+		 * @param parent
+		 */
 		public DelegatingInsertDeleteProvider(LazyInsertDeleteProvider parent) {
-			this.lazyInsertDeleteProvider = parent;
+			this.localLazyInsertDeleteProvider = parent;
 		}
 		
 		public NewObject insertElementAt(LazyInsertEvent insertEvent) {
@@ -74,7 +77,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 					return null;
 				}
 				
-				newObject = lazyInsertDeleteProvider.insertElementAt(insertEvent);
+				newObject = localLazyInsertDeleteProvider.insertElementAt(insertEvent);
 				
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 				failure(errMsg(fireBindingEvent(e)));
@@ -91,14 +94,13 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#canDeleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
 		 */
 		public boolean canDeleteElementAt(LazyDeleteEvent e) {
-			return lazyInsertDeleteProvider.canDeleteElementAt(e);
+			return localLazyInsertDeleteProvider.canDeleteElementAt(e);
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider#deleteElementAt(org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent)
 		 */
 		public void deleteElementAt(LazyDeleteEvent deleteEvent) {
-			boolean canDelete = false;
 			try {
 				updating = true;
 				BindingEvent e = new BindingEvent(modelList, targetList, null,
@@ -107,7 +109,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 				e.originalValue = deleteEvent;
 				failure(errMsg(fireBindingEvent(e)));
 
-				lazyInsertDeleteProvider.deleteElementAt(deleteEvent);
+				localLazyInsertDeleteProvider.deleteElementAt(deleteEvent);
 				
 				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 				failure(errMsg(fireBindingEvent(e)));

@@ -41,8 +41,6 @@ public class CompositeTableTestBinding {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
 	private CompositeTable table = null;
-	private Header header = null;
-	private Row row = null;
 	
 	private List personList = new WritableList();
 	
@@ -82,8 +80,8 @@ public class CompositeTableTestBinding {
 		table.setWeights(new int[] {200, 200, 100, 50});
 		table.setFittingHorizontally(false);
 		table.setTraverseOnTabsEnabled(true);
-		header = new Header(table, SWT.NONE);
-		row = new Row(table, SWT.NONE);
+		new Header(table, SWT.NONE);
+		new Row(table, SWT.NONE);
 		bindGUI(sShell);
 	}
 

@@ -19,7 +19,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * @since 3.2
+ *
+ */
 public class WorkQueue {
+	
     private boolean updateScheduled = false;
 
     private boolean paintListenerAttached = false;
@@ -45,6 +50,9 @@ public class WorkQueue {
         }
     };
 
+    /**
+     * @param targetDisplay
+     */
     public WorkQueue(Display targetDisplay) {
         d = targetDisplay;
     }

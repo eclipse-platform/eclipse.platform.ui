@@ -12,7 +12,7 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: ObservableFactoriesTest.java,v $
- *  $Revision: 1.1.2.6 $  $Date: 2006/03/13 04:52:44 $ 
+ *  $Revision: 1.2 $  $Date: 2006/03/13 04:57:22 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -66,10 +66,6 @@ public class ObservableFactoriesTest extends ScenariosTestCase {
 			if (c.isInstance(description)) {
 				return new TestIObservable() {
 					public void dispose() {
-					}
-
-					public boolean isDisposed() {
-						return false;
 					}
 
 					public boolean isStale() {

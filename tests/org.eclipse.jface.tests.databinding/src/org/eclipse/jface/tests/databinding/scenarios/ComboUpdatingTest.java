@@ -59,7 +59,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	
 
 	private Combo comboEditable;
-	private Combo comboReadOnly;
+	//private Combo comboReadOnly;
 	
 	private static final String PROP_TEXT = "text";
 	private String text = "Hello, world";
@@ -93,7 +93,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		super.setUp();
 		getComposite().setLayout(new FillLayout());
 		comboEditable = new Combo(getComposite(), SWT.DROP_DOWN);
-		comboReadOnly = new Combo(getComposite(), SWT.DROP_DOWN | SWT.READ_ONLY);
+//		comboReadOnly = new Combo(getComposite(), SWT.DROP_DOWN | SWT.READ_ONLY);
 	}
 	
 	//-------------------------------------------------------------------------

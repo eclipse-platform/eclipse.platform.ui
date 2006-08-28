@@ -24,9 +24,7 @@ public class LazyInsertDeleteProvider {
 	 * Clients are free to use or ignore the position (it's a hint) according
 	 * to their own policy.
 	 * 
-	 * @param positionHint The position to insert the new element.  Clients are
-	 * free to use or ignore this information as it is a hint.
-	 * @param initializationData TODO
+	 * @param e the LazyInsertEvent TODO
 	 * 
 	 * @return An ILazyDataRequestor.NewObject containing the actual position
 	 * where the object was inserted and the new object that was inserted, or
@@ -49,7 +47,7 @@ public class LazyInsertDeleteProvider {
 	/**
 	 * Requests that the client delete the object at the specified position.
 	 * 
-	 * @param e.position The position of the object to delete.
+	 * @param e LazyInsertEvent TODO
 	 */
 	public void deleteElementAt(LazyDeleteEvent e) {
 	}

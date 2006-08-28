@@ -22,10 +22,16 @@ package org.eclipse.jface.internal.databinding.internal;
 public class IdentityWrapper {
 	final Object o;
 
+	/**
+	 * @param o
+	 */
 	public IdentityWrapper(Object o) {
 		this.o = o;
 	}
 	
+	/**
+	 * @return the unwrapped object
+	 */
 	public Object unwrap() {
 		return o;
 	}

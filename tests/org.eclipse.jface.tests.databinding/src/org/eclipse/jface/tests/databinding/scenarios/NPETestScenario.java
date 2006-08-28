@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 public class NPETestScenario extends ScenariosTestCase {
 	private Text text;
 
-	private Person person;
+	Person person;
 
 	protected void setUp() throws Exception {
 		super.setUp();

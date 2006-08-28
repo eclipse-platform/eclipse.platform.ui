@@ -25,8 +25,14 @@ package org.eclipse.jface.internal.databinding.provisional.observable.value;
  */
 public interface IVetoableValue extends IObservableValue {
 	
+	/**
+	 * @param listener
+	 */
 	public void addValueChangingListener(IValueChangingListener listener);
 	
+	/**
+	 * @param listener
+	 */
 	public void removeValueChangingListener(IValueChangingListener listener);
 
 }

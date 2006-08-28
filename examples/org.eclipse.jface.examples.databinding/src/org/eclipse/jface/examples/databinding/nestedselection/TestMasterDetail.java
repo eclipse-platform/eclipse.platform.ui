@@ -51,8 +51,6 @@ public class TestMasterDetail {
 
 	private Table personsTable = null;
 
-	private Label label = null;
-
 	private Label label1 = null;
 
 	private Text name = null;

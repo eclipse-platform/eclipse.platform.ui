@@ -76,7 +76,6 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 	}
 	
 	private CalendarableModel testModelLoading(String[][] data) {
-		CMClientFixture cmf = new CMClientFixture();
 		CalendarableModel cm = new CalendarableModel();
 		setupModel(data);
 		return cm;
@@ -298,7 +297,7 @@ public class CalendarableModel_testRefreshResults extends TestCase {
 		String[][] data = new String[][] {
 				{"5", "5", "2", "3", "5", "5"}
 		};
-		CalendarableItem[] allDayEvents = getAllDayEvents(data);
+		getAllDayEvents(data);
 		CalendarableItem result = cm.findAllDayCalendarable(0, false, null);
 		assertNull("No calendarables forward", result);
 	}

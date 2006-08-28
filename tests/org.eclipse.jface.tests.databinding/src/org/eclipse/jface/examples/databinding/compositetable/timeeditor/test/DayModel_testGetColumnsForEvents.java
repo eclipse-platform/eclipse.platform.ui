@@ -100,7 +100,6 @@ public class DayModel_testGetColumnsForEvents extends TestCase {
 	
 	private static final int DIVISIONS_IN_HOUR = 2;
 	
-	private IEventEditor eventEditor;
 	private EventLayoutComputer dayModel;
 	private List expectedEvents;
 	private CalendarableItem[][] eventLayout; 

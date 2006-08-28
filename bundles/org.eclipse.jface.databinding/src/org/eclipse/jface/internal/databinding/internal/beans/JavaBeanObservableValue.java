@@ -36,6 +36,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 	/**
 	 * @param object
 	 * @param descriptor
+	 * @param overrideType 
 	 */
 	public JavaBeanObservableValue(Object object, PropertyDescriptor descriptor, Class overrideType) {
 		this.object = object;

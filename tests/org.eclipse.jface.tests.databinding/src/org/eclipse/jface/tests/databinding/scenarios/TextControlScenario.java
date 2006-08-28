@@ -37,7 +37,7 @@ public class TextControlScenario extends ScenariosTestCase {
 
 	private Transportation transportation;
 
-	private Account account;
+	Account account;
 
 	protected void setUp() throws Exception {
 		super.setUp();

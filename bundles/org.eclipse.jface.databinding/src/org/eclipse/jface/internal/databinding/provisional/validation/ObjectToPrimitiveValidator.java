@@ -32,6 +32,9 @@ public class ObjectToPrimitiveValidator implements IValidator {
 			{Boolean.TYPE, Boolean.class},
 	};	
 	
+	/**
+	 * @param toType
+	 */
 	public ObjectToPrimitiveValidator(Class toType) {
 		this.toType = toType;
 	}
@@ -72,10 +75,16 @@ public class ObjectToPrimitiveValidator implements IValidator {
 		return false;
 	}
 
+	/**
+	 * @return 
+	 */
 	public String getNullHint() {
 		return BindingMessages.getString("Validate_ConversionToPrimitive"); //$NON-NLS-1$
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getClassHint() {
 		return BindingMessages.getString("Validate_ConversionFromClassToPrimitive"); //$NON-NLS-1$
 	}

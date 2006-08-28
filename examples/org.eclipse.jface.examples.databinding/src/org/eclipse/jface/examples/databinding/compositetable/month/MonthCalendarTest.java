@@ -19,14 +19,13 @@ import org.eclipse.swt.widgets.Shell;
 public class MonthCalendarTest {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
-   private MonthCalendar monthCalendar = null;
 	
 	/**
     * This method initializes monthCalendar	
     *
     */
    private void createMonthCalendar() {
-      monthCalendar = new MonthCalendar(sShell, SWT.NONE);
+      new MonthCalendar(sShell, SWT.NONE);
    }
 
    /**

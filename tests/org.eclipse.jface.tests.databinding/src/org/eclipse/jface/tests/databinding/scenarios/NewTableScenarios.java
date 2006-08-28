@@ -32,9 +32,9 @@ public class NewTableScenarios extends ScenariosTestCase {
 
 	private TableViewer tableViewer;
 
-	private Catalog catalog;
+	Catalog catalog;
 
-	private Category category;
+	Category category;
 
 	private TableColumn firstNameColumn;
 
@@ -42,7 +42,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 
 	private TableColumn stateColumn;
 
-	private Image[] images;
+	Image[] images;
 
 	private TableColumn fancyColumn;
 
@@ -80,7 +80,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 		stateColumn = null;
 	}
 
-	private String getValue(String text) {
+	String getValue(String text) {
 		if (text == null)
 			return "";
 		return text;

@@ -54,7 +54,7 @@ final public class ViewersObservableFactory implements IObservableFactory {
 	}
 
 	/**
-	 * @param updateTime.
+	 * @param updateTime
 	 *            Update policy of DataBindingContext.TIME_EARLY or TIME_LATE.
 	 *            This is only a hint that some editable viewers may support
 	 */

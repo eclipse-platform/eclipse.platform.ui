@@ -229,20 +229,25 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		return loadTestDataIntoList(testData);
 	}
 
-	private Property makeModel(final List testData) {
-		Object model = new ModelObject() {
-			List testDataList = testData;
+	static class TestModel extends ModelObject {
+		List testDataList;
+		TestModel(List testData) {
+			this.testDataList = testData;
+		}
 
-			public List getTestDataList() {
-				return testDataList;
-			}
+		public List getTestDataList() {
+			return testDataList;
+		}
 
-			public void setTestDataList(List testDataList) {
-				Object oldValue = this.testDataList;
-				this.testDataList = testDataList;
-				firePropertyChange("testDataList", oldValue, testDataList);
-			}
-		};
+		public void setTestDataList(List testDataList) {
+			Object oldValue = this.testDataList;
+			this.testDataList = testDataList;
+			firePropertyChange("testDataList", oldValue, testDataList);
+		}
+	};
+	
+	private Property makeModel(List testData) {
+		Object model = new TestModel(testData); 
 		return new Property(model, "testDataList");
 	}
 
@@ -477,7 +482,6 @@ public class EventEditorObservableLazyDataRequestorTest extends TestCase {
 		dbc.bind(editorBindDesc, makeModel(testData), null);
 		
 		List daysToDispose = new LinkedList();
-		CalendarableModel cm = editor.model;
 		for (int day=0; day < 7; ++day) {
 			List calendarables = editor.model().getCalendarableItems(day);
 			if (calendarables != null) {

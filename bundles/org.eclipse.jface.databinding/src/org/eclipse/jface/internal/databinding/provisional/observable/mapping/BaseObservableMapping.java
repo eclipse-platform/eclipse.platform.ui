@@ -28,6 +28,9 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 	 */
 	protected Object mappingChangeListeners = null;
 
+	/**
+	 * @param listener
+	 */
 	public void addMappingChangeListener(IMappingChangeListener listener) {
 		if (mappingChangeListeners == null) {
 			boolean hadListeners = hasListeners();
@@ -52,6 +55,9 @@ public abstract class BaseObservableMapping extends AbstractObservable {
 		listenerList.add(listener);
 	}
 
+	/**
+	 * @param listener
+	 */
 	public void removeMappingChangeListener(IMappingChangeListener listener) {
 		if (mappingChangeListeners == listener) {
 			mappingChangeListeners = null;

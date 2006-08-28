@@ -55,10 +55,10 @@ public class BindSpec {
 	 * Creates a bind spec with the given converters, validators, and update
 	 * policies.
 	 * 
-	 * @param modelToTargetConverter, or <code>null</code>
-	 * @param targetToModelConverter, or <code>null</code>
-	 * @param targetValidator, or <code>null</code>
-	 * @param domainValidator, or <code>null</code>
+	 * @param modelToTargetConverter or <code>null</code>
+	 * @param targetToModelConverter or <code>null</code>
+	 * @param targetValidator or <code>null</code>
+	 * @param domainValidator or <code>null</code>
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
 	 * @param targetUpdatePolicy
@@ -82,10 +82,10 @@ public class BindSpec {
 	 * Creates a bind spec with the given converters, validators, and update
 	 * policies.
 	 * 
-	 * @param modelToTargetConverters, or <code>null</code>
-	 * @param targetToModelConverters, or <code>null</code>
-	 * @param targetValidators, or <code>null</code>
-	 * @param domainValidator, or <code>null</code>
+	 * @param modelToTargetConverters or <code>null</code>
+	 * @param targetToModelConverters or <code>null</code>
+	 * @param targetValidators or <code>null</code>
+	 * @param domainValidator or <code>null</code>
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
 	 * @param targetUpdatePolicy
@@ -139,10 +139,10 @@ public class BindSpec {
 	 * Creates a bind spec with the given converter and validator. The update
 	 * policies are set to <code>IBindSpec.POLICY_CONTEXT</code>.
 	 * 
-	 * @param modelToTargetConverter, or <code>null</code>
-	 * @param targetToModelConverter, or <code>null</code>
-	 * @param targetValidator, or <code>null</code>
-	 * @param domainValidator, or <code>null</code>
+	 * @param modelToTargetConverter or <code>null</code>
+	 * @param targetToModelConverter or <code>null</code>
+	 * @param targetValidator or <code>null</code>
+	 * @param domainValidator or <code>null</code>
 	 * 
 	 */
 	public BindSpec(IConverter modelToTargetConverter,

@@ -36,7 +36,7 @@ public class TableScenarios extends ScenariosTestCase {
 
 	private Catalog catalog;
 	
-	private Category category;
+	Category category;
 
 	private TableColumn firstNameColumn;
 
@@ -44,7 +44,7 @@ public class TableScenarios extends ScenariosTestCase {
 
 	private TableColumn stateColumn;
 
-	private Image[] images;
+	Image[] images;
 
 	private TableColumn fancyColumn;
 

@@ -33,7 +33,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -48,8 +47,6 @@ public class LabelProviderTest2 {
 	private Shell shell;
 
 	private ListViewer list;
-
-	private Label exploredNodesLabel;
 
 	private WritableList listOfRenamables;
 

@@ -36,7 +36,7 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
     
     public static boolean includes(Object object, String method, Class[] args) {
         try {
-            Method realMethod = object.getClass().getMethod(method, args);
+            object.getClass().getMethod(method, args);
         } catch (NoSuchMethodException e) {
             return false;
         }

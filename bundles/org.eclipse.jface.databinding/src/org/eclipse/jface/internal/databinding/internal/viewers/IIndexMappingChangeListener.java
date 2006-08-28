@@ -17,6 +17,10 @@ package org.eclipse.jface.internal.databinding.internal.viewers;
  */
 public interface IIndexMappingChangeListener {
 	
+	/**
+	 * @param source
+	 * @param diff
+	 */
 	public void handleIndexMappingChange(IObservableIndexMapping source, IIndexMappingDiff diff);
 
 }

@@ -60,6 +60,9 @@ public class TableModelDescription {
 		return columnIDs;
 	}
 
+	/**
+	 * @return the observable list
+	 */
 	public IObservableList getObservableList() {
 		return observableList;
 	}

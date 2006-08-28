@@ -34,8 +34,6 @@ public class CompositeTableTest {
 
 	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
 	private CompositeTable table = null;
-	private Header header = null;
-	private Row row = null;
 	
 	private LinkedList personList = new LinkedList();
 	
@@ -143,7 +141,7 @@ public class CompositeTableTest {
 	 *
 	 */
 	private void createHeader() {
-		header = new Header(table, SWT.NONE);
+		new Header(table, SWT.NONE);
 	}
 
 	/**
@@ -151,7 +149,7 @@ public class CompositeTableTest {
 	 *
 	 */
 	private void createRow() {
-		row = new Row(table, SWT.NONE);
+		new Row(table, SWT.NONE);
 	}
 
 	/**

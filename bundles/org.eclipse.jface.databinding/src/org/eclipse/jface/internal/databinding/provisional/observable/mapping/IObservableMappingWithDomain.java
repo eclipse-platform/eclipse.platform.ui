@@ -27,6 +27,9 @@ import org.eclipse.jface.internal.databinding.provisional.observable.set.IObserv
  */
 public interface IObservableMappingWithDomain extends IObservableMapping {
 
+	/**
+	 * @return the domain of this mapping (the set of elements that can be mapped)
+	 */
 	public IObservableSet getDomain();
 	
 }
