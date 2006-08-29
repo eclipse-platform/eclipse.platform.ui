@@ -13,6 +13,7 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 
 
 /**
@@ -46,6 +47,18 @@ public class TextAttribute {
 
 	/** The text style */
 	private int style;
+	
+	/**
+	 * The text font.
+	 * @since 3.3
+	 */
+	private Font font;
+
+	/**
+	 * Cached hash code.
+	 * @since 3.3
+	 */
+	private int fHashCode;
 
 	/**
 	 * Creates a text attribute with the given colors and style.
@@ -58,6 +71,22 @@ public class TextAttribute {
 		this.foreground= foreground;
 		this.background= background;
 		this.style= style;
+	}
+	
+	/**
+	 * Creates a text attribute with the given colors and style.
+	 *
+	 * @param foreground the foreground color
+	 * @param background the background color, <code>null</code> if none
+	 * @param style the style
+	 * @param font the font
+	 * @since 3.3
+	 */
+	public TextAttribute(Color foreground, Color background, int style, Font font) {
+		this.foreground= foreground;
+		this.background= background;
+		this.style= style;
+		this.font= font;
 	}
 
 	/**
@@ -80,9 +109,9 @@ public class TextAttribute {
 
 		if (!(object instanceof TextAttribute))
 			return false;
-
-		TextAttribute a= (TextAttribute) object;
-		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background));
+		TextAttribute a= (TextAttribute)object;
+		
+		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background) && equals(a.font, font));
 	}
 
 	/**
@@ -103,9 +132,15 @@ public class TextAttribute {
 	 * @see Object#hashCode()
 	 */
 	 public int hashCode() {
-	 	int foregroundHash= foreground == null ? 0 : foreground.hashCode();
-	 	int backgroundHash= background == null ? 0 : background.hashCode();
-	 	return (foregroundHash << 24) | (backgroundHash << 16) | style;
+		 if (fHashCode == 0) {
+			 int multiplier= 37; // some prime
+			 fHashCode= 13; // some random value
+			 fHashCode= multiplier * fHashCode + (font == null ? 0 : font.hashCode());
+			 fHashCode= multiplier * fHashCode + (background == null ? 0 : background.hashCode());
+			 fHashCode= multiplier * fHashCode + (foreground == null ? 0 : foreground.hashCode());
+			 fHashCode= multiplier * fHashCode + style;
+		 }
+	 	return fHashCode;
 	 }
 
 	/**
@@ -133,5 +168,15 @@ public class TextAttribute {
 	 */
 	public int getStyle() {
 		return style;
+	}
+	
+	/**
+	 * Returns the attribute's font.
+	 *
+	 * @return the attribute's font
+	 * @since 3.3
+	 */
+	public Font getFont() {
+		return font;
 	}
 }

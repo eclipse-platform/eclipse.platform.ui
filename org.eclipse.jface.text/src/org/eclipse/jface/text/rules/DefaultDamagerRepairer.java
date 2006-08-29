@@ -218,6 +218,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 			StyleRange styleRange= new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), fontStyle);
 			styleRange.strikeout= (style & TextAttribute.STRIKETHROUGH) != 0;
 			styleRange.underline= (style & TextAttribute.UNDERLINE) != 0;
+			styleRange.font= attr.getFont();
 			presentation.addStyleRange(styleRange);
 		}
 	}
