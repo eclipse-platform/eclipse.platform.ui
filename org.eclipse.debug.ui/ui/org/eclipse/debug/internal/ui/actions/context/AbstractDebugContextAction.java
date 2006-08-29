@@ -27,14 +27,20 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * Provides an abstract base class for asynchronous debug actions
+ *
+ * @since 3.2
+ */
 public abstract class AbstractDebugContextAction extends Action implements IDebugContextListener {
 
     private IStructuredSelection fActiveContext;
-
     private IWorkbenchWindow fWindow;
-
     private AbstractDebugContextActionDelegate fDelegate;
 
+    /**
+     * Constructor
+     */
     public AbstractDebugContextAction() {
         super();
         String helpContextId = getHelpContextId();
@@ -43,24 +49,20 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         setEnabled(false);
     }
    
+    /**
+     * Set the current delegate
+     * @param delegate
+     */
     public void setDelegate(AbstractDebugContextActionDelegate delegate) {
         fDelegate = delegate;
     }
 
+    /**
+     * This method is analagous to the standard 'run' method for an <code>IAction</code>
+     * @param target the target to perform the action on
+     */
     protected abstract void doAction(Object target);
-
-    public AbstractDebugContextAction(String text) {
-        super(text);
-    }
-
-    public AbstractDebugContextAction(String text, ImageDescriptor image) {
-        super(text, image);
-    }
-
-    public AbstractDebugContextAction(String text, int style) {
-        super(text, style);
-    }
-
+    
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
@@ -78,6 +80,10 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         contextActivated(context, part);
     }
 
+    /**
+     * Updates the enabled state for the current selection
+     * @param context the current context to evaluate enablement with
+     */
     protected void update(ISelection context) {
         if (context instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) context;
@@ -103,6 +109,9 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     /**
      * Return whether the action should be enabled or not based on the given
      * selection.
+     * This method uses the default <code>BooleanRequestMonitor</code>, which collects
+     * votes, and if not cancelled, sets enablement based on the equality of the number of voters
+     * to the total number of voters who could have voted
      */
     protected void updateEnableStateForContext(IStructuredSelection selection) {
         int size = selection.size();
@@ -118,6 +127,12 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         }
     }
 
+    /**
+     * Calls back to the <code>IBooleanRequestMonitor</code> indicating if the action
+     * should be enabled based on the selected element
+     * @param element the element to determine enablement for
+     * @param monitor the <code>IBooleanRequestMonitor</code> to call back to
+     */
     protected abstract void isEnabledFor(Object element, IBooleanRequestMonitor monitor);
     
     /**
@@ -131,6 +146,10 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     	monitor.done();
     }
 
+    /**
+     * Initializes the context action
+     * @param window the window
+     */
     public void init(IWorkbenchWindow window) {
         setWindow(window);
         IDebugContextManager manager = DebugContextManager.getDefault();
@@ -153,6 +172,10 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
     	return false;
     }
 
+    /**
+     * Set the window this action is contained within
+     * @param window the new window
+     */
     protected void setWindow(IWorkbenchWindow window) {
         fWindow = window;
     }
@@ -191,6 +214,9 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         run();
     }
 
+    /**
+     * Clean up when removing
+     */
     public void dispose() {
         IWorkbenchWindow window = getWindow();
         if (getWindow() != null) {
@@ -198,6 +224,9 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         }
     }
 
+    /**
+     * @return The current window this action is associated with
+     */
     protected IWorkbenchWindow getWindow() {
         return fWindow;
     }
@@ -220,6 +249,9 @@ public abstract class AbstractDebugContextAction extends Action implements IDebu
         return ""; //$NON-NLS-1$
     }
 
+    /**
+     * @return The help context id for this action
+     */ 
     public abstract String getHelpContextId();
 
     /*
