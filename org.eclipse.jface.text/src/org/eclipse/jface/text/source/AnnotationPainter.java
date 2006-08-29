@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
@@ -114,9 +115,20 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Point left= textWidget.getLocationAtOffset(offset);
 				Point right= textWidget.getLocationAtOffset(offset + length);
 
-				gc.setForeground(color);
 				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
+
+				
+				int currentLineWidth= gc.getLineWidth();
+				int currentLineStyle= gc.getLineStyle();
+				
+				gc.setLineWidth(0); // use fastest possible algorithm
+				gc.setLineStyle(SWT.LINE_SOLID);
+				gc.setForeground(color);
+				
 				gc.drawPolyline(polyline);
+				
+				gc.setLineWidth(currentLineWidth);
+				gc.setLineStyle(currentLineStyle);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);
