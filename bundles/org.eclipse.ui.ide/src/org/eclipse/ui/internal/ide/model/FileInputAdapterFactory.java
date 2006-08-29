@@ -20,7 +20,7 @@ import org.eclipse.ui.IFileEditorInput;
  *
  */
 
-class FileInputAdapterFactory implements IAdapterFactory {
+public class FileInputAdapterFactory implements IAdapterFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
