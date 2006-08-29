@@ -14,8 +14,7 @@ package org.eclipse.jface.tests.viewers;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreePathViewerSorter;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -23,30 +22,25 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.2
  * 
  */
-public class SimpleTreeViewerTest extends ViewerTestCase {
+public class SimpleTableViewerTest extends ViewerTestCase {
 
-	private TreeViewer treeViewer;
+	private TableViewer tableViewer;
 
 	/**
 	 * @param name
 	 */
-	public SimpleTreeViewerTest(String name) {
+	public SimpleTableViewerTest(String name) {
 		super(name);
 	}
 
 	protected StructuredViewer createViewer(Composite parent) {
-		treeViewer = new TreeViewer(parent);
-		treeViewer.setContentProvider(new TestModelContentProvider());
-		return treeViewer;
+		tableViewer = new TableViewer(parent);
+		tableViewer.setContentProvider(new TestModelContentProvider());
+		return tableViewer;
 	}
 
-	public void testSetTreePathViewerSorterOnNullInput() {
-		treeViewer.setInput(null);
-		treeViewer.setSorter(new TreePathViewerSorter());
-	}
-	
 	public void testNullLabel() {
-		treeViewer.setLabelProvider(new ITableLabelProvider(){
+		tableViewer.setLabelProvider(new ITableLabelProvider() {
 
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
@@ -67,7 +61,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 			}
 
 			public void removeListener(ILabelProviderListener listener) {
-			}});
+			}
+		});
 	}
-
 }

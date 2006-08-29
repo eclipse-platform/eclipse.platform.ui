@@ -30,6 +30,7 @@ public class AllTests extends TestSuite {
 		addTestSuite(TreeViewerTest.class);
 		addTestSuite(VirtualTreeViewerTest.class);
 		addTestSuite(SimpleTreeViewerTest.class);
+		addTestSuite(SimpleTableViewerTest.class);
 		addTestSuite(SimpleVirtualLazyTreeViewerTest.class);
 		addTestSuite(VirtualLazyTreeViewerTest.class);
 		addTestSuite(TableViewerTest.class);

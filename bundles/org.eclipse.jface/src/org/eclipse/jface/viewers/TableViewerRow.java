@@ -135,7 +135,7 @@ public class TableViewerRow extends ViewerRow {
 	 * @see org.eclipse.jface.viewers.ViewerRow#setText(int, java.lang.String)
 	 */
 	public void setText(int columnIndex, String text) {
-		item.setText(columnIndex, text);
+		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
 	}
 
 }
