@@ -90,7 +90,7 @@ public final class ShowViewHandler extends AbstractHandler {
 			return;
 		}
 		
-		final ShowViewDialog dialog = new ShowViewDialog(window.getShell(),
+		final ShowViewDialog dialog = new ShowViewDialog(window,
 				WorkbenchPlugin.getDefault().getViewRegistry());
 		dialog.open();
 		

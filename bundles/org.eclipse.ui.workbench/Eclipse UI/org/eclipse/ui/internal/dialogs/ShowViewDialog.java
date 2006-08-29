@@ -25,12 +25,17 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -68,14 +73,19 @@ public class ShowViewDialog extends Dialog implements
 
     private IViewRegistry viewReg;
 
+	private IWorkbenchWindow window;
+
+	private Color dimmedForeground;
+
     /**
      * Constructs a new ShowViewDialog.
      * 
-     * @param parentShell the parent shell
+     * @param window the workbench window
      * @param viewReg the view registry
      */
-    public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
-        super(parentShell);
+    public ShowViewDialog(IWorkbenchWindow window, IViewRegistry viewReg) {
+        super(window.getShell());
+        this.window = window;
         this.viewReg = viewReg;
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
@@ -151,7 +161,32 @@ public class ShowViewDialog extends Dialog implements
         return composite;
     }
 
-    /**
+	/**
+	 * Blends c1 and c2 based in the provided ratio.
+	 * 
+	 * @param c1
+	 *            first color
+	 * @param c2
+	 *            second color
+	 * @param ratio
+	 *            percentage of the first color in the blend (0-100)
+	 * @return the RGB value of the blended color
+	 * 
+	 * copied from FormColors.java
+	 */
+	private static RGB blend(RGB c1, RGB c2, int ratio) {
+		int r = blend(c1.red, c2.red, ratio);
+		int g = blend(c1.green, c2.green, ratio);
+		int b = blend(c1.blue, c2.blue, ratio);
+		return new RGB(r, g, b);
+	}
+
+	private static int blend(int v1, int v2, int ratio) {
+		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
+		return Math.min(255, b);
+	}
+
+	/**
      * Create a new filtered tree viewer in the parent.
      * 
      * @param parent the parent <code>Composite</code>.
@@ -160,17 +195,26 @@ public class ShowViewDialog extends Dialog implements
 		PatternFilter filter = new ViewPatternFilter();
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		filteredTree = new FilteredTree(parent, styleBits, filter);
+		filteredTree.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		
 		TreeViewer treeViewer = filteredTree.getViewer();
-		treeViewer.setLabelProvider(new ViewLabelProvider());
+		Control treeControl = treeViewer.getControl();
+		RGB dimmedRGB = blend(treeControl.getForeground().getRGB(), treeControl.getBackground().getRGB(), 60);
+		dimmedForeground = new Color(treeControl.getDisplay(), dimmedRGB);
+		treeControl.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dimmedForeground.dispose();
+			}
+		});
+		
+		treeViewer.setLabelProvider(new ViewLabelProvider(window, dimmedForeground));
 		treeViewer.setContentProvider(new ViewContentProvider());
 		treeViewer.setSorter(new ViewSorter((ViewRegistry) viewReg));
 		treeViewer.setInput(viewReg);
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.addDoubleClickListener(this);
 		treeViewer.addFilter(new CapabilityFilter());
-
-		filteredTree.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
 
 		// if the tree has only one or zero views, disable the filter text control
 		if (hasAtMostOneView(filteredTree.getViewer())) {
