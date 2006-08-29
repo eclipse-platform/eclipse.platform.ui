@@ -1,4 +1,4 @@
-package org.eclipse.jface.tests.viewers;
+package org.eclipse.jface.viewers.snippets;
 
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
