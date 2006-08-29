@@ -33,7 +33,7 @@ import org.eclipse.ui.IActionBars;
  * </p>
  * 
  * @author Anthony Hunter
- * 
+ * @since 3.2.1
  */
 public interface IActionProvider {
 
