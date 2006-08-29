@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Bug 154598: DebugModelContextBindingManager does not use IAdaptable.getAdapter() to retrieve IDebugModelProvider adapter
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
