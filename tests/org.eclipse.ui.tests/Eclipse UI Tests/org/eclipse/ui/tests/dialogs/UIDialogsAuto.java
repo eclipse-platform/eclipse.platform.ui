@@ -161,7 +161,7 @@ public class UIDialogsAuto extends TestCase {
     }
 
     public void testShowView() {
-        Dialog dialog = new ShowViewDialog(getShell(), WorkbenchPlugin
+        Dialog dialog = new ShowViewDialog(getWorkbench().getActiveWorkbenchWindow(), WorkbenchPlugin
                 .getDefault().getViewRegistry());
         DialogCheck.assertDialogTexts(dialog, this);
     }
