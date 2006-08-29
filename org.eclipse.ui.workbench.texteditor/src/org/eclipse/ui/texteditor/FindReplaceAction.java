@@ -204,9 +204,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 */
 	private static FindReplaceDialogStub fgFindReplaceDialogStub;
 	
-	/** Lister for disabling the dialog on shell close
+	/** Listener for disabling the dialog on shell close.
 	 * <p>
-	 * This stub is shared amongst <code>IWorkbenchPart</code>s.</p>
+	 * This stub is shared amongst <code>Shell</code>s.</p>
 	 * @since 3.3
 	 */
 	private static FindReplaceDialogStub fgFindReplaceDialogStubShell;
@@ -218,7 +218,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
 	/**
-	 * The shell to use if the action is creatd with a shell.
+	 * The shell to use if the action is created with a shell.
 	 * @since 3.3
 	 */
 	private Shell fShell;
