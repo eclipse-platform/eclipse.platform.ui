@@ -21,6 +21,11 @@ Every element within this extension point is given a unique identifier.  This is
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
@@ -265,7 +270,7 @@ A group can contain menus, items and other groups.
             <annotation>
                <documentation>
                   What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.
-&lt;/p&gt;
+&lt;p&gt;
 &lt;p&gt;If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the bar will generally not require a command or an icon, it should be filled with a widget that displays the trim information.
 &lt;p&gt;
 Within the trim, the workbench defines five general groups which correspond to various positions around the window:
@@ -739,7 +744,7 @@ Note that trim &apos;groups&apos; can be re-located to the other trim areas. The
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005,2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
