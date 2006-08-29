@@ -29,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
+import org.eclipse.ui.views.properties.tabbed.IActionProvider;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
@@ -66,6 +67,8 @@ public class TabbedPropertyRegistry {
 
 	private static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
 
+    private static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
+
 	private static final String TOP = "top"; //$NON-NLS-1$
 
 	protected String contributorId;
@@ -75,6 +78,8 @@ public class TabbedPropertyRegistry {
 	protected List propertyCategories;
 
 	protected ILabelProvider labelProvider;
+
+    protected IActionProvider actionProvider;
 
 	protected ITypeMapper typeMapper;
 
@@ -104,6 +109,10 @@ public class TabbedPropertyRegistry {
 					labelProvider = (ILabelProvider) configurationElement
 						.createExecutableExtension(ATT_LABEL_PROVIDER);
 				}
+                if (configurationElement.getAttribute(ATT_ACTION_PROVIDER) != null) {
+                    actionProvider = (IActionProvider) configurationElement
+                        .createExecutableExtension(ATT_ACTION_PROVIDER);
+                }
 				if (configurationElement.getAttribute(ATT_TYPE_MAPPER) != null) {
 					typeMapper = (ITypeMapper) configurationElement
 						.createExecutableExtension(ATT_TYPE_MAPPER);
@@ -434,6 +443,15 @@ public class TabbedPropertyRegistry {
 	public ILabelProvider getLabelProvider() {
 		return labelProvider;
 	}
+
+    /**
+     * Gets the action provider for the contributor.
+     * 
+     * @return the action provider for the contributor.
+     */
+    public IActionProvider getActionProvider() {
+        return actionProvider;
+    }
 
 	/**
 	 * Sets the section descriptor provider for the contributor.

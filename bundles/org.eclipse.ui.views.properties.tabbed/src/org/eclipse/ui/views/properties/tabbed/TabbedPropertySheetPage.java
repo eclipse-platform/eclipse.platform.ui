@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
@@ -297,7 +300,8 @@ public class TabbedPropertySheetPage
 		 * of these events since we want to send aboutToBeHidden() and
 		 * aboutToBeShown() when the property sheet is hidden or shown.
 		 */
-		if (!thisActivated && !part.equals(contributor)) {
+        if (!thisActivated && !part.equals(contributor)
+                && !part.getSite().getId().equals(contributor.getContributorId())) {
 			/*
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
@@ -482,6 +486,9 @@ public class TabbedPropertySheetPage
 				contributor);
 			registry = null;
 		}
+        
+        contributor = null;
+        currentSelection = null;
 	}
 
 	/**
@@ -497,17 +504,27 @@ public class TabbedPropertySheetPage
 	public void setActionBars(IActionBars actionBars) {
 		// Override the undo and redo global action handlers
 		// to use the contributor action handlers
+        IActionBars partActionBars = null;
 		if (contributor instanceof IEditorPart) {
 			IEditorPart editorPart = (IEditorPart) contributor;
-			IActionBars editorActionBars = editorPart.getEditorSite()
-				.getActionBars();
-			actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-				editorActionBars.getGlobalActionHandler(ActionFactory.UNDO
-					.getId()));
-			actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
-				editorActionBars.getGlobalActionHandler(ActionFactory.REDO
-					.getId()));
-		}
+            partActionBars = editorPart.getEditorSite().getActionBars();
+		} else if (contributor instanceof IViewPart) {
+            IViewPart viewPart = (IViewPart) contributor;
+            partActionBars = viewPart.getViewSite().getActionBars();
+        } 
+        
+        if (partActionBars != null) {
+            IAction action = partActionBars.getGlobalActionHandler(ActionFactory.UNDO
+                .getId());
+            if (action != null) {
+                actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
+            }
+            action = partActionBars.getGlobalActionHandler(ActionFactory.REDO
+                .getId()); 
+            if (action != null) {
+                actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
+            }
+        }
 	}
 
 	/**
@@ -782,12 +799,26 @@ public class TabbedPropertySheetPage
      */
     private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(
             Object object) {
-        Object element = object instanceof IAdaptable ? ((IAdaptable) object)
-            .getAdapter(ITabbedPropertySheetPageContributor.class)
-            : object;
-        return element instanceof ITabbedPropertySheetPageContributor ? (ITabbedPropertySheetPageContributor) element
-            : null;
-    }
+        if (object instanceof ITabbedPropertySheetPageContributor) {
+            return (ITabbedPropertySheetPageContributor) object;
+        }
+
+        if (object instanceof IAdaptable
+            && ((IAdaptable) object)
+                .getAdapter(ITabbedPropertySheetPageContributor.class) != null) {
+            return (ITabbedPropertySheetPageContributor) (((IAdaptable) object)
+                .getAdapter(ITabbedPropertySheetPageContributor.class));
+        }
+
+        if (Platform.getAdapterManager().hasAdapter(object,
+            ITabbedPropertySheetPageContributor.class.getName())) {
+            return (ITabbedPropertySheetPageContributor) Platform
+                .getAdapterManager().loadAdapter(object,
+                    ITabbedPropertySheetPageContributor.class.getName());
+        }
+
+        return null;
+	}
 
 	/**
 	 * The workbench part creates this instance of the TabbedPropertySheetPage
@@ -865,6 +896,17 @@ public class TabbedPropertySheetPage
 		disposeContributor();
 		currentContributorId = selectionContributorId;
 		initContributor(currentContributorId);
+        overrideActionBars();
 	}
+
+    /**
+     * Override the action bars for the selection based contributor.
+     */
+    private void overrideActionBars() {
+        if (registry.getActionProvider() != null ) {
+            IActionProvider actionProvider = registry.getActionProvider();
+            actionProvider.setActionBars(contributor, getSite().getActionBars());
+        }
+    }
 
 }
