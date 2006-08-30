@@ -37,6 +37,13 @@ import org.osgi.service.packageadmin.PackageAdmin;
  * <li>the platform log</li>
  * <li>the authorization info management</li>
  * </ul>
+ * <p>
+ * Most users don't have to worry about Platform's lifecycle. However, if your 
+ * code can call methods of this class when Platform is not running, it becomes 
+ * necessary to check {@link #isRunning()} before making the call. A runtime 
+ * exception might be thrown or incorrect result might be returned if a method 
+ * from this class is called while Platform is not running.
+ * </p>
  */
 public final class Platform {
 
