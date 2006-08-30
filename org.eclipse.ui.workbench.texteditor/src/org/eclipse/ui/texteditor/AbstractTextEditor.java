@@ -908,7 +908,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Maps an action definition id to an StyledText action.
 	 * @since 2.0
 	 */
-	static class IdMapEntry {
+	protected static final class IdMapEntry {
 
 		/** The action id. */
 		private String fActionId;
