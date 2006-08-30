@@ -11,6 +11,8 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
@@ -209,7 +211,11 @@ public class SourceViewerConfiguration {
 
 	/**
 	 * Returns the prefixes to be used by the line-shift operation. This implementation
-	 * always returns <code>new String[] { "\t", "    " }</code>.
+	 * always returns <code>new String[] { "\t", "    ", "" }</code>.
+	 * <p>
+	 * <strong>Note:</strong> <em>This default is incorrect but cannot be changed in order not
+	 * to break any existing clients. Subclasses should overwrite this method and
+	 * use {@link #getIndentPrefixesForTab(int)} if applicable.</em>
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @param contentType the content type for which the prefix is applicable
@@ -217,6 +223,30 @@ public class SourceViewerConfiguration {
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "\t", "    ", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	/**
+	 * Computes and returns the indent prefixes for tab indentation
+	 * which is represented as <code>tabSizeInSpaces</code>.
+	 * 
+	 * @param tabWidth the display tab width
+	 * @return the indent prefixes
+	 * @see #getIndentPrefixes(ISourceViewer, String)
+	 * @since 3.3
+	 */
+	protected String[] getIndentPrefixesForTab(int tabWidth) {
+		String[] indentPrefixes= new String[tabWidth + 2];
+		for (int i= 0; i <= tabWidth; i++) {
+			char[] spaceChars= new char[i];
+			Arrays.fill(spaceChars, ' ');
+			String spaces= new String(spaceChars);
+			if (i < tabWidth)
+				indentPrefixes[i]= spaces + '\t';
+			else
+				indentPrefixes[i]= new String(spaces);
+		}
+		indentPrefixes[tabWidth + 1]= ""; //$NON-NLS-1$
+		return indentPrefixes;
 	}
 
 	/**

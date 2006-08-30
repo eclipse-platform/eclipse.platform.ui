@@ -184,6 +184,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getIndentPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 * @since 3.3
+	 */
+	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
+		return getIndentPrefixesForTab(getTabWidth(sourceViewer));
+	}
+
+	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.1
 	 */
