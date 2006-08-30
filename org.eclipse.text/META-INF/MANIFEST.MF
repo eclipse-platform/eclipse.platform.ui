@@ -6,11 +6,11 @@ Bundle-Version: 3.3.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
- org.eclipse.jface.text,
- org.eclipse.jface.text.link,
+ org.eclipse.jface.text; text="split"; mandatory:="text",
+ org.eclipse.jface.text.link; text="split"; mandatory:="text",
  org.eclipse.jface.text.projection,
- org.eclipse.jface.text.source,
- org.eclipse.jface.text.templates,
+ org.eclipse.jface.text.source; text="split"; mandatory:="text",
+ org.eclipse.jface.text.templates; text="split"; mandatory:="text",
  org.eclipse.text.edits,
  org.eclipse.text.undo
 Require-Bundle: 
