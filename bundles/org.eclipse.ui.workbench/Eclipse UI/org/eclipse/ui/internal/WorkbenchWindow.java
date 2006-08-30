@@ -3364,6 +3364,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	/**
 	 * Returns the perspective bar.
+	 * 
+	 * @return Returns the perspective bar, or <code>null</code> if it has not
+	 *         been initialized.
 	 */
 	public PerspectiveBarManager getPerspectiveBar() {
 		return perspectiveSwitcher == null ? null : perspectiveSwitcher
