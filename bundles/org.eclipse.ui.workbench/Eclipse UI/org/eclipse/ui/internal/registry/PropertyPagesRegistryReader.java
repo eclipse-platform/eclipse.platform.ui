@@ -65,18 +65,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$;
 
-//	private static final String CHILD_ADAPT = "adapt"; //$NON-NLS-1$
-//
-//	private static final String ATT_TYPE = "type";//$NON-NLS-1$
-
-	private static final String CHILD_INSTANCEOF = "instanceof";//$NON-NLS-1$
-
-	private static final String ATT_VALUE = "value"; //$NON-NLS-1$
-
-	private static final String CHILD_AND = "and"; //$NON-NLS-1$
-
-	private static final String CHILD_OR = "or"; //$NON-NLS-1$
-
 	private Collection pages = new ArrayList();
 
 	private PropertyPageContributorManager manager;
@@ -156,15 +144,14 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 			return;
 		}
-		List objectClassNames;
-		if (element.getAttribute(ATT_OBJECTCLASS) == null)
-			objectClassNames = getObjectClassesFromEnablement(element);
-		else {
-			objectClassNames = new ArrayList();
+		if (element.getAttribute(ATT_OBJECTCLASS) == null) {
+			pages.add(contributor);
+			manager.registerContributor(contributor, Object.class.getName());
+		} else {
+			List objectClassNames = new ArrayList();
 			objectClassNames.add(element.getAttribute(ATT_OBJECTCLASS));
+			registerContributors(contributor, objectClassNames);
 		}
-		registerContributors(contributor, objectClassNames);
-
 	}
 
 	/**
@@ -183,58 +170,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	}
 
-	/**
-	 * Get all of the classes that this contributor is enabled for. If none are
-	 * specified return {@link Object}.
-	 * 
-	 * @param element
-	 * @return List of String
-	 */
-	private List getObjectClassesFromEnablement(IConfigurationElement element) {
-		IConfigurationElement[] elements = element
-				.getChildren(CHILD_ENABLED_WHEN);
-		List names = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			addClassNamesFrom(element, names);
-		}
-		if (names.isEmpty())
-			names.add(Object.class.getName());
-
-		return names;
-
-	}
-
-	/**
-	 * Add the classNames in the instanceOf or adapts children to names.
-	 * 
-	 * @param element
-	 * @param names
-	 */
-	private void addClassNamesFrom(IConfigurationElement element, List names) {
-		IConfigurationElement[] children = element.getChildren();
-		for (int i = 0; i < children.length; i++) {
-//			IConfigurationElement[] adapted = children[i].getChildren(CHILD_ADAPT);
-//			for (int j = 0; j < adapted.length; j++) {
-//				names.add(adapted[j].getAttribute(ATT_TYPE));	
-//				addClassNamesFrom(adapted[j], names);
-//			}
-			IConfigurationElement[] instanceOf = children[i].getChildren(CHILD_INSTANCEOF);
-			for (int j = 0; j < instanceOf.length; j++) {
-				names.add(instanceOf[j].getAttribute(ATT_VALUE));				
-			}
-			
-			IConfigurationElement[] ands = children[i].getChildren(CHILD_AND);
-			for (int j = 0; j < ands.length; j++) {
-				addClassNamesFrom(ands[j], names);		
-			}
-			
-			IConfigurationElement[] ors = children[i].getChildren(CHILD_OR);
-			for (int j = 0; j < ors.length; j++) {
-				addClassNamesFrom(ors[j], names);		
-			}
-		}
-		
-	}
 
 	/**
 	 * Reads the next contribution element.
