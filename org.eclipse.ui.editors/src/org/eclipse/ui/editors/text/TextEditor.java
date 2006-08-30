@@ -11,11 +11,9 @@
 package org.eclipse.ui.editors.text;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -97,22 +95,6 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	protected void installEncodingSupport() {
 		fEncodingSupport= new DefaultEncodingSupport();
 		fEncodingSupport.initialize(this);
-	}
-
-	/**
-	 * The <code>TextEditor</code> implementation of this  <code>AbstractTextEditor</code>
-	 * method asks the user for the workspace path of a file resource and saves the document there.
-	 * <p>
-	 * XXX: This method will be removed in 3.3: for now tell the subclass to handle it.
-	 * </p>
-	 *
-	 * @param progressMonitor the progress monitor to be used
-	 */
-	protected void performSaveAs(IProgressMonitor progressMonitor) {
-		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		String key= getEditorSite().getId() + ".internal.delegateSaveAs"; //$NON-NLS-1$
-		store.setValue(key, true);
-		super.performSaveAs(progressMonitor);
 	}
 
 	/*

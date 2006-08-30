@@ -1095,10 +1095,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
-		 // XXX: To be removed in 3.3: we will always execute this code 
-		if (!handleSaveAs())
-			return;
-		
 		Shell shell= getSite().getShell();
 		final IEditorInput input= getEditorInput();
 
@@ -1221,18 +1217,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (files != null && files.length == 1)
 			return files[0];
 		return null;
-	}
-
-	/**
-	 * Tells whether this class should handle {@link #performSaveAs(IProgressMonitor)}.
-	 * 
-	 * @return <code>true</code> if handled by this class
-	 * @since 3.2
-	 */
-	private boolean handleSaveAs() {
-		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		String key= getEditorSite().getId() + ".internal.delegateSaveAs"; //$NON-NLS-1$
-		return store.getBoolean(key);
 	}
 
 	/*
