@@ -97,6 +97,28 @@ public class TextEditGroup {
 	public void addTextEdit(TextEdit edit) {
 		fEdits.add(edit);
 	}
+	
+	/**
+	 * Removes the given {@link TextEdit} from this group.
+	 *
+	 * @param edit the edit to remove
+	 * @return <code>true</code> if this group contained the specified edit.
+	 * @since 3.3
+	 */
+	public boolean removeTextEdit(TextEdit edit) {
+	  return fEdits.remove(edit);
+	}
+
+	/**
+	 * Removes all text edits from this group.
+	 *
+	 * @since 3.3
+	 */
+	public void clearTextEdits() {
+	  fEdits.clear();
+	}
+
+	
 
 	/**
 	 * Returns <code>true</code> if the list of managed
