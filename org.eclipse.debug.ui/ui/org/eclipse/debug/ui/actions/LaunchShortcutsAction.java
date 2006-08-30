@@ -170,6 +170,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		    list = Collections.EMPTY_LIST;
 		}
 		IEvaluationContext context = new EvaluationContext(null, list);
+		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
 		
 		return context;

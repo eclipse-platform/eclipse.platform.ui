@@ -327,6 +327,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		// create a default evaluation context with default variable of the user selection
 		List selection = getSelectedElements();
 		IEvaluationContext context = new EvaluationContext(null, selection);
+		context.setAllowPluginActivation(true);
 		context.addVariable("selection", selection); //$NON-NLS-1$
 		
 		return context;
