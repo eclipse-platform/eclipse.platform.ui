@@ -9,35 +9,32 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.viewers.snippets;
+package org.eclipse.jface.snippets.viewers;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Snippet that hides the selection when nothing is selected.
+ * A simple TreeViewer to demonstrate usage
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class HideSelectionSnippet {
-	private class MyContentProvider implements IStructuredContentProvider {
-
+public class SimpleTreeViewerSnippet {
+	private class MyContentProvider implements ITreeContentProvider {
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return (MyModel[])inputElement;
+			return ((MyModel)inputElement).child.toArray();
 		}
 
 		/* (non-Javadoc)
@@ -53,59 +50,85 @@ public class HideSelectionSnippet {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			return getElements(parentElement);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object element) {
+			if( element == null) {
+				return null;
+			}
+			
+			return ((MyModel)element).parent;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			return ((MyModel)element).child.size() > 0;
+		}
+		
 	}
 	
 	public class MyModel {
+		public MyModel parent;
+		public ArrayList child = new ArrayList();
 		public int counter;
 		
-		public MyModel(int counter) {
+		public MyModel(int counter, MyModel parent) {
+			this.parent = parent;
 			this.counter = counter;
 		}
 		
 		public String toString() {
-			return "Item " + this.counter;
-		}
-	}
-	
-	public HideSelectionSnippet(Shell shell) {
-		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
-		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(new MyContentProvider());
-		MyModel[] model = createModel();
-		v.setInput(model);
-		v.getTable().setLinesVisible(true);
-		v.getTable().addMouseListener(new MouseAdapter() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-			 */
-			public void mouseDown(MouseEvent e) {
-				if( v.getTable().getItem(new Point(e.x,e.y)) == null ) {
-					v.setSelection(new StructuredSelection());
-				}
+			String rv = "Item ";
+			if( parent != null ) {
+				rv = parent.toString() + ".";
 			}
 			
-		});
+			rv += counter;
+			
+			return rv;
+		}
 	}
 	
-	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[10];
+	public SimpleTreeViewerSnippet(Shell shell) {
+		final TreeViewer v = new TreeViewer(shell);
+		v.setLabelProvider(new LabelProvider());
+		v.setContentProvider(new MyContentProvider());
+		v.setInput(createModel());
+	}
+	
+	private MyModel createModel() {
 		
-		for( int i = 0; i < 10; i++ ) {
-			elements[i] = new MyModel(i);
+		MyModel root = new MyModel(0,null);
+		root.counter = 0;
+		
+		MyModel tmp;
+		for( int i = 1; i < 10; i++ ) {
+			tmp = new MyModel(i, root);
+			root.child.add(tmp);
+			for( int j = 1; j < i; j++ ) {
+				tmp.child.add(new MyModel(j,tmp));
+			}
 		}
 		
-		return elements;
+		return root;
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new HideSelectionSnippet(shell);
+		new SimpleTreeViewerSnippet(shell);
 		shell.open ();
 		
 		while (!shell.isDisposed ()) {
@@ -113,7 +136,5 @@ public class HideSelectionSnippet {
 		}
 		
 		display.dispose ();
-
 	}
-
 }

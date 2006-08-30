@@ -9,7 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.viewers.snippets;
+package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;

@@ -1,4 +1,4 @@
-package org.eclipse.jface.viewers.snippets;
+package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;

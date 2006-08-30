@@ -9,23 +9,28 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.viewers.snippets;
+package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A simple TableViewer to demonstrate usage
+ * Edit cell values in a table
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class SimpleTableViewerSnippet {
+public class CellEditorSnippet {
 	private class MyContentProvider implements IStructuredContentProvider {
 
 		/* (non-Javadoc)
@@ -63,10 +68,40 @@ public class SimpleTableViewerSnippet {
 		}
 	}
 	
-	public SimpleTableViewerSnippet(Shell shell) {
-		final TableViewer v = new TableViewer(shell);
+	public CellEditorSnippet(Shell shell) {
+		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
+		v.setCellModifier(new ICellModifier() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
+			 */
+			public boolean canModify(Object element, String property) {
+				return ((MyModel)element).counter % 2 == 0;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
+			 */
+			public Object getValue(Object element, String property) {
+				return ((MyModel)element).counter + "";
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
+			 */
+			public void modify(Object element, String property, Object value) {
+				TableItem item = (TableItem)element;
+				((MyModel)item.getData()).counter = Integer.parseInt(value.toString());
+				v.update(item.getData(), null);
+			}
+			
+		});
+		v.setColumnProperties(new String[] { "column1" });
+		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()) });
+		
+		
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
@@ -89,7 +124,7 @@ public class SimpleTableViewerSnippet {
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new SimpleTableViewerSnippet(shell);
+		new CellEditorSnippet(shell);
 		shell.open ();
 		
 		while (!shell.isDisposed ()) {
