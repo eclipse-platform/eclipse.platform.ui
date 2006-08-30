@@ -56,7 +56,10 @@ public interface IAnnotationAccessExtension {
 
 	/**
 	 * Draws a graphical representation of the given annotation within the given bounds.
-	 *
+	 * <p>
+	 * <em>Note that this method is not used when drawing annotations on the editor's
+	 * text widget. This is handled trough a {@link org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy}.</em>
+	 * </p>
 	 * @param annotation the given annotation
 	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
@@ -67,7 +70,10 @@ public interface IAnnotationAccessExtension {
 	/**
 	 * Returns <code>true</code> if painting <code>annotation</code> will produce something
 	 * meaningful, <code>false</code> if not. E.g. if no image is available.
-	 *
+	 * <p>
+	 * <em>Note that this method is not used when drawing annotations on the editor's
+	 * text widget. This is handled trough a {@link org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy}.</em>
+	 * </p>
 	 * @param annotation the annotation to check whether it can be painted
 	 * @return <code>true</code> if painting <code>annotation</code> will succeed
 	 */

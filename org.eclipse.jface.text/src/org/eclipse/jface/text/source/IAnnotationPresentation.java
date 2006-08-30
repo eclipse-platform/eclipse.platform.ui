@@ -37,7 +37,10 @@ public interface IAnnotationPresentation {
 	/**
 	 * Implement this method to draw a graphical representation
 	 * of this annotation within the given bounds.
-	 *
+	 * <p>
+	 * <em>Note that this method is not used when drawing annotations on the editor's
+	 * text widget. This is handled trough a {@link org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy}.</em>
+	 * </p>
 	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
