@@ -63,7 +63,7 @@ public class TextAttribute {
 	/**
 	 * Creates a text attribute with the given colors and style.
 	 *
-	 * @param foreground the foreground color
+	 * @param foreground the foreground color, <code>null</code> if none
 	 * @param background the background color, <code>null</code> if none
 	 * @param style the style
 	 */
@@ -76,10 +76,10 @@ public class TextAttribute {
 	/**
 	 * Creates a text attribute with the given colors and style.
 	 *
-	 * @param foreground the foreground color
+	 * @param foreground the foreground color, <code>null</code> if none
 	 * @param background the background color, <code>null</code> if none
 	 * @param style the style
-	 * @param font the font
+	 * @param font the font, <code>null</code> if none
 	 * @since 3.3
 	 */
 	public TextAttribute(Color foreground, Color background, int style, Font font) {
@@ -93,7 +93,7 @@ public class TextAttribute {
 	 * Creates a text attribute for the given foreground color, no background color and
 	 * with the SWT normal style.
 	 *
-	 * @param foreground the foreground color
+	 * @param foreground the foreground color, <code>null</code> if none
 	 */
 	public TextAttribute(Color foreground) {
 		this(foreground, null, SWT.NORMAL);
@@ -146,7 +146,7 @@ public class TextAttribute {
 	/**
 	 * Returns the attribute's foreground color.
 	 *
-	 * @return the attribute's foreground color
+	 * @return the attribute's foreground color or <code>null</code> if not set
 	 */
 	public Color getForeground() {
 		return foreground;
@@ -155,7 +155,7 @@ public class TextAttribute {
 	/**
 	 * Returns the attribute's background color.
 	 *
-	 * @return the attribute's background color
+	 * @return the attribute's background color or <code>null</code> if not set
 	 */
 	public Color getBackground() {
 		return background;
@@ -173,7 +173,7 @@ public class TextAttribute {
 	/**
 	 * Returns the attribute's font.
 	 *
-	 * @return the attribute's font
+	 * @return the attribute's font or <code>null</code> if not set
 	 * @since 3.3
 	 */
 	public Font getFont() {
