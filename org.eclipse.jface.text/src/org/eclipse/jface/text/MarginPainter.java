@@ -42,7 +42,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	/** The line style of the line to be painted, default value <code>SWT.LINE_SOLID</code> */
 	private int fLineStyle= SWT.LINE_SOLID;
 	/** The line width of the line to be painted, default value <code>1</code> */
-	private int fLineWidth= 1;
+	private int fLineWidth= 0; // NOTE: 0 means width is 1 but with optimized performance
 	/** The cached x-offset of the <code>fMarginWidth</code> for the current font */
 	private int fCachedWidgetX= -1;
 	/** The active state of this painter */
@@ -82,6 +82,8 @@ public class MarginPainter implements IPainter, PaintListener {
 	 * @param lineWidth the line width
 	 */
 	public void setMarginRulerWidth(int lineWidth) {
+		if (lineWidth == 1)
+			lineWidth= 0; // NOTE: 0 means width is 1 but with optimized performance
 		fLineWidth= lineWidth;
 	}
 

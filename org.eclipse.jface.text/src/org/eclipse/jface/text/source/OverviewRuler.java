@@ -242,7 +242,7 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 
 			e.gc.setForeground(fSeparatorColor);
-			e.gc.setLineWidth(1);
+			e.gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
 		}
 	}
@@ -563,7 +563,7 @@ public class OverviewRuler implements IOverviewRuler {
 							r.y= yy;
 							r.width= size.x - (2 * INSET);
 							r.height= hh;
-							gc.setLineWidth(1);
+							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 							gc.drawRectangle(r);
 						}
 					} catch (BadLocationException x) {
@@ -664,7 +664,7 @@ public class OverviewRuler implements IOverviewRuler {
 							r.y= yy;
 							r.width= size.x - (2 * INSET);
 							r.height= hh;
-							gc.setLineWidth(1);
+							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 							gc.drawRectangle(r);
 						}
 					} catch (BadLocationException x) {

@@ -5171,7 +5171,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Image bracketImage= new Image(display, imageData);
 		GC gc= new GC (bracketImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.setLineWidth(1);
+		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 		int height= imageData.height / 3;
 		// gap between two bars of one third of the height
 		// draw boxes using lines as drawing a line of a certain width produces

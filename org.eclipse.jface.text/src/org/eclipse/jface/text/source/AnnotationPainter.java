@@ -121,7 +121,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				int currentLineWidth= gc.getLineWidth();
 				int currentLineStyle= gc.getLineStyle();
 				
-				gc.setLineWidth(0); // use fastest possible algorithm
+				gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 				gc.setLineStyle(SWT.LINE_SOLID);
 				gc.setForeground(color);
 				

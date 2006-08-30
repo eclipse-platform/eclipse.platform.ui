@@ -101,7 +101,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		Color fg= gc.getForeground();
 		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 
-		gc.setLineWidth(1);
+		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 		/* cap the height - at least on GTK, large numbers are converted to
 		 * negatives at some point */
 		int height= Math.min(r.y + r.height - MARGIN, canvas.getSize().y);
