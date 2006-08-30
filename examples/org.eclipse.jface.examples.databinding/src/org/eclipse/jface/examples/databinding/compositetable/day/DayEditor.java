@@ -62,15 +62,12 @@ import org.eclipse.swt.widgets.Menu;
  * 
  * @since 3.2
  */
-public class DayEditor extends Composite implements IEventEditor {
+public class DayEditor extends AbstractEventEditor implements IEventEditor {
 	private CompositeTable compositeTable = null;
 	private CalendarableModel model = new CalendarableModel();
 	private List recycledCalendarableEventControls = new LinkedList();
 	protected TimeSlice daysHeader = null;
 	private final boolean headerDisabled;
-	private int defaultEventDuration;
-	
-	
 	/**
 	 * NO_HEADER constant.  A style bit constant to indicate that no header
 	 * should be displayed at the top of the editor window.
@@ -558,24 +555,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		selectionChangeListeners.add(l);
 	}
 	
-	private boolean fireEvents(CalendarableItemEvent e, List handlers) {
-		for (Iterator i = handlers.iterator(); i.hasNext();) {
-			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
-			h.handleRequest(e);
-			if (!e.doit) {
-				break;
-			}
-		}
-		for (Iterator i = handlers.iterator(); i.hasNext();) {
-			CalendarableItemEventHandler h = (CalendarableItemEventHandler) i.next();
-			h.requestHandled(e);
-			if (!e.doit) {
-				break;
-			}
-		}
-		return e.doit;
-	}
-
 	private boolean fireEvents(CalendarableItem calendarableItem, List handlers) {
 		CalendarableItemEvent e = new CalendarableItemEvent();
 		e.calendarableItem = calendarableItem;
@@ -686,103 +665,6 @@ public class DayEditor extends Composite implements IEventEditor {
 			throw new SWTException("Widget is disposed");
 		}
 		editHandlers.remove(handler);
-	}
-	
-	private List insertHandlers = new ArrayList();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireInsert(java.util.Date)
-	 */
-	public NewEvent fireInsert(Date date, boolean allDayEvent) {
-		checkWidget();
-		CalendarableItem item = new CalendarableItem(date);
-		item.setAllDayEvent(allDayEvent);
-		item.setStartTime(date);
-		item.setEndTime(incrementHour(date, getDefaultEventDuration()));
-		CalendarableItemEvent e = new CalendarableItemEvent();
-		e.calendarableItem = item;
-		if (fireEvents(e, insertHandlers)) {
-			// TODO: Only refresh the affected days
-			refresh();
-			return (NewEvent) e.result;
-		}
-		return null;
-	}
-
-	private Date incrementHour(Date date, int increment) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.add(Calendar.HOUR_OF_DAY, increment);
-		return c.getTime();
-	}
-
-	/**
-	 * Adds the handler to the collection of handlers who will be notified when
-	 * a CalendarableItem is inserted in the receiver, by sending it one of the
-	 * messages defined in the <code>CalendarableItemInsertHandler</code>
-	 * abstract class.
-	 * <p>
-	 * <code>itemInserted</code> is called when the CalendarableItem is
-	 * inserted.
-	 * </p>
-	 * 
-	 * @param handler
-	 *            the handler which should be notified
-	 * 
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
-	 *                </ul>
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                </ul>
-	 * 
-	 * @see CalendarableItemInsertHandler
-	 * @see #removeItemInsertHandler
-	 */
-	public void addItemInsertHandler(CalendarableItemEventHandler handler) {		
-		checkWidget();
-		if (handler == null) {
-			throw new IllegalArgumentException("The argument cannot be null");
-		}
-		if (isDisposed()) {
-			throw new SWTException("Widget is disposed");
-		}
-		insertHandlers.add(handler);
-	}
-	
-	/**
-	 * Removes the handler from the collection of handlers who will
-	 * be notified when a CalendarableItem is inserted into the receiver, by sending
-	 * it one of the messages defined in the <code>CalendarableItemInsertHandler</code>
-	 * abstract class.
-	 * <p>
-	 * <code>itemInserted</code> is called when the CalendarableItem is inserted.
-	 * </p>
-	 *
-	 * @param handler the handler which should be notified
-	 *
-	 * @exception IllegalArgumentException <ul>
-	 *    <li>ERROR_NULL_ARGUMENT - if the handler is null</li>
-	 * </ul>
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 * </ul>
-	 *
-	 * @see CalendarableItemInsertHandler
-	 * @see #addItemInsertHandler
-	 */
-	public void removeItemInsertHandler(CalendarableItemEventHandler handler) {		
-		checkWidget();
-		if (handler == null) {
-			throw new IllegalArgumentException("The argument cannot be null");
-		}
-		if (isDisposed()) {
-			throw new SWTException("Widget is disposed");
-		}
-		insertHandlers.remove(handler);
 	}
 	
 	private List deleteHandlers = new ArrayList();
@@ -1499,27 +1381,6 @@ public class DayEditor extends Composite implements IEventEditor {
 		recycledCalendarableEventControls.add(control);
 	}
 
-	/**
-	 * Returns the default duration of a new event, in hours.
-	 * 
-	 * @return int the number of hours a new event occupies by default.
-	 */
-	public int getDefaultEventDuration() {
-		checkWidget();
-		return defaultEventDuration;
-	}
-
-	/**
-	 * Sets the default duration of a new event, in hours.
-	 * 
-	 * @param defaultEventDuration
-	 *            int the number of hours a new event occupies by default.
-	 */
-	public void setDefaultEventDuration(int defaultEventDuration) {
-		checkWidget();
-		this.defaultEventDuration = defaultEventDuration;
-	}
-	
 	private Color background = null;
 	
 	/* (non-Javadoc)

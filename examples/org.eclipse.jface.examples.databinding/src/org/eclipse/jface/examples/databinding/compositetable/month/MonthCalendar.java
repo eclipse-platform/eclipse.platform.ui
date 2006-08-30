@@ -18,9 +18,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.examples.databinding.compositetable.day.AbstractEventEditor;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler;
 import org.eclipse.jface.examples.databinding.compositetable.day.CalendarableSelectionChangeListener;
-import org.eclipse.jface.examples.databinding.compositetable.day.NewEvent;
 import org.eclipse.jface.examples.databinding.compositetable.month.internal.Day;
 import org.eclipse.jface.examples.databinding.compositetable.month.internal.Week;
 import org.eclipse.jface.examples.databinding.compositetable.month.internal.WeekHeader;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Control;
  * An IEventEditor implementing a month calendar.  This class is not intended
  * to be subclassed.
  */
-public class MonthCalendar extends Composite implements IEventEditor {
+public class MonthCalendar extends AbstractEventEditor implements IEventEditor {
 
 	private Date startDate;
     private WeekHeader weekHeader = null;
@@ -394,30 +394,6 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		itemEditHandlers.remove(handler);
 	}
 	
-	private List itemInsertHandlers = new ArrayList();
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#addItemInsertHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
-	 */
-	public void addItemInsertHandler(CalendarableItemEventHandler insertHandler) {
-		checkWidget();
-		
-		itemInsertHandlers.add(insertHandler);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#removeItemInsertHandler(org.eclipse.jface.examples.databinding.compositetable.day.CalendarableItemEventHandler)
-	 */
-	public void removeItemInsertHandler(CalendarableItemEventHandler insertHandler) {
-		checkWidget();
-		
-		itemInsertHandlers.remove(insertHandler);
-	}
-	
 	private List selectionChangeListeners = new ArrayList();
 	
 	/*
@@ -452,19 +428,6 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.examples.databinding.compositetable.timeeditor.IEventEditor#fireInsert(java.util.Date,
-	 *      boolean)
-	 */
-	public NewEvent fireInsert(Date date, boolean allDayEvent) {
-		checkWidget();
-		
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/*
@@ -783,5 +746,6 @@ public class MonthCalendar extends Composite implements IEventEditor {
 		Day newDay = weeks[0].getDay(0);
 		return newDay.setFocus();
 	}
-	
+
+
 } // @jve:decl-index=0:visual-constraint="10,10"
