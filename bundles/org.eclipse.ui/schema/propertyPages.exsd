@@ -24,6 +24,11 @@ If these filtering mechanisms are inadequate a property page may use the filter 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
@@ -60,6 +65,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
          <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
+         <documentation>
+            The page is the specification of the implementation and appearance of the page.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -193,6 +201,11 @@ define the target object for a property page.
    </element>
 
    <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            The enabled when element specifies the conditions under which this property page will be added to the properties dialog.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="not"/>
