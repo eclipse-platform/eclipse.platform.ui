@@ -85,12 +85,15 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	/*
 	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
-	public void setRange(IDocument document, int offset, int length) {
+	public void setRange(final IDocument document, int offset, int length) {
+		Assert.isLegal(document != null);
+		final int documentLength= document.getLength();
+		checkRange(offset, length, documentLength);
 
 		fDocument= document;
 		fOffset= offset;
 		fColumn= UNDEFINED;
-		fRangeEnd= Math.min(fDocument.getLength(), offset + length);
+		fRangeEnd= offset + length;
 
 		String[] delimiters= fDocument.getLegalLineDelimiters();
 		fDelimiters= new char[delimiters.length][];
@@ -99,6 +102,21 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 
 		if (fDefaultReturnToken == null)
 			fDefaultReturnToken= new Token(null);
+	}
+
+	/**
+	 * Checks that the given range is valid.
+	 * See: // https://bugs.eclipse.org/bugs/show_bug.cgi?id=69292
+	 * 
+	 * @param offset the offset of the document range to scan
+	 * @param length the length of the document range to scan
+	 * @param documentLength the document's length 
+	 * @since 3.2
+	 */
+	private void checkRange(int offset, int length, int documentLength) {
+		Assert.isLegal(offset > -1);
+		Assert.isLegal(length > -1);
+		Assert.isLegal(offset + length <= documentLength);
 	}
 
 	/*
