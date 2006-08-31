@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.ui.text;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A textual match in a given object. This class may be instantiated and also subclassed (to add

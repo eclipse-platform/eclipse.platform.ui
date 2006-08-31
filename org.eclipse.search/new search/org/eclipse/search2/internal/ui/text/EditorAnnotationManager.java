@@ -14,9 +14,10 @@ package org.eclipse.search2.internal.ui.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.jface.util.Assert;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;

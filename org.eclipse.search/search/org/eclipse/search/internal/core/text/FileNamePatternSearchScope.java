@@ -18,12 +18,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 
-import org.eclipse.jface.util.Assert;
 
 import org.eclipse.search.core.text.TextSearchScope;
 
