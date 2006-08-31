@@ -11,10 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
@@ -23,18 +20,59 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
  * This interface is not intended to be implemented by clients.
  * 
  * @since 1.0
+ * @deprecated use {@link org.eclipse.jface.databinding.Binding} instead
  */
-public abstract class Binding {
+public abstract class Binding extends org.eclipse.jface.databinding.Binding {
 
-	private List bindingEventListeners = new ArrayList();
+	/**
+	 * @since 3.2
+	 *
+	 */
+	private static class WrappingBindingListener implements
+			org.eclipse.jface.databinding.IBindingListener {
+		/**
+		 * 
+		 */
+		private final IBindingListener listener;
 
-	protected final DataBindingContext context;
+		/**
+		 * @param listener
+		 */
+		private WrappingBindingListener(IBindingListener listener) {
+			this.listener = listener;
+		}
+
+		public ValidationError bindingEvent(org.eclipse.jface.databinding.BindingEvent e) {
+			return listener.bindingEvent(new BindingEvent(e.model,e.target,e.diff,e.copyType,e.pipelinePosition));
+		}
+
+		public int hashCode() {
+			return listener.hashCode();
+		}
+
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final WrappingBindingListener other = (WrappingBindingListener) obj;
+			if (listener == null) {
+				if (other.listener != null)
+					return false;
+			} else if (!listener.equals(other.listener))
+				return false;
+			return true;
+		}
+		
+	}
 
 	/**
 	 * @param context
 	 */
 	public Binding(DataBindingContext context) {
-		this.context = context;
+		super(context);
 	}
 
 	/**
@@ -44,45 +82,9 @@ public abstract class Binding {
 	 * @param listener
 	 *            The listener to add.
 	 */
-	public void addBindingEventListener(IBindingListener listener) {
-		bindingEventListeners.add(listener);
+	public void addBindingEventListener(final IBindingListener listener) {
+		super.addBindingEventListener(new WrappingBindingListener(listener));
 	}
-
-	/**
-	 * Fires the given event to the binding event listeners, exiting early when
-	 * one of the listeners flags a validation error. If no listener flags a
-	 * validation error, the data binding context's binding listeners will be
-	 * notified in the same manner.
-	 * 
-	 * @param event
-	 * @return the validation error, or null
-	 */
-	protected ValidationError fireBindingEvent(BindingEvent event) {
-		ValidationError result = null;
-		IBindingListener[] listeners = (IBindingListener[]) bindingEventListeners
-				.toArray(new IBindingListener[bindingEventListeners.size()]);
-		for (int i = 0; i < listeners.length; i++) {
-			IBindingListener listener = listeners[i];
-			result = listener.bindingEvent(event);
-			if (result != null)
-				break;
-		}
-		if (result == null)
-			result = context.fireBindingEvent(event);
-		return result;
-	}
-
-	/**
-	 * @return an observable value containing the current partial validation
-	 *         error or null
-	 */
-	public abstract IObservableValue getPartialValidationError();
-
-	/**
-	 * @return an observable value containing the current validation error or
-	 *         null
-	 */
-	public abstract IObservableValue getValidationError();
 
 	/**
 	 * Removes a listener from the set of listeners that will be notified when
@@ -93,31 +95,7 @@ public abstract class Binding {
 	 *            The listener to remove.
 	 */
 	public void removeBindingEventListener(IBindingListener listener) {
-		bindingEventListeners.remove(listener);
+		super.removeBindingEventListener(new WrappingBindingListener(listener));
 	}
-
-	/**
-	 * 
-	 */
-	public abstract void updateModelFromTarget();
-
-	/**
-	 * 
-	 */
-	public abstract void updateTargetFromModel();
 	
-	/**
-	 * Dispose all observables managed by the current Binding
-	 */
-	public abstract void dispose();
-
-	protected boolean disposed = false;
-	
-	/**
-	 * @return true if the binding has been disposed.  false otherwise.
-	 */
-	public boolean isDisposed() {
-		return disposed;
-	}
-
 }

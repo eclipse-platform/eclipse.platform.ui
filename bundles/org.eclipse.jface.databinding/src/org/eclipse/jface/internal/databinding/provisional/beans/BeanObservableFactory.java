@@ -45,6 +45,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.list.IObser
  * </ul>
  * 
  * @since 1.0
+ * @deprecated no longer part of the API
  * 
  */
 final public class BeanObservableFactory implements IObservableFactory {

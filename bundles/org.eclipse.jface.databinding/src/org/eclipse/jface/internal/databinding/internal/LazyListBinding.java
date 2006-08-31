@@ -70,8 +70,8 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			try {
 				updating = true;
 				BindingEvent e = new BindingEvent(modelList, targetList, null,
-						BindingEvent.EVENT_LAZY_INSERT,
-						BindingEvent.PIPELINE_AFTER_GET);
+						org.eclipse.jface.databinding.BindingEvent.EVENT_LAZY_INSERT,
+						org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 				e.originalValue = insertEvent;
 				if (failure(errMsg(fireBindingEvent(e)))) {
 					return null;
@@ -79,7 +79,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 				
 				newObject = localLazyInsertDeleteProvider.insertElementAt(insertEvent);
 				
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 				failure(errMsg(fireBindingEvent(e)));
 			} finally {
 				updating = false;
@@ -104,14 +104,14 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			try {
 				updating = true;
 				BindingEvent e = new BindingEvent(modelList, targetList, null,
-						BindingEvent.EVENT_LAZY_DELETE,
-						BindingEvent.PIPELINE_AFTER_GET);
+						org.eclipse.jface.databinding.BindingEvent.EVENT_LAZY_DELETE,
+						org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 				e.originalValue = deleteEvent;
 				failure(errMsg(fireBindingEvent(e)));
 
 				localLazyInsertDeleteProvider.deleteElementAt(deleteEvent);
 				
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 				failure(errMsg(fireBindingEvent(e)));
 			} finally {
 				updating = false;
@@ -163,8 +163,8 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			
 			// TODO validation
 			BindingEvent e = new BindingEvent(modelList, targetList, diff,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
+					org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET,
+					org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
@@ -188,7 +188,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 						}
 					}
 				}
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 				if (failure(errMsg(fireBindingEvent(e)))) {
 					return;
 				}
@@ -226,8 +226,8 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			int sizeToSetOnTarget = modelList.size();
 			
 			BindingEvent e = new BindingEvent(modelList, targetList, null,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
+					org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET,
+					org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 			e.originalValue = new Integer(sizeToSetOnTarget);
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
@@ -235,7 +235,7 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 			
 			targetList.setSize(sizeToSetOnTarget);
 			
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+			e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
@@ -272,8 +272,8 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 		Object result = iterator.get(position);
 		
 		BindingEvent e = new BindingEvent(modelList, targetList, null,
-				BindingEvent.EVENT_COPY_TO_TARGET,
-				BindingEvent.PIPELINE_AFTER_GET);
+				org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET,
+				org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 		e.originalValue = new Integer(position);
 		e.convertedValue = result;
 

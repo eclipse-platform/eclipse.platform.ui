@@ -150,9 +150,9 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 			Binding binding = dbc.bind(items, itemsList, null);
 			binding.addBindingEventListener(new IBindingListener() {
 				public ValidationError bindingEvent(BindingEvent e) {
-					if ((e.copyType == BindingEvent.EVENT_COPY_TO_MODEL || 
-							e.copyType == BindingEvent.EVENT_COPY_TO_TARGET) &&
-							e.pipelinePosition == BindingEvent.PIPELINE_AFTER_GET &&
+					if ((e.copyType == org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_MODEL || 
+							e.copyType == org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET) &&
+							e.pipelinePosition == org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET &&
 							!ignoreNextEvent)
 					{
 						ignoreNextEvent = true;

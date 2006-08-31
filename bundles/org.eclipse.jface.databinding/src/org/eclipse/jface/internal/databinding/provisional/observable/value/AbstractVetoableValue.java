@@ -49,6 +49,9 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	}
 
 	public void removeValueChangingListener(IValueChangingListener listener) {
+		if (valueChangingListeners == null) {
+			return;
+		}
 		valueChangingListeners.remove(listener);
 		if (valueChangingListeners.isEmpty()) {
 			valueChangingListeners = null;

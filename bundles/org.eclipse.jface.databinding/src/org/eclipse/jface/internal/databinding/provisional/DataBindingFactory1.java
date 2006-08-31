@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Widget;
  * contents and/or order of the factories, and then delegating to super().
  *  
  * @since 3.3
+ * @deprecated no longer part of the API
  */
 public class DataBindingFactory1 extends AbstractDataBindingContextFactory {
 

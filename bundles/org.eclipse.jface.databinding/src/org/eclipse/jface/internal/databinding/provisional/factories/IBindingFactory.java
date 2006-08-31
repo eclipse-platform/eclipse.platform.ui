@@ -18,6 +18,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.IObservable
 
 /**
  * @since 1.0
+ * @deprecated no longer part of the API
  * 
  */
 public interface IBindingFactory {

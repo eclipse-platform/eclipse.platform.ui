@@ -99,8 +99,8 @@ public class MultiMappingAndListBinding extends Binding {
 			}
 			// TODO validation
 			BindingEvent e = new BindingEvent(model, targetList, diff,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
+					org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET,
+					org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
@@ -117,7 +117,7 @@ public class MultiMappingAndListBinding extends Binding {
 						targetList.remove(entry.getPosition());
 					}
 				}
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 				if (failure(errMsg(fireBindingEvent(e)))) {
 					return;
 				}

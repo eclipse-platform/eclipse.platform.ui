@@ -26,6 +26,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.value.IObse
 
 /**
  * @since 3.2
+ * @deprecated no longer part of the API
  * 
  */
 public class DefaultBindingFactory implements IBindingFactory {

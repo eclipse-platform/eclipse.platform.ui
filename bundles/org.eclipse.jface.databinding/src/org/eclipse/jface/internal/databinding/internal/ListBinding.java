@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal;
 
-import org.eclipse.jface.internal.databinding.provisional.BindSpec;
-import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingEvent;
+import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
@@ -24,9 +23,9 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
 
 /**
  * 
- * 
+ * implementation note: this class extends a deprecated class for backwards compatibility.
  */
-public class ListBinding extends Binding {
+public class ListBinding extends org.eclipse.jface.internal.databinding.provisional.Binding {
 
 	private boolean updating = false;
 
@@ -59,10 +58,7 @@ public class ListBinding extends Binding {
 	public void dispose() {
 		targetList.removeListChangeListener(targetChangeListener);
 		modelList.removeListChangeListener(modelChangeListener);
-		targetList.dispose();
-		modelList.dispose();
-		
-		disposed = true;
+		super.dispose();
 	}
 	
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {

@@ -9,19 +9,22 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional;
+package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
-
 
 /**
  * A default implementation for an IBindingListener event handler.
  * 
  * @since 1.0
- * @deprecated use {@link org.eclipse.jface.databinding.BindingAdapter} instead
+ * 
+ * implementation note: This class implements a deprecated interface for backwards compatibility.
  */
 public class BindingAdapter implements IBindingListener {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.databinding.IBindingListener#bindingEvent(org.eclipse.jface.databinding.BindingEvent)
+	 */
 	public ValidationError bindingEvent(BindingEvent e) {
 		return null;
 	}

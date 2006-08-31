@@ -27,6 +27,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.value.IObse
  * the property is a collection.
  * 
  * @since 1.0
+ * @deprecated no longer part of the API
  */
 public class JavaBeansScalarObservableValueFactory extends Object implements
 		IObservableFactory {

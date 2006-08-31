@@ -30,6 +30,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.value.IObse
  * TODO Javadoc
  * 
  * @since 1.0
+ * @deprecated no longer part of the API
  * 
  */
 public class NestedObservableFactory implements IObservableFactory {

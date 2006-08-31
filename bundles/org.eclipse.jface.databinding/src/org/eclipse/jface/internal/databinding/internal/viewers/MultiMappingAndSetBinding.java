@@ -99,8 +99,8 @@ public class MultiMappingAndSetBinding extends Binding {
 			}
 			// TODO validation
 			BindingEvent e = new BindingEvent(model, targetSet, diff,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
+					org.eclipse.jface.databinding.BindingEvent.EVENT_COPY_TO_TARGET,
+					org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
@@ -110,7 +110,7 @@ public class MultiMappingAndSetBinding extends Binding {
 				SetDiff setDiff = (SetDiff) e.diff;
 				targetSet.addAll(setDiff.getAdditions());
 				targetSet.removeAll(setDiff.getRemovals());
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
+				e.pipelinePosition = org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CHANGE;
 				if (failure(errMsg(fireBindingEvent(e)))) {
 					return;
 				}

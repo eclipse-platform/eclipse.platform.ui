@@ -23,7 +23,6 @@ import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
@@ -69,7 +68,7 @@ import org.eclipse.swt.widgets.Text;
  */
 final public class SWTObservableFactory implements IObservableFactory {
 
-	private int updateTime = DataBindingContext.TIME_LATE;
+	private int updateTime = org.eclipse.jface.databinding.DataBindingContext.TIME_LATE;
 
 	/**
 	 * Create a factory that can create observables for SWT controls

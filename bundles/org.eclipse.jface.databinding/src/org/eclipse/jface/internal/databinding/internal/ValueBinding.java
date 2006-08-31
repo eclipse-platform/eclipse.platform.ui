@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal;
 
-import org.eclipse.jface.internal.databinding.provisional.BindSpec;
-import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
-import org.eclipse.jface.internal.databinding.provisional.BindingException;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.BindingEvent;
+import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
@@ -30,8 +29,9 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
 /**
  * @since 1.0
  * 
+ * implementation note: this class extends a deprecated class for backwards compatibility
  */
-public class ValueBinding extends Binding {
+public class ValueBinding extends org.eclipse.jface.internal.databinding.provisional.Binding {
 
 	private final IObservableValue target;
 
@@ -64,7 +64,7 @@ public class ValueBinding extends Binding {
 		super(context);
 		this.target = target;
 		this.model = model;
-		if (bindSpec.updateTarget()) {
+		if (bindSpec.isUpdateTarget()) {
 			modelToTargetConverter = bindSpec.getModelToTargetConverter();
 			if (modelToTargetConverter == null) {
 				throw new BindingException(
@@ -82,7 +82,7 @@ public class ValueBinding extends Binding {
 			}
 			model.addValueChangeListener(modelChangeListener);
 		}
-		if (bindSpec.updateModel()) {
+		if (bindSpec.isUpdateModel()) {
 			targetToModelConverter = bindSpec.getTargetToModelConverter();
 			if (targetToModelConverter == null) {
 				throw new BindingException(
@@ -116,9 +116,13 @@ public class ValueBinding extends Binding {
 	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
 	 */
 	public void dispose() {
-		target.dispose();
-		model.dispose();
-		disposed = true;
+		target.removeValueChangeListener(targetChangeListener);
+		if (target instanceof IVetoableValue) {
+			((IVetoableValue) target)
+					.removeValueChangingListener(targetChangingListener);
+		}
+		model.removeValueChangeListener(modelChangeListener);
+		super.dispose();
 	}
 	
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {

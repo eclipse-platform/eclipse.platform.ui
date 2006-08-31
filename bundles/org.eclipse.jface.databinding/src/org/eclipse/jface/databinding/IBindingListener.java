@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional;
+package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
@@ -18,10 +18,8 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
  * data flow pipeline
  *  
  * @since 1.0
- * @deprecated no longer part of the API
  */
 public interface IBindingListener {
-	
 	/**
 	 * Method bindingEvent.  The method that is called when something interesting
 	 * occurs in the data flow pipeline.
@@ -32,4 +30,5 @@ public interface IBindingListener {
 	 * context's error message updatable.
 	 */
 	public ValidationError bindingEvent(BindingEvent e);
+	
 }

@@ -119,7 +119,7 @@ public class CompositeTableTestBinding {
 		CompositeTableObservableLazyDataRequestor tableObservable = 
 			new CompositeTableObservableLazyDataRequestor(bindingContext, table, rowBinder);
 		
-		bindingContext.bind(tableObservable, (IObservable)personList, 
+		bindingContext.bind(tableObservable, (IObservable)personList,
 				new BindSpec().setLazyInsertDeleteProvider(insertDeleteProvider));
 	}
 

@@ -91,7 +91,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// the value will revert
 		// the updatePolicy for this test is TIME_LATE so it occurs when focus
 		// is lost from the Text control
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_LATE);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String currentText = text.getText();
 		text.setText("Switzerland");
@@ -126,7 +126,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// the value will revert
 		// the updatePolicy for this test is TIME_EARLY so it occurs when each
 		// keystroke occurs
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_EARLY);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		String originalName = adventure.getName();
 		// Change the text field character by character and ensure that the
@@ -240,7 +240,7 @@ public class TextControlScenario extends ScenariosTestCase {
 		// the
 		// validator on the MaxNumberOfPeople property
 
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_EARLY);
 		DataBindingContext parentDbc = getDbc();
 		DataBindingContext childDbc = new DataBindingContext(parentDbc);
 		childDbc.addBindSupportFactory(new CustomBeanBindSupportFactory(
@@ -261,7 +261,7 @@ public class TextControlScenario extends ScenariosTestCase {
 
 		// Verify direct binding between a Text and Label following bugzilla
 		// 118696
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_LATE);
 		Label label = new Label(getComposite(), SWT.NONE);
 		getDbc().bind(text, label, null);
 		// Change the text
@@ -278,7 +278,7 @@ public class TextControlScenario extends ScenariosTestCase {
 
 		// Verify direct binding between a Text and Label following bugzilla
 		// 118696 with TIME_EARLY
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_EARLY);
 		Label label = new Label(getComposite(), SWT.NONE);
 		getDbc().bind(text, label, null);
 		// Change the text

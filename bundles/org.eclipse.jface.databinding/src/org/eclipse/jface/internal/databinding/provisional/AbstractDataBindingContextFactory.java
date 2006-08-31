@@ -19,6 +19,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.IObservableF
  * Defines an interface for objects that can create data binding contexts
  * 
  * @since 3.3
+ * @deprecated this class is no longer part of the data binding API
  */
 public abstract class AbstractDataBindingContextFactory {
 	

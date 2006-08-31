@@ -15,6 +15,7 @@ package org.eclipse.jface.internal.databinding.provisional.description;
  * TODO Javadoc
  * 
  * @since 1.0
+ * @deprecated no longer part of the API
  *
  */
 public class NestedProperty  extends Property {

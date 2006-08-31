@@ -260,7 +260,7 @@ public class DatabindingContextTest extends TestCase {
 		// Now test forcing an error from the event handler...
 		binding.addBindingEventListener(new BindingAdapter() {
 			public ValidationError bindingEvent(BindingEvent e) {
-				if (e.pipelinePosition == BindingEvent.PIPELINE_AFTER_CONVERT) {
+				if (e.pipelinePosition == org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CONVERT) {
 					return ValidationError.error("error");
 				}
 				return null;

@@ -18,6 +18,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.IObservable
 
 /**
  * @since 3.2
+ * @deprecated no longer part of the API
  * 
  */
 public class DefaultObservableFactory implements IObservableFactory {

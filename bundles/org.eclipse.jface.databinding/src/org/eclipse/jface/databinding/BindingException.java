@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.provisional;
+package org.eclipse.jface.databinding;
 
 /**
  * An unchecked exception indicating a binding problem.
@@ -23,14 +23,13 @@ package org.eclipse.jface.internal.databinding.provisional;
  * TODO API review issue: Use CoreException instead?
  * 
  * @since 1.0
- * @deprecated use {@link org.eclipse.jface.databinding.BindingException} instead
  */
-public class BindingException extends org.eclipse.jface.databinding.BindingException {
+public class BindingException extends RuntimeException {
 
-	/**
-	 * 
+	/*
+	 * Needed because all Throwables are Serializable.
 	 */
-	private static final long serialVersionUID = -5163348527342184865L;
+	private static final long serialVersionUID = -4092828452936724217L;
 
 	/**
 	 * Creates a new BindingException with the given message.

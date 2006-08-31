@@ -7,7 +7,8 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.jface.internal.databinding.internal;x-internal:=true,
+Export-Package: org.eclipse.jface.databinding,
+ org.eclipse.jface.internal.databinding.internal;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.beans;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.observable;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.swt;x-internal:=true,

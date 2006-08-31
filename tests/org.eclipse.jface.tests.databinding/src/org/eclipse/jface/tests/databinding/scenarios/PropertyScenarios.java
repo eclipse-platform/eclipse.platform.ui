@@ -21,7 +21,6 @@ import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.conversion.Converter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverter;
@@ -506,7 +505,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 	public void testScenario13() {
 		// Changing the update policy to be not automatic, but on explicit
 		// method call (e.g. triggered by a button click).
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_LATE);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_LATE);
 		Text text = new Text(getComposite(), SWT.BORDER);
 		getDbc().bind(text, new Property(adventure, "name"), null);
 		// uncomment the following line to see what's happening
@@ -528,7 +527,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		Text t1 = new Text(getComposite(), SWT.BORDER);
 		Text t2 = new Text(getComposite(), SWT.BORDER);
 
-		getSWTObservableFactory().setUpdateTime(DataBindingContext.TIME_EARLY);
+		getSWTObservableFactory().setUpdateTime(org.eclipse.jface.databinding.DataBindingContext.TIME_EARLY);
 		getDbc().bind(t1, new Property(adventure, "name"), null);
 		getDbc().bind(t2, new Property(adventure, "name"), null);
 
