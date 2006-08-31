@@ -227,6 +227,10 @@ public class AntPropertiesBlock {
 	private TableViewer createTableViewer(Composite parent, boolean setColumns) {
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
+        int availableRows= availableRows(parent);
+        if (setColumns) {
+            data.heightHint = table.getItemHeight() * (availableRows / 10);
+        }
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		table.setLayoutData(data);
 		table.setFont(parent.getFont());
@@ -252,6 +256,18 @@ public class AntPropertiesBlock {
             
 		return tableViewer;
 	}
+    
+    /**
+     * Return the number of rows available in the current display using the
+     * current font.
+     * @param parent The Composite whose Font will be queried.
+     * @return The result of the display size divided by the font size.
+     */
+    private int availableRows(Composite parent) {
+        int fontHeight = (parent.getFont().getFontData())[0].getHeight();
+        int displayHeight = parent.getDisplay().getClientArea().height;
+        return displayHeight / fontHeight;
+    }
 	
 	/* (non-Javadoc)
 	 * Method declared on AntPage.
