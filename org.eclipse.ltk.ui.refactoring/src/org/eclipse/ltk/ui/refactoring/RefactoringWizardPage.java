@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 

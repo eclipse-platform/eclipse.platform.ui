@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.util;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
 
 /**
  * Utility class for swt-related functions.

@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.GroupCategorySet;
@@ -25,7 +26,6 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.util.Assert;
 
 public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 	
