@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.text.rules;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 
 /**

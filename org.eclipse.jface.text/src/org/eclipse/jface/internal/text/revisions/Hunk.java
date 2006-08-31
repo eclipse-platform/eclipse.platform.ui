@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.revisions;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A hunk is a sequence of changed, added or deleted lines. <code>Hunk</code>s are separated by

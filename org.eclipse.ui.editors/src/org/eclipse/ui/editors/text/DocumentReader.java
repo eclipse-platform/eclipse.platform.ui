@@ -13,7 +13,8 @@ package org.eclipse.ui.editors.text;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;

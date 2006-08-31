@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
-import org.eclipse.jface.text.Assert;
 
 
 /**

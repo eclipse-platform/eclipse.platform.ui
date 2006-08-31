@@ -11,9 +11,10 @@
 
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.action.Action;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IChangeRulerColumn;

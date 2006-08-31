@@ -12,11 +12,11 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.osgi.framework.BundleContext;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.editors.text.EditorsUI;

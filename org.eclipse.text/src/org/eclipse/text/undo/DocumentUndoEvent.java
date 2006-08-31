@@ -11,7 +11,8 @@
 
 package org.eclipse.text.undo;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.IDocument;
 
 /**

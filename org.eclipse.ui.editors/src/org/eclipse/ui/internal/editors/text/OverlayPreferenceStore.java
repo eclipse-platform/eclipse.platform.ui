@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.jface.text.Assert;
 
 /**
  * An overlaying preference store.

@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.action.Action;
@@ -50,7 +51,6 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 

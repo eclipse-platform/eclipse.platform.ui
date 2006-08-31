@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Positions describe text ranges of a document. Positions are adapted to

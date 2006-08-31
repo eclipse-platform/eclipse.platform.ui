@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A template consisting of a name and a pattern.

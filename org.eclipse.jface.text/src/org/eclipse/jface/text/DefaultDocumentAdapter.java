@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Default implementation of {@link org.eclipse.jface.text.IDocumentAdapter}.

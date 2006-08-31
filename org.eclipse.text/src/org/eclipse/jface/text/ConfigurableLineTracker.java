@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Standard implementation of a generic

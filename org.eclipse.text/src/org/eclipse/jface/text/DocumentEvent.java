@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Specification of changes applied to documents. All changes are represented as

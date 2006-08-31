@@ -15,7 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;

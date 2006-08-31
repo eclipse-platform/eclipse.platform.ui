@@ -16,13 +16,13 @@ import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffExtensionsRegistry;
 import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;

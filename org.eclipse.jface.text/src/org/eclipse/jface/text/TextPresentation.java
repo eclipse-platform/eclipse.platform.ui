@@ -18,6 +18,8 @@ import java.util.NoSuchElementException;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Describes the presentation styles for a section of an indexed text such as a

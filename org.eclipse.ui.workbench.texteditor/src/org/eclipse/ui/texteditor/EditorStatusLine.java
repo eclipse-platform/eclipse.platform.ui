@@ -13,7 +13,8 @@ package org.eclipse.ui.texteditor;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

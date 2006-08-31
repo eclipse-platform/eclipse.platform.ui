@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.quickdiff;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.texteditor.IUpdate;
 

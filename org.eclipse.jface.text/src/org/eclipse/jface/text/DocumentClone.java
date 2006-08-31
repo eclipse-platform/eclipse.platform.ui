@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * An {@link org.eclipse.jface.text.IDocument} that is a read-only clone of another document.

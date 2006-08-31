@@ -13,13 +13,13 @@ package org.eclipse.ui.internal.editors.text;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.editors.text.ILocationProvider;
 

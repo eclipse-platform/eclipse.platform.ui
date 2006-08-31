@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.osgi.service.prefs.BackingStoreException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -35,7 +36,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 

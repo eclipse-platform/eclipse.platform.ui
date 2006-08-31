@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * Copy-on-write <code>ITextStore</code> wrapper.
  * <p>

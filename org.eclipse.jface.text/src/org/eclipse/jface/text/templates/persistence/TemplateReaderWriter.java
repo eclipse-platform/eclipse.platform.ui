@@ -38,10 +38,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
+import org.eclipse.core.runtime.Assert;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.templates.Template;
 
 /**

@@ -21,6 +21,8 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.swt.events.VerifyEvent;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Represents a text modification as a document replace command. The text

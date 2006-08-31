@@ -12,7 +12,8 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;
 
 import java.util.ConcurrentModificationException;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.source.ILineRange;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;

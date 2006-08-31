@@ -15,7 +15,8 @@ package org.eclipse.jface.text.rules;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 
 
 

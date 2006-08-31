@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
 

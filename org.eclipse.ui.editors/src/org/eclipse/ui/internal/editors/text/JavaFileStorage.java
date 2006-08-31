@@ -15,13 +15,13 @@ import java.io.InputStream;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IStorage;
 
-import org.eclipse.jface.text.Assert;
 
 /**
  * A storage for java.io.File.

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.TextUtilities;
 
 /**

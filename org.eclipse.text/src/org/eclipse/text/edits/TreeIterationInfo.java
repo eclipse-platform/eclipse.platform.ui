@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 
 class TreeIterationInfo {

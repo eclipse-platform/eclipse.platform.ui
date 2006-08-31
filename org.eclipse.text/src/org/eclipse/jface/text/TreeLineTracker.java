@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
 
 /**

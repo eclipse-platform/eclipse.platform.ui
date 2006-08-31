@@ -13,7 +13,8 @@ package org.eclipse.jface.text.hyperlink;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.IRegion;
 
 

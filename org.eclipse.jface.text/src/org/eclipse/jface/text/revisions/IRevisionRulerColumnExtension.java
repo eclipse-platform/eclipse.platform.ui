@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.revisions;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
 

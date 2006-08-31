@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+
 
 /**
  * Implements a gap managing text store. The gap text store relies on the assumption that

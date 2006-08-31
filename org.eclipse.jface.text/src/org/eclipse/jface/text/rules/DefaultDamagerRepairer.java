@@ -15,7 +15,8 @@ package org.eclipse.jface.text.rules;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.SWT;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;

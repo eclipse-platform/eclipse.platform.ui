@@ -18,6 +18,8 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceStatus;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -28,7 +30,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;

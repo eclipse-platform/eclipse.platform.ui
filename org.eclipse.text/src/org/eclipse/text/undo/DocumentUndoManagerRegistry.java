@@ -13,7 +13,8 @@ package org.eclipse.text.undo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.text.Assert;
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.IDocument;
 
 /**

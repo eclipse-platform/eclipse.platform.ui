@@ -27,6 +27,7 @@ import java.nio.charset.UnsupportedCharsetException;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -58,7 +59,6 @@ import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;

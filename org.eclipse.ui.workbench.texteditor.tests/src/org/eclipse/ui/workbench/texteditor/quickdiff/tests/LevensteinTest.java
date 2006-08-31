@@ -13,9 +13,10 @@ package org.eclipse.ui.workbench.texteditor.quickdiff.tests;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.Assert;
+
 import junit.framework.TestCase;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;

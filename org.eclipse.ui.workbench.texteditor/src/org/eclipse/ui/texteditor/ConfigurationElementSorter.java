@@ -25,6 +25,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +34,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.osgi.util.ManifestElement;
 
-import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
