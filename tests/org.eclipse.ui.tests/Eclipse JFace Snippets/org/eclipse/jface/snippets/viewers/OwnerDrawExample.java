@@ -1,5 +1,6 @@
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -11,6 +12,8 @@ import org.eclipse.jface.viewers.ViewerLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -77,15 +80,18 @@ public class OwnerDrawExample {
 
 		String cupYear;
 
+		private String baseName;
+
 		/**
 		 * Create a new instance of the receiver.
 		 * 
 		 * @param countryName
 		 * @param worldCupYear
 		 */
-		CountryEntry(String countryName, String worldCupYear) {
+		CountryEntry(String countryName, String englishName, String worldCupYear) {
 			name = countryName;
 			cupYear = worldCupYear;
+			baseName = englishName;
 		}
 
 		/**
@@ -113,10 +119,10 @@ public class OwnerDrawExample {
 
 			switch (event.index) {
 			case 0:
-				return event.gc.textExtent(name).x + 5;
+				return event.gc.textExtent(getDisplayString().toString()).x + 50;
 
 			case 1:
-				return 50;
+				return 200;
 
 			case 2:
 				return event.gc.textExtent(cupYear).x + 5;
@@ -157,11 +163,40 @@ public class OwnerDrawExample {
 		 */
 		protected void drawName(Event event) {
 
-			event.gc.drawText(name, event.x, event.y);
+			StringBuffer buffer = getDisplayString();
+
+			Display display = viewer.getControl().getDisplay();
+			TextLayout layout = new TextLayout(display);
+			layout.setText(buffer.toString());
+
+			TextStyle plain = new TextStyle(JFaceResources
+					.getFont(JFaceResources.DEFAULT_FONT), display
+					.getSystemColor(SWT.COLOR_LIST_FOREGROUND), display
+					.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			TextStyle italic = new TextStyle(JFaceResources.getFontRegistry()
+					.getItalic(JFaceResources.DEFAULT_FONT), display
+					.getSystemColor(SWT.COLOR_BLUE), display
+					.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			layout.setStyle(plain, 0, name.length() - 1);
+			layout.setStyle(italic, name.length(), buffer.length() - 1);
+
+			layout.draw(event.gc, event.x, event.y);
 
 		}
 
-
+		/**
+		 * @return
+		 */
+		private StringBuffer getDisplayString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(name);
+			buffer.append(" (");
+			buffer.append(baseName);
+			buffer.append(")");
+			return buffer;
+		}
 
 		/**
 		 * @param event
@@ -189,7 +224,7 @@ public class OwnerDrawExample {
 	private class GermanyEntry extends CountryEntry {
 
 		GermanyEntry() {
-			super("Deutschland", "1990");
+			super("Deutschland", "Germany", "1990");
 		}
 
 		/*
@@ -228,7 +263,7 @@ public class OwnerDrawExample {
 	private class AustriaEntry extends CountryEntry {
 
 		AustriaEntry() {
-			super("Österreich", "TBD");
+			super("Österreich", "Austria", "TBD");
 		}
 
 		/*
@@ -265,7 +300,7 @@ public class OwnerDrawExample {
 
 	private class EnglandEntry extends CountryEntry {
 		EnglandEntry() {
-			super("England", "1966");
+			super("Blighty", "England", "1966");
 		}
 
 		/*
