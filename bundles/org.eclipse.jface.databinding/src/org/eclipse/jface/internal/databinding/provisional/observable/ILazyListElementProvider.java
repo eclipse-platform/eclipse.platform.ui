@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
 
 /**
  * Interface for Observables that can supply data lazily.

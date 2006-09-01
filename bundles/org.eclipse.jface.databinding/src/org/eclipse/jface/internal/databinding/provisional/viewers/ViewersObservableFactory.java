@@ -12,12 +12,12 @@
 
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.internal.viewers.AbstractListViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.viewers.TableViewerObservableCollectionWithLabels;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;

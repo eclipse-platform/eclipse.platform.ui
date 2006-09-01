@@ -14,7 +14,7 @@ package org.eclipse.jface.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**

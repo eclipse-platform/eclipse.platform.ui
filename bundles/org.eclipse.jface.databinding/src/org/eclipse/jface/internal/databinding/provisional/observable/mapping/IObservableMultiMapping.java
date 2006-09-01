@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IObservable;
 
 /**
  * A mapping that maps objects to multiple values, whose changes can be tracked by

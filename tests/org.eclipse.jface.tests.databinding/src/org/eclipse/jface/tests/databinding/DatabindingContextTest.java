@@ -12,6 +12,11 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingAdapter;
@@ -27,11 +32,6 @@ import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.tests.databinding.util.Mocks;

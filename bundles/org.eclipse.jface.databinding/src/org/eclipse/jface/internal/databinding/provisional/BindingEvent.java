@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.provisional;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IDiff;
+import org.eclipse.jface.databinding.observable.IObservable;
 
 /**
  * The event that is passed to a #bindingEvent method of an IBindingListener.

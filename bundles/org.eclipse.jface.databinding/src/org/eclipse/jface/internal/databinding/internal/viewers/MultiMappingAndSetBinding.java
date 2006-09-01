@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.viewers;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMappingChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IObservableMultiMappingWithDomain;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.internal.databinding.provisional.viewers.IObservableCollectionWithLabels;
 

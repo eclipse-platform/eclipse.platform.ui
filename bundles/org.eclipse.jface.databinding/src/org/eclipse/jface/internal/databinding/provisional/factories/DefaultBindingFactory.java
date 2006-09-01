@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.internal.LazyListBinding;
 import org.eclipse.jface.internal.databinding.internal.ListBinding;
 import org.eclipse.jface.internal.databinding.internal.ValueBinding;
@@ -19,10 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
 /**
  * @since 3.2

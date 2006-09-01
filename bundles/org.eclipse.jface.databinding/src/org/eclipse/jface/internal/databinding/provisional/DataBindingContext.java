@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 
 /**
  * A context for binding observable objects with a shared lifecycle. The

@@ -21,14 +21,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.list.ObservableList;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
 import org.eclipse.jface.internal.databinding.provisional.viewers.IObservableCollectionWithLabels;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -176,8 +176,8 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 	 * 
 	 * @param c items to be added
 	 * @return success <code>true</code> if items were added to the list
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener
+	 * @see org.eclipse.jface.databinding.observable.list.IListChangeListener
+	 * @see org.eclipse.jface.databinding.observable.set.ISetChangeListener
 	 */
 	public boolean addAll(Collection c) {
 		if (c == null)

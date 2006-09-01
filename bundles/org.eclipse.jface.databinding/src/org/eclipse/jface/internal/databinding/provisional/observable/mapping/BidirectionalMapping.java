@@ -18,11 +18,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.WritableSet;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
+import org.eclipse.jface.databinding.observable.set.WritableSet;
 
 /**
  * @since 1.0

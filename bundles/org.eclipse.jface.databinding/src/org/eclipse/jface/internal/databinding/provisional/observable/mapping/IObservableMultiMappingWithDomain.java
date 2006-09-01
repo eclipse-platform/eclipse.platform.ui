@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservableCollection;
+import org.eclipse.jface.databinding.observable.IObservableCollection;
 
 /**
  * An observable multi-mapping with domain.

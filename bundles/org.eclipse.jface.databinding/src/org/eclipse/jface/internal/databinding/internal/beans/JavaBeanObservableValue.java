@@ -15,9 +15,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue;
 
 /**
  * @since 1.0

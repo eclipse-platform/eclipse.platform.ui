@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.list.ObservableList;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
@@ -107,7 +107,7 @@ public class ValidationErrorList extends ObservableList implements ILazyListElem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#dispose()
+	 * @see org.eclipse.jface.databinding.observable.list.ObservableList#dispose()
 	 */
 	public void dispose() {
 		bindings.removeChangeListener(markDirtyChangeListener);

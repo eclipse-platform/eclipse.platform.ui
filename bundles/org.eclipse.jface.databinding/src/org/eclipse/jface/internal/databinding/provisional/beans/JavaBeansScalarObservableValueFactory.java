@@ -15,11 +15,11 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
 /**
  * This is an optional IObservableFactory that forces all JavaBeans observables

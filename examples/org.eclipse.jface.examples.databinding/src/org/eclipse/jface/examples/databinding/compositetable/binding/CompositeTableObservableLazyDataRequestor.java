@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.binding;
 
+import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.IDeleteHandler;
 import org.eclipse.jface.examples.databinding.compositetable.IInsertHandler;
@@ -18,7 +19,6 @@ import org.eclipse.jface.examples.databinding.compositetable.IRowContentProvider
 import org.eclipse.jface.examples.databinding.compositetable.IRowFocusListener;
 import org.eclipse.jface.examples.databinding.compositetable.RowFocusAdapter;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;

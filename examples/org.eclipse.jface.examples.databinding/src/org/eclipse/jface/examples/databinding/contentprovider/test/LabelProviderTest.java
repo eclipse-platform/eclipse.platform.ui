@@ -13,11 +13,11 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
+import org.eclipse.jface.databinding.observable.set.WritableSet;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
+import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.WritableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ListeningLabelProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableSetContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;

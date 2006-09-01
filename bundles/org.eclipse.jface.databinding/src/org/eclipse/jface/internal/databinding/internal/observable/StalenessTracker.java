@@ -14,10 +14,10 @@ package org.eclipse.jface.internal.databinding.internal.observable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.internal.IdentityWrapper;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
 
 /**
  * @since 1.0

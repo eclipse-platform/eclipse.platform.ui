@@ -13,14 +13,14 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.Iterator;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservableCollection;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
+import org.eclipse.jface.databinding.observable.IObservableCollection;
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
 
 /**
  * @since 1.0

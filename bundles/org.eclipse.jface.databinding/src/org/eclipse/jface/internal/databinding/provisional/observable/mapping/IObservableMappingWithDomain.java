@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
 
 /**
  * A mapping with domain whose changes can be tracked by mapping change listeners.

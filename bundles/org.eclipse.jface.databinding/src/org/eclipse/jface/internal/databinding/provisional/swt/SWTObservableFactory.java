@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableValue;
@@ -25,7 +26,6 @@ import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;

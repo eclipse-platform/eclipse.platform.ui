@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ObservableSet;
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.set.ObservableSet;
 import org.eclipse.jface.util.Assert;
 
 /**

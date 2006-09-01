@@ -12,11 +12,11 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.JavaBeansScalarObservableValueFactory;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
 public class JavaBeansScalarObservableValueFactoryTest extends TestCase {
    

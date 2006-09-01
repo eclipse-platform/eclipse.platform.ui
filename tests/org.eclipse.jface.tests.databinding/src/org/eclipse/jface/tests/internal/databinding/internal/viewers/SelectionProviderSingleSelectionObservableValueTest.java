@@ -12,11 +12,11 @@ package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
+import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -113,8 +113,8 @@ public class SelectionProviderSingleSelectionObservableValueTest extends TestCas
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue,
-		 *      org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff)
+		 * @see org.eclipse.jface.databinding.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.databinding.observable.value.IObservableValue,
+		 *      org.eclipse.jface.databinding.observable.value.ValueDiff)
 		 */
 		public void handleValueChange(IObservableValue source, ValueDiff diff) {
 			count++;

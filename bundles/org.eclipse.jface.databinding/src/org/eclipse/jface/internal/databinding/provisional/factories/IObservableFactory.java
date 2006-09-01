@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IObservable;
 
 /**
  * A factory for creating observable objects from description objects.

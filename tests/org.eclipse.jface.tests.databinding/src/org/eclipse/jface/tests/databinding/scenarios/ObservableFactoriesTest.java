@@ -12,15 +12,15 @@
  *  Created Oct 21, 2005 by Gili Mendel
  * 
  *  $RCSfile: ObservableFactoriesTest.java,v $
- *  $Revision: 1.2 $  $Date: 2006/03/13 04:57:22 $ 
+ *  $Revision: 1.3 $  $Date: 2006/08/28 17:33:58 $ 
  */
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
 
 public class ObservableFactoriesTest extends ScenariosTestCase {
 

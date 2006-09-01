@@ -10,21 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.viewers;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMappingChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IObservableMultiMappingWithDomain;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.internal.databinding.provisional.viewers.IObservableCollectionWithLabels;
 

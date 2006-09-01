@@ -13,9 +13,9 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.Iterator;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
 
 /**
  * @since 1.0

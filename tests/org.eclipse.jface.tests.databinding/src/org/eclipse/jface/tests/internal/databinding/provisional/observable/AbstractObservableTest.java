@@ -13,10 +13,10 @@ package org.eclipse.jface.tests.internal.databinding.provisional.observable;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
+import org.eclipse.jface.databinding.observable.AbstractObservable;
+import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IStaleListener;
 
 /**
  * Tests for AbstractObservable.

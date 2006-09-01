@@ -13,7 +13,7 @@ package org.eclipse.jface.examples.databinding.compositetable.day.binding;
 
 import java.util.Date;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IDiff;
+import org.eclipse.jface.databinding.observable.IDiff;
 
 /**
  * When a multi-day calendarable event is edited, clients may need to know

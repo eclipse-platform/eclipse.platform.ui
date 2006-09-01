@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.day.binding;
 
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 
 /**
  * An observable factory for EventEditorObservableLazyDataRequestors

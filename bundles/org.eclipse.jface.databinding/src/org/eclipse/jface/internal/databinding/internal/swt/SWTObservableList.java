@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.list.AbstractObservableList;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.ObservableTracker;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.AbstractObservableList;
 
 /**
  * Abstract base class of CComboObservableList, ComboObservableList, and

@@ -11,10 +11,10 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
 
 /**
  * @since 1.0

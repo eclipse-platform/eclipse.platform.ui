@@ -13,6 +13,8 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.databinding.observable.value.ComputedValue;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
@@ -21,8 +23,6 @@ import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ComputedValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.ContentViewer;

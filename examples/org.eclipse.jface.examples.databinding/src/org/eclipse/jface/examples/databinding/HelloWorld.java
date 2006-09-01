@@ -11,11 +11,11 @@
 
 package org.eclipse.jface.examples.databinding;
 
+import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.examples.databinding.nestedselection.BindingFactory;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;

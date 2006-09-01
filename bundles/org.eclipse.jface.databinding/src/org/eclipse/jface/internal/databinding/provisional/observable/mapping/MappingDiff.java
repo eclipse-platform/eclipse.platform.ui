@@ -13,7 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IDiff;
+import org.eclipse.jface.databinding.observable.IDiff;
 
 /**
  * @since 1.0

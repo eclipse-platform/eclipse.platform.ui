@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
+import org.eclipse.jface.databinding.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMultiMapping;
 
 /**

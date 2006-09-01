@@ -16,14 +16,14 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.StringTokenizer;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.internal.databinding.internal.observable.NestedObservableList;
 import org.eclipse.jface.internal.databinding.internal.observable.NestedObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.NestedProperty;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
 
 /**
  * 

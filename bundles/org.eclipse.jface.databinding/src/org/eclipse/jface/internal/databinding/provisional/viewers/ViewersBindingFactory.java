@@ -13,6 +13,9 @@ package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 import java.beans.PropertyDescriptor;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableMultiMapping;
 import org.eclipse.jface.internal.databinding.internal.viewers.MultiMappingAndListBinding;
 import org.eclipse.jface.internal.databinding.internal.viewers.MultiMappingAndSetBinding;
@@ -21,10 +24,7 @@ import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.factories.IBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IObservableMultiMappingWithDomain;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
 
 /**
  * @since 3.2

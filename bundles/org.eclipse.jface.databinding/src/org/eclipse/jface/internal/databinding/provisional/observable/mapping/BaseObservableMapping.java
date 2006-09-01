@@ -13,8 +13,9 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.jface.internal.databinding.provisional.observable.AbstractObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
+
+import org.eclipse.jface.databinding.observable.AbstractObservable;
+import org.eclipse.jface.databinding.observable.IChangeListener;
 
 /**
  * @since 3.2

@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue;
+import org.eclipse.jface.databinding.observable.value.AbstractVetoableValue;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;

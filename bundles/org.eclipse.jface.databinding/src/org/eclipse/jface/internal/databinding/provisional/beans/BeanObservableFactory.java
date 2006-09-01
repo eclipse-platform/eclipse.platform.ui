@@ -16,6 +16,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Collection;
 
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableMultiMapping;
 import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableValue;
@@ -24,8 +26,6 @@ import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
 
 /**
  * A factory for creating observable objects for properties of plain Java

@@ -14,8 +14,8 @@ package org.eclipse.jface.databinding;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.IDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.databinding.observable.IDiff;
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**

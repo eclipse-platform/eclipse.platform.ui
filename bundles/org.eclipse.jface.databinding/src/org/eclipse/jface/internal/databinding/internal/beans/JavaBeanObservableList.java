@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -74,7 +74,7 @@ public class JavaBeanObservableList extends ObservableList implements ILazyListE
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#dispose()
+	 * @see org.eclipse.jface.databinding.observable.list.ObservableList#dispose()
 	 */
 	public void dispose() {
 		super.dispose();

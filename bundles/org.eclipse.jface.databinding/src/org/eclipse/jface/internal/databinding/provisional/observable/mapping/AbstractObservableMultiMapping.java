@@ -12,7 +12,7 @@
 package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 
-import org.eclipse.jface.internal.databinding.provisional.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.ObservableTracker;
 
 /**
  * @since 1.0

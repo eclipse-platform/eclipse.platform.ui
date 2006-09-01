@@ -16,6 +16,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
@@ -25,7 +26,6 @@ import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteE
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.WritableList;
 
 /**
  * @since 3.2

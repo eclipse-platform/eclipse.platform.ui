@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservable;
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTVetoableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -197,7 +197,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * 
 	 * @param value
 	 *            new value, String expected
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractVetoableValue#doSetValue(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.value.AbstractVetoableValue#doSetValue(java.lang.Object)
 	 * @throws ClassCastException
 	 *             if the value is anything other than a String
 	 */
@@ -214,7 +214,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	/**
 	 * Returns the current value of the {@link Text}.
 	 * 
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.AbstractObservableValue#doGetValue()
+	 * @see org.eclipse.jface.databinding.observable.value.AbstractObservableValue#doGetValue()
 	 */
 	public Object doGetValue() {
 		return text.getText();
@@ -224,7 +224,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * Returns the type of the value from {@link #doGetValue()}, i.e.
 	 * String.class
 	 * 
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue#getValueType()
+	 * @see org.eclipse.jface.databinding.observable.value.IObservableValue#getValueType()
 	 */
 	public Object getValueType() {
 		return String.class;

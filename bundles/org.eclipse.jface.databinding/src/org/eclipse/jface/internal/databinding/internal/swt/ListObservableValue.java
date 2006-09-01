@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
+import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;

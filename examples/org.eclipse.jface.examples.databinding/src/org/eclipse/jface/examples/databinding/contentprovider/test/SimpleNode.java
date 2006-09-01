@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
 
 
 /**

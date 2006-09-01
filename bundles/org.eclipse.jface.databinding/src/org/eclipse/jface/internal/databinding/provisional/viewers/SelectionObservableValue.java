@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
+import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;

@@ -13,16 +13,16 @@ package org.eclipse.jface.internal.databinding.internal.observable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
+import org.eclipse.jface.databinding.observable.set.ObservableSet;
+import org.eclipse.jface.databinding.observable.set.SetDiff;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
+import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.ObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**

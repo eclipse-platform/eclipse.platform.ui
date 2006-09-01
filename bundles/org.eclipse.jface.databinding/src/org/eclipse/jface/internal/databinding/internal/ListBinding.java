@@ -13,12 +13,12 @@ package org.eclipse.jface.internal.databinding.internal;
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**

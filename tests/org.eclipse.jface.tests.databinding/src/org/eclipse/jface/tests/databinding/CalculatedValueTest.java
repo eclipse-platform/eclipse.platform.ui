@@ -13,11 +13,11 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.value.ComputedValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ComputedValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
 
 /**
  * @since 1.0

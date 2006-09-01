@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.internal.databinding.provisional.observable.IObservableCollection;
+import org.eclipse.jface.databinding.observable.IObservableCollection;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.ObservableMultiMappingWithDomain;
 import org.eclipse.jface.util.Assert;

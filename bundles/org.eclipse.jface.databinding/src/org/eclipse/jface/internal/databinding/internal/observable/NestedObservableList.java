@@ -13,17 +13,17 @@ package org.eclipse.jface.internal.databinding.internal.observable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ObservableList;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
+import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.ValueDiff;
 import org.eclipse.jface.util.Assert;
 
 /**

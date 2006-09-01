@@ -12,9 +12,9 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Set;
 
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
 import org.eclipse.jface.internal.databinding.provisional.observable.mapping.ObservableMappingWithDomain;
-import org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet;
 
 /**
  * Simple function that performs one of three operations on Doubles:

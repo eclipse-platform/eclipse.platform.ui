@@ -15,24 +15,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IStaleListener;
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.Binding;
 import org.eclipse.jface.internal.databinding.provisional.BindingEvent;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.observable.IChangeListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
-import org.eclipse.jface.internal.databinding.provisional.observable.IStaleListener;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.ILazyDataRequestor.NewObject;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.list.ListDiffEntry;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.observable.value.WritableValue;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
@@ -283,161 +283,161 @@ public class LazyListBinding extends Binding implements ILazyListElementProvider
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#add(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#add(java.lang.Object)
 	 */
 	public boolean add(Object o) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(java.util.Collection)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection c) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addAll(int, java.util.Collection)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#addAll(int, java.util.Collection)
 	 */
 	public boolean addAll(int index, Collection c) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#addListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#addListChangeListener(org.eclipse.jface.databinding.observable.list.IListChangeListener)
 	 */
 	public void addListChangeListener(IListChangeListener listener) {
 		//noop
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#contains(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#contains(java.lang.Object)
 	 */
 	public boolean contains(Object o) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#containsAll(java.util.Collection)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection c) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#getElementType()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#getElementType()
 	 */
 	public Object getElementType() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#indexOf(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
 		return 0;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#isEmpty()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#iterator()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#iterator()
 	 */
 	public Iterator iterator() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#lastIndexOf(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
 		return 0;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#listIterator()
 	 */
 	public ListIterator listIterator() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#listIterator(int)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#listIterator(int)
 	 */
 	public ListIterator listIterator(int index) {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#remove(int)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#remove(int)
 	 */
 	public Object remove(int index) {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeAll(java.util.Collection)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection c) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#removeListChangeListener(org.eclipse.jface.internal.databinding.provisional.observable.list.IListChangeListener)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#removeListChangeListener(org.eclipse.jface.databinding.observable.list.IListChangeListener)
 	 */
 	public void removeListChangeListener(IListChangeListener listener) {
 		
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#retainAll(java.util.Collection)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection c) {
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#set(int, java.lang.Object)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#set(int, java.lang.Object)
 	 */
 	public Object set(int index, Object element) {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#size()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#size()
 	 */
 	public int size() {
 		return 0;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#subList(int, int)
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#subList(int, int)
 	 */
 	public List subList(int fromIndex, int toIndex) {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray()
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#toArray()
 	 */
 	public Object[] toArray() {
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.IObservableList#toArray(java.lang.Object[])
+	 * @see org.eclipse.jface.databinding.observable.list.IObservableList#toArray(java.lang.Object[])
 	 */
 	public Object[] toArray(Object[] a) {
 		return null;
