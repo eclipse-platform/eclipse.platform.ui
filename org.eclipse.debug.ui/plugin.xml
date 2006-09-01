@@ -1370,27 +1370,34 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.debug.core.model.IProcess"
             name="%processPropertyPageName"
             class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"
             id="org.eclipse.debug.ui.properties.process">
-      </page>
-      <page
-            objectClass="org.eclipse.debug.core.model.IDebugElement"
-            name="%processPropertyPageName"
-            class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"
-            id="org.eclipse.debug.ui.properties.process">
+         <enabledWhen>
+            <or>
+               <adapt
+                     type="org.eclipse.debug.core.model.IProcess">
+               </adapt>
+               <adapt
+                     type="org.eclipse.debug.core.model.IDebugElement"></adapt>
+            </or>
+         </enabledWhen>
       </page>
       <page
             class="org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPropertiesPage"
             id="org.eclipse.debug.ui.properties.tablerendering"
-            name="%TableRenderingInfo.label"
-            objectClass="org.eclipse.debug.ui.memory.AbstractTableRendering"/>
-      <page
-            class="org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingPropertiesPage"
-            id="org.eclipse.debug.ui.properties.asynctablerendering"
-            name="%TableRenderingInfo.label"
-            objectClass="org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering"/>            
+            name="%TableRenderingInfo.label">
+         <enabledWhen>
+            <or>
+               <adapt
+                     type="org.eclipse.debug.ui.memory.AbstractTableRendering">
+               </adapt>
+               <adapt
+                     type="org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering">
+               </adapt>
+            </or>
+         </enabledWhen>
+      </page>
    </extension>
 <!-- commands and their bindings
 NOTE: 
