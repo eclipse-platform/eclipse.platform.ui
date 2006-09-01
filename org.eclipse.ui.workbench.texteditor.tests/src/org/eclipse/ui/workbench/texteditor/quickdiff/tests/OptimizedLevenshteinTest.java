@@ -15,18 +15,18 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenshtein;
 
 
 /**
  * @since 3.1
  */
-public class OptimizedLevensteinTest extends TestCase {
+public class OptimizedLevenshteinTest extends TestCase {
 	private final static int SKIP= Integer.MAX_VALUE;
 
-	protected Levenstein createLevenstein(IRangeComparator left, IRangeComparator right) {
-		Levenstein ls= new Levenstein(left, right);
-		LevensteinTestHelper helper= new LevensteinTestHelper(ls);
+	protected Levenshtein createLevenshtein(IRangeComparator left, IRangeComparator right) {
+		Levenshtein ls= new Levenshtein(left, right);
+		LevenshteinTestHelper helper= new LevenshteinTestHelper(ls);
 		helper.setOptimizedCellComputer();
 		return ls;
 	}
@@ -35,8 +35,8 @@ public class OptimizedLevensteinTest extends TestCase {
 		IRangeComparator c1= new SequenceComparator("abcd"); 
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
-		Levenstein levenstein= createLevenstein(c1, c2);
-		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		Levenshtein levenshtein= createLevenshtein(c1, c2);
+		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 		
 		// full compare
@@ -70,8 +70,8 @@ public class OptimizedLevensteinTest extends TestCase {
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
-		levenstein= createLevenstein(c1, c2);
-		helper= new LevensteinTestHelper(levenstein);
+		levenshtein= createLevenshtein(c1, c2);
+		helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 
 		helper.internalEditDistance(1, 1, 1, 1);
@@ -85,8 +85,8 @@ public class OptimizedLevensteinTest extends TestCase {
 		IRangeComparator c1= new SequenceComparator("abcd"); 
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
-		Levenstein levenstein= createLevenstein(c1, c2);
-		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		Levenshtein levenshtein= createLevenshtein(c1, c2);
+		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 		
 		// full compare
@@ -122,8 +122,8 @@ public class OptimizedLevensteinTest extends TestCase {
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
-		levenstein= createLevenstein(c1, c2);
-		helper= new LevensteinTestHelper(levenstein);
+		levenshtein= createLevenshtein(c1, c2);
+		helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 
 		helper.internalReverseEditDistance(1, 1, 1, 1);

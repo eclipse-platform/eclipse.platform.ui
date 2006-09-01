@@ -22,13 +22,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 
 /**
- * Levenstein distance and edit script computation using a dynamic programming algorithm.
+ * Levenshtein distance and edit script computation using a dynamic programming algorithm.
  * The algorithm is O(n*m) in time where n and m are the number of elements in
  * the two ranges to compare. It does not implement the greedy Ukkonen algorithm.
  *
  * @since 3.1
  */
-public final class Levenstein {
+public final class Levenshtein {
 	/* debug output */
 	private static final boolean DEBUG= false;
 	private static final boolean MATRIX= false;
@@ -109,36 +109,36 @@ public final class Levenstein {
 		private int computeNullRow(int column) {
 			// initialize first row, [0,i] = i if it is valid
 			if (minCost(fRowStart, column, Math.abs(column - fColStart)) > fMaxCost)
-				return Levenstein.SKIP;
+				return Levenshtein.SKIP;
 			return Math.abs(column - fColStart);
 		}
 
 		private int computeNullColumn(int row) {
 			// initialize first column
 			if (minCost(row, fColStart, Math.abs(row - fRowStart)) > fMaxCost)
-				return Levenstein.SKIP;
+				return Levenshtein.SKIP;
 			return Math.abs(row - fRowStart);
 		}
 
 		private int computeInnerCell(int row, int col) {
-			int fromAbove= sum(getAt(row - fStep, col), Levenstein.COST_INSERT);
-			int fromLeft= sum(getAt(row, col - fStep), Levenstein.COST_DELETE);
+			int fromAbove= sum(getAt(row - fStep, col), Levenshtein.COST_INSERT);
+			int fromLeft= sum(getAt(row, col - fStep), Levenshtein.COST_DELETE);
 			int minDiag= getAt(row - fStep, col - fStep);
 
 			int minCellValue= Math.min(Math.min(fromAbove, fromLeft), minDiag);
 			int minCost= minCost(row, col, minCellValue);
 
 			if (minCost > fMaxCost) {
-				return Levenstein.SKIP;
+				return Levenshtein.SKIP;
 			} else if (minCellValue == fromAbove || minCellValue == fromLeft) {
 				return minCellValue;
 			} else {
 				if (ASSERT) Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
 
-				int nextCharCost= rangesEqual(row, col) ? 0 : Levenstein.COST_CHANGE;
-				minCost= Levenstein.sum(minCost, nextCharCost);
+				int nextCharCost= rangesEqual(row, col) ? 0 : Levenshtein.COST_CHANGE;
+				minCost= Levenshtein.sum(minCost, nextCharCost);
 				if (minCost > fMaxCost)
-					return Levenstein.SKIP;
+					return Levenshtein.SKIP;
 				int cost= minDiag + nextCharCost;
 				fMaxCost= Math.min(fMaxCost, maxCost(row, col, cost));
 				return cost;
@@ -216,8 +216,8 @@ public final class Levenstein {
 	 * @return the edit script from left to right
 	 */
 	public static RangeDifference[] findDifferences(IRangeComparator left, IRangeComparator right) {
-		Levenstein levenstein= new Levenstein(left, right);
-		return levenstein.editScriptHirschberg();
+		Levenshtein levenshtein= new Levenshtein(left, right);
+		return levenshtein.editScriptHirschberg();
 	}
 
 	/**
@@ -230,8 +230,8 @@ public final class Levenstein {
 	 * @return the edit script from left to right
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
-		Levenstein levenstein= new Levenstein(pm, left, right);
-		return levenstein.editScriptHirschberg();
+		Levenshtein levenshtein= new Levenshtein(pm, left, right);
+		return levenshtein.editScriptHirschberg();
 	}
 
 	/**
@@ -241,7 +241,7 @@ public final class Levenstein {
 	 * @param left the left domain range
 	 * @param right the right domain range
 	 */
-	public Levenstein(IRangeComparator left, IRangeComparator right) {
+	public Levenshtein(IRangeComparator left, IRangeComparator right) {
 		this(null, left, right);
 	}
 
@@ -253,7 +253,7 @@ public final class Levenstein {
 	 * @param left the left domain range
 	 * @param right the right domain range
 	 */
-	public Levenstein(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
+	public Levenshtein(IProgressMonitor pm, IRangeComparator left, IRangeComparator right) {
 		if (left == null || right == null)
 			throw new NullPointerException();
 		fLeft= left;

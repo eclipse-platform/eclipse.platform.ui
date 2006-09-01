@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;
+import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenshtein;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
 
@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
 /**
  * @since 3.1
  */
-public class LevensteinTest extends TestCase {
+public class LevenshteinTest extends TestCase {
 	
 	
 	protected void setUp() throws Exception {
@@ -125,8 +125,8 @@ public class LevensteinTest extends TestCase {
 		IRangeComparator c1= new SequenceComparator("abcd"); 
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
-		Levenstein levenstein= createLevenstein(c1, c2);
-		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		Levenshtein levenshtein= createLevenshtein(c1, c2);
+		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 		
 		// full compare
@@ -160,8 +160,8 @@ public class LevensteinTest extends TestCase {
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
-		levenstein= createLevenstein(c1, c2);
-		helper= new LevensteinTestHelper(levenstein);
+		levenshtein= createLevenshtein(c1, c2);
+		helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 
 		helper.internalEditDistance(1, 1, 1, 1);
@@ -171,16 +171,16 @@ public class LevensteinTest extends TestCase {
 		assertTrue(Arrays.equals(new int[] { 1, 1 }, helper.getPreviousRow()));
 	}
 	
-	protected Levenstein createLevenstein(IRangeComparator left, IRangeComparator right) {
-		return new Levenstein(left, right);
+	protected Levenshtein createLevenshtein(IRangeComparator left, IRangeComparator right) {
+		return new Levenshtein(left, right);
 	}
 
 	public void testInternalReverseEditDistance() {
 		IRangeComparator c1= new SequenceComparator("abcd"); 
 		IRangeComparator c2= new SequenceComparator("abcd");
 		
-		Levenstein levenstein= createLevenstein(c1, c2);
-		LevensteinTestHelper helper= new LevensteinTestHelper(levenstein);
+		Levenshtein levenshtein= createLevenshtein(c1, c2);
+		LevenshteinTestHelper helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 		
 		// full compare
@@ -216,8 +216,8 @@ public class LevensteinTest extends TestCase {
 		// test insertion
 		c1= new SequenceComparator("a"); 
 		c2= new SequenceComparator("ab");
-		levenstein= createLevenstein(c1, c2);
-		helper= new LevensteinTestHelper(levenstein);
+		levenshtein= createLevenshtein(c1, c2);
+		helper= new LevenshteinTestHelper(levenshtein);
 		helper.initRows();
 
 		helper.internalReverseEditDistance(1, 1, 1, 1);
@@ -262,8 +262,8 @@ public class LevensteinTest extends TestCase {
 		SequenceComparator sc1= new SequenceComparator(s1);
 		SequenceComparator sc2= new SequenceComparator(s2);
 		RangeDifference[] expected= RangeDifferencer.findDifferences(sc1, sc2);
-		Levenstein levenstein= createLevenstein(sc1,sc2);
-		RangeDifference[] tested= levenstein.editScript();
+		Levenshtein levenshtein= createLevenshtein(sc1,sc2);
+		RangeDifference[] tested= levenshtein.editScript();
 		
 		assertTrue(Arrays.equals(expected, tested));
 	}
@@ -272,8 +272,8 @@ public class LevensteinTest extends TestCase {
 		SequenceComparator sc1= new SequenceComparator(s1);
 		SequenceComparator sc2= new SequenceComparator(s2);
 		RangeDifference[] expected= RangeDifferencer.findDifferences(sc1, sc2);
-		Levenstein levenstein= createLevenstein(sc1,sc2);
-		RangeDifference[] tested= levenstein.editScriptHirschberg();
+		Levenshtein levenshtein= createLevenshtein(sc1,sc2);
+		RangeDifference[] tested= levenshtein.editScriptHirschberg();
 		
 		assertTrue(Arrays.equals(expected, tested));
 	}
@@ -291,16 +291,16 @@ public class LevensteinTest extends TestCase {
 	private int computeDistance(SequenceComparator comp1, SequenceComparator comp2) {
 		SequenceComparator s1= comp1;
 		SequenceComparator s2= comp2;
-		Levenstein levenstein= createLevenstein(s1,s2);
-		int dist= levenstein.editDistance();
+		Levenshtein levenshtein= createLevenshtein(s1,s2);
+		int dist= levenshtein.editDistance();
 		return dist;
 	}
 
 	private int computeDistanceHirschberg(SequenceComparator comp1, SequenceComparator comp2) {
 		SequenceComparator s1= comp1;
 		SequenceComparator s2= comp2;
-		Levenstein levenstein= createLevenstein(s1, s2);
-		int dist= levenstein.editDistanceHirschberg();
+		Levenshtein levenshtein= createLevenshtein(s1, s2);
+		int dist= levenshtein.editDistanceHirschberg();
 		return dist;
 	}
 

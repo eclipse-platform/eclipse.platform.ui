@@ -80,7 +80,7 @@ public final class RangeDifferencer {
 		try {
 			return findDifferencesUkkonen(pm, left, right);
 		} catch (LowMemoryException e) {
-			return Levenstein.findDifferences(pm, left, right);
+			return Levenshtein.findDifferences(pm, left, right);
 		}
 	}
 

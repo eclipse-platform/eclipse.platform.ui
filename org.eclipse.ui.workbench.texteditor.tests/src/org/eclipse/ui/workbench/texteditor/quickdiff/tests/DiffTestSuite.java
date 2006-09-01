@@ -22,8 +22,8 @@ public class DiffTestSuite {
 	public static Test suite() {
 		TestSuite suite= new TestSuite("Test for org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(OptimizedLevensteinTest.class);
-		suite.addTestSuite(LevensteinTest.class);
+		suite.addTestSuite(OptimizedLevenshteinTest.class);
+		suite.addTestSuite(LevenshteinTest.class);
 		//$JUnit-END$
 		return suite;
 	}
