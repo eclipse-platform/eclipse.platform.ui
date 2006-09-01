@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import java.net.URI;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -23,9 +25,9 @@ import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-
 import org.eclipse.ui.editors.text.ILocationProvider;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
@@ -34,7 +36,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * @since 3.0
  */
-public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInput, ILocationProvider {
+public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInput, ILocationProvider, IPersistableElement {
 
 	/**
 	 * The workbench adapter which simply provides the label.
@@ -107,7 +109,7 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
 	public IPersistableElement getPersistable() {
-		return null;
+		return this;
 	}
 
 	/*
@@ -183,6 +185,33 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
 		if (fStorage == null)
 			fStorage= new JavaFileStorage(fFileStore);
 		return fStorage;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
+	 * @since 3.3
+	 */
+	public String getFactoryId() {
+		return JavaFileEditorInputFactory.ID;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
+	 * @since 3.3
+	 */
+	public void saveState(IMemento memento) {
+		JavaFileEditorInputFactory.saveState(memento, this);
+		
+	}
+	
+	/**
+	 * Returns the file store's URI.
+	 * 
+	 * @return the uri
+	 * @since 3.3
+	 */
+	URI URI() {
+		return fFileStore.toURI();
 	}
 
 }

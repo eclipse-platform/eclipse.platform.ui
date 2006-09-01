@@ -923,4 +923,12 @@
       </column>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory"
+            id="org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory">
+      </factory>
+   </extension>
+   
 </plugin>
