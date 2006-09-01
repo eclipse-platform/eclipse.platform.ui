@@ -604,5 +604,10 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String REVISION_SHOW_ID_TOGGLE= "Revision.ShowId.Toggle"; //$NON-NLS-1$
-	
+	/** 
+	 * Name of the action for emacs recenter. 
+	 * Value: <code>"RECENTER"</code>
+	 * @since 3.3
+	 */
+	String RECENTER= "Recenter"; //$NON-NLS-1$	
 }

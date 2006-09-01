@@ -403,6 +403,12 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.text.hippieCompletion">
       </command>
+      <command
+            name="%command.recenter.name"
+            description="%command.recenter.description"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.recenter">
+	  </command>     
 	</extension>
    
 	<extension
@@ -956,6 +962,11 @@
             contextId="org.eclipse.ui.textEditorScope"
             sequence="ESC D"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.recenter"
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"
+	        sequence="CTRL+L"/>
    </extension>
    
    	<extension

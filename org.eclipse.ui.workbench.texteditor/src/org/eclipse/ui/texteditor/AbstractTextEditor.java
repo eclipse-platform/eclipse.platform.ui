@@ -4574,6 +4574,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new GotoAnnotationAction(this, false);
 		setAction(ITextEditorActionConstants.PREVIOUS, action);
 
+		action= new RecenterAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Recenter.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.RECENTER_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.RECENTER);
+		setAction(ITextEditorActionConstants.RECENTER, action);
+
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {
 					public Shell getShell() {

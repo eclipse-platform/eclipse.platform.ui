@@ -331,4 +331,11 @@ public interface IAbstractTextEditorHelpContextIds {
      * @since 3.2
      */
     String QUICK_ASSIST_ACTION=PREFIX + "quick_assist" + ACTION_POSTFIX; //$NON-NLS-1$
+    
+    /**
+     * Help context id for the recenter action.
+     * Value: <code>"org.eclipse.ui.recenter_action_context"</code>
+     * @since 3.3
+     */
+    String RECENTER_ACTION=PREFIX + "recenter" + ACTION_POSTFIX; //$NON-NLS-1$
 }
