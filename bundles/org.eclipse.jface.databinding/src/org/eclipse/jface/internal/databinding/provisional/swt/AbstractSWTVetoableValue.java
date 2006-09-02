@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
 import org.eclipse.jface.databinding.observable.value.AbstractVetoableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;
@@ -23,7 +24,9 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 3.3
  */
-public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue {
+public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue implements ISWTObservableValue {
+
+	private final Widget widget;
 
 	/**
 	 * Standard constructor for an SWT VetoableValue.  Makes sure that
@@ -32,6 +35,7 @@ public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue {
 	 * @param widget
 	 */
 	protected AbstractSWTVetoableValue(Widget widget) {
+		this.widget = widget;
 		if (widget == null) {
 			throw new IllegalArgumentException("The widget parameter is null."); //$NON-NLS-1$
 		}
@@ -43,4 +47,11 @@ public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue {
 			AbstractSWTVetoableValue.this.dispose();
 		}
 	};
+
+	/**
+	 * @return Returns the widget.
+	 */
+	public Widget getWidget() {
+		return widget;
+	}
 }

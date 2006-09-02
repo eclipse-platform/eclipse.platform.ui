@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
 import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;
@@ -23,7 +24,9 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @since 3.3
  */
-public abstract class AbstractSWTObservableValue extends AbstractObservableValue {
+public abstract class AbstractSWTObservableValue extends AbstractObservableValue implements ISWTObservableValue {
+
+	private final Widget widget;
 
 	/**
 	 * Standard constructor for an SWT ObservableValue.  Makes sure that
@@ -32,6 +35,7 @@ public abstract class AbstractSWTObservableValue extends AbstractObservableValue
 	 * @param widget
 	 */
 	protected AbstractSWTObservableValue(Widget widget) {
+		this.widget = widget;
 		widget.addDisposeListener(disposeListener);
 	}
 	
@@ -40,4 +44,11 @@ public abstract class AbstractSWTObservableValue extends AbstractObservableValue
 			AbstractSWTObservableValue.this.dispose();
 		}
 	};
+
+	/**
+	 * @return Returns the widget.
+	 */
+	public Widget getWidget() {
+		return widget;
+	}
 }

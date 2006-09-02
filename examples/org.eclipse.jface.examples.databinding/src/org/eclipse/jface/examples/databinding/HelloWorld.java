@@ -11,11 +11,12 @@
 
 package org.eclipse.jface.examples.databinding;
 
+import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.examples.databinding.nestedselection.BindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
@@ -38,13 +39,13 @@ public class HelloWorld {
 		list.add("Hello");
 		list.add("Bonjour");
 		list.add("Guten Tag");
-		dbc.bind(combo, list, null);
+		dbc.bindList(SWTObservables.getItems(combo), list, null);
 		combo.select(0);
 		Text text = new Text(shell, SWT.BORDER);
-		SimplePerson person = new SimplePerson("Boris", "1234 Carling Ave", "Ottawa",
-				"Canada");
-		dbc.bind(text, new Property(person, "name"), null);
-		// shell.setLayout(new GridLayout(2, false));
+		SimplePerson person = new SimplePerson("Boris", "1234 Carling Ave",
+				"Ottawa", "Canada");
+		dbc.bindValue(SWTObservables.getText(text, SWT.Modify),
+				BeansObservables.getAttribute(person, "name"), null);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(shell);
 		shell.pack();
 		shell.open();

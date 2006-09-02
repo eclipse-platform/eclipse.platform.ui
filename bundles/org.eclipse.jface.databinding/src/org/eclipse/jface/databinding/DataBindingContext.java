@@ -29,7 +29,8 @@ import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
- * A context for binding observable objects. This class is not intended to be subclassed by clients.
+ * A context for binding observable objects. This class is not intended to be
+ * subclassed by clients.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -68,7 +69,7 @@ public class DataBindingContext {
 	 * should be triggered late, typically on focus lost.
 	 */
 	public static final int TIME_LATE = 1;
-	
+
 	private List bindingEventListeners = new ArrayList();
 
 	private WritableList bindings = new WritableList();
@@ -97,9 +98,8 @@ public class DataBindingContext {
 	private ObservableList validationErrors = new ValidationErrorList(bindings,
 			false);
 
-	
 	private List childContexts = new ArrayList();
-	
+
 	/**
 	 * 
 	 */
@@ -114,7 +114,7 @@ public class DataBindingContext {
 		this.parent = parent;
 		parent.addChild(this);
 	}
-	
+
 	protected void addChild(DataBindingContext context) {
 		childContexts.add(context);
 	}
@@ -144,43 +144,46 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Binds two observable values using converter and validator
-	 * as specified in bindSpec. If bindSpec is null, a default converter and
-	 * validator is used.
+	 * Binds two observable values using converter and validator as specified in
+	 * bindSpec. If bindSpec is null, a default converter and validator is used.
 	 * 
 	 * @param targetObservableValue
 	 * @param modelObservableValue
 	 * @param bindSpec
-	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            the bind spec, or null. Any bindSpec object must not be reused
 	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bindValue(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue, BindSpec bindSpec) {
-		Binding result = new ValueBinding(this, targetObservableValue, modelObservableValue,
-				bindSpec);
+		if (bindSpec == null) {
+			bindSpec = new BindSpec();
+		}
+		fillBindSpecDefaults(this, bindSpec, targetObservableValue
+				.getValueType(), modelObservableValue.getValueType());
+		Binding result = new ValueBinding(this, targetObservableValue,
+				modelObservableValue, bindSpec);
 		return result;
 	}
 
 	/**
-	 * Binds two observable lists using converter and validator
-	 * as specified in bindSpec. If bindSpec is null, a default converter and
-	 * validator is used.
+	 * Binds two observable lists using converter and validator as specified in
+	 * bindSpec. If bindSpec is null, a default converter and validator is used.
 	 * 
 	 * @param targetObservableList
 	 * @param modelObservableList
 	 * @param bindSpec
-	 *            the bind spec, or null.  Any bindSpec object must not be reused
+	 *            the bind spec, or null. Any bindSpec object must not be reused
 	 *            or changed after it is passed to #bind.
 	 * @return The Binding that manages this data flow
 	 */
 	public Binding bindList(IObservableList targetObservableList,
 			IObservableList modelObservableList, BindSpec bindSpec) {
-		Binding result = new ListBinding(this, targetObservableList, modelObservableList,
-				bindSpec);
+		Binding result = new ListBinding(this, targetObservableList,
+				modelObservableList, bindSpec);
 		return result;
 	}
-	
+
 	/**
 	 * Tries to create a converter that can convert from values of type
 	 * fromType. Returns <code>null</code> if no converter could be created.
@@ -284,18 +287,20 @@ public class DataBindingContext {
 	public void fillBindSpecDefaults(DataBindingContext dataBindingContext,
 			BindSpec bindSpec, Object targetType, Object modelType) {
 		if (bindSpec.getTypeConversionValidator() == null) {
-			bindSpec.setValidator(
-					dataBindingContext.createValidator(targetType, modelType));
+			bindSpec.setValidator(dataBindingContext.createValidator(
+					targetType, modelType));
 		}
 		if (bindSpec.getDomainValidator() == null) {
-			bindSpec.setDomainValidator(
-					dataBindingContext.createDomainValidator(modelType));
+			bindSpec.setDomainValidator(dataBindingContext
+					.createDomainValidator(modelType));
 		}
-		IConverter[] modelToTargetConverters = bindSpec.getModelToTargetConverters();
+		IConverter[] modelToTargetConverters = bindSpec
+				.getModelToTargetConverters();
 		if (modelToTargetConverters.length > 1) {
 			for (int i = 0; i < modelToTargetConverters.length; i++) {
 				if (modelToTargetConverters[i] == null) {
-					modelToTargetConverters[i] = dataBindingContext.createConverter(modelType, targetType);
+					modelToTargetConverters[i] = dataBindingContext
+							.createConverter(modelType, targetType);
 				}
 			}
 		} else {
@@ -303,15 +308,17 @@ public class DataBindingContext {
 			// element array that represents null to a 1 element array, so we'll
 			// just call setMTTC() instead of manipulating the array directly
 			if (bindSpec.getModelToTargetConverter() == null) {
-				bindSpec.setModelToTargetConverter(
-						dataBindingContext.createConverter(modelType, targetType));
+				bindSpec.setModelToTargetConverter(dataBindingContext
+						.createConverter(modelType, targetType));
 			}
 		}
-		IConverter[] targetToModelConverters = bindSpec.getTargetToModelConverters();
+		IConverter[] targetToModelConverters = bindSpec
+				.getTargetToModelConverters();
 		if (targetToModelConverters.length > 1) {
 			for (int i = 0; i < targetToModelConverters.length; i++) {
 				if (targetToModelConverters[i] == null) {
-					targetToModelConverters[i] = dataBindingContext.createConverter(targetType, modelType);
+					targetToModelConverters[i] = dataBindingContext
+							.createConverter(targetType, modelType);
 				}
 			}
 		} else {
@@ -319,8 +326,8 @@ public class DataBindingContext {
 			// element array that represents null to a 1 element array, so we'll
 			// just call setTTMC() instead of manipulating the array directly
 			if (bindSpec.getTargetToModelConverter() == null) {
-				bindSpec.setTargetToModelConverter(
-						dataBindingContext.createConverter(targetType, modelType));
+				bindSpec.setTargetToModelConverter(dataBindingContext
+						.createConverter(targetType, modelType));
 			}
 		}
 	}
