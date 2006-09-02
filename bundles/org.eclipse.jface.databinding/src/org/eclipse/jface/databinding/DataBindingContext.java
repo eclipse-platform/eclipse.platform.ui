@@ -179,6 +179,10 @@ public class DataBindingContext {
 	 */
 	public Binding bindList(IObservableList targetObservableList,
 			IObservableList modelObservableList, BindSpec bindSpec) {
+		if (bindSpec == null) {
+			bindSpec = new BindSpec();
+		}
+		fillBindSpecDefaults(this, bindSpec, targetObservableList.getElementType(), modelObservableList.getElementType());
 		Binding result = new ListBinding(this, targetObservableList,
 				modelObservableList, bindSpec);
 		return result;
