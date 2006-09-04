@@ -98,6 +98,10 @@ public interface IAnnotationModel {
 	 * If the model is connected to a document, the position is automatically
 	 * updated on document changes. If the annotation is already managed by
 	 * this annotation model or is not a valid position in the connected nothing happens.
+	 * <p>
+	 * <strong>Performance hint:</strong> Use {@link IAnnotationModelExtension#replaceAnnotations(Annotation[], java.util.Map)}
+	 * if several annotations are added and/or removed.
+	 * </p>
 	 *
 	 * @param annotation the annotation to add, may not be <code>null</code>
 	 * @param position the position describing the range covered by this annotation,
@@ -110,6 +114,10 @@ public interface IAnnotationModel {
 	 * longer managed by this model. The position associated with the annotation
 	 * is no longer updated on document changes. If the annotation is not
 	 * managed by this model, nothing happens.
+	 * <p>
+	 * <strong>Performance hint:</strong> Use {@link IAnnotationModelExtension#replaceAnnotations(Annotation[], java.util.Map)}
+	 * if several annotations are removed and/or added.
+	 * </p>
 	 *
 	 * @param annotation the annotation to be removed from this model,
 	 *		may not be <code>null</code>
