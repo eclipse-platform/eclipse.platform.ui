@@ -461,7 +461,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, new RGB(0, 0, 255));
 
-		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE, false);
+		store.setToDefault(EDITOR_DISABLE_OVERWRITE_MODE);
 
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
