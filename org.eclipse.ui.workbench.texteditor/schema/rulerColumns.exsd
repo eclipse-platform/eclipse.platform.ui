@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="column"/>
@@ -256,7 +261,7 @@
       includeInMenu=&quot;false&quot;&gt;
       &lt;placement
          gravity=&quot;0.9&quot;&gt;
-         &lt;after id=&quot;org.eclipse.ui.editors.columns.annotations&quot;&gt;
+         &lt;after id=&quot;org.eclipse.ui.editors.columns.annotations&quot;/&gt;
       &lt;/placement&gt;
       &lt;targetClass
          class=&quot;org.eclipse.ui.texteditor.AbstractDecoratedTextEditor&quot;&gt;
