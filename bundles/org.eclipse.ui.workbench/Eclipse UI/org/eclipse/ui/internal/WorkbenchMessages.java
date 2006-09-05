@@ -709,6 +709,11 @@ public class WorkbenchMessages extends NLS {
 	public static String ShowPartPaneMenuAction_toolTip;
 	public static String ShowViewMenuAction_text;
 	public static String ShowViewMenuAction_toolTip;
+	
+	public static String ToggleCoolbarVisibilityAction_show_text;
+	public static String ToggleCoolbarVisibilityAction_hide_text;
+	public static String ToggleCoolbarVisibilityAction_toolTip;
+	
 
 	// ==============================================================================
 	// Working Set Framework.

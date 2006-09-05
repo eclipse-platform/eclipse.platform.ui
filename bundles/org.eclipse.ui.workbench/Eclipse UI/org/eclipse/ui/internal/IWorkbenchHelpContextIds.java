@@ -322,4 +322,6 @@ public interface IWorkbenchHelpContextIds {
     
     public static final String CAPABILITY_PREFERENCE_PAGE = PREFIX
     	        + "capabilities_preference_page_context"; //$NON-NLS-1$
+    public static final String TOGGLE_COOLBAR_ACTION = PREFIX
+    			+ "toggle_coolbar_action"; //$NON-NLS-1$
 }

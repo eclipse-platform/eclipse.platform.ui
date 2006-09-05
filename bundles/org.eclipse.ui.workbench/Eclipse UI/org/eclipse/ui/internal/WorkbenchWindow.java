@@ -3626,4 +3626,23 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public final boolean hasService(final Class key) {
 		return serviceLocator.hasService(key);
 	}
+	
+	/**
+	 * Toggle the visibility of the coolbar/perspective bar. This method
+	 * respects the window configurer and will only toggle visibility if the
+	 * item in question was originally declared visible by the window advisor.
+	 * 
+	 * @since 3.3
+	 */
+	public void toggleToolbarVisibility() {
+		boolean coolbarVisible = getCoolBarVisible();
+		boolean perspectivebarVisible = getPerspectiveBarVisible();
+		// only toggle the visibility of the components that
+		// were on initially
+		if (getWindowConfigurer().getShowCoolBar())
+			setCoolBarVisible(!coolbarVisible);
+		if (getWindowConfigurer().getShowPerspectiveBar())
+			setPerspectiveBarVisible(!perspectivebarVisible);
+		getShell().layout();
+	}
 }

@@ -653,7 +653,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		menu.add(newEditorAction);
 		// See the comment for quit in createFileMenu
 		ActionContributionItem toggleCoolbarItem = new ActionContributionItem(toggleCoolbarAction);
-		//toggleCoolbarItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		toggleCoolbarItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
 		menu.add(toggleCoolbarItem);
         menu.add(new Separator());
         addPerspectiveActions(menu);
