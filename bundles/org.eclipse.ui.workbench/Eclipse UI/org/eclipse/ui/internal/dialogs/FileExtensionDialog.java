@@ -149,6 +149,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         // check for characters before * 
         // or no other characters
         // or next chatacter not '.'
+        // or another *
         index = filename.indexOf('*');
         if (index > -1) {
             if (filename.length() == 1) {
@@ -158,6 +159,10 @@ public class FileExtensionDialog extends TitleAreaDialog {
             if (index != 0 || filename.charAt(1) != '.') {
                 setErrorMessage(WorkbenchMessages.FileExtension_fileNameInvalidMessage);
                 return false;
+            }
+            if (filename.length() > index && filename.indexOf('*', index + 1) != -1) {
+            	setErrorMessage(WorkbenchMessages.FileExtension_fileNameInvalidMessage); 
+            	return false;
             }
         }
 
