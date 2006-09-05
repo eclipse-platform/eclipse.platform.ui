@@ -227,7 +227,13 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
         });
         listViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                okPressed();
+            	Object obj = ((IStructuredSelection) listViewer.getSelection())
+						.getFirstElement();
+				listViewer.setCheckedElements(new Object[] {obj});
+				buttonWindowSet.setSelection(false);
+				buttonNoSet.setSelection(false);
+				buttonSelectedSets.setSelection(true);            	
+            	okPressed();
             }
         });
         listViewer.addCheckStateListener(new ICheckStateListener() {
