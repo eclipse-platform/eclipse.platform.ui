@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Roman Dawydkin - bug 55116
  *******************************************************************************/
 
 package org.eclipse.jface.window;
@@ -172,7 +173,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             for (int i = 0; i < ws.length; i++) {
                 Control w = ws[i];
 
-                if (i == 0) { // Separator
+                if (w == seperator1) { // Separator
                     Point e = w.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                             flushCache);
                     w.setBounds(clientArea.x, clientArea.y, clientArea.width,
