@@ -1055,6 +1055,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         }
         // make the new page visible
         IWizardPage oldPage = currentPage;
+        // disable widgets on old page in case setVisible code has a runnable 
+        ControlEnableState.disable(oldPage.getControl());
         currentPage = page;
         currentPage.setVisible(true);
         if (oldPage != null) {
