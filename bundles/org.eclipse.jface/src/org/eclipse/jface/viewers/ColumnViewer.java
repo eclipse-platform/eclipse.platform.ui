@@ -142,9 +142,7 @@ abstract class ColumnViewer extends StructuredViewer {
 			viewer = createColumnViewer(columnOwner, ViewerLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
 			setViewerColumn(columnIndex, viewer);
-		} else
-			// Reset the colum-index because maybe it changed from the last time
-			viewer.getLabelProvider().setColumnIndex(columnIndex);
+		} 
 
 		return viewer;
 	}
@@ -199,10 +197,6 @@ abstract class ColumnViewer extends StructuredViewer {
 				}
 			});
 		}
-
-		// Reset the colum-index because maybe it changed from the last time
-		viewer.getLabelProvider().setColumnIndex(columnIndex);
-
 	}
 
 	/**

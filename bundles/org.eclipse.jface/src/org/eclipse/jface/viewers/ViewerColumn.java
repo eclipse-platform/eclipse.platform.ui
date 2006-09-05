@@ -86,7 +86,7 @@ public class ViewerColumn {
 	 */
 	public void refresh(ViewerCell cell) {
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-		getLabelProvider().updateLabel(label, cell.getElement(), cell.getColumnIndex());
+		getLabelProvider().updateLabel(label, cell);
 
 		cell.setBackground(label.getBackground());
 		cell.setForeground(label.getForeground());

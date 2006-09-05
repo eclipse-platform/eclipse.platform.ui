@@ -39,7 +39,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 
 	private IFontProvider fontProvider;
 
-	private int columnIndex;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -73,11 +72,23 @@ public class ViewerLabelProvider extends LabelProvider implements
 				|| labelProvider instanceof ITableColorProvider
 				|| labelProvider instanceof ITableFontProvider)
 			return new TableColumnViewerLabelProvider(labelProvider);
+		if(labelProvider instanceof ViewerLabelProvider)
+			return (ViewerLabelProvider) labelProvider;
 		return new ViewerLabelProvider(labelProvider);
 
 	}
-
-	private void updateLabel(ViewerLabel label, Object element) {
+	/**
+	 * Updates the label for the given cell.
+	 * 
+	 * @param label
+	 *            the label to update
+	 * @param cell
+	 *            the cell to update
+	 */
+	public void updateLabel(ViewerLabel label, ViewerCell cell) {
+		
+		Object element = cell.getElement();
+	
 		label.setText(labelProvider.getText(element));
 		label.setImage(labelProvider.getImage(element));
 
@@ -91,35 +102,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 		}
 	}
 
-	/**
-	 * Updates the label for the given element and the given index
-	 * 
-	 * @param label
-	 *            the label to update
-	 * @param element
-	 *            the element
-	 * @param columnIndex
-	 *            the column index
-	 */
-	public void updateLabel(ViewerLabel label, Object element, int columnIndex) {
-		setColumnIndex(columnIndex);
-		updateLabel(label, element);
-	}
-
-	/**
-	 * @param columnIndex
-	 *            the column-index
-	 */
-	public void setColumnIndex(int columnIndex) {
-		this.columnIndex = columnIndex;
-	}
-
-	/**
-	 * @return Returns the column index
-	 */
-	public int getColumnIndex() {
-		return columnIndex;
-	}
 
 	/**
 	 * Set the colorProvider to use for the receiver.
@@ -211,7 +193,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 	/**
 	 * Get the IColorProvider for the receiver.
 	 * 
-	 * @return IColorProvider
+	 * @return IColorProvider or <code>null</code>
 	 */
 	public IColorProvider getColorProvider() {
 		return colorProvider;
@@ -220,7 +202,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 	/**
 	 * Get the IFontProvider for the receiver.
 	 * 
-	 * @return IFontProvider
+	 * @return IFontProvider or <code>null</code>
 	 */
 	public IFontProvider getFontProvider() {
 		return fontProvider;
