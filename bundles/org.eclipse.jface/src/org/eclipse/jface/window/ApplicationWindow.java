@@ -169,6 +169,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             Rectangle clientArea = composite.getClientArea();
 
             Control[] ws = composite.getChildren();
+            
+            // Lay out the separator, the tool bar control, the cool bar control, the status line, and the page composite.
+            // The following code assumes that the page composite is the last child, and that there are no unexpected other controls.
 
             for (int i = 0; i < ws.length; i++) {
                 Control w = ws[i];
