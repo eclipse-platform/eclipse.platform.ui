@@ -1,4 +1,4 @@
-package org.eclipse.ui.navigator.resources;
+package org.eclipse.ui.internal.navigator.workingsets;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;

@@ -263,7 +263,7 @@
             contentProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider"
             icon="icons/full/obj16/workingsets.gif"
             id="org.eclipse.ui.navigator.resources.workingSets"
-            labelProvider="org.eclipse.ui.navigator.resources.WorkingSetsLabelProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsLabelProvider"
             name="%workingsets.extension.name"
             priority="higher">
          <triggerPoints>
