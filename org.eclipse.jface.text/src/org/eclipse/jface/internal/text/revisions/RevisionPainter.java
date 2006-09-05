@@ -815,7 +815,8 @@ public final class RevisionPainter {
 			ILineRange range= (ILineRange) it.next();
 			ILineRange widgetRange= modelLinesToWidgetLines(range);
 			if (widgetRange == null)
-				return;
+				continue;
+			
 			Rectangle box= computeBoxBounds(widgetRange);
 
 			if (drawFocus)
@@ -826,10 +827,9 @@ public final class RevisionPainter {
 			boolean drawText= fShowAuthor || fShowRevision;
 			if (drawText) {
 				gc.setForeground(foreground);
-				int widgetLine= range.getStartLine();
 				
 				int indentation= 1;
-				int baselineBias= getBaselineBias(gc, widgetLine);
+				int baselineBias= getBaselineBias(gc, widgetRange.getStartLine());
 				if (fShowAuthor && fShowRevision) {
 					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
 					gc.drawString(revision.getAuthor(), fAuthorInset, box.y + baselineBias, true);
@@ -839,7 +839,6 @@ public final class RevisionPainter {
 					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
 				}
 			}
-
 		}
 	}
 
