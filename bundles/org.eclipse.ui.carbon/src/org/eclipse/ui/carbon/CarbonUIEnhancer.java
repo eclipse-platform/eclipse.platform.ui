@@ -47,8 +47,7 @@ public class CarbonUIEnhancer implements IStartup {
     private static final int kHICommandServices = ('s' << 24) + ('e' << 16) + ('r' << 8) + 'v';
 
     private static final String RESOURCE_BUNDLE = "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
-	private static final String TOOLBAR_BUTTON_TOGGLE_FLAGS = "toolbarButtonToggleFlags"; //$NON-NLS-1$
-
+	
     private String fAboutActionName;
 
     /**
@@ -144,9 +143,6 @@ public class CarbonUIEnhancer implements IStartup {
 			// modify the newly opened window with the correct OS X
 			// style bits such that it possesses the toolbar button
 			Shell shell = window.getShell();
-			boolean[] switchArray = new boolean[] { coolBarInitiallyVsible,
-					perspectiveBarInitiallyVsible };
-			shell.setData(TOOLBAR_BUTTON_TOGGLE_FLAGS, switchArray);
 			int windowHandle = OS.GetControlOwner(shell.handle);
 			OS.ChangeWindowAttributes(windowHandle,
 					OS.kWindowToolbarButtonAttribute, 0);
@@ -181,26 +177,7 @@ public class CarbonUIEnhancer implements IStartup {
 						.getWorkbenchWindows();
 				for (int i = 0; i < windows.length; i++) {
 					if (windows[i].getShell() == shell) {
-						WorkbenchWindow castedWindow = (WorkbenchWindow) windows[i];
-						// get the switch flags that were set on the shell by
-						// the window listener
-						boolean[] switchFlags = (boolean[]) shell
-								.getData(TOOLBAR_BUTTON_TOGGLE_FLAGS);
-						if (switchFlags == null)
-							return OS.eventNotHandledErr;
-						boolean coolbarVisible = castedWindow
-								.getCoolBarVisible();
-						boolean perspectivebarVisible = castedWindow
-								.getPerspectiveBarVisible();
-						// only toggle the visibility of the components that
-						// were on initially
-						if (switchFlags[0])
-							castedWindow.setCoolBarVisible(!coolbarVisible);
-						if (switchFlags[1])
-							castedWindow
-									.setPerspectiveBarVisible(!perspectivebarVisible);
-						shell.layout();
-						return OS.noErr;
+						return runAction("toggleCoolbar"); //$NON-NLS-1$
 					}
 				}
 				return OS.eventNotHandledErr;

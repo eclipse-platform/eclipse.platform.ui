@@ -881,6 +881,11 @@
             description="%command.closeOthers.description"
             id="org.eclipse.ui.file.closeOthers"
             name="%command.closeOthers.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.toggleCoolbar.description"
+            id="org.eclipse.ui.ToggleCoolbarAction"
+            name="%command.toggleCoolbar.name"/>
    </extension>
    
    <extension

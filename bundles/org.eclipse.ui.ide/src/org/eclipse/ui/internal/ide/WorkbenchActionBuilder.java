@@ -220,6 +220,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction openProjectAction;
 
     private IWorkbenchAction closeProjectAction;
+    
+    private IWorkbenchAction toggleCoolbarAction;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -649,6 +651,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(newWindowAction);
 		menu.add(newEditorAction);
+		// See the comment for quit in createFileMenu
+		ActionContributionItem toggleCoolbarItem = new ActionContributionItem(toggleCoolbarAction);
+		//toggleCoolbarItem.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
+		menu.add(toggleCoolbarItem);
         menu.add(new Separator());
         addPerspectiveActions(menu);
         menu.add(new Separator());
@@ -1148,6 +1154,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         prefListener = null;
         propPrefListener = null;
         introAction = null;
+        toggleCoolbarAction = null;
         
         super.dispose();
     }
@@ -1461,6 +1468,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
                 .create(window);
+        
+        toggleCoolbarAction = ActionFactory.TOGGLE_COOLBAR.create(window);
+        register(toggleCoolbarAction);
         
 //        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
     }

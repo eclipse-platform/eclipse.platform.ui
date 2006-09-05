@@ -54,6 +54,7 @@ import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
 import org.eclipse.ui.internal.actions.NewEditorAction;
 import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
+import org.eclipse.ui.internal.actions.ToggleCoolbarVisibilityAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1480,22 +1481,47 @@ public abstract class ActionFactory {
     };
     
     /**
-     * Establishes bi-direction connections between the forward and backward
-     * actions of a cycle pair.
-     * <p>
-     * Example usage:
-     * 
-     * <pre>
-     *  ActionFactory.IWorkbenchAction nextEditorAction = ActionFactory.NEXT_EDITOR.create(window); ActionFactory.IWorkbenchAction previousEditorAction = ActionFactory.PREVIOUS_EDITOR.create(window); ActionFactory.linkCycleActionPair(nextEditorAction, previousEditorAction);
-     * </pre>
-     * 
-     * </p>
-     * 
-     * @param next
-     *            the action that moves forward
-     * @param previous
-     *            the action that moves backward
-     */
+	 * Workbench action (id "toggleCoolbar"): Toggle the visibility of the
+	 * coolbar and perspective switcher. This will only enable visibility of the
+	 * coolbar and perspective bar if the window advisor creating the window
+	 * allowed for their visibility initially.
+	 * 
+	 * @since 3.3
+	 */
+	public static final ActionFactory TOGGLE_COOLBAR = new ActionFactory(
+			"toggleCoolbar") { //$NON-NLS-1$
+
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new ToggleCoolbarVisibilityAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+    
+    /**
+	 * Establishes bi-direction connections between the forward and backward
+	 * actions of a cycle pair.
+	 * <p>
+	 * Example usage:
+	 * 
+	 * <pre>
+	 * ActionFactory.IWorkbenchAction nextEditorAction = ActionFactory.NEXT_EDITOR
+	 * 		.create(window);
+	 * ActionFactory.IWorkbenchAction previousEditorAction = ActionFactory.PREVIOUS_EDITOR
+	 * 		.create(window);
+	 * ActionFactory.linkCycleActionPair(nextEditorAction, previousEditorAction);
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * @param next
+	 *            the action that moves forward
+	 * @param previous
+	 *            the action that moves backward
+	 */
     public static void linkCycleActionPair(IWorkbenchAction next,
             IWorkbenchAction previous) {
         if (!(next instanceof CyclePartAction)) {
