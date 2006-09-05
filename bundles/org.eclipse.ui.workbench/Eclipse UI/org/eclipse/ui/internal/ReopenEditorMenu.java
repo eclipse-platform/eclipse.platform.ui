@@ -12,7 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -59,6 +59,9 @@ public class ReopenEditorMenu extends ContributionItem {
 
     /**
      * Create a new instance.
+     * @param window the window on which the menu is to be created
+     * @param id menu's id
+     * @param showSeparator whether or not to show a separator
      */
     public ReopenEditorMenu(IWorkbenchWindow window, String id,
             boolean showSeparator) {
@@ -166,7 +169,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
             }
         }
-        return TextProcessor.process(sb.toString(), TextProcessor.getDefaultDelimiters() + "]");//$NON-NLS-1$
+        return TextProcessor.process(sb.toString(), TextProcessor.getDefaultDelimiters() + "[]");//$NON-NLS-1$
     }
 
     /**
@@ -207,7 +210,7 @@ public class ReopenEditorMenu extends ContributionItem {
         for (int i = 0; i < n; i++) {
             final EditorHistoryItem item = historyItems[i];
             final int historyIndex = i;
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() throws Exception {
                     String text = calcText(historyIndex, item);
                     MenuItem mi = new MenuItem(menu, SWT.PUSH, menuIndex[0]);
