@@ -405,21 +405,26 @@ public class CyclePartAction extends PageEventAction {
 		});
 
 		Rectangle dialogBounds = dialog.getBounds();
-		Rectangle displayBounds = display.getClientArea();
 		Rectangle parentBounds = dialog.getParent().getBounds();
+		IWorkbenchPart activePart = getActivePart();
 
+		// the bounds of the monitor that contains the currently active part.  
+		Rectangle monitorBounds = activePart == null ? display
+				.getPrimaryMonitor().getBounds() : ((PartSite) activePart
+				.getSite()).getPane().getControl().getMonitor().getBounds();
+		
 		// Place it in the center of its parent;
 		dialogBounds.x = parentBounds.x
 				+ ((parentBounds.width - dialogBounds.width) / 2);
 		dialogBounds.y = parentBounds.y
 				+ ((parentBounds.height - dialogBounds.height) / 2);
-		if (!displayBounds.contains(dialogBounds.x, dialogBounds.y)
-				|| !displayBounds.contains(dialogBounds.x + dialogBounds.width,
+		if (!monitorBounds.contains(dialogBounds.x, dialogBounds.y)
+				|| !monitorBounds.contains(dialogBounds.x + dialogBounds.width,
 						dialogBounds.y + dialogBounds.height)) {
-			// Place it in the center of the display if it is not visible
+			// Place it in the center of the monitor if it is not visible
 			// when placed in the center of its parent;
-			dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
-			dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
+			dialogBounds.x = monitorBounds.x + (monitorBounds.width - dialogBounds.width) / 2;
+			dialogBounds.y = monitorBounds.y + (monitorBounds.height - dialogBounds.height) / 2;
 		}
 
 		dialog.setLocation(dialogBounds.x, dialogBounds.y);
