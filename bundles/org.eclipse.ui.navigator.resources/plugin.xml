@@ -271,7 +271,10 @@
          </triggerPoints>
          <possibleChildren>
             <instanceof value="java.lang.Object"/>
-         </possibleChildren>  
+         </possibleChildren>
+         <commonSorter
+               class="org.eclipse.ui.internal.navigator.workingsets.WorkingSetSorter"
+               id="org.eclipse.ui.navigator.resources.workingSets.sorter"/>  
       </navigatorContent>
       
    </extension>
