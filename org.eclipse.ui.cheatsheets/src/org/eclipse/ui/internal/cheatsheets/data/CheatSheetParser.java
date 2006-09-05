@@ -235,12 +235,13 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	private void checkForNoChildren(Node parentNode) {
-		// Handle nodes
 		NodeList nodes = parentNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-			String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), parentNode.getNodeName()}));
-			addStatus(IStatus.WARNING, message, null);
+			if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
+				String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), parentNode.getNodeName()}));
+				addStatus(IStatus.WARNING, message, null);
+			}
 		}
 	}
 
