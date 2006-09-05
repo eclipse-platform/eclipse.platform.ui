@@ -166,7 +166,7 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
             }
         }
-        return TextProcessor.process(sb.toString(), TextProcessor.getDefaultDelimiters() + "]");//$NON-NLS-1$
+        return TextProcessor.process(sb.toString(), TextProcessor.getDefaultDelimiters() + "[]");//$NON-NLS-1$
     }
 
     /**
