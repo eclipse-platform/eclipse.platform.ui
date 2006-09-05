@@ -6,9 +6,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerColumn;
-import org.eclipse.jface.viewers.ViewerLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -17,7 +14,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -45,32 +41,6 @@ public class MultiLineExample {
 		display.dispose();
 	}
 
-	class MultiLineColumn extends ViewerColumn {
-
-		Control control;
-
-		/**
-		 * Create a new instance of the receiver with no label provider.
-		 * 
-		 * @param columnOwner
-		 */
-		public MultiLineColumn(TableColumn columnOwner) {
-			super(columnOwner, null);
-			control = columnOwner.getParent();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerColumn#refresh(org.eclipse.jface.viewers.ViewerCell)
-		 */
-		public void refresh(ViewerCell cell) {
-			Rectangle cellBounds = cell.getBounds();
-			control.redraw(cellBounds.x, cellBounds.y, cellBounds.width,
-					cellBounds.height, true);
-		}
-
-	}
 
 	class LineEntry {
 
@@ -212,6 +182,7 @@ public class MultiLineExample {
 		});
 		createColumns();
 
+		viewer.setLabelProvider(new OwnerDrawLabelProvider());
 		viewer.setInput(this);
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL
@@ -308,9 +279,6 @@ public class MultiLineExample {
 		TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, 0);
 		layout.addColumnData(new ColumnPixelData(350));
 		tc.setText("Lines");
-		MultiLineColumn column = new MultiLineColumn(tc);
-		column.setLabelProvider(new ViewerLabelProvider());
-		viewer.setViewerColumn(0, column);
 
 	}
 

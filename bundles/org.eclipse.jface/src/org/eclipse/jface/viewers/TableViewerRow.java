@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -136,6 +137,13 @@ public class TableViewerRow extends ViewerRow {
 	 */
 	public void setText(int columnIndex, String text) {
 		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerRow#getControl()
+	 */
+	public Control getControl() {
+		return item.getParent();
 	}
 
 }

@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
@@ -141,5 +143,21 @@ public class ViewerCell {
 	void update(ViewerRow rowItem, int column) {
 		row = rowItem;
 		columnIndex = column;		
+	}
+
+	/**
+	 * Return the item for the receiver.
+	 * @return Item
+	 */
+	public Item getItem() {
+		return row.getItem();
+	}
+	
+	/**
+	 * Get the control for this cell.
+	 * @return Control
+	 */
+	public Control getControl(){
+		return row.getControl();
 	}
 }

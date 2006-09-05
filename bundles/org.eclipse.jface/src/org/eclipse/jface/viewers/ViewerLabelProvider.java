@@ -334,4 +334,25 @@ public class ViewerLabelProvider extends LabelProvider implements
 		return SWT.SHADOW_NONE;
 	}
 
+	/**
+	 * Update for cell.
+	 * @param cell
+	 */
+	public void update(ViewerCell cell) {
+		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
+		updateLabel(label, cell);
+		
+
+		cell.setBackground(label.getBackground());
+		cell.setForeground(label.getForeground());
+		cell.setFont(label.getFont());
+
+		if (label.hasNewText())
+			cell.setText(label.getText());
+
+		if (label.hasNewImage())
+			cell.setImage(label.getImage());
+		
+	}
+
 }

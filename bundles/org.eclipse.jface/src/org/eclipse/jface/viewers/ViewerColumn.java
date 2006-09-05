@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  * 
  */
-public class ViewerColumn {
+public final class ViewerColumn {
 
 	private ViewerLabelProvider labelProvider;
 
@@ -85,18 +85,7 @@ public class ViewerColumn {
 	 * @param cell
 	 */
 	public void refresh(ViewerCell cell) {
-		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-		getLabelProvider().updateLabel(label, cell);
-
-		cell.setBackground(label.getBackground());
-		cell.setForeground(label.getForeground());
-		cell.setFont(label.getFont());
-
-		if (label.hasNewText())
-			cell.setText(label.getText());
-
-		if (label.hasNewImage())
-			cell.setImage(label.getImage());
+		getLabelProvider().update(cell);
 	}
 
 	/**

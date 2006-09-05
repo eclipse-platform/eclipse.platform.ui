@@ -6,9 +6,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerColumn;
-import org.eclipse.jface.viewers.ViewerLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
@@ -17,7 +14,6 @@ import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -46,33 +42,6 @@ public class OwnerDrawExample {
 	}
 
 	private static int COLUMN_COUNT = 3;
-
-	class OwnerDrawColumn extends ViewerColumn {
-
-		Control control;
-
-		/**
-		 * Create a new instance of the receiver with no label provider.
-		 * 
-		 * @param columnOwner
-		 */
-		public OwnerDrawColumn(TableColumn columnOwner) {
-			super(columnOwner, null);
-			control = columnOwner.getParent();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerColumn#refresh(org.eclipse.jface.viewers.ViewerCell)
-		 */
-		public void refresh(ViewerCell cell) {
-			Rectangle cellBounds = cell.getBounds();
-			control.redraw(cellBounds.x, cellBounds.y, cellBounds.width,
-					cellBounds.height, true);
-		}
-
-	}
 
 	class CountryEntry {
 
@@ -322,7 +291,7 @@ public class OwnerDrawExample {
 
 		}
 	}
-
+	
 	private TableViewer viewer;
 
 	private CountryEntry[] entries;
@@ -373,6 +342,7 @@ public class OwnerDrawExample {
 		});
 		createColumns();
 
+		viewer.setLabelProvider(new OwnerDrawLabelProvider());
 		viewer.setInput(this);
 
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL
@@ -466,9 +436,6 @@ public class OwnerDrawExample {
 			TableColumn tc = new TableColumn(viewer.getTable(), SWT.NONE, i);
 			layout.addColumnData(new ColumnPixelData(100));
 			tc.setText(getTitleFor(i));
-			OwnerDrawColumn column = new OwnerDrawColumn(tc);
-			column.setLabelProvider(new ViewerLabelProvider());
-			viewer.setViewerColumn(i, column);
 		}
 		;
 	}

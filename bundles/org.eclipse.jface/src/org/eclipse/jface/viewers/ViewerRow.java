@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 
 /**
@@ -210,5 +211,11 @@ public abstract class ViewerRow {
 
 		return null;
 	}
+	
+	/**
+	 * Get the Control for the receiver.
+	 * @return Control
+	 */
+	public abstract Control getControl();
 
 }
