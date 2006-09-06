@@ -128,7 +128,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
-			System.out.println("Event: " + event.getProperty()); //$NON-NLS-1$
 			IWorkingSet oldWorkingSet = (IWorkingSet) event.getOldValue();
 			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
