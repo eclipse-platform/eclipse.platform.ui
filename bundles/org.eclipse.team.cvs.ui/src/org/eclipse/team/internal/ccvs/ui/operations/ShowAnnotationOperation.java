@@ -18,16 +18,15 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.revisions.Revision;
-import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.revisions.*;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -61,6 +60,7 @@ public class ShowAnnotationOperation extends CVSOperation {
     final private ICVSResource fCVSResource;
     final private String fRevision;
     private final boolean binary;
+	private Map fUIRevisionsById;
 
     public ShowAnnotationOperation(IWorkbenchPart part, ICVSResource cvsResource, String revision, boolean binary) {
         super(part);
@@ -114,7 +114,14 @@ public class ShowAnnotationOperation extends CVSOperation {
 								CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
 								cvsHistoryPage.setMode(CVSHistoryPage.REMOTE_MODE);
 							}
-							final ISelectionProvider provider= (ISelectionProvider) editor.getAdapter(RevisionSelectionProvider.class);
+							IRevisionRulerColumn column= (IRevisionRulerColumn) editor.getAdapter(IRevisionRulerColumn.class);
+							final ISelectionProvider provider;
+							if (column instanceof IRevisionRulerColumnExtension) {
+								IRevisionRulerColumnExtension ext= (IRevisionRulerColumnExtension) column;
+								provider= ext.getRevisionSelectionProvider();
+							} else {
+								provider= null;
+							}
 							if (provider != null) {
 								final ISelectionChangedListener selectionListener= new ISelectionChangedListener() {
 									public void selectionChanged(SelectionChangedEvent event) {
@@ -142,6 +149,32 @@ public class ShowAnnotationOperation extends CVSOperation {
 									}
 								};
 								provider.addSelectionChangedListener(selectionListener);
+								final ISelectionChangedListener viewSelectionListener= new ISelectionChangedListener() {
+									public void selectionChanged(SelectionChangedEvent event) {
+										ISelection selection= event.getSelection();
+										ISelection uiSelection= StructuredSelection.EMPTY;
+										if (selection instanceof IStructuredSelection) {
+											Object first= ((IStructuredSelection) selection).getFirstElement();
+											if (first instanceof IFileRevision) {
+												IFileRevision revision= (IFileRevision) first;
+												if (fUIRevisionsById != null) {
+													Revision rev= (Revision) fUIRevisionsById.get(revision.getContentIdentifier());
+													if (rev != null) {
+														uiSelection= new StructuredSelection(rev);
+													}
+												}
+											}
+										}
+										provider.setSelection(uiSelection);
+									}
+								};
+								final TreeViewer viewer;
+								if (historyPage instanceof CVSHistoryPage) {
+									viewer= ((CVSHistoryPage) historyPage).getTreeViewer();
+									viewer.addSelectionChangedListener(viewSelectionListener);
+								} else {
+									viewer= null;
+								}
 								page.addPartListener(new IPartListener() {
 
 									public void partOpened(IWorkbenchPart part) {
@@ -154,6 +187,8 @@ public class ShowAnnotationOperation extends CVSOperation {
 										if (part == historyView || part == editor) {
 											page.removePartListener(this);
 											provider.removeSelectionChangedListener(selectionListener);
+											if (viewer != null)
+												viewer.removeSelectionChangedListener(viewSelectionListener);
 										}
 									}
 
@@ -238,7 +273,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 					if (editor instanceof AbstractDecoratedTextEditor)
 						return (AbstractDecoratedTextEditor) editor;
 					else {
-						//editor opened is not a text editor - reopen file using the defualt text editor
+						//editor opened is not a text editor - reopen file using the default text editor
 						IEditorPart part = getPart().getSite().getPage().openEditor(new FileEditorInput((IFile) resource), IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_NONE);
 						if (part != null && part instanceof AbstractDecoratedTextEditor)
 							return (AbstractDecoratedTextEditor)part;
@@ -340,6 +375,8 @@ public class ShowAnnotationOperation extends CVSOperation {
 					continue;
 				
 				revision= new Revision() {
+					private String fCommitter= null;
+					
 					public Object getHoverInfo() {
 						if (entry != null)
 							return "<b>" + entry.getAuthor() + " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) + "</b><p>" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -348,7 +385,9 @@ public class ShowAnnotationOperation extends CVSOperation {
 					}
 					
 					private String getCommitterId() {
-						return block.toString().substring(0, block.toString().indexOf(' '));
+						if (fCommitter == null)
+							fCommitter= block.toString().substring(0, block.toString().indexOf(' '));
+						return fCommitter;
 					}
 					
 					public String getId() {
@@ -362,12 +401,18 @@ public class ShowAnnotationOperation extends CVSOperation {
 					public RGB getColor() {
 						return colors.getCommitterRGB(getCommitterId());
 					}
+
+					public String getAuthor() {
+						return getCommitterId();
+					}
 				};
 				sets.put(revisionString, revision);
 				info.addRevision(revision);
 			}
 			revision.addRange(new LineRange(block.getStartLine(), block.getEndLine() - block.getStartLine() + 1));
 		}
+		
+		fUIRevisionsById= sets;
 		return info;
 	}
     
