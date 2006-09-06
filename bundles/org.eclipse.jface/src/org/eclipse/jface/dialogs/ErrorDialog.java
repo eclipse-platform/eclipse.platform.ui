@@ -186,10 +186,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 
     /**
      * This implementation of the <code>Dialog</code> framework method creates
-     * and lays out a composite and calls <code>createMessageArea</code> and
-     * <code>createCustomArea</code> to populate it. Subclasses should
-     * override <code>createCustomArea</code> to add contents below the
-     * message.
+     * and lays out a composite.  Subclasses that require a different dialog
+     * area may either override this method, or call the <code>super</code> 
+     * implementation and add controls to the created composite.
      */
     protected Control createDialogArea(Composite parent) {
         createMessageArea(parent);
