@@ -11,32 +11,29 @@
 package org.eclipse.compare; 
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.custom.BusyIndicator;
-
-import org.eclipse.core.resources.IFile;
+import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.*;
 
 
 /**
@@ -187,22 +184,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					}
 				);
 			return fNavigator;
-		}
-		if (IFile.class.equals(adapter)) {
-		    IProgressMonitor pm= new NullProgressMonitor();
-			// flush changes in any dirty viewer
-			try {
-	            flushViewer(fStructureInputPane, pm);
-	            flushViewer(fStructurePane1, pm);
-	            flushViewer(fStructurePane2, pm);
-	            flushViewer(fContentInputPane, pm);
-	        } catch (CoreException e) {
-	            CompareUIPlugin.log(e);
-	        }
-		    IFile[] files= (IFile[]) getAdapter(IFile[].class);
-		    if (files != null && files.length > 0)
-		        return files[0];	// can only return one: limitation on IDE.saveAllEditors; see #64617
-		    return null;
 		}
 		return null;
 	}
@@ -802,13 +783,23 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		
-		// flush changes in any dirty viewer
-		flushViewer(fStructureInputPane, pm);
-		flushViewer(fStructurePane1, pm);
-		flushViewer(fStructurePane2, pm);
-		flushViewer(fContentInputPane, pm);
+		flushViewers(pm);
 
 		save(pm);
+	}
+
+	/**
+	 * Flush the viewer contents into the input.
+	 * @param monitor a progress monitor
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	protected void flushViewers(IProgressMonitor monitor) throws CoreException {
+		// flush changes in any dirty viewer
+		flushViewer(fStructureInputPane, monitor);
+		flushViewer(fStructurePane1, monitor);
+		flushViewer(fStructurePane2, monitor);
+		flushViewer(fContentInputPane, monitor);
 	}
 		
 	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) throws CoreException {
