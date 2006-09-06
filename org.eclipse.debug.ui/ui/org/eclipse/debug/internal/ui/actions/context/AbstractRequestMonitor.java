@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 
 /**
- * Common function for request montiors
+ * Common function for request monitors
  * 
  * @since 3.2
  *
