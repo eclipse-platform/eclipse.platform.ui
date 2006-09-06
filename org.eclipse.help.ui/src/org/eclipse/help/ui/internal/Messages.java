@@ -32,11 +32,6 @@ public final class Messages extends NLS {
 	public static String CustomBrowserPreferencePage_Program;
 	public static String CustomBrowserPreferencePage_Browse;
 	public static String CustomBrowserPreferencePage_Details;
-	public static String AppserverPreferencePage_description;
-	public static String AppserverPreferencePage_hostDescription;
-	public static String AppserverPreferencePage_portDescription;
-	public static String AppserverPreferencePage_requireRestart;
-	public static String AppserverPreferencePage_invalidPort;
 	public static String WW002;
 	public static String WE022;
 	public static String WE023;
@@ -136,19 +131,19 @@ public final class Messages extends NLS {
 	public static String ScopePreferenceDialog_delete;
 	public static String NewEngineWizard_wtitle;
 	public static String BrowserPart_showExternalTooltip;
-	public static String BrowsersPreferencePage_message;
-	public static String BrowsersPreferencePage_winfopop;
-	public static String BrowsersPreferencePage_dinfopop;
+	public static String HelpPreferencePage_message;
+	public static String HelpPreferencePage_winfopop;
+	public static String HelpPreferencePage_dinfopop;
 	public static String BrowserPart_bookmarkTooltip;
 	public static String BrowserPart_highlightTooltip;
 	public static String BrowserPart_syncTocTooltip;	
-	public static String BrowsersPreferencePage_wlabel;
-	public static String BrowsersPreferencePage_view;
-	public static String BrowsersPreferencePage_dlabel;
-	public static String BrowsersPreferencePage_tray;
-	public static String BrowsersPreferencePage_search;
-	public static String BrowsersPreferencePage_searchPotentialHits;
-	public static String BrowsersPreferencePage_searchActualHits;
+	public static String HelpPreferencePage_wlabel;
+	public static String HelpPreferencePage_view;
+	public static String HelpPreferencePage_dlabel;
+	public static String HelpPreferencePage_tray;
+	public static String HelpPreferencePage_search;
+	public static String HelpPreferencePage_searchPotentialHits;
+	public static String HelpPreferencePage_searchActualHits;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;
@@ -175,16 +170,24 @@ public final class Messages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	public static String BrowsersPreferencePage_openModeGroup;
-	public static String BrowsersPreferencePage_olabel;
-	public static String BrowsersPreferencePage_openInPlace;
-	public static String BrowsersPreferencePage_openInEditor;
+	public static String HelpPreferencePage_openModeGroup;
+	public static String HelpPreferencePage_olabel;
+	public static String HelpPreferencePage_openInPlace;
+	public static String HelpPreferencePage_openInEditor;
 	public static String ReusableHelpPart_internalBrowserTitle;
 	public static String ReusableHelpPart_internalWebBrowserError;
 	public static String ScopeSet_errorLoading;
 	public static String ScopeSet_errorSaving;
 	public static String IndexInstructions;
 	public static String IndexButton;
+	
+	public static String HelpContentPreferencePage_remote;
+	public static String HelpContentPreferencePage_location;
+	public static String HelpContentPreferencePage_host;
+	public static String HelpContentPreferencePage_portDefault;
+	public static String HelpContentPreferencePage_port;
+	public static String HelpContentPreferencePage_error_host;
+	public static String HelpContentPreferencePage_error_port;
 	
 	public static String NoWorkbenchForExecuteCommand_msg;
 }

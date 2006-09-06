@@ -98,10 +98,10 @@ becomes undefined.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for the index provider.  This class must implement the &lt;samp&gt;org.eclipse.help.IIndexProvider&lt;/samp&gt; interface.
+                  the implementation class for the index provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IIndexProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractIndexProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -178,7 +178,7 @@ becomes undefined.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         An implementation of &lt;samp&gt;org.eclipse.help.IIndexProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;indexProvider&lt;/samp&gt; is used.
+         An implementation of &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;indexProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 

@@ -18,18 +18,21 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IIndexContribution;
-import org.eclipse.help.IIndexProvider;
+import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
  * Provides index data from index XML files to the help system.
  */
-public class IndexFileProvider implements IIndexProvider {
+public class IndexFileProvider extends AbstractIndexProvider {
 
 	public static final String EXTENSION_POINT_ID_INDEX = HelpPlugin.PLUGIN_ID + ".index"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_FILE = "file"; //$NON-NLS-1$
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
+	 */
 	public IIndexContribution[] getIndexContributions(String locale) {
 		List contributions = new ArrayList();
 		IndexFile[] indexFiles = getIndexFiles(locale);

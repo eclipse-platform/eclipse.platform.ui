@@ -165,23 +165,10 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	public IHelpResource getCategory() {
 		if (participantId == null)
 			return toc;
-		return BaseHelpSystem.getSearchManager().getParticipantCategory(participantId);
+		return BaseHelpSystem.getLocalSearchManager().getParticipantCategory(participantId);
 	}
 
-	/**
-	 * Returns the unprocessed summary.
-	 */
-	public String getRawSummary() {
-		return summary;
-	}
-	
-	/**
-	 * @return Returns the summary.
-	 */
 	public String getSummary() {
-		if (summary != null && summary.length() > 0) {
-			return summary + "..."; //$NON-NLS-1$
-		}
 		return summary;
 	}
 
@@ -216,7 +203,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	public URL getIconURL() {
 		if (participantId == null)
 			return null;
-		return BaseHelpSystem.getSearchManager().getParticipantIconURL(participantId);
+		return BaseHelpSystem.getLocalSearchManager().getParticipantIconURL(participantId);
 	}
 
 	public boolean canOpen() {

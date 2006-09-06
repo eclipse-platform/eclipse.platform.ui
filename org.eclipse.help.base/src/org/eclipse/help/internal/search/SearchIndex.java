@@ -190,7 +190,7 @@ public class SearchIndex implements ISearchIndex {
 			Document doc = new Document();
 			doc.add(Field.Keyword(FIELD_NAME, name));
 			addExtraFields(doc);
-			String pluginId = SearchManager.getPluginId(name);
+			String pluginId = LocalSearchManager.getPluginId(name);
 			if (relativePath != null)
 				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath));
 			// NEW: check for the explicit search participant.
@@ -199,10 +199,10 @@ public class SearchIndex implements ISearchIndex {
 			String id = urlc.getValue("id"); //$NON-NLS-1$
 			String pid = urlc.getValue("participantId"); //$NON-NLS-1$
 			if (pid != null)
-				participant = BaseHelpSystem.getSearchManager().getGlobalParticipant(pid);
+				participant = BaseHelpSystem.getLocalSearchManager().getGlobalParticipant(pid);
 			// NEW: check for file extension-based search participant;
 			if (participant == null)
-				participant = BaseHelpSystem.getSearchManager().getParticipant(pluginId, name);
+				participant = BaseHelpSystem.getLocalSearchManager().getParticipant(pluginId, name);
 			if (participant != null) {
 				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
@@ -626,7 +626,7 @@ public class SearchIndex implements ISearchIndex {
 					openSearcher();
 				}
 				Hits hits = searcher.search(luceneQuery);
-				collector.addHits(SearchManager.asList(hits), highlightTerms);
+				collector.addHits(LocalSearchManager.asList(hits), highlightTerms);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
 			throw new QueryTooComplexException();
@@ -661,7 +661,7 @@ public class SearchIndex implements ISearchIndex {
 					// ignore this extension and move on
 				}
 			}
-			Collection additionalPluginIds = BaseHelpSystem.getSearchManager()
+			Collection additionalPluginIds = BaseHelpSystem.getLocalSearchManager()
 					.getPluginsWithSearchParticipants();
 			totalIds.addAll(additionalPluginIds);
 			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE, totalIds, indexDir, !exists());
@@ -999,7 +999,7 @@ public class SearchIndex implements ISearchIndex {
 			// its a fragment, index whole document
 		} else {
 			// try search participants
-			return BaseHelpSystem.getSearchManager().isIndexable(url) ? url : null;
+			return BaseHelpSystem.getLocalSearchManager().isIndexable(url) ? url : null;
 		}
 		return url;
 	}
@@ -1049,7 +1049,7 @@ public class SearchIndex implements ISearchIndex {
 
 	public IStatus addDocument(String pluginId, String name, URL url, String id, Document doc) {
 		// try a registered participant for the file format
-		LuceneSearchParticipant participant = BaseHelpSystem.getSearchManager()
+		LuceneSearchParticipant participant = BaseHelpSystem.getLocalSearchManager()
 				.getParticipant(pluginId, name);
 		if (participant != null) {
 			try {

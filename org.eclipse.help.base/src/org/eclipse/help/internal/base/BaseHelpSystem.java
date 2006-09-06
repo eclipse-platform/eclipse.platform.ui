@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
@@ -29,6 +30,7 @@ import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.util.IErrorUtil;
 import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.internal.search.LocalSearchManager;
 import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.internal.workingset.WorkingSetManager;
 import org.osgi.framework.Bundle;
@@ -90,10 +92,9 @@ public final class BaseHelpSystem {
 		return instance;
 	}
 
-	/**
-	 * Used to obtain Search Manager
-	 * 
-	 * @return instance of SearchManager
+	/*
+	 * Returns the singleton search manager, which is the main interface to the
+	 * help system's search capability.
 	 */
 	public static SearchManager getSearchManager() {
 		if (getInstance().searchManager == null) {
@@ -104,6 +105,14 @@ public final class BaseHelpSystem {
 			}
 		}
 		return getInstance().searchManager;
+	}
+	
+	/*
+	 * Returns the local search manager which deals only with the local content
+	 * and is called by the global search manager.
+	 */
+	public static LocalSearchManager getLocalSearchManager() {
+		return getSearchManager().getLocalSearchManager();
 	}
 
 	/**
@@ -452,6 +461,19 @@ public final class BaseHelpSystem {
 		return false;
 	}
 
+	/*
+	 * Returns whether or not the help system is configured for remote help
+	 * content.
+	 */
+	public static boolean isRemote() {
+		if (getMode() != MODE_INFOCENTER) {
+			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
+			return (host != null && host.length() > 0);
+		}
+		return false;
+	}
+	
 	public static boolean isRTL() {
 		return getInstance().rtl;
 	}

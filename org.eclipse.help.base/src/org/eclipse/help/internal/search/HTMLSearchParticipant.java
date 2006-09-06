@@ -41,7 +41,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 			Document doc) {
 		// if it's XHTML, forward it on to the proper search participant
 		if (isXHTML(pluginId, url)) {
-			SearchManager manager = BaseHelpSystem.getSearchManager();
+			LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
 			LuceneSearchParticipant xhtmlParticipant = manager.getParticipant("org.eclipse.help.base.xhtml"); //$NON-NLS-1$
 			return xhtmlParticipant.addDocument(index, pluginId, name, url, id, doc);
 		}
@@ -88,7 +88,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 	 */
 	private boolean isXHTML(String pluginId, URL url) {
 		// if the search participant isn't bound to the plugin we shouldn't use it
-		SearchManager manager = BaseHelpSystem.getSearchManager();
+		LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
 		if (manager.isParticipantBound(pluginId, "org.eclipse.help.base.xhtml")) { //$NON-NLS-1$
 			if (xhtmlDescriber == null) {
 				xhtmlDescriber = new XHTMLContentDescriber();

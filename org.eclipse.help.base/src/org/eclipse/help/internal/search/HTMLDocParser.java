@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.help.internal.search;
 
 import java.io.*;
@@ -127,6 +126,9 @@ public class HTMLDocParser {
 				if (header.equalsIgnoreCase(title)) {
 					summary = summary.substring(title.length()).trim();
 				}
+			}
+			if (summary != null && summary.length() > 0) {
+				summary += "..."; //$NON-NLS-1$
 			}
 			return summary;
 		} catch (InterruptedException ie) {

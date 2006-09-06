@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help;
 
+import org.eclipse.help.internal.HelpPlugin;
+
 /**
- * An <code>ITocProvider</code> is a mechanism to provide arbitrary content to
- * the table of contents (TOC). <code>ITocProvider</code>s must be registered
- * via the <code>org.eclipse.help.toc</code> extension point.
- * 
- * This interface is intended to be implemented by clients.
+ * An <code>AbstractTocProvider</code> is a mechanism to provide arbitrary
+ * content to the table of contents (TOC). <code>AbstractTocProvider</code>s
+ * must be registered via the <code>org.eclipse.help.toc</code> extension point.
  * 
  * @since 3.3
  */
-public interface ITocProvider {
+public abstract class AbstractTocProvider {
 
 	/**
 	 * Returns all <code>ITocContribution</code>s for this provider. Providers
@@ -28,5 +28,15 @@ public interface ITocProvider {
 	 * @param locale the locale for which to get contributions
 	 * @return all the contributions for this provider
 	 */
-	public ITocContribution[] getTocContributions(String locale);
+	public abstract ITocContribution[] getTocContributions(String locale);
+	
+	/**
+	 * Notifies the platform that the content managed by this provider may
+	 * have changed since the last time <code>getTocContributions()</code>
+	 * was called, and needs to be updated.
+	 */
+	protected void contentChanged() {
+		// will force a reload next time around
+		HelpPlugin.getTocManager().clearCache();
+	}
 }

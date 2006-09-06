@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.ui.internal.browser;
+package org.eclipse.help.ui.internal.preferences;
 
 import java.util.Iterator;
 
@@ -40,7 +40,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 /**
  * Preference page for selecting default web browser.
  */
-public class BrowsersPreferencePage extends PreferencePage implements
+public class HelpPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private Button alwaysExternal;
 
@@ -70,7 +70,7 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	 */
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IHelpUIConstants.PREF_PAGE_BROWSERS);
+				IHelpUIConstants.PREF_PAGE_HELP);
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
@@ -105,7 +105,7 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		if (node != null) {
 			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,
 					SWT.WRAP, WBROWSER_PAGE_ID,
-					Messages.BrowsersPreferencePage_message,
+					Messages.HelpPreferencePage_message,
 					(IWorkbenchPreferenceContainer) getContainer(), null);
 			GridData data = new GridData(GridData.FILL_HORIZONTAL
 					| GridData.GRAB_HORIZONTAL);
@@ -120,17 +120,17 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		group.setText(Messages.BrowsersPreferencePage_openModeGroup);
+		group.setText(Messages.HelpPreferencePage_openModeGroup);
 		
 		Label whelpDescription = new Label(group, SWT.NONE);
-		whelpDescription.setText(Messages.BrowsersPreferencePage_wlabel);
+		whelpDescription.setText(Messages.HelpPreferencePage_wlabel);
 		whelpDescription.setLayoutData(createLabelData());
 		composite = createRadioComposite(group);
 		whelpAsViewButton = new Button(composite, SWT.RADIO);
-		whelpAsViewButton.setText(Messages.BrowsersPreferencePage_view);
+		whelpAsViewButton.setText(Messages.HelpPreferencePage_view);
 		whelpAsViewButton.setLayoutData(createIndentData());
 		whelpAsInfopopButton = new Button(composite, SWT.RADIO);
-		whelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_winfopop);
+		whelpAsInfopopButton.setText(Messages.HelpPreferencePage_winfopop);
 		whelpAsInfopopButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
@@ -138,14 +138,14 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		whelpAsInfopopButton.setSelection(winfopop);
 
 		Label dhelpDescription = new Label(group, SWT.NONE);
-		dhelpDescription.setText(Messages.BrowsersPreferencePage_dlabel);
+		dhelpDescription.setText(Messages.HelpPreferencePage_dlabel);
 		dhelpDescription.setLayoutData(createLabelData());
 		composite = createRadioComposite(group);
 		dhelpAsTrayButton = new Button(composite, SWT.RADIO);
-		dhelpAsTrayButton.setText(Messages.BrowsersPreferencePage_tray);
+		dhelpAsTrayButton.setText(Messages.HelpPreferencePage_tray);
 		dhelpAsTrayButton.setLayoutData(createIndentData());
 		dhelpAsInfopopButton = new Button(composite, SWT.RADIO);
-		dhelpAsInfopopButton.setText(Messages.BrowsersPreferencePage_dinfopop);
+		dhelpAsInfopopButton.setText(Messages.HelpPreferencePage_dinfopop);
 		dhelpAsInfopopButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
@@ -155,16 +155,16 @@ public class BrowsersPreferencePage extends PreferencePage implements
 		if (PlatformUI.getWorkbench().getBrowserSupport()
 				.isInternalWebBrowserAvailable()) {
 			Label ohelpDescription = new Label(group, SWT.NONE);
-			ohelpDescription.setText(Messages.BrowsersPreferencePage_olabel);
+			ohelpDescription.setText(Messages.HelpPreferencePage_olabel);
 			ohelpDescription.setLayoutData(createLabelData());
 			composite = createRadioComposite(group);
 			openInPlaceButton = new Button(composite, SWT.RADIO);
 			openInPlaceButton
-					.setText(Messages.BrowsersPreferencePage_openInPlace);
+					.setText(Messages.HelpPreferencePage_openInPlace);
 			openInPlaceButton.setLayoutData(createIndentData());
 			openInEditorButton = new Button(composite, SWT.RADIO);
 			openInEditorButton
-					.setText(Messages.BrowsersPreferencePage_openInEditor);
+					.setText(Messages.HelpPreferencePage_openInEditor);
 			openInEditorButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			boolean openInBrowser = HelpBasePlugin.getDefault()
 					.getPluginPreferences().getBoolean(
@@ -198,15 +198,15 @@ public class BrowsersPreferencePage extends PreferencePage implements
 	
 	private void createSearchArea(Composite parent) {
 		Group searchGroup = new Group(parent, SWT.NONE);
-		searchGroup.setText(Messages.BrowsersPreferencePage_search);
+		searchGroup.setText(Messages.HelpPreferencePage_search);
 		searchGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		searchGroup.setLayout(new GridLayout());
 		
 		showPotentialHitsButton = new Button(searchGroup, SWT.RADIO);
-		showPotentialHitsButton.setText(Messages.BrowsersPreferencePage_searchPotentialHits);
+		showPotentialHitsButton.setText(Messages.HelpPreferencePage_searchPotentialHits);
 
 		showActualHitsButton = new Button(searchGroup, SWT.RADIO);
-		showActualHitsButton.setText(Messages.BrowsersPreferencePage_searchActualHits);
+		showActualHitsButton.setText(Messages.HelpPreferencePage_searchActualHits);
 
 		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
 			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);

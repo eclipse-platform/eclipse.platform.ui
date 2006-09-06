@@ -1,0 +1,132 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.help.internal.base.remote;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.help.internal.search.SearchHit;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+/*
+ * Converts search results serialized by the SearchServlet on remote help server
+ * back into model objects.
+ */
+public class RemoteSearchParser extends DefaultHandler {
+
+	private SAXParser parser;
+	private Stack stack;
+	private List hits;
+	private StringBuffer summary;
+
+	/*
+	 * Parses the given serialized search hits and returns generated model
+	 * objects (SearchHit objects).
+	 */
+	public List parse(InputStream in, IProgressMonitor monitor) throws ParserConfigurationException, SAXException, IOException {
+		monitor.beginTask("", 1); //$NON-NLS-1$
+		init();
+		parser.parse(in, this);
+		monitor.worked(1);
+		monitor.done();		
+		return hits;
+	}
+	
+	/*
+	 * Initializes the parser's state for a new search. Must be called
+	 * before each parse.
+	 */
+	private void init() throws ParserConfigurationException, SAXException {
+		if (hits == null) {
+			hits = new ArrayList();
+		}
+		else if (!hits.isEmpty()) {
+			hits.clear();
+		}
+		if (stack == null) {
+			stack = new Stack();
+		}
+		else if (!stack.isEmpty()) {
+			stack.clear();
+		}
+		summary = null;
+		if (parser == null) {
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		if (qName.equals("hit")) { //$NON-NLS-1$
+			handleHit(attributes);
+		}
+		else if (qName.equals("summary")) { //$NON-NLS-1$
+			handleSummary(attributes);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		if (qName.equals("hit")) { //$NON-NLS-1$
+			stack.pop();
+		}
+		else if (qName.equals("summary") && summary != null) { //$NON-NLS-1$
+			// collect the summary from the buffer
+			SearchHit hit = (SearchHit)stack.peek();
+			hit.setSummary(summary.toString());
+			summary = null;
+		}
+	}
+
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		// are we in <summary></summary> elements?
+		if (summary != null) {
+			// if so, add to the buffer
+			summary.append(ch, start, length);
+		}
+	}
+
+	private void handleHit(Attributes attr) {
+		String href = attr.getValue("href"); //$NON-NLS-1$
+		String label = attr.getValue("label"); //$NON-NLS-1$
+		String filters = attr.getValue("filters"); //$NON-NLS-1$
+		float score;
+		try {
+			score = Float.parseFloat(attr.getValue("score")); //$NON-NLS-1$
+		}
+		catch (NumberFormatException e) {
+			// score was probably missing; default to 0
+			score = 0;
+		}
+		SearchHit hit = new SearchHit(href, label, null, score, null, null, null, filters);
+		hits.add(hit);
+		stack.push(hit);
+	}
+	
+	private void handleSummary(Attributes attr) {
+		// prepare the buffer to receive text summary
+		summary = new StringBuffer();
+	}
+}

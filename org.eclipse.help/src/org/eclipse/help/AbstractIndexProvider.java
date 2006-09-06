@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help;
 
+import org.eclipse.help.internal.HelpPlugin;
+
 /**
- * An <code>IIndexProvider</code> is a mechanism to provide arbitrary content to
- * the keyword index. <code>IIndexProvider</code>s must be registered
- * via the <code>org.eclipse.help.index</code> extension point.
+ * An <code>AbstractIndexProvider</code> is a mechanism to provide arbitrary
+ * content to the keyword index. <code>AbstractIndexProvider</code>s must be
+ * registered via the <code>org.eclipse.help.index</code> extension point.
  * 
  * @since 3.3
  */
-public interface IIndexProvider {
+public abstract class AbstractIndexProvider {
 
 	/**
 	 * Returns all <code>IIndexContribution</code>s for this provider. Providers
@@ -26,5 +28,15 @@ public interface IIndexProvider {
 	 * @param locale the locale for which to get contributions
 	 * @return all the index contributions for this provider
 	 */
-	public IIndexContribution[] getIndexContributions(String locale);
+	public abstract IIndexContribution[] getIndexContributions(String locale);
+	
+	/**
+	 * Notifies the platform that the content managed by this provider may
+	 * have changed since the last time <code>getIndexContributions()</code>
+	 * was called, and needs to be updated.
+	 */
+	protected void contentChanged() {
+		// will force a reload next time around
+		HelpPlugin.getIndexManager().clearCache();
+	}
 }

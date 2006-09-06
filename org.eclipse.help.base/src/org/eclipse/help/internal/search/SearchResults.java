@@ -47,7 +47,7 @@ public class SearchResults implements ISearchHitCollector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(List, String)
 	 */
-	public void addHits(List hits, String highlightTerms) {
+	public void addHits(List hits, String highlightTerms) {	
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
@@ -107,7 +107,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (urlEncodedWords.length() > 0) {
 				href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			}
-			searchHitList.add(new SearchHit(href, label, rawHit.getRawSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.getFilters()));
+			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.getFilters()));
 		}
 		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);

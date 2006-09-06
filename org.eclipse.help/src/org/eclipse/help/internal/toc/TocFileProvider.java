@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.ITocProvider;
+import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
  * Provides toc data from toc XML files to the help system.
  */
-public class TocFileProvider implements ITocProvider {
+public class TocFileProvider extends AbstractTocProvider {
 
 	public static final String EXTENSION_POINT_ID_TOC = HelpPlugin.PLUGIN_ID + ".toc"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME_TOC = "toc"; //$NON-NLS-1$
@@ -32,10 +32,9 @@ public class TocFileProvider implements ITocProvider {
 	public static final String ATTRIBUTE_NAME_PRIMARY = "primary"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_EXTRADIR = "extradir"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_CATEGORY = "category"; //$NON-NLS-1$
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.help.ITocProvider#getTocContributions(java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
 	public ITocContribution[] getTocContributions(String locale) {
 		List contributions = new ArrayList();

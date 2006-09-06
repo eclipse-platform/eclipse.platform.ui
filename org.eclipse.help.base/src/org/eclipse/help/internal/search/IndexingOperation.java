@@ -97,7 +97,7 @@ class IndexingOperation {
 		// need to check if we have to do anything to the progress monitor
 		if (numRemoved + numAdded <= 0) {
 			pm.done();
-			BaseHelpSystem.getSearchManager().clearSearchParticipants();
+			BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
 			return;
 		}
 		pm.beginTask(HelpBaseResources.UpdatingIndex, numRemoved + 10
@@ -112,7 +112,7 @@ class IndexingOperation {
 				staleDocs.size() == 0);
 
 		pm.done();
-		BaseHelpSystem.getSearchManager().clearSearchParticipants();
+		BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
 	}
 
 	private Map calculateNewToRemove(Collection newDocs, Map prebuiltDocs) {
@@ -402,7 +402,7 @@ class IndexingOperation {
 			}
 		}
 		//Add documents from global search participants
-		LuceneSearchParticipant[] participants = BaseHelpSystem.getSearchManager().getGlobalParticipants();
+		LuceneSearchParticipant[] participants = BaseHelpSystem.getLocalSearchManager().getGlobalParticipants();
 		for (int j=0; j<participants.length; j++) {
 			String participantId;
 			try {

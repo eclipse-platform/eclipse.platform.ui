@@ -15,8 +15,11 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.help.IIndexContribution;
-import org.eclipse.help.IIndexProvider;
+import org.eclipse.help.AbstractIndexProvider;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 
@@ -24,43 +27,73 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
  * Provides the TOC data that is located on the remote infocenter, if the system
  * is configured for remote help. If not, returns no contributions.
  */
-public class RemoteIndexProvider implements IIndexProvider {
+public class RemoteIndexProvider extends AbstractIndexProvider {
 
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
 	private static final String PATH_INDEX = "/help/index"; //$NON-NLS-1$
 
+	private String lastHost;
+	private int lastPort;
+
 	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.help.IIndexProvider#getIndexContributions(java.lang.String)
+	 * Constructs a new RemoteIndexProvider.
+	 */
+	public RemoteIndexProvider() {
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+			// if the user changes remote help preferences, signal the platform
+			final Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			prefs.addPropertyChangeListener(new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (lastHost != null) {
+						String property = event.getProperty();
+						if (property.equals(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST) || property.equals(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT)) {
+							String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
+							int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
+							if (!host.equals(lastHost) || port != lastPort) {
+								contentChanged();
+							}
+						}
+					}
+				}
+			});
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
 	 */
 	public IIndexContribution[] getIndexContributions(String locale) {
-		InputStream in = null;
-		try {
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-			String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-			int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
-			if (host != null && host.length() > 0) {
-				URL url = new URL(PROTOCOL_HTTP, host, port, PATH_INDEX);
-				in = url.openStream();
-				RemoteIndexParser parser = new RemoteIndexParser();
-				return parser.parse(in);
-			}
-		}
-		catch (IOException e) {
-			String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, e);
-		}
-		catch (Throwable t) {
-			String msg = "Internal error while reading index contents from remote server"; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, t);
-		}
-		finally {
-			if (in != null) {
-				try {
-					in.close();
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+			InputStream in = null;
+			try {
+				Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+				String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
+				int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
+				lastHost = host;
+				lastPort = port;
+				if (host != null && host.length() > 0) {
+					URL url = new URL(PROTOCOL_HTTP, host, port, PATH_INDEX);
+					in = url.openStream();
+					RemoteIndexParser parser = new RemoteIndexParser();
+					return parser.parse(in);
 				}
-				catch (IOException e) {
-					// nothing more we can do
+			}
+			catch (IOException e) {
+				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
+				HelpBasePlugin.logError(msg, e);
+			}
+			catch (Throwable t) {
+				String msg = "Internal error while reading index contents from remote server"; //$NON-NLS-1$
+				HelpBasePlugin.logError(msg, t);
+			}
+			finally {
+				if (in != null) {
+					try {
+						in.close();
+					}
+					catch (IOException e) {
+						// nothing more we can do
+					}
 				}
 			}
 		}

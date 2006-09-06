@@ -22,9 +22,9 @@ public class IndexerJob extends Job {
 		super(HelpBaseResources.IndexerJob_name); 
 	}
 	protected IStatus run(IProgressMonitor monitor) {
-		SearchIndexWithIndexingProgress index = BaseHelpSystem.getSearchManager().getIndex(Platform.getNL());
+		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(Platform.getNL());
 		try {
-			BaseHelpSystem.getSearchManager().ensureIndexUpdated(monitor, index);
+			BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(monitor, index);
 			return Status.OK_STATUS;
 		}
 		catch (OperationCanceledException e) {

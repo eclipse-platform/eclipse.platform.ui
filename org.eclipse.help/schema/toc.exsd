@@ -194,10 +194,10 @@ or not primary and intended to be integrated into another table of contents.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for the toc provider.  This class must implement the &lt;samp&gt;org.eclipse.help.ITocProvider&lt;/samp&gt; interface.
+                  the implementation class for the toc provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.ITocProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractTocProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -316,7 +316,7 @@ to plugin directory.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         An implementation of &lt;samp&gt;org.eclipse.help.ITocProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;tocProvider&lt;/samp&gt; is used.
+         An implementation of &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;tocProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 

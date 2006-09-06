@@ -26,16 +26,16 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.ITocProvider;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 /*
  * Manages toc contributions (ITocContribution) supplied by the various toc
- * providers (ITocProvider).
+ * providers (AbstractTocProvider).
  */
 public class TocManager {
 	
@@ -43,7 +43,7 @@ public class TocManager {
 	private static final String ELEMENT_NAME_TOC_PROVIDER = "tocProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 	
-	private ITocProvider[] tocProviders;
+	private AbstractTocProvider[] tocProviders;
 	private Map tocContributionsByLocale = new HashMap();
 	private Map tocsByLocale = new HashMap();
 	private Map tocsById = new HashMap();
@@ -111,7 +111,7 @@ public class TocManager {
 		ITocContribution[] cached = (ITocContribution[])tocContributionsByLocale.get(locale);
 		if (cached == null) {
 			List contributions = new ArrayList();
-			ITocProvider[] providers = getTocProviders();
+			AbstractTocProvider[] providers = getTocProviders();
 			for (int i=0;i<providers.length;++i) {
 				ITocContribution[] contrib;
 				try {
@@ -119,7 +119,7 @@ public class TocManager {
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + ITocContribution.class.getName() + " from " + ITocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + ITocContribution.class.getName() + " from " + AbstractTocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -146,6 +146,18 @@ public class TocManager {
 			tocContributionsByLocale.put(locale, cached);
 		}
 		return cached;
+	}
+
+	/*
+	 * Clears all cached contributions, forcing the manager to query the
+	 * providers again next time a request is made.
+	 */
+	public void clearCache() {
+		tocContributionsByLocale.clear();
+		tocsByLocale.clear();
+		tocsById.clear();
+		tocsByTopic = null;
+		ignoredTopicHrefs = null;
 	}
 
 	/*
@@ -204,7 +216,7 @@ public class TocManager {
 	/*
 	 * Returns all registered toc providers (potentially cached).
 	 */
-	private ITocProvider[] getTocProviders() {
+	private AbstractTocProvider[] getTocProviders() {
 		if (tocProviders == null) {
 			List providers = new ArrayList();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -216,7 +228,7 @@ public class TocManager {
 						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
 						if (className != null) {
 							try {
-								ITocProvider provider = (ITocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+								AbstractTocProvider provider = (AbstractTocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
 								providers.add(provider);
 							}
 							catch (CoreException e) {
@@ -226,7 +238,7 @@ public class TocManager {
 							}
 							catch (ClassCastException e) {
 								// log and skip
-								String msg = ELEMENT_NAME_TOC_PROVIDER + " class must implement " + ITocProvider.class.getName(); //$NON-NLS-1$
+								String msg = ELEMENT_NAME_TOC_PROVIDER + " class must implement " + AbstractTocProvider.class.getName(); //$NON-NLS-1$
 								HelpPlugin.logError(msg, e);
 							}
 						}
@@ -247,7 +259,7 @@ public class TocManager {
 					// no longer valid; skip it
 				}
 			}
-			tocProviders = (ITocProvider[])providers.toArray(new ITocProvider[providers.size()]);
+			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);
 		}
 		return tocProviders;
 	}

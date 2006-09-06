@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexContribution;
-import org.eclipse.help.IIndexProvider;
+import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.internal.HelpPlugin;
 
 public class IndexManager {
@@ -40,7 +40,7 @@ public class IndexManager {
 	
 	private Map indexContributionsByLocale = new HashMap();
 	private Map indexesByLocale = new HashMap();
-	private IIndexProvider[] indexProviders;
+	private AbstractIndexProvider[] indexProviders;
 
 	public synchronized IIndex getIndex(String locale) {
 		IIndex index = (IIndex)indexesByLocale.get(locale);
@@ -62,7 +62,7 @@ public class IndexManager {
 		IIndexContribution[] cached = (IIndexContribution[])indexContributionsByLocale.get(locale);
 		if (cached == null) {
 			List contributions = new ArrayList();
-			IIndexProvider[] providers = getIndexProviders();
+			AbstractIndexProvider[] providers = getIndexProviders();
 			for (int i=0;i<providers.length;++i) {
 				IIndexContribution[] contrib;
 				try {
@@ -70,7 +70,7 @@ public class IndexManager {
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + IIndexContribution.class.getName() + " from " + IIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + IIndexContribution.class.getName() + " from " + AbstractIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -98,11 +98,20 @@ public class IndexManager {
 		}
 		return cached;
 	}
+	
+	/*
+	 * Clears all cached contributions, forcing the manager to query the
+	 * providers again next time a request is made.
+	 */
+	public void clearCache() {
+		indexContributionsByLocale.clear();
+		indexesByLocale.clear();
+	}
 
 	/*
 	 * Returns all registered index providers (potentially cached).
 	 */
-	private IIndexProvider[] getIndexProviders() {
+	private AbstractIndexProvider[] getIndexProviders() {
 		if (indexProviders == null) {
 			List providers = new ArrayList();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -114,7 +123,7 @@ public class IndexManager {
 						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
 						if (className != null) {
 							try {
-								IIndexProvider provider = (IIndexProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+								AbstractIndexProvider provider = (AbstractIndexProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
 								providers.add(provider);
 							}
 							catch (CoreException e) {
@@ -124,7 +133,7 @@ public class IndexManager {
 							}
 							catch (ClassCastException e) {
 								// log and skip
-								String msg = ELEMENT_NAME_INDEX_PROVIDER + " class must implement " + IIndexProvider.class.getName(); //$NON-NLS-1$
+								String msg = ELEMENT_NAME_INDEX_PROVIDER + " class must implement " + AbstractIndexProvider.class.getName(); //$NON-NLS-1$
 								HelpPlugin.logError(msg, e);
 							}
 						}
@@ -145,7 +154,7 @@ public class IndexManager {
 					// no longer valid; skip it
 				}
 			}
-			indexProviders = (IIndexProvider[])providers.toArray(new IIndexProvider[providers.size()]);
+			indexProviders = (AbstractIndexProvider[])providers.toArray(new AbstractIndexProvider[providers.size()]);
 		}
 		return indexProviders;
 	}

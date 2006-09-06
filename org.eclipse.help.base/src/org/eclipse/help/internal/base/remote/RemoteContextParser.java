@@ -38,7 +38,6 @@ public class RemoteContextParser extends DefaultHandler {
 
 	private Stack stack = new Stack();
 	private Context context;
-	private boolean inDescription;
 	private StringBuffer description;
 
 	/*
@@ -80,7 +79,7 @@ public class RemoteContextParser extends DefaultHandler {
 	}
 
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		if (inDescription && description != null) {
+		if (description != null) {
 			description.append(ch, start, length);
 		}
 	}
@@ -91,7 +90,6 @@ public class RemoteContextParser extends DefaultHandler {
 	}
 	
 	private void handleDescription(Attributes attr) {
-		inDescription = true;
 		description = new StringBuffer();
 	}
 

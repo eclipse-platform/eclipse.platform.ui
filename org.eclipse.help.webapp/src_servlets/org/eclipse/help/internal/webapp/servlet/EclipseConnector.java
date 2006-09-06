@@ -34,6 +34,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
+import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.data.ServletResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -66,7 +67,7 @@ public class EclipseConnector {
 
 		try {
 
-			String url = getURL(req);
+			String url = getURL(req, false);
 			if (url == null)
 				return;
 			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:/") //$NON-NLS-1$
@@ -247,7 +248,7 @@ public class EclipseConnector {
 		if (host != null && host.length() > 0) {
 			int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
 			try {
-				URL url = new URL(PROTOCOL_HTTP, host, port == 0 ? -1 : port, PATH_TOPIC + getURL(req));
+				URL url = new URL(PROTOCOL_HTTP, host, port == 0 ? -1 : port, PATH_TOPIC + getURL(req, true));
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 				if (connection.getResponseCode() != HttpServletResponse.SC_NOT_FOUND) {
 					return connection.getInputStream();
@@ -264,7 +265,7 @@ public class EclipseConnector {
 	/**
 	 * Extracts the url from a request
 	 */
-	private String getURL(HttpServletRequest req) {
+	private String getURL(HttpServletRequest req, boolean encode) {
 		String query = ""; //$NON-NLS-1$
 		boolean firstParam = true;
 		for (Enumeration params = req.getParameterNames(); params
@@ -274,11 +275,12 @@ public class EclipseConnector {
 			if (values == null)
 				continue;
 			for (int i = 0; i < values.length; i++) {
+				String value = encode ? URLCoder.encode(values[i]) : values[i];
 				if (firstParam) {
-					query += "?" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
+					query += "?" + param + "=" + value; //$NON-NLS-1$ //$NON-NLS-2$
 					firstParam = false;
 				} else
-					query += "&" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
+					query += "&" + param + "=" + value; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

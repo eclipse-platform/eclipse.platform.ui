@@ -76,9 +76,9 @@ public class IndexToolApplication implements IPlatformRunnable,
 			delete(indexPath);
 		}
 		// index
-		BaseHelpSystem.getSearchManager().ensureIndexUpdated(
+		BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(
 				new NullProgressMonitor(),
-				BaseHelpSystem.getSearchManager().getIndex(locale.toString()));
+				BaseHelpSystem.getLocalSearchManager().getIndex(locale.toString()));
 		// zip up
 		File d = new File(outputDir,
 				"nl" + File.separator + locale.getLanguage()); //$NON-NLS-1$

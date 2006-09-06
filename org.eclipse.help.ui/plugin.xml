@@ -16,14 +16,14 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%help_preferences_page_name"
-            class="org.eclipse.help.ui.internal.browser.BrowsersPreferencePage"
+            class="org.eclipse.help.ui.internal.preferences.HelpPreferencePage"
             id="org.eclipse.help.ui.browsersPreferencePage">
             <keywordReference id="org.eclipse.help.ui.browsersPreferencePage"/>
       </page>
       <page
-            name="%appserver_preferences_page_name"
+            name="%remote_help_preferences_page_name"
             category="org.eclipse.help.ui.browsersPreferencePage"
-            class="org.eclipse.help.ui.internal.AppserverPreferencePage"
+            class="org.eclipse.help.ui.internal.preferences.HelpContentPreferencePage"
             id="org.eclipse.help.ui.appserverPreferencePage">
             <keywordReference id="org.eclipse.help.ui.appserverPreferencePage"/>
       </page>

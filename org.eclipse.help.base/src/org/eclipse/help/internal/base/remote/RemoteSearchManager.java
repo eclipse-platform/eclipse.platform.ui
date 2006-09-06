@@ -12,47 +12,54 @@ package org.eclipse.help.internal.base.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.help.IContext;
-import org.eclipse.help.IContextProvider;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.search.ISearchHitCollector;
+import org.eclipse.help.internal.search.ISearchQuery;
+import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.util.URLCoder;
 
 /*
- * Provides the context-sensitive help data that is located on the remote
- * infocenter for a particular id, if the system is configured for remote help.
- * If not, returns null.
+ * Manages indexing and searching for all remote help content.
  */
-public class RemoteContextProvider implements IContextProvider {
+public class RemoteSearchManager {
 
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	private static final String PATH_CONTEXT = "/help/context?id="; //$NON-NLS-1$
+	private static final String PATH_SEARCH = "/help/search?phrase="; //$NON-NLS-1$
+	private RemoteSearchParser parser;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getContext(java.lang.Object)
+	/*
+	 * Performs a search for remote content.
 	 */
-	public IContext getContext(Object target) {
-		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-			if (target instanceof String) {
-				String id = (String)target;
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
+			throws QueryTooComplexException {
+		
+		pm.beginTask("", 100); //$NON-NLS-1$
+		try {
+			// infocenters ignore remote content
+			if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 				InputStream in = null;
 				try {
 					Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 					String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
 					int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
 					if (host != null && host.length() > 0) {
-						URL url = new URL(PROTOCOL_HTTP, host, port, PATH_CONTEXT + URLCoder.encode(id));
-						HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-						if (connection.getResponseCode() == 200) {
-							in = connection.getInputStream();
-							RemoteContextParser parser = new RemoteContextParser();
-							return parser.parse(in);
+						// fire off the remote search
+						URL url = new URL(PROTOCOL_HTTP, host, port, PATH_SEARCH + URLCoder.encode(searchQuery.getSearchWord()));
+						in = url.openStream();
+						if (parser == null) {
+							parser = new RemoteSearchParser();
 						}
+						// parse the XML-serialized search results
+						List hits = parser.parse(in, new SubProgressMonitor(pm, 100));
+						collector.addHits(hits, null);
 					}
 				}
 				catch (IOException e) {
@@ -60,7 +67,7 @@ public class RemoteContextProvider implements IContextProvider {
 					HelpBasePlugin.logError(msg, e);
 				}
 				catch (Throwable t) {
-					String msg = "Internal error while reading context-sensitive help data from remote server"; //$NON-NLS-1$
+					String msg = "Internal error while reading search results from remote server"; //$NON-NLS-1$
 					HelpBasePlugin.logError(msg, t);
 				}
 				finally {
@@ -75,20 +82,8 @@ public class RemoteContextProvider implements IContextProvider {
 				}
 			}
 		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getContextChangeMask()
-	 */
-	public int getContextChangeMask() {
-		return NONE;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
-	 */
-	public String getSearchExpression(Object target) {
-		return null;
+		finally {
+			pm.done();
+		}
 	}
 }
