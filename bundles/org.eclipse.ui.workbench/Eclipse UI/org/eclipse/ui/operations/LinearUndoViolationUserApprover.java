@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -29,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * An operation approver that prompts the user to see if linear undo violations
  * are permitted. A linear undo violation is detected when an operation being
  * undone or redone shares an undo context with another operation appearing more
- * recently in the history.  
+ * recently in the history.
  * </p>
  * <p>
  * This class may be instantiated by clients.
@@ -48,9 +49,9 @@ public final class LinearUndoViolationUserApprover extends
 	 * Create a LinearUndoViolationUserApprover associated with the specified
 	 * workbench part.
 	 * 
-	 * @param context 
+	 * @param context
 	 *            the undo context with the linear undo violation
-	 * @param part 
+	 * @param part
 	 *            the part that should be used for prompting the user
 	 */
 	public LinearUndoViolationUserApprover(IUndoContext context,
@@ -75,20 +76,27 @@ public final class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		}
 
-		String message = NLS.bind(
-				WorkbenchMessages.Operations_linearRedoViolation, getTitle(part), operation.getLabel());
-		// Show a dialog.
-		part.setFocus();
-		boolean proceed = MessageDialog.openQuestion(part.getSite().getShell(),
-				getTitle(part), message);
+		final String message = NLS.bind(
+				WorkbenchMessages.Operations_linearRedoViolation,
+				getTitle(part), operation.getLabel());
+		final boolean [] proceed = new boolean[1];
+		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// Show a dialog.
+				part.setFocus();
+				proceed[0] = MessageDialog.openQuestion(part.getSite()
+						.getShell(), getTitle(part), message);
+			}
+		});
 
-		if (proceed) {
+		if (proceed[0]) {
 			// redo the local changes first
 			while (operation != history.getRedoOperation(context)) {
 				try {
 					IStatus status = history.redo(context, null, uiInfo);
 					if (!status.isOK()) {
-						// flush the redo history because the operation failed
+						// flush the redo history because the operation
+						// failed
 						history.dispose(context, false, true, false);
 						return Status.CANCEL_STATUS;
 					}
@@ -100,6 +108,7 @@ public final class LinearUndoViolationUserApprover extends
 			}
 			return Status.OK_STATUS;
 		}
+
 		return Status.CANCEL_STATUS;
 	}
 
@@ -118,21 +127,27 @@ public final class LinearUndoViolationUserApprover extends
 			return Status.OK_STATUS;
 		}
 
-		String message = NLS.bind(
-				WorkbenchMessages.Operations_linearUndoViolation, 
-						getTitle(part), operation.getLabel());
-		// Show a dialog.
-		part.setFocus();
-		boolean proceed = MessageDialog.openQuestion(part.getSite().getShell(),
-				getTitle(part), message);
+		final String message = NLS.bind(
+				WorkbenchMessages.Operations_linearUndoViolation,
+				getTitle(part), operation.getLabel());
+		final boolean [] proceed = new boolean[1];
+		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// Show a dialog.
+				part.setFocus();
+				proceed[0] = MessageDialog.openQuestion(part.getSite()
+						.getShell(), getTitle(part), message);
+			}
+		});
 
-		if (proceed) {
+		if (proceed[0]) {
 			// redo the local changes first
 			while (operation != history.getUndoOperation(context)) {
 				try {
 					IStatus status = history.undo(context, null, uiInfo);
 					if (!status.isOK()) {
-						// flush the operation history because the operation failed.
+						// flush the operation history because the operation
+						// failed.
 						history.dispose(context, true, false, false);
 						return Status.CANCEL_STATUS;
 					}
@@ -146,15 +161,15 @@ public final class LinearUndoViolationUserApprover extends
 		}
 		return Status.CANCEL_STATUS;
 	}
-	
+
 	/*
-	 * Get the title for the specified part.  Use the newer interface
-	 * IWorkbenchPart2 if available.  
+	 * Get the title for the specified part. Use the newer interface
+	 * IWorkbenchPart2 if available.
 	 */
 	private String getTitle(IWorkbenchPart part) {
 		String title;
 		if (part instanceof IWorkbenchPart2) {
-			title = ((IWorkbenchPart2)part).getPartName();
+			title = ((IWorkbenchPart2) part).getPartName();
 		} else {
 			title = part.getTitle();
 		}

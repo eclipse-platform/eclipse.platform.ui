@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -147,7 +148,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * prompt the user as to whether the operation should proceed.
 	 */
 	private IStatus proceedWithOperation(IUndoableOperation operation,
-			String message, String discardButton) {
+			final String message, final String discardButton) {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
@@ -203,12 +204,18 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		}
 
 		// The operation affects more than just our element.  Find out if
-		// we should proceed, cancel, or discard the undo.
-		MessageDialog dialog = new MessageDialog(part.getSite().getShell(), part.getEditorInput().getName(),
-				null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
-                        discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
-        int answer = dialog.open();
-		switch (answer) {
+		// we should proceed, cancel, or discard the undo.  Must be done in
+		// a syncExec because operation approval notifications may come from
+		// a background thread.
+		final int[] answer = new int[1];
+		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), part.getEditorInput().getName(),
+						null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
+		                        discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
+		        answer[0] = dialog.open();
+		}});
+		switch (answer[0]) {
 		case 0:
 			return Status.OK_STATUS;
 		case 1:
