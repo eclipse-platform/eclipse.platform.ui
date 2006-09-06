@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.compare.contentmergeviewer.IMergeViewerContentProvider;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Adapts any <code>ContentMergeViewer</code> to work on an <code>ICompareInput</code>
  * e.g. a <code>DiffNode</code>.
  */
 public class MergeViewerContentProvider implements IMergeViewerContentProvider {
+	
+	public static final char ANCESTOR_CONTRIBUTOR = 'A';
+	public static final char RIGHT_CONTRIBUTOR = 'R';
+	public static final char LEFT_CONTRIBUTOR = 'L';
 	
 	private CompareConfiguration fCompareConfiguration;
 	private String fAncestorError;

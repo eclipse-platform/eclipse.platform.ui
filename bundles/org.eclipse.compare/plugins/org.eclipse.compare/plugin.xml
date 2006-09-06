@@ -323,5 +323,12 @@
             contentViewerId="org.eclipse.compare.TextViewerCreator">
 	  </contentTypeBinding>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            class="org.eclipse.compare.internal.TypedElementDocumentProvider"
+            id="org.eclipse.compare.typedElementDocumentProvider"
+            inputTypes="org.eclipse.compare.internal.TypedElementEditorInput"/>
+   </extension>
 
 </plugin>

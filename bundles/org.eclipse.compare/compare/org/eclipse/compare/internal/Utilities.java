@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
@@ -641,5 +642,29 @@ public class Utilities {
 		if (resources.length > 0)
 			return resources[0];
 		return null;
+	}
+	
+	public static Object getAdapter(Object element, Class adapterType, boolean load) {
+		if (adapterType.isInstance(element))
+			return element;
+		if (element instanceof IAdaptable) {
+			Object adapted = ((IAdaptable) element).getAdapter(adapterType);
+			if (adapterType.isInstance(adapted))
+				return adapted;
+		}
+		if (load) {
+			Object adapted = Platform.getAdapterManager().loadAdapter(element, adapterType.getName());
+			if (adapterType.isInstance(adapted))
+				return adapted;
+		} else {
+			Object adapted = Platform.getAdapterManager().getAdapter(element, adapterType);
+			if (adapterType.isInstance(adapted))
+				return adapted;
+		}
+		return null;
+	}
+	
+	public static Object getAdapter(Object element, Class adapterType) {
+		return getAdapter(element, adapterType, false);
 	}
 }

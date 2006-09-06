@@ -613,7 +613,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected boolean doSave(Object newInput, Object oldInput) {
 		
 		// before setting the new input we have to save the old
-		if (fLeftSaveAction.isEnabled() || fRightSaveAction.isEnabled()) {
+		if (isLeftDirty() || isRightDirty()) {
 			
 			// post alert
 			if (fConfirmSave) {
@@ -1009,7 +1009,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param dirty the state of the left side dirty flag
 	 */
 	protected void setLeftDirty(boolean dirty) {
-		if (fLeftSaveAction.isEnabled() != dirty) {
+		if (isLeftDirty() != dirty) {
 			fLeftSaveAction.setEnabled(dirty);
 			fireDirtyState(dirty);
 		}
@@ -1025,7 +1025,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param dirty the state of the right side dirty flag
 	 */
 	protected void setRightDirty(boolean dirty) {
-		if (fRightSaveAction.isEnabled() != dirty) {
+		if (isRightDirty() != dirty) {
 			fRightSaveAction.setEnabled(dirty);
 			fireDirtyState(dirty);
 		}
@@ -1051,7 +1051,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		boolean leftEmpty= content.getLeftContent(oldInput) == null;
 		boolean rightEmpty= content.getRightContent(oldInput) == null;
 
-		if (fCompareConfiguration.isLeftEditable() && fLeftSaveAction.isEnabled()) {
+		if (getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
 			byte[] bytes= getContents(true);
 			if (leftEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
@@ -1059,12 +1059,20 @@ public abstract class ContentMergeViewer extends ContentViewer
 			content.saveLeftContent(oldInput, bytes);
 		}
 		
-		if (fCompareConfiguration.isRightEditable() && fRightSaveAction.isEnabled()) {
+		if (getCompareConfiguration().isRightEditable() && isRightDirty()) {
 			byte[] bytes= getContents(false);
 			if (rightEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
 			setRightDirty(false);
 			content.saveRightContent(oldInput, bytes);
 		}
+	}
+
+	/* package */ boolean isRightDirty() {
+		return fRightSaveAction.isEnabled();
+	}
+
+	/* package */ boolean isLeftDirty() {
+		return fLeftSaveAction.isEnabled();
 	}
 }

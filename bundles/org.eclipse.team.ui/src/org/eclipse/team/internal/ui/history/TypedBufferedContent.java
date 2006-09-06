@@ -14,17 +14,19 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
+import org.eclipse.compare.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 
 
-public class TypedBufferedContent extends ResourceNode {
+public class TypedBufferedContent extends ResourceNode implements ISharedDocumentAdapter {
 	public TypedBufferedContent(IFile resource) {
 		super(resource);
 	}
@@ -56,7 +58,8 @@ public class TypedBufferedContent extends ResourceNode {
 			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
 			progressService.run(false,false, runnable);
 		} catch (InvocationTargetException e) {
-			//TODO: Handle
+			// TODO: should show this error to the user
+			TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.internal, e.getTargetException());
 		} catch (InterruptedException e) {
 			// Ignore
 		}
@@ -67,5 +70,12 @@ public class TypedBufferedContent extends ResourceNode {
 	}
 	public void fireChange() {
 		fireContentChanged();
+	}
+	public IEditorInput getDocumentKey(Object element) {
+		if (element == this && getResource() instanceof IFile) {
+			IFile file = (IFile) getResource();
+			return new FileEditorInput(file);
+		}
+		return null;
 	}
 }

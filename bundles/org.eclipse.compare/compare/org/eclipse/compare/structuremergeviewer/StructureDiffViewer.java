@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.services.IDisposable;
 
 
 /**
@@ -35,19 +36,83 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private Differencer fDifferencer;
 	private boolean fThreeWay= false;
 	
-	private ITypedElement fAncestorInput;
-	private ITypedElement fLeftInput;
-	private ITypedElement fRightInput;
-	
-	private IStructureComparator fAncestorStructure;
-	private IStructureComparator fLeftStructure;
-	private IStructureComparator fRightStructure;
+	private StructureInfo fAncestorStructure = new StructureInfo();
+	private StructureInfo fLeftStructure = new StructureInfo();
+	private StructureInfo fRightStructure = new StructureInfo();
 	
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
 	private IContentChangeListener fContentChangedListener;
 	private CompareViewerSwitchingPane fParent;
+	
+	/*
+	 * A helper class for holding the input and generated structure
+	 * for the ancestor, left and right inputs.
+	 */
+	private class StructureInfo {
+		private ITypedElement fInput;
+		private IStructureComparator fStructureComparator;
 		
+		public boolean setInput(ITypedElement newInput) {
+			boolean changed = false;
+			if (newInput != fInput) {
+				if (fInput instanceof IContentChangeNotifier)
+					((IContentChangeNotifier)fInput).removeContentChangeListener(fContentChangedListener);
+				fInput= newInput;
+				if (fInput != null) {
+					refresh();
+					changed= true;
+				} else {
+					if (fStructureComparator instanceof IDisposable) {
+						IDisposable disposable = (IDisposable) fStructureComparator;
+						disposable.dispose();
+					}
+					fStructureComparator= null;
+				}
+				if (fInput instanceof IContentChangeNotifier)
+					((IContentChangeNotifier)fInput).addContentChangeListener(fContentChangedListener);
+			}
+			return changed;
+		}
+		
+		public IStructureComparator getStructureComparator() {
+			return fStructureComparator;
+		}
+
+		public void refresh() {
+			IStructureComparator oldComparator = fStructureComparator;
+			fStructureComparator= createStructure();
+			// Dispose of the old one after in case they are using a shared document
+			if (oldComparator instanceof IDisposable) {
+				IDisposable disposable = (IDisposable) oldComparator;
+				disposable.dispose();
+			}
+		}
+
+		public Object getInput() {
+			return fInput;
+		}
+		
+		private IStructureComparator createStructure() {
+			if (fStructureCreator instanceof IStructureCreator2) {
+				IStructureCreator2 sc2 = (IStructureCreator2) fStructureCreator;
+				try {
+					return sc2.createStructure(fInput);
+				} catch (CoreException e) {
+					CompareUIPlugin.log(e);
+				}
+			}
+			return fStructureCreator.getStructure(fInput);
+		}
+
+		public void dispose() {
+			if (fStructureComparator instanceof IDisposable) {
+				IDisposable disposable = (IDisposable) fStructureComparator;
+				disposable.dispose();
+			}
+		}
+	}
+	
 	/**
 	 * Creates a new viewer for the given SWT tree control with the specified configuration.
 	 *
@@ -177,51 +242,19 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		if (input != null)
 			t= input.getAncestor();
-			
 		fThreeWay= (t != null);
-		
-		if (t != fAncestorInput) {
-			if (fAncestorInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fAncestorInput).removeContentChangeListener(fContentChangedListener);
-			fAncestorInput= t;
-			if (fAncestorInput != null) {
-				fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
-				changed= true;
-			} else
-				fAncestorStructure= null;
-			if (fAncestorInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fAncestorInput).addContentChangeListener(fContentChangedListener);
-		}
+		if (fAncestorStructure.setInput(t))
+			changed = true;
 		
 		if (input != null)
 			t= input.getLeft();
-		if (t != fLeftInput) {
-			if (fLeftInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fLeftInput).removeContentChangeListener(fContentChangedListener);
-			fLeftInput= t;
-			if (fLeftInput != null) {
-				fLeftStructure= fStructureCreator.getStructure(fLeftInput);
-				changed= true;
-			} else
-				fLeftStructure= null;
-			if (fLeftInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fLeftInput).addContentChangeListener(fContentChangedListener);
-		}
+		if (fLeftStructure.setInput(t))
+			changed = true;
 		
 		if (input != null)
 			t= input.getRight();
-		if (t != fRightInput) {
-			if (fRightInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fRightInput).removeContentChangeListener(fContentChangedListener);
-			fRightInput= t;
-			if (fRightInput != null) {
-				fRightStructure= fStructureCreator.getStructure(fRightInput);
-				changed= true;
-			} else
-				fRightStructure= null;
-			if (fRightInput instanceof IContentChangeNotifier)
-				((IContentChangeNotifier)fRightInput).addContentChangeListener(fContentChangedListener);
-		}
+		if (fRightStructure.setInput(t))
+			changed = true;
 		
 		if (changed)
 			diff();
@@ -237,18 +270,18 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			return;
 			
 		if (changed != null) {
-			if (changed == fAncestorInput) {
-				fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
-			} else if (changed == fLeftInput) {
-				fLeftStructure= fStructureCreator.getStructure(fLeftInput);
-			} else if (changed == fRightInput) {
-				fRightStructure= fStructureCreator.getStructure(fRightInput);
+			if (changed == fAncestorStructure.getInput()) {
+				fAncestorStructure.refresh();
+			} else if (changed == fLeftStructure.getInput()) {
+				fLeftStructure.refresh();
+			} else if (changed == fRightStructure.getInput()) {
+				fRightStructure.refresh();
 			} else
 				return;
 		} else {
-			fAncestorStructure= fStructureCreator.getStructure(fAncestorInput);
-			fLeftStructure= fStructureCreator.getStructure(fLeftInput);
-			fRightStructure= fStructureCreator.getStructure(fRightInput);
+			fAncestorStructure.refresh();
+			fLeftStructure.refresh();
+			fRightStructure.refresh();
 		}
 		
 		diff();
@@ -273,11 +306,17 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	protected void diff() {
 		
-		preDiffHook(fAncestorStructure, fLeftStructure, fRightStructure);
+		IStructureComparator ancestorComparator = fAncestorStructure.getStructureComparator();
+		IStructureComparator leftComparator = fLeftStructure.getStructureComparator();
+		IStructureComparator rightComparator = fRightStructure.getStructureComparator();
+		
+		preDiffHook(ancestorComparator, 
+				leftComparator, 
+				rightComparator);
 							
 		String message= null;
 		
-		if ((fThreeWay && fAncestorStructure == null) || fLeftStructure == null || fRightStructure == null) {
+		if ((fThreeWay && ancestorComparator == null) || leftComparator == null || rightComparator == null) {
 			// could not get structure of one (or more) of the legs
 			fRoot= null;
 			message= CompareMessages.StructureDiffViewer_StructureError;	
@@ -298,7 +337,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				};
 			
 			fRoot= (IDiffContainer) fDifferencer.findDifferences(fThreeWay, null, null,
-					fAncestorStructure, fLeftStructure, fRightStructure);
+					ancestorComparator, leftComparator, rightComparator);
 					
 			if (fRoot == null || fRoot.getChildren().length == 0) {
 				message= CompareMessages.StructureDiffViewer_NoStructuralDifferences;	
@@ -368,8 +407,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		
 		if (fStructureCreator != null)
 			fStructureCreator.save(
-							leftToRight ? fRightStructure : fLeftStructure,
-							leftToRight ? fRightInput : fLeftInput);
+							leftToRight ? fRightStructure.getStructureComparator() : fLeftStructure.getStructureComparator(),
+							leftToRight ? fRightStructure.getInput() : fLeftStructure.getInput());
 	}
 }
 
