@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A <code>SubCoolBarManager</code> monitors the additional and removal of 

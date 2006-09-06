@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;

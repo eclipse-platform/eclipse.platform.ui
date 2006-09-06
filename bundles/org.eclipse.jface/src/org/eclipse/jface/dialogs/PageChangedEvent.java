@@ -12,7 +12,7 @@ package org.eclipse.jface.dialogs;
 
 import java.util.EventObject;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Event object describing a page selection change. The source of these events

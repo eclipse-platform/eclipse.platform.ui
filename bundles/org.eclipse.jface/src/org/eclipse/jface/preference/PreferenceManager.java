@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A preference manager maintains a hierarchy of preference nodes and

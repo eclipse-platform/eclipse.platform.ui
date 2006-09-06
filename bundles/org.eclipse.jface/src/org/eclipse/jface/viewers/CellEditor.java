@@ -12,7 +12,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;

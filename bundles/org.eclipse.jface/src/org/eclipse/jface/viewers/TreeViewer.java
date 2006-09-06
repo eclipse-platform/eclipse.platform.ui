@@ -15,7 +15,7 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.DisposeEvent;

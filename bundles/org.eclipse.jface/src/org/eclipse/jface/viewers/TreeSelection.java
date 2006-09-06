@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A concrete implementation of the <code>ITreeSelection</code> interface,

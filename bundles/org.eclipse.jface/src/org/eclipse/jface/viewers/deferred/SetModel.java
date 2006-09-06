@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers.deferred;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 
 /**

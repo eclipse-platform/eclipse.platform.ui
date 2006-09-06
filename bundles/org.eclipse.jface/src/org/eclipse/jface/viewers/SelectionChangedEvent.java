@@ -12,7 +12,7 @@ package org.eclipse.jface.viewers;
 
 import java.util.EventObject;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Event object describing a selection change. The source of these

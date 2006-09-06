@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * This object maintains a collection of elements, sorted by a comparator

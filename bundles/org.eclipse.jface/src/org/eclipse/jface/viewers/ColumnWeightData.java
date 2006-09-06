@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Describes the width of a table column in terms of a weight, 

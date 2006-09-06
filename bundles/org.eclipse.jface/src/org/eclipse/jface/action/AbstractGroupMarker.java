@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Abstract superclass for group marker classes.

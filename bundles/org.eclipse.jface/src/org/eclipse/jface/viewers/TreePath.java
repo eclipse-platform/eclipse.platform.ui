@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A tree path denotes a model element in a tree viewer. Tree path objects have
