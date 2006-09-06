@@ -11,8 +11,13 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="viewPage"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -33,6 +38,11 @@
    </element>
 
    <element name="viewPage">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="searchResultClass" type="string" use="required">
             <annotation>
@@ -64,14 +74,14 @@
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  
+                  a translatable label that can be used in the search result page to list all available search result views. It is currently not used but might be in the future.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  an icon that can be used in the search result page in a list of all available search result views. It is currently not used but might be in the future.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
