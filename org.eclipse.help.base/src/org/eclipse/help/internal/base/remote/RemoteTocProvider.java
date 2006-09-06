@@ -14,14 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpBaseConstants;
 
 /*
  * Provides the TOC data that is located on the remote infocenter, if the system
@@ -29,54 +24,35 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
  */
 public class RemoteTocProvider extends AbstractTocProvider {
 
-	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	private static final String PATH_TOC = "/help/toc"; //$NON-NLS-1$
-
-	private String lastHost;
-	private int lastPort;
+	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
+	private static RemoteTocProvider instance;
 	
 	/*
-	 * Constructs a new RemoteTocProvider.
+	 * Returns the class's singleton instance.
+	 */
+	public static RemoteTocProvider getInstance() {
+		return instance;
+	}
+	
+	/*
+	 * Called by the platform, but we need a way to get the singleton
+	 * instance.
 	 */
 	public RemoteTocProvider() {
-		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-			// if the user changes remote help preferences, signal the platform
-			final Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-			prefs.addPropertyChangeListener(new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					if (lastHost != null) {
-						String property = event.getProperty();
-						if (property.equals(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST) || property.equals(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT)) {
-							String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-							int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
-							if (!host.equals(lastHost) || port != lastPort) {
-								contentChanged();
-							}
-						}
-					}
-				}
-			});
-		}
+		instance = this;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
 	public ITocContribution[] getTocContributions(String locale) {
-		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
+		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
-				Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-				String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-				int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
-				lastHost = host;
-				lastPort = port;
-				if (host != null && host.length() > 0) {
-					URL url = new URL(PROTOCOL_HTTP, host, port, PATH_TOC);
-					in = url.openStream();
-					RemoteTocParser parser = new RemoteTocParser();
-					return parser.parse(in);
-				}
+				URL url = RemoteHelp.getURL(PATH_TOC);
+				in = url.openStream();
+				RemoteTocParser parser = new RemoteTocParser();
+				return parser.parse(in);
 			}
 			catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
@@ -98,5 +74,13 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			}
 		}
 		return new ITocContribution[0];
+	}
+
+	/*
+	 * Called by the preference page whenever the user changed preferences.
+	 */
+	public void notifyPreferencesChanged() {
+		// forward the notification on to the platform
+		contentChanged();
 	}
 }

@@ -29,10 +29,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.data.ServletResources;
@@ -43,8 +42,7 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  */
 public class EclipseConnector {
 	
-	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	private static final String PATH_TOPIC = "/help/ntopic/"; //$NON-NLS-1$
+	private static final String PATH_TOPIC = "/ntopic/"; //$NON-NLS-1$
 
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
@@ -242,13 +240,10 @@ public class EclipseConnector {
 	 * was specified. If the document doesn't exist on the remote server,
 	 * returns null;
 	 */
-	private InputStream openRemoteInputStream(HttpServletRequest req, HttpServletResponse resp) {		
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-		if (host != null && host.length() > 0) {
-			int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
+	private InputStream openRemoteInputStream(HttpServletRequest req, HttpServletResponse resp) {
+		if (RemoteHelp.isEnabled()) {
 			try {
-				URL url = new URL(PROTOCOL_HTTP, host, port == 0 ? -1 : port, PATH_TOPIC + getURL(req, true));
+				URL url = RemoteHelp.getURL(PATH_TOPIC + getURL(req, true));
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 				if (connection.getResponseCode() != HttpServletResponse.SC_NOT_FOUND) {
 					return connection.getInputStream();

@@ -13,6 +13,8 @@ package org.eclipse.help.ui.internal.preferences;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.remote.RemoteIndexProvider;
+import org.eclipse.help.internal.base.remote.RemoteTocProvider;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.PreferencePage;
@@ -41,6 +43,8 @@ public class HelpContentPreferencePage extends PreferencePage
 	private Group group;
 	private Label hostLabel;
 	private Text hostText;
+	private Label pathLabel;
+	private Text pathText;
 	private Button radio1;
 	private Button radio2;
 	private Text portText;
@@ -71,9 +75,12 @@ public class HelpContentPreferencePage extends PreferencePage
 
         // initialize the UI
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-		int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
-		setValues(host, port);
+		boolean isOn = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
+		String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
+		String path = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
+		boolean useDefaultPort = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT);
+		int port = prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
+		setValues(isOn, host, path, useDefaultPort, port);
         
         return composite;
 	}
@@ -90,9 +97,12 @@ public class HelpContentPreferencePage extends PreferencePage
 	 */
 	protected void performDefaults() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		String host = prefs.getDefaultString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-		int port = prefs.getDefaultInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT);
-		setValues(host, port);
+		boolean isOn = prefs.getDefaultBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
+		String host = prefs.getDefaultString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
+		String path = prefs.getDefaultString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
+		boolean useDefaultPort = prefs.getDefaultBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT);
+		int port = prefs.getDefaultInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
+		setValues(isOn, host, path, useDefaultPort, port);
 	}
 
 	/* (non-Javadoc)
@@ -100,23 +110,21 @@ public class HelpContentPreferencePage extends PreferencePage
 	 */
 	public boolean performOk() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		if (checkbox.getSelection() == true) {
-			String host = hostText.getText().trim();
-			prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST, host);
-			String port;
-			if (radio2.getSelection()) {
-				port = portText.getText().trim();
-			}
-			else {
-				port = String.valueOf(Preferences.INT_DEFAULT_DEFAULT);
-			}
-			prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT, port);
-		}
-		else {
-			prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST, Preferences.STRING_DEFAULT_DEFAULT);
-			prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_PORT, Preferences.INT_DEFAULT_DEFAULT);
-		}
+		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, checkbox.getSelection());
+		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, hostText.getText().trim());
+		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, pathText.getText().trim());
+		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, radio1.getSelection());
+		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, portText.getText().trim());
+		
 		HelpBasePlugin.getDefault().savePluginPreferences();
+		
+		/*
+		 * Let the providers know that preferences changed and that the
+		 * content may be outdated.
+		 */
+		RemoteIndexProvider.getInstance().notifyPreferencesChanged();
+		RemoteTocProvider.getInstance().notifyPreferencesChanged();
+		
 		return true;
 	}
 	
@@ -152,6 +160,7 @@ public class HelpContentPreferencePage extends PreferencePage
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
         createHostSection(group);
+        createPathSection(group);
         createPortSection(group);
 	}
 	
@@ -164,6 +173,17 @@ public class HelpContentPreferencePage extends PreferencePage
         hostText = new Text(parent, SWT.BORDER);
         hostText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         hostText.addListener(SWT.Modify, changeListener);
+	}
+
+	/*
+	 * Create the "Path:" label and text field.
+	 */
+	private void createPathSection(Composite parent) {
+        pathLabel = new Label(parent, SWT.NONE);        
+        pathLabel.setText(Messages.HelpContentPreferencePage_path);
+        pathText = new Text(parent, SWT.BORDER);
+        pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        pathText.addListener(SWT.Modify, changeListener);
 	}
 
 	/*
@@ -187,23 +207,21 @@ public class HelpContentPreferencePage extends PreferencePage
         radio2.addListener(SWT.Selection, changeListener);
         
         portText = new Text(portComposite, SWT.BORDER);
-        portText.setLayoutData(new GridData(45, SWT.DEFAULT));
+        portText.setLayoutData(new GridData(50, SWT.DEFAULT));
         portText.addListener(SWT.Modify, changeListener);
 	}
 	
 	/*
 	 * Sets the given values for the UI.
 	 */
-	private void setValues(String host, int port) {
-		if (host.length() > 0) {
-			checkbox.setSelection(true);
-			hostText.setText(host);
-		}
-		radio1.setSelection(port == Preferences.INT_DEFAULT_DEFAULT);
-		radio2.setSelection(port != Preferences.INT_DEFAULT_DEFAULT);
-		if (port != 0) {
-			portText.setText(String.valueOf(port));
-		}
+	private void setValues(boolean isOn, String host, String path, boolean useDefaultPort, int port) {
+		checkbox.setSelection(isOn);
+		hostText.setText(host);
+		pathText.setText(path);
+		radio1.setSelection(useDefaultPort);
+		radio2.setSelection(!useDefaultPort);
+		portText.setText(String.valueOf(port));
+
 		updateEnablement();
 		updateValidity();
 	}
@@ -217,6 +235,8 @@ public class HelpContentPreferencePage extends PreferencePage
 		group.setEnabled(isChecked);
 		hostLabel.setEnabled(isChecked);
 		hostText.setEnabled(isChecked);
+		pathLabel.setEnabled(isChecked);
+		pathText.setEnabled(isChecked);
 		radio1.setEnabled(isChecked);
 		radio2.setEnabled(isChecked);
 		portText.setEnabled(isChecked && radio2.getSelection());

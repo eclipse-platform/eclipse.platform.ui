@@ -184,6 +184,7 @@ public final class Messages extends NLS {
 	public static String HelpContentPreferencePage_remote;
 	public static String HelpContentPreferencePage_location;
 	public static String HelpContentPreferencePage_host;
+	public static String HelpContentPreferencePage_path;
 	public static String HelpContentPreferencePage_portDefault;
 	public static String HelpContentPreferencePage_port;
 	public static String HelpContentPreferencePage_error_host;

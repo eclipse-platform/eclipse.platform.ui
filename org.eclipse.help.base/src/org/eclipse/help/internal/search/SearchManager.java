@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.base.remote.RemoteSearchManager;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
@@ -74,7 +74,7 @@ public class SearchManager {
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
-		if (BaseHelpSystem.isRemote()) {
+		if (RemoteHelp.isEnabled()) {
 			searchLocalAndRemote(searchQuery, collector, pm);
 		}
 		else {

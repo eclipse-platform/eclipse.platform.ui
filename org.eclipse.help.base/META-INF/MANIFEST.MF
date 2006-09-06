@@ -8,7 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.help.browser,
  org.eclipse.help.internal.base;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
- org.eclipse.help.internal.base.remote;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.internal.base.remote;x-friends:="org.eclipse.ua.tests,org.eclipse.help.webapp,org.eclipse.help.ui",
  org.eclipse.help.internal.base.util;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.browser;x-friends:="org.eclipse.help.ui,org.eclipse.ua.tests",
  org.eclipse.help.internal.browser.macosx;x-friends:="org.eclipse.ua.tests",

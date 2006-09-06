@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
@@ -457,19 +456,6 @@ public final class BaseHelpSystem {
 				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$//$NON-NLS-2$
 				|| locale.startsWith("ur")) { //$NON-NLS-1$
 			return true;
-		}
-		return false;
-	}
-
-	/*
-	 * Returns whether or not the help system is configured for remote help
-	 * content.
-	 */
-	public static boolean isRemote() {
-		if (getMode() != MODE_INFOCENTER) {
-			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-			String host = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_SERVER_HOST);
-			return (host != null && host.length() > 0);
 		}
 		return false;
 	}
