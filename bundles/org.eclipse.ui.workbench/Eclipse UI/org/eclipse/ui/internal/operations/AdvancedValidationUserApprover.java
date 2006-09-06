@@ -14,7 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationApprover2;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -27,9 +29,11 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -45,17 +49,27 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  * validations, the true validity is not determined until it is time to perform
  * the operation.
  * </p>
+ * <p>
+ * Since 3.3, this operation approver also checks the validity of a proposed
+ * execute by determining whether the redo is viable.
  * 
  * @since 3.1
  */
-public class AdvancedValidationUserApprover implements IOperationApprover {
+public class AdvancedValidationUserApprover implements IOperationApprover,
+		IOperationApprover2 {
 
 	private IUndoContext context;
+
+	private static final int EXECUTING = 1;
+
+	private static final int UNDOING = 2;
+
+	private static final int REDOING = 3;
 
 	private class StatusReportingRunnable implements IRunnableWithProgress {
 		IStatus status;
 
-		boolean undoing;
+		int doing;
 
 		IUndoableOperation operation;
 
@@ -64,23 +78,34 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 		IAdaptable uiInfo;
 
 		StatusReportingRunnable(IUndoableOperation operation,
-				IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
+				IOperationHistory history, IAdaptable uiInfo, int doing) {
 			super();
 			this.operation = operation;
 			this.history = history;
-			this.undoing = undoing;
+			this.doing = doing;
 			this.uiInfo = uiInfo;
 		}
 
+		// The casts to IAdvancedUndoableOperation and
+		// IAdvancedUndoableOperation2 are safe because these types were checked
+		// in the call chain.
 		public void run(IProgressMonitor pm) {
 			try {
-				if (undoing) {
+				switch (doing) {
+				case UNDOING:
 					status = ((IAdvancedUndoableOperation) operation)
 							.computeUndoableStatus(pm);
-				} else {
+					break;
+				case REDOING:
 					status = ((IAdvancedUndoableOperation) operation)
 							.computeRedoableStatus(pm);
+					break;
+				case EXECUTING:
+					status = ((IAdvancedUndoableOperation2) operation)
+							.computeExecutionStatus(pm);
+					break;
 				}
+
 			} catch (ExecutionException e) {
 				reportException(e, uiInfo);
 				status = IOperationHistory.OPERATION_INVALID_STATUS;
@@ -114,7 +139,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 	 */
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
-		return proceedWithOperation(operation, history, uiInfo, false);
+		return proceedWithOperation(operation, history, uiInfo, REDOING);
 	}
 
 	/*
@@ -127,14 +152,27 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
 
-		return proceedWithOperation(operation, history, uiInfo, true);
+		return proceedWithOperation(operation, history, uiInfo, UNDOING);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationApprover2#proceedExecuting(org.eclipse.core.commands.operations.IUndoableOperation,
+	 *      org.eclipse.core.commands.operations.IOperationHistory,
+	 *      org.eclipse.core.runtime.IAdaptable)
+	 */
+	public IStatus proceedExecuting(IUndoableOperation operation,
+			IOperationHistory history, IAdaptable uiInfo) {
+		return proceedWithOperation(operation, history, uiInfo, EXECUTING);
 	}
 
 	/*
 	 * Determine whether the operation in question is still valid.
 	 */
-	private IStatus proceedWithOperation(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
+	private IStatus proceedWithOperation(final IUndoableOperation operation,
+			final IOperationHistory history, final IAdaptable uiInfo,
+			final int doing) {
 
 		// return immediately if the operation is not relevant
 		if (!operation.hasContext(context)) {
@@ -143,41 +181,56 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 
 		// if the operation does not support advanced validation,
 		// then we assume it is valid.
-		if (!(operation instanceof IAdvancedUndoableOperation)) {
-			return Status.OK_STATUS;
+		if (doing == EXECUTING) {
+			if (!(operation instanceof IAdvancedUndoableOperation2)) {
+				return Status.OK_STATUS;
+			}
+		} else {
+			if (!(operation instanceof IAdvancedUndoableOperation)) {
+				return Status.OK_STATUS;
+			}
 		}
 
-		// Compute the undoable or redoable status
-		IStatus status = computeOperationStatus(operation, history, uiInfo,
-				undoing);
+		// The next two methods make a number of UI calls, so we wrap the
+		// whole thing up in a syncExec.
+		final IStatus[] status = new IStatus[1];
+		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// Compute the undoable or redoable status
+				status[0] = computeOperationStatus(operation, history, uiInfo,
+						doing);
 
-		// Report non-OK statuses to the user. In some cases, the user may
-		// choose to proceed, and the returned status will be different than
-		// what is reported.
-		if (!status.isOK()) {
-			status = reportAndInterpretStatus(status, uiInfo, operation,
-					undoing);
-		}
+				// Report non-OK statuses to the user. In some cases, the user
+				// may choose to proceed, and the returned status will be
+				// different than what is reported.
+				if (!status[0].isOK()) {
+					status[0] = reportAndInterpretStatus(status[0], uiInfo,
+							operation, doing);
+				}
+
+			}
+		});
 
 		// If the operation is still not OK, inform the history that the
 		// operation has changed, since it was previously believed to be valid.
 		// We rely here on the ability of an IAdvancedUndoableOperation to
 		// correctly report canUndo() and canRedo() once the undoable and
 		// redoable status have been computed.
-		if (!status.isOK()) {
+		if (!status[0].isOK()) {
 			history.operationChanged(operation);
 		}
-		return status;
+		return status[0];
 	}
 
 	private IStatus computeOperationStatus(IUndoableOperation operation,
-			IOperationHistory history, IAdaptable uiInfo, boolean undoing) {
+			IOperationHistory history, IAdaptable uiInfo, int doing) {
 		try {
 			StatusReportingRunnable runnable = new StatusReportingRunnable(
-					operation, history, uiInfo, undoing);
+					operation, history, uiInfo, doing);
 			TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(
-						getShell(uiInfo), PlatformUI.getWorkbench()
-								.getProgressService().getLongOperationTime());
+					getShell(uiInfo), PlatformUI.getWorkbench()
+							.getProgressService().getLongOperationTime());
+
 			progressDialog.run(false, true, runnable);
 			return runnable.getStatus();
 		} catch (OperationCanceledException e) {
@@ -187,8 +240,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 			return IOperationHistory.OPERATION_INVALID_STATUS;
 		} catch (InterruptedException e) {
 			// Operation was cancelled and acknowledged by runnable with this
-			// exception.
-			// Do nothing.
+			// exception. Do nothing.
 			return Status.CANCEL_STATUS;
 		}
 	}
@@ -225,7 +277,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 	 * Report a non-OK status to the user
 	 */
 	private IStatus reportAndInterpretStatus(IStatus status, IAdaptable uiInfo,
-			IUndoableOperation operation, boolean undoing) {
+			IUndoableOperation operation, int doing) {
 		// CANCEL status is assumed to be initiated by the user, so there
 		// is nothing to report.
 		if (status.getSeverity() == IStatus.CANCEL) {
@@ -248,43 +300,64 @@ public class AdvancedValidationUserApprover implements IOperationApprover {
 
 		if (!(status.getSeverity() == IStatus.ERROR)) {
 			String warning, title;
-			if (undoing) {
+			switch (doing) {
+			case UNDOING:
 				warning = WorkbenchMessages.Operations_proceedWithNonOKUndoStatus;
 				if (status.getSeverity() == IStatus.INFO) {
 					title = WorkbenchMessages.Operations_undoInfo;
 				} else {
 					title = WorkbenchMessages.Operations_undoWarning;
 				}
-			} else {
+				break;
+			case REDOING:
 				warning = WorkbenchMessages.Operations_proceedWithNonOKRedoStatus;
 				if (status.getSeverity() == IStatus.INFO) {
 					title = WorkbenchMessages.Operations_redoInfo;
 				} else {
 					title = WorkbenchMessages.Operations_redoWarning;
 				}
+				break;
+			default: // EXECUTING
+				warning = WorkbenchMessages.Operations_proceedWithNonOKExecuteStatus;
+				if (status.getSeverity() == IStatus.INFO) {
+					title = WorkbenchMessages.Operations_executeInfo;
+				} else {
+					title = WorkbenchMessages.Operations_executeWarning;
+				}
+				break;
 			}
 
-			String message = NLS.bind(warning, new Object [] {title, status.getMessage(), operation
-					.getLabel()});
+			String message = NLS.bind(warning, new Object[] { title,
+					status.getMessage(), operation.getLabel() });
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
 					message, MessageDialog.WARNING, buttons, 0);
-			boolean proceed = (dialog.open() == 0);
-			// if the user chooses to proceed anyway, map the status to OK so
-			// that the operation is considered approved. Otherwise leave
-			// the status as is to stop the operation.
-			if (proceed) {
+			int dialogAnswer = dialog.open();
+			// The user has been given the specific status and has chosen
+			// to proceed or to cancel. The user choice determines what
+			// the status should be at this point, OK or CANCEL.
+			if (dialogAnswer == Window.OK) {
 				reportedStatus = Status.OK_STATUS;
+			} else {
+				reportedStatus = Status.CANCEL_STATUS;
 			}
 		} else {
 			String title, stopped;
-			if (undoing) {
+			switch (doing) {
+			case UNDOING:
 				title = WorkbenchMessages.Operations_undoProblem;
 				stopped = WorkbenchMessages.Operations_stoppedOnUndoErrorStatus;
-			} else {
+				break;
+			case REDOING:
 				title = WorkbenchMessages.Operations_redoProblem;
 				stopped = WorkbenchMessages.Operations_stoppedOnRedoErrorStatus;
+				break;
+			default: // EXECUTING
+				title = WorkbenchMessages.Operations_executeProblem;
+				stopped = WorkbenchMessages.Operations_stoppedOnExecuteErrorStatus;
+
+				break;
 			}
 
 			// It is an error condition. The user has no choice to proceed, so

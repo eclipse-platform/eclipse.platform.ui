@@ -709,7 +709,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ShowPartPaneMenuAction_toolTip;
 	public static String ShowViewMenuAction_text;
 	public static String ShowViewMenuAction_toolTip;
-	
+
 	public static String ToggleCoolbarVisibilityAction_show_text;
 	public static String ToggleCoolbarVisibilityAction_hide_text;
 	public static String ToggleCoolbarVisibilityAction_toolTip;
@@ -840,18 +840,23 @@ public class WorkbenchMessages extends NLS {
 	public static String Operations_undoRedoCommandDisabled;
 	public static String Operations_undoProblem;
 	public static String Operations_redoProblem;
+	public static String Operations_executeProblem;
 	public static String Operations_undoInfo;
 	public static String Operations_redoInfo;
+	public static String Operations_executeInfo;
 	public static String Operations_undoWarning;
 	public static String Operations_redoWarning;
+	public static String Operations_executeWarning;
 	public static String Operations_linearUndoViolation;
 	public static String Operations_linearRedoViolation;
 	public static String Operations_nonLocalUndoWarning;
 	public static String Operations_nonLocalRedoWarning;
 	public static String Operations_discardUndo;
 	public static String Operations_discardRedo;
+	public static String Operations_proceedWithNonOKExecuteStatus;
 	public static String Operations_proceedWithNonOKUndoStatus;
 	public static String Operations_proceedWithNonOKRedoStatus;
+	public static String Operations_stoppedOnExecuteErrorStatus;
 	public static String Operations_stoppedOnUndoErrorStatus;
 	public static String Operations_stoppedOnRedoErrorStatus;
 
@@ -916,7 +921,7 @@ public class WorkbenchMessages extends NLS {
     public static String TrimCommon_IntroBar_TrimName;
     public static String TrimCommon_Progress_TrimName;
     public static String TrimCommon_StatusLine_TrimName;
-    
+		
     // AbstractSearchDialog
     public static String AbstractSearchDialog_menu;
 	public static String AbstractSearchDialog_refreshJob;
