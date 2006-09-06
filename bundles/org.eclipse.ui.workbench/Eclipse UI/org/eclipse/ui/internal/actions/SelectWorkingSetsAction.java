@@ -81,7 +81,7 @@ public class SelectWorkingSetsAction implements IWorkbenchWindowActionDelegate,
 
 		ToggleWorkingSetAction(IWorkingSet set) {
 			super(set.getLabel(), IAction.AS_CHECK_BOX);
-			setImageDescriptor(set.getImage());
+			setImageDescriptor(set.getImageDescriptor());
 			this.set = set;
 			setChecked(isWorkingSetEnabled(set));
 		}

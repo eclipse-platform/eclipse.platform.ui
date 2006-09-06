@@ -77,7 +77,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 		public ImageDescriptor getImageDescriptor(Object o) {
 			if (o instanceof IWorkingSet) {
 				IWorkingSet set = (IWorkingSet) o;
-				return set.getImage();
+				return set.getImageDescriptor();
 			}
 			return null;
 		}
