@@ -225,6 +225,8 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW,
                 PATH_ETOOL + "new_fastview.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_FASTVIEW,
+                PATH_ETOOL + "fastview_restore.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW,
                 PATH_DTOOL + "new_fastview.gif", true); //$NON-NLS-1$
 

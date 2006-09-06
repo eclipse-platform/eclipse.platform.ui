@@ -69,7 +69,7 @@ public class ShowViewAction extends Action implements IPluginContribution {
                     }
                     
                     FastViewBar bar = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBar();
-                    bar.adoptView(ref, -1, true, true, false);
+                    bar.adoptView(ref, -1, true, true);
                 } else {
                     page.showView(desc.getId());
                 }

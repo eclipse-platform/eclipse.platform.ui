@@ -1164,7 +1164,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	Perspective persp = getPage().getActivePerspective();
     	boolean useMultiFVB = (System.getProperty("MultiFVB")!= null && persp != null); //$NON-NLS-1$
     	if (minimized && useMultiFVB && this instanceof ViewStack) {
-    		persp.moveToTrim((ViewStack) this, FastViewBar.GROUP_FVB);
+    		// Make a one element list to pass on
+    		List stacks = new ArrayList();
+    		stacks.add(this);
+    		persp.moveToTrim(stacks, FastViewBar.GROUP_FVB);
     		return;
     	}
     	

@@ -53,6 +53,7 @@ public interface IWorkbenchGraphicConstants {
     
     //Fast view enabled and disabled icons
     public final static String IMG_ETOOL_NEW_FASTVIEW = "IMG_ETOOL_NEW_FASTVIEW"; //$NON-NLS-1$
+    public final static String IMG_ETOOL_RESTORE_FASTVIEW = "IMG_ETOOL_RESTORE_FASTVIEW"; //$NON-NLS-1$
     
     public final static String IMG_DTOOL_NEW_FASTVIEW = "IMG_DTOOL_NEW_FASTVIEW"; //$NON-NLS-1$
 

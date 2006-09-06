@@ -47,9 +47,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
-import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -375,28 +375,62 @@ public class Perspective {
     	return SWT.BOTTOM; // shouldn't be able to get here...
     }
     
-    public void moveToTrim(ViewStack stack, int style) {
-    	int side = calcStackSide(stack);
-    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), style, side);
+    public void moveToTrim(List stacks, int style) {
+    	if (stacks == null || stacks.size() == 0)
+    		return;
     	
-    	// Add all the views in the stack to teh new FVB
-    	ArrayList refs = new ArrayList();
-    	List parts = stack.getPresentableParts();
-    	for (Iterator partIter = parts.iterator(); partIter.hasNext();) {
-    		PresentablePart part = (PresentablePart) partIter.next();
-    		if (part.getPane().getPartReference() instanceof ViewReference) {
-    			refs.add(part.getPane().getPartReference());
-    		}
+    	Shell shell = ((ViewStack)stacks.get(0)).getShell();
+    	RectangleAnimation animation = new RectangleAnimation(shell, null, null);
+    	
+		// Capture the area the stack currently occupies (and its image)
+    	for (Iterator stackIter = stacks.iterator(); stackIter.hasNext();) {
+			ViewStack stack = (ViewStack) stackIter.next();
+			animation.addStartRect(DragUtil.getDisplayBounds(stack.getControl()));
+    	}
+    	
+    	// Iterate through all the stacks, moveing each to the trim
+    	List newFVBs = new ArrayList(stacks.size());
+    	for (Iterator stackIter = stacks.iterator(); stackIter.hasNext();) {
+			ViewStack stack = (ViewStack) stackIter.next();
+			
+			// Place the stack on the correct side
+	    	int side = calcStackSide(stack);
+	    	FastViewBar fvb = createFastViewBar(getUniqueGroupId(), style, side);
+	    	newFVBs.add(fvb);
+	    	
+	    	// Add all the views in the stack to teh new FVB
+	    	ArrayList refs = new ArrayList();
+	    	List parts = stack.getPresentableParts();
+	    	for (Iterator partIter = parts.iterator(); partIter.hasNext();) {
+	    		PresentablePart part = (PresentablePart) partIter.next();
+	    		if (part.getPane().getPartReference() instanceof ViewReference) {
+	    			refs.add(part.getPane().getPartReference());
+	    		}
+			}
+	    	fvb.setViewRefs(refs);
+	    	
+	    	// Set the display orientation based on the stack's geometry
+	    	Rectangle stackBounds = stack.getBounds();
+	    	int orientation = (stackBounds.width > stackBounds.height) ? SWT.HORIZONTAL : SWT.VERTICAL;
+	    	fvb.setOrientation(orientation);
+	    	
+	    	// Move the views 'into' the new group
+	    	fvb.collapseGroup();
+    	
+    	}
+
+    	// Force a layout
+    	WorkbenchWindow wbw = (WorkbenchWindow)page.getWorkbenchWindow();
+    	ITrimManager tbm = wbw.getTrimManager();
+    	tbm.forceLayout();
+    	
+    	// Now that the layout is finished we can add the 'end' rects for the animation
+    	for (Iterator fvbIter = newFVBs.iterator(); fvbIter.hasNext();) {
+			FastViewBar fvb = (FastViewBar) fvbIter.next();
+			animation.addEndRect(DragUtil.getDisplayBounds(fvb.getControl()));
 		}
-    	fvb.setViewRefs(refs);
     	
-    	// Set the display orientation based on the stack's geometry
-    	Rectangle stackBounds = stack.getBounds();
-    	int orientation = (stackBounds.width > stackBounds.height) ? SWT.HORIZONTAL : SWT.VERTICAL;
-    	fvb.setOrientation(orientation);
-    	
-    	// Move the views 'into' the new group
-    	fvb.collapseGroup();
+    	animation.schedule();
     }
     
     public void restoreZoomGroups() {
@@ -427,7 +461,6 @@ public class Perspective {
     	tbm.addTrim(side, newFVB);
     	
     	fastViewBars.add(newFVB);
-    	LayoutUtil.resize(newFVB.getControl());
     	
     	return newFVB;
     }
@@ -1939,7 +1972,7 @@ public class Perspective {
 
         if (openViewMode == IPreferenceConstants.OVM_FAST) {
         	FastViewBar fvb = ((WorkbenchWindow)pane.getWorkbenchWindow()).getFastViewBar();
-        	fvb.adoptView(ref, -1, true, true, false);
+        	fvb.adoptView(ref, -1, true, true);
         } else if (openViewMode == IPreferenceConstants.OVM_FLOAT
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);

@@ -15,11 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -33,27 +29,38 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * @since 3.0
  */
 public class RectangleAnimation extends Job {
-    private static final int LINE_WIDTH = 2;
+	private static class AnimationFeedbackFactory {
+		public static DefaultAnimationFeedback createAnimationRenderer() {
+			if (System.getProperty("MultiFVB") != null) //$NON-NLS-1$
+				return new ImageAnimationFeedback();
+			return new DefaultAnimationFeedback();
+		}
+		
+	}
+	
+	// Constants
+	public static final int TICK_TIMER = 1;
+	public static final int FRAME_COUNT = 2;
 
-    private Rectangle start;
-
+	// Animation Parameters
+	private Display display;
+	
+	private boolean enableAnimations;
+    private int timingStyle = TICK_TIMER;
     private int duration;
+    
+    // Control State
+    private DefaultAnimationFeedback feedbackRenderer;
+    private long stepCount;
+    private long frameCount;
+    private long startTime;
+    private long curTime;
+    private long prevTime;
+    
+    // Macros
+    private boolean done() { return amount() >= 1.0; }
 
-    private long startTime = 0;
-
-    private Rectangle end;
-
-    private boolean done = false;
-
-    private Shell theShell;
-
-    private Display display;
-
-    private Region shellRegion;
-
-    private boolean first = true;
-
-    private static Rectangle interpolate(Rectangle start, Rectangle end,
+    public static Rectangle interpolate(Rectangle start, Rectangle end,
             double amount) {
         double initialWeight = 1.0 - amount;
 
@@ -64,70 +71,31 @@ public class RectangleAnimation extends Job {
 
         return result;
     }
+    
+    // Animation Step
+    private Runnable animationStep = new Runnable() {
 
-    private Runnable paintJob = new Runnable() {
+		public void run() {
+            // Capture time
+            prevTime = curTime;
+            curTime = System.currentTimeMillis();
 
-        public void run() {
-
-            if (theShell == null || theShell.isDisposed()) {
-                done = true;
-                return;
-            }
-
-            if (first) {
-                // Wait until the first syncExec before we make the shell visible and start
-            	// the timer.
-            	setCurrentRectangle(start);
-            	theShell.setVisible(true);
-            	// Making the shell visible will be slow on old video cards, so only start
-            	// the timer once it is visible.
-            	startTime = System.currentTimeMillis();
-            	first = false;
-            	return;
+            // Has the system timer 'ticked'?
+            if (curTime != prevTime) {
+            	clockTick();
             }
             
-            long currentTime = System.currentTimeMillis();
-            
-            double amount = (double) (currentTime - startTime)
-                    / (double) duration;
-
-            if (amount > 1.0) {
-                amount = 1.0;
-                done = true;
+            if (isUpdateStep()) {
+	            updateDisplay();
+	            frameCount++;
             }
-
-            Rectangle toPaint = interpolate(start, end, amount);
-
-            setCurrentRectangle(toPaint);
             
-            display.update();
+            stepCount++;
         }
 
     };
-
-    public RectangleAnimation(Shell parentShell, Rectangle start, Rectangle end) {
-        this(parentShell, start, end, 400);
-    }
-
-    private void setCurrentRectangle(Rectangle newRegion) {
-        if (shellRegion != null) {
-            shellRegion.dispose();
-            shellRegion = new Region(display);
-        }
-        
-        Rectangle rect = Geometry.toControl(theShell, newRegion);
-        shellRegion.add(rect);
-        rect.x += LINE_WIDTH;
-        rect.y += LINE_WIDTH;
-        rect.width = Math.max(0, rect.width - 2 * LINE_WIDTH);
-        rect.height = Math.max(0, rect.height - 2 * LINE_WIDTH);
-
-        shellRegion.subtract(rect);
-
-        theShell.setRegion(shellRegion);
-    }
     
-    /**
+	/**
      * Creates an animation that will morph the start rectangle to the end rectangle in the
      * given number of milliseconds. The animation will take the given number of milliseconds to
      * complete.
@@ -145,67 +113,127 @@ public class RectangleAnimation extends Job {
     public RectangleAnimation(Shell parentShell, Rectangle start,
             Rectangle end, int duration) {
         super(WorkbenchMessages.RectangleAnimation_Animating_Rectangle);
-        this.duration = duration;
-        this.start = start;
-        this.end = end;
 
-        display = parentShell.getDisplay();
-
-        setSystem(true);
-
+        // if animations aren't on this is a NO-OP
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean enableAnimations = preferenceStore
-        	.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
-        	
-        if (enableAnimations) {
-	        theShell = new Shell(parentShell, SWT.NO_TRIM | SWT.ON_TOP);
-	        Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
-	        theShell.setBackground(color);
-	
-	        Rectangle shellBounds = Geometry.copy(start);
-	        shellBounds.add(end);
-	        theShell.setBounds(shellBounds);
-	
-	        shellRegion = new Region(display);
+        enableAnimations = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+        if (!enableAnimations) {
+        	return;
         }
+
+        // Capture paraeters
+        display = parentShell.getDisplay();
+        this.duration = duration;
+
+        // Don't show the job in monitors
+        setSystem(true);
+        
+        // Pick the renderer (could be a preference...)
+        feedbackRenderer = AnimationFeedbackFactory.createAnimationRenderer();
+        
+        // Set it up
+        feedbackRenderer.initialize(parentShell, start, end);
+        
+        // Set the animation's initial state
+        stepCount = 0;
+        //long totalFrames = (long) ((duration / 1000.0) * framesPerSec);       
+        curTime = startTime = System.currentTimeMillis();
     }
 
-    /* (non-Javadoc)
+    public RectangleAnimation(Shell parentShell, Rectangle start, Rectangle end) {
+        this(parentShell, start, end, 400);
+    }
+    
+    public void addStartRect(Rectangle rect) {
+    	if (feedbackRenderer != null)
+    		feedbackRenderer.addStartRect(rect);
+    }
+    
+    public void addEndRect(Rectangle rect) {
+    	if (feedbackRenderer != null)
+    	    feedbackRenderer.addEndRect(rect);
+    }
+
+    /**
+	 * 
+	 */
+	protected void clockTick() {
+	}
+    
+    /**
+	 * @return
+	 */
+	protected boolean isUpdateStep() {
+		switch (timingStyle) {
+			case TICK_TIMER:
+				return prevTime != curTime;
+	
+			case FRAME_COUNT:
+				return true;
+		}
+		
+		return false;
+	}
+
+	private double amount() {
+		double amount = 0.0;
+		
+		switch (timingStyle) {
+			case TICK_TIMER:
+				amount = (double) (curTime - startTime) / (double) duration;
+				break;
+	
+			case FRAME_COUNT:
+				amount = (double)frameCount / (double)duration;
+		}
+		
+		if (amount > 1.0)
+			amount = 1.0;
+		
+		return amount;
+    }
+
+    /**
+	 * 
+	 */
+	protected void updateDisplay() {
+		feedbackRenderer.renderStep(amount());
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected IStatus run(IProgressMonitor monitor) {
 
-        // We use canvas = null to indicate that the animation should be skipped on this platform.
-        if (theShell == null) {
+        // We use preferece value to indicate that the animation should be skipped on this platform.
+        if (!enableAnimations) {
             return Status.OK_STATUS;
         }
 
-        startTime = 0;
-
-        while (!done) {
-            if (!theShell.isDisposed()) {
-                display.syncExec(paintJob);
-                // Don't pin the CPU
-                Thread.yield();
+        // We're starting, initialize
+        display.syncExec(new Runnable() {
+            public void run() {
+                feedbackRenderer.jobInit();
             }
+        });
+        
+        // Only start the animation timer -after- we've initialized
+        curTime = startTime = System.currentTimeMillis();
+        
+        while (!done()) {
+            display.syncExec(animationStep);
+            // Don't pin the CPU
+            Thread.yield();
         }
 
-        if (!theShell.isDisposed()) {
-            display.syncExec(new Runnable() {
-                public void run() {
-                    theShell.dispose();
-                }
-            });
-        }
-
-        if (!shellRegion.isDisposed()) {
-            display.syncExec(new Runnable() {
-                public void run() {
-                    shellRegion.dispose();
-                }
-            });
-        }
-
+        System.out.println("Done: " + (curTime-startTime) + " steps: " + stepCount + " frames:" + frameCount);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        // We're done, clean up
+        display.syncExec(new Runnable() {
+            public void run() {
+                feedbackRenderer.dispose();
+            }
+        });
+    
         return Status.OK_STATUS;
     }
 }

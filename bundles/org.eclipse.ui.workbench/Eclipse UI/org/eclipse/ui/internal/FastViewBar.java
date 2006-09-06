@@ -27,11 +27,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -69,6 +71,12 @@ import org.osgi.framework.Bundle;
  * @see org.eclipse.ui.internal.FastViewPane
  */
 public class FastViewBar implements IWindowTrim {
+	// Restore button...'cloned' from CTabFolder...
+	static final int BUTTON_SIZE = 18;
+	static final int BUTTON_BORDER = SWT.COLOR_WIDGET_DARK_SHADOW;
+	static final int BUTTON_FILL = SWT.COLOR_WIDGET_BACKGROUND;
+    private static Image restoreImage = null;
+
     private ToolBarManager fastViewBar;
     private MenuManager fastViewBarMenuManager;
     private MenuManager showViewMenuMgr;
@@ -83,21 +91,20 @@ public class FastViewBar implements IWindowTrim {
     private Composite fvbComposite;
     private ToolBar menuTB;
     private ToolItem showItem = null;
-    private ToolItem groupItem = null;
-    private FastGroupTrimButton groupBtn = null;
+    private ToolItem restoreItem = null;
     private CellData toolBarData;
 
     /** Causes the FVB to remove the ref for any view restored to the workbench */
     public static final int REMOVE_UNFAST_REFS = 0x0001;
     /** Causes the FVB to show the 'group mode' button set */
-    public static final int SHOW_GROUP_BUTTON = 0x0002;
+    public static final int SHOW_RESTORE_BUTTON = 0x0002;
     /** Causes the FVB to show the 'Add View' popup button */
     public static final int SHOW_ADD_BUTTON = 0x0004;
     /** Indicates that the FVB was added during 'zoomIn' */
     public static final int ZOOM_GROUP = 0x0008;
     
     public static final int LEGACY_FVB = REMOVE_UNFAST_REFS | SHOW_ADD_BUTTON;
-    public static final int GROUP_FVB = SHOW_GROUP_BUTTON;
+    public static final int GROUP_FVB = SHOW_RESTORE_BUTTON;
     
     public boolean testStyleBit(int toTest) { return (style & toTest) != 0; }
     private int style = LEGACY_FVB;
@@ -186,7 +193,7 @@ public class FastViewBar implements IWindowTrim {
                 }
                 
                 int insertIdx = viewRefs.indexOf(beforeRef);
-                adoptView(ref, insertIdx, true, false, !iter.hasNext());
+                adoptView(ref, insertIdx, true, false);
             }
             update(true);
         }
@@ -223,6 +230,11 @@ public class FastViewBar implements IWindowTrim {
     public FastViewBar(WorkbenchWindow theWindow) {
         window = theWindow;
 
+        // Initialize the 'restore' image
+        if (restoreImage == null) {
+        	defineRestoreImage(window.getShell().getDisplay());
+        }
+        
         perspectiveListener = new IPerspectiveListener2() {
             public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
                 update(true);
@@ -268,6 +280,34 @@ public class FastViewBar implements IWindowTrim {
     }
 
     /**
+     * Create the restore image
+	 * @param window
+	 */
+	private void defineRestoreImage(Display display) {
+		restoreImage = new Image(display, 18, 18);
+		restoreImage.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		
+		GC gc = new GC(restoreImage);
+
+		int x = 4;
+		int y = 3;
+		
+		gc.setForeground(display.getSystemColor(BUTTON_BORDER));
+		gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		// Fill the background
+		gc.fillRectangle(restoreImage.getBounds());
+
+		gc.fillRectangle(x, y+3, 5, 4);
+		gc.fillRectangle(x+2, y, 5, 4);
+		gc.drawRectangle(x, y+3, 5, 4);
+		gc.drawRectangle(x+2, y, 5, 4);
+		gc.drawLine(x+3, y+1, x+6, y+1);
+		gc.drawLine(x+1, y+4, x+4, y+4);
+		
+		gc.dispose();
+	}
+
+	/**
      * Special constructor that sets the ID
      * 
 	 * @param wbw The Workbench window
@@ -387,7 +427,10 @@ public class FastViewBar implements IWindowTrim {
         fvbComposite.setToolTipText(tip);
 
         fvbComposite.addListener(SWT.MenuDetect, menuListener);
-        PresentationUtil.addDragListener(fvbComposite, dragListener);
+        
+        if (style == LEGACY_FVB) {
+        	PresentationUtil.addDragListener(fvbComposite, dragListener);
+        }
 
         createChildControls();
     }
@@ -452,16 +495,27 @@ public class FastViewBar implements IWindowTrim {
 	        });
         }
         
-        if (testStyleBit(SHOW_GROUP_BUTTON)) {
-        	groupBtn = new FastGroupTrimButton(menuTB, this);
-        	groupBtn.setSize(20);
-        	groupItem = new ToolItem(menuTB, SWT.SEPARATOR, 0);
-        	groupItem.setControl(groupBtn.getControl());
-        	groupItem.setWidth(20);
-        	
+        if (testStyleBit(SHOW_RESTORE_BUTTON)) {
+	        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
+	        restoreItem = new  ToolItem(menuTB, SWT.PUSH, 0);
+	        
+	        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_FASTVIEW);
+	        restoreItem.setImage(tbImage);
+	        
+	        String menuTip = WorkbenchMessages.StandardSystemToolbar_Restore;
+	        restoreItem.setToolTipText(menuTip);
+	        
+	        // Left Click...
+	        restoreItem.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					closeGroup();
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+	        	
+	        });
         }
-        
-        //new ToolItem(menuTB, SWT.SEPARATOR, 1);
 
         // Now that the ToolBar is populated calculate its size...
         Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -531,8 +585,11 @@ public class FastViewBar implements IWindowTrim {
         toolBarData.align(SWT.FILL, SWT.FILL);
 
         getToolBar().setLayoutData(toolBarData);
-        PresentationUtil.addDragListener(getToolBar(), dragListener);
-        DragUtil.addDragTarget(getControl(), fastViewDragTarget);
+        
+        if (style == LEGACY_FVB) {
+	        PresentationUtil.addDragListener(getToolBar(), dragListener);
+	        DragUtil.addDragTarget(getControl(), fastViewDragTarget);
+        }
 
         update(true);
     }
@@ -707,9 +764,9 @@ public class FastViewBar implements IWindowTrim {
         	showItem = null;
         }
         
-        if (groupItem != null) {
-        	groupItem.dispose();
-        	groupItem = null;
+        if (restoreItem != null) {
+        	restoreItem.dispose();
+        	restoreItem = null;
         }
         
         menuTB.dispose();
@@ -940,14 +997,10 @@ public class FastViewBar implements IWindowTrim {
         return window;
     }
     
-    public void adoptView(IViewReference ref, int insertIndex, boolean makeFast, boolean activate, boolean animate) {
+    public void adoptView(IViewReference ref, int insertIndex, boolean makeFast, boolean activate) {
         if (ref != null) {
             WorkbenchPage page = window.getActiveWorkbenchPage();
             if (page != null) {
-            	// Remember the pane -before- we adopt the view for animations
-                ViewPane pane = (ViewPane) ((WorkbenchPartReference) ref)
-                .getPane();
-            	
                 if (makeFast)
                 	page.addFastView(ref);
 
@@ -961,33 +1014,14 @@ public class FastViewBar implements IWindowTrim {
 	                    page.activate(toActivate);
 	                }
                 }
-
-                if (animate && pane != null) {
-                    int idx = getIndex(ref);
-                    ToolItem item = getItem(idx);
-                    Rectangle bounds = item.getBounds();
-                    Rectangle endBounds = Geometry.toDisplay(item
-                            .getParent(), bounds);
-
-	                RectangleAnimation animation = new RectangleAnimation(
-	                        window.getShell(), pane.getParentBounds(), endBounds);
-	
-	                animation.schedule();
-                }
             }
         }
     }
     
-    public void restoreView(IViewReference selectedView, boolean activate, boolean animate) {
+    public void restoreView(IViewReference selectedView, boolean activate) {
         if (selectedView != null) {
             WorkbenchPage page = window.getActiveWorkbenchPage();
             if (page != null) {
-                int idx = getIndex(selectedView);
-                ToolItem item = getItem(idx);
-                Rectangle bounds = item.getBounds();
-                Rectangle startBounds = Geometry.toDisplay(item
-                        .getParent(), bounds);
-
                 page.removeFastView(selectedView);
                 
                 if (activate) {
@@ -996,17 +1030,6 @@ public class FastViewBar implements IWindowTrim {
 	                if (toActivate != null) {
 	                    page.activate(toActivate);
 	                }
-                }
-
-                ViewPane pane = (ViewPane) ((WorkbenchPartReference) selectedView)
-                        .getPane();
-
-                if (animate) {
-	                RectangleAnimation animation = new RectangleAnimation(
-	                        window.getShell(), startBounds, pane
-	                                .getParentBounds());
-	
-	                animation.schedule();
                 }
             }
         }
@@ -1153,7 +1176,7 @@ public class FastViewBar implements IWindowTrim {
 	public void collapseGroup() {
 		for (Iterator refIter = viewRefs.iterator(); refIter.hasNext();) {
 			IViewReference ref = (IViewReference) refIter.next();
-			adoptView(ref, -1, true, false, !refIter.hasNext());
+			adoptView(ref, -1, true, false);
 		}
 		
 		update(false);
@@ -1165,10 +1188,17 @@ public class FastViewBar implements IWindowTrim {
 	public void restoreGroup() {
 		for (Iterator refIter = viewRefs.iterator(); refIter.hasNext();) {
 			IViewReference ref = (IViewReference) refIter.next();
-			restoreView(ref, false, !refIter.hasNext());
+			restoreView(ref, false);
 		}
 		
 		update(false);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isTrueFastView() {
+		return style == LEGACY_FVB;
 	}
 }
 

@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
@@ -54,7 +55,6 @@ public abstract class PartSashContainer extends LayoutPart implements
     
     // 'Smart' zoom
     private boolean smartZoomed = false;
-    private EditorSashContainer smartHiddenEditor = null;
 
     protected WorkbenchPage page;
 
@@ -855,8 +855,7 @@ public abstract class PartSashContainer extends LayoutPart implements
     	// get called; 'unzoom' if necessary
     	if (smartZoomed) {
     		// Restore the editor area if necessary
-    		if (smartHiddenEditor != null)
-    			smartHiddenEditor.setVisible(true);
+    		persp.showEditorArea();
     		
     		// Restore (close) and groups created during a zoom
             persp.restoreZoomGroups();
@@ -874,30 +873,30 @@ public abstract class PartSashContainer extends LayoutPart implements
     	// one we're zooming. If we're zooming the editor then -all-
     	// view stacks get minimized
         LayoutPart[] children = getChildren();
+        List stacks = new ArrayList();
         for (int i = 0; i < children.length; i++) {
             LayoutPart child = children[i];
     		// Close the editor stack unless it's the 'zooming' part
     		if (child instanceof EditorSashContainer && child != part) { 
-    			child.setVisible(false);
-    			
-    			// Remember it so we can restore it
-    			smartHiddenEditor = (EditorSashContainer) child;
+    			persp.hideEditorArea();
     		}
     		else if (child instanceof ViewStack) {
     			if (child != part) {
-        			persp.moveToTrim((ViewStack) child, 
-        					FastViewBar.GROUP_FVB | FastViewBar.ZOOM_GROUP);
+    				stacks.add(child);
     			}
     		}
         }
+
+        persp.moveToTrim(stacks, FastViewBar.GROUP_FVB | FastViewBar.ZOOM_GROUP);
         
         // We're -not- really zoomed, don't lie
         zoomedPart = null;
+        
         // ...but we're 'zoomed'
         smartZoomed = true;
         
         // Remember that we need to trigger a layout
-            layoutDirty = true;
+        layoutDirty = true;
     }
     
     /**

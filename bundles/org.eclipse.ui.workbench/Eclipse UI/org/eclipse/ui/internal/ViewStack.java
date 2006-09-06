@@ -17,7 +17,6 @@ import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuDetach;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
-import org.eclipse.ui.internal.presentations.SystemMenuMoveToTrim;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -46,13 +45,10 @@ public class ViewStack extends PartStack {
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
 
     private SystemMenuFastView fastViewAction;
-    private SystemMenuMoveToTrim moveToTrimAction;
 
     private SystemMenuDetach detachViewAction;
     
     public void addSystemActions(IMenuManager menuManager) {
-        appendToGroupIfPossible(menuManager,
-                "misc", new UpdatingActionContributionItem(moveToTrimAction)); //$NON-NLS-1$
         appendToGroupIfPossible(menuManager,
                 "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
         appendToGroupIfPossible(menuManager,
@@ -79,7 +75,6 @@ public class ViewStack extends PartStack {
 
         this.allowStateChanges = allowsStateChanges;
         fastViewAction = new SystemMenuFastView(getPresentationSite());
-        moveToTrimAction = new SystemMenuMoveToTrim(getPresentationSite());
         detachViewAction = new SystemMenuDetach(getPresentationSite());
     }
 
@@ -107,7 +102,6 @@ public class ViewStack extends PartStack {
         }
 
         fastViewAction.setPane(current);
-        moveToTrimAction.setPane(current);
         detachViewAction.setPane(pane);
         sizeItem.setPane(pane);
     }
