@@ -60,16 +60,6 @@ public abstract class Wizard implements IWizard {
      * <code>"org.eclipse.jface.wizard.Wizard.pageImage"</code>).
      */
     public static final String DEFAULT_IMAGE = "org.eclipse.jface.wizard.Wizard.pageImage";//$NON-NLS-1$
-    /*
-     * Register the default page image
-     */
-    static {
-        JFaceResources.getImageRegistry()
-                .put(
-                        DEFAULT_IMAGE,
-                        ImageDescriptor.createFromFile(Wizard.class,
-                                "images/page.gif"));//$NON-NLS-1$
-    }
 
     /**
      * The wizard container this wizard belongs to; <code>null</code> if none.

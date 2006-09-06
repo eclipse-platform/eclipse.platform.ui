@@ -16,8 +16,6 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.IShellProvider;
@@ -196,27 +194,6 @@ public abstract class Dialog extends Window {
 	 */
 	public static final int DIALOG_PERSISTSIZE = 0x0002;
 	
-
-	/**
-	 * NOTE: Dialog does not the following images in the registry DLG_IMG_ERROR
-	 * DLG_IMG_INFO DLG_IMG_QUESTION DLG_IMG_WARNING
-	 * 
-	 * They are now coming directly from SWT see ImageRegistry. For backwards
-	 * compatibility they are still supported, however new code should use SWT
-	 * for these.
-	 * 
-	 * @see Display#getSystemIcon(int ID)
-	 */
-	static {
-		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_MESSAGE_INFO, ImageDescriptor.createFromFile(
-				Dialog.class, "images/message_info.gif")); //$NON-NLS-1$
-		reg.put(DLG_IMG_MESSAGE_WARNING, ImageDescriptor.createFromFile(
-				Dialog.class, "images/message_warning.gif")); //$NON-NLS-1$
-		reg.put(DLG_IMG_MESSAGE_ERROR, ImageDescriptor.createFromFile(
-				Dialog.class, "images/message_error.gif")); //$NON-NLS-1$
-	}
-
 	/**
 	 * The dialog area; <code>null</code> until dialog is layed out.
 	 */
@@ -918,6 +895,15 @@ public abstract class Dialog extends Window {
 	 * @param key
 	 *            one of the <code>Dialog.DLG_IMG_* </code> constants
 	 * @return the standard dialog image
+	 * 
+	 * NOTE: Dialog does not use the following images in the registry
+	 * DLG_IMG_ERROR DLG_IMG_INFO DLG_IMG_QUESTION DLG_IMG_WARNING
+	 * 
+	 * They are now coming directly from SWT, see ImageRegistry. For backwards
+	 * compatibility they are still supported, however new code should use SWT
+	 * for these.
+	 * 
+	 * @see Display#getSystemIcon(int ID)
 	 */
 	public static Image getImage(String key) {
 		return JFaceResources.getImageRegistry().get(key);

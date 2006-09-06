@@ -17,6 +17,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -261,6 +263,7 @@ public class JFaceResources {
      * also provided on this class for directly accessing
      * JFace's standard fonts.
      * </p>
+     * @return the JFace font registry
      */
     public static FontRegistry getFontRegistry() {
         if (fontRegistry == null) {
@@ -304,14 +307,36 @@ public class JFaceResources {
      * Note that the static convenience method <code>getImage</code>
      * is also provided on this class.
      * </p>
+     * @return the JFace image registry
      */
     public static ImageRegistry getImageRegistry() {
         if (imageRegistry == null) {
 			imageRegistry = new ImageRegistry(getResources(Display.getCurrent()));
+			initializeDefaultImages();
 		}
         return imageRegistry;
     }
 
+    /**
+     * Initialize default images in JFace's image registry. 
+     *
+     */
+    private static void initializeDefaultImages(){
+		// register default page image for wizards
+		imageRegistry.put(Wizard.DEFAULT_IMAGE, ImageDescriptor
+				.createFromFile(Wizard.class, "images/page.gif"));//$NON-NLS-1$
+		
+		// register default images for dialogs
+		imageRegistry.put(Dialog.DLG_IMG_MESSAGE_INFO, ImageDescriptor
+				.createFromFile(Dialog.class, "images/message_info.gif")); //$NON-NLS-1$
+		imageRegistry
+				.put(Dialog.DLG_IMG_MESSAGE_WARNING, ImageDescriptor
+						.createFromFile(Dialog.class,
+								"images/message_warning.gif")); //$NON-NLS-1$
+		imageRegistry.put(Dialog.DLG_IMG_MESSAGE_ERROR, ImageDescriptor
+				.createFromFile(Dialog.class, "images/message_error.gif")); //$NON-NLS-1$    	
+    }
+    
     /**
      * Returns the resource object with the given key in
      * JFace's resource bundle. If there isn't any value under
