@@ -21,18 +21,21 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
- * @since 3.3
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
- *
+ * 
+ * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
+ *        added as part of a work in progress. This API may change at any given
+ *        time. Please do not use this API without consulting with the
+ *        Platform/UI team.
+ * 
  */
 public class ViewerCell {
 	private int columnIndex;
+
 	private ViewerRow row;
-	
+
 	/**
 	 * Create a new instance of the receiver on the row.
+	 * 
 	 * @param row
 	 * @param columnIndex
 	 */
@@ -40,26 +43,29 @@ public class ViewerCell {
 		this.row = row;
 		this.columnIndex = columnIndex;
 	}
-	
+
 	/**
 	 * Get the index of the cell.
+	 * 
 	 * @return int
 	 */
 	public int getColumnIndex() {
 		return columnIndex;
 	}
-	
+
 	/**
 	 * Get the bounds of the cell.
-	 * @return Rectangle
+	 * 
+	 * @return {@link Rectangle}
 	 */
 	public Rectangle getBounds() {
 		return row.getBounds(columnIndex);
 	}
-	
+
 	/**
 	 * Get the element this row represents.
-	 * @return Object
+	 * 
+	 * @return {@link Object}
 	 */
 	public Object getElement() {
 		return row.getItem().getData();
@@ -67,7 +73,8 @@ public class ViewerCell {
 
 	/**
 	 * Return the text for the cell.
-	 * @return String
+	 * 
+	 * @return {@link String}
 	 */
 	public String getText() {
 		return row.getText(columnIndex);
@@ -75,7 +82,8 @@ public class ViewerCell {
 
 	/**
 	 * Return the Image for the cell.
-	 * @return Image
+	 * 
+	 * @return {@link Image} or <code>null</code>
 	 */
 	public Image getImage() {
 		return row.getImage(columnIndex);
@@ -83,81 +91,90 @@ public class ViewerCell {
 
 	/**
 	 * Set the background color of the cell.
+	 * 
 	 * @param background
 	 */
 	public void setBackground(Color background) {
 		row.setBackground(columnIndex, background);
-		
+
 	}
 
 	/**
 	 * Set the foreground color of the cell.
+	 * 
 	 * @param foreground
 	 */
 	public void setForeground(Color foreground) {
 		row.setForeground(columnIndex, foreground);
-		
+
 	}
 
 	/**
 	 * Set the font of the cell.
+	 * 
 	 * @param font
 	 */
 	public void setFont(Font font) {
 		row.setFont(columnIndex, font);
-		
+
 	}
 
 	/**
 	 * Set the text for the cell.
+	 * 
 	 * @param text
 	 */
 	public void setText(String text) {
 		row.setText(columnIndex, text);
-		
+
 	}
 
 	/**
 	 * Set the Image for the cell.
+	 * 
 	 * @param image
 	 */
 	public void setImage(Image image) {
 		row.setImage(columnIndex, image);
-		
+
 	}
 
 	/**
 	 * Set the columnIndex.
+	 * 
 	 * @param column
 	 */
 	void setColumn(int column) {
 		columnIndex = column;
-		
+
 	}
 
 	/**
-	 * Set the ro to rowItem and the columnIndex to column.
+	 * Set the row to rowItem and the columnIndex to column.
+	 * 
 	 * @param rowItem
 	 * @param column
 	 */
 	void update(ViewerRow rowItem, int column) {
 		row = rowItem;
-		columnIndex = column;		
+		columnIndex = column;
 	}
 
 	/**
 	 * Return the item for the receiver.
-	 * @return Item
+	 * 
+	 * @return {@link Item}
 	 */
 	public Item getItem() {
 		return row.getItem();
 	}
-	
+
 	/**
 	 * Get the control for this cell.
-	 * @return Control
+	 * 
+	 * @return {@link Control}
 	 */
-	public Control getControl(){
+	public Control getControl() {
 		return row.getControl();
 	}
 }

@@ -19,26 +19,24 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * The ViewerLabelProvider is an abstract implementation of a 
- * label provider for structured viewers.
- * @since 3.3
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
+ * The ViewerLabelProvider is an abstract implementation of a label provider for
+ * structured viewers.
+ * 
+ * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
+ *        added as part of a work in progress. This API may change at any given
+ *        time. Please do not use this API without consulting with the
+ *        Platform/UI team.
  */
 public class ViewerLabelProvider extends LabelProvider implements
 		ILabelProvider, IColorProvider, IFontProvider {
 
-	private static ILabelProvider defaultLabelProvider = new LabelProvider() {
-
-	};
+	private static ILabelProvider defaultLabelProvider = new LabelProvider();
 
 	private ILabelProvider labelProvider = defaultLabelProvider;
 
 	private IColorProvider colorProvider;
 
 	private IFontProvider fontProvider;
-
 
 	/**
 	 * Create a new instance of the receiver.
@@ -72,23 +70,24 @@ public class ViewerLabelProvider extends LabelProvider implements
 				|| labelProvider instanceof ITableColorProvider
 				|| labelProvider instanceof ITableFontProvider)
 			return new TableColumnViewerLabelProvider(labelProvider);
-		if(labelProvider instanceof ViewerLabelProvider)
+		if (labelProvider instanceof ViewerLabelProvider)
 			return (ViewerLabelProvider) labelProvider;
 		return new ViewerLabelProvider(labelProvider);
 
 	}
+
 	/**
 	 * Updates the label for the given cell.
 	 * 
 	 * @param label
-	 *            the label to update
+	 *            the {@link ViewerLabel} to update
 	 * @param cell
-	 *            the cell to update
+	 *            the {@link ViewerCell} to update
 	 */
 	public void updateLabel(ViewerLabel label, ViewerCell cell) {
-		
+
 		Object element = cell.getElement();
-	
+
 		label.setText(labelProvider.getText(element));
 		label.setImage(labelProvider.getImage(element));
 
@@ -102,22 +101,23 @@ public class ViewerLabelProvider extends LabelProvider implements
 		}
 	}
 
-
 	/**
 	 * Set the colorProvider to use for the receiver.
 	 * 
 	 * @param colorProvider
-	 *            The colorProvider to set.
+	 *            {@link IColorProvider} The colorProvider to set. This value
+	 *            may be <code>null</code>.
 	 */
 	public void setColorProvider(IColorProvider colorProvider) {
 		this.colorProvider = colorProvider;
 	}
 
 	/**
-	 * Set the fontProvider to fontProvider.
+	 * Set the font provider.
 	 * 
 	 * @param fontProvider
-	 *            The fontProvider to set.
+	 *            {@link IFontProvider} The fontProvider to set. This value may
+	 *            be <code>null</code>.
 	 */
 	public void setFontProvider(IFontProvider fontProvider) {
 		this.fontProvider = fontProvider;
@@ -127,7 +127,8 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 * Set the labelProvider to be provider.
 	 * 
 	 * @param provider
-	 *            ILabelProvider provider to set.
+	 *            {@link ILabelProvider} provider to set. This value may be
+	 *            <code>null</code>.
 	 */
 	public void setLabelProvider(ILabelProvider provider) {
 		this.labelProvider = provider;
@@ -137,6 +138,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 * Set the any providers for the receiver that can be adapted from provider.
 	 * 
 	 * @param provider
+	 *            {@link Object}
 	 */
 	public void setProviders(Object provider) {
 		if (provider instanceof ILabelProvider)
@@ -193,7 +195,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 	/**
 	 * Get the IColorProvider for the receiver.
 	 * 
-	 * @return IColorProvider or <code>null</code>
+	 * @return {@link IColorProvider} or <code>null</code>
 	 */
 	public IColorProvider getColorProvider() {
 		return colorProvider;
@@ -202,25 +204,27 @@ public class ViewerLabelProvider extends LabelProvider implements
 	/**
 	 * Get the IFontProvider for the receiver.
 	 * 
-	 * @return IFontProvider or <code>null</code>
+	 * @return {@link IFontProvider} or <code>null</code>
 	 */
 	public IFontProvider getFontProvider() {
 		return fontProvider;
 	}
 
 	/**
-	 * @return Returns the labelProvider.
+	 * Return the label provider for the receiver.
+	 * 
+	 * @return {@link ILabelProvider}
 	 */
 	public ILabelProvider getLabelProvider() {
 		return labelProvider;
 	}
 
 	/**
-	 * The image displayed in the tooltip
+	 * Get the image displayed in the tooltip for object.
 	 * 
 	 * @param object
 	 *            the element for which the tooltip is shown
-	 * @return the image displayed if null no image is displayed
+	 * @return {@link Image} or <code>null</code> if there is not image.
 	 */
 
 	public Image getTooltipImage(Object object) {
@@ -233,20 +237,21 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 * 
 	 * @param element
 	 *            the element for which the tooltip is shown
-	 * @return the text to be displayed in the tooltip, or <code>null</code>
-	 *         if a custom tooltip should not be displayed
+	 * @return the {@link String} to be displayed in the tooltip, or
+	 *         <code>null</code> if a custom tooltip should not be displayed
 	 */
 	public String getTooltipText(Object element) {
 		return null;
 	}
 
 	/**
-	 * The background color used for the tooltip
+	 * Return the background color used for the tooltip
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
+	 *            the {@link Object} for which the tooltip is shown
 	 * 
-	 * @return the color used or <code>null</code> if you want to use the
+	 * @return the {@link Color} used or <code>null</code> if you want to use
+	 *         the
 	 */
 	public Color getTooltipBackgroundColor(Object object) {
 		return null;
@@ -256,92 +261,96 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 * The foreground color used to display the the text in the tooltip
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @return the color used or <code>null</code> if you want to use the
-	 *         default color {@link SWT#COLOR_INFO_FOREGROUND}
+	 *            the {@link Object} for which the tooltip is shown
+	 * @return the {@link Color} used or <code>null</code> if you want to use
+	 *         the default color {
+	 * @link SWT#COLOR_INFO_FOREGROUND}
+	 * @see SWT#COLOR_INFO_FOREGROUND
 	 */
 	public Color getTooltipForegroundColor(Object object) {
 		return null;
 	}
 
 	/**
-	 * The font used to display the tooltip
+	 * Get the {@link Font} used to display the tooltip
 	 * 
 	 * @param object
 	 *            the element for which the tooltip is shown
-	 * @return the font if null default font is used
+	 * @return {@link Font} or <code>null</code> if the default font is to be
+	 *         used.
 	 */
 	public Font getTooltipFont(Object object) {
 		return null;
 	}
 
 	/**
-	 * This is the amount the used to control how much the tooltip is shifted
+	 * Return the amount the used to control how much the tooltip is shifted
 	 * from the current mouse position
 	 * 
 	 * @param object
 	 *            the element for which the tooltip is shown
-	 * @return shift of the tooltip
+	 * @return {@link Point} shift of the tooltip or <code>null</code> if
+	 *         there is to be no shift.
 	 */
 	public Point getTooltipShift(Object object) {
 		return null;
 	}
 
 	/**
-	 * If you want your tooltip to be using the native Tooltip you can force
-	 * this by returning true from this method. If native tooltips are used only
-	 * the text-value is used all other feature are of custom tooltips are not
-	 * supported.
+	 * Return whether or not to use the native Tooltip. If native tooltips are
+	 * used only the textvalue is used. All other feature are of custom tooltips
+	 * are not supported.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @return true if native tooltips should be used
+	 *            the {@link Object} for which the tooltip is shown
+	 * @return <code>true</code> if native tooltips should be used
 	 */
 	public boolean useNativeTooltip(Object object) {
 		return false;
 	}
 
 	/**
-	 * The time in milliseconds after the tooltip is hidden
+	 * The time in milliseconds the tooltip is shown for.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @return milliseconds
+	 *            the {@link Object} for which the tooltip is shown
+	 * @return <code>int<code>
 	 */
 	public int getTooltipTimeDisplayed(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The time in milliseconds until the tooltip pops up
+	 * The time in milliseconds until the tooltip is displaued.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @return milliseconds
+	 *            the {@link Object} for which the tooltip is shown
+	 * @return int
 	 */
 	public int getTooltipDisplayDelayTime(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The style used to create the label
+	 * The {@link SWT} style used to create the label
 	 * 
 	 * @param object
 	 *            the element for which the tooltip is shown
-	 * @return style mask
+	 * @return int
+	 * @see SWT#SHADOW_NONE
 	 */
 	public int getTooltipStyle(Object object) {
 		return SWT.SHADOW_NONE;
 	}
 
 	/**
-	 * Update for cell.
-	 * @param cell
+	 * Update the label for cell.
+	 * 
+	 * @param cell {@link ViewerCell}
 	 */
 	public void update(ViewerCell cell) {
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
 		updateLabel(label, cell);
-		
 
 		cell.setBackground(label.getBackground());
 		cell.setForeground(label.getForeground());
@@ -352,7 +361,7 @@ public class ViewerLabelProvider extends LabelProvider implements
 
 		if (label.hasNewImage())
 			cell.setImage(label.getImage());
-		
+
 	}
 
 }

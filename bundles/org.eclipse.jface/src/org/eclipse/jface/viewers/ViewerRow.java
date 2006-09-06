@@ -64,21 +64,21 @@ public abstract class ViewerRow {
 	 * Get the bounds of the entry at the columnIndex,
 	 * 
 	 * @param columnIndex
-	 * @return Rectangle
+	 * @return {@link Rectangle}
 	 */
 	public abstract Rectangle getBounds(int columnIndex);
 
 	/**
 	 * Return the bounds for the whole item.
 	 * 
-	 * @return Rectangle
+	 * @return {@link Rectangle}
 	 */
 	public abstract Rectangle getBounds();
 
 	/**
 	 * Return the item for the receiver.
 	 * 
-	 * @return Item
+	 * @return {@link Item}
 	 */
 	public abstract Item getItem();
 
@@ -93,7 +93,7 @@ public abstract class ViewerRow {
 	 * Return the image at the columnIndex.
 	 * 
 	 * @param columnIndex
-	 * @return Image
+	 * @return {@link Image} or <code>null</code>
 	 */
 	public abstract Image getImage(int columnIndex);
 
@@ -109,7 +109,7 @@ public abstract class ViewerRow {
 	 * Get the text at the columnIndex.
 	 * 
 	 * @param columnIndex
-	 * @return String
+	 * @return {@link String}
 	 */
 	public abstract String getText(int columnIndex);
 
@@ -125,7 +125,7 @@ public abstract class ViewerRow {
 	 * Get the background at the columnIndex,
 	 * 
 	 * @param columnIndex
-	 * @return Color
+	 * @return {@link Color} or <code>null</code>
 	 */
 	public abstract Color getBackground(int columnIndex);
 
@@ -141,7 +141,7 @@ public abstract class ViewerRow {
 	 * Get the foreground at the columnIndex.
 	 * 
 	 * @param columnIndex
-	 * @return Color
+	 * @return {@link Color} or <code>null</code>
 	 */
 	public abstract Color getForeground(int columnIndex);
 
@@ -157,12 +157,12 @@ public abstract class ViewerRow {
 	 * Get the font at the columnIndex.
 	 * 
 	 * @param columnIndex
-	 * @return Font
+	 * @return {@link Font} or <code>null</code>
 	 */
 	public abstract Font getFont(int columnIndex);
 
 	/**
-	 * Set the font at the columnIndex.
+	 * Set the {@link Font} at the columnIndex.
 	 * 
 	 * @param columnIndex
 	 * @param font
@@ -173,7 +173,7 @@ public abstract class ViewerRow {
 	 * Get the ViewerCell at point.
 	 * 
 	 * @param point
-	 * @return ViewerCell
+	 * @return {@link ViewerCell}
 	 */
 	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
@@ -185,7 +185,7 @@ public abstract class ViewerRow {
 	 * Get the columnIndex of the point.
 	 * 
 	 * @param point
-	 * @return the column index or -1 if it cannot be found.
+	 * @return int or -1 if it cannot be found.
 	 */
 	public int getColumnIndex(Point point) {
 		int count = getColumnCount();
@@ -203,7 +203,8 @@ public abstract class ViewerRow {
 	 * Get a ViewerCell for the column at index.
 	 * 
 	 * @param column
-	 * @return ViewerCell or <code>null</code> if the index is negative.
+	 * @return {@link ViewerCell} or <code>null</code> if the index is
+	 *         negative.
 	 */
 	public ViewerCell getCell(int column) {
 		if (column >= 0)
@@ -211,10 +212,11 @@ public abstract class ViewerRow {
 
 		return null;
 	}
-	
+
 	/**
 	 * Get the Control for the receiver.
-	 * @return Control
+	 * 
+	 * @return {@link Control}
 	 */
 	public abstract Control getControl();
 
