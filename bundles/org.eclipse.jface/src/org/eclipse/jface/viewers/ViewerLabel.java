@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.shindl@bestsolution.at> - tooltip support
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -24,12 +25,13 @@ import org.eclipse.swt.graphics.Point;
  */
 public class ViewerLabel {
 
-	//New values for the receiver. Null if nothing has been set.
+	// New values for the receiver. Null if nothing has been set.
 	private String newText = null;
 
 	private Image newImage = null;
-	
+
 	private boolean imageUpdated = false;
+
 	private boolean textUpdated = false;
 
 	private Color background = null;
@@ -38,24 +40,25 @@ public class ViewerLabel {
 
 	private Font font = null;
 
-	//The initial values for the receiver.
+	// The initial values for the receiver.
 	private String startText;
 
 	private Image startImage;
 
 	private boolean hasPendingDecorations;
-	
+
 	private String tooltipText;
-	
+
 	private Color tooltipForegroundColor;
-	
+
 	private Color tooltipBackgroundColor;
-	
+
 	private Point tooltipShift;
 
 	/**
-	 * Create a new instance of the receiver with the supplied
-	 * initial text and image.
+	 * Create a new instance of the receiver with the supplied initial text and
+	 * image.
+	 * 
 	 * @param initialText
 	 * @param initialImage
 	 */
@@ -92,7 +95,8 @@ public class ViewerLabel {
 	 * Get the text for the receiver. If the new text has been set return it,
 	 * otherwise return the starting text.
 	 * 
-	 * @return Returns the text.
+	 * @return String or <code>null</code> if there was no initial text and
+	 *         nothing was updated.
 	 */
 	public final String getText() {
 		if (textUpdated) {
@@ -105,7 +109,9 @@ public class ViewerLabel {
 	 * Set the text for the receiver.
 	 * 
 	 * @param text
-	 *            The label to set.
+	 *            String The label to set. This value should not be
+	 *            <code>null</code>.
+	 * @see #hasNewText()
 	 */
 	public final void setText(String text) {
 		newText = text;
@@ -115,18 +121,19 @@ public class ViewerLabel {
 	/**
 	 * Return whether or not the image has been set.
 	 * 
-	 * @return boolean. <code>true</code>  if the image has been set to something new.
+	 * @return boolean. <code>true</code> if the image has been set to
+	 *         something new.
 	 * 
 	 * @since 3.1
 	 */
 	public boolean hasNewImage() {
 
-		//If we started with null any change is an update
+		// If we started with null any change is an update
 		if (startImage == null) {
 			return newImage != null;
 		}
-		
-		if(imageUpdated) {
+
+		if (imageUpdated) {
 			return !(startImage.equals(newImage));
 		}
 		return false;
@@ -135,19 +142,20 @@ public class ViewerLabel {
 	/**
 	 * Return whether or not the text has been set.
 	 * 
-	 * @return boolean. <code>true</code>  if the text has been set to something new.
+	 * @return boolean. <code>true</code> if the text has been set to
+	 *         something new.
 	 */
 	public boolean hasNewText() {
 
-		//If we started with null any change is an update
+		// If we started with null any change is an update
 		if (startText == null) {
 			return newText != null;
 		}
-		
-		if(textUpdated) {
+
+		if (textUpdated) {
 			return !(startText.equals(newText));
 		}
-		
+
 		return false;
 	}
 
@@ -159,7 +167,7 @@ public class ViewerLabel {
 	public boolean hasNewBackground() {
 		return background != null;
 	}
-	
+
 	/**
 	 * Return whether or not the foreground color has been set.
 	 * 
@@ -170,7 +178,7 @@ public class ViewerLabel {
 	public boolean hasNewForeground() {
 		return foreground != null;
 	}
-	
+
 	/**
 	 * Return whether or not the font has been set.
 	 * 
@@ -184,55 +192,66 @@ public class ViewerLabel {
 
 	/**
 	 * Get the background Color.
-	 * @return Color or <code>null</code> if no new value
-	 * was set.
+	 * 
+	 * @return Color or <code>null</code> if no new value was set.
 	 * 
 	 * @since 3.1
 	 */
 	public Color getBackground() {
 		return background;
 	}
+
 	/**
 	 * Set the background Color.
-	 * @param background Color
+	 * 
+	 * @param background
+	 *            Color. This value should not be <code>null</code>.
 	 * 
 	 * @since 3.1
 	 */
 	public void setBackground(Color background) {
 		this.background = background;
 	}
+
 	/**
 	 * Get the font.
-	 * @return Font or <code>null</code> if no new value
-	 * was set.
+	 * 
+	 * @return Font or <code>null</code> if no new value was set.
 	 * 
 	 * @since 3.1
 	 */
 	public Font getFont() {
 		return font;
 	}
+
 	/**
 	 * Set the font.
-	 * @param font Font
+	 * 
+	 * @param font
+	 *            Font This value should not be <code>null</code>.
 	 * 
 	 * @since 3.1
 	 */
 	public void setFont(Font font) {
 		this.font = font;
 	}
+
 	/**
 	 * Get the foreground Color.
-	 * @return Color or <code>null</code> if no new value
-	 * was set.
+	 * 
+	 * @return Color or <code>null</code> if no new value was set.
 	 * 
 	 * @since 3.1
 	 */
 	public Color getForeground() {
 		return foreground;
 	}
+
 	/**
 	 * Set the foreground Color.
+	 * 
 	 * @param foreground
+	 *            Color This value should not be <code>null</code>.
 	 * 
 	 * @since 3.1
 	 */
@@ -241,74 +260,146 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * @param b
+	 * Set whether or not there are any decorations pending.
+	 * 
+	 * @param hasPendingDecorations
 	 */
-	/* public */ void setHasPendingDecorations(boolean hasPendingDecorations) {
+	void setHasPendingDecorations(boolean hasPendingDecorations) {
 		this.hasPendingDecorations = hasPendingDecorations;
 	}
 
-	/* public */ boolean hasPendingDecorations() {
+	/**
+	 * @return <code>boolean</code>. <code>true</code> if there are any
+	 *         decorations pending.
+	 */
+	boolean hasPendingDecorations() {
 		return hasPendingDecorations;
 	}
 
 	/**
-	 * @return Returns the tooltipText.
+	 * Returns the tooltipText.
+	 * 
+	 * @return {@link String} or <code>null</code> if the tooltip text was
+	 *         never set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public String getTooltipText() {
 		return tooltipText;
 	}
 
 	/**
-	 * @param tooltipText The tooltipText to set.
+	 * Set the tooltip text.
+	 * 
+	 * @param tooltipText
+	 *            The tooltipText {@link String} to set. This value should not
+	 *            be <code>null</code>.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public void setTooltipText(String tooltipText) {
 		this.tooltipText = tooltipText;
 	}
-	
+
 	/**
-	 * @return Return whether or not the tooltip text has been set.
+	 * Return whether or not the tooltip text has been set.
+	 * 
+	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
+	 *         has been set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public boolean hasNewTooltipText() {
 		return this.tooltipText != null;
 	}
 
 	/**
-	 * @return Returns the tooltipBackgroundColor.
+	 * Return the tooltip background color.
+	 * 
+	 * @return {@link Color} or <code>null</code> if the tooltip background
+	 *         color has not been set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public Color getTooltipBackgroundColor() {
 		return tooltipBackgroundColor;
 	}
 
 	/**
-	 * @param tooltipBackgroundColor The tooltipBackgroundColor to set.
+	 * Set the background {@link Color} for tooltip.
+	 * 
+	 * @param tooltipBackgroundColor
+	 *            The {@link Color} to set. This value should not be
+	 *            <code>null</code>.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public void setTooltipBackgroundColor(Color tooltipBackgroundColor) {
 		this.tooltipBackgroundColor = tooltipBackgroundColor;
 	}
 
 	/**
-	 * @return Return whether or not the tooltip background color has been set.
+	 * Return whether or not the tooltip background color has been set.
+	 * 
+	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
+	 *         has been set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public boolean hasNewTooltipBackgroundColor() {
 		return tooltipBackgroundColor != null;
 	}
-	
+
 	/**
-	 * @return Returns the tooltipForegroundColor.
+	 * Return the foreground {@link Color}.
+	 * 
+	 * @return Returns {@link Color} or <code>null</code> if the tooltip
+	 *         foreground color has not been set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public Color getTooltipForegroundColor() {
 		return tooltipForegroundColor;
 	}
 
 	/**
-	 * @param tooltipForegroundColor The tooltipForegroundColor to set.
+	 * Set the foreground {@link Color} for tooltip.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
+	 * 
+	 * @param tooltipForegroundColor
+	 *            The tooltipForegroundColor to set.
 	 */
 	public void setTooltipForegroundColor(Color tooltipForegroundColor) {
 		this.tooltipForegroundColor = tooltipForegroundColor;
 	}
-	
+
 	/**
-	 * @return Return whether or not the tooltip foreground color has been set.
+	 * 
+	 * Return whether or not the tooltip foreground color has been set.
+	 * 
+	 * @return <code>boolean</code>. <code>true</code> if the tooltip foreground
+	 *         has been set.
+	 * 
+	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
+	 * work in progress. This API may change at any given time. Please do not
+	 * use this API without consulting with the Platform/UI team.
 	 */
 	public boolean hasNewTooltipForegroundColor() {
 		return tooltipForegroundColor != null;
@@ -322,12 +413,13 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * @param tooltipShift The tooltipShift to set.
+	 * @param tooltipShift
+	 *            The tooltipShift to set.
 	 */
 	public void setTooltipShift(Point tooltipShift) {
 		this.tooltipShift = tooltipShift;
 	}
-	
+
 	/**
 	 * @return Return whether or not the tooltip shift has been set.
 	 */
