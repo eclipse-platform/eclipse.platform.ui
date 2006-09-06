@@ -21,6 +21,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
@@ -37,6 +38,7 @@ public class CheatSheetView extends ViewPart {
 	private Action copyAction;
 	private CheatSheetViewer viewer;
 	private IMemento memento;
+	private static final String CHEAT_SHEET_VIEW_HELP_ID = "org.eclipse.ui.cheatsheets.cheatSheetView"; //$NON-NLS-1$
 	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -89,6 +91,7 @@ public class CheatSheetView extends ViewPart {
 
 		viewer = new CheatSheetViewer(false);
 		viewer.createPartControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, CHEAT_SHEET_VIEW_HELP_ID);
 	
 		if (!actionBarContributed) {
 			contributeToActionBars();

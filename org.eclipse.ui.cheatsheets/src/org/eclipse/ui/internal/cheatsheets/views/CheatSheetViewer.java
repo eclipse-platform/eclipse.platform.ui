@@ -1137,8 +1137,11 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 */
 	public void setFocus() {
 		//need this to have current item selected. (Assumes that when you reactivate the view you will work with current item.)
-		if (currentItem != null)
+		if (currentItem != null) {
 			currentItem.getMainItemComposite().setFocus();
+		} else {
+			getControl().setFocus();
+		}
 	}
 	
 
