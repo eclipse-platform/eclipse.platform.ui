@@ -117,8 +117,10 @@ public interface IIDEActionConstants {
 
     /**
      * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
+     * <p>Note: The value of this constant has changed in 3.3 to match the specification;
+     * before 3.3, its value was incorrect (<code>"cut.ext"</code>).  See bug 155856 for details.</p>
      */
-    public static final String FIND_EXT = "cut.ext"; //$NON-NLS-1$
+    public static final String FIND_EXT = "find.ext"; //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for extra Add-like actions (value <code>"add.ext"</code>).
