@@ -21,7 +21,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 	
 	/*
 	 * A validator plugged in the the Team UI that will prompt
-	 * the user to make read-only files writtable. In the absense of
+	 * the user to make read-only files writable. In the absence of
 	 * this validator, edit/save fail on read-only files.
 	 */
 	private IFileModificationValidator uiValidator;
