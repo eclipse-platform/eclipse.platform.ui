@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
@@ -178,4 +179,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	public boolean isEmpty() {
 		return getElementsArray().isEmpty();
 	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSet#getImage()
+     */
+    public final ImageDescriptor getImage() {
+        return getImageDescriptor();
+    }
 }

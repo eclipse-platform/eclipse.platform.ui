@@ -94,7 +94,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		return null;
 	}
 
-	public ImageDescriptor getImage() {
+	public ImageDescriptor getImageDescriptor() {
 		return WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS);
 	}
@@ -103,8 +103,6 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	 * A no-op for aggregates - their contents should be derived.
 	 */
 	public void setElements(IAdaptable[] elements) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void setId(String id) {
