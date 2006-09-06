@@ -904,8 +904,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.3
 	 */
 	private boolean isReadOnlyLocalStatus(IStatus status) {
-		final String teamCorePluginId= "org.eclipse.team.core"; // XXX: see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=156351 //$NON-NLS-1$
-		return status.getCode() == IResourceStatus.READ_ONLY_LOCAL && teamCorePluginId.equals(status.getPlugin());
+		return status.getCode() == IResourceStatus.READ_ONLY_LOCAL;
 	}
 
 	/*
