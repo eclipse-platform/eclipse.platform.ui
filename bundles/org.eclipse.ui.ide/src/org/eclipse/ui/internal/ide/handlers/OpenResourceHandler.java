@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.ide.handlers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -77,10 +81,19 @@ public final class OpenResourceHandler extends Action implements IHandler,
 
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
-		final IFile file;
+		final List files = new ArrayList();
+
 		if (event.getParameter(PARAM_ID_FILE_PATH) == null) {
 			// Prompt the user for the resource to open.
-			file = queryFileResource();
+			Object[] result = queryFileResource();
+
+			if (result != null) {
+				for (int i = 0; i < result.length; i++) {
+					if (result[i] instanceof IFile) {
+						files.add(result[i]);
+					}
+				}
+			}
 
 		} else {
 			// Use the given parameter.
@@ -90,28 +103,29 @@ public final class OpenResourceHandler extends Action implements IHandler,
 				throw new ExecutionException(
 						"filePath parameter must identify a file"); //$NON-NLS-1$
 			}
-			file = (IFile) resource;
+			files.add(resource);
 		}
 
-		// We still don't have a file for some reason, then just give up.
-		if (file == null) {
-			return null;
-		}
+		if (files.size() > 0) {
 
-		final IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (window == null) {
-			throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
-		}
+			final IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			if (window == null) {
+				throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
+			}
 
-		final IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			throw new ExecutionException("no active workbench page"); //$NON-NLS-1$
-		}
-		try {
-			IDE.openEditor(page, file, true);
-		} catch (final PartInitException e) {
-			throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$
+			final IWorkbenchPage page = window.getActivePage();
+			if (page == null) {
+				throw new ExecutionException("no active workbench page"); //$NON-NLS-1$
+			}
+
+			try {
+				for (Iterator it = files.iterator(); it.hasNext();) {
+					IDE.openEditor(page, (IFile) it.next(), true);
+				}
+			} catch (final PartInitException e) {
+				throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$
+			}
 		}
 
 		return null;
@@ -122,12 +136,11 @@ public final class OpenResourceHandler extends Action implements IHandler,
 	}
 
 	/**
-	 * Query the user for the resource that should be opened
+	 * Query the user for the resources that should be opened
 	 * 
-	 * @return the resource that should be opened or null if the resource
-	 *         selection dialog was cancelled.
+	 * @return the resource that should be opened.
 	 */
-	private final IFile queryFileResource() {
+	private final Object[] queryFileResource() {
 		final IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
@@ -144,12 +157,8 @@ public final class OpenResourceHandler extends Action implements IHandler,
 		}
 
 		final Object[] result = dialog.getResult();
-		if (result == null || result.length == 0
-				|| result[0] instanceof IFile == false) {
-			return null;
-		}
 
-		return (IFile) result[0];
+		return result;
 	}
 
 	public final void removeHandlerListener(final IHandlerListener listener) {

@@ -296,6 +296,9 @@ public/*final*/class WorkbenchImages {
                 PATH_OBJECT + "activity_category.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS, 
      		   PATH_OBJECT + "workingsets.gif", true); //$NON-NLS-1$
+        
+        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR, 
+      		   PATH_OBJECT + "separator.gif", true); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_OBJ_FILE,
                 PATH_OBJECT + "file_obj.gif", true); //$NON-NLS-1$

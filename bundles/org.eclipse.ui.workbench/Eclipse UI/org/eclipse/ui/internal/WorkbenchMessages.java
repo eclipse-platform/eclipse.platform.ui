@@ -916,6 +916,19 @@ public class WorkbenchMessages extends NLS {
     public static String TrimCommon_IntroBar_TrimName;
     public static String TrimCommon_Progress_TrimName;
     public static String TrimCommon_StatusLine_TrimName;
+    
+    // AbstractSearchDialog
+    public static String AbstractSearchDialog_menu;
+	public static String AbstractSearchDialog_refreshJob;
+	public static String AbstractSearchDialog_patternLabel;
+	public static String AbstractSearchDialog_listLabel;
+	public static String AbstractSearchDialog_toggleStatusAction;
+	public static String AbstractSearchDialog_separatorLabel;
+    
+    // AbstractSeracher
+    public static String AbstractSearcher_job_label; 
+    public static String AbstractSearcher_job_error;
+    public static String AbstractSearcher_job_cancel;
 		
     static {
 		// load message values from bundle file

@@ -173,4 +173,9 @@ public interface IWorkbenchGraphicConstants {
      * @since 3.2
      */
     public static final String IMG_OBJ_WORKING_SETS = "IMG_OBJ_WORKING_SETS"; //$NON-NLS-1$
+    
+    /**
+     * Separator icon for selection dialogs.
+     */
+    public static final String IMG_OBJ_SEPARATOR = "IMG_OBJ_SEPARATOR"; //$NON-NLS-1$
 }
