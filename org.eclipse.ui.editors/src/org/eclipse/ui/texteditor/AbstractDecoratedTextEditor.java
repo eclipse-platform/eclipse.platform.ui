@@ -16,22 +16,7 @@ import java.util.List;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -43,14 +28,48 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
-import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
 import org.eclipse.jface.text.source.ChangeRulerColumn;
@@ -78,30 +97,6 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
-import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
-import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
-import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
-import org.eclipse.ui.internal.editors.text.NLSUtility;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -112,6 +107,14 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
+import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
+import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
 import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
 import org.eclipse.ui.internal.texteditor.ColumnSupport;
@@ -871,11 +874,38 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/*
+	 * For an explanation why we override this method see:
+	 * bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=42230
+	 * 
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
 	 */
 	protected boolean isErrorStatus(IStatus status) {
-		// see bug 42230
-		return super.isErrorStatus(status) && status.getCode() != IResourceStatus.READ_ONLY_LOCAL && status.getSeverity() != IStatus.CANCEL;
+		if (!super.isErrorStatus(status) || status.getSeverity() != IStatus.ERROR)
+			return false;
+		
+		if (!status.isMultiStatus())
+			return !isReadOnlyLocalStatus(status);
+		
+		IStatus[] childrenStatus= status.getChildren();
+		for (int i= 0; i < childrenStatus.length; i++) {
+			if (childrenStatus[i].getSeverity() == IStatus.ERROR && !isReadOnlyLocalStatus(childrenStatus[i]))
+				return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Check whether the given status is a <code>IResourceStatus.READ_ONLY_LOCAL</code>
+	 * error.
+	 * 
+	 * @param status the status to be checked
+	 * @return <code>true</code> if the given status is a <code>IResourceStatus.READ_ONLY_LOCAL</code> error 
+	 * @since 3.3
+	 */
+	private boolean isReadOnlyLocalStatus(IStatus status) {
+		final String teamCorePluginId= "org.eclipse.team.core"; // XXX: see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=156351 //$NON-NLS-1$
+		return status.getCode() == IResourceStatus.READ_ONLY_LOCAL && teamCorePluginId.equals(status.getPlugin());
 	}
 
 	/*

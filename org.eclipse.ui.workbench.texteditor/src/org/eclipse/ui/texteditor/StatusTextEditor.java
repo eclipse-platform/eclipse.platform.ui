@@ -97,7 +97,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * @since 3.0
 	 */
 	protected boolean isErrorStatus(IStatus status) {
-		return status != null && !status.isOK();
+		return status != null && status.getSeverity() == IStatus.ERROR;
 	}
 
 	/**
