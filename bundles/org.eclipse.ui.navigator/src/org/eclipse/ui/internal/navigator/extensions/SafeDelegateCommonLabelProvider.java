@@ -26,6 +26,8 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
+ * Contains elements of a patch from Anton Leherbauer <anton.leherbauer@windriver.com>
+ * contributed as part of bug 146788 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=146788).
  * 
  * @since 3.2
  */
@@ -66,6 +68,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object element) {
+		/* The following few lines were contributed as part of a patch. */
 		if (delegateLabelProvider instanceof IDescriptionProvider) {
 			IDescriptionProvider provider = (IDescriptionProvider) delegateLabelProvider;
 			return provider.getDescription(element);
