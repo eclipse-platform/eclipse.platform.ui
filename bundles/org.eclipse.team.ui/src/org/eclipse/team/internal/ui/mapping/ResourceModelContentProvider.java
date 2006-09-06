@@ -174,8 +174,12 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		ISynchronizationScope scope = context.getScope();
 		// First see if the object is a root of the scope
 		ResourceMapping mapping = scope.getMapping(object);
-		if (mapping != null)
-			return scope.getTraversals(mapping);
+		if (mapping != null) {
+			ResourceTraversal[] traversals = scope.getTraversals(mapping);
+			if (traversals == null)
+				return new ResourceTraversal[0];
+			return traversals;
+		}
 		// Next, check if the object is within the scope
 		if (object instanceof IResource) {
 			IResource resource = (IResource) object;
