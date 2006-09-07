@@ -64,21 +64,27 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.structuremergeviewer.ITextStructureCreator#getStructure(java.lang.Object, org.eclipse.compare.structuremergeviewer.IDocumentManager)
 	 */
-	public IStructureComparator createStructure(Object element) throws CoreException {
+	public IStructureComparator createStructure(Object element) {
 		IDocument document = null;
 		final IEditorInput input = getDocumentKey(element);
 		if (input != null) {
 			final IDocumentProvider provider = getDocumentProvider(input);
 			if (provider != null) {
-				provider.connect(input);
-				document = provider.getDocument(input);
-				IDisposable disposable = new IDisposable() {
-					public void dispose() {
-						provider.disconnect(input);
-					}
-				};
-				setupDocument(document);
-				return createStructureComparator(element, document, disposable);
+				try {
+					provider.connect(input);
+					document = provider.getDocument(input);
+					IDisposable disposable = new IDisposable() {
+						public void dispose() {
+							provider.disconnect(input);
+						}
+					};
+					setupDocument(document);
+					return createStructureComparator(element, document, disposable);
+				} catch (CoreException e) {
+					// Connection to the document provider failed.
+					// Log and fall through to use simple structure
+					CompareUIPlugin.log(e);
+				}
 			}
 		}
 		return getStructure(element);

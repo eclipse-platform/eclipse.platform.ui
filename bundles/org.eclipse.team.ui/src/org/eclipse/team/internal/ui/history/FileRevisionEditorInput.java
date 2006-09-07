@@ -27,8 +27,8 @@ import com.ibm.icu.text.DateFormat;
 
 public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter,IStorageEditorInput {
 
-	private IFileRevision fileRevision;
-	private IStorage storage;
+	private final IFileRevision fileRevision;
+	private final IStorage storage;
 	
 	/**
 	 * Creates FileRevisionEditorInput on the given revision.
@@ -57,6 +57,10 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 		this.fileRevision = null;
 	}
 
+	public IFileRevision getFileRevision() {
+		return fileRevision;
+	}
+	
 	public IStorage getStorage() throws CoreException {
 		return storage;
 	}
@@ -112,7 +116,6 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public ImageDescriptor getImageDescriptor(Object object) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -129,6 +132,17 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	public Object getParent(Object o) {
 		return null;
 	}
-
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof FileRevisionEditorInput) {
+			FileRevisionEditorInput other = (FileRevisionEditorInput) obj;
+			return (other.getFileRevision().equals(getFileRevision()));
+		}
+		return false;
+	}
+	
+	public int hashCode() {
+		return getFileRevision().hashCode();
+	}
 
 }
