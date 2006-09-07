@@ -15,6 +15,8 @@ Did it work? Of course not, it is suppose to cause a parsing error.
 	<subitem label="sub 1">
 		<extra>testing</extra>
 	</subitem>
+	<subitem label="sub 2">
+	</subitem>
 </item>
 
 </cheatsheet>

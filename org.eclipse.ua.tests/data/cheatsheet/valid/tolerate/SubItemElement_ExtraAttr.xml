@@ -13,6 +13,7 @@ Simple test
 Did it work? Of course not, it is suppose to cause a parsing error.
 		</description>
 	<subitem label="sub 1" extra="testing"/>
+	<subitem label="sub 2" />
 </item>
 
 </cheatsheet>
