@@ -550,6 +550,11 @@ public class CheatSheetParser implements IStatusContainer {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_DESCRIPTION, (new Object[] {itemNode.getNodeName()}));
 			addStatus(IStatus.ERROR, message, null);
 		}
+		
+	    ArrayList subItems = item.getSubItems();
+		if( subItems != null && subItems.size() ==  1 && !item.isDynamic()) {
+			addStatus(IStatus.ERROR, Messages.LESS_THAN_2_SUBITEMS, null);
+		}
 
 		return item;
 	}

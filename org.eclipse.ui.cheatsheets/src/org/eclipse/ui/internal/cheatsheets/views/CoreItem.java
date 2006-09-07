@@ -276,14 +276,7 @@ public class CoreItem extends ViewItem {
 			handleDynamicButtons();
 			return;
 		} else if( item.getSubItems() != null && item.getSubItems().size() > 0) {
-			try{
-				handleSubButtons();
-			}catch(Exception e){
-				//Need to log exception here. 
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.LESS_THAN_2_SUBITEMS, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.LESS_THAN_2_SUBITEMS, null, status);
-			}
+			handleSubButtons();
 		}
 
 		if (buttonsHandled)
@@ -407,16 +400,13 @@ public class CoreItem extends ViewItem {
 		}
 	}
 
-	private void handleSubButtons() throws Exception {
+	private void handleSubButtons() {
 		if (buttonsHandled)
 			return;
 		//Instantiate the list to store the sub item composites.
 		listOfSubItemCompositeHolders = new ArrayList(20);
 
 		ArrayList sublist = item.getSubItems();
-		
-		if(sublist == null || sublist.size()<=1)
-			throw new Exception(Messages.LESS_THAN_2_SUBITEMS);
 		
 		createSubItemButtonComposite();
 
