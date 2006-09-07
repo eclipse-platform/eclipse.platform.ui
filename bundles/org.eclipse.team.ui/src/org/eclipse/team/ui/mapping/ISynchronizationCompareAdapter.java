@@ -30,7 +30,7 @@ public interface ISynchronizationCompareAdapter {
 	
 	/**
 	 * Return whether their is a compare input associated with the given object.
-	 * In otherwords, return <code>true</code> if {@link #asCompareInput(ISynchronizationContext, Object) }
+	 * In other words, return <code>true</code> if {@link #asCompareInput(ISynchronizationContext, Object) }
 	 * would return a value and <code>false</code> if it would return <code>null</code>.
 	 * @param context the synchronization context
 	 * @param object the object.
@@ -61,7 +61,7 @@ public interface ISynchronizationCompareAdapter {
 	
 	/**
 	 * Get the name associated with the model object of the given mapping.
-	 * This name sould be suitable for display to the user.
+	 * This name should be suitable for display to the user.
 	 * @param mapping the mapping
 	 * @return the name of the mapping's model object
 	 */
@@ -70,7 +70,7 @@ public interface ISynchronizationCompareAdapter {
 	/**
 	 * Get the path associated with the model object
 	 * of the given mapping.
-	 * Ths path sould be suitable for display to the user.
+	 * This path should be suitable for display to the user.
 	 * @param mapping the mapping
 	 * @return the path of the model object of the mapping
 	 */
@@ -86,7 +86,7 @@ public interface ISynchronizationCompareAdapter {
 	public void save(ResourceMapping[] mappings, IMemento memento);
 	
 	/**
-	 * Restore the previosuly saved resource mappings.
+	 * Restore the previously saved resource mappings.
 	 * @param memento a memento
 	 * @return the mappings restored from the given memento
 	 */
