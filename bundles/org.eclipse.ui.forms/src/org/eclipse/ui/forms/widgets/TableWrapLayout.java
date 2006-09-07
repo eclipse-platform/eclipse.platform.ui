@@ -600,6 +600,10 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		resetColumnWidths();
 		int minWidth = internalGetMinimumWidth(parent, changed);
 		int maxWidth = internalGetMaximumWidth(parent, changed);
+		
+		if (wHint == SWT.DEFAULT)
+			parentWidth = maxWidth;
+		
 		int tableWidth = parentWidth;
 		int[] columnWidths;
 		if (parentWidth <= minWidth) {
@@ -611,7 +615,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 			} else
 				columnWidths = minColumnWidths;
-		} else if (parentWidth > maxWidth) {
+		} else if (parentWidth >= maxWidth) {
 			if (makeColumnsEqualWidth) {
 				columnWidths = new int[numColumns];
 				int colSpace = parentWidth - leftMargin - rightMargin;
@@ -701,7 +705,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	int internalGetMinimumWidth(Composite parent, boolean changed) {
 		if (changed)
-			calculateMinimumColumnWidths(parent, true);
+			//calculateMinimumColumnWidths(parent, true);
+			calculateColumnWidths(parent, minColumnWidths, false, true);
 		int minimumWidth = 0;
 		widestColumnWidth = 0;
 		if (makeColumnsEqualWidth) {
@@ -725,7 +730,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	int internalGetMaximumWidth(Composite parent, boolean changed) {
 		if (changed)
-			calculateMaximumColumnWidths(parent, true);
+			//calculateMaximumColumnWidths(parent, true);
+			calculateColumnWidths(parent, maxColumnWidths, true, true);
 		int maximumWidth = 0;
 		for (int i = 0; i < numColumns; i++) {
 			if (i > 0)
@@ -749,139 +755,96 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			maxColumnWidths[i] = 0;
 		}
 	}
-
-	void calculateMinimumColumnWidths(Composite parent, boolean changed) {
-		//Control[] children = parent.getChildren();
+	
+	void calculateColumnWidths(Composite parent, int [] columnWidths, boolean max, boolean changed) {
+		boolean secondPassNeeded=false;
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false)
 					continue;
-				//Control child = children[td.childIndex];
+				
+				if (td.colspan>1) {
+					// we will not do controls with multiple column span
+					// here - increment and continue
+					secondPassNeeded=true;
+					j+=td.colspan-1;
+					continue;
+				}
 
 				SizeCache childCache = cache.getCache(td.childIndex);
-				int minWidth = childCache.computeMinimumWidth();
+				// !!
+				int width = max?childCache.computeMaximumWidth():childCache.computeMinimumWidth();
 				if (td.maxWidth!=SWT.DEFAULT)
-					minWidth = Math.min(minWidth, td.maxWidth);
+					width = Math.min(width, td.maxWidth);
 
-				minWidth += td.indent;
-				if (td.colspan == 1)
-					minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
-				else {
-					// check if the current minimum width is enough to
-					// support the control; if not, add the delta to
-					// the last column
-					int current = 0;
-					for (int k = j; k < j + td.colspan; k++) {
-						if (k > j)
-							current += horizontalSpacing;
-						current += minColumnWidths[k];
-					}
-					if (minWidth <= current) {
-						// we are ok - nothing to do here
-					} else {
-						int ndiv = 0;
-						if (growingColumns != null) {
-							for (int k = j; k < j + td.colspan; k++) {
-								if (isGrowingColumn(k)) {
-									ndiv++;
-								}
+				width += td.indent;
+				columnWidths[j] = Math.max(columnWidths[j], width);
+			}
+		}
+		if (!secondPassNeeded) return;
+		
+		// Second pass for controls with multi-column horizontal span
+		for (int i = 0; i < grid.size(); i++) {
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
+			for (int j = 0; j < numColumns; j++) {
+				TableWrapData td = row[j];
+				if (td.isItemData == false || td.colspan==1)
+					continue;
+
+				SizeCache childCache = cache.getCache(td.childIndex);
+				int width = max?childCache.computeMaximumWidth():childCache.computeMinimumWidth();
+				if (td.maxWidth!=SWT.DEFAULT)
+					width = Math.min(width, td.maxWidth);
+
+				width += td.indent;
+				// check if the current width is enough to
+				// support the control; if not, add the delta to
+				// the last column or to all the growing columns, if present
+				int current = 0;
+				for (int k = j; k < j + td.colspan; k++) {
+					if (k > j)
+						current += horizontalSpacing;
+					current += columnWidths[k];
+				}
+				if (width <= current) {
+					// we are ok - nothing to do here
+				} else {
+					int ndiv = 0;
+					if (growingColumns != null) {
+						for (int k = j; k < j + td.colspan; k++) {
+							if (isGrowingColumn(k)) {
+								ndiv++;
 							}
 						}
-						if (ndiv == 0) {
-							// add the delta to the last column
-							minColumnWidths[j + td.colspan - 1] += minWidth
-									- current;
-						} else {
-							// distribute the delta to the growing
-							// columns
-							int percolumn = (minWidth - current) / ndiv;
-							if ((minWidth - current) % ndiv > 0)
-								percolumn++;
-							for (int k = j; k < j + td.colspan; k++) {
-								if (isGrowingColumn(k))
-									minColumnWidths[k] += percolumn;
-							}
+					}
+					if (ndiv == 0) {
+						// add the delta to the last column
+						columnWidths[j + td.colspan - 1] += width
+								- current;
+					} else {
+						// distribute the delta to the growing
+						// columns
+						int percolumn = (width - current) / ndiv;
+						if ((width - current) % ndiv > 0)
+							percolumn++;
+						for (int k = j; k < j + td.colspan; k++) {
+							if (isGrowingColumn(k))
+								columnWidths[k] += percolumn;
 						}
 					}
 				}
 			}
-		}
-	}
-
+		}		
+	}	
+	
 	boolean isWrap(Control control) {
 		if (control instanceof Composite
 				&& ((Composite) control).getLayout() instanceof ILayoutExtension)
 			return true;
 		return (control.getStyle() & SWT.WRAP) != 0;
-	}
-
-	void calculateMaximumColumnWidths(Composite parent, boolean changed) {
-		//Control[] children = parent.getChildren();
-		for (int i = 0; i < numColumns; i++) {
-			maxColumnWidths[i] = 0;
-		}
-		for (int i = 0; i < grid.size(); i++) {
-			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
-			for (int j = 0; j < numColumns; j++) {
-				TableWrapData td = row[j];
-				if (td.isItemData == false)
-					continue;
-				//Control child = children[td.childIndex];
-
-				SizeCache sc = cache.getCache(td.childIndex);
-				int maxWidth = sc.computeMaximumWidth();
-				if (td.maxWidth!=SWT.DEFAULT)
-					maxWidth = Math.min(maxWidth, td.maxWidth);
-
-				maxWidth += td.indent;
-				if (td.colspan == 1)
-					maxColumnWidths[j] = Math.max(maxColumnWidths[j], maxWidth);
-				else {
-					// check if the current maximum width is enough to
-					// support the control; if not, add the delta to
-					// the last column
-					int current = 0;
-					for (int k = j; k < j + td.colspan; k++) {
-						if (k > j)
-							current += horizontalSpacing;
-						current += maxColumnWidths[k];
-					}
-					if (maxWidth <= current) {
-						// we are ok - nothing to do here
-					} else {
-						int ndiv = 0;
-						if (growingColumns != null) {
-							for (int k = j; k < j + td.colspan; k++) {
-								if (isGrowingColumn(k)) {
-									ndiv++;
-								}
-							}
-						}
-						if (ndiv == 0) {
-							// add the delta to the last column
-							maxColumnWidths[j + td.colspan - 1] += maxWidth
-									- current;
-						} else {
-							// distribute the delta to the growing
-							// columns
-							int percolumn = (maxWidth - current) / ndiv;
-							if ((maxWidth - current) % ndiv > 0)
-								percolumn++;
-							// divide the distribution per row
-							// if the control will span multiple rows
-							percolumn /= td.rowspan;
-							for (int k = j; k < j + td.colspan; k++) {
-								if (isGrowingColumn(k))
-									maxColumnWidths[k] += percolumn;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	}	
 
 	private void initializeIfNeeded(Composite parent, boolean changed) {
 		if (changed)
