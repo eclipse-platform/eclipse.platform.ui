@@ -19,7 +19,7 @@ import org.eclipse.team.core.variants.IResourceVariant;
 public class ResourceVariantFileRevision extends FileRevision implements IAdaptable {
 	private final IResourceVariant variant;
 
-	protected ResourceVariantFileRevision(IResourceVariant variant) {
+	public ResourceVariantFileRevision(IResourceVariant variant) {
 		this.variant = variant;
 	}
 

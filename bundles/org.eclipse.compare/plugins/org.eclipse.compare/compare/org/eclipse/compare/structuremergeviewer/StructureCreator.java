@@ -27,7 +27,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * 
  * @since 3.3
  */
-public abstract class DocumentStructureCreator implements IStructureCreator2 {
+public abstract class StructureCreator implements IStructureCreator2 {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.structuremergeviewer.IStructureCreator#getStructure(java.lang.Object)

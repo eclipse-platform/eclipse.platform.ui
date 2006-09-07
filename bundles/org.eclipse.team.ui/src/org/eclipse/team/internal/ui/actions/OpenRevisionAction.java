@@ -67,7 +67,7 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 									//if this is the current workspace file, open it
 									IDE.openEditor(page.getSite().getPage(), (IFile) file);
 								} else {
-									FileRevisionEditorInput fileRevEditorInput = new FileRevisionEditorInput(revision); 
+									FileRevisionEditorInput fileRevEditorInput = FileRevisionEditorInput.createEditorInputFor(revision, monitor); 
 									if (!editorAlreadyOpenOnContents(fileRevEditorInput))
 										page.getSite().getPage().openEditor(fileRevEditorInput, id);
 								}

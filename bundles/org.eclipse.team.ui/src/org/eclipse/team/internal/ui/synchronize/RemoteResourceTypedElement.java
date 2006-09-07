@@ -12,13 +12,18 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
 import org.eclipse.team.internal.ui.StorageTypedElement;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
+import org.eclipse.ui.IEditorInput;
 
 /**
- * RemoteResourceTypedElement
+ * An {@link ITypedElement} wrapper for {@link IResourceVariant} for use with the
+ * Compare framework.
  */
 public class RemoteResourceTypedElement extends StorageTypedElement {
 
@@ -91,6 +96,16 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 		discardBuffer();
 		remote = variant;
 		fireContentChanged();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ISharedDocumentAdapter#getDocumentKey(java.lang.Object)
+	 */
+	public IEditorInput getDocumentKey(Object element) {
+		if (element == this && getBufferedStorage() != null) {
+			return new FileRevisionEditorInput(new ResourceVariantFileRevision(remote), getBufferedStorage());
+		}
+		return null;
 	}
 	
 }

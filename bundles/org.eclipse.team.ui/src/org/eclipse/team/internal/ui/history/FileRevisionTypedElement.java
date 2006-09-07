@@ -14,106 +14,114 @@ import java.net.URI;
 import java.util.Date;
 
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.StorageTypedElement;
+import org.eclipse.ui.IEditorInput;
 
 import com.ibm.icu.text.DateFormat;
 
+/**
+ * An {@link ITypedElement} wrapper for {@link IFileRevision} for use with the
+ * Compare framework.
+ */
 public class FileRevisionTypedElement extends StorageTypedElement {
 
 	IFileRevision fileRevision;
-	IFile file;
 	
+	/**
+	 * Create a typed element that wraps the given file revision.
+	 * @param fileRevision the file revision
+	 */
 	public FileRevisionTypedElement(IFileRevision fileRevision){
-		this(fileRevision,null);
+		this(fileRevision, null);
 	}
 	
-	public FileRevisionTypedElement(IFile file){
-		this(file,null);
-	}
-	
+	/**
+	 * Create a typed element that wraps the given file revision.
+	 * @param fileRevision the file revision
+	 * @param localEncoding the encoding of the local file that corresponds to the given file revision
+	 */
 	public FileRevisionTypedElement(IFileRevision fileRevision, String localEncoding){
 		super(localEncoding);
+		Assert.isNotNull(fileRevision);
 		this.fileRevision = fileRevision;
-		this.file = null;
 	}
 	
-	public FileRevisionTypedElement(IFile file, String localEncoding){
-		super(localEncoding);
-		this.file = file;
-		this.fileRevision = null;
-	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getName()
+	 */
 	public String getName() {
-		if (file != null)
-			return file.getName();
-		
 		return fileRevision.getName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getElementStorage(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected IStorage getElementStorage(IProgressMonitor monitor) throws CoreException {
-		if (file != null)
-			return file;
-	
 		return fileRevision.getStorage(monitor);
 	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#isEditable()
+	 */
 	public boolean isEditable() {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#replace(org.eclipse.compare.ITypedElement, org.eclipse.compare.ITypedElement)
+	 */
 	public ITypedElement replace(ITypedElement dest, ITypedElement src) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getContentIdentifier()
+	 */
 	public String getContentIdentifier() {
-		if (file != null)
-			return file.getName();
-		
 		return fileRevision.getContentIdentifier();
 	}
 	
+	/**
+	 * Return the human readable timestamp of this element.
+	 * @return the human readable timestamp of this element
+	 */
 	public String getTimestamp() {
-		long date = 0;
-		if (file != null) {
-			date = file.getModificationStamp();
-		} else {
-			date = fileRevision.getTimestamp();
-		}
+		long date = fileRevision.getTimestamp();
 		Date dateFromLong = new Date(date);
 		return DateFormat.getDateTimeInstance().format(dateFromLong);
 	}
 	
-	public String getComment() {
-		if (file != null)
-			return ""; //$NON-NLS-1$
-		
-		return fileRevision.getComment();
-	}
-	
-	/*
-	 * Can return either an IFile or an IFileRevision
+	/**
+	 * Return the file revision of this element.
+	 * @return the file revision of this element
 	 */
-	public Object getFileRevision(){
-		if (file != null)
-			return file;
-		
+	public IFileRevision getFileRevision(){
 		return fileRevision;
 	}
 	
+	/**
+	 * Return the human readable path of this element.
+	 * @return the human readable path of this element
+	 */
 	public String getPath() {
-		if (file != null)
-			return file.getFullPath().toString();
-		if (fileRevision != null) {
-			URI uri = fileRevision.getURI();
-			if (uri != null)
-				return uri.getPath();
-		}
+		URI uri = fileRevision.getURI();
+		if (uri != null)
+			return uri.getPath();
 		return getName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ISharedDocumentAdapter#getDocumentKey(java.lang.Object)
+	 */
+	public IEditorInput getDocumentKey(Object element) {
+		if (element == this && getBufferedStorage() != null) {
+			return new FileRevisionEditorInput(fileRevision, getBufferedStorage());
+		}
+		return null;
 	}
 
 }

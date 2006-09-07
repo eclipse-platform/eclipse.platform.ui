@@ -18,7 +18,7 @@ import org.eclipse.ui.services.IDisposable;
  * use of shared documents.
  * <p>
  * This interface is not intended to be implemented by clients. Client should instead
- * subclass {@link DocumentStructureCreator}.
+ * subclass {@link StructureCreator}.
  * 
  * @since 3.3
  */

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
-import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFileState;
@@ -20,33 +19,42 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+import com.ibm.icu.text.DateFormat;
+
 public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter,IStorageEditorInput {
 
-	private IFileRevision file;
+	private IFileRevision fileRevision;
 	private IStorage storage;
 	
 	/**
-	 * Creates FileRevisionEditorInput on the given file.
+	 * Creates FileRevisionEditorInput on the given revision.
+	 * @param revision the file revision
+	 * @param monitor 
+	 * @return a file revision editor input
+	 * @throws CoreException 
 	 */
-	public FileRevisionEditorInput(IFileRevision file) {
-		this.file = file;
-		//TODO: need a monitor
-		try {
-			this.storage = file.getStorage(new NullProgressMonitor());
-		} catch (CoreException e) {
-			// TODO Need to get storage before creating input
-			TeamUIPlugin.log(e);
-		}
+	public static FileRevisionEditorInput createEditorInputFor(IFileRevision revision, IProgressMonitor monitor) throws CoreException {
+		IStorage storage = revision.getStorage(monitor);
+		return new FileRevisionEditorInput(revision, storage);
+	}
+	
+	/**
+	 * Creates FileRevisionEditorInput on the given revision.
+	 * @param revision the file revision
+	 * @param storage the contents of the file revision
+	 */
+	public FileRevisionEditorInput(IFileRevision revision, IStorage storage) {
+		this.fileRevision = revision;
+		this.storage = storage;
 	}
 	
 	public FileRevisionEditorInput(IFileState state) {
 		this.storage = state;
-		this.file = null;
+		this.fileRevision = null;
 	}
 
 	public IStorage getStorage() throws CoreException {
@@ -58,13 +66,12 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public ImageDescriptor getImageDescriptor() {
-		
 		return null;
 	}
 
 	public String getName() {
-		if (file != null)
-			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { file.getName(), file.getContentIdentifier()});
+		if (fileRevision != null)
+			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { fileRevision.getName(), fileRevision.getContentIdentifier()});
 		
 		if (storage != null){
 			return storage.getName() +  " " + DateFormat.getInstance().format(new Date(((IFileState) storage).getModificationTime())) ; //$NON-NLS-1$
@@ -79,7 +86,7 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public String getToolTipText() {
-		if (file != null)
+		if (fileRevision != null)
 			try {
 				return getStorage().getFullPath().toString();
 			} catch (CoreException e) {
@@ -96,7 +103,7 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 			return this;
 		}
 		if (adapter == IFileRevision.class)
-			return file;
+			return fileRevision;
 		return super.getAdapter(adapter);
 	}
 
@@ -110,8 +117,8 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public String getLabel(Object o) {
-		if (file != null)
-			return file.getName();
+		if (fileRevision != null)
+			return fileRevision.getName();
 		
 		if (storage != null){
 			return storage.getName();

@@ -13,11 +13,12 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.io.*;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.BufferedResourceNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * A resource node that is not buffered. Changes made to it are applied directly 
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 3.0
  */
-public class LocalResourceTypedElement extends ResourceNode {
+public class LocalResourceTypedElement extends ResourceNode implements ISharedDocumentAdapter {
 
 		private boolean fDirty= false;
 		private IFile fDeleteFile;
@@ -50,12 +51,14 @@ public class LocalResourceTypedElement extends ResourceNode {
 		
 		/**
 		 * Commits buffered contents to resource.
+		 * @param monitor a progress monitor
+		 * @throws CoreException 
 		 */
-		public void commit(IProgressMonitor pm) throws CoreException {
+		public void commit(IProgressMonitor monitor) throws CoreException {
 			if (fDirty) {
 			
 				if (fDeleteFile != null) {
-					fDeleteFile.delete(true, true, pm);
+					fDeleteFile.delete(true, true, monitor);
 					return;
 				}
 			
@@ -65,9 +68,9 @@ public class LocalResourceTypedElement extends ResourceNode {
 					try {
 						IFile file= (IFile) resource;
 						if (file.exists())
-							file.setContents(is, false, true, pm);
+							file.setContents(is, false, true, monitor);
 						else
-							file.create(is, false, pm);
+							file.create(is, false, monitor);
 						fDirty= false;
 					} finally {
 						fireContentChanged();
@@ -89,7 +92,7 @@ public class LocalResourceTypedElement extends ResourceNode {
 				if (resource instanceof IFolder) {
 					IFolder folder= (IFolder) resource;
 					IFile file= folder.getFile(other.getName());
-					child= new BufferedResourceNode(file);
+					child= new LocalResourceTypedElement(file);
 				}
 			}
 		
@@ -155,6 +158,17 @@ public class LocalResourceTypedElement extends ResourceNode {
 	public InputStream getContents() throws CoreException {
 		if(getResource().exists())
 			return super.getContents();
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ISharedDocumentAdapter#getDocumentKey(java.lang.Object)
+	 */
+	public IEditorInput getDocumentKey(Object element) {
+		if (element == this && getResource() instanceof IFile) {
+			IFile file = (IFile) getResource();
+			return new FileEditorInput(file);
+		}
 		return null;
 	}
     

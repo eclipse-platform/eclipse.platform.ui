@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 
-public abstract class StorageTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
+public abstract class StorageTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor, ISharedDocumentAdapter {
 
 	private IStorage bufferedContents;
 	private final String localEncoding;
@@ -44,6 +44,7 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	/**
 	 * Cache the contents for the remote resource in a local buffer
 	 * @param monitor
+	 * @throws CoreException 
 	 */
 	public void cacheContents(IProgressMonitor monitor) throws CoreException {
 		bufferedContents = getElementStorage(monitor);
@@ -110,4 +111,12 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	 * @return String	the string contains a unique content id
 	 */
 	abstract public String getContentIdentifier();
+
+	/**
+	 * Return the {@link IStorage} that has been buffered for this element.
+	 * @return the buffered storage
+	 */
+	public IStorage getBufferedStorage() {
+		return bufferedContents;
+	}
 }
