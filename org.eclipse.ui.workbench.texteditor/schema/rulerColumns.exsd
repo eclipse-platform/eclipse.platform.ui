@@ -13,7 +13,6 @@
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
