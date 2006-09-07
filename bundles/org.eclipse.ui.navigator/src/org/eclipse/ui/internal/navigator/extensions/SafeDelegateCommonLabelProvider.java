@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Anton Leherbauer, Wind River - bug 146788
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -26,9 +27,6 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
- * Contains elements of a patch from Anton Leherbauer <anton.leherbauer@windriver.com>
- * contributed as part of bug 146788 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=146788).
- * 
  * @since 3.2
  */
 public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
