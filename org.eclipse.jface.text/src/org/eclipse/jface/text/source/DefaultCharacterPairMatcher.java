@@ -95,7 +95,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		final int adjustedOffset= isForward ? offset - 1 : offset;
 		final String partition= TextUtilities.getContentType(doc, fPartitioning, adjustedOffset, false);
 		final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(doc, fPartitioning, partition);
-		int endOffset= findMatchingPeer(partDoc, fPairs.getMatching(prevChar),
+		int endOffset= findMatchingPeer(partDoc, prevChar, fPairs.getMatching(prevChar),
 				isForward,  isForward ? doc.getLength() : -1,
 				searchStartPosition);
 		if (endOffset == -1) return null;
@@ -109,6 +109,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * Searches <code>doc</code> for the specified end character, <code>end</code>.
 	 * 
 	 * @param doc the document to search
+	 * @param start the opening matching character
 	 * @param end the end character to search for
 	 * @param searchForward search forwards or backwards?
 	 * @param boundary a boundary at which the search should stop
@@ -116,14 +117,14 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	 * @return the index of the end character if it was found, otherwise -1
 	 * @throws BadLocationException
 	 */
-	private int findMatchingPeer(DocumentPartitionAccessor doc, char end, boolean searchForward, int boundary, int startPos) throws BadLocationException {
+	private int findMatchingPeer(DocumentPartitionAccessor doc, char start, char end, boolean searchForward, int boundary, int startPos) throws BadLocationException {
 		int pos= startPos;
 		while (pos != boundary) {
 			final char c= doc.getChar(pos);
 			if (doc.isMatch(pos, end)) {
 				return pos;
-			} else if (fPairs.isOpeningCharacter(c, searchForward) && doc.inPartition(pos)) {
-				pos= findMatchingPeer(doc, fPairs.getMatching(c), searchForward, boundary,
+			} else if (c == start && doc.inPartition(pos)) {
+				pos= findMatchingPeer(doc, start, end, searchForward, boundary,
 						doc.getNextPosition(pos, searchForward));
 				if (pos == -1) return -1;
 			}

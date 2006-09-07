@@ -162,6 +162,15 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 	
+	public void testBug156426() {
+		final ICharacterPairMatcher matcher= createMatcher("()[]{}<>");
+		performMatch(matcher, " #( a < b )% ");
+		performMatch(matcher, " (% a < b )# ");
+		performMatch(matcher, " #( a > b )% ");
+		performMatch(matcher, " (% a > b )# ");
+		matcher.dispose();
+	}
+	
 	/* --- U t i l i t i e s --- */
 
 	/**
