@@ -231,15 +231,20 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				boolean foundRoot = false;
 				for (int k = 0; !foundRoot && k < elements.length; k++) {
 					Object element = elements[k];
-					if (isTreepathContentProvider) {
+					if (roots.contains(element)) {
+					    result.add(saveable);
+					    foundRoot = true;
+					} else if (isTreepathContentProvider) {
 						ITreePathContentProvider treePathContentProvider = (ITreePathContentProvider) contentProvider;
 						TreePath[] parentPaths = treePathContentProvider.getParents(element);
 						for (int l = 0; !foundRoot && l < parentPaths.length; l++) {
 							TreePath parentPath = parentPaths[l];
-							if (roots.contains(parentPath.createChildPath(element).getFirstSegment())) {
-								result.add(saveable);
-								foundRoot = true;
-							}
+                            for (int m = 0; !foundRoot && m < parentPath.getSegmentCount(); m++) {
+                                if (roots.contains(parentPath.getSegment(m))) {
+                                    result.add(saveable);
+                                    foundRoot = true;
+                                }
+                            }
 						}
 					} else {
 						while (!foundRoot && element != null) {
