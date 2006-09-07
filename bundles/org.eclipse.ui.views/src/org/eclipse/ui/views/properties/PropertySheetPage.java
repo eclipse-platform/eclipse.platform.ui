@@ -199,7 +199,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                     Object helpContextId = entry.getHelpContextIds();
                     if (helpContextId != null) {
                         if (helpContextId instanceof String) {
-                            getSite().getWorkbenchWindow().getWorkbench()
+                            PlatformUI.getWorkbench()
 									.getHelpSystem().displayHelp(
 											(String) helpContextId);
                             return;
@@ -218,7 +218,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                         } else {
                             contexts = (Object[]) helpContextId;
                         }
-                        IWorkbenchHelpSystem help = getSite().getWorkbenchWindow().getWorkbench().getHelpSystem();
+                        IWorkbenchHelpSystem help = PlatformUI.getWorkbench().getHelpSystem();
                         // Ignore all but the first element in the array
                         if (contexts[0] instanceof IContext) {
 							help.displayHelp((IContext) contexts[0]);
@@ -230,7 +230,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                 }
 
                 // No help for the selection so show page help
-                getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
+                PlatformUI.getWorkbench().getHelpSystem().displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
             }
         });
     }
