@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=156433
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
@@ -91,7 +92,7 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		urlOffsetInLine++;
 
 		// Right to "://"
-		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3));
+		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), "<>", false); //$NON-NLS-1$
 		if (!tokenizer.hasMoreTokens())
 			return null;
 
