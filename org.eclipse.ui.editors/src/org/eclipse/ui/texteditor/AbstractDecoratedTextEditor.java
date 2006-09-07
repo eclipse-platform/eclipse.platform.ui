@@ -880,7 +880,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
 	 */
 	protected boolean isErrorStatus(IStatus status) {
-		if (!super.isErrorStatus(status) || status.getSeverity() != IStatus.ERROR)
+		if (!super.isErrorStatus(status))
 			return false;
 		
 		if (!status.isMultiStatus())
