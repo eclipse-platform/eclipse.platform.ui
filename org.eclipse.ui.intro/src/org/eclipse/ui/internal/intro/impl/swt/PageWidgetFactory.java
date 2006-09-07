@@ -225,6 +225,7 @@ public class PageWidgetFactory {
         int numColumns = styleManager.getNumberOfColumns(group);
         numColumns = numColumns < 1 ? 1 : numColumns;
         layout.numColumns = numColumns;
+        layout.makeColumnsEqualWidth = styleManager.getEqualWidth(group);
         layout.verticalSpacing = styleManager.getVerticalSpacing(group);
         layout.horizontalSpacing = styleManager.getHorizantalSpacing(group);
         client.setLayout(layout);

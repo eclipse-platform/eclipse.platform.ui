@@ -166,6 +166,10 @@ public class PageStyleManager extends SharedStyleManager {
     public int getNumberOfColumns(IntroGroup group) {
         return getIntProperty(group, ".layout.ncolumns", 0); //$NON-NLS-1$
     }
+    
+    public boolean getEqualWidth(IntroGroup group) {
+    	return getBooleanProperty(group, ".layout.equalWidth", false); //$NON-NLS-1$
+    }
 
     public int getPageVerticalSpacing() {
         return getIntProperty(page, ".layout.vspacing", 5); //$NON-NLS-1$
@@ -199,6 +203,15 @@ public class PageStyleManager extends SharedStyleManager {
         String key = buff.append(qualifier).toString();
         return getIntProperty(key, defaultValue);
     }
+    
+    private boolean getBooleanProperty(AbstractBaseIntroElement element,
+            String qualifier, boolean defaultValue) {
+        StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+        if (buff == null)
+            return defaultValue;
+        String key = buff.append(qualifier).toString();
+        return getBooleanProperty(key, defaultValue);
+    }
 
     private int getIntProperty(String key, int defaulValue) {
         int intValue = defaulValue;
@@ -212,6 +225,14 @@ public class PageStyleManager extends SharedStyleManager {
             Log.error("Failed to parse key: " + key + " as an integer.", e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return intValue;
+    }
+    
+    private boolean getBooleanProperty(String key, boolean defaultValue) {
+        boolean booleanValue = defaultValue;
+        String value = getProperty(key);
+        if (value != null)
+        	booleanValue = value.equalsIgnoreCase("true"); //$NON-NLS-1$
+        return booleanValue;
     }
 
 
