@@ -122,8 +122,14 @@ public class HelpContentPreferencePage extends PreferencePage
 		 * Let the providers know that preferences changed and that the
 		 * content may be outdated.
 		 */
-		RemoteIndexProvider.getInstance().notifyPreferencesChanged();
-		RemoteTocProvider.getInstance().notifyPreferencesChanged();
+		RemoteIndexProvider indexProvider = RemoteIndexProvider.getInstance();
+		if (indexProvider != null) {
+			indexProvider.notifyPreferencesChanged();
+		}
+		RemoteTocProvider tocProvider = RemoteTocProvider.getInstance();
+		if (tocProvider != null) {
+			tocProvider.notifyPreferencesChanged();
+		}
 		
 		return true;
 	}
