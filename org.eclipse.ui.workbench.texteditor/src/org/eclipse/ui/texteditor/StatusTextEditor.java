@@ -88,6 +88,23 @@ public class StatusTextEditor extends AbstractTextEditor {
 			updateStatusFields();
 		}
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#validateEditorInputState()
+	 * @since 3.3
+	 */
+	public boolean validateEditorInputState() {
+		if (!super.validateEditorInputState())
+			return false;
+
+		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
+			IStatus status= extension.getStatus(getEditorInput());
+			return !isErrorStatus(status) && status.getSeverity() != IStatus.CANCEL;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Returns whether the given status indicates an error. Subclasses may override.
