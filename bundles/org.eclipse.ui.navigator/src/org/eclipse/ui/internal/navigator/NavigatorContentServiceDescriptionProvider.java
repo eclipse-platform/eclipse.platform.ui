@@ -66,11 +66,10 @@ public final class NavigatorContentServiceDescriptionProvider implements
 		if (providers.length == 0) {
 			return getDefaultStatusBarMessage(0);
 		}
-		for (int i = 0; i < providers.length; i++) {
+		for (int i = 0; i < providers.length && (message == null || message.length() == 0); i++) {
 			if (providers[i] instanceof ICommonLabelProvider) {
 				message = ((ICommonLabelProvider) providers[i])
-						.getDescription(target);
-				break;
+						.getDescription(target); 
 			}
 		}
 		message = (message != null) ? message : getDefaultStatusBarMessage(1);
