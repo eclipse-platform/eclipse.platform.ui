@@ -62,6 +62,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 		}
 		finally {
 			Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+			queue = null;
 		}
 	}
 

@@ -43,17 +43,15 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class ExportArchiveFileOperationTest extends UITestCase implements
 		IOverwriteQuery {
 	
-	private static String FILE_NAME = "test";
-	private static String ZIP_FILE_EXT = "zip";
-	private static String TAR_FILE_EXT = "tar";
-	
+	private static final String FILE_NAME = "test";
+	private static final String ZIP_FILE_EXT = "zip";
+	private static final String TAR_FILE_EXT = "tar";
+    private static final String[] directoryNames = { "dir1", "dir2" };
+    private static final String[] fileNames = { "file1.txt", "file2.txt" };
+    
     private String localDirectory;
     
     private String filePath;
-
-    private String[] directoryNames = { "dir1", "dir2" };
-
-    private String[] fileNames = { "file1.txt", "file2.txt" };
 
     private IProject project;
     
@@ -306,6 +304,11 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         } catch (CoreException e) {
             fail(e.toString());
         }
+        finally{
+        	project = null;
+        	localDirectory = null;
+        	filePath = null;
+        }        
 	}
 	
     private void setUpData(){

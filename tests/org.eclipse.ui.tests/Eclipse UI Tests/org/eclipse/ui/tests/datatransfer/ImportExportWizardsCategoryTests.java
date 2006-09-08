@@ -204,5 +204,16 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 		assertTrue(
 				"Export wizards should not have category named " + WIZARD_IMPORT_NEW_CATEGORY, 
 				category == null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		importRoot = null;
+		exportRoot = null;
 	}	
+	
+	
 }
