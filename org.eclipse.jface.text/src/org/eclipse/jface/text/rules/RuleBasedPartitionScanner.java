@@ -27,8 +27,11 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	protected int fPartitionOffset;
 
 
-	/*
-	 * @see RuleBasedScanner#setRules(IRule[])
+	/**
+	 * Disallow setting the rules since this scanner
+	 * exclusively uses predicate rules.
+	 * 
+	 * @param rules the sequence of rules controlling this scanner
 	 */
 	public void setRules(IRule[] rules) {
 		throw new UnsupportedOperationException();
