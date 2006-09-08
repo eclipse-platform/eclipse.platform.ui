@@ -14,7 +14,6 @@
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
@@ -48,7 +47,6 @@
    <element name="markerResolutionGenerator">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
@@ -81,7 +79,6 @@
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>

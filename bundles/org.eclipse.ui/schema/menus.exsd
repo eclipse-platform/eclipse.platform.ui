@@ -23,7 +23,6 @@ Every element within this extension point is given a unique identifier.  This is
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>

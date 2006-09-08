@@ -26,7 +26,6 @@ If these filtering mechanisms are inadequate a property page may use the filter 
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>

@@ -15,7 +15,6 @@ See propertyPages and preferencePages.
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
@@ -52,7 +51,6 @@ See propertyPages and preferencePages.
    <element name="keyword">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
