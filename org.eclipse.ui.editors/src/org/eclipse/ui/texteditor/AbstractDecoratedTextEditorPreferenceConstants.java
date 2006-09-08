@@ -341,7 +341,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 * <p>
-	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 *
 	 * @since 3.3
@@ -375,7 +375,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>String</code> and should be read using a {@link RulerColumnPreferenceAdapter}.
 	 * </p>
 	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 *
 	 * @since 3.3
@@ -389,7 +389,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * {@link org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode}.
 	 * </p>
 	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @since 3.3
@@ -402,7 +402,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @since 3.3
@@ -415,7 +415,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @since 3.3

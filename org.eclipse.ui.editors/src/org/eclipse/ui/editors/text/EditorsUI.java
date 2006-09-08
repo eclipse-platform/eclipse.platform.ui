@@ -191,7 +191,7 @@ public final class EditorsUI {
 	 * <p>
 	 * Value: {@value}</p>
 	 * <p>
-	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
@@ -205,7 +205,7 @@ public final class EditorsUI {
 	 * <p>
 	 * Value: {@value}</p>
 	 * <p>
-	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @see IResource#isDerived()

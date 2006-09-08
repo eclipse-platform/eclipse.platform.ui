@@ -18,7 +18,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * This interface must not be implemented by clients.
  * </p>
  * <p>
- * This API is provisional and may change any time before the 3.3 API freeze.
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
  * </p>
  * 
  * @since 3.3

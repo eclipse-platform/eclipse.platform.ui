@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.texteditor.rulers.StringSetSerializer;
 /**
  * Manages the preferences for ruler contributions stored in a preference store.
  * <p>
- * This API is provisional and may change any time before the 3.3 API freeze.
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
  * </p>
  * 
  * @since 3.3

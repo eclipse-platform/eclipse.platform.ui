@@ -1619,7 +1619,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Adds enabled ruler contributions to the vertical ruler. Clients may extend or replace.
 	 * <p>
-	 * This API is provisional and may change any time before the 3.3 API freeze.
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * @param ruler the composite ruler to add contributions to
 	 * @since 3.3

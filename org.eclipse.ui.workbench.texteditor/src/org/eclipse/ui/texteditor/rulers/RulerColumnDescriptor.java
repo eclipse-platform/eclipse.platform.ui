@@ -37,7 +37,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * <code>org.eclipse.ui.workbench.texteditor.rulerColumns</code> extension point. Instances are
  * immutable. Instances can be obtained from a {@link RulerColumnRegistry}.
  * <p>
- * This API is provisional and may change any time before the 3.3 API freeze.
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
  * </p>
  * 
  * @since 3.3
