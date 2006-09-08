@@ -31,11 +31,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class ExportFileSystemOperationTest extends UITestCase implements
 		IOverwriteQuery {
 
+    private static final String[] directoryNames = { "dir1", "dir2" };
+
+    private static final String[] fileNames = { "file1.txt", "file2.txt" };
+
     private String localDirectory;
-
-    private String[] directoryNames = { "dir1", "dir2" };
-
-    private String[] fileNames = { "file1.txt", "file2.txt" };
 
     private IProject project;
     
@@ -90,6 +90,10 @@ public class ExportFileSystemOperationTest extends UITestCase implements
         } catch (CoreException e) {
             fail(e.toString());
         }
+        finally{
+        	project = null;
+        	localDirectory = null;
+        }        
 	}
 	
 	public void testGetStatus() throws Exception {

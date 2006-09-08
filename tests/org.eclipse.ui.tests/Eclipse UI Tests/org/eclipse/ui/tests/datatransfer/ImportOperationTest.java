@@ -33,11 +33,11 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 
+    private static final String[] directoryNames = { "dir1", "dir2" };
+
+    private static final String[] fileNames = { "file1.txt", "file2.txt" };
+    
     private String localDirectory;
-
-    private String[] directoryNames = { "dir1", "dir2" };
-
-    private String[] fileNames = { "file1.txt", "file2.txt" };
 
     private IProject project;
 
@@ -107,6 +107,10 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
             FileSystemHelper.clear(topDirectory);
         } catch (CoreException e) {
             fail(e.toString());
+        }
+        finally{
+        	project = null;
+        	localDirectory = null;
         }
     }
 
