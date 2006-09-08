@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 
-public abstract class StorageTypedElement extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor, ISharedDocumentAdapter {
+public abstract class StorageTypedElement implements ITypedElement, IEncodedStreamContentAccessor, ISharedDocumentAdapter {
 
 	private IStorage bufferedContents;
 	private final String localEncoding;
@@ -28,10 +28,7 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 		this.localEncoding = localEncoding;
 	}
 	
-	/* (non-Javadoc)
-	 * @see BufferedContent#createStream()
-	 */
-	protected InputStream createStream() throws CoreException {
+	public InputStream getContents() throws CoreException {
 		if (bufferedContents == null) {
 			cacheContents(new NullProgressMonitor());
 		}
@@ -42,12 +39,14 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	}
 
 	/**
-	 * Cache the contents for the remote resource in a local buffer
-	 * @param monitor
+	 * Cache the contents for the remote resource in a local buffer.
+	 * This method should be invoked before {@link #getContents()}
+	 * to ensure that a round trip is not made in that method.
+	 * @param monitor a progress monitor.
 	 * @throws CoreException 
 	 */
 	public void cacheContents(IProgressMonitor monitor) throws CoreException {
-		bufferedContents = getElementStorage(monitor);
+		bufferedContents = fetchContents(monitor);
 	}
 
 	/**
@@ -56,12 +55,26 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 	 * @return a storage
 	 * @throws TeamException
 	 */
-	abstract protected IStorage getElementStorage(IProgressMonitor monitor) throws CoreException;
+	abstract protected IStorage fetchContents(IProgressMonitor monitor) throws CoreException;
 
+	/**
+	 * Return the {@link IStorage} that has been buffered for this element.
+	 * @return the buffered storage
+	 */
+	public IStorage getBufferedStorage() {
+		return bufferedContents;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ITypedElement#getImage()
+	 */
 	public Image getImage() {
 		return CompareUI.getImage(getType());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ITypedElement#getType()
+	 */
 	public String getType() {
 		String name = getName();
 		if (name != null) {
@@ -91,32 +104,4 @@ public abstract class StorageTypedElement extends BufferedContent implements ITy
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ITypedElement#getName()
-	 */
-	abstract public String getName();
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.IEditableContent#isEditable()
-	 */
-	abstract public boolean isEditable();
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.IEditableContent#replace(org.eclipse.compare.ITypedElement, org.eclipse.compare.ITypedElement)
-	 */
-	abstract public ITypedElement replace(ITypedElement dest, ITypedElement src);
-	
-	/**
-	 * Returns the unique content identifier for this element
-	 * @return String	the string contains a unique content id
-	 */
-	abstract public String getContentIdentifier();
-
-	/**
-	 * Return the {@link IStorage} that has been buffered for this element.
-	 * @return the buffered storage
-	 */
-	public IStorage getBufferedStorage() {
-		return bufferedContents;
-	}
 }

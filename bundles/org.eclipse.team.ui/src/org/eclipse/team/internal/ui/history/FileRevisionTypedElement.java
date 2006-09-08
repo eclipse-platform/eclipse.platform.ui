@@ -59,27 +59,14 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getElementStorage(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStorage getElementStorage(IProgressMonitor monitor) throws CoreException {
+	protected IStorage fetchContents(IProgressMonitor monitor) throws CoreException {
 		return fileRevision.getStorage(monitor);
 	
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.StorageTypedElement#isEditable()
-	 */
-	public boolean isEditable() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.StorageTypedElement#replace(org.eclipse.compare.ITypedElement, org.eclipse.compare.ITypedElement)
-	 */
-	public ITypedElement replace(ITypedElement dest, ITypedElement src) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getContentIdentifier()
+	/**
+	 * Returns the unique content identifier for this element
+	 * @return String	the string contains a unique content id
 	 */
 	public String getContentIdentifier() {
 		return fileRevision.getContentIdentifier();

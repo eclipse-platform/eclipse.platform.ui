@@ -31,6 +31,8 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 
 	/**
 	 * Creates a new content buffer for the given team node.
+	 * @param remote the resource variant
+	 * @param encoding the  encoding of the contents
 	 */
 	public RemoteResourceTypedElement(IResourceVariant remote, String encoding) {
 		super(encoding);
@@ -38,14 +40,16 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 		this.remote = remote;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ITypedElement#getName()
+	 */
 	public String getName() {
 		return remote.getName();
 	}
-
-	public String getContentIdentifier() {
-		return remote.getContentIdentifier();
-	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#getType()
+	 */
 	public String getType() {
 		if (remote.isContainer()) {
 			return ITypedElement.FOLDER_TYPE;
@@ -53,49 +57,11 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 		return super.getType();		
 	}
 
-	/**
-	 * Returns true if this object can be modified.
-	 * If it returns <code>false</code> the other methods must not be called.
-	 * 
-	 * @return <code>true</code> if this object can be modified.
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.StorageTypedElement#fetchContents(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean isEditable() {
-		return false;
-	}
-
-	/**
-	 * This is not the definitive API!
-	 * This method is called on a parent to
-	 * - add a child,
-	 * - remove a child,
-	 * - copy the contents of a child
-	 * 
-	 * What to do is encoded in the two arguments as follows:
-	 * add:	child == null		other != null
-	 * remove:	child != null		other == null
-	 * copy:	child != null		other != null
-	 */
-	public ITypedElement replace(ITypedElement child, ITypedElement other) {
-		return null;
-	}
-
-	/**
-	 * Cache the contents for the remote resource in a local buffer
-	 * @param monitor
-	 */
-	protected IStorage getElementStorage(IProgressMonitor monitor) throws TeamException {
+	protected IStorage fetchContents(IProgressMonitor monitor) throws TeamException {
 		return remote.getStorage(monitor);		
-	}
-
-	/**
-	 * Update the remote handle in this typed element.
-	 * @param variant the new remote handle
-	 */
-	public void update(IResourceVariant variant) {
-		Assert.isNotNull(variant);
-		discardBuffer();
-		remote = variant;
-		fireContentChanged();
 	}
 	
 	/* (non-Javadoc)

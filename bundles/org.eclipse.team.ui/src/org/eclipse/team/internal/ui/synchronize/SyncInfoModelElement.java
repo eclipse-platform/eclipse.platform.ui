@@ -82,7 +82,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 			if(remote == null) {
 				setRight(null);
 			} else {
-				rightEl.update(remote);
+				setRight(createRemoteTypeElement(info));
 			}
 		}
 		// Base
@@ -94,7 +94,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 			if(base == null) {
 				setAncestor(null);
 			} else {
-				ancestorEl.update(base);
+				setAncestor(createBaseTypeElement(info));
 			}
 		}
 		
