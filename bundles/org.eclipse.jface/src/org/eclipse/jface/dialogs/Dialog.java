@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -903,7 +904,7 @@ public abstract class Dialog extends Window {
 	 * compatibility they are still supported, however new code should use SWT
 	 * for these.
 	 * 
-	 * @see Display#getSystemIcon(int ID)
+	 * @see Display#getSystemImage(int)
 	 */
 	public static Image getImage(String key) {
 		return JFaceResources.getImageRegistry().get(key);

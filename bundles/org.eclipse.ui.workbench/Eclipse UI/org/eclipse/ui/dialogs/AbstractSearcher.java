@@ -235,7 +235,6 @@ public abstract class AbstractSearcher {
 	
 	/**
 	 * Get comparator to sort elements
-	 * @param comparator
 	 */
 	protected abstract Comparator getComparator();
 	
@@ -255,7 +254,7 @@ public abstract class AbstractSearcher {
 			
 		/**
 		 * @param monitor
-		 * @param searchEngineModel
+		 * @param model
 		 */
 		public SearcherProgressMonitor(IProgressMonitor monitor, SearcherModel model) {
 			super(monitor);

@@ -171,7 +171,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	/**
 	 * Restores dialog settings
 	 * 
-	 * @param dialogSettings
+	 * @param settings
 	 *            settings used to restore dialog
 	 */
 	protected void restoreDialog(IDialogSettings settings) {
@@ -207,7 +207,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	/**
 	 * Stores dialog settings
 	 * 
-	 * @param dialogSettings
+	 * @param settings
 	 *            settings used to store dialog
 	 */
 	protected void storeDialog(IDialogSettings settings) {
