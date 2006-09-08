@@ -24,10 +24,9 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IEncodedStreamContentAccessor;
-import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -49,6 +48,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -58,12 +58,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.texteditor.DocumentProviderRegistry;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -666,5 +665,59 @@ public class Utilities {
 	
 	public static Object getAdapter(Object element, Class adapterType) {
 		return getAdapter(element, adapterType, false);
+	}
+	
+	public static ITypedElement getLeg(char type, Object input) {
+		if (input instanceof ICompareInput) {
+			switch (type) {
+			case MergeViewerContentProvider.ANCESTOR_CONTRIBUTOR:
+				return ((ICompareInput)input).getAncestor();
+			case MergeViewerContentProvider.LEFT_CONTRIBUTOR:
+				return ((ICompareInput)input).getLeft();
+			case MergeViewerContentProvider.RIGHT_CONTRIBUTOR:
+				return ((ICompareInput)input).getRight();
+			}
+		}
+		return null;
+	}
+	
+	public static IDocument getDocument(char type, Object element, boolean isUsingDefaultContentProvider, boolean canHaveSharedDocument) {
+		ITypedElement te= getLeg(type, element);
+		if (te instanceof IDocument)
+			return (IDocument) te;
+		if (te instanceof IDocumentRange)
+			return ((IDocumentRange) te).getDocument();
+		if (te instanceof IStreamContentAccessor)
+			return DocumentManager.get(te);
+		if (isUsingDefaultContentProvider) {
+			IEditorInput input = getDocumentKey(element, type, canHaveSharedDocument);
+			if (input != null) {
+				IDocumentProvider provider = getDocumentProvider(input);
+				if (provider != null)
+					return provider.getDocument(input);
+			}
+		}
+		return null;
+	}
+	
+	public static IDocumentProvider getDocumentProvider(IEditorInput input) {
+		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+	}
+	
+	public static IEditorInput getDocumentKey(Object compareInput, char leg, boolean canShare) {
+		if (canShare) {
+			Object element = getLeg(leg, compareInput);
+			if (element != null) {
+				ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class, true);
+				if (sda != null) {
+					return sda.getDocumentKey(element);
+				}
+			}
+		}
+		if (compareInput instanceof ICompareInput) {
+			ICompareInput ci = (ICompareInput) compareInput;
+			return new ThreeWayTypedElementEditorInput(ci, leg);
+		}
+		return null;
 	}
 }

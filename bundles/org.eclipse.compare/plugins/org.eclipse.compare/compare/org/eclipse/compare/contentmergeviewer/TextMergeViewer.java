@@ -22,8 +22,7 @@ import org.eclipse.compare.internal.*;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -93,7 +92,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see IDocumentRange
  * @see org.eclipse.compare.IStreamContentAccessor
  */
-public class TextMergeViewer extends ContentMergeViewer  {
+public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	
 	private static final char ANCESTOR_CONTRIBUTOR = MergeViewerContentProvider.ANCESTOR_CONTRIBUTOR;
 	private static final char RIGHT_CONTRIBUTOR = MergeViewerContentProvider.RIGHT_CONTRIBUTOR;
@@ -265,27 +264,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private ContributorInfo fLeftContributor;
 	private ContributorInfo fRightContributor;
 	private ContributorInfo fAncestorContributor;
-	
-	private static IDocumentProvider getDocumentProvider(IEditorInput input) {
-		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-	}
-	
-	private static IEditorInput getDocumentKey(Object compareInput, char leg, boolean canShare) {
-		if (canShare) {
-			Object element = getLeg(leg, compareInput);
-			if (element != null) {
-				ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class, true);
-				if (sda != null) {
-					return sda.getDocumentKey(element);
-				}
-			}
-		}
-		if (compareInput instanceof ICompareInput) {
-			ICompareInput ci = (ICompareInput) compareInput;
-			return new ThreeWayTypedElementEditorInput(ci, leg);
-		}
-		return null;
-	}
 
 	class ContributorInfo implements IElementStateListener {
 		private final TextMergeViewer fViewer;
@@ -529,8 +507,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				return fDocumentKey;
 			if (isUsingDefaultContentProvider() && fElement != null) {
 				Object viewerInput = fViewer.getInput();
-				if (getLeg(fLeg, viewerInput) == fElement) {
-					return TextMergeViewer.getDocumentKey(viewerInput, fLeg, canHaveSharedDocument());
+				if (Utilities.getLeg(fLeg, viewerInput) == fElement) {
+					return Utilities.getDocumentKey(viewerInput, fLeg, canHaveSharedDocument());
 				} else if (canHaveSharedDocument()) {
 					ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(fElement, ISharedDocumentAdapter.class, true);
 					if (sda != null) {
@@ -549,7 +527,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (isUsingDefaultContentProvider()) {
 				IEditorInput input = getDocumentKey();
 				if (input != null)
-					return TextMergeViewer.getDocumentProvider(input);
+					return Utilities.getDocumentProvider(input);
 			}
 			return null;
 		}
@@ -1934,23 +1912,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			actionBars.updateActionBars();
 		}
 	}
-	
-	static ITypedElement getLeg(char type, Object input) {
-		if (input instanceof ICompareInput) {
-			switch (type) {
-			case ANCESTOR_CONTRIBUTOR:
-				return ((ICompareInput)input).getAncestor();
-			case LEFT_CONTRIBUTOR:
-				return ((ICompareInput)input).getLeft();
-			case RIGHT_CONTRIBUTOR:
-				return ((ICompareInput)input).getRight();
-			}
-		}
-		return null;
-	}
 
 	private IDocument getElementDocument(char type, Object element) {
-		ITypedElement te= getLeg(type, element);
+		ITypedElement te= Utilities.getLeg(type, element);
 		// First check the contributors for the document
 		IDocument document = null;
 		switch (type) {
@@ -1966,21 +1930,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		if (document != null)
 			return document;
-		if (te instanceof IDocument)
-			return (IDocument) te;
-		if (te instanceof IDocumentRange)
-			return ((IDocumentRange) te).getDocument();
-		if (te instanceof IStreamContentAccessor)
-			return DocumentManager.get(te);
-		if (isUsingDefaultContentProvider()) {
-			IEditorInput input = getDocumentKey(element, type, canHaveSharedDocument());
-			if (input != null) {
-				IDocumentProvider provider = getDocumentProvider(input);
-				if (provider != null)
-					return provider.getDocument(input);
-			}
-		}
-		return null;
+		return Utilities.getDocument(type, element, isUsingDefaultContentProvider(), canHaveSharedDocument());
 	}
 	
 	private boolean isUsingDefaultContentProvider() {
@@ -2060,7 +2010,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Object input= getInput();
 		if (input instanceof IDiffElement) {
 			IDiffContainer parent= ((IDiffElement)input).getParent();
-			return getLeg(type, parent);
+			return Utilities.getLeg(type, parent);
 		}
 		return null;
 	}
@@ -4683,6 +4633,28 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (!(content instanceof MergeViewerContentProvider) || isLeftDirty() || isRightDirty()) {
 			super.saveContent(oldInput);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IMergeViewerTestAdapter.class) {
+			return new IMergeViewerTestAdapter() {
+				public IDocument getDocument(char leg) {
+					switch (leg) {
+					case LEFT_CONTRIBUTOR:
+						return fLeft.getDocument();
+					case RIGHT_CONTRIBUTOR:
+						return fRight.getDocument();
+					case ANCESTOR_CONTRIBUTOR:
+						return fAncestor.getDocument();
+					}
+					return null;
+				}
+			};
+		}
+		return null;
 	}
 	
 }

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.services.IDisposable;
-import org.eclipse.ui.texteditor.DocumentProviderRegistry;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -68,7 +67,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		IDocument document = null;
 		final IEditorInput input = getDocumentKey(element);
 		if (input != null) {
-			final IDocumentProvider provider = getDocumentProvider(input);
+			final IDocumentProvider provider = Utilities.getDocumentProvider(input);
 			if (provider != null) {
 				try {
 					provider.connect(input);
@@ -160,10 +159,6 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	 */
 	protected String getDocumentPartitioning() {
 		return null;
-	}
-
-	private IDocumentProvider getDocumentProvider(IEditorInput input) {
-		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
 	}
 	
 	private IEditorInput getDocumentKey(Object element) {
