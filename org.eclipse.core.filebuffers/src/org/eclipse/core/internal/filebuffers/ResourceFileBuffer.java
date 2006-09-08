@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -35,6 +36,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 
 
 public abstract class ResourceFileBuffer extends AbstractFileBuffer {
@@ -390,6 +392,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public void validateState(IProgressMonitor monitor, Object computationContext) throws CoreException {
 		if (!isDisconnected() && !fIsStateValidated)  {
 
+			fStatus= null;
+
 			fManager.fireStateChanging(this);
 
 			try {
@@ -399,14 +403,37 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					if (fStatus.isOK())
 						handleFileContentChanged(false);
 				}
+				
+				if (isDerived(fFile)) {
+					IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.DERIVED_FILE, FileBuffersMessages.ResourceFileBuffer_warning_fileIsDerived, null);
+					if (fStatus == null || fStatus.isOK())
+						fStatus= status;
+					else
+						fStatus= new MultiStatus(FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.STATE_VALIDATION_FAILED, new IStatus[] {fStatus, status}, FileBuffersMessages.ResourceFileBuffer_stateValidationFailed, null);
+				}
+				
 			} catch (RuntimeException x) {
 				fManager.fireStateChangeFailed(this);
 				throw x;
 			}
 
-			fIsStateValidated= true;
+			fIsStateValidated= fStatus == null || fStatus.getSeverity() != IStatus.CANCEL;
 			fManager.fireStateValidationChanged(this, fIsStateValidated);
 		}
+	}
+
+	/*
+	 *
+	 * @see IResource#isDerived()
+	 * @since 3.3
+	 */
+	private boolean isDerived(IResource resource) {
+		while (resource != null) {
+			if (resource.isDerived())
+				return true;
+			resource= resource.getParent();
+		}
+		return false;
 	}
 
 	/*

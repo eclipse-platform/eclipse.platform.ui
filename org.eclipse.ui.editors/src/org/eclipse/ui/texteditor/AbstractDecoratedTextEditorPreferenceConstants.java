@@ -333,6 +333,20 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_DISABLE_OVERWRITE_MODE= "disable_overwrite_mode"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether a confirmation
+	 * dialog is shown before editing derived input.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * <p>
+	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String EDITOR_WARN_IF_INPUT_DERIVED= "warn_if_input_derived"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the display of the range indicator.
@@ -475,6 +489,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(REVISION_RULER_SHOW_AUTHOR, false);
 		store.setDefault(REVISION_RULER_SHOW_REVISION, false);
 
+		store.setDefault(EDITOR_WARN_IF_INPUT_DERIVED, true);
+		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
 }

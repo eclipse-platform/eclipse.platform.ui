@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
@@ -891,12 +892,33 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				IFile file= input.getFile();
 				if (file.isReadOnly()) { // do not use cached state here
 					IWorkspace workspace= file.getWorkspace();
-					workspace.validateEdit(new IFile[] { file }, computationContext);
+					info.fStatus= workspace.validateEdit(new IFile[] { file }, computationContext);
+				}
+				if (isDerived(file)) {
+					IStatus status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, EditorsUI.DERIVED_FILE, TextEditorMessages.FileDocumentProvider_warning_fileIsDerived, null);
+					if (info.fStatus == null || info.fStatus.isOK())
+						info.fStatus= status;
+					else
+						info.fStatus= new MultiStatus(EditorsUI.PLUGIN_ID, EditorsUI.STATE_VALIDATION_FAILED, new IStatus[] {info.fStatus, status}, TextEditorMessages.FileDocumentProvider_stateValidationFailed, null);
 				}
 			}
 		}
 
 		super.doValidateState(element, computationContext);
+	}
+	
+	/*
+	 *
+	 * @see IResource#isDerived()
+	 * @since 3.3
+	 */
+	private boolean isDerived(IResource resource) {
+		while (resource != null) {
+			if (resource.isDerived())
+				return true;
+			resource= resource.getParent();
+		}
+		return false;
 	}
 
 	/*

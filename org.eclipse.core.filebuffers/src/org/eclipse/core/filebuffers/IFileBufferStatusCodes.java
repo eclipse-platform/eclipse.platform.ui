@@ -12,6 +12,8 @@ package org.eclipse.core.filebuffers;
 
 import java.nio.charset.UnmappableCharacterException;
 
+import org.eclipse.core.resources.IResource;
+
 /**
  * This interface provides the list of status codes that are used by the file
  * buffer plug-in when it throws {@link org.eclipse.core.runtime.CoreException}.
@@ -34,7 +36,7 @@ public interface IFileBufferStatusCodes {
 	int CREATION_FAILED= 2;
 	
 	/**
-	 * File buffer Status code indicating that an operation failed
+	 * File buffer status code indicating that an operation failed
 	 * because a character could not be mapped using the given
 	 * charset.
 	 * <p>
@@ -45,4 +47,32 @@ public interface IFileBufferStatusCodes {
 	 */
 	int CHARSET_MAPPING_FAILED= 3;
 	
+	/**
+	 * File buffer status code indicating that state
+	 * validation failed.
+	 * <p>
+	 * Value: {@value}</p>
+	 * <p>
+	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * </p>
+	 * 
+	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
+	 * @since 3.3
+	 */
+	int STATE_VALIDATION_FAILED= 4;
+	
+	/**
+	 * File buffer status code indicating that
+	 * a resource is marked derived.
+	 * <p>
+	 * Value: {@value}</p>
+	 * <p>
+	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * </p>
+	 * 
+	 * @see IResource#isDerived()
+	 * @since 3.3
+	 */
+	int DERIVED_FILE= 5;
+
 }

@@ -14,6 +14,11 @@ import java.nio.charset.UnmappableCharacterException;
 
 import org.eclipse.core.runtime.Preferences;
 
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -179,5 +184,33 @@ public final class EditorsUI {
 	 * @since 3.2
 	 */
 	public static final int CHARSET_MAPPING_FAILED= 1;
+
+	/**
+	 * Editor UI plug-in status code indicating that state
+	 * validation failed.
+	 * <p>
+	 * Value: {@value}</p>
+	 * <p>
+	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * </p>
+	 * 
+	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
+	 * @since 3.3
+	 */
+	public static final int STATE_VALIDATION_FAILED= IFileBufferStatusCodes.STATE_VALIDATION_FAILED;
+
+	/**
+	 * Editor UI plug-in status code indicating that
+	 * a resource is marked derived.
+	 * <p>
+	 * Value: {@value}</p>
+	 * <p>
+	 * NOTE: This API is fresh and may change before the final API freeze.
+	 * </p>
+	 * 
+	 * @see IResource#isDerived()
+	 * @since 3.3
+	 */
+	public static final int DERIVED_FILE= IFileBufferStatusCodes.DERIVED_FILE;
 	
 }

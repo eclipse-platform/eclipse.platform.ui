@@ -47,6 +47,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -56,6 +59,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -240,6 +244,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	protected boolean fIsUpdatingMarkerViews= false;
+	/**
+	 * Tells whether editing the current derived editor input is allowed.
+	 * @since 3.3
+	 */
+	private boolean fIsEditingDerivedFileAllowed= true;
 	/**
 	 * The delegating annotation ruler contribution.
 	 * @since 3.3
@@ -872,6 +881,63 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (end - 1 < length && start < length)
 			selectAndReveal(start, end - start);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#isEditable()
+	 * @since 3.3
+	 */
+	public boolean isEditable() {
+		if (!super.isEditable())
+			return false;
+		return fIsEditingDerivedFileAllowed;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.StatusTextEditor#validateEditorInputState()
+	 * @since 3.3
+	 */
+	public boolean validateEditorInputState() {
+		if (!super.validateEditorInputState())
+			return false;
+
+		return validateEditorInputDerived();
+	}
+
+	/**
+	 * Validates the editor input for derived state.
+	 * If the given input is derived then this method
+	 * can show a dialog asking whether to edit the
+	 * derived file.
+	 * 
+	 * @return <code>true</code> if the input is OK for editing, <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	private boolean validateEditorInputDerived() { 
+		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
+			IStatus status= extension.getStatus(getEditorInput());
+			String pluginId= status.getPlugin();
+			if (status.getCode() != IFileBufferStatusCodes.DERIVED_FILE || (FileBuffers.PLUGIN_ID.equals(pluginId) && EditorsUI.PLUGIN_ID.equals(pluginId)))
+				return true;
+		}
+
+		final String warnKey= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED;
+		IPreferenceStore store= getPreferenceStore();
+		if (!store.getBoolean(warnKey))
+			return true;
+		
+		MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openYesNoQuestion(
+				getSite().getShell(),
+				TextEditorMessages.AbstractDecoratedTextEditor_warning_derived_title,
+				TextEditorMessages.AbstractDecoratedTextEditor_warning_derived_message,
+				TextEditorMessages.AbstractDecoratedTextEditor_warning_derived_dontShowAgain,
+				false,
+				null,
+				null);
+		
+		store.setValue(warnKey, !toggleDialog.getToggleState());
+		return fIsEditingDerivedFileAllowed= toggleDialog.getReturnCode() == IDialogConstants.YES_ID;
+	}
 
 	/*
 	 * For an explanation why we override this method see:
@@ -1103,6 +1169,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * ruler.
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
+		fIsEditingDerivedFileAllowed= true;
 		if (fLineColumn != null)
 			fLineColumn.hideRevisionInformation();
 

@@ -45,6 +45,8 @@ final class TextEditorMessages extends NLS {
 	public static String FileDocumentProvider_task_saving;
 	public static String FileDocumentProvider_resetDocument;
 	public static String FileDocumentProvider_getPersistedEncoding;
+	public static String FileDocumentProvider_warning_fileIsDerived;
+	public static String FileDocumentProvider_stateValidationFailed;
 	public static String DocumentProvider_error_charset_mapping_failed_message_arg;
 	public static String DocumentProvider_error_illegal_encoding_message_arg;
 	public static String DocumentProvider_error_unsupported_encoding_message_arg;

@@ -450,6 +450,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -531,6 +532,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_range_indicator;
 		Preference showMagnet= new Preference(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, label, null);
 		addCheckBox(appearanceComposite, showMagnet, new BooleanDomain(), 0);
+		
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_warn_if_derived;
+		Preference warnIfDerived= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED, label, null);
+		addCheckBox(appearanceComposite, warnIfDerived, new BooleanDomain(), 0);
 		
 		label= TextEditorMessages.HyperlinksEnabled_label;
 		Preference hyperlinksEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, label, null);

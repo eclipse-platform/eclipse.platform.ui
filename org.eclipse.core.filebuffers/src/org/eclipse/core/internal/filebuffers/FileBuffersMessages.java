@@ -28,6 +28,8 @@ final class FileBuffersMessages extends NLS {
 	public static String ExtensionsRegistry_error_extensionPointNotFound;
 	public static String ExtensionsRegistry_error_contentTypeDoesNotExist;
 	public static String ResourceFileBuffer_error_fileDoesNotExist;
+	public static String ResourceFileBuffer_warning_fileIsDerived;
+	public static String ResourceFileBuffer_stateValidationFailed;
 	public static String FileBuffer_error_outOfSync;
 	public static String FileBuffer_status_ok;
 	public static String FileBuffer_status_error;

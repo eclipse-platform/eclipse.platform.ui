@@ -62,6 +62,9 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_error_saveAs_message;
 	public static String AbstractDecoratedTextEditor_saveAs_overwrite_title;
 	public static String AbstractDecoratedTextEditor_saveAs_overwrite_message;
+	public static String AbstractDecoratedTextEditor_warning_derived_title;
+	public static String AbstractDecoratedTextEditor_warning_derived_message;
+	public static String AbstractDecoratedTextEditor_warning_derived_dontShowAgain;
 	
 	public static String AbstractDecoratedTextEditor_showIn_menu;
 	

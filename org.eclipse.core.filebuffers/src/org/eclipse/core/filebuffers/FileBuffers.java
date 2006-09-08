@@ -42,6 +42,14 @@ public final class FileBuffers {
 	}
 
 	/**
+	 * File buffer plug-in ID
+	 * (value <code>"org.eclipse.core.filebuffers"</code>).
+	 * 
+	 * @since 3.3.
+	 */
+	public final static String PLUGIN_ID= FileBuffersPlugin.PLUGIN_ID;
+
+	/**
 	 * Returns the text file buffer manager. May return <code>null</code> if
 	 * the file buffers plug-in may no be activated. This is, for example, the
 	 * case when the method is called on plug-in shutdown.
