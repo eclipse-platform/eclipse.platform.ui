@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kostadin Bajalcaliev <kbajalc@netcetera.com.mk> - Fix for bug 145378 -
+ *     [Coolbar]RCP appication loses Icons/actions with IDE Stable Builds RC6
+ *     and RC7
  *******************************************************************************/
 
 package org.eclipse.jface.action;
