@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
+ *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -74,6 +75,7 @@ public class MergeSourceViewer extends SourceViewer
 	private IDocument fRememberedDocument;
 	
 	private boolean fAddSaveAction= true;
+	private boolean isConfigured = false;
 	
 	
 	public MergeSourceViewer(Composite parent, ResourceBundle bundle) {
@@ -399,6 +401,10 @@ public class MergeSourceViewer extends SourceViewer
 			addMenu(menu, SAVE_ID);
 		
 		menu.add(new Separator("rest")); //$NON-NLS-1$
+		
+		// update all actions
+		// to get undo redo right
+		updateActions();
 	}
 	
 	private void addMenu(IMenuManager menu, String actionId) {
@@ -421,5 +427,24 @@ public class MergeSourceViewer extends SourceViewer
 	 */
 	public IVerticalRuler getMergeVerticalRuler() {
 		return super.getVerticalRuler();
+	}
+	
+	/**
+	 * update all actions independent of their type
+	 *
+	 */
+	public void updateActions() {
+		Iterator e= fActions.values().iterator();
+		while (e.hasNext()) {
+			MergeViewerAction action= (MergeViewerAction) e.next();
+			action.update();
+		}
+	}
+	
+	public void configure(SourceViewerConfiguration configuration) {
+		if (isConfigured )
+			unconfigure();
+		isConfigured = true;
+		super.configure(configuration);
 	}
 }
