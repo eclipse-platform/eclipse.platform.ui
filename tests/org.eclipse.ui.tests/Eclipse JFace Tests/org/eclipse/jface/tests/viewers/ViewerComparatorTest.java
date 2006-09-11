@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak  (brockj@tpg.com.au) - Bug 142960 Performance tweak for ignored file processing
  ******************************************************************************/
-
 package org.eclipse.jface.tests.viewers;
 
 import java.util.Vector;
