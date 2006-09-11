@@ -48,37 +48,40 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 	 */
 	protected void performAction() {
 		Object object = getStructuredSelection().getFirstElement();
-		ILaunchConfigurationType type= null;
-		// Construct a new config of the selected type
-		if (object instanceof ILaunchConfiguration) {
-			ILaunchConfiguration config= (ILaunchConfiguration) object;
+		//double click with Ctrl key mask results in empty selection: bug 156087
+		//do no work if the selection is null
+		if(object != null) {
+			ILaunchConfigurationType type= null;
+			// Construct a new config of the selected type
+			if (object instanceof ILaunchConfiguration) {
+				ILaunchConfiguration config= (ILaunchConfiguration) object;
+				try {
+					type = config.getType();
+				} catch (CoreException e) {
+					errorDialog(e);
+					return;
+				}
+			} else {
+				type = (ILaunchConfigurationType) object;
+			}
 			try {
-				type = config.getType();
+				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
+				ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc.getType(), getMode());
+				// this only works because this action is only present when the dialog is open
+				ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+				tabGroup.createTabs(dialog, dialog.getMode());
+				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+				for (int i = 0; i < tabs.length; i++) {
+					ILaunchConfigurationTab tab = tabs[i];
+					tab.setLaunchConfigurationDialog(dialog);
+				}
+				tabGroup.setDefaults(wc);
+				tabGroup.dispose();
+				wc.doSave();
 			} catch (CoreException e) {
 				errorDialog(e);
 				return;
 			}
-		} else {
-			type = (ILaunchConfigurationType) object;
-		}
-
-		try {
-			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
-			ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc.getType(), getMode());
-			// this only works because this action is only present when the dialog is open
-			ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-			tabGroup.createTabs(dialog, dialog.getMode());
-			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-			for (int i = 0; i < tabs.length; i++) {
-				ILaunchConfigurationTab tab = tabs[i];
-				tab.setLaunchConfigurationDialog(dialog);
-			}
-			tabGroup.setDefaults(wc);
-			tabGroup.dispose();
-			wc.doSave();
-		} catch (CoreException e) {
-			errorDialog(e);
-			return;
 		}
 	}
 
