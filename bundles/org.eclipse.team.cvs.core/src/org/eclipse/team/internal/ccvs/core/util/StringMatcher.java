@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 132260 Eclipse doesn't understand negated character classes in .cvsignore
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
