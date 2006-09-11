@@ -40,6 +40,13 @@ public interface ITeamStatus extends IStatus {
 	 */
 	public static final int SYNC_INFO_SET_CANCELLATION = 3;
 	
+	/** Status code constant (value 279) indicating that the 
+	 * file in the file system is marked as read-only and could
+	 * not be made writable.
+	 * @since 3.3
+	 */
+	public static final int READ_ONLY_LOCAL = 279;
+	
 	/**
 	 * Return the resource associated with this status.
 	 * @return Returns the resource.

@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.ITeamStatus;
+import org.eclipse.team.core.TeamStatus;
 
 public class DefaultFileModificationValidator implements IFileModificationValidator {
 	
@@ -29,7 +31,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 	private IStatus getDefaultStatus(IFile file) {
 		return 
 			file.isReadOnly()
-			? new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.READ_ONLY_LOCAL, NLS.bind(Messages.FileModificationValidator_fileIsReadOnly, new String[] { file.getFullPath().toString() }), null) 
+			? new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.READ_ONLY_LOCAL, NLS.bind(Messages.FileModificationValidator_fileIsReadOnly, new String[] { file.getFullPath().toString() }), null, file) 
 				: Status.OK_STATUS;
 	}
 	
