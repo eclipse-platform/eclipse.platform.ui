@@ -288,7 +288,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	};
 
 	private IVerticalRuler internalGetVerticalRuler() {
-		// TODO: workaround for IllegalAccessError
+		/*
+		 * Workaround for IllegalAccessError thrown because we are accessing a protected method in a
+		 * different bundle from an inner class.
+		 */
 		return getVerticalRuler();
 	}
 	
@@ -1116,12 +1119,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				return fLineNumberRulerColumn;
 		}
 		
-		// XXX: This will go away in 3.3, see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=135231
-		if (adapter != null && "org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider".equals(adapter.getName())) { //$NON-NLS-1$
-			if (fLineColumn != null)
-				return fLineColumn.getRevisionSelectionProvider();
-		}
-		
 		if (IColumnSupport.class.equals(adapter))
 			return fColumnSupport;
 	
@@ -1389,8 +1386,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			
 			revisionMenu.add(new Separator());
 
-			// XXX enable author toggle once CVS provides committer info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=154996
-//			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE));
+			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE));
 			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE));
 
 			revisionMenu.add(new Separator());
