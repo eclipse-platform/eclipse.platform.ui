@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eugene Kuleshov (eu@md.pp.ru) - Bug 138152 Improve sync job status reporting
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
