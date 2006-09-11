@@ -18,11 +18,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceSaveableComparison.ResourceDiffCompareInput;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -112,6 +114,38 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 			}
 		}
 		return getName(mapping);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getImageDescriptor(org.eclipse.core.resources.mapping.ResourceMapping)
+	 */
+	public ImageDescriptor getImageDescriptor(ResourceMapping mapping) {
+		Object object = mapping.getModelObject();
+		ImageDescriptor image = getImageDescriptorFromWorkbenchAdapter(object);
+		if (image != null)
+			return image;
+		IResource resource = Utils.getResource(object);
+		if (resource != null) {
+			image = getImageDescriptorFromWorkbenchAdapter(resource);
+			if (image != null)
+				return image;
+		}
+		if (object instanceof ModelProvider) {
+			ModelProvider provider = (ModelProvider) object;
+			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+			if (desc != null)
+				return desc.getImageDescriptor();
+		}
+		return null;
+	}
+
+	private ImageDescriptor getImageDescriptorFromWorkbenchAdapter(Object object) {
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter) Utils.getAdapter(
+				object, IWorkbenchAdapter.class);
+		if (adapter != null) {
+			return adapter.getImageDescriptor(object);
+		}
+		return null;
 	}
 	
 	/**

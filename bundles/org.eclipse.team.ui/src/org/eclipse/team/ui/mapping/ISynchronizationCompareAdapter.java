@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.ui.IMemento;
 
@@ -75,6 +76,16 @@ public interface ISynchronizationCompareAdapter {
 	 * @return the path of the model object of the mapping
 	 */
 	public String getPathString(ResourceMapping mapping);
+	
+	/**
+	 * Return an image descriptor that can be displayed as an icon for the
+	 * model object of the given resource mapping.
+	 * @param mapping the mapping
+	 * @return an image descriptor that can be displayed as an icon for the
+	 * model object of the given resource mapping
+	 * @since 3.3
+	 */
+	public ImageDescriptor getImageDescriptor(ResourceMapping mapping);
 	
 	/**
 	 * Save the given resource mappings from this adapters 
