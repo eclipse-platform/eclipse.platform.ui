@@ -1053,7 +1053,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 		if (getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
 			byte[] bytes= getContents(true);
-			if (leftEmpty && bytes != null && bytes.length == 0)
+			if (rightEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
 			setLeftDirty(false);
 			content.saveLeftContent(oldInput, bytes);
@@ -1061,7 +1061,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		
 		if (getCompareConfiguration().isRightEditable() && isRightDirty()) {
 			byte[] bytes= getContents(false);
-			if (rightEmpty && bytes != null && bytes.length == 0)
+			if (leftEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
 			setRightDirty(false);
 			content.saveRightContent(oldInput, bytes);
