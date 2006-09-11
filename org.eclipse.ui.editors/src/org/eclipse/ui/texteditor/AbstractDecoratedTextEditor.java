@@ -250,6 +250,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private boolean fIsEditingDerivedFileAllowed= true;
 	/**
+	 * Tells whether the derived state has been validated.
+	 * @since 3.3
+	 */
+	private boolean fIsDerivedStateValidated= false;
+	/**
 	 * The delegating annotation ruler contribution.
 	 * @since 3.3
 	 */
@@ -915,7 +920,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return <code>true</code> if the input is OK for editing, <code>false</code> otherwise
 	 * @since 3.3
 	 */
-	private boolean validateEditorInputDerived() { 
+	private boolean validateEditorInputDerived() {
+		if (fIsDerivedStateValidated)
+			return fIsEditingDerivedFileAllowed;
+
 		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
 			IStatus status= extension.getStatus(getEditorInput());
@@ -938,7 +946,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				null,
 				null);
 		
-		store.setValue(warnKey, !toggleDialog.getToggleState());
+		EditorsUI.getPreferenceStore().setValue(warnKey, !toggleDialog.getToggleState());
+		fIsDerivedStateValidated= true;
 		return fIsEditingDerivedFileAllowed= toggleDialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
 
@@ -1166,7 +1175,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * ruler.
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
+		fIsDerivedStateValidated= false;
 		fIsEditingDerivedFileAllowed= true;
+		
 		if (fLineColumn != null)
 			fLineColumn.hideRevisionInformation();
 
