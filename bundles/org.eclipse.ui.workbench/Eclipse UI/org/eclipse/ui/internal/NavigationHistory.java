@@ -126,7 +126,7 @@ public class NavigationHistory implements INavigationHistory {
                                     i++;
                                 }
                                 e.remove();
-                                entry.dispose();
+                                disposeEntry(entry);
                             } else {
                                 i++;
                             }
