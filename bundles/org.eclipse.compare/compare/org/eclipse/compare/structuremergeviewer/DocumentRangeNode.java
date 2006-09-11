@@ -18,6 +18,7 @@ import org.eclipse.jface.text.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 
@@ -331,6 +332,7 @@ public class DocumentRangeNode
 					srcContents= Utilities.readString((IStreamContentAccessor)other);
 				} catch(CoreException ex) {
 					// NeedWork
+					CompareUIPlugin.log(ex);
 				}
 			}
 		}

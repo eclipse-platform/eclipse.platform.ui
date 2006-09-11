@@ -58,6 +58,7 @@ public class SimpleTextViewer extends AbstractViewer {
 				return Utilities.readString((IStreamContentAccessor) input);
 			} catch (CoreException ex) {
 				// NeedWork
+				CompareUIPlugin.log(ex);
 			}
 		}
 		return ""; //$NON-NLS-1$

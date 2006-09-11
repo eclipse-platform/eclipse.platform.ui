@@ -125,6 +125,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 							fContent= Utilities.readString(sca);
 						} catch (CoreException ex) {
 							// NeedWork
+							CompareUIPlugin.log(ex);
 						}
 					}
 				}

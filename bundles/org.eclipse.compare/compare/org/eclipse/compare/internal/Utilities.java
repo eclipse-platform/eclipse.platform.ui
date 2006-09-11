@@ -561,10 +561,26 @@ public class Utilities {
 	
 	// encoding
 	
+	public static String readString(IStreamContentAccessor sca, String encoding) throws CoreException {
+		String s = null;
+		try {
+			try {
+				s= Utilities.readString(sca.getContents(), encoding);
+			} catch (UnsupportedEncodingException e) {
+				if (!encoding.equals(ResourcesPlugin.getEncoding())) {
+					s = Utilities.readString(sca.getContents(), ResourcesPlugin.getEncoding());
+				}
+			}
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+		}
+		return s;
+	}
+	
 	/*
 	 * Returns null if an error occurred.
 	 */
-	public static String readString(InputStream is, String encoding) {
+	public static String readString(InputStream is, String encoding) throws IOException {
 		if (is == null)
 			return null;
 		BufferedReader reader= null;
@@ -573,14 +589,10 @@ public class Utilities {
 			char[] part= new char[2048];
 			int read= 0;
 			reader= new BufferedReader(new InputStreamReader(is, encoding));
-
 			while ((read= reader.read(part)) != -1)
 				buffer.append(part, 0, read);
 			
 			return buffer.toString();
-			
-		} catch (IOException ex) {
-			CompareUIPlugin.log(ex);
 		} finally {
 			if (reader != null) {
 				try {
@@ -590,7 +602,6 @@ public class Utilities {
 				}
 			}
 		}
-		return null;
 	}
 	
 	public static String getCharset(IResource resource) {
@@ -617,13 +628,12 @@ public class Utilities {
 	}
 
 	public static String readString(IStreamContentAccessor sa) throws CoreException {
-		InputStream is= sa.getContents();
 		String encoding= null;
 		if (sa instanceof IEncodedStreamContentAccessor)
 			encoding= ((IEncodedStreamContentAccessor)sa).getCharset();
 		if (encoding == null)
 			encoding= ResourcesPlugin.getEncoding();
-		return Utilities.readString(is, encoding);
+		return Utilities.readString(sa, encoding);
 	}
 
 	public static void close(InputStream is) {

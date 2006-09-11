@@ -475,7 +475,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				String s= null;
 
 				try {
-					s= Utilities.readString(sca.getContents(), getEncoding());
+					String encoding = getEncoding();
+					s = Utilities.readString(sca, encoding);
 				} catch (CoreException ex) {
 					this.fViewer.setError(fLeg, ex.getMessage());
 				}
