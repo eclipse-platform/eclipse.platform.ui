@@ -8,6 +8,7 @@
  * Contributors:
  *     Atsuhiko Yamanaka, JCraft,Inc. - initial API and implementation.
  *     IBM Corporation - ongoing maintenance
+ *     Sebastian Davids (sdavids@gmx.de) - Bug 54599 [SSH2] Export SSH Key ... Dialog does not standard margins
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
