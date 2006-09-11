@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 144419 Avoid calculating encoding for each line read/written
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.connection;
 
