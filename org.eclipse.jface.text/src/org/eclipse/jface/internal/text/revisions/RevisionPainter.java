@@ -840,6 +840,9 @@ public final class RevisionPainter {
 				}
 			}
 		}
+		
+		if (drawFocus || fShowAuthor || fShowRevision)
+			gc.setForeground(foreground);
 	}
 
 	/**
