@@ -26,7 +26,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -79,6 +81,10 @@ import org.eclipse.ui.progress.UIJob;
  * Shows a list of items to the user with a text entry field for a string
  * pattern used to filter the list of resources.
  * 
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
  * @since 3.3
  */
 public abstract class AbstractSearchDialog extends SelectionStatusDialog {
@@ -88,6 +94,10 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	private static final String SHOW_STATUS_LINE = "ShowStatusLine"; //$NON-NLS-1$
 
 	private static final String SEARCHER_SETTINGS = "Searcher"; //$NON-NLS-1$
+
+	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+
+	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
 	private Text pattern;
 
@@ -117,6 +127,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 	int currentIndex;
 
+	private IStatus status;
+
 	/**
 	 * Creates a new instance of the class
 	 * 
@@ -129,6 +141,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
+		updateStatus(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+				IStatus.ERROR, "", null)); //$NON-NLS-1$
 	}
 
 	/**
@@ -175,10 +189,14 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	 *            settings used to restore dialog
 	 */
 	protected void restoreDialog(IDialogSettings settings) {
-		boolean toggleStatusLine = settings.getBoolean(SHOW_STATUS_LINE);
-		toggleStatusLineAction.setChecked(toggleStatusLine);
+		boolean toggleStatusLine = true;
 
-		GridData gd = (GridData) details.getControl().getLayoutData();
+		if (settings.get(SHOW_STATUS_LINE) != null) {
+			toggleStatusLine = settings.getBoolean(SHOW_STATUS_LINE);
+		}
+
+		toggleStatusLineAction.setChecked(toggleStatusLine);
+		GridData gd = (GridData) details.getTable().getLayoutData();
 		gd.exclude = !toggleStatusLine;
 
 		String setting = settings.get(SEARCHER_SETTINGS);
@@ -339,13 +357,19 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		list.setInput(new Object[0]);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		list.getControl().setLayoutData(gd);
+		list.getTable().setLayoutData(gd);
 
 		list.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection) event
 						.getSelection();
 				handleSelected(selection);
+			}
+		});
+
+		list.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				okPressed();
 			}
 		});
 
@@ -387,38 +411,62 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 						// }
 						// }
 
-						list.getControl().setFocus();
+						list.getTable().setFocus();
 						refreshDetails();
 					}
 				}
 			}
 		});
 
-		list.getControl().addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
+		list.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.PAGE_DOWN || e.keyCode == SWT.END) {
-					int height = list.getTable().getClientArea().height;
-					int rows = height / list.getTable().getItemHeight();
-
 					if (list.getTable().getItemCount() > 0) {
-						currentIndex = list.getTable().getTopIndex() + rows - 1;
-						if (currentIndex > list.getTable().getItemCount() - 1) {
-							currentIndex = list.getTable().getItemCount() - 1;
-						}
+						if (currentIndex < list.getTable().getItemCount() - 1) {
+							int height = list.getTable().getClientArea().height;
+							int rows = height / list.getTable().getItemHeight();
 
+							int bottomIndex = list.getTable().getTopIndex()
+									+ rows - 1;
+
+							if (bottomIndex > list.getTable().getItemCount() - 1) {
+								bottomIndex = list.getTable().getItemCount() - 1;
+							}
+
+							if (currentIndex == bottomIndex) {
+								currentIndex = currentIndex + rows - 1;
+								if (currentIndex > list.getTable()
+										.getItemCount() - 1) {
+									currentIndex = list.getTable()
+											.getItemCount() - 1;
+								}
+							} else {
+								currentIndex = bottomIndex;
+							}
+						}
 						refreshDetails();
 					}
 				}
 
 				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.HOME) {
 					if (list.getTable().getItemCount() > 0) {
-						currentIndex = list.getTable().getTopIndex();
+						int topIndex = list.getTable().getTopIndex();
+
+						if (currentIndex == topIndex) {
+							int height = list.getTable().getClientArea().height;
+							int rows = height / list.getTable().getItemHeight();
+
+							currentIndex = currentIndex - rows + 1;
+							if (currentIndex < 0) {
+								currentIndex = 0;
+							}
+						} else {
+							currentIndex = topIndex;
+						}
 						refreshDetails();
 					}
 				}
-			}
 
-			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					if (currentIndex < list.getTable().getItemCount() - 1) {
 						currentIndex = currentIndex + 1;
@@ -453,7 +501,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.heightHint = listLabel.getSize().y;
-		details.getControl().setLayoutData(gd);
+		details.getTable().setLayoutData(gd);
 
 		applyDialogFont(content);
 
@@ -558,6 +606,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		IDialogSettings section = settings.getSection(DIALOG_BOUNDS_SETTINGS);
 		if (section == null) {
 			section = settings.addNewSection(DIALOG_BOUNDS_SETTINGS);
+			section.put(DIALOG_HEIGHT, 500);
+			section.put(DIALOG_WIDTH, 600);
 		}
 		return section;
 	}
@@ -572,10 +622,10 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	 */
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
-			list.getControl().setRedraw(false);
+			list.getTable().setRedraw(false);
 			listContentProvider.setElements(searcher.getElements());
 			list.refresh();
-			list.getControl().setRedraw(true);
+			list.getTable().setRedraw(true);
 
 			if (list.getTable().getItemCount() > 0) {
 				list.setSelection(new StructuredSelection(list
@@ -585,6 +635,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			} else {
 				currentIndex = -1;
 			}
+
+			refreshDetails();
 		}
 
 		if (!progressLabel.isDisposed()) {
@@ -604,11 +656,14 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 		List objectsToReturn = new ArrayList();
 
-		AbstractSearchItem item = null;
+		Object item = null;
 
 		for (Iterator it = selectedElements.iterator(); it.hasNext();) {
-			item = (AbstractSearchItem) it.next();
-			objectsToReturn.add(searcher.getObjectToReturn(item));
+			item = it.next();
+
+			if (item instanceof AbstractSearchItem) {
+				objectsToReturn.add(searcher.getObjectToReturn(item));
+			}
 		}
 
 		setResult(objectsToReturn);
@@ -625,9 +680,9 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		}
 
 		public void run() {
-			GridData gd = (GridData) details.getControl().getLayoutData();
+			GridData gd = (GridData) details.getTable().getLayoutData();
 			gd.exclude = !isChecked();
-			details.getControl().getParent().layout();
+			details.getTable().getParent().layout();
 		}
 	}
 
@@ -660,6 +715,14 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		// Need to keep our own list of listeners
 		private ListenerList listeners = new ListenerList();
 
+		/**
+		 * Creates a new instance of the class
+		 * 
+		 * @param provider
+		 *            the label provider for all items
+		 * @param selectionDecorator
+		 *            the decorator for selected items
+		 */
 		public ListLabelProvider(ILabelProvider provider,
 				ILabelDecorator selectionDecorator) {
 			this.provider = provider;
@@ -718,8 +781,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 			int width = rect.width - borderWidth - imageWidth;
 
-			GC gc = new GC(list.getControl());
-			gc.setFont(list.getControl().getFont());
+			GC gc = new GC(list.getTable());
+			gc.setFont(list.getTable().getFont());
 
 			int fSeparatorWidth = gc.getAdvanceWidth('-');
 			int fMessageLength = gc.textExtent(separatorLabel).x;
@@ -930,12 +993,35 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 		private String name;
 
+		/**
+		 * Creates a new instance of the class
+		 * 
+		 * @param name
+		 *            the name of the separator
+		 */
 		public SearchListSeparator(String name) {
 			this.name = name;
 		}
 
 		public String getName() {
 			return name;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#updateStatus(org.eclipse.core.runtime.IStatus)
+	 */
+	protected void updateStatus(IStatus status) {
+		this.status = status;
+		super.updateStatus(status);
+	}
+
+	/*
+	 * @see Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		if (status != null && status.getCode() == IStatus.OK) {
+			super.okPressed();
 		}
 	}
 }

@@ -37,80 +37,96 @@ import org.eclipse.ui.utils.ResourceSearchItem;
 import com.ibm.icu.text.Collator;
 
 /**
- * ResourceSearcher is an implementation of AbstractSearcher to searching resources.  
+ * ResourceSearcher is an implementation of AbstractSearcher to searching
+ * resources.
+ * 
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
  * 
  * @since 3.3
  * @see AbstractSearcher
  */
 public class ResourceSearcher extends AbstractSearcher {
-	
+
 	/**
-	 * Filter param to change manner of searching.
-	 * When its filter param is true, ResourceSearcher show all derived resources.
-	 * It's set by <code> setFilterParam(int param, Object value) <code> method.
+	 * Filter param to change manner of searching. When its filter param is
+	 * true, ResourceSearcher show all derived resources. It's set by
+	 * <code> setFilterParam(int param, Object value) <code> method.
 	 */
 	public static final int DERIVED = 2;
-	
+
 	private List lastCompletedResult;
-	
+
 	private static Collator collator = Collator.getInstance();
-	
-    private String patternString = ""; //$NON-NLS-1$
 
-    private IContainer container;
+	private String patternString = ""; //$NON-NLS-1$
 
-    private int typeMask;
+	private IContainer container;
 
-    private StringMatcher stringMatcher;
-    
-    private StringMatcher lastComplitedMacher;
+	private int typeMask;
 
-    private boolean showDerived = false;
+	private StringMatcher stringMatcher;
+
+	private StringMatcher lastComplitedMacher;
+
+	private boolean showDerived = false;
 
 	/**
 	 * Creates a ResourceSearcher
 	 * 
-	 * @param container which contains other resources
-	 * @param typeMask to filter type of serached elements
+	 * @param container
+	 *            which contains other resources
+	 * @param typeMask
+	 *            to filter type of serached elements
 	 */
 	public ResourceSearcher(IContainer container, int typeMask) {
 		this.container = container;
-	    this.typeMask = typeMask;
+		this.typeMask = typeMask;
 		this.model = new SearcherModel();
-		this.history = ResourceHistory.getInstance(); 
+		this.history = ResourceHistory.getInstance();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractSearcher#getComparator()
 	 */
 	protected Comparator getComparator() {
 		return new ResourceComparator();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractSearcher#getDetails(java.lang.Object)
 	 */
 	public Object getDetails(Object item) {
-		return ((ResourceSearchItem)item).getResource().getParent();
+		return ((ResourceSearchItem) item).getResource().getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractSearcher#getObjectToReturn(java.lang.Object)
 	 */
 	public Object getObjectToReturn(Object item) {
-		ResourceHistory history= ResourceHistory.getInstance();
+		ResourceHistory history = ResourceHistory.getInstance();
 		ResourceSearchItem resourceDecorator = (ResourceSearchItem) item;
 		history.accessed(resourceDecorator.getResource());
 		return resourceDecorator.getResource();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.AbstractSearcher#setFilterParam(int, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.AbstractSearcher#setFilterParam(int,
+	 *      java.lang.Object)
 	 */
 	public void setFilterParam(int param, Object value) {
 		if (param == PATTERN) {
-			 setSearchPattern((String) value);
-		 }
+			setSearchPattern((String) value);
+		}
 		if (param == DERIVED) {
 			boolean isDerived = ((Boolean) value).booleanValue();
 			showDerived = isDerived;
@@ -120,108 +136,112 @@ public class ResourceSearcher extends AbstractSearcher {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractSearcher#validateElement(java.lang.Object)
 	 */
 	public IStatus validateElement(Object item) {
-		return new Status(IStatus.OK,
-				WorkbenchPlugin.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
+		return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
 	}
-	
+
 	/**
-     * Use this method to further filter resources. As resources are gathered,
-     * if a resource matches the current pattern string, this method will be called.
-     * If this method answers false, the resource will not be included in the list
-     * of matches and the resource's children will NOT be considered for matching.
-     */
+	 * Use this method to further filter resources. As resources are gathered,
+	 * if a resource matches the current pattern string, this method will be
+	 * called. If this method answers false, the resource will not be included
+	 * in the list of matches and the resource's children will NOT be considered
+	 * for matching.
+	 */
 	protected boolean validateSearchedResource(IResource resource) {
 		return true;
 	}
-	
-	
-	private void setSearchPattern( String text) {
+
+	private void setSearchPattern(String text) {
 		stop(false, false);
 		patternString = adjustPattern(text);
-		if (patternString.length() == 0) { 
+		if (patternString.length() == 0) {
 			model.reset();
 		} else {
-		    stringMatcher = new StringMatcher(patternString, true, false);
+			stringMatcher = new StringMatcher(patternString, true, false);
 			scheduleSearchJob();
 		}
 	}
-	
-    /**
-     * Adjust the pattern string for matching.
-     */
-    protected String adjustPattern(String textPattern) {
-        String text = textPattern.trim();
-        if (text.endsWith("<")) { //$NON-NLS-1$
-            // the < character indicates an exact match search
-            return text.substring(0, text.length() - 1);
-        }
-        if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
-        	return text + "*"; //$NON-NLS-1$
-        }
-        return text;
-    }
-	
+
+	/**
+	 * Adjust the pattern string for matching.
+	 */
+	protected String adjustPattern(String textPattern) {
+		String text = textPattern.trim();
+		if (text.endsWith("<")) { //$NON-NLS-1$
+			// the < character indicates an exact match search
+			return text.substring(0, text.length() - 1);
+		}
+		if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return text + "*"; //$NON-NLS-1$
+		}
+		return text;
+	}
+
 	private void scheduleSearchJob() {
 		searchJobTicket++;
-		if (lastComplitedMacher != null && lastComplitedMacher.match(patternString)) {
-			searchJob= new ResourceCachedResultJob(searchJobTicket, lastCompletedResult, model, 
-				(ResourceHistory) history);
+		if (lastComplitedMacher != null
+				&& lastComplitedMacher.match(patternString)) {
+			searchJob = new ResourceCachedResultJob(searchJobTicket,
+					lastCompletedResult, model, (ResourceHistory) history);
 		} else {
 			lastComplitedMacher = null;
-			lastCompletedResult= null; 
-			searchJob= new ResourceSearchEngineJob(searchJobTicket, model,  
-				(ResourceHistory) history, this);
+			lastCompletedResult = null;
+			searchJob = new ResourceSearchEngineJob(searchJobTicket, model,
+					(ResourceHistory) history, this);
 		}
 		searchJob.schedule();
 	}
-	
+
 	private void rememberResult(int ticket, final List result) {
 		if (ticket == searchJobTicket) {
-				if (lastCompletedResult == null) {
-					lastComplitedMacher = stringMatcher;
-					lastCompletedResult= result;
-				}
+			if (lastCompletedResult == null) {
+				lastComplitedMacher = stringMatcher;
+				lastCompletedResult = result;
+			}
 		}
 	}
 
-    /**
-     * Returns whether derived resources should be shown in the list.
-     * The default is <code>false</code>.
-     * 
-     * @return <code>true</code> to show derived resources, <code>false</code> to hide them
-     * @since 3.1
-     */
-    protected boolean getShowDerived() {
-       return showDerived ; 
-    }
-    
-    
-    /**
-     * Returns true if the label matches the chosen pattern.
-     * 
-     * @param label label to match with the current pattern
-     * @return true if the label matches the chosen pattern. 
-     * 	false otherwise.
-     */
-    private boolean match(String label) {
-        if ((patternString == null)
-                || (patternString.equals("")) || (patternString.equals("*"))) { //$NON-NLS-1$ //$NON-NLS-2$
+	/**
+	 * Returns whether derived resources should be shown in the list. The
+	 * default is <code>false</code>.
+	 * 
+	 * @return <code>true</code> to show derived resources, <code>false</code>
+	 *         to hide them
+	 * @since 3.1
+	 */
+	protected boolean getShowDerived() {
+		return showDerived;
+	}
+
+	/**
+	 * Returns true if the label matches the chosen pattern.
+	 * 
+	 * @param label
+	 *            label to match with the current pattern
+	 * @return true if the label matches the chosen pattern. false otherwise.
+	 */
+	private boolean match(String label) {
+		if ((patternString == null)
+				|| (patternString.equals("")) || (patternString.equals("*"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
-        return stringMatcher.match(label);
-    }
-	
-    /**
-     * ResourceCachedResultJob to search resources in cache.
-     * @since 3.3
-     *
-     */
+		return stringMatcher.match(label);
+	}
+
+	/**
+	 * ResourceCachedResultJob to search resources in cache.
+	 * 
+	 * @since 3.3
+	 * 
+	 */
 	private class ResourceCachedResultJob extends AbstractSearchJob {
 		private List lastResult;
+
 		/**
 		 * @param ticket
 		 * @param lastResult
@@ -229,16 +249,18 @@ public class ResourceSearcher extends AbstractSearcher {
 		 * @param history
 		 * @param mode
 		 */
-		public ResourceCachedResultJob(int ticket, List lastResult, SearcherModel model, ResourceHistory history) {
+		public ResourceCachedResultJob(int ticket, List lastResult,
+				SearcherModel model, ResourceHistory history) {
 			super(ticket, model, history);
 			this.lastResult = lastResult;
 		}
-		
-		protected void searchResults(Set filteredHistory, SearcherProgressMonitor monitor) throws CoreException {
+
+		protected void searchResults(Set filteredHistory,
+				SearcherProgressMonitor monitor) throws CoreException {
 			model.reset();
 			for (Iterator iter = lastResult.iterator(); iter.hasNext();) {
 				ResourceSearchItem resource = (ResourceSearchItem) iter.next();
-				if (!getShowDerived() && resource.getResource().isDerived()) 
+				if (!getShowDerived() && resource.getResource().isDerived())
 					continue;
 				if (filteredHistory.contains(resource.getResource()))
 					continue;
@@ -246,84 +268,99 @@ public class ResourceSearcher extends AbstractSearcher {
 					model.addElement(resource);
 			}
 			model.refresh();
-			
+
 		}
-		
+
 		protected List getFilteredHistory() {
 			List elements = new ArrayList();
-			IResource[] matchingResources = ((ResourceHistory) history).getMatchedElements(stringMatcher, container);
-			
+			IResource[] matchingResources = ((ResourceHistory) history)
+					.getMatchedElements(stringMatcher, container);
+
 			if (matchingResources.length > 0) {
-				for (int i = 0; i < matchingResources.length; i++){
+				for (int i = 0; i < matchingResources.length; i++) {
 					IResource resource = matchingResources[i];
-					if ((!getShowDerived() && resource.isDerived()) || ((typeMask & resource.getType()) == 0)) {
-	                    continue;
-	                }
+					if ((!getShowDerived() && resource.isDerived())
+							|| ((typeMask & resource.getType()) == 0)) {
+						continue;
+					}
 					elements.add(new ResourceSearchItem(resource, true));
 				}
 			}
 			return elements;
 		}
-	} 
-	
+	}
+
 	/**
-	 * ResourceSearchEngineJob to search matched resources in indicated reources container and in resource history.
-	 * It decorate results and mark duplicates. During searching this refresh progres Monitor
+	 * ResourceSearchEngineJob to search matched resources in indicated reources
+	 * container and in resource history. It decorate results and mark
+	 * duplicates. During searching this refresh progres Monitor
+	 * 
 	 * @since 3.2
-	 *
+	 * 
 	 */
 	private class ResourceSearchEngineJob extends AbstractSearchJob {
 
 		private ResourceSearcher resourceSearcher;
-		
-		public ResourceSearchEngineJob(int ticket, SearcherModel model, ResourceHistory history, ResourceSearcher  resourceSearcher) {
+
+		public ResourceSearchEngineJob(int ticket, SearcherModel model,
+				ResourceHistory history, ResourceSearcher resourceSearcher) {
 			super(ticket, model, history);
 			this.resourceSearcher = resourceSearcher;
 		}
+
 		public void stop() {
 			super.stop();
 		}
-	
+
 		protected List getFilteredHistory() {
 			List elements = new ArrayList();
-			IResource[] matchingResources = ((ResourceHistory) history).getMatchedElements(stringMatcher, container);
-			
+			IResource[] matchingResources = ((ResourceHistory) history)
+					.getMatchedElements(stringMatcher, container);
+
 			if (matchingResources.length > 0) {
-				for (int i = 0; i < matchingResources.length; i++){
+				for (int i = 0; i < matchingResources.length; i++) {
 					IResource resource = matchingResources[i];
-					if ((!getShowDerived() && resource.isDerived()) || ((typeMask & resource.getType()) == 0)) {
-	                    continue;
-	                }
+					if ((!getShowDerived() && resource.isDerived())
+							|| ((typeMask & resource.getType()) == 0)) {
+						continue;
+					}
 					elements.add(new ResourceSearchItem(resource, true));
 				}
-			} 
+			}
 			return elements;
 		}
-	
-		protected void searchResults(Set filteredHistory, SearcherProgressMonitor monitor) throws CoreException {
-			SearcherProgressMonitor progress = new SearcherProgressMonitor(monitor, model);
-			
+
+		protected void searchResults(Set filteredHistory,
+				SearcherProgressMonitor monitor) throws CoreException {
+			SearcherProgressMonitor progress = new SearcherProgressMonitor(
+					monitor, model);
+
 			if (progress != null)
 				progress.beginTask("", container.members().length); //$NON-NLS-1$
 
-    		container.accept(new ResourceProxyVisitor(model, progress, (ResourceHistory) this.history, container), IResource.NONE);
+			container.accept(new ResourceProxyVisitor(model, progress,
+					(ResourceHistory) this.history, container), IResource.NONE);
 
-	        if (progress != null)
-    			progress.done();
-	  
-	        ArrayList resources = new ArrayList(Arrays.asList(this.model.getElements()));
-	        resourceSearcher.rememberResult(fTicket, resources);
+			if (progress != null)
+				progress.done();
+
+			ArrayList resources = new ArrayList(Arrays.asList(this.model
+					.getElements()));
+			resourceSearcher.rememberResult(fTicket, resources);
 		}
 	}
-	
+
 	/**
 	 * ResourceComparator to caompare resources and mark duplicates.
+	 * 
 	 * @since 3.3
-	 *
+	 * 
 	 */
 	public static class ResourceComparator implements Comparator {
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object o1, Object o2) {
@@ -332,26 +369,30 @@ public class ResourceSearcher extends AbstractSearcher {
 			final IResource resource1 = resourceDecorator1.getResource();
 			final IResource resource2 = resourceDecorator2.getResource();
 			String s1 = resource1.getName();
-            String s2 = resource2.getName();
-            int comparability = collator.compare(s1, s2);
-            if (comparability == 0) {
-            	resourceDecorator1.setDuplicate();
-            	resourceDecorator2.setDuplicate();
-            	s1 = resource1.getFullPath().toString();
-            	s2 = resource2.getFullPath().toString();
-            	comparability = collator.compare(s1, s2); 
-        	}
-            
-            if ((resourceDecorator1.isHistory() && resourceDecorator2.isHistory()) || (!resourceDecorator1.isHistory() && !resourceDecorator2.isHistory()))
-            	return comparability;
-        	if (resourceDecorator1.isHistory())
-        		return -1;
-        	if (resourceDecorator2.isHistory())
-        		return +1;
-        	
-        	return 0;
+			String s2 = resource2.getName();
+			int comparability = collator.compare(s1, s2);
+			if (comparability == 0) {
+				resourceDecorator1.setDuplicate();
+				resourceDecorator2.setDuplicate();
+				s1 = resource1.getFullPath().toString();
+				s2 = resource2.getFullPath().toString();
+				comparability = collator.compare(s1, s2);
+			}
+
+			if ((resourceDecorator1.isHistory() && resourceDecorator2
+					.isHistory())
+					|| (!resourceDecorator1.isHistory() && !resourceDecorator2
+							.isHistory()))
+				return comparability;
+			if (resourceDecorator1.isHistory())
+				return -1;
+			if (resourceDecorator2.isHistory())
+				return +1;
+
+			return 0;
 		}
 	}
+
 	/**
 	 * ResourceProxyVisitor to visit resource tree and get matched resources.
 	 * During visit resources they update progress monitor.
@@ -359,58 +400,68 @@ public class ResourceSearcher extends AbstractSearcher {
 	 * @since 3.3
 	 */
 	private class ResourceProxyVisitor implements IResourceProxyVisitor {
-		
+
 		SearcherModel model;
+
 		IProgressMonitor progressMonitor;
+
 		ResourceHistory resourceHistory;
+
 		IContainer container;
+
 		List projects;
 
 		/**
 		 * @param model
-		 * @throws CoreException 
+		 * @throws CoreException
 		 */
-		public ResourceProxyVisitor(SearcherModel model, IProgressMonitor progressMonitor, ResourceHistory resourceHistory, IContainer container) throws CoreException {
+		public ResourceProxyVisitor(SearcherModel model,
+				IProgressMonitor progressMonitor,
+				ResourceHistory resourceHistory, IContainer container)
+				throws CoreException {
 			super();
 			this.model = model;
 			this.progressMonitor = progressMonitor;
 			this.resourceHistory = resourceHistory;
 			this.container = container;
 			this.projects = new ArrayList(Arrays.asList(container.members()));
-	
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
 		public boolean visit(IResourceProxy proxy) throws CoreException {
-                if (!getShowDerived() && proxy.isDerived()) {
-                    return false;
-                }
-                
-                IResource res = proxy.requestResource();
-                if (this.projects.remove((res.getProject()))) {
-                	progressMonitor.worked(1);
-                }
-                
-                int type = proxy.getType();
-                if ((typeMask & type) != 0) {
-                    if (match(proxy.getName())) {
-                        if (validateSearchedResource(res)) {
-                        	if (!resourceHistory.contains(res))
-                        		model.addElement(new ResourceSearchItem(res));
-                            return true;
-                        }
-                        return false;
-                    }
-                }
-                if (type == IResource.FILE) {
+			if (!getShowDerived() && proxy.isDerived()) {
+				return false;
+			}
+
+			IResource res = proxy.requestResource();
+			if (this.projects.remove((res.getProject()))) {
+				progressMonitor.worked(1);
+			}
+
+			int type = proxy.getType();
+			if ((typeMask & type) != 0) {
+				if (match(proxy.getName())) {
+					if (validateSearchedResource(res)) {
+						if (!resourceHistory.contains(res))
+							model.addElement(new ResourceSearchItem(res));
+						return true;
+					}
 					return false;
 				}
-                return true;
-            }
-		
+			}
+			if (type == IResource.FILE) {
+				return false;
+			}
+			return true;
+		}
+
 	}
+
 	/**
 	 * ResourceHistory store a history of selected resources.
 	 * 
@@ -418,17 +469,18 @@ public class ResourceSearcher extends AbstractSearcher {
 	 */
 	private static class ResourceHistory extends SearcherHistory {
 
-		private static final String NODE_ROOT= "resourceInfoHistroy"; //$NON-NLS-1$
-		private static final String NODE_TYPE_INFO= "resourceInfo"; //$NON-NLS-1$
+		private static final String NODE_ROOT = "resourceInfoHistroy"; //$NON-NLS-1$
+
+		private static final String NODE_TYPE_INFO = "resourceInfo"; //$NON-NLS-1$
 
 		private static ResourceHistory fgInstance;
 
 		public static synchronized ResourceHistory getInstance() {
 			if (fgInstance == null)
-				fgInstance= new ResourceHistory();
+				fgInstance = new ResourceHistory();
 			return fgInstance;
 		}
-		
+
 		private ResourceHistory() {
 			super(NODE_ROOT, NODE_TYPE_INFO);
 		}
@@ -442,25 +494,26 @@ public class ResourceSearcher extends AbstractSearcher {
 		}
 
 		public synchronized IResource remove(IResource resource) {
-			return (IResource)super.remove(resource);
+			return (IResource) super.remove(resource);
 		}
 
-		public synchronized IResource[] getMatchedElements(StringMatcher matcher, IContainer container) {
-			Collection values= getValues();
-			List result= new ArrayList();
-			for (Iterator iter= values.iterator(); iter.hasNext();) {
-				IResource resource= (IResource)iter.next();
+		public synchronized IResource[] getMatchedElements(
+				StringMatcher matcher, IContainer container) {
+			Collection values = getValues();
+			List result = new ArrayList();
+			for (Iterator iter = values.iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
 				if (matcher == null || matcher.match(resource.getName()))
 					if (container.findMember(resource.getFullPath()) != null)
 						result.add(resource);
-					else 
+					else
 						remove(resource);
 			}
 			Collections.reverse(result);
 			return (IResource[]) result.toArray(new IResource[result.size()]);
-			
+
 		}
-		
+
 		protected Object getKey(Object object) {
 			return object;
 		}
@@ -470,10 +523,10 @@ public class ResourceSearcher extends AbstractSearcher {
 			ResourceFactory resourceFactory = new ResourceFactory();
 			resource = (IResource) resourceFactory.createElement(memento);
 			return resource;
-		} 
+		}
 
 		protected void setAttributes(Object object, IMemento resourceElement) {
-			IResource resource= (IResource)object;
+			IResource resource = (IResource) object;
 			ResourceFactory resourceFactory = new ResourceFactory(resource);
 			resourceFactory.saveState(resourceElement);
 		}

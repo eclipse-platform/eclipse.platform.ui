@@ -11,48 +11,51 @@
 
 package org.eclipse.ui.dialogs;
 
-
 /**
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
  * @since 3.2
- *
  */
 public abstract class AbstractSearchItem {
-	
+
 	private boolean duplicate = false;
-	
+
 	private boolean isHistory = false;
-	
+
 	/**
 	 * Check if it is duplicate
+	 * 
 	 * @return true if it's duplicate, else false
 	 */
-	public boolean isDuplicate(){
+	public boolean isDuplicate() {
 		return this.duplicate;
 	}
-	
+
 	/**
 	 * 
-	 *	Mark it as a duplicate
+	 * Mark it as a duplicate
 	 */
 	public void setDuplicate() {
 		this.duplicate = true;
 	}
-	
+
 	/**
 	 * Check if it is duplicate
+	 * 
 	 * @return true if it's duplicate, else false
 	 */
-	public boolean isHistory(){
+	public boolean isHistory() {
 		return this.isHistory;
 	}
-	
+
 	/**
 	 * 
-	 *	Mark it as a duplicate
+	 * Mark it as a duplicate
 	 */
 	public void markAsHistory() {
 		this.isHistory = true;
 	}
-
 
 }

@@ -39,6 +39,10 @@ import org.eclipse.ui.utils.ResourceSearchItem;
  * Shows a list of resources to the user with a text entry field for a string
  * pattern used to filter the list of resources.
  * 
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
  * @since 3.3
  */
 public class ResourceSearchDialog extends AbstractSearchDialog {

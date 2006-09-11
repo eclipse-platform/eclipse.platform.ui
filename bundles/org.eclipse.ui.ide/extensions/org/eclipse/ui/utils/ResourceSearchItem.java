@@ -15,8 +15,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.dialogs.AbstractSearchItem;
 
 /**
- * @since 3.2
- *
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
+ * @since 3.3
  */
 public class ResourceSearchItem extends AbstractSearchItem {
 	
