@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak  (brockj@tpg.com.au) - Bug 144067 Repository types not sorted in the share project wizard
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
