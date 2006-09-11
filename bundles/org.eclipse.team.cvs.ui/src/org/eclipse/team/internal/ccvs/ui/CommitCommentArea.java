@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 57208
  *     Maik Schreiber - bug 102461
+ *     Eugene Kuleshov (eu@md.pp.ru) - Bug 112742 [Wizards] Add spell check to commit dialog
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
