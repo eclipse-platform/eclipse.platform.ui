@@ -1186,13 +1186,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	/**
-	 * Configures the passed text viewer.
-	 * This method is called after the three text viewers have been created for the
-	 * content areas.
-	 * The <code>TextMergeViewer</code> implementation of this method does nothing.
-	 * Subclasses may reimplement to provide a specific configuration for the text viewer.
-	 *
-	 * @param textViewer the text viewer to configure
+	 * Configures the passed text viewer. This method is called after the three
+	 * text viewers have been created for the content areas. The
+	 * <code>TextMergeViewer</code> implementation of this method will
+	 * configure the viewer with a {@link SourceViewerConfiguration}.
+	 * Subclasses may reimplement to provide a specific configuration for the
+	 * text viewer.
+	 * 
+	 * @param textViewer
+	 *            the text viewer to configure
 	 */
 	protected void configureTextViewer(TextViewer textViewer) {
 		// to get undo for all text files
