@@ -43,7 +43,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
 	
-	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable {
+	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable, IResourceProvider {
 
 		private final IDiff node;
 		private long timestamp;
@@ -257,6 +257,10 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 
 		public void updateTimestamp() {
 			timestamp = ResourceDiffTree.getResourceFor(node).getLocalTimeStamp();
+		}
+
+		public IResource getResource() {
+			return ResourceDiffTree.getResourceFor(node);
 		}
 	}
 	
