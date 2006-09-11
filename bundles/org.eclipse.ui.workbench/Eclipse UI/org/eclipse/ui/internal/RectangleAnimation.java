@@ -226,7 +226,7 @@ public class RectangleAnimation extends Job {
             Thread.yield();
         }
 
-        System.out.println("Done: " + (curTime-startTime) + " steps: " + stepCount + " frames:" + frameCount);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        //System.out.println("Done: " + (curTime-startTime) + " steps: " + stepCount + " frames:" + frameCount);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
         // We're done, clean up
         display.syncExec(new Runnable() {
             public void run() {
