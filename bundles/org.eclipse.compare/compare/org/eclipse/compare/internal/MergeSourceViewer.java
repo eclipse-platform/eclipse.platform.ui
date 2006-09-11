@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -76,11 +77,11 @@ public class MergeSourceViewer extends SourceViewer
 	
 	
 	public MergeSourceViewer(Composite parent, ResourceBundle bundle) {
-		this(parent, SWT.NONE, bundle);
+		this(parent, null, SWT.NONE, bundle);
 	}
 	
-	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle) {
-		super(parent, null, style | SWT.H_SCROLL | SWT.V_SCROLL);
+	public MergeSourceViewer(Composite parent, IVerticalRuler ruler, int style, ResourceBundle bundle) {
+		super(parent, ruler, style | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fResourceBundle= bundle;
 		
@@ -412,5 +413,13 @@ public class MergeSourceViewer extends SourceViewer
 		removeSelectionChangedListener(this);
 		
 		super.handleDispose();
+	}
+	
+	/**
+	 * need access to the ruler to switch contents on and off
+	 * @return the ruler
+	 */
+	public IVerticalRuler getMergeVerticalRuler() {
+		return super.getVerticalRuler();
 	}
 }
