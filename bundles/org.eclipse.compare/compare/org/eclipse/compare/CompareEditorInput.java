@@ -17,14 +17,13 @@ import java.util.ResourceBundle;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -412,9 +411,27 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 	
+		fComposite.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handleDispose();
+			}
+		});
 		return fComposite;
 	}
 	
+	/**
+	 * Callback that occurs when the UI associated with this compare editor
+	 * input is disposed. This method will only be invoked if the UI has been
+	 * created (i.e. after the call to {@link #createContents(Composite)}.
+	 * Subclasses can extend this method but ensure that the overridden method
+	 * is invoked.
+	 * 
+	 * @since 3.3
+	 */
+	protected void handleDispose() {
+		// Default is to do nothing
+	}
+
 	/**
 	 * @param parent the parent control under which the control must be created
 	 * @param direction the layout direction of the contents, either </code>SWT.HORIZONTAL<code> or </code>SWT.VERTICAL<code> 
