@@ -12,12 +12,10 @@ package org.eclipse.team.examples.filesystem;
 
 import java.io.IOException;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.examples.model.PluginManifestChangeTracker;
 import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -48,6 +46,9 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	private static FileSystemPlugin plugin;
 	
 	private PessimisticFilesystemProviderPlugin pessPlugin;
+	
+	private PluginManifestChangeTracker tracker;
+	
 	/**
 	 * Override the standard plugin constructor.
 	 * 
@@ -120,6 +121,8 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		super.start(context);
 		//Call startup on the Pessimistic Plugin
 		pessPlugin.startup();
+		tracker = new PluginManifestChangeTracker();
+		tracker.start();
 	}
 	
 	public void stop(BundleContext context) throws Exception {
@@ -129,6 +132,8 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		} finally {
 			super.stop(context);
 		}
+		tracker.dispose();
+		tracker = null;
 	}
 }
 

@@ -54,7 +54,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @since 2.1
  */
 
-public abstract class RepositoryProviderType {
+public abstract class RepositoryProviderType extends PlatformObject {
 	private static Map allProviderTypes = new HashMap();
 	
 	private String id;

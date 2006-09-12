@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.*;
+import org.eclipse.team.core.mapping.IChangeGroupingRequestor;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -192,7 +193,7 @@ public class CVSTeamProviderType extends RepositoryProviderType implements IAdap
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == ActiveChangeSetManager.class)
+		if (adapter == ActiveChangeSetManager.class || adapter == IChangeGroupingRequestor.class)
 			return CVSProviderPlugin.getPlugin().getChangeSetManager();
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

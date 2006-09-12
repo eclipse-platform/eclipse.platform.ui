@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core;
+package org.eclipse.team.core.mapping;
 
 import java.util.*;
 
@@ -17,19 +17,78 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.RepositoryProviderType;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
+import org.eclipse.team.internal.core.*;
 
 /**
  * Track changes to plugin projects so that changes to any of the manifest files
  * will be grouped together for the purposes of committing.
- * 
- * @since 3.2
+ * <p>
+ * Clients may subclass this class.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
+ * @since 3.3
  */
-public abstract class ChangeTracker implements IResourceChangeListener, IRepositoryProviderListener {
+public abstract class ChangeTracker {
 
-	private Map trackedProjects = new HashMap(); // Map IProject->SubscriberChanegSetCollector
+	private Map trackedProjects = new HashMap(); // Map IProject->IChangeGroupingRequestor
 	private boolean disposed;
+	private ChangeListener changeListener = new ChangeListener();
+	
+	private class ChangeListener implements IResourceChangeListener, IRepositoryProviderListener {
+		/**
+		 * Handle a resource change event.
+		 * Update the set of projects for which we can track changes
+		 * by listening for project changes and project description changes.
+		 * @param event the change event
+		 */
+		public void resourceChanged(IResourceChangeEvent event) {
+			if (disposed) return;
+			IResourceDelta delta = event.getDelta();
+			IResourceDelta[] projectDeltas = delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED | IResourceDelta.REMOVED);
+			for (int i = 0; i < projectDeltas.length; i++) {
+				IResourceDelta projectDelta = projectDeltas[i];
+				IResource resource = projectDelta.getResource();
+				if (resource.getType() == IResource.PROJECT) {
+					IProject project = (IProject)resource;
+					if (isProjectOfInterest(project)) {
+						if (isProjectTracked(project)) {
+							IResource[] resources = getProjectChanges(project, projectDelta);
+							if (resources.length > 0)
+								handleChanges(project, resources);
+						} else {
+							trackProject(project);
+						}
+					} else {
+						stopTrackingProject(project);
+					}
+				}
+			}
+		}
+		
+		/**
+		 * When a project is shared, start tracking it if it is of interest.
+		 * @param provider the repository provider
+		 */
+		public void providerMapped(RepositoryProvider provider) {
+			if (disposed) return;
+			if (isProjectOfInterest(provider.getProject())) {
+				trackProject(provider.getProject());
+			}
+		}
+
+		/**
+		 * When a project is no longer shared, stop tracking the project.
+		 * @param project the project
+		 */
+		public void providerUnmapped(IProject project) {
+			if (disposed) return;
+			stopTrackingProject(project);
+		}
+	}
 	
 	/**
 	 * Create a change tracker
@@ -43,8 +102,8 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 	 * and team.
 	 */
 	public void start() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		RepositoryProviderManager.getInstance().addListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, IResourceChangeEvent.POST_CHANGE);
+		RepositoryProviderManager.getInstance().addListener(changeListener);
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < allProjects.length; i++) {
 			IProject project = allProjects[i];
@@ -59,38 +118,8 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 	 */
 	public void dispose() {
 		disposed = true;
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		RepositoryProviderManager.getInstance().removeListener(this);
-	}
-	
-	/**
-	 * Handle a resource change event.
-	 * Update the set of projects for which we can track changes
-	 * by listening for project changes and project description changes.
-	 * @param event the change event
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		if (disposed) return;
-		IResourceDelta delta = event.getDelta();
-		IResourceDelta[] projectDeltas = delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.CHANGED | IResourceDelta.REMOVED);
-		for (int i = 0; i < projectDeltas.length; i++) {
-			IResourceDelta projectDelta = projectDeltas[i];
-			IResource resource = projectDelta.getResource();
-			if (resource.getType() == IResource.PROJECT) {
-				IProject project = (IProject)resource;
-				if (isProjectOfInterest(project)) {
-					if (isProjectTracked(project)) {
-						IResource[] resources = getProjectChanges(project, projectDelta);
-						if (resources.length > 0)
-							handleChanges(project, resources);
-					} else {
-						trackProject(project);
-					}
-				} else {
-					stopTrackingProject(project);
-				}
-			}
-		}
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+		RepositoryProviderManager.getInstance().removeListener(changeListener);
 	}
 
 	private IResource[] getProjectChanges(IProject project, IResourceDelta projectDelta) {
@@ -153,26 +182,6 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 	}
 
 	/**
-	 * When a project is shared, start tracking it if it is of interest.
-	 * @param provider the repository provider
-	 */
-	public void providerMapped(RepositoryProvider provider) {
-		if (disposed) return;
-		if (isProjectOfInterest(provider.getProject())) {
-			trackProject(provider.getProject());
-		}
-	}
-
-	/**
-	 * When a project is no longer shared, stop tracking the project.
-	 * @param project the project
-	 */
-	public void providerUnmapped(IProject project) {
-		if (disposed) return;
-		stopTrackingProject(project);
-	}
-
-	/**
 	 * Return whether the given resource is of interest to the tracker.
 	 * @param resource the resource
 	 * @return whether the given resource is of interest to the tracker
@@ -207,7 +216,7 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 				if (currentId != null) {
 					RepositoryProviderType type = RepositoryProviderType.getProviderType(currentId);
 					if (type != null) {
-						ActiveChangeSetManager collector = getCollector(type);
+						IChangeGroupingRequestor collector = getCollector(type);
 						if (collector != null) {
 							trackedProjects.put(project, collector);
 							// Ensure that an appropriate change set exists if needed
@@ -225,12 +234,12 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 		return false;
 	}
 
-	private ActiveChangeSetManager getCollector(RepositoryProviderType type) {
+	private IChangeGroupingRequestor getCollector(RepositoryProviderType type) {
 		if (type instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) type;
-			Object o = adaptable.getAdapter(ActiveChangeSetManager.class);
-			if (o instanceof ActiveChangeSetManager) {
-				return (ActiveChangeSetManager) o;
+			Object o = adaptable.getAdapter(IChangeGroupingRequestor.class);
+			if (o instanceof IChangeGroupingRequestor) {
+				return (IChangeGroupingRequestor) o;
 			}
 		}
 		return null;
@@ -252,23 +261,15 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 	 * @param files the change files to be grouped
 	 * @throws CoreException
 	 */
-	protected void groupAsSet(IProject project, String name, IFile[] files) throws CoreException {
-		ActiveChangeSetManager collector = getCollector(project);
+	protected void ensureGrouped(IProject project, String name, IFile[] files) throws CoreException {
+		IChangeGroupingRequestor collector = getCollector(project);
 		if (collector != null) {
-			ActiveChangeSet set = collector.getSet(name);
-			if (set == null) {
-				set = collector.createSet(name, files);
-				set.setUserCreated(false);
-				collector.add(set);
-			} else {
-				set.setUserCreated(false);
-				set.add(files);
-			}
+			collector.ensureChangesGrouped(project, files, name);
 		}
 	}
 
-	private ActiveChangeSetManager getCollector(IProject project) {
-		return (ActiveChangeSetManager)trackedProjects.get(project);
+	private IChangeGroupingRequestor getCollector(IProject project) {
+		return (IChangeGroupingRequestor)trackedProjects.get(project);
 	}
 	
 	/**
@@ -279,7 +280,7 @@ public abstract class ChangeTracker implements IResourceChangeListener, IReposit
 	 * @throws CoreException
 	 */
 	protected boolean isModified(IFile file) throws CoreException {
-		ActiveChangeSetManager collector = getCollector(file.getProject());
+		IChangeGroupingRequestor collector = getCollector(file.getProject());
 		if (collector != null)
 			return collector.isModified(file);
 		return false;

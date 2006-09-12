@@ -12,15 +12,14 @@ package org.eclipse.team.internal.core.subscribers;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.IChangeGroupingRequestor;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
-import org.eclipse.team.internal.core.Messages;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -29,7 +28,7 @@ import org.osgi.service.prefs.Preferences;
  * A change set manager that contains sets that represent collections of
  * related local changes.
  */
-public abstract class ActiveChangeSetManager extends ChangeSetManager implements IDiffChangeListener {
+public abstract class ActiveChangeSetManager extends ChangeSetManager implements IDiffChangeListener, IChangeGroupingRequestor {
 
     private static final String CTX_DEFAULT_SET = "defaultSet"; //$NON-NLS-1$
     
@@ -393,5 +392,21 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
         ActiveChangeSet changeSet = doCreateSet(title);
         changeSet.init(childPrefs);
         return changeSet;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.core.IChangeGroupingRequestor#ensureChangesGrouped(org.eclipse.core.resources.IProject, org.eclipse.core.resources.IFile[], java.lang.String)
+     */
+    public void ensureChangesGrouped(IProject project, IFile[] files,
+    		String name) throws CoreException {
+		ActiveChangeSet set = getSet(name);
+		if (set == null) {
+			set = createSet(name, files);
+			set.setUserCreated(false);
+			add(set);
+		} else {
+			set.setUserCreated(false);
+			set.add(files);
+		}
     }
 }
