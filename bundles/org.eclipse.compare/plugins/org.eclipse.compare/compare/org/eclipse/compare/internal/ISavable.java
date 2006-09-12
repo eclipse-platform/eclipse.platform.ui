@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
+import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * The precursor to {@link IFlushable}. This interface has been kept around since
+ * it was needed by clients in some situations.
+ * 
+ * @deprecated use {@link IFlushable}
+ */
 public interface ISavable {
 	
 	void save(IProgressMonitor pm) throws CoreException;

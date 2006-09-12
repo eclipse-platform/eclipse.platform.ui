@@ -1003,12 +1003,18 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * Method from the internal {@link ISavable} interface
 	 * Save the viewers's content.
 	 * Note: this method is for internal use only. Clients should not call this method. 
+	 * @param monitor a progress monitor
+	 * @throws CoreException 
 	 * @deprecated use {@link IFlushable#flush(IProgressMonitor)}.
 	 */
 	public void save(IProgressMonitor monitor) throws CoreException {
 		flush(monitor);
 	}
 	
+	/**
+	 * Flush the viewer model contents into the compare input.
+	 * @see IFlushable#flush(IProgressMonitor)
+	 */
 	public void flush(IProgressMonitor monitor) {
 		saveContent(getInput());
 	}
