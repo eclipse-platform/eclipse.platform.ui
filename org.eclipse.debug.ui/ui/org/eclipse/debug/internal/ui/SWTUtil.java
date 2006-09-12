@@ -274,6 +274,19 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * creates a horizontal spacer for seperating components
+	 * @param comp
+	 * @param numlines
+	 * @since 3.3
+	 */
+	public static void createHorizontalSpacer(Composite comp, int numlines) {
+		Label lbl = new Label(comp, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = numlines;
+		lbl.setLayoutData(gd);
+	}
+	
+	/**
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
 	 * @param columns the number of columns within the composite
