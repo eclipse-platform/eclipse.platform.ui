@@ -47,11 +47,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
  */
 public class EditorTestHelper {
 	
-	private static class ImportOverwriteQuery implements IOverwriteQuery {
-		public String queryOverwrite(String file) {
-			return ALL;
-		}	
-	}	 
+ 
 	
 	public static final String TEXT_EDITOR_ID= "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 	
@@ -213,7 +209,7 @@ public class EditorTestHelper {
 			Job job= jobs[i];
 			int state= job.getState();
 			if (state == Job.RUNNING || state == Job.WAITING) {
-				Logger.global.finest(job.toString());
+				Logger.global.finest(job.getName());
 				return false;
 			}
 		}
@@ -269,23 +265,5 @@ public class EditorTestHelper {
 				findFiles(resources[i], files);
 		}
 	}
-	 
-  
-	
-	private static void addJavaFiles(File dir, List collection) throws IOException {
-		File[] files= dir.listFiles();
-		List subDirs= new ArrayList(2);
-		for (int i= 0; i < files.length; i++) {
-			if (files[i].isFile()) {
-				collection.add(files[i]);
-			} else if (files[i].isDirectory()) {
-				subDirs.add(files[i]);
-			}
-		}
-		Iterator iter= subDirs.iterator();
-		while (iter.hasNext()) {
-			File subDir= (File)iter.next();
-			addJavaFiles(subDir, collection);
-		}
-	}
+	  
 }

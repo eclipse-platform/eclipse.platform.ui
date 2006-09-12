@@ -148,11 +148,9 @@ public class INavigatorContentServiceTests extends TestCase {
 		contentService.getActivationService().activateExtensions(
 				new String[] { RESOURCE_EXTENSION_ID }, true);
 
-		ITreeContentProvider contentServiceContentProvider = contentService
-				.createCommonContentProvider();
+		contentService.createCommonContentProvider();
 
-		ILabelProvider contentServiceLabelProvider = contentService
-				.createCommonLabelProvider();
+		contentService.createCommonLabelProvider();
 
 		Set rootContentProviders = contentService
 				.findRootContentExtensions(ResourcesPlugin.getWorkspace()
