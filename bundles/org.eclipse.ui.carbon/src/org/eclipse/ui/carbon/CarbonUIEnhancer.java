@@ -42,7 +42,52 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 public class CarbonUIEnhancer implements IStartup {
 
-    private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16) + ('e' << 8) + 'f';
+    class Target {
+		public int toolbarProc (int nextHandler, int theEvent, int userData) {
+			int eventKind = OS.GetEventKind (theEvent);
+			if (eventKind != OS.kEventWindowToolbarSwitchMode)
+				return OS.eventNotHandledErr;
+			
+			int [] theWindow = new int [1];
+			OS.GetEventParameter (theEvent, OS.kEventParamDirectObject, OS.typeWindowRef, null, 4, null, theWindow);
+			
+			int [] theRoot = new int [1];
+			OS.GetRootControl (theWindow [0], theRoot);
+			Widget widget = Display.getCurrent().findWidget(theRoot [0]);
+			
+			if (!(widget instanceof Shell)) {
+				return OS.eventNotHandledErr;
+			}
+			Shell shell = (Shell) widget;
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+					.getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++) {
+				if (windows[i].getShell() == shell) {
+					return runAction("toggleCoolbar"); //$NON-NLS-1$
+				}
+			}
+			return OS.eventNotHandledErr;
+		}
+
+        public int commandProc(int nextHandler, int theEvent, int userData) {
+            if (OS.GetEventKind(theEvent) == OS.kEventProcessCommand) {
+                HICommand command = new HICommand();
+                OS.GetEventParameter(theEvent, OS.kEventParamDirectObject,
+                        OS.typeHICommand, null, HICommand.sizeof, null, command);
+                switch (command.commandID) {
+                case kHICommandPreferences:
+                    return runAction("preferences"); //$NON-NLS-1$
+                case kHICommandAbout:
+                    return runAction("about"); //$NON-NLS-1$
+                default:
+                    break;
+                }
+            }
+            return OS.eventNotHandledErr;
+        }
+	}
+
+	private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16) + ('e' << 8) + 'f';
     private static final int kHICommandAbout = ('a' << 24) + ('b' << 16) + ('o' << 8) + 'u';
     private static final int kHICommandServices = ('s' << 24) + ('e' << 16) + ('r' << 8) + 'v';
 
@@ -156,34 +201,7 @@ public class CarbonUIEnhancer implements IStartup {
 	 * @since 3.2
 	 */
     protected void hookToolbarButtonCallback() {
-		Object target = new Object() {
-			public int toolbarProc (int nextHandler, int theEvent, int userData) {
-				int eventKind = OS.GetEventKind (theEvent);
-				if (eventKind != OS.kEventWindowToolbarSwitchMode)
-					return OS.eventNotHandledErr;
-				
-				int [] theWindow = new int [1];
-				OS.GetEventParameter (theEvent, OS.kEventParamDirectObject, OS.typeWindowRef, null, 4, null, theWindow);
-				
-				int [] theRoot = new int [1];
-				OS.GetRootControl (theWindow [0], theRoot);
-				Widget widget = Display.getCurrent().findWidget(theRoot [0]);
-				
-				if (!(widget instanceof Shell)) {
-					return OS.eventNotHandledErr;
-				}
-				Shell shell = (Shell) widget;
-				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-						.getWorkbenchWindows();
-				for (int i = 0; i < windows.length; i++) {
-					if (windows[i].getShell() == shell) {
-						return runAction("toggleCoolbar"); //$NON-NLS-1$
-					}
-				}
-				return OS.eventNotHandledErr;
-			}
-
-		};
+		Object target = new Target();
 		
 	    final Callback commandCallback = new Callback(target, "toolbarProc", 3); //$NON-NLS-1$
         int commandProc = commandCallback.getAddress();
@@ -204,24 +222,7 @@ public class CarbonUIEnhancer implements IStartup {
     private void hookApplicationMenu(Display display) {
 
         // Callback target
-        Object target = new Object() {
-            public int commandProc(int nextHandler, int theEvent, int userData) {
-                if (OS.GetEventKind(theEvent) == OS.kEventProcessCommand) {
-                    HICommand command = new HICommand();
-                    OS.GetEventParameter(theEvent, OS.kEventParamDirectObject,
-                            OS.typeHICommand, null, HICommand.sizeof, null, command);
-                    switch (command.commandID) {
-                    case kHICommandPreferences:
-                        return runAction("preferences"); //$NON-NLS-1$
-                    case kHICommandAbout:
-                        return runAction("about"); //$NON-NLS-1$
-                    default:
-                        break;
-                    }
-                }
-                return OS.eventNotHandledErr;
-            }
-        };
+        Object target = new Target();
 
         final Callback commandCallback = new Callback(target, "commandProc", 3); //$NON-NLS-1$
         int commandProc = commandCallback.getAddress();
