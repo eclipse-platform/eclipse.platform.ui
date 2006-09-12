@@ -945,5 +945,23 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		super.internalInitializeTree(tree);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#updatePlus(org.eclipse.swt.widgets.Item, java.lang.Object)
+	 */
+	protected void updatePlus(Item item, Object element) {
+		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+			ILazyTreeContentProvider contentProvider = (ILazyTreeContentProvider) getContentProvider();
+			Object data = item.getData();
+			int itemCount = 0;
+			if (data != null) {
+				// item is already materialized
+				itemCount = ((TreeItem) item).getItemCount();
+			}
+			contentProvider.updateChildCount(element, itemCount);
+		} else {
+			super.updatePlus(item, element);
+		}
+	}
 
 }
