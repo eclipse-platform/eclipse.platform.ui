@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.Assert;
 
 public class CheatSheetStopWatch {
 	private static CheatSheetStopWatch stopWatch = null;
@@ -34,7 +33,6 @@ public class CheatSheetStopWatch {
 	}
 	
 	public void start(String key) {
-		Assert.isNotNull(key);
 
 		Entry entry = getEntry(key);
 		if (entry == null) {
@@ -48,24 +46,17 @@ public class CheatSheetStopWatch {
 	}
 	
 	public void stop(String key) {
-		Assert.isNotNull(key);
 		Entry entry = getEntry(key);
-		Assert.isTrue(entry == null || entry.start != -1, "start() must be called before using stop()"); //$NON-NLS-1$
 		entry.stop = System.currentTimeMillis();
 	}
 	
 	public long totalElapsedTime(String key) {
-		Assert.isNotNull(key);
 		Entry entry = getEntry(key);
-		Assert.isTrue(entry == null || entry.start != -1, "start() must be called before using totalElapsedTime()"); //$NON-NLS-1$
-		Assert.isTrue(entry.stop != -1, "stop() must be called before using totalElapsedTime()"); //$NON-NLS-1$
 		return entry.stop - entry.start;
 	}
 	
 	public void lapTime(String key) {
-		Assert.isNotNull(key);
 		Entry entry = getEntry(key);
-		Assert.isTrue(entry == null || entry.start != -1, "start() must be called before using lapTime()"); //$NON-NLS-1$
 		if(entry.currentLap == -1) {
 			entry.previousLap = entry.start;
 		} else {
@@ -75,9 +66,7 @@ public class CheatSheetStopWatch {
 	}
 
 	public long elapsedTime(String key) {
-		Assert.isNotNull(key);
 		Entry entry = getEntry(key);
-		Assert.isTrue(entry.currentLap != -1, "lapTime() must be called before using elapsedTime()"); //$NON-NLS-1$
 		return entry.currentLap - entry.previousLap;
 	}
 

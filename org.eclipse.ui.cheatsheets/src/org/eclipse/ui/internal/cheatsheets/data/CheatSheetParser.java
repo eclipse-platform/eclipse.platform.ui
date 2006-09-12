@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
