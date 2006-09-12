@@ -212,6 +212,10 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	};
 
+	private Thread fThread;
+	private DocumentEvent fLastUIEvent;
+
+
 	/**
 	 * Creates a new differ.
 	 */
@@ -731,11 +735,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 		
 		// if a initialization is going on, we just store the events in the meantime
-		if (!isInitialized() && fInitializationJob != null) {
-			fStoredEvents.add(event);
+		if (!isInitialized()) {
+			if (fInitializationJob != null)
+				fStoredEvents.add(event);
 			return;
 		}
 
+		fLastUIEvent= event;
 		try {
 			handleAboutToBeChanged(event);
 		} catch (BadLocationException e) {
@@ -768,6 +774,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails
 	 */
 	void handleAboutToBeChanged(DocumentEvent event) throws BadLocationException {
+		Assert.isTrue(fThread == null);
+		fThread= Thread.currentThread();
+		
 		IDocument doc= event.getDocument();
 		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
 
@@ -794,6 +803,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			initialize();
 			return;
 		}
+		
+		if (event != fLastUIEvent) {
+			fLastUIEvent= null;
+			return;
+		}
+		fLastUIEvent= null;
 
 		if (!isInitialized())
 			return;
@@ -862,6 +877,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @throws BadLocationException if document access fails somewhere
 	 */
 	void handleChanged(DocumentEvent event) throws BadLocationException {
+		Assert.isTrue(fThread == Thread.currentThread());
+		fThread= null;
 		
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=132125
 		IDocument left= fLeftDocument;
@@ -905,7 +922,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		// get enclosing range: search for a consistent block of at least the size of our
 		// change before and after the change.
-		RangeDifference consistentBefore, consistentAfter;
+		final RangeDifference consistentBefore, consistentAfter;
 		if (leftToRight) {
 			consistentBefore= findConsistentRangeBeforeLeft(fFirstLine, size);
 			consistentAfter= findConsistentRangeAfterLeft(lastLine, size);
