@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl - bug 151205
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -77,6 +78,10 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     }
     
     public void testFilter() {
+    	// no need to test since virtual trees do not support filtering
+    }
+    
+    public void testSetFilters() {
     	// no need to test since virtual trees do not support filtering
     }
     

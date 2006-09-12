@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl - bug 151205
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -41,6 +42,21 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         }
     }
 
+    public static class TestLabelFilter2 extends ViewerFilter {
+        public boolean select(Viewer viewer, Object parent, Object element) {
+            String label = ((TestElement) element).getLabel();
+            int count = label.indexOf("-");
+            if (count < 0)
+                return false;
+            String number = label.substring(count + 1);
+            return Integer.parseInt(number) == 0;
+        }
+
+        public boolean isFilterProperty(Object element, String property) {
+            return property.equals(IBasicPropertyConstants.P_TEXT);
+        }
+    }
+    
     public static class TestLabelSorter extends ViewerSorter {
         public int compare(Viewer v, Object e1, Object e2) {
             // put greater labels first
@@ -144,6 +160,19 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
     }
 
+    public void testSetFilters() {
+    	ViewerFilter filter = new TestLabelFilter();
+    	fViewer.setFilters(new ViewerFilter[] { filter, new TestLabelFilter2() });
+//    	System.err.println("Item: " + getItemCount() );
+    	assertTrue("2 filters count", getItemCount() == 1);
+    	
+    	fViewer.setFilters(new ViewerFilter[] { filter });
+    	assertTrue("1 filtered count", getItemCount() == 5);
+    	
+    	fViewer.setFilters(new ViewerFilter[0]);
+    	assertTrue("unfiltered count", getItemCount() == 10);
+    }
+    
     public void testInsertChild() {
         TestElement first = fRootElement.getFirstChild();
         TestElement newElement = first.addChild(TestModelChange.INSERT);

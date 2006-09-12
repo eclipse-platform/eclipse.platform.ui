@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl - bug 151205
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -113,6 +114,11 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		// are created.
 	}
 
+	public void testSetFilters() {
+		// The filter test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

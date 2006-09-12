@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl - bug 151205
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -551,10 +552,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Adds the given filter to this viewer, and triggers refiltering and
-	 * resorting of the elements.
+	 * resorting of the elements. If you want to add more than one filter
+	 * consider using {@link StructuredViewer#setFilters(ViewerFilter[])}.
 	 * 
 	 * @param filter
 	 *            a viewer filter
+	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (filters == null) {
@@ -879,6 +882,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Returns this viewer's filters.
 	 * 
 	 * @return an array of viewer filters
+	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
 	public ViewerFilter[] getFilters() {
 		if (filters == null) {
@@ -1466,10 +1470,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Removes the given filter from this viewer, and triggers refiltering and
 	 * resorting of the elements if required. Has no effect if the identical
-	 * filter is not registered.
+	 * filter is not registered. If you want to remove more than one filter
+	 * consider using {@link StructuredViewer#setFilters(ViewerFilter[])}.
 	 * 
 	 * @param filter
 	 *            a viewer filter
+	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
 	public void removeFilter(ViewerFilter filter) {
 		Assert.isNotNull(filter);
@@ -1490,6 +1496,23 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	/**
+	 * Sets the filters, replacing any previous filters, and triggers
+	 * refiltering and resorting of the elements.
+	 * 
+	 * @param filters
+	 *            an array of viewer filters
+	 * @since 3.3
+	 */
+	public void setFilters(ViewerFilter[] filters) {
+		if (filters.length == 0) {
+			resetFilters();
+		} else {
+			this.filters = new ArrayList(Arrays.asList(filters));
+			refresh();
+		}
+	}
+	
 	/**
 	 * Discards this viewer's filters and triggers refiltering and resorting of
 	 * the elements.
