@@ -374,11 +374,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		if (IFile.class.equals(adapter)) {
 		    IProgressMonitor pm= new NullProgressMonitor();
 			// flush changes in any dirty viewer
-			try {
-	            flushViewers(pm);
-	        } catch (CoreException e) {
-	            CompareUIPlugin.log(e);
-	        }
+			flushViewers(pm);
 		    IFile[] files= (IFile[]) getAdapter(IFile[].class);
 		    if (files != null && files.length > 0)
 		        return files[0];	// can only return one: limitation on IDE.saveAllEditors; see #64617

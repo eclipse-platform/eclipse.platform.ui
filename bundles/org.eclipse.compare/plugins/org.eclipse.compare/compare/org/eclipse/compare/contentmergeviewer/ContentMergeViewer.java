@@ -14,53 +14,21 @@ package org.eclipse.compare.contentmergeviewer;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.CompareViewerPane;
-import org.eclipse.compare.IPropertyChangeNotifier;
-import org.eclipse.compare.internal.ChangePropertyAction;
-import org.eclipse.compare.internal.CompareEditor;
-import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.ISavable;
-import org.eclipse.compare.internal.MergeViewerAction;
-import org.eclipse.compare.internal.MergeViewerContentProvider;
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.ViewerSwitchingCancelled;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.compare.*;
+import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.handlers.IHandlerService;
 
@@ -91,7 +59,7 @@ import org.eclipse.ui.handlers.IHandlerService;
  * @see TextMergeViewer
  */
 public abstract class ContentMergeViewer extends ContentViewer
-					implements IPropertyChangeNotifier, ISavable {
+					implements IPropertyChangeNotifier, IFlushable, ISavable {
 	
 	class SaveAction extends MergeViewerAction {
 				
@@ -1031,12 +999,17 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
-	/*
+	/**
+	 * Method from the internal {@link ISavable} interface
 	 * Save the viewers's content.
 	 * Note: this method is for internal use only. Clients should not call this method. 
-	 * @since 2.0
+	 * @deprecated use {@link IFlushable#flush(IProgressMonitor)}.
 	 */
-	public void save(IProgressMonitor pm) throws CoreException {
+	public void save(IProgressMonitor monitor) throws CoreException {
+		flush(monitor);
+	}
+	
+	public void flush(IProgressMonitor monitor) {
 		saveContent(getInput());
 	}
 	

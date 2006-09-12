@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
@@ -808,10 +809,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	/**
 	 * Flush the viewer contents into the input.
 	 * @param monitor a progress monitor
-	 * @throws CoreException
 	 * @since 3.3
 	 */
-	protected void flushViewers(IProgressMonitor monitor) throws CoreException {
+	protected void flushViewers(IProgressMonitor monitor) {
 		// flush changes in any dirty viewer
 		flushViewer(fStructureInputPane, monitor);
 		flushViewer(fStructurePane1, monitor);
@@ -819,11 +819,24 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		flushViewer(fContentInputPane, monitor);
 	}
 		
-	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) throws CoreException {
+	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) {
 		if (pane != null) {
 			Viewer v= pane.getViewer();
-			if (v instanceof ISavable)
-				((ISavable)v).save(pm);
+			IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
+			if (flushable != null)
+				flushable.flush(pm);
+			else {
+				// This code is here for backwards compatibility
+				// It can be removed after the 3.3 release since it is 
+				// for internal code that was used by clients
+				try {
+					ISavable savable = (ISavable)Utilities.getAdapter(v, ISavable.class);
+					if (savable != null)
+						savable.save(pm);
+				} catch (CoreException e) {
+					CompareUIPlugin.log(e);
+				}
+			}
 		}
 	}
 }

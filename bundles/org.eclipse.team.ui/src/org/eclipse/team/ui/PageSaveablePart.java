@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.CompareEditor;
-import org.eclipse.compare.internal.ISavable;
+import org.eclipse.compare.contentmergeviewer.IFlushable;
+import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.ToolBarManager;
@@ -30,8 +30,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.PartNavigator;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -407,10 +406,19 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 		
 		for (int i=0; i<fDirtyViewers.size(); i++){
 			Object element = iter.next();
-			if (element instanceof ISavable){
+			IFlushable flushable = (IFlushable)Utils.getAdapter(element, IFlushable.class);
+			if (flushable != null)
+				flushable.flush(monitor);
+			else {
 				try {
-					((ISavable)element).save(monitor);
+					// This code is here for backwards compatibility
+					// It can be removed after the 3.3 release since it is 
+					// for internal code that was used by clients
+					ISavable savable = (ISavable)Utils.getAdapter(element, ISavable.class);
+					if (savable != null)
+						savable.save(monitor);
 				} catch (CoreException e) {
+					CompareUIPlugin.log(e);
 				}
 			}
 		}
