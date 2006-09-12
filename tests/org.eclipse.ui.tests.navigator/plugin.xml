@@ -206,5 +206,74 @@
             <objectClass name="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
          </enablement>
       </decorator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activityPatternBinding
+            activityId="org.eclipse.wst.web"
+            pattern="org\.eclipse\.ui\.tests\.navigator\.*"/> 
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.NewWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleNewWizard"
+            name="Sample New Wizard (Does Nothing)"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.ImportWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleImportWizard"
+            name="Sample Import Wizard  (Does Nothing)"/>
+   </extension>
+  
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            class="org.eclipse.ui.tests.navigator.wizards.ExportWizard1"
+            id="org.eclipse.ui.tests.navigator.SampleExportWizard"
+            name="Sample Export Wizard  (Does Nothing)"/>
+   </extension>
+	<extension
+	      point="org.eclipse.ui.navigator.navigatorContent"> 
+      <commonWizard
+            associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="import"
+            wizardId="org.eclipse.ui.tests.navigator.SampleImportWizard">
+         <enablement>
+            <or>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+				<instanceof value="org.eclipse.core.resources.IFile" />
+			</or>         
+         </enablement>
+      </commonWizard>
+      <commonWizard
+            associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="export"
+            wizardId="org.eclipse.ui.tests.navigator.SampleExportWizard">
+         <enablement>
+            <or>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+				<instanceof value="org.eclipse.core.resources.IFile" />
+			</or>         
+         </enablement>
+      </commonWizard>
+      <commonWizard
+            associatedExtensionId="org.eclipse.ui.tests.navigator.testContent"
+            menuGroupId="org.eclipse.ui.tests.navigator"
+            type="new"
+            wizardId="org.eclipse.ui.tests.navigator.SampleNewWizard">  
+         <enablement>
+            <or>
+				<instanceof value="org.eclipse.ui.tests.navigator.extension.TestExtensionTreeData"/>
+				<instanceof value="org.eclipse.core.resources.IFile" />
+			</or>         
+         </enablement>            
+      </commonWizard>
    </extension> 
 </plugin>
