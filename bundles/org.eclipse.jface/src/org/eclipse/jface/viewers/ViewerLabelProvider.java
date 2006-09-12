@@ -13,6 +13,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -220,126 +221,129 @@ public class ViewerLabelProvider extends LabelProvider implements
 	}
 
 	/**
-	 * Get the image displayed in the tooltip for object.
+	 * Get the image displayed in the tool tip for object.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
+	 *            the element for which the tool tip is shown
 	 * @return {@link Image} or <code>null</code> if there is not image.
 	 */
 
-	public Image getTooltipImage(Object object) {
+	public Image getToolTipImage(Object object) {
 		return null;
 	}
 
 	/**
-	 * Returns the tooltip text for the given element and column index, or
-	 * <code>null</code> if a custom tooltip should not be displayed.
+	 * Returns the tool tip text for the given element and column index, or
+	 * <code>null</code> if a custom tool tip should not be displayed.
 	 * 
 	 * @param element
-	 *            the element for which the tooltip is shown
-	 * @return the {@link String} to be displayed in the tooltip, or
-	 *         <code>null</code> if a custom tooltip should not be displayed
+	 *            the element for which the tool tip is shown
+	 * @return the {@link String} to be displayed in the tool tip, or
+	 *         <code>null</code> if a custom tool tip should not be displayed
 	 */
-	public String getTooltipText(Object element) {
+	public String getToolTipText(Object element) {
 		return null;
 	}
 
 	/**
-	 * Return the background color used for the tooltip
+	 * Return the background color used for the tool tip
 	 * 
 	 * @param object
-	 *            the {@link Object} for which the tooltip is shown
+	 *            the {@link Object} for which the tool tip is shown
 	 * 
 	 * @return the {@link Color} used or <code>null</code> if you want to use
 	 *         the
 	 */
-	public Color getTooltipBackgroundColor(Object object) {
+	public Color getToolTipBackgroundColor(Object object) {
 		return null;
 	}
 
 	/**
-	 * The foreground color used to display the the text in the tooltip
+	 * The foreground color used to display the the text in the tool tip
 	 * 
 	 * @param object
-	 *            the {@link Object} for which the tooltip is shown
+	 *            the {@link Object} for which the tool tip is shown
 	 * @return the {@link Color} used or <code>null</code> if you want to use
-	 *         the default color {
-	 * @link SWT#COLOR_INFO_FOREGROUND}
+	 *         the default color {@link SWT#COLOR_INFO_FOREGROUND}
 	 * @see SWT#COLOR_INFO_FOREGROUND
 	 */
-	public Color getTooltipForegroundColor(Object object) {
+	public Color getToolTipForegroundColor(Object object) {
 		return null;
 	}
 
 	/**
-	 * Get the {@link Font} used to display the tooltip
+	 * Get the {@link Font} used to display the tool tip
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
+	 *            the element for which the tool tip is shown
 	 * @return {@link Font} or <code>null</code> if the default font is to be
 	 *         used.
 	 */
-	public Font getTooltipFont(Object object) {
+	public Font getToolTipFont(Object object) {
 		return null;
 	}
 
 	/**
-	 * Return the amount the used to control how much the tooltip is shifted
-	 * from the current mouse position
+	 * Return the amount of pixels in x and y direction you want the tool tip to
+	 * pop up from the mouse pointer. The default shift is 10px right and 0px
+	 * below your mouse cursor. Be aware of the fact that you should at least
+	 * position the tool tip 1px right to your mouse cursor else click events
+	 * may not get propagated properly.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
-	 * @return {@link Point} shift of the tooltip or <code>null</code> if
-	 *         there is to be no shift.
+	 *            the element for which the tool tip is shown
+	 * @return {@link Point} shift of the tool tip or <code>null</code> if the
+	 *         default shift should be used.
 	 */
-	public Point getTooltipShift(Object object) {
+	public Point getToolTipShift(Object object) {
 		return null;
 	}
 
 	/**
-	 * Return whether or not to use the native Tooltip. If native tooltips are
-	 * used only the textvalue is used. All other feature are of custom tooltips
+	 * Return whether or not to use the native tool tip. If native tool tips are
+	 * used only the textvalue is used. All other feature of custom tool tips
 	 * are not supported.
 	 * 
 	 * @param object
-	 *            the {@link Object} for which the tooltip is shown
-	 * @return <code>true</code> if native tooltips should be used
+	 *            the {@link Object} for which the tool tip is shown
+	 * @return <code>true</code> if native tool tips should be used
 	 */
-	public boolean useNativeTooltip(Object object) {
+	public boolean useNativeToolTip(Object object) {
 		return false;
 	}
 
 	/**
-	 * The time in milliseconds the tooltip is shown for.
+	 * The time in milliseconds the tool tip is shown for.
 	 * 
 	 * @param object
-	 *            the {@link Object} for which the tooltip is shown
+	 *            the {@link Object} for which the tool tip is shown
 	 * @return <code>int<code>
 	 */
-	public int getTooltipTimeDisplayed(Object object) {
+	public int getToolTipTimeDisplayed(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The time in milliseconds until the tooltip is displaued.
+	 * The time in milliseconds until the tool tip is displaued.
 	 * 
 	 * @param object
-	 *            the {@link Object} for which the tooltip is shown
+	 *            the {@link Object} for which the tool tip is shown
 	 * @return int
 	 */
-	public int getTooltipDisplayDelayTime(Object object) {
+	public int getToolTipDisplayDelayTime(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The {@link SWT} style used to create the label
+	 * The {@link SWT} style used to create the {@link CLabel} (see there for supported styles). 
+	 * By default {@link SWT#SHADOW_NONE} is used.
 	 * 
 	 * @param object
-	 *            the element for which the tooltip is shown
+	 *            the element for which the tool tip is shown
 	 * @return int
-	 * @see SWT#SHADOW_NONE
+	 * @see CLabel
 	 */
-	public int getTooltipStyle(Object object) {
+	public int getToolTipStyle(Object object) {
 		return SWT.SHADOW_NONE;
 	}
 

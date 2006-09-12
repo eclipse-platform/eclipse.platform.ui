@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 abstract class ColumnViewer extends StructuredViewer {
 
-	private TooltipSupport tooltipSupport;
+	private ToolTipSupport tooltipSupport;
 
 	/**
 	 * The cell is a cached viewer cell used for refreshing.
@@ -40,7 +40,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public ColumnViewer() {
 		super();
-		tooltipSupport = new TooltipSupport(this);
+		tooltipSupport = new ToolTipSupport(this);
 	}
 
 	/**

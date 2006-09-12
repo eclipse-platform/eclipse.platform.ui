@@ -34,13 +34,13 @@ import org.eclipse.swt.widgets.Shell;
  * do not use this API without consulting with the Platform/UI team.
  *
  */
-class TooltipSupport {
+class ToolTipSupport {
 	private ColumnViewer viewer;
 	private Listener listener = new MouseListener();
 	private static final int DEFAULT_SHIFT_X = 10;
 	private static final int DEFAULT_SHIFT_Y = 0;
 	
-	TooltipSupport(ColumnViewer viewer) {
+	ToolTipSupport(ColumnViewer viewer) {
 		this.viewer = viewer;
 	}
 	
@@ -116,48 +116,48 @@ class TooltipSupport {
 			
 			ViewerLabelProvider labelProvider = viewPart.getLabelProvider();
 			
-			String text = labelProvider.getTooltipText(element);
+			String text = labelProvider.getToolTipText(element);
 			
 			if( text != null ) {
 				
-				if( labelProvider.useNativeTooltip(element) ) {
+				if( labelProvider.useNativeToolTip(element) ) {
 					viewer.getControl().setToolTipText(text);
 					return;
 				}
 				
 				tip = new Shell(viewer.getControl().getShell(), SWT.ON_TOP | SWT.TOOL);
 				tip.setLayout(new FillLayout());
-				CLabel label = new CLabel(tip, labelProvider.getTooltipStyle(element));
+				CLabel label = new CLabel(tip, labelProvider.getToolTipStyle(element));
 				label.setText(text);
 				label.addListener(SWT.MouseExit, hideListener);
 				label.addListener(SWT.MouseDown, hideListener);
 				
-				Image img =  labelProvider.getTooltipImage(element);
+				Image img =  labelProvider.getToolTipImage(element);
 				
 				if( img != null) {
 					label.setImage(img);
 				}
 				
-				Color color = labelProvider.getTooltipForegroundColor(element);
+				Color color = labelProvider.getToolTipForegroundColor(element);
 				if( color == null ) {
 					color = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 				}
 				label.setForeground(color);
 				
-				color = labelProvider.getTooltipBackgroundColor(element);
+				color = labelProvider.getToolTipBackgroundColor(element);
 				if( color == null ) {
 					color = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 				}
 				label.setBackground(color);
 				
-				Font font = labelProvider.getTooltipFont(element);
+				Font font = labelProvider.getToolTipFont(element);
 				
 				if( font != null ) {
 					label.setFont(font);
 				}
 				
 				Point pt = viewer.getControl().toDisplay(p);
-				Point shift = labelProvider.getTooltipShift(element);
+				Point shift = labelProvider.getToolTipShift(element);
 				
 				if( shift == null ) {
 					pt.x += DEFAULT_SHIFT_X;
