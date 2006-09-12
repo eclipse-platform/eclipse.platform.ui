@@ -15,7 +15,6 @@ public class ExportWizard1 extends Wizard implements IExportWizard {
 	public ExportWizard1() { 
 	}
 
-	@Override
 	public boolean performFinish() { 
 		return false;
 	}
