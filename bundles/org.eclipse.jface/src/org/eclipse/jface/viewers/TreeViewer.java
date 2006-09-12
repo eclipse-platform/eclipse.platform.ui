@@ -931,5 +931,19 @@ public class TreeViewer extends AbstractTreeViewer {
 		
 		return getRowPartFromItem(new TreeItem((TreeItem)parent.getItem(),SWT.NONE));
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalInitializeTree(org.eclipse.swt.widgets.Control)
+	 */
+	protected void internalInitializeTree(Control widget) {
+		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+			ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+			if (widget instanceof Tree && widget.getData() != null) {
+				lazyTreeContentProvider.updateChildCount(widget.getData(), 0);
+				return;
+			}
+		}
+		super.internalInitializeTree(tree);
+	}
 
 }

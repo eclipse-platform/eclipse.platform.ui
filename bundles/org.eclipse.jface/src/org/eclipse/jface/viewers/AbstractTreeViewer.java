@@ -1336,13 +1336,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 				removeAll(tree);
 				tree.setData(getRoot());
-				createChildren(tree);
-				internalExpandToLevel(tree, expandToLevel);
+				internalInitializeTree(tree);
 				if (useRedraw) {
 					tree.setRedraw(true);
 				}
 			}
+
 		});
+	}
+
+	/**
+	 * @param tree
+	 */
+	protected void internalInitializeTree(Control tree) {
+		createChildren(tree);
+		internalExpandToLevel(tree, expandToLevel);
 	}
 
 	/**
