@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -462,11 +461,8 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 				.getExtension(descriptor, true);
 		ITreeContentProvider contentProvider = extension
 				.getContentProvider();
-		if (contentProvider instanceof IAdaptable) {
-			return (SaveablesProvider) ((IAdaptable) contentProvider)
-					.getAdapter(SaveablesProvider.class);
-		}
-		return null;
+        
+        return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
 	}
 
 	private Saveable[] getShownSaveables(Saveable[] saveables) {

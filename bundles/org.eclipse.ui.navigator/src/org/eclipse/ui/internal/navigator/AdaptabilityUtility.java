@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Provides utilities for working with adaptable and non-adaptable objects.
@@ -26,20 +28,39 @@ public class AdaptabilityUtility {
 	 * 
 	 * @param anElement
 	 *            The element to adapt, which may or may not implement
-	 *            {@link IAdaptable}
+	 *            {@link IAdaptable}, or null
 	 * @param anAdapterType
 	 *            The class type to return
 	 * @return An adapter of the requested type or null
 	 */
 	public static Object getAdapter(Object anElement, Class anAdapterType) {
-		if (anElement == null) {
-			return null;
-		} else if (anElement instanceof IAdaptable) {
-			return ((IAdaptable) anElement).getAdapter(anAdapterType);
-		} else {
-			return Platform.getAdapterManager().getAdapter(anElement,
-					anAdapterType);
-		}
+		Assert.isNotNull(anAdapterType);
+        if (anElement == null) {
+            return null;
+        }
+        if (anAdapterType.isInstance(anElement)) {
+            return anElement;
+        }
+
+        if (anElement instanceof IAdaptable) {
+            IAdaptable adaptable = (IAdaptable) anElement;
+
+            Object result = adaptable.getAdapter(anAdapterType);
+            if (result != null) {
+                // Sanity-check
+                Assert.isTrue(anAdapterType.isInstance(result));
+                return result;
+            }
+        } 
+        
+        if (!(anElement instanceof PlatformObject)) {
+            Object result = Platform.getAdapterManager().getAdapter(anElement, anAdapterType);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
 	}
 
 }
