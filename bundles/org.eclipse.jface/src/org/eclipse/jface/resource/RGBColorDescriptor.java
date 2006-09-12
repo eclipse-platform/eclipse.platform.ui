@@ -22,8 +22,11 @@ import org.eclipse.swt.graphics.RGB;
 class RGBColorDescriptor extends ColorDescriptor {
 
     private RGB color;
+    
+    /**
+     * Color being copied, or null if none
+     */
     private Color originalColor = null;
-    private Device originalDevice = null;
     
     /**
      * Creates a new RGBColorDescriptor given some RGB values
@@ -32,21 +35,6 @@ class RGBColorDescriptor extends ColorDescriptor {
      */
     public RGBColorDescriptor(RGB color) {
         this.color = color;
-    }
-    
-	/**
-     * Creates a new RGBColorDescriptor that describes an existing color. 
-     * 
-     * @since 3.1
-     *
-     * @param originalColor a color to describe
-     * @param originalDevice must be the same Device that was passed into
-     * the color's constructor when it was first created.
-     */
-    public RGBColorDescriptor(Color originalColor, Device originalDevice) {
-        this(originalColor.getRGB());
-        this.originalColor = originalColor;
-        this.originalDevice = originalDevice;
     }
     
 	/**
@@ -87,30 +75,9 @@ class RGBColorDescriptor extends ColorDescriptor {
     public Color createColor(Device device) {
         // If this descriptor is wrapping an existing color, then we can return the original color
         // if this is the same device.
-        if (originalColor != null) { 
-
-            // If we don't know what device the original was allocated on, we can't tell if we
-            // can reuse the original until we try to create a new one.
-            if (originalDevice == null) {
-                Color result = new Color(device, color);
-                       
-                // If this new color was equal to the original, then it must have been allocated
-                // on the same device. 
-                if (result.equals(originalColor)) {
-                    // We now know the original device. We can reuse the original image,
-                    // discard the temporary Image, and remember the device for the next time
-                    // this descriptor is used.
-                    result.dispose();
-                    originalDevice = device;
-                    return originalColor;
-                }
-                // The newly created color ended up being different from the original, so
-                // it may have been allocated on a different device. Return the new version.
-                return result;
-            }
-         
+        if (originalColor != null) {
             // If we're allocating on the same device as the original color, return the original.
-            if (originalDevice == device) {
+            if (originalColor.getDevice() == device) {
                 return originalColor;
             }            
         }

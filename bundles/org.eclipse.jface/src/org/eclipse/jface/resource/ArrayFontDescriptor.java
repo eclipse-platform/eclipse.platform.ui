@@ -23,7 +23,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
 
     private FontData[] data;
     private Font originalFont = null;
-    private Device originalDevice = null;
     
     /**
      * Creates a font descriptor for a font with the given name, height,
@@ -52,22 +51,6 @@ final class ArrayFontDescriptor extends FontDescriptor {
         this.originalFont = originalFont;
     }
     
-    /**
-     * Creates a font descriptor that describes the given font on the
-     * specified device.
-     * 
-     * @param originalFont font to be described
-     * @param originalDevice must be the same Device that was passed into
-     * the font's constructor when it was first created.
-     * 
-     * @see FontDescriptor#createFrom(org.eclipse.swt.graphics.Font, org.eclipse.swt.graphics.Device)
-     * @since 3.1
-     */
-     public ArrayFontDescriptor(Font originalFont, Device originalDevice) {
-        this(originalFont);
-        this.originalDevice = originalDevice;
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.FontDescriptor#createFont(org.eclipse.swt.graphics.Device)
      */
@@ -75,33 +58,11 @@ final class ArrayFontDescriptor extends FontDescriptor {
         
         // If this descriptor is an existing font, then we can return the original font
         // if this is the same device.
-        if (originalFont != null) {
-
-            // If we don't know what device the original was allocated on, we can't tell if we
-            // can reuse the original until we try to create a new one.
-            if (originalDevice == null) {
-                // Create a new font
-                Font result = new Font(device, data);
-                
-                // If this new font was equal to the original, then it must have been allocated
-                // on the same device. 
-                if (result.equals(originalFont)) {
-                    // We now know the original device. We can reuse the original font,
-                    // discard the temporary Font, and remember the device for the next time
-                    // this descriptor is used.
-                    result.dispose();
-                    originalDevice = device;
-                    return originalFont;
-                }
-                // The newly created font ended up being different from the original, so
-                // it may have been allocated on a different device. Return the new version.
-                return result;
-            }
-         
+        if (originalFont != null) {         
             // If we're allocating on the same device as the original font, return the original.
-            if (originalDevice == device) {
+            if (originalFont.getDevice() == device) {
                 return originalFont;
-            }            
+            }
         }
         
         return new Font(device, data);

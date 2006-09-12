@@ -20,25 +20,18 @@ import org.eclipse.swt.graphics.ImageData;
 class ImageDataImageDescriptor extends ImageDescriptor {
 
     private ImageData data;
+    
+    /**
+     * Original image being described, or null if this image is described
+     * completely using its ImageData
+     */
     private Image originalImage = null;
-    private Device originalDevice = null;
     
     /**
      * Creates an image descriptor, given an image and the device it was created on.
      * 
      * @param originalImage
      * @param originalDevice
-     */
-    ImageDataImageDescriptor(Image originalImage, Device originalDevice) {
-        this(originalImage.getImageData());
-        this.originalImage = originalImage;
-        this.originalDevice = originalDevice;
-    }
-    
-    /**
-     * Creates an image descriptor, given an image.
-     * 
-     * @param originalImage
      */
     ImageDataImageDescriptor(Image originalImage) {
         this(originalImage.getImageData());
@@ -63,34 +56,10 @@ class ImageDataImageDescriptor extends ImageDescriptor {
         // If this descriptor is an existing font, then we can return the original font
         // if this is the same device.
         if (originalImage != null) {
-
-            // If we don't know what device the original was allocated on, we can't tell if we
-            // can reuse the original until we try to create a new one.
-            if (originalDevice == null) {
-                Image result = createImage(false, device);
-                if (result == null) {
-                    throw new DeviceResourceException(this);
-                }
-                       
-                // If this new font was equal to the original, then it must have been allocated
-                // on the same device. 
-                if (result.equals(originalImage)) {
-                    // We now know the original device. We can reuse the original image,
-                    // discard the temporary Image, and remember the device for the next time
-                    // this descriptor is used.
-                    result.dispose();
-                    originalDevice = device;
-                    return originalImage;
-                }
-                // The newly created font ended up being different from the original, so
-                // it may have been allocated on a different device. Return the new version.
-                return result;
-            }
-         
             // If we're allocating on the same device as the original font, return the original.
-            if (originalDevice == device) {
+            if (originalImage.getDevice() == device) {
                 return originalImage;
-            }            
+            }
         }
         
         return super.createResource(device);

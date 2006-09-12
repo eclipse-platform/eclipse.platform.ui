@@ -31,21 +31,22 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
      * 
      * @since 3.1
      *
+     * @deprecated use {@link FontDescriptor#createFrom(Font)}
+     *
      * @param font a font to describe
      * @param originalDevice must be the same Device that was passed into
      * the font's constructor when it was first created.
      * @return a newly created FontDescriptor.
      */
     public static FontDescriptor createFrom(Font font, Device originalDevice) {
-        return new ArrayFontDescriptor(font, originalDevice);
+        return new ArrayFontDescriptor(font);
     }
     
     /**
      * Creates a FontDescriptor that describes an existing font. The resulting
      * descriptor depends on the original Font, and disposing the original Font
      * while the descriptor is still in use may cause SWT to throw a graphic
-     * disposed exception. This is less efficient than <code>createFrom(Font, Device)
-     * </code>, so the other version should be used whenever possible.
+     * disposed exception.
      * 
      * @since 3.1
      *

@@ -29,6 +29,8 @@ public abstract class ColorDescriptor extends DeviceResourceDescriptor {
      * a ColorDescriptor. Note that the returned ColorDescriptor depends on the
      * original Color, and disposing the Color will invalidate the ColorDescriptor.
      * 
+     * @deprecated use {@link ColorDescriptor#createFrom(Color)}
+     * 
      * @since 3.1
      *
      * @param toCreate Color to convert into a ColorDescriptor.
@@ -37,16 +39,12 @@ public abstract class ColorDescriptor extends DeviceResourceDescriptor {
      * @return a newly created ColorDescriptor that describes the given Color.
      */
     public static ColorDescriptor createFrom(Color toCreate, Device originalDevice) {
-        return new RGBColorDescriptor(toCreate, originalDevice);
+        return new RGBColorDescriptor(toCreate);
     }
     
     /**
      * Creates a ColorDescriptor from an existing color. 
-     * <p>
-     * This is less efficient than <code>createFrom(Color, Device)</code>, so this
-     * version should only be used in situations where the device associated
-     * with the color is unknown.
-     * </p>
+     * 
      * The returned ColorDescriptor depends on the original Color. Disposing
      * the original colour while the color descriptor is still in use may cause 
      * SWT to throw a graphic disposed exception.

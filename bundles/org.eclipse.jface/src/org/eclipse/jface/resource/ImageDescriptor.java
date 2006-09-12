@@ -93,14 +93,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     
     /**
      * Creates and returns a new image descriptor for the given image. Note 
-     * that disposing the original Image will cause the descriptor to become invalid.  
-     * 
-     * <p>
-     * Performance note: If the device that created the Image is known, it 
-     * is more efficient to use createFromImage(Image, Device).
-     * This method should only be used in those rare situations where
-     * the device is unknown.
-     * </p>
+     * that disposing the original Image will cause the descriptor to become invalid.
      * 
      * @since 3.1 
      *
@@ -141,6 +134,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
      * Image on the same device. Note that disposing the original Image will 
      * cause the descriptor to become invalid.
      * 
+     * @deprecated use {@link ImageDescriptor#createFromImage(Image)}
      * @since 3.1 
      *
      * @param img image to create
@@ -148,7 +142,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
      * @return a newly created image descriptor
      */
     public static ImageDescriptor createFromImage(Image img, Device theDevice) {
-        return new ImageDataImageDescriptor(img, theDevice);
+        return new ImageDataImageDescriptor(img);
     }
     
     /**
