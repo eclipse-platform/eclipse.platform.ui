@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart;
@@ -19,6 +18,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.views.ViewsPlugin;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -115,14 +115,8 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
      */
     protected PageRec doCreatePage(IWorkbenchPart part) {
         // Try to get a custom property sheet page.
-        IPropertySheetPage page = (IPropertySheetPage) part
-                .getAdapter(IPropertySheetPage.class);
-        if (page == null) {
-        	// Look for a declaratively-contributed adapter.
-        	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
-			page = (IPropertySheetPage) Platform.getAdapterManager()
-					.loadAdapter(part, IPropertySheetPage.class.getName());
-		}
+        IPropertySheetPage page = (IPropertySheetPage) ViewsPlugin.getAdapter(part,
+                IPropertySheetPage.class, false);
         if (page != null) {
             if (page instanceof IPageBookViewPage) {
 				initPage((IPageBookViewPage) page);
@@ -180,8 +174,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
      * adapter and if so, asks it for its contributing part.
      */
     public void partActivated(IWorkbenchPart part) {
-        IContributedContentsView view = (IContributedContentsView) part
-                .getAdapter(IContributedContentsView.class);
+    	// Look for a declaratively-contributed adapter - including not yet loaded adapter factories.
+    	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
+        IContributedContentsView view = (IContributedContentsView) ViewsPlugin.getAdapter(part,
+                IContributedContentsView.class, true);
         IWorkbenchPart source = null;
         if (view != null) {
 			source = view.getContributingPart();

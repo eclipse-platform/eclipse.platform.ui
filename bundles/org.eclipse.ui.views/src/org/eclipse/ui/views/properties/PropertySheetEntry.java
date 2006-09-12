@@ -19,13 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellEditorListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.views.ViewsPlugin;
 
 /**
  * <code>PropertySheetEntry</code> is an implementation of
@@ -462,22 +461,16 @@ public class PropertySheetEntry extends EventManager implements
 		IPropertySource result = null;
 		IPropertySourceProvider provider = propertySourceProvider;
 
-		if (provider == null && object != null)
-			provider = (IPropertySourceProvider) Platform.getAdapterManager()
-					.getAdapter(object, IPropertySourceProvider.class);
+		if (provider == null && object != null) {
+			provider = (IPropertySourceProvider) ViewsPlugin.getAdapter(object, 
+                    IPropertySourceProvider.class, false);
+        }
 
 		if (provider != null) {
 			result = provider.getPropertySource(object);
-		} else if (object instanceof IPropertySource) {
-			result = (IPropertySource) object;
-		} else if (object instanceof IAdaptable) {
-			result = (IPropertySource) ((IAdaptable) object)
-					.getAdapter(IPropertySource.class);
 		} else {
-			if (object != null)
-				result = (IPropertySource) Platform.getAdapterManager()
-						.getAdapter(object, IPropertySource.class);
-		}
+            result = (IPropertySource)ViewsPlugin.getAdapter(object, IPropertySource.class, false);
+        }
 
 		sources.put(object, result);
 		return result;
